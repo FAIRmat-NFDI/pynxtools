@@ -56,12 +56,12 @@ Scientific data across experimental physics and materials science remains largel
 # Dataconverter and validation (Sherjeel)
 
       * Mechanism to write an own reader, i.e. pynxtools-plugin mechanism and test frameworks, not mentioned to much about pynxtools-plugins
+      * ELN Generator - one sentence or so
 
 # NeXus reader and annotator (read\_nexus) (Sandor)
 
 # NOMAD integration (schema, parser) (Lukas, Sandor)
 
-# ELN generator
 
 # Funding
 The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).
