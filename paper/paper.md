@@ -68,12 +68,12 @@ _default plotable -_ NeXus allows any data provider to specify which plottable d
 
 __special features__ supporting particular semantic use of data items in a NeXus file is also incorporated to _read\_nexus_  
 
-_--concept_ This feature allows the user to query the NeXus file using a specific NeXus concept from the full vocabulary. _read\_nexus_ prints then all data items paths that corresponds to the provided NeXus concept.  
+_--concept_ This feature allows the user to query the NeXus file using a specific NeXus concept from the full vocabulary. _read\_nexus_ prints then all data item paths that corresponds to the provided NeXus concept.  
 
 _--documentation_ Instead of traversing the whole file, this feature allows the user to annotate only a single data item at a specific path in the NeXus file. This is parctical when only a few specific data items need to be investigated, e.g. those selected by a _--concept_ query.   
 
-__semantic use__ _read\_nexus_ provides semantic meaning to the data items by automating the process of connecting data items of a NeXus file to the NeXus concepts defined with their full semantic meaning. Data processing applications, can use _read\_nexus_ to find data items in a NeXus file based on the NeXus concepts they should use and work on. They can process data files without the need of hardcoding any data path which could lead to incompatoibilities.  
-Also note that NeXus Ontology (https://github.com/nexusformat/NeXusOntology) ensures that all defined concepts of the NeXus vocabulary and their relationships including their defined restrictions are fully expressed using the semantic web technology standard OWL (https://www.w3.org/OWL/). Hence, _read_\nexus_ can be used to automatically connect data from any NeXus files to the semantic web.
+__semantic use__ _read\_nexus_ provides semantic meaning to the data items by automating the annotation process of connecting data items of a NeXus file to the NeXus concepts defined with their full semantic meaning. Data processing applications, can use _read\_nexus_ to find data items in a NeXus file based on the NeXus concepts they should use and work on. They can process data files without the need of hardcoding any data path which would lead to incompatoibilities.  
+Also note that NeXus Ontology (https://github.com/nexusformat/NeXusOntology) ensures that all defined concepts of the NeXus vocabulary and their relationships including their defined restrictions are fully expressed using the semantic web technology standard OWL (https://www.w3.org/OWL/). Hence, _read\_nexus_ can be used to automatically connect data from any NeXus files to the semantic web.
 
 !!! Check the NeXus links! Use either nexusformat.org links, or reference the path in the actual(!) pynxtools repo noting that pynxtools/definitions is a github submodule and content (as well as content path) can change version to version.
 
