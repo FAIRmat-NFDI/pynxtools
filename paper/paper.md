@@ -60,6 +60,23 @@ Scientific data across experimental physics and materials science remains largel
 
 # NeXus reader and annotator (read\_nexus) (Sandor)
 
+__read_nexus__ is a command line tool to annotate NeXus data files. The tool is registered by the python ecosystem in the PATH and so it is practicly made available for immediate command line use in the environemnt the pynxtools python module is installed. The available command line options are explained if the argument _--help_ is passed when _read\_nexus_ is launched. These allow selecting a NeXus file and either documenting all or part of its content. Note that with no specific NeXus file provided as an argument, the tool will use by default an example NeXus file shiped together with the tool.  
+
+_annotations -_ As it is expained above NeXus defines a huge list of concepts, the so called NeXus Vocabulary (https://manual.nexusformat.org/classes/index.html#classes-vocabulary-downloads). These include _Attributes_ and _Fields_ being organised in _Groups_ and their subgroups. NeXus files store their data items following the hierarchy of these groups (see details in https://manual.nexusformat.org/datarules.html). During reading a NeXus file, the proper interpretation of each data items requries following its group path and connecting it to the concept of the specific vocabulary item with the coresponding definition path. _read\_nexus_ traverse the input NeXus file and does it for each data items in it. Additionally to identifying the corresponding NeXus conpect, it immediately prints its definition. Since NeXus conepts follow inheritance, _read\_nexus_ also prints the defintions of the superclass NeXus concepts all along the inheritance chain. Note that if a data item in a NeXus file does not belong to any concepts which is allowed by the NeXus standard), _read\_nexus_ prints the message 'NOT IN SCHEMA'.  
+
+_default plotable -_ NeXus allows any data provider to specify which plottable data shall be presented by default when a given NeXus file is investigated (see details in https://manual.nexusformat.org/datarules.html#find-plottable-data). After traversing the whole file and visiting all data items, _read\_nexus_ also gives a summary of the default polottable by presenting its path and also its plotting details as specified by NXdata (https://manual.nexusformat.org/classes/base_classes/NXdata.html).  
+
+__special features__ supporting particular semantic use of data items in a NeXus file is also incorporated to _read\_nexus_  
+
+_--concept_ This feature allows the user to query the NeXus file using a specific NeXus concept from the full vocabulary. _read\_nexus_ prints then all data items paths that corresponds to the provided NeXus concept.  
+
+_--documentation_ Instead of traversing the whole file, this feature allows the user to annotate only a single data item at a specific path in the NeXus file. This is parctical when only a few specific data items need to be investigated, e.g. those selected by a _--concept_ query.   
+
+__semantic use__ _read\_nexus_ provides semantic meaning to the data items by automating the process of connecting data items of a NeXus file to the NeXus concepts defined with their full semantic meaning. Data processing applications, can use _read\_nexus_ to find data items in a NeXus file based on the NeXus concepts they should use and work on. They can process data files without the need of hardcoding any data path which could lead to incompatoibilities.  
+Also note that NeXus Ontology (https://github.com/nexusformat/NeXusOntology) ensures that all defined concepts of the NeXus vocabulary and their relationships including their defined restrictions are fully expressed using the semantic web technology standard OWL (https://www.w3.org/OWL/). Hence, _read_\nexus_ can be used to automatically connect data from any NeXus files to the semantic web.
+
+!!! Check the NeXus links! Use either nexusformat.org links, or reference the path in the actual(!) pynxtools repo noting that pynxtools/definitions is a github submodule and content (as well as content path) can change version to version.
+
 # NOMAD integration (schema, parser) (Lukas, Sandor)
 
 
