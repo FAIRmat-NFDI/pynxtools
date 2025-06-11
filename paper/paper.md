@@ -53,14 +53,28 @@ Scientific data across experimental physics and materials science remains largel
 (Second sentence: We base everything on NeXus. We don't wanna say it's too complicated. Make it nicer. We make it more easier to handle it.)
 (Third: refer to cnxvalidate and such)
 
-# Dataconverter and validation (Sherjeel)
+## Dataconverter and validation (Sherjeel)
 
       * Mechanism to write an own reader, i.e. pynxtools-plugin mechanism and test frameworks, not mentioned to much about pynxtools-plugins
       * ELN Generator - one sentence or so
 
-# NeXus reader and annotator (read\_nexus) (Sandor)
+## NeXus reader and annotator (read\_nexus) (Sandor)
 
-# NOMAD integration (schema, parser) (Lukas, Sandor)
+## NOMAD integration (schema, parser) (Lukas, Sandor)
+
+While pynxtools works as a standalone tool using the command line, it can also be integrated directly into Research Data Management Systems (RDMS). Natively, the package functions as a plugin within the NOMAD platform[@Scheidgen:2023], converting and parsing data from experiments. This plugin architecture allows experimental data in NeXus format to be integrated into NOMAD’s archive and metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (called entry points):
+
+- Schema Package: The NeXus (meta)data definitions are natively defined in the NeXus Definition Language (NXDL) and expressed in XML. pynxtools converts this representation and extends NOMAD’s internal data schema (called __Metainfo__) with these domain-specific quantities. pynxtools also connects the NeXus vocabulary to existing base sections in NOMAD, which allows compability of NeXus-defined concepts with other standardized representations (e.g., for sample synthesis or theory) in NOMAD.
+
+- Data Converter: The __DataConverter__ as described above is also available in NOMAD. Hence, NOMAD users can directly convert their experimental data to NeXus via the NOMAD GUI. Aside from the capabilities already described, the internal __DataConverter__ class also handles NOMAD's electronic lab notebooks (ELNs) and converts these such that the manual input data can be converted to NeXus as well.
+
+- Parser: The NOMAD parser module in pynxtools (__NexusParser__) reads NeXus HDF5 files and extracts structured content, which is then used to populate the NOMAD archive (archive.json) with __Metainfo__ objects as defined by the pynxtools schema package. This step translates the NeXus structure into NOMAD's internal data model.
+
+- Normalization: Parsed data is post-processed using NOMAD’s normalization pipeline. This includes automatic handling of units (via pint), linking references across sections (including sample and instrument identifiers defined elsewhere in NOMAD), and populating derived quantities needed for advanced search and visualization.
+
+- App: pynxtools contains an integrated search application for NeXus data within NOMAD. This application, powered by Elasticsearch, enables users to efficiently filter uploaded data based on various parameters, such as experiment type, upload timestamp, and other relevant quantities.
+
+- Example Upload: The plugin includes a representative NOMAD upload (based on the NeXus application definition __NX_iv_temp__), which exemplifies the entire workflow of pynxtools as a NOMAD package. This example upload details the conversion of data from experiments into NeXus files using the __DataConverter__, along with parsing them into the NOMAD archive. This example upload is designed for new users to understand the pynxtools workflow in NOMAD and serves as templates to adapt the plugin to new NeXus applications.
 
 
 # Funding
