@@ -31,7 +31,6 @@ from typing import Any, Optional, Union
 import h5py
 import numpy as np
 import pandas as pd
-import pint
 from ase import Atoms
 from ase.data import atomic_numbers
 from scipy.spatial import cKDTree
@@ -689,7 +688,9 @@ def _create_field(xml_node: ET.Element, container: Section) -> Quantity:
             # TODO: Remove workaround for NX_TRANSFORMATTION
             nx_dimensionality = "NX_ANY"
         dimensionality = NXUnitSet.get_dimensionality(nx_dimensionality)
-        if dimensionality is None and nx_dimensionality != "NX_ANY":
+        if dimensionality is not None:
+            dimensionality = str(dimensionality)
+        elif nx_dimensionality != "NX_ANY":
             raise NotImplementedError(
                 f"Unit {nx_dimensionality} is not supported for {name}."
             )
