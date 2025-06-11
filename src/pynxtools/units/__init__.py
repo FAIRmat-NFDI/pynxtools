@@ -77,7 +77,16 @@ class NXUnitSet:
 
     @classmethod
     def get_dimensionality(cls, nx_unit: str) -> Optional[Any]:
-        """Get the dimensionality object for a given NeXus unit category or example."""
+        """
+        Get the dimensionality object for a given NeXus unit category or example.
+
+        Args:
+            nx_unit (str): The NeXus unit category or a specific unit string.
+
+        Returns:
+            Optional[Any]: The dimensionality object, '1' for dimensionless,
+                or None if undefined.
+        """
         if nx_unit in cls._dimensionalities:
             return cls._dimensionalities[nx_unit]
 
@@ -87,7 +96,7 @@ class NXUnitSet:
                 try:
                     quantity = 1 * ureg(nx_unit)
                     if quantity.dimensionality == "dimensionless":
-                        cls._dimensionalities[nx_unit] = "1"
+                        cls._dimensionalities[nx_unit] = ureg("").dimensionality
                     else:
                         cls._dimensionalities[nx_unit] = str(quantity.dimensionality)
                 except (UndefinedUnitError, DefinitionSyntaxError):
@@ -105,8 +114,19 @@ class NXUnitSet:
     @classmethod
     def matches(cls, unit_category: str, unit: str) -> bool:
         """
-        Check whether the actual unit matches the expected unit category (or example)
-        by comparing dimensionalities.
+        Check whether the actual unit matches the expected unit category or example.
+
+        This is determined by comparing dimensionalities. Special handling is
+        included for NX_ANY (accepts any valid unit or empty string) and for
+        dimensionless cases.
+
+        Args:
+            unit_category (str): The expected NeXus unit category.
+            unit (str): The actual unit string to validate.
+
+        Returns:
+            bool: True if the actual unit matches the expected dimensionality;
+                False otherwise.
         """
 
         def is_valid_unit(unit: str):
@@ -129,11 +149,12 @@ class NXUnitSet:
             return is_valid_unit(unit) or unit == ""
 
         expected_dim = cls.get_dimensionality(unit_category)
+
         if expected_dim is None and not unit:
             return True
 
         if str(expected_dim) == "dimensionless":
-            return True if unit is None else False
+            return True if not unit else False
 
         # At this point, we expect a valid unit.
         if not is_valid_unit(unit):
