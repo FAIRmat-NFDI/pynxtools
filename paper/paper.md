@@ -68,7 +68,7 @@ _default plottable -_ NeXus allows to specify which plottable data shall be pres
 
 __special features__ supporting particular semantic use of data items in a NeXus file is also incorporated to _read\_nexus_  
 
-_--concept_ This feature allows the user to query the NeXus file using a specific NeXus concept from the full vocabulary. _read\_nexus_ prints then all data item paths that corresponds to the provided NeXus concept.  
+_--concept_: This command line queries the NeXus file using a specific NeXus vocabulary item, logging all data item paths that correspond to this concept.
 
 _--documentation_ Instead of traversing the whole file, this feature allows the user to annotate only a single data item at a specific path in the NeXus file. This is parctical when only a few specific data items need to be investigated, e.g. those selected by a _--concept_ query.   
 
