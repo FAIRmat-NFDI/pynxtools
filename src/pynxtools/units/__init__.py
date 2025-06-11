@@ -125,7 +125,8 @@ class NXUnitSet:
                 return False
 
         if unit_category in ("NX_ANY"):
-            return is_valid_unit(unit)
+            # Note: we allow empty string units here
+            return is_valid_unit(unit) or unit == ""
 
         expected_dim = cls.get_dimensionality(unit_category)
         if expected_dim is None and not unit:
