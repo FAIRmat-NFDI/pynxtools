@@ -221,7 +221,21 @@ def is_valid_unit_for_node(
     node: NexusNode, unit: str, unit_path: str, hints: Dict[str, Any]
 ) -> None:
     """
-    Check if a given unit matches the unit category for a node.
+    Validate whether a unit string is compatible with the expected unit category for a given NeXus node.
+
+    This function checks if the provided `unit` string matches the expected unit dimensionality
+    defined in the node's `unit` field. Special logic is applied for "NX_TRANSFORMATION", where
+    the dimensionality depends on the `transformation_type` hint.
+
+    If the unit does not match the expected dimensionality, a validation problem is logged.
+
+    Args:
+        node (NexusNode): The node containing unit metadata to validate against.
+        unit (str): The unit string to validate (e.g., "m", "eV", "1", "").
+        unit_path (str): The path to the unit in the NeXus template, used for logging.
+        hints (Dict[str, Any]): Additional metadata used during validation. For example,
+            hints["transformation_type"] may be used to determine the expected unit category
+            if the node represents a transformation.
     """
     # Need to use a list as `NXtransformation` is a special use case
     if node.unit == "NX_TRANSFORMATION":
@@ -640,16 +654,20 @@ def validate_dict_against(
             _ = check_reserved_prefix(variant_path, mapping, "field")
 
             # Check unit category
-            if node.unit is not None and node.unit != "NX_UNITLESS":
+            if node.unit is not None:
                 unit_path = f"{variant_path}/@units"
-                remove_from_not_visited(unit_path)
-                if f"{variant}@units" not in keys and node.unit != "NX_TRANSFORMATION":
-                    collector.collect_and_log(
-                        variant_path,
-                        ValidationProblem.MissingUnit,
-                        node.unit,
-                    )
-                    break
+                if node.unit != "NX_UNITLESS":
+                    remove_from_not_visited(unit_path)
+                    if (
+                        f"{variant}@units" not in keys
+                        and node.unit != "NX_TRANSFORMATION"
+                    ):
+                        collector.collect_and_log(
+                            variant_path,
+                            ValidationProblem.MissingUnit,
+                            node.unit,
+                        )
+                        break
 
                 unit = keys.get(f"{variant}@units")
                 # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
@@ -1391,7 +1409,7 @@ def validate_dict_against(
                             mapping[not_visited_key],
                         )
 
-                if node.unit is not None and node.unit != "NX_UNITLESS":
+                if node.unit is not None:  # and node.unit != "NX_UNITLESS":
                     # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
                     if (
                         transformation_type := mapping.get(

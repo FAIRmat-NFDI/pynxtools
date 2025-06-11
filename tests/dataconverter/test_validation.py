@@ -1163,7 +1163,26 @@ TEMPLATE["required"][
                 "J/mm",
             ),
             [],
-            id="baseclass-valid-units-xample",
+            id="baseclass-valid-unit-example",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                        1,
+                    ),
+                    "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position/@units",
+                    "mm",
+                ),
+                "/ENTRY[my_entry]/SAMPLE[sample2]]/changer_position",
+                1,
+            ),
+            [
+                "The unit 'mm' at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position/@units does not match with the unit category NX_UNITLESS of 'changer_position'."
+            ],
+            id="baseclass-unitless-field",
         ),
         pytest.param(
             alter_dict(
