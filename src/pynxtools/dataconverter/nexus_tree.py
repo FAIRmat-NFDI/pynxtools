@@ -47,7 +47,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
-from pynxtools.units import NXUnitSet
 
 NexusType = Literal[
     "NX_BINARY",
