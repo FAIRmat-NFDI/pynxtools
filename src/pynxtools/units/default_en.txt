@@ -179,7 +179,7 @@ lambda = microliter = λ
 hertz = 1 / second = Hz
 revolutions_per_minute = 1 / minute = rpm
 revolutions_per_second = 1 / second = rps
-counts_per_second = 1 / second = cps
+counts_per_second = count / second = cps
 
 # Wavenumber
 [wavenumber] = 1 / [length]
