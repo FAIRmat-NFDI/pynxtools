@@ -105,6 +105,7 @@ kelvin = [temperature]; offset: 0 = K = degK = °K = degree_Kelvin = degreeK  # 
 radian = [angle] = rad
 bit = [information]
 pixel = [digital_image_resolution] = px = pel
+count = []
 
 
 #### CONSTANTS ####
