@@ -47,8 +47,10 @@ Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data prin
 
 # Dataconverter and validation (Sherjeel)
 
-      * Mechanism to write an own reader, i.e. pynxtools-plugin mechanism and test frameworks, not mentioned to much about pynxtools-plugins
-      * ELN Generator - one sentence or so
+The dataconverter module forms the core of pynxtools, combining instrument output files and electronic lab notebook data into NeXus-compliant HDF5 files. The converter performs three key operations: reading experimental data through specialized readers, validating against NeXus application definitions to ensure compliance with existence, shape, and format constraints, and writing valid NeXus/HDF5 output files.
+The system employs two types of readers: built-in readers for generic functionality and superclass implementations, and technique-specific reader plugins distributed as separate Python packages. To facilitate plugin development, pynxtools provides a specialized reader abstract class that streamlines the creation of new readers for the dataconverter. Each reader processes experiment-specific file formats—whether proprietary, community-standard, or text-based—that collectively contain the required information specified by the target NeXus application definition.
+New reader implementations are validated through comprehensive test suites that ensure compatibility with the dataconverter framework. These tests run automatically on GitHub CI, maintaining code quality and functional integration across all reader plugins.
+The converter maps data to NeXus application definitions that serve as data delivery contracts, specifying required and optional metadata for specific experimental techniques. This ensures that output files contain all necessary information while distinguishing between mandatory fields and recommended data that encourages comprehensive documentation without requiring placeholder values when unavailable.
 
 # NeXus reader and annotator (read\_nexus)
 
