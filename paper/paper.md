@@ -45,11 +45,14 @@ Scientific data across experimental physics and materials science often lacks ad
 
 Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data principles in experimental physics and materials science requires consistent implementation of standardized data formats. While NeXus provides comprehensive data specifications for structured scientific data storage, pynxtools simplifies the implementation process for developers and researchers by providing guided workflows and automated validation to ensure complete compliance. Existing tools [@Koennecke:2024; @Jemian:2025] provide solutions with individual capabilities, but none offers a comprehensive end-to-end workflow for proper NeXus adoption. pynxtools addresses this critical gap by providing an accessible framework that enforces complete NeXus application definition compliance through automated validation, detailed error reporting for missing required data points, and clear implementation pathways via configuration files and extensible plugins. This approach transforms NeXus from a complex specification into a practical solution, enabling researchers to achieve true data interoperability without deep technical expertise in the underlying standards.
 
-# Dataconverter and validation (Sherjeel)
+# Dataconverter and validation
 
 The dataconverter module forms the core of pynxtools, combining instrument output files and electronic lab notebook data into NeXus-compliant HDF5 files. The converter performs three key operations: reading experimental data through specialized readers, validating against NeXus application definitions to ensure compliance with existence, shape, and format constraints, and writing valid NeXus/HDF5 output files.
+
 The system employs two types of readers: built-in readers for generic functionality and superclass implementations, and technique-specific reader plugins distributed as separate Python packages. To facilitate plugin development, pynxtools provides a specialized reader abstract class that streamlines the creation of new readers for the dataconverter. Each reader processes experiment-specific file formats—whether proprietary, community-standard, or text-based—that collectively contain the required information specified by the target NeXus application definition.
+
 New reader implementations are validated through comprehensive test suites that ensure compatibility with the dataconverter framework. These tests run automatically on GitHub CI, maintaining code quality and functional integration across all reader plugins.
+
 The converter maps data to NeXus application definitions that serve as data delivery contracts, specifying required and optional metadata for specific experimental techniques. This ensures that output files contain all necessary information while distinguishing between mandatory fields and recommended data that encourages comprehensive documentation without requiring placeholder values when unavailable.
 
 # NeXus reader and annotator (read\_nexus)
