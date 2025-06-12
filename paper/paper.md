@@ -36,29 +36,18 @@ bibliography: paper.bib
 
 # Summary
 
-(Add statement like sentence for the start like the Nomad JOSS). pynxtools is a Python framework that standardizes data conversion for scientific experiments (materials characterization, something like This standardized approach addresses the historical problem of incompatible formats across research communities.) to NeXus HDF5 format across diverse scientific domains. pynxtools provides a fixed set of NeXus application definitions (reference needed here) that ensures convergence and alignment in data specifications across photoemission spectroscopy, electron microscopy(Check if there is a review paper, or just cite rosettasciIO), atom probe tomography, optical spectroscopy, scanning probe microscopy, and X-ray diffraction (Ref: CIFF, IUPAC). Through its modular plugin architecture, pynxtools provides maps for instrument-specific raw data and electronic lab notebook metadata to these unified definitions, while performing validation to ensure data correctness and NeXus compliance. By simplifying the adoption of standardized application definitions, the framework enables true data interoperability and FAIR data management across multiple experimental techniques.
-(Missing what NeXus is. Add a bit of context.)
-(Add it's a CLI tool. And code framework)
-(Nexus Reference, https://doi.org/10.1107/S1600576714027575)
-(Compromise for Nomad: We have a standalone tool that is also integrated in Nomad as an example.)
-(https://github.com/ess-dmsc/nexus-constructor)
-(Cite some FAIR papers, one from Jacobson, FAIR4RS, FAIR4Workflows-thisnotsoimp)
-
-
+Scientific data across experimental physics and materials science often lacks adherence to FAIR principles [@Wilkinson:2016; @Jacobsen:2020; @Barker:2022] due to incompatible instrument-specific formats and diverse standardization practices. pynxtools is a Python software development framework with a CLI interface that standardizes data conversion for scientific experiments in materials characterization to the NeXus format [@Koennecke:2015] across diverse scientific domains. pynxtools provides a fixed set of NeXus application definitions that ensures convergence and alignment in data specifications across photoemission spectroscopy, electron microscopy [@Prestat:2025], atom probe tomography, optical spectroscopy, scanning probe microscopy, and X-ray diffraction. Through its modular plugin architecture, pynxtools provides maps for instrument-specific raw data and electronic lab notebook metadata to these unified definitions, while performing validation to ensure data correctness and NeXus compliance. By simplifying the adoption of standardized application definitions, the framework enables true data interoperability and FAIR data management across multiple experimental techniques.
 
 # Statement of need
 
-Scientific data across experimental physics and materials science remains largely non-FAIR (Findable, Accessible, Interoperable, and Reproducible) due to inconsistent implementation and documentation of standardized data formats. While NeXus provides comprehensive data specifications for structured scientific data storage, researchers typically struggle with its specification requirements, leading to incomplete implementations, non-compliant outputs, or abandonment of standardization efforts entirely. Existing tools (do some parts of what we offer, and then list what we provide) lack robust validation frameworks and provide insufficient guidance for proper NeXus adoption. pynxtools addresses this critical gap by providing an accessible framework that enforces complete NeXus application definition compliance through automated validation, detailed error reporting for missing required data points, and clear implementation pathways via configuration files and extensible plugins. This approach transforms NeXus from a complex specification into a practical solution, enabling researchers to achieve true data interoperability without deep technical expertise in the underlying standards.
-(Can we tone down the first sentence to not offend readers/people who worked before. Don't dwell on stuff not working. How to make this sound less negative?)
-(Second sentence: We base everything on NeXus. We don't wanna say it's too complicated. Make it nicer. We make it more easier to handle it.)
-(Third: refer to cnxvalidate and such)
+Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data principles in experimental physics and materials science requires consistent implementation of standardized data formats. While NeXus provides comprehensive data specifications for structured scientific data storage, pynxtools simplifies the implementation process for developers and researchers by providing guided workflows and automated validation to ensure complete compliance. Existing tools [@Koennecke:2024; @Jemian:2025] provide solutions with individual capabilities, but none offers a comprehensive end-to-end workflow for proper NeXus adoption. pynxtools addresses this critical gap by providing an accessible framework that enforces complete NeXus application definition compliance through automated validation, detailed error reporting for missing required data points, and clear implementation pathways via configuration files and extensible plugins. This approach transforms NeXus from a complex specification into a practical solution, enabling researchers to achieve true data interoperability without deep technical expertise in the underlying standards.
 
 # Dataconverter and validation (Sherjeel)
 
       * Mechanism to write an own reader, i.e. pynxtools-plugin mechanism and test frameworks, not mentioned to much about pynxtools-plugins
       * ELN Generator - one sentence or so
 
-# NeXus reader and annotator (read\_nexus) (Sandor)
+# NeXus reader and annotator (read\_nexus)
 
 __read_nexus__ is a command line tool to annotate and explore NeXus data files. Once pynxtools is installed, it is immediately available and offers options for selecting a NeXus file and either documenting all or part of its content. Note that with no specific NeXus file provided as an argument, the tool will use by default an example NeXus file shipped together with the package.
 
@@ -74,7 +63,21 @@ _--documentation_: Instead of traversing the whole file, this feature annotates 
 
 !!! Check the NeXus links! Use either nexusformat.org links, or reference the path in the actual(!) pynxtools repo noting that pynxtools/definitions is a github submodule and content (as well as content path) can change version to version.
 
-# NOMAD integration (schema, parser) (Lukas, Sandor)
+# NOMAD integration (schema, parser)
+
+While pynxtools works as a standalone tool using the command line, it can also be integrated directly into Research Data Management Systems (RDMS). Out of the box, the package functions as a plugin within the NOMAD platform [@Scheidgen:2023], converting and parsing data from experiments. This enables experimental data in the NeXus format to be integrated into NOMAD's metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
+
+- Schema Package: The NeXus (meta)data definitions are expressed in XML using the NeXus Definition Language (NXDL), which in turn is defined using XSD. pynxtools converts this representation and extends NOMAD's internal data schema (called __Metainfo__) with these domain-specific quantities. pynxtools also connects the NeXus vocabulary to existing base sections in NOMAD — reusable, standardized building blocks used to represent common scientific concepts. This connection enables interoperability between NeXus-defined concepts and other standardized representations in NOMAD, such as those for sample synthesis or theoretical calculations.
+
+- Data Converter: The __DataConverter__ as described above is also available in NOMAD. Thus, NOMAD users can directly convert their experimental data to NeXus using NOMAD's graphical interface. In addition to the capabilities already described, the internal __DataConverter__ class also handles NOMAD's electronic lab notebooks (ELNs) and converts these such that the manually inputted data can be converted to NeXus as well.
+
+- Parser: The NOMAD parser module in pynxtools (__NexusParser__) reads NeXus HDF5 files and uses the structured data instances from these files to populate the NOMAD __Metainfo__ model with __Metainfo__ object instances as defined by the pynxtools schema package. This step enables ingestion of NeXus data directly into the NOMAD __Metainfo__ model.
+
+- Normalization: Parsed data is post-processed using NOMAD's normalization pipeline. This includes automatic handling of units (via pint), linking references across sections (including sample and instrument identifiers defined elsewhere in NOMAD), and populating derived quantities needed for advanced search and visualization.
+
+- App: pynxtools contains an integrated search application for NeXus data within NOMAD. This application, powered by Elasticsearch [@elasticsearch:2025], enables users to efficiently filter uploaded data based on various parameters, such as experiment type, upload timestamp, and other relevant quantities.
+
+- Example Upload: The plugin includes a representative NOMAD upload (based on the NeXus application definition __NX_iv_temp__ describing temperature-dependent IV curve measurements), which exemplifies the entire workflow of pynxtools as a NOMAD package. This example upload details the conversion of data from experiments into NeXus files using the __DataConverter__, along with parsing them into the NOMAD archive. This example upload is designed for new users to understand the pynxtools workflow in NOMAD and serves as templates to adapt the plugin to new NeXus applications.
 
 
 # Funding
