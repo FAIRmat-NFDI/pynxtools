@@ -160,6 +160,10 @@ class NXUnitSet:
         if not is_valid_unit(unit):
             return False
 
+        # Workaround for pixels as units in transformations
+        if ureg.Unit(unit) == ureg.Unit("pixel") and str(expected_dim) == "[length]":
+            return True
+
         actual_dim = (1 * ureg(unit)).dimensionality
 
         return actual_dim == expected_dim

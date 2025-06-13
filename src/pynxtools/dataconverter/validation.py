@@ -1409,7 +1409,7 @@ def validate_dict_against(
                             mapping[not_visited_key],
                         )
 
-                if node.unit is not None:  # and node.unit != "NX_UNITLESS":
+                if node.unit is not None:
                     # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
                     if (
                         transformation_type := mapping.get(
