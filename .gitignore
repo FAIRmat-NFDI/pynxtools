@@ -203,6 +203,8 @@ cython_debug/
 !mkdocs-requirements.txt
 !src/pynxtools/nexus-version.txt
 !src/pynxtools/remote_definitions_url.txt
+!src/pynxtools/units/constants_en.txt
+!src/pynxtools/units/default_en.txt
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
