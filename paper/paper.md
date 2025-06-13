@@ -49,6 +49,20 @@ Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data prin
 
 # NeXus reader and annotator (read\_nexus)
 
+__read_nexus__ is a command line tool to annotate and explore NeXus data files. Once pynxtools is installed, it is immediately available and offers options for selecting a NeXus file and either documenting all or part of its content. Note that with no specific NeXus file provided as an argument, the tool will use by default an example NeXus file shipped together with the package.
+
+_annotations -_ As it is expained above[!!! Ref better when it is done], NeXus defines a rich set of concepts, the so called [NeXus Vocabulary](https://manual.nexusformat.org/classes/index.html#classes-vocabulary-downloads). These include _Attributes_ and _Fields_ which are organized in _Groups_ and their subgroups. [NeXus files](https://manual.nexusformat.org/design.html) store their [data items](see details in https://manual.nexusformat.org/datarules.html) following the hierarchy of these groups. _read\_nexus_ traverses the input NeXus file and interprets each data item by following its group path and connecting it to the concept of the specific vocabulary item. It reports the concept's definition. Since NeXus concepts follow inheritance, the all superclass concepts along the inheritance chain and their definitions are also reported. If a data item in a NeXus file does not belong to any concept (which is allowed by the NeXus standard), _read\_nexus_ reports the message 'NOT IN SCHEMA'.  
+
+_default plottable -_ NeXus allows to specify which [plottable data](https://manual.nexusformat.org/datarules.html#find-plottable-data) shall be presented by default for a given NeXus file. After traversing the whole file and visiting all data items, _read\_nexus_ additionally reports a summary of the default plottable by presenting its path and also its plotting details as specified by the [NXdata definition](https://manual.nexusformat.org/classes/base_classes/NXdata.html).  
+
+__semantic use__: _read\_nexus_ also supports the proper semantic use of data items in NeXus files by automating the annotation process of connecting them to the corresponding NeXus concepts. Hence, data processing applications can find data items in a NeXus file based on the semantic concepts, without the need of hardcoding any data path which could lead to incompatibilities. Note that _read\_nexus_ uses [NeXus Ontology's](https://github.com/nexusformat/NeXusOntology) [OWL](https://www.w3.org/OWL/) labels assigned to each NeXus' semantic concept. Hence, it can also be used to connect data items from any NeXus files to the semantic web. The following features facilitate such use:  
+
+_--concept_: This command line queries the NeXus file using a specific NeXus vocabulary item (or NeXus Ontology class), reporting all data item paths that correspond to this concept.
+
+_--documentation_: Instead of traversing the whole file, this feature annotates only a single data item at a specific path in the NeXus file. This is practical when only a few specific data items need to be investigated, e.g. those selected by a _--concept_ query.   
+
+!!! Check the NeXus links! Use either nexusformat.org links, or reference the path in the actual(!) pynxtools repo noting that pynxtools/definitions is a github submodule and content (as well as content path) can change version to version.
+
 # NOMAD integration (schema, parser)
 
 While pynxtools works as a standalone tool using the command line, it can also be integrated directly into Research Data Management Systems (RDMS). Out of the box, the package functions as a plugin within the NOMAD platform [@Scheidgen:2023], converting and parsing data from experiments. This enables experimental data in the NeXus format to be integrated into NOMAD's metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
