@@ -93,16 +93,18 @@ class NXUnitSet:
         definition = cls.mapping.get(nx_unit)
         if definition == "1":
             cls._dimensionalities[nx_unit] = ureg("").dimensionality
-        elif definition is None or definition == "transformation":
-            if definition is None:
-                try:
-                    quantity = 1 * ureg(nx_unit)
-                    if quantity.dimensionality == "dimensionless":
-                        cls._dimensionalities[nx_unit] = ureg("").dimensionality
-                    else:
-                        cls._dimensionalities[nx_unit] = quantity.dimensionality
-                except (UndefinedUnitError, DefinitionSyntaxError):
-                    cls._dimensionalities[nx_unit] = None
+        elif definition is None:
+            try:
+                quantity = 1 * ureg(nx_unit)
+                if quantity.dimensionality == ureg("").dimensionality:
+                    cls._dimensionalities[nx_unit] = ureg("").dimensionality
+                else:
+                    cls._dimensionalities[nx_unit] = quantity.dimensionality
+            except (UndefinedUnitError, DefinitionSyntaxError):
+                cls._dimensionalities[nx_unit] = None
+        elif definition == "transformation":
+            cls._dimensionalities[nx_unit] = None
+
         else:
             try:
                 cls._dimensionalities[nx_unit] = ureg.get_dimensionality(definition)
