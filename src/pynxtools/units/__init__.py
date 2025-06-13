@@ -42,7 +42,7 @@ class NXUnitSet:
         "NX_ANY": None,
         "NX_AREA": "[area]",
         "NX_CHARGE": "[charge]",
-        "NX_COUNT": "1",
+        "NX_COUNT": "[count]",
         "NX_CROSS_SECTION": "[area]",
         "NX_CURRENT": "[current]",
         "NX_DIMENSIONLESS": "1",
