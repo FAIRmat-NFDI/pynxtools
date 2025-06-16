@@ -30,12 +30,12 @@ jobs:
 
     - name: Compare unit definition files
       run: |
-        diff --unified=3 nomad/units/default_en.txt src/pynxtools/units/default_en.txt || {
+        diff --unified=3 nomad/nomad/units/default_en.txt src/pynxtools/units/default_en.txt || {
           echo "::error file=src/pynxtools/units/default_en.txt::default_en.txt differs from NOMAD";
           exit 1;
         }
 
-        diff --unified=3 nomad/units/constants_en.txt src/pynxtools/units/constants_en.txt || {
+        diff --unified=3 nomad/nomad/units/constants_en.txt src/pynxtools/units/constants_en.txt || {
           echo "::error file=src/pynxtools/units/constants.txt::constants.txt differs from NOMAD";
           exit 1;
         }
