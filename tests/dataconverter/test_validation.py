@@ -1191,30 +1191,40 @@ TEMPLATE["required"][
                         alter_dict(
                             alter_dict(
                                 alter_dict(
-                                    TEMPLATE,
-                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]",
-                                    1.0,
+                                    alter_dict(
+                                        alter_dict(
+                                            TEMPLATE,
+                                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]",
+                                            1.0,
+                                        ),
+                                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@transformation_type",
+                                        "translation",
+                                    ),
+                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@units",
+                                    "m",
                                 ),
-                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@transformation_type",
-                                "translation",
+                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]",
+                                1.0,
                             ),
-                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@units",
-                            "m",
+                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@transformation_type",
+                            "rotation",
                         ),
-                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]",
-                        1.0,
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@units",
+                        "m",
                     ),
-                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@transformation_type",
-                    "rotation",
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation_no_units]",
+                    1.0,
                 ),
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@units",
-                "m",
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation_no_units]/@transformation_type",
+                "translation",
             ),
             [
                 "The unit 'm' at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@units "
                 "does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. Based on the 'transformation_type' of the field "
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation], "
                 "it should match with 'NX_ANGLE'.",
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation_no_units] requires a unit "
+                "in the unit category NX_TRANSFORMATION.",
             ],
             id="nxtransformations-translation-units",
         ),
@@ -1225,30 +1235,40 @@ TEMPLATE["required"][
                         alter_dict(
                             alter_dict(
                                 alter_dict(
-                                    TEMPLATE,
-                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]",
-                                    1.0,
+                                    alter_dict(
+                                        alter_dict(
+                                            TEMPLATE,
+                                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]",
+                                            1.0,
+                                        ),
+                                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@transformation_type",
+                                        "rotation",
+                                    ),
+                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@units",
+                                    "degree",
                                 ),
-                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@transformation_type",
-                                "rotation",
+                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]",
+                                1.0,
                             ),
-                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@units",
-                            "degree",
+                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@transformation_type",
+                            "translation",
                         ),
-                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]",
-                        1.0,
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@units",
+                        "degree",
                     ),
-                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@transformation_type",
-                    "translation",
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation_no_units]",
+                    1.0,
                 ),
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@units",
-                "degree",
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation_no_units]/@transformation_type",
+                "rotation",
             ),
             [
                 "The unit 'degree' at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@units "
                 "does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. Based on the 'transformation_type' of the field "
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation], "
                 "it should match with 'NX_LENGTH'.",
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation_no_units] requires a unit "
+                "in the unit category NX_TRANSFORMATION.",
             ],
             id="nxtransformations-rotation-units",
         ),
