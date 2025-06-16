@@ -1,4 +1,4 @@
-name: NOMAD dependencies compatibility
+name: NOMAD compatibility
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
   python-version: 3.11
 
 jobs:
-  validate_dependencies:
+  validate_compatibility:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,13 +28,25 @@ jobs:
         git clone --depth 1 --branch develop --recurse-submodules https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
         git submodule update --init --recursive --depth 1
 
+    - name: Compare unit definition files
+      run: |
+        diff --unified=3 nomad/units/default_en.txt src/pynxtools/units/default_en.txt || {
+          echo "::error file=src/pynxtools/units/default_en.txt::default_en.txt differs from NOMAD";
+          exit 1;
+        }
+
+        diff --unified=3 nomad/units/constants_en.txt src/pynxtools/units/constants_en.txt || {
+          echo "::error file=src/pynxtools/units/constants.txt::constants.txt differs from NOMAD";
+          exit 1;
+        }
+
     - name: Add pynxtools dependency in NOMAD test_plugins.txt
       working-directory: ./nomad
       run: |
         echo "" >> test_plugins.txt
         echo "pynxtools@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }}" >> test_plugins.txt
     - name: Install uv and set the python version to ${{ env.python-version }}
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
       with:
         python-version: ${{ env.python-version }}
     - name: Generate (dev-)requirements.txt from modified pyproject.toml
