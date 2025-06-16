@@ -482,10 +482,6 @@ def validate_dict_against(
             and node.optionality == "required"
             and node.type in missing_type_err
         ):
-            # Remove any subkeys from further checking.
-            for key in mapping:
-                if key.startswith(f"{prev_path}/{node.name}"):
-                    remove_from_not_visited(key)
             collector.collect_and_log(
                 f"{prev_path}/{node.name}",
                 missing_type_err.get(node.type),
@@ -1366,6 +1362,10 @@ def validate_dict_against(
     check_attributes_of_nonexisting_field(tree)
 
     for not_visited_key in not_visited:
+        if mapping.get(not_visited_key) is None:
+            # This value is not really set. Skip checking its validity.
+            continue
+
         # TODO: remove again if "@target"/"@reference" is sorted out by NIAC
         always_allowed_attributes = ("@target", "@reference")
         if not_visited_key.endswith(always_allowed_attributes):
