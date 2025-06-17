@@ -47,18 +47,20 @@ Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data prin
 
 # Dataconverter and validation
 
-The __dataconverter__ module forms the core of pynxtools, combining instrument output files and data from electronic lab notebook into NeXus-compliant HDF5 files. The converter performs three key operations: reading experimental data through specialized readers, validating against NeXus application definitions to ensure compliance with existence, shape, and format constraints, and writing valid NeXus/HDF5 output files.
+The __dataconverter__ module forms the core of pynxtools, combining instrument output files and data from electronic lab notebooks into NeXus-compliant HDF5 files. The converter performs three key operations: reading experimental data through specialized readers, validating against NeXus application definitions to ensure compliance with existence, shape, and format constraints, and writing valid NeXus/HDF5 output files.
 
-The __dataconverter__ provides an abstract __reader__ class to create plugins that process experiment-specific file formats and try to fill the NeXus specification. A __Template__ object is passed to the __reader__ by the __dataconverter__ that acts like a form that has to be filled by the __reader__. __Template__ is a subclass of a regular Python __dict__ class. It keeps a similar interface to a __dict__ to help developers write code they are familiar with. It transparently ensures structural compliance with the selected NeXus application definition. __Template__ categorizes all data elements according to three requirement levels: required, recommended, and optional.
+The __dataconverter__ provides a CLI interface to produce NeXus files where users can use one of the built-in readers for generic functionality or technique-specific reader plugins distributed as separate Python packages.
+
+For developers, the __dataconverter__ provides an abstract __reader__ class to create plugins that process experiment-specific file formats and try to fill the NeXus specification. A __Template__ object is passed to the __reader__ by the __dataconverter__ that acts like a form that has to be filled by the __reader__. __Template__ is a subclass of a regular Python __dict__ class. It keeps a similar interface to a __dict__ to help developers write code they are familiar with. It transparently ensures structural compliance with the selected NeXus application definition. __Template__ categorizes all data elements according to three requirement levels: required, recommended, and optional.
 
 This allows the __dataconverter__ to control what the reader plugins provide and validate this against the selected NeXus application definition. Once, the reader plugin returns a __Template__ object, the __dataconverter__'s validation routine checks if all required fields in the NeXus application definition exist. This includes complex dependency relationships such as inheritance chains or required children within optional parent groups. The validation then collects all data entities that have a specification and ensures data integritiy by verifying the data type, shape, and constraints set by the specification. The __dataconverter__'s validation routine throws an error if there is a required data entity it found invalid. It also emits warnings to the CLI for the user and/or developer for any data it invalidates or doesn't find a specification for. This helps the users identify issues while practically building a NeXus file.
 
-After validation the __dataconverter__ passes the __Template__ object to the __Writer__ class. This class has the job of writing an HDF5 file as provided in a __Template__ object. It also converts the __Template__ object's simple link syntax to an HDF5 link. This can be a softlink or hardlink. It can be within the same file or another file. We reduce this syntax to... (Syntax explanation goes here.)
-
-The __dataconverter__ is packaged with built-in readers for generic functionality and technique-specific reader plugins distributed as separate Python packages. All reader implementations are validated through a comprehensive test suite that ensures compatibility with the __dataconverter__ framework. These tests run automatically via the continuous integration pipeline provided by GitHub, maintaining code quality and functional integration across all reader plugins.
-(List readers here)
+After validation the __dataconverter__ passes the __Template__ object to the __Writer__ class. This class has the job of writing an HDF5 file as provided in a __Template__ object. It also converts the __Template__ object's simple link syntax to an HDF5 link. This can be a softlink or hardlink. It can be within the same file or another file. We reduce this syntax to a __dict__ object with a __link__ key with a string formatted as "<filename.hdf5>:<\/path\/to\/data\/in\/template\/object>". The filename is optional and can be ommitted if the data being linked is in the same file: "<\/path\/to\/data\/in\/template\/object>". This drastically simplifies linking to data for new users and developers. The same syntax is available in our dynamic mapping built-in readers.
 
 
+All reader implementations are validated through a comprehensive test suite that ensures compatibility with the __dataconverter__ framework. These tests run automatically via the continuous integration pipeline provided by GitHub, maintaining code quality and functional integration across all reader plugins.
+
+The __dataconverter__ module is also shipped with an ELN generator that, for a selected NeXus application definition, creates either a YAML file that can be manually filled in and used by __dataconverter__ readers or a Nomad ELN schema that can be used to manually fill in data on the Nomad platform.
 
 # NeXus reader and annotator (read\_nexus)
 
@@ -99,5 +101,7 @@ The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research 
 # Author contributions
 
 # Acknowledgements
+
+We acknowledge the following software packages our package depends on: [@H5py:2008], [@Harris:2020], [@Click:2014], [@Druskat:2021], [@Hoyer:2017], [@Hoyer:2025], [@Pandas:2020], [@McKinney:2010], [@Behnel:2005], [@Clarke:2019], [@Hjorth:2017], [@Pint:2012].
 
 # References
