@@ -300,7 +300,7 @@ class Writer:
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
-                raise IOError(
+                raise OSError(
                     f"Unknown error occured writing the path: {path} "
                     f"with the following message: {str(exc)}"
                 ) from exc
@@ -335,7 +335,7 @@ class Writer:
                     )
                     dataset.attrs[entry_name[1:]] = data
             except Exception as exc:
-                raise IOError(
+                raise OSError(
                     f"Unknown error occured writing the path: {path}"
                     f", while writing the value: {value} "
                     f"with the following message: {str(exc)}"

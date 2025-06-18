@@ -16,22 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import re
 import copy
+import re
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
 from typing import (
     Any,
+    Dict,
     Iterable,
     List,
+    Literal,
     Mapping,
     MutableMapping,
     Optional,
     Tuple,
     Union,
-    Dict,
-    Literal,
 )
 
 import h5py

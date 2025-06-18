@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum, auto
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union, Sequence, cast
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Union, cast
 
 import h5py
 import lxml.etree as ET

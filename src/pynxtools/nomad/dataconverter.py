@@ -18,7 +18,9 @@ except ImportError as exc:
 from pynxtools.dataconverter import convert as pynxtools_converter
 from pynxtools.dataconverter import writer as pynxtools_writer
 from pynxtools.dataconverter.template import Template
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_app_defs_names  # pylint: disable=import-error
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_app_defs_names,  # pylint: disable=import-error
+)
 
 m_package = Package(name="nexus_data_converter")
 
@@ -176,7 +178,7 @@ class ElnYamlConverter(EntryData):
     )
 
     def normalize(self, archive, logger):
-        super(ElnYamlConverter, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         eln_dict = create_eln_dict(archive)
         write_yaml(archive, archive.data.output, eln_dict)
@@ -231,7 +233,7 @@ class NexusDataConverter(EntryData):
     )
 
     def normalize(self, archive, logger):
-        super(NexusDataConverter, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         raw_path = archive.m_context.raw_path()
         eln_dict = create_eln_dict(archive)

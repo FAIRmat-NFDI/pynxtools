@@ -20,7 +20,7 @@
 import logging
 import os
 from glob import glob
-from typing import Dict, List, Literal, Tuple, Optional
+from typing import Dict, List, Literal, Optional, Tuple
 
 try:
     from nomad.client import parse
@@ -30,7 +30,7 @@ except ImportError:
     NOMAD_AVAILABLE = False
 
 
-from pynxtools.dataconverter.convert import get_reader, convert
+from pynxtools.dataconverter.convert import convert, get_reader
 from pynxtools.dataconverter.helpers import (
     add_default_root_attributes,
     get_nxdl_root_and_path,
@@ -150,7 +150,7 @@ class ReaderTest:
 
         if files_with_expected_output:
             output_file = files_with_expected_output[0]
-            with open(output_file, "r") as file:
+            with open(output_file) as file:
                 expected_messages = [line.strip() for line in file.readlines()]
 
             for message in expected_messages:
@@ -206,8 +206,8 @@ class ReaderTest:
             gen_log_path: str, ref_log_path: str
         ) -> Tuple[List[str], List[str]]:
             """Load log files and return their contents as lists of lines."""
-            with open(gen_log_path, "r", encoding="utf-8") as gen, open(
-                ref_log_path, "r", encoding="utf-8"
+            with open(gen_log_path, encoding="utf-8") as gen, open(
+                ref_log_path, encoding="utf-8"
             ) as ref:
                 return gen.readlines(), ref.readlines()
 

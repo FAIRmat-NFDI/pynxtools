@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Taken from: https://github.com/SiggiGue/hdfdict/blob/master/hdfdict/hdfdict.py"""
 
 from collections import UserDict
@@ -196,7 +195,7 @@ def dump(data, hdf, *args, packer=pack_dataset, **kwargs):
     def _recurse(datadict, hdfobject):
         for key, value in datadict.items():
             if isinstance(key, tuple):
-                key = "_".join((str(i) for i in key))
+                key = "_".join(str(i) for i in key)
             if isinstance(value, (dict, LazyHdfDict)):
                 hdfgroup = hdfobject.create_group(key)
                 _recurse(value, hdfgroup)

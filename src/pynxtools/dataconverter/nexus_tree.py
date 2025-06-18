@@ -29,25 +29,24 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import lru_cache, reduce
-from typing import Any, List, Dict, Literal, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
-from pynxtools import get_definitions_url
+from pynxtools import NX_DOC_BASES, get_definitions_url
 from pynxtools.dataconverter.helpers import (
+    NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
-    is_variadic,
     is_appdef,
+    is_variadic,
     remove_namespace_from_tag,
-    NEXUS_TO_PYTHON_DATA_TYPES,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
-from pynxtools import NX_DOC_BASES
 
 NexusType = Literal[
     "NX_BINARY",

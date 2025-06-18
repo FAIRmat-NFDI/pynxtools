@@ -297,7 +297,7 @@ def parse_json(file_path: Union[str, Path]) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: The dictionary containing the data readout from the json.
     """
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(file_path, encoding="utf-8") as file:
         return json.load(file)
 
 

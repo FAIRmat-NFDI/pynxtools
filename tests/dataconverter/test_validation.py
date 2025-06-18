@@ -21,14 +21,11 @@ from typing import Optional
 
 import numpy as np
 import pytest
+
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 
-from .test_helpers import (  # pylint: disable=unused-import
-    alter_dict,
-    fixture_filled_test_data,
-    fixture_template,
-)
+from .test_helpers import alter_dict  # pylint: disable=unused-import
 
 
 def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):

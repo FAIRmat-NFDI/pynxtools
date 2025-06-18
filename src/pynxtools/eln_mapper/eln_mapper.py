@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-from typing import Union, Optional
 from pathlib import Path
+from typing import Optional, Union
 
 import click
 

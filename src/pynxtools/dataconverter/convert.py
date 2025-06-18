@@ -373,12 +373,10 @@ def convert_cli(
         except TypeError as exc:
             sys.tracebacklimit = 0
             raise click.UsageError(
-                (
-                    "Please make sure you have the following entries in your "
-                    "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
-                    "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
-                    "put-file: value"
-                )
+                "Please make sure you have the following entries in your "
+                "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
+                "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
+                "put-file: value"
             ) from exc
     if nxdl is None:
         raise click.UsageError("Missing option '--nxdl'")
