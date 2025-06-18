@@ -16,11 +16,11 @@
 # limitations under the License.
 #
 
-from typing import Dict
 import logging
 import os
 import re
 from datetime import datetime
+from typing import Dict
 
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version

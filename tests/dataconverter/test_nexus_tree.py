@@ -1,6 +1,7 @@
 from typing import Any, List, Tuple, get_args
 
 from anytree import Resolver
+
 from pynxtools.dataconverter.nexus_tree import (
     NexusNode,
     NexusType,

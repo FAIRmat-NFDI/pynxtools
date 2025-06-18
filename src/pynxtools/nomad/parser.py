@@ -43,8 +43,11 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import FIELD_STATISTICS
-from pynxtools.nomad.utils import REPLACEMENT_FOR_NX, get_quantity_base_name
+from pynxtools.nomad.utils import (
+    FIELD_STATISTICS,
+    REPLACEMENT_FOR_NX,
+    get_quantity_base_name,
+)
 from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 
 

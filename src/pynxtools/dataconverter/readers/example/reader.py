@@ -45,7 +45,7 @@ class ExampleReader(BaseReader):
         data: dict = {}
 
         if not file_paths:
-            raise IOError("No input files were given to Example Reader.")
+            raise OSError("No input files were given to Example Reader.")
 
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex(".") :]

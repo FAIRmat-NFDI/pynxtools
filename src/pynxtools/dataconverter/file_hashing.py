@@ -28,7 +28,7 @@ def get_file_hashvalue(file_name: str) -> str:
             # Read and update hash string value in blocks of 4K
             for byte_block in iter(lambda: file_handle.read(4096), b""):
                 sha256_hash.update(byte_block)
-    except IOError:
+    except OSError:
         print(f"File {file_name} is not accessible !")
 
     return sha256_hash.hexdigest()

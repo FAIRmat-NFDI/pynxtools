@@ -22,8 +22,8 @@ import pickle
 from typing import Any, Tuple
 
 import numpy as np
-import yaml
 import xarray
+import yaml
 from mergedeep import merge
 
 from pynxtools.dataconverter import hdfdict
@@ -216,7 +216,7 @@ class JsonMapReader(BaseReader):
                 template = Template(
                     {x: "/hierarchical/path/in/your/datafile" for x in template}
                 )
-                raise IOError(
+                raise OSError(
                     "Please supply a JSON mapping file: "
                     " my_nxdl_map.mapping.json\n\n You can use this "
                     "template for the required fields: \n" + str(template)

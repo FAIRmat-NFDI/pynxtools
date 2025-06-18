@@ -18,14 +18,13 @@
 """Test for NOMAD examples in reader plugins."""
 
 import os
-from typing import Any, Dict, List
 import tempfile
+from typing import Any, Dict, List
+
 import pytest
 
 try:
-    from nomad.config.models.plugins import (
-        ExampleUploadEntryPoint,
-    )
+    from nomad.config.models.plugins import ExampleUploadEntryPoint
     from nomad.datamodel import Context, EntryArchive
     from nomad.parsing.parser import ArchiveParser
 except ImportError:

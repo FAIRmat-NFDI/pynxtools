@@ -18,13 +18,9 @@
 #
 
 import re
-from typing import List, Dict, Union, Tuple
+from typing import Dict, List, Tuple, Union
 
-from pynxtools.dataconverter.nexus_tree import (
-    NexusEntity,
-    NexusGroup,
-    NexusNode,
-)
+from pynxtools.dataconverter.nexus_tree import NexusEntity, NexusGroup, NexusNode
 from pynxtools.eln_mapper.eln import ElnGenerator
 
 NEXUS_TO_NOMAD_QUANTITY: Dict[str, Tuple[str, str]] = {

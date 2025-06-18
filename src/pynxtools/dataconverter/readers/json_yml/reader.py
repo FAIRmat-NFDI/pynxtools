@@ -17,8 +17,8 @@
 #
 """An example reader implementation for the DataConverter."""
 
-from typing import Tuple, Any, Callable, Dict, List
 import os
+from typing import Any, Callable, Dict, List, Tuple
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template

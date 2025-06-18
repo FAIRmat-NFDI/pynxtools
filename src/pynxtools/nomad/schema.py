@@ -75,14 +75,14 @@ try:
     from nomad.normalizing.common import nomad_atoms_from_ase_atoms
     from nomad.normalizing.topology import add_system, add_system_info
     from nomad.units import ureg
-    from nomad.utils import get_logger, strip, hash
+    from nomad.utils import get_logger, hash, strip
 
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-from pynxtools import get_definitions_url, NX_DOC_BASES
+from pynxtools import NX_DOC_BASES, get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import (
     FIELD_STATISTICS,

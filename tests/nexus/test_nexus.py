@@ -17,13 +17,13 @@
 # limitations under the License.
 #
 
+import difflib
 import logging
 import os
 
 import lxml.etree as ET
 import numpy as np
 import pytest
-import difflib
 
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_inherited_nodes,
