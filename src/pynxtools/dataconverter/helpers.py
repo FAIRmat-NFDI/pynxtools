@@ -21,10 +21,11 @@ import json
 import logging
 import os
 import re
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
-from functools import lru_cache
-from typing import Any, Callable, List, Optional, Sequence, Tuple, Union, cast
+from functools import cache, lru_cache
+from typing import Any, Callable, Optional, Union, cast
 
 import h5py
 import lxml.etree as ET
@@ -302,7 +303,7 @@ def is_appdef(xml_elem: ET._Element) -> bool:
     return get_appdef_root(xml_elem).attrib.get("category") == "application"
 
 
-def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
+def get_all_parents_for(xml_elem: ET._Element) -> list[ET._Element]:
     """
     Get all parents from the nxdl (via extends keyword)
 
@@ -310,7 +311,7 @@ def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
         xml_elem (ET._Element): The element to get the parents for.
 
     Returns:
-        List[ET._Element]: The list of parents xml nodes.
+        list[ET._Element]: The list of parents xml nodes.
     """
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
@@ -412,7 +413,7 @@ def get_all_defined_required_children_for_elem(xml_element):
     return list_of_children_to_add
 
 
-visited_paths: List[str] = []
+visited_paths: list[str] = []
 
 
 def get_all_defined_required_children(nxdl_path, nxdl_name):
@@ -605,7 +606,7 @@ def get_name_from_data_dict_entry(entry: str) -> str:
     ENTRY[entry] -> entry
     """
 
-    @lru_cache(maxsize=None)
+    @cache
     def get_regex():
         return re.compile(r"(?<=\[)(.*?)(?=\])")
 
@@ -630,7 +631,7 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
-def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
+def is_value_valid_element_of_enum(value, elist) -> tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     for elem in elist:
         enums = get_enums(elem)
@@ -784,8 +785,8 @@ def is_valid_data_field(
     return value
 
 
-@lru_cache(maxsize=None)
-def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> List[str]:
+@cache
+def path_in_data_dict(nxdl_path: str, data_keys: tuple[str, ...]) -> list[str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
     found_keys = []
     for key in data_keys:
@@ -1081,7 +1082,7 @@ def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
         for sym in symbol_list_for_data_seperation:
             if sym in str_value:
                 parts = str_value.split(sym)
-                modified_parts: List = []
+                modified_parts: list = []
                 for part in parts:
                     part = transform_to_intended_dt(part)
                     if isinstance(part, (int, float)):

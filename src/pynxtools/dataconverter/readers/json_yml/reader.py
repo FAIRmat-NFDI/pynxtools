@@ -18,7 +18,7 @@
 """An example reader implementation for the DataConverter."""
 
 import os
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
@@ -30,15 +30,15 @@ class YamlJsonReader(BaseReader):
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls: List[str] = []
-    extensions: Dict[str, Callable[[Any], dict]] = {}
-    kwargs: Dict[str, Any] = None
+    supported_nxdls: list[str] = []
+    extensions: dict[str, Callable[[Any], dict]] = {}
+    kwargs: dict[str, Any] = None
 
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
         **kwargs,
     ) -> dict:
         """

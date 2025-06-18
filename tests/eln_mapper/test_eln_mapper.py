@@ -18,7 +18,6 @@
 #
 
 import os
-from typing import Dict, List, Tuple
 
 import yaml
 from click import testing
@@ -26,19 +25,19 @@ from click import testing
 from pynxtools.eln_mapper import eln_mapper
 
 
-def check_keys_from_two_dict(dict1: Dict, dict2: Dict, path: str = ""):
+def check_keys_from_two_dict(dict1: dict, dict2: dict, path: str = ""):
     """Compare keys of two dicts and report all differences.
 
     Parameters
     ----------
-    dict1 : Dict
+    dict1 : dict
         First dictionary to compare.
-    dict2 : Dict
+    dict2 : dict
         Second dictionary to compare.
     path : str, optional
         Current key path being checked (used for recursive calls).
     """
-    differences: List[Tuple[str, str]] = []
+    differences: list[tuple[str, str]] = []
 
     keys1 = set(dict1.keys())
     keys2 = set(dict2.keys())

@@ -20,7 +20,7 @@
 import logging
 import os
 from glob import glob
-from typing import Dict, List, Literal, Optional, Tuple
+from typing import Literal, Optional
 
 try:
     from nomad.client import parse
@@ -78,7 +78,7 @@ class ReaderTest:
             Pytest fixture variable, used to clean up the files generated during the test.
         caplog : _pytest.logging.LogCaptureFixture
             Pytest fixture variable, used to capture the log messages during the test.
-        kwargs : Dict[str, Any]
+        kwargs : dict[str, Any]
             Any additional keyword arguments to be passed to the readers' read function.
         """
 
@@ -176,15 +176,15 @@ class ReaderTest:
 
     def check_reproducibility_of_nexus(self, **kwargs):
         """Reproducibility test for the generated nexus file."""
-        reader_ignore_lines: List[str] = kwargs.get("ignore_lines", [])
-        reader_ignore_sections: Dict[str, List[str]] = kwargs.get("ignore_sections", {})
+        reader_ignore_lines: list[str] = kwargs.get("ignore_lines", [])
+        reader_ignore_sections: dict[str, list[str]] = kwargs.get("ignore_sections", {})
 
-        IGNORE_LINES: List[str] = reader_ignore_lines + [
+        IGNORE_LINES: list[str] = reader_ignore_lines + [
             "DEBUG - value: v",
             "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
             "DEBUG - ===== GROUP (// [NXroot::]):",
         ]
-        IGNORE_SECTIONS: Dict[str, List[str]] = {
+        IGNORE_SECTIONS: dict[str, list[str]] = {
             **reader_ignore_sections,
             "ATTRS (//@HDF5_Version)": ["DEBUG - value:"],
             "ATTRS (//@file_name)": ["DEBUG - value:"],
@@ -195,7 +195,7 @@ class ReaderTest:
 
         SECTION_SEPARATOR = "DEBUG - ===== "
 
-        def should_skip_line(gen_l: str, ref_l: str, ignore_lines: List[str]) -> bool:
+        def should_skip_line(gen_l: str, ref_l: str, ignore_lines: list[str]) -> bool:
             """Check if both lines start with any ignored prefix."""
             return any(
                 gen_l.startswith(ignore) and ref_l.startswith(ignore)
@@ -204,14 +204,15 @@ class ReaderTest:
 
         def load_logs(
             gen_log_path: str, ref_log_path: str
-        ) -> Tuple[List[str], List[str]]:
+        ) -> tuple[list[str], list[str]]:
             """Load log files and return their contents as lists of lines."""
-            with open(gen_log_path, encoding="utf-8") as gen, open(
-                ref_log_path, encoding="utf-8"
-            ) as ref:
+            with (
+                open(gen_log_path, encoding="utf-8") as gen,
+                open(ref_log_path, encoding="utf-8") as ref,
+            ):
                 return gen.readlines(), ref.readlines()
 
-        def compare_logs(gen_lines: List[str], ref_lines: List[str]) -> None:
+        def compare_logs(gen_lines: list[str], ref_lines: list[str]) -> None:
             """Compare log lines, ignoring specific differences."""
             if len(gen_lines) != len(ref_lines):
                 raise AssertionError(

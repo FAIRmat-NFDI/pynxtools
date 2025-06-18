@@ -18,12 +18,12 @@
 #
 
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Union
 
 from pynxtools.dataconverter.nexus_tree import NexusEntity, NexusGroup, NexusNode
 from pynxtools.eln_mapper.eln import ElnGenerator
 
-NEXUS_TO_NOMAD_QUANTITY: Dict[str, Tuple[str, str]] = {
+NEXUS_TO_NOMAD_QUANTITY: dict[str, tuple[str, str]] = {
     "NX_BINARY": ("bytes", "NumberEditQuantity"),
     "NX_BOOLEAN": ("bool", "BoolEditQuantity"),
     "NX_CHAR": ("str", "StringEditQuantity"),
@@ -37,7 +37,7 @@ NEXUS_TO_NOMAD_QUANTITY: Dict[str, Tuple[str, str]] = {
     "NX_UINT": ("int", "NumberEditQuantity"),
 }
 
-DEFAULT_UNITS: Dict[str, Union[str, None]] = {
+DEFAULT_UNITS: dict[str, Union[str, None]] = {
     "NX_ANGLE": "degree",
     "NX_ANY": None,
     "NX_AREA": "m**2",
@@ -73,7 +73,7 @@ DEFAULT_UNITS: Dict[str, Union[str, None]] = {
     "NX_WAVENUMBER": "1 / m",
 }
 
-DEFAULT_READER: Dict[str, str] = {
+DEFAULT_READER: dict[str, str] = {
     "NXafm": "spm",
     "NXapm": "apm",
     "NXellipsometry": "ellips",
@@ -88,7 +88,7 @@ DEFAULT_READER: Dict[str, str] = {
 }
 
 
-def construct_description(node: NexusNode, concept_dict: Dict) -> None:
+def construct_description(node: NexusNode, concept_dict: dict) -> None:
     """Collect doc from concept doc (and inherited docs)."""
     inherited_docstrings = node.get_docstring()
 
@@ -139,7 +139,7 @@ class NomadElnGenerator(ElnGenerator):
 
         return out_file
 
-    def _generate_eln_header(self) -> Dict:
+    def _generate_eln_header(self) -> dict:
         """Generate the header for the NOMAD ELN"""
 
         # Basic building blocks of ELN
@@ -164,7 +164,7 @@ class NomadElnGenerator(ElnGenerator):
 
         reader = DEFAULT_READER.get(self.nxdl, "<READER_NAME>")
 
-        m_annotations: Dict = {
+        m_annotations: dict = {
             "m_annotations": {
                 "template": {"reader": reader, "nxdl": self.nxdl},
                 "eln": {"hide": []},
@@ -175,7 +175,7 @@ class NomadElnGenerator(ElnGenerator):
         return sections[root_name]
 
     def _construct_group_structure(
-        self, node: NexusGroup, recursive_dict: Dict, recursion_level: int
+        self, node: NexusGroup, recursive_dict: dict, recursion_level: int
     ) -> None:
         """Handle NeXus group, to construct group structure as follows:
         <group_name>:
@@ -188,8 +188,8 @@ class NomadElnGenerator(ElnGenerator):
         ----------
         node: NexusGroup
             NeXus group to recurse
-        recursive_dict : Dict
-            Dict into which the group is recursively added
+        recursive_dict : dict
+            dict into which the group is recursively added
         recursion_level: int
             Recursion level in the tree, used to (optionally) skip upper levels like NXentry
         """
@@ -226,7 +226,7 @@ class NomadElnGenerator(ElnGenerator):
         self._recurse_tree(node, section, recursion_level + 1)
 
     def _construct_entity_structure(
-        self, node: NexusEntity, recursive_dict: Dict, recursion_level: int
+        self, node: NexusEntity, recursive_dict: dict, recursion_level: int
     ):
         """Handle NeXus field or attribute, to construct structure like:
         <entity_name>:
@@ -242,8 +242,8 @@ class NomadElnGenerator(ElnGenerator):
         ----------
         node: NexusEntity
             NeXus field/attribute to recurse
-        recursive_dict : Dict
-            Dict into which the entity is recursively added
+        recursive_dict : dict
+            dict into which the entity is recursively added
         recursion_level: int
             Recursion level in the tree, used to (optionally) skip upper levels like NXentry
         """
@@ -278,7 +278,7 @@ class NomadElnGenerator(ElnGenerator):
 
         entity_dict["type"] = entity_type
 
-        display_dict: Dict[str, Union[bool, str]] = {"visible": True}
+        display_dict: dict[str, Union[bool, str]] = {"visible": True}
         if unit:
             entity_dict["unit"] = unit
             display_dict["unit"] = unit

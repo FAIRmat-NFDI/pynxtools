@@ -18,7 +18,7 @@
 """The abstract class off of which to implement readers."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Tuple
+from typing import Any
 
 
 class BaseReader(ABC):
@@ -44,8 +44,8 @@ class BaseReader(ABC):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
     ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         return template

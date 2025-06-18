@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from typing import Dict, Optional
+from typing import Optional
 
 import numpy as np
 
@@ -55,7 +55,7 @@ NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
     "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
 }
 
-FIELD_STATISTICS: Dict[str, list] = {
+FIELD_STATISTICS: dict[str, list] = {
     "suffix": ["__mean", "__std", "__min", "__max", "__size", "__ndim"],
     "function": [np.mean, np.std, np.min, np.max, np.size, np.ndim],
     "type": [np.float64, np.float64, None, None, np.int32, np.int32],
