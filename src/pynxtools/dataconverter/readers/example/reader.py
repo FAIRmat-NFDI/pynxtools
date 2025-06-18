@@ -19,7 +19,7 @@
 
 import json
 import os
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -37,8 +37,8 @@ class ExampleReader(BaseReader):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
         **_,
     ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""

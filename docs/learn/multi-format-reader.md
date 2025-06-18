@@ -15,9 +15,10 @@ Here, we will explain the inner workings of the `MultiFormatReader`. Note that t
 ## The basic structure
 
 For extending the `MultiFormatReader`, the following basic structure must be implemented:
+
 ```python title="multi/reader.py"
 """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
-from typing import Tuple, Any
+from typing import Any
 
 from pynxtools.dataconverter.readers.base.reader import MultiFormatReader
 
@@ -38,24 +39,28 @@ READER = MyDataReader
 ```
 
 In order to understand the capabilities of the `MultiFormatReader` and which methods need to be implemented when extending it, we will have a look at its ```read``` method:
+
 ```python title="multi/reader.py"
 def read(
     self,
     template: dict = None,
-    file_paths: Tuple[str] = None,
-    objects: Optional[Tuple[Any]] = None,
+    file_paths: tuple[str] = None,
+    objects: Optional[tuple[Any]] = None,
     **kwargs,
 ) -> dict:
     self.kwargs = kwargs
     self.config_file = self.kwargs.get("config_file", self.config_file)
     self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)   
 ```
+
 ## Template initialization and processing order
+
 An empty `Template` object is initialized that later gets filled from the data files later.
+
 ```python title="multi/reader.py"
     template = Template(overwrite_keys=self.overwrite_keys)
 
-    def get_processing_order(path: str) -> Tuple[int, Union[str, int]]:
+    def get_processing_order(path: str) -> tuple[int, Union[str, int]]:
         """
         Returns the processing order of the file.
         """
@@ -66,10 +71,12 @@ An empty `Template` object is initialized that later gets filled from the data f
 
     sorted_paths = sorted(file_paths, key=get_processing_order)
 ```
+
 If the reader has a `self.processing_order`, the input files get sorted in this order.
 If `self.overwrite_keys` is True, later files get precedent. For example, if `self.processing_order = [".yaml", ".hdf5"]`, any values coming from HDF5 files would overwrite values from the YAML files.
 
 ## Reading of input files
+
 ```python title="multi/reader.py"
     for file_path in sorted_paths:
         extension = os.path.splitext(file_path)[1].lower()
@@ -84,22 +91,28 @@ If `self.overwrite_keys` is True, later files get precedent. For example, if `se
 
         template.update(self.extensions.get(extension, lambda _: {})(file_path))
 ```
+
 This parts reads in the data from all data files. The `MultiFormatReader` has an `extensions` property, which is a dictionary that for each file extension calls a function that reads in data from files with that extension. If the reader shall handle e.g. an HDF5 file, a method for handling this type of file should be added, i.e., `self.extensions[".hdf5"] = self.handle_hdf5`.
 Note that these methods should also implement any logic depending on the provided data, i.e., it may not be sufficient to rely on the filename suffix, but the reader may also need to check for different file versions, binary signature, mimetype, etc.
 
 Any of these methods should take as input only the file path, e.g.
+
 ```python title="multi/reader.py"
-def handle_eln_file(self, file_path: str) -> Dict[str, Any]
+def handle_eln_file(self, file_path: str) -> dict[str, Any]
 ```
+
 These methods must return a dictionary. One possibility is to return a dictionary that directly fills the template (see the `template.update` call above) with the data from the file. Another option is to return an empty dictionary (i.e., not fill the template at this stage) and only later fill the template from a config file (see below).
 
 Note that for several input formats, standardized parser functions already exist within the `MultiFormatReader`. For example, YAML files can be parsed using the `pynxtools.dataconverter.readers.utils.parse_yml` function.
 
 ## Setting default values in the template
+
 ```python title="multi/reader.py"
     template.update(self.setup_template())
 ```
+
 Next, the `setup_template` method can be implemented, which is used to populate the template with initial data that does not come from the files themselves. This may be used to set fixed information, e.g., about the reader. As an example, `NXentry/program_name` (which is defined as the name of program used to generate the NeXus file) scan be set to `pynxtools-plugin` by making `setup_template` return a dictionary of the form
+
 ```json
 {
   "/ENTRY[my_entry]/program_name": "pynxtools-plugin",
@@ -108,20 +121,25 @@ Next, the `setup_template` method can be implemented, which is used to populate 
 ```
 
 ## Handling objects
+
 ```python title="multi/reader.py"
     if objects is not None:
         template.update(self.handle_objects(objects))
 ```
+
 Aside from data files, it is also possible to directly pass any Python objects to the `read` function (e.g., a numpy array with measurement data). In order to exploit this, the `handle_objects` method must implemented, which should return a dictionary that populates the template.
 
 ## Parsing the config file
+
 ```python title="multi/reader.py"
     if self.config_file is not None:
         self.config_dict = parse_flatten_json(
             self.config_file, create_link_dict=False
         )
 ```
+
 Next up, we can make use of the config file, which is a JSON file that tells the reader which input data to use to populate the template. In other words, the config.json is used for ontology mapping between the input file paths and the NeXus application definition. Essentially, the config file should contain all keys that are present in the NXDL. A subset of a typical config file may look like this:
+
 ```json
 {
   "/ENTRY/title": "@attrs:metadata/title", 
@@ -148,6 +166,7 @@ Next up, we can make use of the config file, which is a JSON file that tells the
   }
 }
 ```
+
 Here, the `parse_flatten_json` method is used that allows us to write the config dict in the structured manner above and internally flattens it (so that it has a similar structure as the Template).
 
 In the config file, one can
@@ -158,12 +177,15 @@ In the config file, one can
 Note that in order to use a `link_callback` (see below), `create_link_dict` must be set to `False`, which means that at this stage, config values of the form `"@link:"/path/to/source/data"` get NOT yet converted to `{"link": "/path/to/source/data"}`.
 
 ## Data post processing
+
 ```python title="multi/reader.py"
    self.post_process()
 ```
+
 In case there is the need for any post-processing on the data and/or config dictionary _after_ they have been read, the `post_process` method can be implemented. For example, this can be helpful if there are multiple entities of a given NX_CLASS (for example, multiple detectors) on the same level and the config dict shall be set up to fill the template with all of these entities.
 
 ## Filling the template from the read-in data
+
 ```python title="multi/reader.py"
     if self.config_dict:
         suppress_warning = kwargs.pop("suppress_warning", False)
@@ -178,9 +200,11 @@ In case there is the need for any post-processing on the data and/or config dict
 
     return template
 ```
+
 As a last step, the template is being filled from the config dict using the data. If there is more than one entry, the `get_entry_names` method must be implemented, which shall return a list of all entry names. The `fill_from_config` method iterates through all of the them and replaces the generic `/ENTRY/` in the config file by keys of the form `/ENTRY[my-entry]/` to fill the template.
 
 Here, we are using **callbacks**, which are used to bring in data based on `@`-prefixes in the config file. These are defined in the reader's ``__init__`` call using the `pynxtools.dataconverter.readers.multi.ParseJsonCallbacks` class:
+
 ```python title="multi/reader.py"
 self.callbacks = ParseJsonCallbacks(
     attrs_callback=self.get_attr,
@@ -189,7 +213,9 @@ self.callbacks = ParseJsonCallbacks(
     dims=self.get_data_dims,
 )
 ```
+
 The `ParseJsonCallbacks` class has an attribute called `special_key_map` that makes use of these callbacks to populate the template based on the starting prefix of the config dict value:
+
 ```python title="multi/reader.py"
 self.special_key_map = {
     "@attrs": attrs_callback if attrs_callback is not None else self.identity,
@@ -198,6 +224,7 @@ self.special_key_map = {
     "@eln": eln_callback if eln_callback is not None else self.identity,
 }
 ```
+
 That means, if the config file has an entry ```{"/ENTRY/title": "@attrs:metadata/title"}```, the `get_attr` method of the reader gets called and should return an attribute from the given path, i.e., in this case from `metadata/title`.
 
 By default, the MultiFormatReader supports the following special prefixes:
@@ -212,12 +239,15 @@ The destinction between data and metadata is somewhat arbitrary here. The reason
 In addition, the reader can also implement the `get_data_dims` method, which is used to return a list of the data dimensions (see below for more details).
 
 All of `get_attr`, `get_data`, and `get_eln_data`  (as well as any similar method that might be implemented) should have the same call signature:
+
 ```python
 def get_data(self, key: str, path: str) -> Any:
 ```
+
 Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and path is the path that comes _after_ the prefix in the config file. In the example config file above, `path` would be `mydata`. With these two inputs, the reader should be able to return the correct data for this template key.
 
 ### Special rules
+
 - **Lists as config value**: It is possible to write a list of possible configurations of the sort
   ```json
   "/ENTRY/title":"['@attrs:my_title', '@eln', 'no title']"

@@ -4,8 +4,8 @@
 import logging
 import os
 import sys
-from functools import lru_cache
-from typing import Any, List, Optional, Union
+from functools import cache, lru_cache
+from typing import Any, Optional, Union
 
 import click
 import h5py
@@ -370,7 +370,7 @@ def get_hdf_path(hdf_info):
 
 
 # pylint: disable=too-many-arguments,too-many-locals
-@lru_cache(maxsize=None)
+@cache
 def get_inherited_hdf_nodes(
     nx_name: str = None,
     elem: ET._Element = None,

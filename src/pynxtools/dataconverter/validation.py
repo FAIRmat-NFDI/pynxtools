@@ -19,20 +19,10 @@
 import copy
 import re
 from collections import defaultdict
+from collections.abc import Iterable, Mapping, MutableMapping
 from functools import reduce
 from operator import getitem
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Literal,
-    Mapping,
-    MutableMapping,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Any, Literal, Optional, Union
 
 import h5py
 import lxml.etree as ET
@@ -121,7 +111,7 @@ def build_nested_dict_from(
     return default_to_regular_dict(data_tree)
 
 
-def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
+def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
     """
     Return the class and the name of a data dict entry of the form
     `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
@@ -132,7 +122,7 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
         name (str): The data dict entry
 
     Returns:
-        Tuple[Optional[str], str]:
+        tuple[Optional[str], str]:
             First element is the class name of the entry, second element is the name.
             The class name will be None if it is not present.
     """
@@ -149,7 +139,7 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
 def best_namefit_of(
     name: str,
     nodes: Iterable[NexusNode],
-    expected_types: List[str],
+    expected_types: list[str],
     check_types: bool = False,
 ) -> Optional[NexusNode]:
     """
@@ -247,7 +237,7 @@ def validate_dict_against(
         bool: True if the mapping is valid according to `appdef`, False otherwise.
     """
 
-    def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
+    def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> list[str]:
         variations = []
 
         prefix = f"{'@' if node.type == 'attribute' else ''}"
@@ -840,7 +830,7 @@ def validate_dict_against(
         node: NexusNode,
         keys: Mapping[str, Any],
         prev_path: str = "",
-        ignore_names: Optional[List[str]] = None,
+        ignore_names: Optional[list[str]] = None,
     ):
         for child in node.children:
             if ignore_names is not None and child.name in ignore_names:
@@ -877,7 +867,7 @@ def validate_dict_against(
                 The mapping containing the data to validate.
                 This should be a dict of `/` separated paths, such as
                 "/ENTRY[entry1]/SAMPLE[sample1]/name".
-            keys_to_remove (List[str]):
+            keys_to_remove (list[str]):
                 List of keys that will be removed from the template. This is extended here
                 in the case of conflicts.
 
@@ -885,7 +875,7 @@ def validate_dict_against(
         pattern = re.compile(r"(?P<concept_name>[^\[\]/]+)\[(?P<instance>[^\]]+)\]")
 
         # Tracks instance usage with respect to their parent group
-        instance_usage: Dict[Tuple[str, str], List[Tuple[str, str]]] = defaultdict(list)
+        instance_usage: dict[tuple[str, str], list[tuple[str, str]]] = defaultdict(list)
 
         for key in mapping:
             matches = list(pattern.finditer(key))
@@ -1098,7 +1088,7 @@ def validate_dict_against(
 
     def startswith_with_variations(
         large_str: str, baseline_str: str
-    ) -> Tuple[bool, int]:
+    ) -> tuple[bool, int]:
         """
             Recursively check if the large_str starts with baseline_str or an allowed
             equivalent (i.e. .../AXISNAME[energy]/... matches .../energy/...).
@@ -1295,7 +1285,7 @@ def validate_dict_against(
         "choice": handle_choice,
     }
 
-    keys_to_remove: List[str] = []
+    keys_to_remove: list[str] = []
 
     tree = generate_tree_from(appdef)
     collector.clear()

@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple, get_args
+from typing import Any, get_args
 
 from anytree import Resolver
 
@@ -40,7 +40,7 @@ def test_correct_extension_of_tree():
     nxtest = generate_tree_from("NXtest")
     nxtest_extended = generate_tree_from("NXtest_extended")
 
-    def get_node_fields(tree: NexusNode) -> List[Tuple[str, Any]]:
+    def get_node_fields(tree: NexusNode) -> list[tuple[str, Any]]:
         return list(
             filter(
                 lambda x: not x[0].startswith("_")

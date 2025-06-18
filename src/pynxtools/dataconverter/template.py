@@ -21,7 +21,6 @@ import copy
 import json
 import logging
 import re
-from typing import Set
 
 from pynxtools.dataconverter import helpers
 
@@ -201,12 +200,12 @@ class Template(dict):
                     internal_dict[f"/ENTRY[{new_name}]{rest_of_path}"] = value
                     del internal_dict[key]
 
-    def get_all_entry_names(self) -> Set[str]:
+    def get_all_entry_names(self) -> set[str]:
         """
         Get all entry names in the template.
 
         Returns:
-            Set[str]: A set of entry names.
+            set[str]: A set of entry names.
         """
         entry_names = set()
         for key in self:

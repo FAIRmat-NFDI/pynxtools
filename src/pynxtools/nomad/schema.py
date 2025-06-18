@@ -26,7 +26,7 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 import h5py
 import numpy as np
@@ -107,7 +107,7 @@ XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
 
-section_definitions: Dict[str, Section] = dict()
+section_definitions: dict[str, Section] = dict()
 
 logger_ = get_logger(__name__)
 
@@ -301,7 +301,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
         act_array.extend(new_items)
 
 
-BASESECTIONS_MAP: Dict[str, Any] = {
+BASESECTIONS_MAP: dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
@@ -313,7 +313,7 @@ BASESECTIONS_MAP: Dict[str, Any] = {
 
 
 VALIDATE = False
-XML_PARENT_MAP: Dict[ET.Element, ET.Element]
+XML_PARENT_MAP: dict[ET.Element, ET.Element]
 
 PACKAGE_NAME = "pynxtools.nomad.schema"
 
@@ -481,8 +481,8 @@ def nxdata_ensure_definition(
     if isinstance(def_or_name, str):
         # check enums for or actual values of signals and axes
         # TODO: also check symbol table dimensions
-        acceptable_data: List[str] = []
-        acceptable_axes: List[str] = []
+        acceptable_data: list[str] = []
+        acceptable_axes: list[str] = []
         # set filter string according
         chk_name = def_or_name.split("_errors")[0]
         if chk_name in acceptable_data:
@@ -528,7 +528,7 @@ def to_section(name: str, **kwargs) -> Section:
     return section
 
 
-def _get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], Optional[bool]]:
+def _get_enumeration(xml_node: ET.Element) -> tuple[Optional[MEnum], Optional[bool]]:
     """
     Get the enumeration field from xml node
     """
@@ -608,7 +608,7 @@ def _create_attributes(
         nx_enum, nx_enum_open = _get_enumeration(attribute)
         if nx_enum and not nx_enum_open:
             nx_type = nx_enum
-            nx_shape: List[str] = []
+            nx_shape: list[str] = []
         else:
             nx_type = get_nx_type(attribute.get("type", "NX_CHAR"))  # type: ignore
             has_bound = False
@@ -1417,7 +1417,7 @@ def normalize_atom_probe(self, archive, logger):
     build_nomad_topology(archive)
 
 
-NORMALIZER_MAP: Dict[str, Any] = {
+NORMALIZER_MAP: dict[str, Any] = {
     _rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     _rename_nx_for_nomad("NXsample"): normalize_sample,
     _rename_nx_for_nomad("NXsample_component"): normalize_sample_component,

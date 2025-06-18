@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import List, Literal, Optional, Tuple
+from typing import Literal, Optional
 
 import click
 import lxml.etree as ET
@@ -82,7 +82,7 @@ def get_reader(reader_name) -> BaseReader:
     return module.READER  # type: ignore[attr-defined]
 
 
-def get_names_of_all_readers() -> List[str]:
+def get_names_of_all_readers() -> list[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = (
         f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
@@ -192,7 +192,7 @@ def transfer_data_into_template(
 
 # pylint: disable=too-many-arguments,too-many-locals,W1203
 def convert(
-    input_file: Tuple[str, ...],
+    input_file: tuple[str, ...],
     reader: str,
     nxdl: str,
     output: str,
@@ -203,7 +203,7 @@ def convert(
 
     Parameters
     ----------
-    input_file : Tuple[str]
+    input_file : tuple[str]
         Tuple of files or file
     reader: str
         Name of reader such as xps
@@ -352,8 +352,8 @@ def main_cli():
 )
 # pylint: disable=too-many-arguments
 def convert_cli(
-    files: Tuple[str, ...],
-    input_file: Tuple[str, ...],
+    files: tuple[str, ...],
+    input_file: tuple[str, ...],
     reader: str,
     nxdl: str,
     output: str,

@@ -21,7 +21,6 @@ import glob
 import logging
 import os
 import xml.etree.ElementTree as ET
-from typing import List
 
 import pytest
 from _pytest.mark.structures import ParameterSet
@@ -43,12 +42,12 @@ def get_reader_name_from_reader_object(reader) -> str:
     return ""
 
 
-def get_readers_file_names() -> List[str]:
+def get_readers_file_names() -> list[str]:
     """Helper function to parametrize paths of all the reader Python files"""
     return sorted(glob.glob("pynxtools/dataconverter/readers/*/reader.py"))
 
 
-def get_all_readers() -> List[ParameterSet]:
+def get_all_readers() -> list[ParameterSet]:
     """Scans through the reader list and returns them for pytest parametrization"""
     readers = []
 

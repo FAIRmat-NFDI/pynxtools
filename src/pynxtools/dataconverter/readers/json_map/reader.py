@@ -19,7 +19,7 @@
 
 import json
 import pickle
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 import xarray
@@ -166,8 +166,8 @@ class JsonMapReader(BaseReader):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
     ) -> dict:
         """
         Reads data from given file and returns a filled template dictionary.

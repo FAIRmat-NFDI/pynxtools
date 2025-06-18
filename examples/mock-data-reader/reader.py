@@ -17,7 +17,8 @@
 """An example reader implementation based on the MultiFormatReader."""
 
 import logging
-from typing import Dict, Any
+from typing import Any
+
 import h5py
 
 from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
@@ -51,7 +52,7 @@ class MyDataReader(MultiFormatReader):
             ".h5": self.handle_hdf5_file,
         }
 
-    def set_config_file(self, file_path: str) -> Dict[str, Any]:
+    def set_config_file(self, file_path: str) -> dict[str, Any]:
         if self.config_file is not None:
             logger.info(
                 f"Config file already set. Replaced by the new file {file_path}."
@@ -59,7 +60,7 @@ class MyDataReader(MultiFormatReader):
         self.config_file = file_path
         return {}
 
-    def handle_hdf5_file(self, filepath) -> Dict[str, Any]:
+    def handle_hdf5_file(self, filepath) -> dict[str, Any]:
         def recursively_read_group(group, path=""):
             result = {}
             for key, item in group.items():
@@ -78,7 +79,7 @@ class MyDataReader(MultiFormatReader):
 
         return {}
 
-    def handle_eln_file(self, file_path: str) -> Dict[str, Any]:
+    def handle_eln_file(self, file_path: str) -> dict[str, Any]:
         self.eln_data = parse_yml(
             file_path,
             convert_dict=CONVERT_DICT,

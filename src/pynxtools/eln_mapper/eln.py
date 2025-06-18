@@ -20,7 +20,7 @@
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import yaml
 
@@ -34,10 +34,10 @@ from pynxtools.dataconverter.nexus_tree import (
 
 logger = logging.getLogger("pynxtools")
 
-NODES_TO_SKIP: List[str] = ["definition"]
+NODES_TO_SKIP: list[str] = ["definition"]
 
 
-def clean_filters(filter_list: Optional[List[str]]) -> Optional[List[str]]:
+def clean_filters(filter_list: Optional[list[str]]) -> Optional[list[str]]:
     """
     Clean list of filters by converting keys from data converter style path"
     to NXDL style path:
@@ -48,7 +48,7 @@ def clean_filters(filter_list: Optional[List[str]]) -> Optional[List[str]]:
     return [convert_data_converter_dict_to_nxdl_path(key) for key in filter_list]
 
 
-def _should_skip_iteration(node: NexusNode, filter_list: Optional[List[str]]) -> bool:
+def _should_skip_iteration(node: NexusNode, filter_list: Optional[list[str]]) -> bool:
     """Filter those nodes that are _not_ in filter_list.
 
     Parameters
@@ -70,7 +70,7 @@ class ElnGenerator(ABC):
         output_file: Optional[str] = None,
         skip_top_levels: int = 0,
         optionality: Optional[str] = "required",
-        filter: Optional[List[str]] = None,
+        filter: Optional[list[str]] = None,
     ) -> None:
         self.nxdl = nxdl
         self.output_file = output_file
@@ -79,7 +79,7 @@ class ElnGenerator(ABC):
         self.filter = clean_filters(filter)
 
         self.out_file = self._generate_output_file_name(output_file)
-        self.recursive_dict: Dict[str, Any] = {}
+        self.recursive_dict: dict[str, Any] = {}
 
         if self.skip_top_levels == 1:
             logger.warning(
@@ -101,7 +101,7 @@ class ElnGenerator(ABC):
         """
         return ""
 
-    def _generate_eln_header(self) -> Dict:
+    def _generate_eln_header(self) -> dict:
         """
         Generate a header for YAML ELN.
 
@@ -115,7 +115,7 @@ class ElnGenerator(ABC):
     def _construct_group_structure(
         self,
         node: NexusGroup,
-        recursive_dict: Dict,
+        recursive_dict: dict,
         recursion_level: int,
     ) -> bool:
         """
@@ -142,7 +142,7 @@ class ElnGenerator(ABC):
 
     @abstractmethod
     def _construct_entity_structure(
-        self, node: NexusEntity, recursive_dict: Dict, recursion_level: int
+        self, node: NexusEntity, recursive_dict: dict, recursion_level: int
     ) -> bool:
         """Handle NeXus field or attribute.
 
@@ -161,7 +161,7 @@ class ElnGenerator(ABC):
         return True
 
     def _recurse_tree(
-        self, node: NexusNode, recursive_dict: Dict, recursion_level: int
+        self, node: NexusNode, recursive_dict: dict, recursion_level: int
     ) -> None:
         """Recurse the NeXus node and add the parsed elements to the recursive dict.
 
@@ -169,14 +169,14 @@ class ElnGenerator(ABC):
         ----------
         node : NexusNode
             NeXus node to recurse.
-        recursive_dict : Dict
+        recursive_dict : dict
             A dict that store hierarchical structure of schema ELN.
         recursion_level: int
             Recursion level in the tree, used to (optionally) skip upper levels like NXentry
         """
 
         def _handle_unknown_type(
-            node: NexusNode, section_dict: Dict, recursion_level: int
+            node: NexusNode, section_dict: dict, recursion_level: int
         ):
             # This should normally not happen if
             # the handling map includes all types allowed in NexusNode.type

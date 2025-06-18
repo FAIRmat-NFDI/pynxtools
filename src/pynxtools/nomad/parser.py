@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from typing import Dict, Optional, Set
+from typing import Optional
 
 import lxml.etree as ET
 import numpy as np
@@ -437,13 +437,13 @@ class NexusParser(MatchingParser):
                 filtered.append(individual)
         return filtered
 
-    def _get_chemical_formulas(self) -> Set[str]:
+    def _get_chemical_formulas(self) -> set[str]:
         """
         Parses the descriptive chemical formula from a nexus entry.
         """
         material = self.archive.m_setdefault("results.material")
-        element_set: Set[str] = set()
-        chemical_formulas: Set[str] = set()
+        element_set: set[str] = set()
+        chemical_formulas: set[str] = set()
 
         # DEBUG added here 'sample' only to test that I think the root cause
         # of the bug is that when the appdef defines at the level of the HDF5
@@ -526,7 +526,7 @@ class NexusParser(MatchingParser):
         mainfile: str,
         archive: EntryArchive,
         logger=None,
-        child_archives: Dict[str, EntryArchive] = None,
+        child_archives: dict[str, EntryArchive] = None,
     ) -> None:
         if DEBUG_PYNXTOOLS_WITH_NOMAD:
             import debugpy  # will connect to debugger if in debug mode

@@ -1,4 +1,5 @@
 # How to use the built-in MultiFormatReader
+
 While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data. In this how-to guide, we will focus on an implementation using a concrete example. If you are also interested in the general structure of the `MultiFormatReader`, you can find more information [here](../learn/multi-format-reader.md).
 
 ## Getting started
@@ -71,9 +72,10 @@ Note that in order to be recognized as a valid application definition, this file
 
 
 We first start by implementing the class and its ``__init__`` call:
+
 ```python title="reader.py"
 """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
-from typing import Tuple, Any
+from typing import Any
 
 from pynxtools.dataconverter.readers.base.reader import ParseJsonCallbacks, MultiFormatReader
 
@@ -97,12 +99,15 @@ class MyDataReader(MultiFormatReader):
 
 READER = MyDataReader
 ```
+
 Note that here we are adding handlers for three types of data file extensions:
+
 1. `".hdf5"`, `".h5"`: This will be used to parse in the (meta)data from the instrument's HDF5 file.
 2. `".yml"`, `".yaml"`: This will be used to parse in the (meta)data from the ELN file.
 3. `".json"`: This will be used to read in the **config file**, which is used to map from the (meta)data concepts from the instrument and ELN data to the concepts in the NXDL file.
 
 ## Reading in the instrument's data and metadata
+
 First, we will have a look at the HDF5 file. This mock HDF5 file was generated with `h5py` using a [simple script](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader/create_mock_data.py).
 
 <img src="media/mock_data.png" style="width: 50vw; min-width: 330px;" />
@@ -110,6 +115,7 @@ First, we will have a look at the HDF5 file. This mock HDF5 file was generated w
 Here, we see that we have a `data` group with x and y values, as well as some additional metadata for the instrument.
 
 Here is one way to implement the method to read in the data:
+
 ```python title="reader.py"
 import h5py
 
@@ -132,9 +138,11 @@ def handle_hdf5_file(filepath):
 
     return {}
 ```
+
 Note that here we are returning an empty dictionary because we don't want to fill the template just yet, but only read in the HDF5 data for now. We will use the config file later to fill the template with the read-in data. Note that it is also possible to return a dictionary here to update the template directly.
 
 `self.hdf5_data` will look like this:
+
 ```python
 {
     "data/x_values": array([-10.        ,  -9.7979798 ,  -9.5959596 , ...,  10.        ]),
@@ -147,9 +155,12 @@ Note that here we are returning an empty dictionary because we don't want to fil
     "metadata/instrument/detector/count_time_units": s",
 }
 ```
+
 ## Reading in ELN data
+
 As we can see in the application definition `NXsimple` above, there are some concepts defined for which there is no equivalent metadata in the HDF5 file. We are therefore using a YAML ELN file to add additional metadata.
 The ELN file `eln_data.yaml` looks like this:
+
 ```yaml  title="eln_data.yaml"
 title: My experiment
 user:
@@ -179,7 +190,7 @@ CONVERT_DICT = {
     "sample": "SAMPLE[sample]",
 }
 
-def handle_eln_file(self, file_path: str) -> Dict[str, Any]:
+def handle_eln_file(self, file_path: str) -> dict[str, Any]:
     self.eln_data = parse_yml(
         file_path,
         convert_dict=CONVERT_DICT,
@@ -188,7 +199,9 @@ def handle_eln_file(self, file_path: str) -> Dict[str, Any]:
             
     return {}
 ```
+
 When this method is called, `self.eln_data` will look like this:
+
 ```python
 {
     "/ENTRY[entry]/title": "My experiment",
@@ -200,9 +213,11 @@ When this method is called, `self.eln_data` will look like this:
     "/ENTRY[entry]/SAMPLE[sample]/temperature/@units": "K"
 }
 ```
+
 Note that here we are using `parent_key="/ENTRY[entry]"` as well as a `CONVERT_DICT`, meaning that each key in `self.eln_data` will start with `"/ENTRY[entry]"` and some of the paths will be converted to match the template notation. This will be important later.
 
 ## Parsing the config file
+
 Next up, we can make use of the config file, which is a JSON file that tells the reader how to map the concepts from the HDF5 and ELN files in order to populate the template designed to match `NXsimple`. The choices made in the config file define how semantics from the source (data file) and target (NeXus application definition) side are mapped. Essentially, the config file should contain all keys that are present in the NXDL. In our case, the config file looks like this:
 
 ```json title="config_file.json"
@@ -235,11 +250,13 @@ Next up, we can make use of the config file, which is a JSON file that tells the
   }
 }
 ```
+
 Note that here we are using `@`-prefixes which are used to fill the template from the different data sources. We dicuss this below in more detail.
 
 We also implement a method for setting the config file in the reader:
+
 ```python title="reader.py"
-def set_config_file(self, file_path: str) -> Dict[str, Any]:
+def set_config_file(self, file_path: str) -> dict[str, Any]:
     if self.config_file is not None:
         logger.info(
             f"Config file already set. Replaced by the new file {file_path}."
@@ -247,12 +264,14 @@ def set_config_file(self, file_path: str) -> Dict[str, Any]:
     self.config_file = file_path
   
     return {}
-```        
+```
 
 ## Filling the template from the read-in data
+
 Finally, after reading in all of the data and metadata as well as designing the config file, we can start filling the template. For this, we must implement functions that are called using the reader's **callbacks**.
 
 We will start with the `@attrs` prefix, associated with the `attrs_callback`. We must implement the `get_attr` method:
+
 ```python title="reader.py"
 def get_attr(self, key: str, path: str) -> Any:
     """
@@ -263,13 +282,16 @@ def get_attr(self, key: str, path: str) -> Any:
     
     return self.hdf5_data.get(path)
 ```
+
 This method (and all similar callbacks methods) have two inputs:
+
 1. **`key`**, which is a key in the config file. Note that here, the generic `"/ENTRY/"` gets replaced by `f"/ENTRY[{entry_name}]/"`, where `entry_name` is the one of the entries of the `self.get_entry_names` method.
 2. **`path`**, which is the part of the config value that comes after the `@attrs:` prefix. For example, for the config value `"@attrs:my-metadata"`, the extracted path is `my-metadata`.
 
 For the `get_attr` method, we are making use of the `path`. For example, for the config value `"@attrs:metadata/instrument/version"`, the extracted path is `metadata/instrument/version`, which is also one of the keys of the `self.hdf5_data` dictionary.
 
 For the ELN data, we must implement the `get_eln_data` function that gets called from the `eln_callback` when using the `@eln` prefix:
+
 ```python title="reader.py"
 def get_eln_data(self, key: str, path: str) -> Any:
         """Returns data from the given eln path."""
@@ -278,9 +300,11 @@ def get_eln_data(self, key: str, path: str) -> Any:
         
         return self.eln_data.get(key)
 ```
+
 Here, we are making use of the fact that we have used `CONVERT_DICT` in the `parse_yml` function above. Thus, the keys of the `self.eln_data` dictionary are exactly the same as those in the config file (for example, the config key `"/ENTRY[entry]/USER[user]/address"` also exists in `self.eln_data`). Therefore, we can just get this data using the `key` coming from the config file. 
 
 Finally, we also need to address the `@data` prefix, which gets used in the `data_callback` to populate the NXdata group in the template. Note that here we use the same `@data` prefix to fill the `x_values` as well as the `data` (from `y_values`) fields. We achieve this by using the path that follows `@data:` in the config file:
+
 ```python title="reader.py"
 def get_data(self, key: str, path: str) -> Any:
     """Returns measurement data from the given hdf5 path."""
@@ -291,11 +315,12 @@ def get_data(self, key: str, path: str) -> Any:
 ```
 
 ## Bringing it all together
+
 Et voilà! That's all we need to read in our data and populate the `NXsimple` template. Our final reader looks like this:
 
 ```python title="reader.py"
 import logging
-from typing import Dict, Any
+from typing import Any
 import h5py
 
 from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
@@ -331,7 +356,7 @@ class MyDataReader(MultiFormatReader):
             ".h5": self.handle_hdf5_file,
         }
         
-    def set_config_file(self, file_path: str) -> Dict[str, Any]:
+    def set_config_file(self, file_path: str) -> dict[str, Any]:
         if self.config_file is not None:
             logger.info(
                 f"Config file already set. Replaced by the new file {file_path}."
@@ -339,7 +364,7 @@ class MyDataReader(MultiFormatReader):
         self.config_file = file_path
         return {}
     
-    def handle_hdf5_file(self, filepath) -> Dict[str, Any]:
+    def handle_hdf5_file(self, filepath) -> dict[str, Any]:
         def recursively_read_group(group, path=""):
             result = {}
             for key, item in group.items():
@@ -358,7 +383,7 @@ class MyDataReader(MultiFormatReader):
             
         return {}
     
-    def handle_eln_file(self, file_path: str) -> Dict[str, Any]:
+    def handle_eln_file(self, file_path: str) -> dict[str, Any]:
         self.eln_data = parse_yml(
             file_path,
             convert_dict=CONVERT_DICT,
@@ -394,6 +419,7 @@ READER = MyDataReader
 ```
 
 ## Using the reader
+
 We can call our reader using the following command
 
 ```console
