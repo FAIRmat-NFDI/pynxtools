@@ -157,7 +157,6 @@ ignore = [
     "PLR5501", # else-if-used
     "PLW0603", # Using the global statement
     "PLW2901", # redefined-loop-name,
-    "UP015", 
 ]
 fixable = ["ALL"]
 isort.split-on-trailing-comma = false
