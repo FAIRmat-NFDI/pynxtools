@@ -1257,7 +1257,7 @@
 <p>Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?</p>
 <p>Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.</p>
 <h2 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<p>You should start by creating a clean repository that implements the following structure (for a plugin called <code>pynxtools-plugin</code>):
+<p>You should start by creating a clean repository that implements the following structure (for a plugin called <code>pynxtools-plugin</code>):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynxtools-plugin
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── .github/workflows
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── docs
@@ -1274,11 +1274,11 @@
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>├── mkdocs.yaml
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>├── dev-requirements.txt
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>└── pyproject.toml
-</code></pre></div></p>
-<p>To identify <code>pynxtools-plugin</code> as a plugin for pynxtools, an entry point must be established (in the <code>pyproject.toml</code> file):
+</code></pre></div>
+<p>To identify <code>pynxtools-plugin</code> as a plugin for pynxtools, an entry point must be established (in the <code>pyproject.toml</code> file):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>[project.entry-points.&quot;pynxtools.reader&quot;]
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>mydatareader = &quot;pynxtools_plugin.reader:MyDataReader&quot;
-</code></pre></div></p>
+</code></pre></div>
 <p>Note that it is also possible that your plugin contains multiple readers. In that case, each reader must have its unique entry point.</p>
 <p>Here, we will focus mostly on the <code>reader.py</code> file and how to build a reader. For guidelines on how to build the other parts of your plugin, you can have a look here:</p>
 <ul>
@@ -1291,7 +1291,7 @@
 <p>After you have established the main structure, you can start writing your reader. The new reader shall be placed in <code>reader.py</code>.</p>
 <p>Then implement the reader function:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="sd">&quot;&quot;&quot;MyDataReader implementation for the DataConverter to convert mydata to NeXus.&quot;&quot;&quot;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.dataconverter.readers.base.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseReader</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
@@ -1305,8 +1305,8 @@
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>
 <a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="bp">self</span><span class="p">,</span>
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="n">template</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">file_paths</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">objects</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">file_paths</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">objects</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads data from given file and returns a filled template dictionary&quot;&quot;&quot;</span>
 <a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="c1"># Here, you must provide functionality to fill the the template, see below.</span>
@@ -1328,9 +1328,9 @@ They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Pr
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;/entry/instrument/source/type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
 </code></pre></div>
-<p>For a given NXDL schema, you can generate an empty template with the command
+<p>For a given NXDL schema, you can generate an empty template with the command</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl
-</code></pre></div></p>
+</code></pre></div>
 <h4 id="naming-of-groups">Naming of groups<a class="headerlink" href="#naming-of-groups" title="Permanent link">&para;</a></h4>
 <p>In case the NXDL does not define a <code>name</code> for the group the requested data belongs to, the template dictionary will list it as <code>/NAME_IN_NXDL[name_in_output_nexus]</code>. You can choose any name you prefer instead of the suggested <code>name_in_output_nexus</code> (see <a href="../learn/nexus-rules.html">here</a> for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
@@ -1360,10 +1360,10 @@ They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Pr
 <p>While building on the <code>BaseReader</code> allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, <code>pynxtools</code> has the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a>, which can be readily extended for your own data.</p>
 <p>You can find an extensive how-to guide to build off the <code>MultiFormatReader</code> <a href="use-multi-format-reader.html">here</a>.</p>
 <h2 id="calling-the-reader-from-the-command-line">Calling the reader from the command line<a class="headerlink" href="#calling-the-reader-from-the-command-line" title="Permanent link">&para;</a></h2>
-<p>The dataconverter can be executed using:
+<p>The dataconverter can be executed using:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--reader<span class="w"> </span>mydatareader<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>--output<span class="w"> </span>path_to_output.nxs
 </code></pre></div>
-Here, the <code>--reader</code> flag must match the reader name defined in <code>[project.entry-points."pynxtools.reader"]</code> in the pyproject.toml file. The NXDL name passed to <code>--nxdl</code>must be a valid NeXus NXDL/XML file in <code>pynxtools.definitions</code>.</p>
+<p>Here, the <code>--reader</code> flag must match the reader name defined in <code>[project.entry-points."pynxtools.reader"]</code> in the pyproject.toml file. The NXDL name passed to <code>--nxdl</code>must be a valid NeXus NXDL/XML file in <code>pynxtools.definitions</code>.</p>
 <p>Aside from this default structure, there are many more flags that can be passed to the
 dataconverter call. Here is its API:</p>
 <h3 id="dataconverter">dataconverter<a class="headerlink" href="#dataconverter" title="Permanent link">&para;</a></h3>

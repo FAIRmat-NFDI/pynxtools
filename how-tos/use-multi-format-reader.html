@@ -1206,9 +1206,9 @@
 </code></pre></div>
 <p>The NXDL requires a user, some sample information, some instrument metadata, and the measured data to be written. Some groups, fields, and attributes are strictly required (the default), others just recommended.</p>
 <p>Note that in order to be recognized as a valid application definition, this file should be copied to the <code>definitions</code> submodule at <code>pynxtools.definitions</code>.</p>
-<p>We first start by implementing the class and its <code>__init__</code> call:
+<p>We first start by implementing the class and its <code>__init__</code> call:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="sd">&quot;&quot;&quot;MyDataReader implementation for the DataConverter to convert mydata to NeXus.&quot;&quot;&quot;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.dataconverter.readers.base.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseJsonCallbacks</span><span class="p">,</span> <span class="n">MultiFormatReader</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
@@ -1232,15 +1232,17 @@
 <a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
 <a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="n">READER</span> <span class="o">=</span> <span class="n">MyDataReader</span>
 </code></pre></div>
-Note that here we are adding handlers for three types of data file extensions:
-1. <code>".hdf5"</code>, <code>".h5"</code>: This will be used to parse in the (meta)data from the instrument's HDF5 file.
-2. <code>".yml"</code>, <code>".yaml"</code>: This will be used to parse in the (meta)data from the ELN file.
-3. <code>".json"</code>: This will be used to read in the <strong>config file</strong>, which is used to map from the (meta)data concepts from the instrument and ELN data to the concepts in the NXDL file.</p>
+<p>Note that here we are adding handlers for three types of data file extensions:</p>
+<ol>
+<li><code>".hdf5"</code>, <code>".h5"</code>: This will be used to parse in the (meta)data from the instrument's HDF5 file.</li>
+<li><code>".yml"</code>, <code>".yaml"</code>: This will be used to parse in the (meta)data from the ELN file.</li>
+<li><code>".json"</code>: This will be used to read in the <strong>config file</strong>, which is used to map from the (meta)data concepts from the instrument and ELN data to the concepts in the NXDL file.</li>
+</ol>
 <h2 id="reading-in-the-instruments-data-and-metadata">Reading in the instrument's data and metadata<a class="headerlink" href="#reading-in-the-instruments-data-and-metadata" title="Permanent link">&para;</a></h2>
 <p>First, we will have a look at the HDF5 file. This mock HDF5 file was generated with <code>h5py</code> using a <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader/create_mock_data.py">simple script</a>.</p>
 <p><img src="media/mock_data.png" style="width: 50vw; min-width: 330px;" /></p>
 <p>Here, we see that we have a <code>data</code> group with x and y values, as well as some additional metadata for the instrument.</p>
-<p>Here is one way to implement the method to read in the data:
+<p>Here is one way to implement the method to read in the data:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">handle_hdf5_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
@@ -1262,8 +1264,8 @@ Note that here we are adding handlers for three types of data file extensions:
 <a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
 <a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="k">return</span> <span class="p">{}</span>
 </code></pre></div>
-Note that here we are returning an empty dictionary because we don't want to fill the template just yet, but only read in the HDF5 data for now. We will use the config file later to fill the template with the read-in data. Note that it is also possible to return a dictionary here to update the template directly.</p>
-<p><code>self.hdf5_data</code> will look like this:
+<p>Note that here we are returning an empty dictionary because we don't want to fill the template just yet, but only read in the HDF5 data for now. We will use the config file later to fill the template with the read-in data. Note that it is also possible to return a dictionary here to update the template directly.</p>
+<p><code>self.hdf5_data</code> will look like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="s2">&quot;data/x_values&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">10.</span>        <span class="p">,</span>  <span class="o">-</span><span class="mf">9.7979798</span> <span class="p">,</span>  <span class="o">-</span><span class="mf">9.5959596</span> <span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">10.</span>        <span class="p">]),</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="s2">&quot;data/y_values&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">3.72665317e-06</span><span class="p">,</span> <span class="mf">6.14389891e-06</span><span class="p">,</span> <span class="mf">1.00262383e-05</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">3.72665317e-06</span><span class="p">]),</span>
@@ -1274,10 +1276,10 @@ Note that here we are returning an empty dictionary because we don't want to fil
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="s2">&quot;metadata/instrument/detector/count_time&quot;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="s2">&quot;metadata/instrument/detector/count_time_units&quot;</span><span class="p">:</span> <span class="n">s</span><span class="s2">&quot;,</span>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
-</code></pre></div></p>
+</code></pre></div>
 <h2 id="reading-in-eln-data">Reading in ELN data<a class="headerlink" href="#reading-in-eln-data" title="Permanent link">&para;</a></h2>
 <p>As we can see in the application definition <code>NXsimple</code> above, there are some concepts defined for which there is no equivalent metadata in the HDF5 file. We are therefore using a YAML ELN file to add additional metadata.
-The ELN file <code>eln_data.yaml</code> looks like this:
+The ELN file <code>eln_data.yaml</code> looks like this:</p>
 <div class="highlight"><span class="filename">eln_data.yaml</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My experiment</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">user</span><span class="p">:</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">John Doe</span>
@@ -1288,10 +1290,10 @@ The ELN file <code>eln_data.yaml</code> looks like this:
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nt">temperature</span><span class="p">:</span>
 <a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
 <a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="nt">unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">K</span>
-</code></pre></div></p>
+</code></pre></div>
 <p>It contains metadata about the user and the sample that was measured.</p>
 <p>We now need to write a function to read in this ELN data. Luckily, there exists already a solution within <code>pynxtools</code>, using the <code>parse_yaml</code> function:</p>
-<p><div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.dataconverter.readers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_yml</span>
+<div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.dataconverter.readers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_yml</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">CONVERT_DICT</span> <span class="o">=</span> <span class="p">{</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;@units&quot;</span><span class="p">,</span>
@@ -1302,7 +1304,7 @@ The ELN file <code>eln_data.yaml</code> looks like this:
 <a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;SAMPLE[sample]&quot;</span><span class="p">,</span>
 <a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">}</span>
 <a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="k">def</span><span class="w"> </span><span class="nf">handle_eln_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="k">def</span><span class="w"> </span><span class="nf">handle_eln_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">eln_data</span> <span class="o">=</span> <span class="n">parse_yml</span><span class="p">(</span>
 <a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        <span class="n">file_path</span><span class="p">,</span>
 <a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        <span class="n">convert_dict</span><span class="o">=</span><span class="n">CONVERT_DICT</span><span class="p">,</span>
@@ -1311,7 +1313,7 @@ The ELN file <code>eln_data.yaml</code> looks like this:
 <a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>
 <a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>    <span class="k">return</span> <span class="p">{}</span>
 </code></pre></div>
-When this method is called, <code>self.eln_data</code> will look like this:
+<p>When this method is called, <code>self.eln_data</code> will look like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="s2">&quot;/ENTRY[entry]/title&quot;</span><span class="p">:</span> <span class="s2">&quot;My experiment&quot;</span><span class="p">,</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="s2">&quot;/ENTRY[entry]/USER[user]/name&quot;</span><span class="p">:</span> <span class="s2">&quot;John Doe&quot;</span><span class="p">,</span>
@@ -1322,10 +1324,10 @@ When this method is called, <code>self.eln_data</code> will look like this:
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="s2">&quot;/ENTRY[entry]/SAMPLE[sample]/temperature/@units&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span>
 <a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">}</span>
 </code></pre></div>
-Note that here we are using <code>parent_key="/ENTRY[entry]"</code> as well as a <code>CONVERT_DICT</code>, meaning that each key in <code>self.eln_data</code> will start with <code>"/ENTRY[entry]"</code> and some of the paths will be converted to match the template notation. This will be important later.</p>
+<p>Note that here we are using <code>parent_key="/ENTRY[entry]"</code> as well as a <code>CONVERT_DICT</code>, meaning that each key in <code>self.eln_data</code> will start with <code>"/ENTRY[entry]"</code> and some of the paths will be converted to match the template notation. This will be important later.</p>
 <h2 id="parsing-the-config-file">Parsing the config file<a class="headerlink" href="#parsing-the-config-file" title="Permanent link">&para;</a></h2>
 <p>Next up, we can make use of the config file, which is a JSON file that tells the reader how to map the concepts from the HDF5 and ELN files in order to populate the template designed to match <code>NXsimple</code>. The choices made in the config file define how semantics from the source (data file) and target (NeXus application definition) side are mapped. Essentially, the config file should contain all keys that are present in the NXDL. In our case, the config file looks like this:</p>
-<p><div class="highlight"><span class="filename">config_file.json</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<div class="highlight"><span class="filename">config_file.json</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY/title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@eln&quot;</span><span class="p">,</span><span class="w"> </span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">&quot;/ENTRY/USER[user]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;@eln&quot;</span><span class="p">,</span>
@@ -1354,9 +1356,9 @@ Note that here we are using <code>parent_key="/ENTRY[entry]"</code> as well as a
 <a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">  </span><span class="p">}</span>
 <a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="p">}</span>
 </code></pre></div>
-Note that here we are using <code>@</code>-prefixes which are used to fill the template from the different data sources. We dicuss this below in more detail.</p>
-<p>We also implement a method for setting the config file in the reader:
-<div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">set_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<p>Note that here we are using <code>@</code>-prefixes which are used to fill the template from the different data sources. We dicuss this below in more detail.</p>
+<p>We also implement a method for setting the config file in the reader:</p>
+<div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">set_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>            <span class="sa">f</span><span class="s2">&quot;Config file already set. Replaced by the new file </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">.&quot;</span>
@@ -1364,10 +1366,10 @@ Note that here we are using <code>@</code>-prefixes which are used to fill the t
 <a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">config_file</span> <span class="o">=</span> <span class="n">file_path</span>
 <a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
 <a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="k">return</span> <span class="p">{}</span>
-</code></pre></div></p>
+</code></pre></div>
 <h2 id="filling-the-template-from-the-read-in-data">Filling the template from the read-in data<a class="headerlink" href="#filling-the-template-from-the-read-in-data" title="Permanent link">&para;</a></h2>
 <p>Finally, after reading in all of the data and metadata as well as designing the config file, we can start filling the template. For this, we must implement functions that are called using the reader's <strong>callbacks</strong>.</p>
-<p>We will start with the <code>@attrs</code> prefix, associated with the <code>attrs_callback</code>. We must implement the <code>get_attr</code> method:
+<p>We will start with the <code>@attrs</code> prefix, associated with the <code>attrs_callback</code>. We must implement the <code>get_attr</code> method:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="sd">    Get the metadata that was stored in the main file.</span>
@@ -1377,11 +1379,13 @@ Note that here we are using <code>@</code>-prefixes which are used to fill the t
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
 <a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf5_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </code></pre></div>
-This method (and all similar callbacks methods) have two inputs:
-1. <strong><code>key</code></strong>, which is a key in the config file. Note that here, the generic <code>"/ENTRY/"</code> gets replaced by <code>f"/ENTRY[{entry_name}]/"</code>, where <code>entry_name</code> is the one of the entries of the <code>self.get_entry_names</code> method.
-2. <strong><code>path</code></strong>, which is the part of the config value that comes after the <code>@attrs:</code> prefix. For example, for the config value <code>"@attrs:my-metadata"</code>, the extracted path is <code>my-metadata</code>.</p>
+<p>This method (and all similar callbacks methods) have two inputs:</p>
+<ol>
+<li><strong><code>key</code></strong>, which is a key in the config file. Note that here, the generic <code>"/ENTRY/"</code> gets replaced by <code>f"/ENTRY[{entry_name}]/"</code>, where <code>entry_name</code> is the one of the entries of the <code>self.get_entry_names</code> method.</li>
+<li><strong><code>path</code></strong>, which is the part of the config value that comes after the <code>@attrs:</code> prefix. For example, for the config value <code>"@attrs:my-metadata"</code>, the extracted path is <code>my-metadata</code>.</li>
+</ol>
 <p>For the <code>get_attr</code> method, we are making use of the <code>path</code>. For example, for the config value <code>"@attrs:metadata/instrument/version"</code>, the extracted path is <code>metadata/instrument/version</code>, which is also one of the keys of the <code>self.hdf5_data</code> dictionary.</p>
-<p>For the ELN data, we must implement the <code>get_eln_data</code> function that gets called from the <code>eln_callback</code> when using the <code>@eln</code> prefix:
+<p>For the ELN data, we must implement the <code>get_eln_data</code> function that gets called from the <code>eln_callback</code> when using the <code>@eln</code> prefix:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_eln_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns data from the given eln path.&quot;&quot;&quot;</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eln_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1389,19 +1393,19 @@ This method (and all similar callbacks methods) have two inputs:
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
 <a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eln_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 </code></pre></div>
-Here, we are making use of the fact that we have used <code>CONVERT_DICT</code> in the <code>parse_yml</code> function above. Thus, the keys of the <code>self.eln_data</code> dictionary are exactly the same as those in the config file (for example, the config key <code>"/ENTRY[entry]/USER[user]/address"</code> also exists in <code>self.eln_data</code>). Therefore, we can just get this data using the <code>key</code> coming from the config file. </p>
-<p>Finally, we also need to address the <code>@data</code> prefix, which gets used in the <code>data_callback</code> to populate the NXdata group in the template. Note that here we use the same <code>@data</code> prefix to fill the <code>x_values</code> as well as the <code>data</code> (from <code>y_values</code>) fields. We achieve this by using the path that follows <code>@data:</code> in the config file:
+<p>Here, we are making use of the fact that we have used <code>CONVERT_DICT</code> in the <code>parse_yml</code> function above. Thus, the keys of the <code>self.eln_data</code> dictionary are exactly the same as those in the config file (for example, the config key <code>"/ENTRY[entry]/USER[user]/address"</code> also exists in <code>self.eln_data</code>). Therefore, we can just get this data using the <code>key</code> coming from the config file. </p>
+<p>Finally, we also need to address the <code>@data</code> prefix, which gets used in the <code>data_callback</code> to populate the NXdata group in the template. Note that here we use the same <code>@data</code> prefix to fill the <code>x_values</code> as well as the <code>data</code> (from <code>y_values</code>) fields. We achieve this by using the path that follows <code>@data:</code> in the config file:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns measurement data from the given hdf5 path.&quot;&quot;&quot;</span>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;x_values&quot;</span><span class="p">,</span> <span class="s2">&quot;y_values&quot;</span><span class="p">)):</span>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf5_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="k">else</span><span class="p">:</span>
 <a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No axis name corresponding to the path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</code></pre></div></p>
+</code></pre></div>
 <h2 id="bringing-it-all-together">Bringing it all together<a class="headerlink" href="#bringing-it-all-together" title="Permanent link">&para;</a></h2>
 <p>Et voilà! That's all we need to read in our data and populate the <code>NXsimple</code> template. Our final reader looks like this:</p>
 <div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.dataconverter.readers.multi.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiFormatReader</span>
@@ -1437,7 +1441,7 @@ Here, we are making use of the fact that we have used <code>CONVERT_DICT</code> 
 <a id="__codelineno-12-35" name="__codelineno-12-35" href="#__codelineno-12-35"></a>            <span class="s2">&quot;.h5&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_hdf5_file</span><span class="p">,</span>
 <a id="__codelineno-12-36" name="__codelineno-12-36" href="#__codelineno-12-36"></a>        <span class="p">}</span>
 <a id="__codelineno-12-37" name="__codelineno-12-37" href="#__codelineno-12-37"></a>
-<a id="__codelineno-12-38" name="__codelineno-12-38" href="#__codelineno-12-38"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<a id="__codelineno-12-38" name="__codelineno-12-38" href="#__codelineno-12-38"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <a id="__codelineno-12-39" name="__codelineno-12-39" href="#__codelineno-12-39"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-12-40" name="__codelineno-12-40" href="#__codelineno-12-40"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
 <a id="__codelineno-12-41" name="__codelineno-12-41" href="#__codelineno-12-41"></a>                <span class="sa">f</span><span class="s2">&quot;Config file already set. Replaced by the new file </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">.&quot;</span>
@@ -1445,7 +1449,7 @@ Here, we are making use of the fact that we have used <code>CONVERT_DICT</code> 
 <a id="__codelineno-12-43" name="__codelineno-12-43" href="#__codelineno-12-43"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">config_file</span> <span class="o">=</span> <span class="n">file_path</span>
 <a id="__codelineno-12-44" name="__codelineno-12-44" href="#__codelineno-12-44"></a>        <span class="k">return</span> <span class="p">{}</span>
 <a id="__codelineno-12-45" name="__codelineno-12-45" href="#__codelineno-12-45"></a>
-<a id="__codelineno-12-46" name="__codelineno-12-46" href="#__codelineno-12-46"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle_hdf5_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<a id="__codelineno-12-46" name="__codelineno-12-46" href="#__codelineno-12-46"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle_hdf5_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <a id="__codelineno-12-47" name="__codelineno-12-47" href="#__codelineno-12-47"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">recursively_read_group</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <a id="__codelineno-12-48" name="__codelineno-12-48" href="#__codelineno-12-48"></a>            <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
 <a id="__codelineno-12-49" name="__codelineno-12-49" href="#__codelineno-12-49"></a>            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1464,7 +1468,7 @@ Here, we are making use of the fact that we have used <code>CONVERT_DICT</code> 
 <a id="__codelineno-12-62" name="__codelineno-12-62" href="#__codelineno-12-62"></a>
 <a id="__codelineno-12-63" name="__codelineno-12-63" href="#__codelineno-12-63"></a>        <span class="k">return</span> <span class="p">{}</span>
 <a id="__codelineno-12-64" name="__codelineno-12-64" href="#__codelineno-12-64"></a>
-<a id="__codelineno-12-65" name="__codelineno-12-65" href="#__codelineno-12-65"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle_eln_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<a id="__codelineno-12-65" name="__codelineno-12-65" href="#__codelineno-12-65"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle_eln_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <a id="__codelineno-12-66" name="__codelineno-12-66" href="#__codelineno-12-66"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eln_data</span> <span class="o">=</span> <span class="n">parse_yml</span><span class="p">(</span>
 <a id="__codelineno-12-67" name="__codelineno-12-67" href="#__codelineno-12-67"></a>            <span class="n">file_path</span><span class="p">,</span>
 <a id="__codelineno-12-68" name="__codelineno-12-68" href="#__codelineno-12-68"></a>            <span class="n">convert_dict</span><span class="o">=</span><span class="n">CONVERT_DICT</span><span class="p">,</span>
