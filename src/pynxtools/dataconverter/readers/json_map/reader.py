@@ -186,7 +186,7 @@ class JsonMapReader(BaseReader):
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex(".") :]
             if file_extension == ".json":
-                with open(file_path, "r", encoding="utf-8") as input_file:
+                with open(file_path, encoding="utf-8") as input_file:
                     if ".mapping" in file_path:
                         mapping = json.loads(input_file.read())
                     else:
@@ -195,7 +195,7 @@ class JsonMapReader(BaseReader):
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
                     data = pickle.load(input_file)  # type: ignore[arg-type]
             elif file_extension == ".yaml":
-                with open(file_path, "r") as input_file:
+                with open(file_path) as input_file:
                     merge(data, yaml.safe_load(input_file))
             else:
                 is_hdf5 = False

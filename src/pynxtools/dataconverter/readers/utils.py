@@ -192,7 +192,7 @@ def parse_yml(
 
     convert_dict["unit"] = "@units"
 
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(file_path, encoding="utf-8") as file:
         return flatten_and_replace(
             FlattenSettings(
                 dic=yaml.safe_load(file),

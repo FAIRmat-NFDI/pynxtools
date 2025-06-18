@@ -95,10 +95,10 @@ def test_reader_eln(tmp_path):
         ],
     )
 
-    with open(ref_file, encoding="utf-8", mode="r") as ref_f:
+    with open(ref_file, encoding="utf-8") as ref_f:
         ref_dict = yaml.safe_load(ref_f)
 
-    with open(test_file, encoding="utf-8", mode="r") as test_f:
+    with open(test_file, encoding="utf-8") as test_f:
         test_dict = yaml.safe_load(test_f)
 
     check_keys_from_two_dict(ref_dict, test_dict)
@@ -122,10 +122,10 @@ def test_scheme_eln(tmp_path):
         eln_mapper.get_eln,
         ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "schema"],
     )
-    with open(ref_file, encoding="utf-8", mode="r") as ref_f:
+    with open(ref_file, encoding="utf-8") as ref_f:
         ref_dict = yaml.safe_load(ref_f)
 
-    with open(test_file, encoding="utf-8", mode="r") as test_f:
+    with open(test_file, encoding="utf-8") as test_f:
         test_dict = yaml.safe_load(test_f)
 
     check_keys_from_two_dict(ref_dict, test_dict)
