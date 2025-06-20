@@ -1,5 +1,5 @@
 ---
-title: 'pynxtools: A framework for generating NeXus files from raw file formats.'
+title: 'pynxtools: A framework for generating NeXus files from formats across disciplines.'
 tags:
   - Python
   - NeXus
@@ -10,20 +10,61 @@ tags:
   - serialization
   - HDF5
 authors:
-  - name: Adrian M. Price-Whelan
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
-    affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
-  - given-names: Ludwig
-    dropping-particle: van
-    surname: Beethoven
-    affiliation: 3
+  - given-names: Sherjeel
+    family-names: Shabih
+    orcid: 'https://orcid.org/0009-0008-6635-4465'
+  - given-names: Lukas
+    family-names: Pielsticker
+    orcid: https://orcid.org/0000-0001-9361-8333
+  - given-names: Florian
+    family-names: Dobener
+    orcid: https://orcid.org/0000-0003-1987-6224
+  - given-names: Andreas
+    family-names: Who do we mean here?
+    orcid: None
+  - given-names Carola
+    family-names: Emminger
+    orcid: https://orcid.org/0000-0003-4793-1809
+  - given-names: Jose
+    family-names: Marquez
+    orcid: need to find
+  - given-names: Laurenz
+    family-names: Rettig
+    orcid: 'https://orcid.org/0000-0002-0725-6696'
+  - given-names: Lev
+    family-names: Ginzburg
+    orcid: 'https://orcid.org/0000-0001-8929-1040'
+  - given-names: Markus
+    family-names: Kühbach
+    orcid: 'https://orcid.org/0000-0002-7117-5196'
+  - given-names: Rubel
+    family-names: Mozumder
+    orcid: 'https://orcid.org/0009-0007-5926-6646'
+  - given-names: Ron
+    family-names: Hildebrandt
+    orcid: https://orcid.org/0000-0001-6932-604X
+  - given-names: Theodore
+    family-names: Chang
+    orcid: https://orcid.org/0000-0002-4911-0230
+  - given-names: Tommaso
+    family-names: Pincelli
+    orcid: 'https://orcid.org/0000-0003-2692-2540'
+  - given-names: Christoph
+    family-names: Koch
+    orcid: 'https://orcid.org/0000-0002-3984-1523'
+  - given-names: Heiko B.
+    family-names: Weber
+    orcid: 'https://orcid.org/0000-0002-6403-9022'
+  - given-names: Markus
+    family-names: Scheidgen
+    orcid: https://orcid.org/0000-0002-8038-2277
+  - given-names: Claudia
+    family-names: Draxl
+    orcid: 'https://orcid.org/0000-0003-3523-6657'
+  - given-names: Sandor
+    family-names: Brockhauser
+    orcid: 'https://orcid.org/0000-0002-9700-4803'
+
 affiliations:
  - name: Lyman Spitzer, Jr. Fellow, Princeton University, United States
    index: 1
