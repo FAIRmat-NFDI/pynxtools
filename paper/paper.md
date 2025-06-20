@@ -25,9 +25,9 @@ authors:
   - given-names Carola
     family-names: Emminger
     orcid: https://orcid.org/0000-0003-4793-1809
-  - given-names: Jose
-    family-names: Marquez
-    orcid: need to find
+  - given-names: José Antonio
+    family-names: Márquez Prieto
+    orcid: https://orcid.org/0000-0002-8173-2566
   - given-names: Laurenz
     family-names: Rettig
     orcid: 'https://orcid.org/0000-0002-0725-6696'
