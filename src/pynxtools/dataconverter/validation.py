@@ -218,7 +218,7 @@ def best_namefit_of(
 
 
 def is_valid_unit_for_node(
-    node: NexusNode, unit: str, unit_path: str, hints: Dict[str, Any]
+    node: NexusNode, unit: str, unit_path: str, hints: dict[str, Any]
 ) -> None:
     """
     Validate whether a unit string is compatible with the expected unit category for a given NeXus node.
@@ -233,14 +233,14 @@ def is_valid_unit_for_node(
         node (NexusNode): The node containing unit metadata to validate against.
         unit (str): The unit string to validate (e.g., "m", "eV", "1", "").
         unit_path (str): The path to the unit in the NeXus template, used for logging.
-        hints (Dict[str, Any]): Additional metadata used during validation. For example,
+        hints (dict[str, Any]): Additional metadata used during validation. For example,
             hints["transformation_type"] may be used to determine the expected unit category
             if the node represents a transformation.
     """
     # Need to use a list as `NXtransformation` is a special use case
     if node.unit == "NX_TRANSFORMATION":
         if (transformation_type := hints.get("transformation_type")) is not None:
-            category_map: Dict[str, str] = {
+            category_map: dict[str, str] = {
                 "translation": "NX_LENGTH",
                 "rotation": "NX_ANGLE",
             }

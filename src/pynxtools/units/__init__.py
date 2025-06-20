@@ -18,9 +18,10 @@
 """A unit registry for NeXus units"""
 
 import os
-from typing import Optional, Dict, Any
+from typing import Any, Optional
+
 from pint import UnitRegistry
-from pint.errors import UndefinedUnitError, DefinitionSyntaxError, DimensionalityError
+from pint.errors import DefinitionSyntaxError, DimensionalityError, UndefinedUnitError
 
 try:
     from nomad.units import ureg
@@ -37,7 +38,7 @@ class NXUnitSet:
     - 'transformation' -> specially handled elsewhere
     """
 
-    mapping: Dict[str, Optional[str]] = {
+    mapping: dict[str, Optional[str]] = {
         "NX_ANGLE": "[angle]",
         "NX_ANY": None,
         "NX_AREA": "[area]",
@@ -73,7 +74,7 @@ class NXUnitSet:
         "NX_WAVENUMBER": "1 / [length]",
     }
 
-    _dimensionalities: Dict[str, Optional[Any]] = {}
+    _dimensionalities: dict[str, Optional[Any]] = {}
 
     @classmethod
     def get_dimensionality(cls, nx_unit: str) -> Optional[Any]:

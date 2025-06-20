@@ -81,7 +81,6 @@ except ImportError as exc:
     ) from exc
 
 from pynxtools import NX_DOC_BASES, get_definitions_url
-from pynxtools.units import NXUnitSet, ureg
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import (
     FIELD_STATISTICS,
@@ -90,6 +89,7 @@ from pynxtools.nomad.utils import (
     _rename_nx_for_nomad,
     get_quantity_base_name,
 )
+from pynxtools.units import NXUnitSet, ureg
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
