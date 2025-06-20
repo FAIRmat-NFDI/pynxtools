@@ -1,4 +1,4 @@
-name: NOMAD dependencies compatibility
+name: NOMAD compatibility
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
   python-version: 3.11
 
 jobs:
-  validate_dependencies:
+  validate_compatibility:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +27,18 @@ jobs:
       run: |
         git clone --depth 1 --branch develop --recurse-submodules https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
         git submodule update --init --recursive --depth 1
+
+    - name: Compare unit definition files
+      run: |
+        diff --unified=3 nomad/nomad/units/default_en.txt src/pynxtools/units/default_en.txt || {
+          echo "::error file=src/pynxtools/units/default_en.txt::default_en.txt differs from NOMAD";
+          exit 1;
+        }
+
+        diff --unified=3 nomad/nomad/units/constants_en.txt src/pynxtools/units/constants_en.txt || {
+          echo "::error file=src/pynxtools/units/constants.txt::constants.txt differs from NOMAD";
+          exit 1;
+        }
 
     - name: Add pynxtools dependency in NOMAD test_plugins.txt
       working-directory: ./nomad
