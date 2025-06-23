@@ -12,67 +12,90 @@ tags:
 authors:
   - given-names: Sherjeel
     family-names: Shabih
-    orcid: 'https://orcid.org/0009-0008-6635-4465'
+    orcid: https://orcid.org/0009-0008-6635-4465
+    affiliation: 1
+    equal-contrib: true
   - given-names: Lukas
     family-names: Pielsticker
     orcid: https://orcid.org/0000-0001-9361-8333
+    affiliation: "1,3"
+    equal-contrib: true
   - given-names: Florian
     family-names: Dobener
     orcid: https://orcid.org/0000-0003-1987-6224
+    affiliation: 1
   - given-names: Theodore
     family-names: Chang
     orcid: https://orcid.org/0000-0002-4911-0230
+    affiliation: 1
   - given-names: Carola
     family-names: Emminger
     orcid: https://orcid.org/0000-0003-4793-1809
+    affiliation: 5
   - given-names: Lev
     family-names: Ginzburg
-    orcid: 'https://orcid.org/0000-0001-8929-1040'
+    orcid: https://orcid.org/0000-0001-8929-1040
+    affiliation: 1
   - given-names: Ron
     family-names: Hildebrandt
     orcid: https://orcid.org/0000-0001-6932-604X
+    affiliation: 5
   - given-names: Markus
     family-names: Kühbach
-    orcid: 'https://orcid.org/0000-0002-7117-5196'
+    orcid: https://orcid.org/0000-0002-7117-5196
+    affiliation: 1
   - given-names: José Antonio
     family-names: Márquez Prieto
     orcid: https://orcid.org/0000-0002-8173-2566
+    affiliation: 1
   - given-names: Rubel
     family-names: Mozumder
-    orcid: 'https://orcid.org/0009-0007-5926-6646'
+    orcid: https://orcid.org/0009-0007-5926-6646
+    affiliation: 1
   - given-names: Tommaso
     family-names: Pincelli
-    orcid: 'https://orcid.org/0000-0003-2692-2540'
+    orcid: https://orcid.org/0000-0003-2692-2540
+    affiliation: 4
+  - given-names: Walid
+    family-names: Hetaba
+    orcid: https://orcid.org/0000-0003-4728-0786
+    affiliation: 3
   - given-names: Laurenz
     family-names: Rettig
-    orcid: 'https://orcid.org/0000-0002-0725-6696'
-  - given-names: Andreas
-    family-names: Who do we mean here?
-    orcid: None
+    orcid: https://orcid.org/0000-0002-0725-6696
+    affiliation: 4
   - given-names: Christoph
     family-names: Koch
-    orcid: 'https://orcid.org/0000-0002-3984-1523'
+    orcid: https://orcid.org/0000-0002-3984-1523
+    affiliation: 1
   - given-names: Heiko B.
     family-names: Weber
-    orcid: 'https://orcid.org/0000-0002-6403-9022'
+    orcid: https://orcid.org/0000-0002-6403-9022
+    affiliation: 2
   - given-names: Markus
     family-names: Scheidgen
     orcid: https://orcid.org/0000-0002-8038-2277
+    affiliation: 1
   - given-names: Claudia
     family-names: Draxl
-    orcid: 'https://orcid.org/0000-0003-3523-6657'
+    orcid: https://orcid.org/0000-0003-3523-6657
+    affiliation: 1
   - given-names: Sandor
     family-names: Brockhauser
-    orcid: 'https://orcid.org/0000-0002-9700-4803'
+    orcid: https://orcid.org/0000-0002-9700-4803
+    affiliation: 1
 
 affiliations:
- - name: Lyman Spitzer, Jr. Fellow, Princeton University, United States
-   index: 1
-   ror: 00hx57361
- - name: Institution Name, Country
-   index: 2
- - name: Independent Researcher, Country
-   index: 3
+  - name: Department of Physics, Humboldt-Universität zu Berlin, Berlin, Germany
+    index: 1
+  - name: Lehrstuhl für Angewandte Physik, Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany
+    index: 2
+  - name: Department Heterogeneous Reactions, Max Planck Institute for Chemical Energy Conversion, Mülheim an der Ruhr, Germany
+    index: 3
+  - name: Fritz Haber Institute of the Max Planck Society, Berlin, DE
+    index: 4
+  - name: Universität Leipzig Felix-Bloch-Institut für Festkörperphysik, Leipzig, Germany
+    index: 5
 date: 06 June 2025
 bibliography: paper.bib
 
