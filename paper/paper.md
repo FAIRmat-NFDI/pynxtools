@@ -94,7 +94,7 @@ affiliations:
     index: 3
   - name: Fritz Haber Institute of the Max Planck Society, Berlin, DE
     index: 4
-  - name: Universität Leipzig Felix-Bloch-Institut für Festkörperphysik, Leipzig, Germany
+  - name: Felix-Bloch-Institut für Festkörperphysik, Universität Leipzig, Leipzig, Germany
     index: 5
 date: 06 June 2025
 bibliography: paper.bib
