@@ -31,7 +31,7 @@ authors:
   - given-names: Carola
     family-names: Emminger
     orcid: https://orcid.org/0000-0003-4793-1809
-    affiliation: 5
+    affiliation: "1, 5"
   - given-names: Lev
     family-names: Ginzburg
     orcid: https://orcid.org/0000-0001-8929-1040
@@ -39,7 +39,7 @@ authors:
   - given-names: Ron
     family-names: Hildebrandt
     orcid: https://orcid.org/0000-0001-6932-604X
-    affiliation: 5
+    affiliation: "1, 5"
   - given-names: Markus
     family-names: Kühbach
     orcid: https://orcid.org/0000-0002-7117-5196
@@ -86,7 +86,7 @@ authors:
     affiliation: 1
 
 affiliations:
-  - name: Department of Physics, Humboldt-Universität zu Berlin, Berlin, Germany
+  - name: Physics Department and CSMB, Humboldt-Universität zu Berlin, Berlin, Germany
     index: 1
   - name: Lehrstuhl für Angewandte Physik, Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany
     index: 2
