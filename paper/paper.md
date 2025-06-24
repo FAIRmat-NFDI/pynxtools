@@ -92,7 +92,7 @@ affiliations:
     index: 2
   - name: Department Heterogeneous Reactions, Max Planck Institute for Chemical Energy Conversion, Mülheim an der Ruhr, Germany
     index: 3
-  - name: Fritz Haber Institute of the Max Planck Society, Berlin, DE
+  - name: Department of Physical Chemistry, Fritz Haber Institute of the Max Planck Society, Berlin, DE
     index: 4
   - name: Felix-Bloch-Institut für Festkörperphysik, Universität Leipzig, Leipzig, Germany
     index: 5
