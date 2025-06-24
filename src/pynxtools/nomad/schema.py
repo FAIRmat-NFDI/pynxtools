@@ -261,7 +261,6 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                             collection.append(ref_cls(name=sec.name, reference=sec))
                             break
                 # ------------------ ontology service  ------------------
-                print("------------------Load Ontology Service------------------------")
                 try:
                     if hasattr(entry, "definition__field") and entry.definition__field:
                         # Directly use entry.definition__field as class_name
