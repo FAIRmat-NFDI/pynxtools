@@ -231,10 +231,10 @@ By default, the MultiFormatReader supports the following special prefixes:
 
 - `@attrs`: To get metadata from the read-in experiment file(s). You need to implement the `get_attr` method in the reader.
 - `@data`: To get measurement data from the read-in experiment file(s). You need to implement the `get_data` method in the reader.
-- `@eln`: To get metadata from addtional ELN files. You need to implement the `get_eln_data` method in the reader.
+- `@eln`: To get metadata from additional ELN files. You need to implement the `get_eln_data` method in the reader.
 - `@link`: To implement a link between two entities in the NeXus file. By default, the link callback returns a dict of the form {"link": value.replace("/entry/", f"/{self.entry_name}/")}, i.e., a generic `/entry/` get replaced by the actual `entry_name`.
 
-The destinction between data and metadata is somewhat arbitrary here. The reason to have both of these prefixes is to have different methods to access different parts of the read-in data. For example, `@attrs` may just access key-value pairs of a read-in dictionary, whereas `@data` can handle different object types, e.g. xarrays. The implementation in the reader decides how to distinguish data and metadata and what each of the callbacks shall do.
+The distinction between data and metadata is somewhat arbitrary here. The reason to have both of these prefixes is to have different methods to access different parts of the read-in data. For example, `@attrs` may just access key-value pairs of a read-in dictionary, whereas `@data` can handle different object types, e.g. xarrays. The implementation in the reader decides how to distinguish data and metadata and what each of the callbacks shall do.
 
 In addition, the reader can also implement the `get_data_dims` method, which is used to return a list of the data dimensions (see below for more details).
 
@@ -277,18 +277,18 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
 - **Required fields in optional groups**: There will sometimes be the situation that there is an optional NeXus group in an application definition, that (if implemented) requires some sub-element. As an example, for the instrument's energy resolution, the only value expected to come from a data source is the `resolution`, whereas other fields are hardcoded.
   ```json
   "ENTRY/INSTRUMENT[instrument]/energy_resolution": {
-    "resolution": "@attrs:metadata/instrument/electronanalyser/energy_resolution",
+    "resolution": "@attrs:metadata/instrument/electronanalyzer/energy_resolution",
     "resolution/@units": "meV",
     "physical_quantity": "energy"
   }
   ```
-  Now, if there is no data for `@attrs:metadata/instrument/electronanalyser/energy_resolution` available in a dataset, this will be skipped by the reader, and not available, yet the other entries are present. During validation, this means that the required field `resolution` of the optional group `energy_resolution` is not present, and thus a warning or error would be raised:
+  Now, if there is no data for `@attrs:metadata/instrument/electronanalyzer/energy_resolution` available in a dataset, this will be skipped by the reader, and not available, yet the other entries are present. During validation, this means that the required field `resolution` of the optional group `energy_resolution` is not present, and thus a warning or error would be raised:
   ```console
-  LookupError: The data entry, /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution/physical_quantity, has an optional parent, /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution, with required children set. Either provide no children for /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution or provide all required ones.
+  LookupError: The data entry, /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYZER[electronanalyzer]/energy_resolution/physical_quantity, has an optional parent, /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYZER[electronanalyzer]/energy_resolution, with required children set. Either provide no children for /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYZER[electronanalyzer]/energy_resolution or provide all required ones.
   ```
 
     To circumvent this problem, there exists a notation using the `"!"` prefix. If you write
     ```json
-    "ENTRY/INSTRUMENT[instrument]/energy_resolution/resolution": "!@attrs:metadata/instrument/electronanalyser/energy_resolution"
+    "ENTRY/INSTRUMENT[instrument]/energy_resolution/resolution": "!@attrs:metadata/instrument/electronanalyzer/energy_resolution"
     ```
-    the whole parent group `/ENTRY/INSTRUMENT[instrument]/energy_resolution` will _not_ be written in case that there is no value for `@attrs:metadata/instrument/electronanalyser/energy_resolution"`, thus preventing the aforementioned error.
+    the whole parent group `/ENTRY/INSTRUMENT[instrument]/energy_resolution` will _not_ be written in case that there is no value for `@attrs:metadata/instrument/electronanalyzer/energy_resolution"`, thus preventing the aforementioned error.

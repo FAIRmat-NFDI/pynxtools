@@ -25,18 +25,24 @@ We use a Python tool to make converting our research data easier. This has a num
 
 We will use the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xps) with a [SpecsLabProdigy](https://www.specs-group.com/nc/specs/products/detail/prodigy/) file (file extension: .sle) as an example.
 
-#### Steps
+### Steps
 
 1. Download the example files from here: [Example files](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools-xps/tree/main/examples/specs/sle)
+
 2. **Extract** the zip and copy the files in your current working directory. You can find the working directory by typing the following in your terminal:
+
 ```console
 pwd
 ```
+
 3. Install [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation) with the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xps):
+
 ```console
 pip install pynxtools[xps]
 ```
+
 4. Verify you can run the ```dataconverter``` in a terminal window. Open a terminal with the Python environment where you installed ```pynxtools```. Then type the following:
+
 ```console
 dataconverter --help
 ```
@@ -44,6 +50,7 @@ dataconverter --help
 ## Converting the example files
 
 Once you have your files copied into the working directory, your directory structure should look like this:
+
 ```
 ├── README.md
 ├── EX439_S718_Au.sle
@@ -51,9 +58,10 @@ Once you have your files copied into the working directory, your directory struc
 └── params.yaml
 ```
 
-The ```eln_data_sle.yaml``` YAML file is another data file containing additional information (e.g., information about the experimentator) that is not provided in the main data file.
+The ```eln_data_sle.yaml``` YAML file is another data file containing additional information (e.g., information about the experimenter) that is not provided in the main data file.
 
 Next, you will run the conversion routine from your Python environment:
+
 ```console
 dataconverter --params-file params.yaml
 ```

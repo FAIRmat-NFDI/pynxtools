@@ -7,27 +7,33 @@ edit_uri: ""
 
 nav:
   - Home: index.md
+  - Getting started: getting-started.md
   - Tutorials:
+    - tutorial/installation.md
     - tutorial/converting-data-to-nexus.md
     - tutorial/nexus-to-nomad.md
+    - tutorial/contributing.md
   - How-tos:
-    - how-tos/writing-an-appdef.md
-    - how-tos/using-multiple-appdefs.md
-    - how-tos/transformations.md
-    - how-tos/build-a-plugin.md
-    - how-tos/use-multi-format-reader.md
-    - how-tos/using-pynxtools-test-framework.md
-    - how-tos/create-nexus-files-by-python.md
-    - how-tos/validate-nexus-file.md
+    - NeXus:
+      - how-tos/nexus/writing-an-appdef.md
+      # - how-tos/nexus/using-multiple-appdefs.md
+      # - how-tos/nexus/transformations.md
+    - pynxtools:
+      - how-tos/pynxtools/build-a-plugin.md
+      - how-tos/pynxtools/use-multi-format-reader.md
+      - how-tos/pynxtools/using-pynxtools-test-framework.md
+      - how-tos/pynxtools/run-tests-in-parallel.md
+      - how-tos/pynxtools/create-nexus-files-by-python.md
+      - how-tos/pynxtools/validate-nexus-file.md
   - Learn:
     - NeXus:
-      - learn/nexus-primer.md
-      - learn/nexus-rules.md
-      - learn/multiple-appdefs.md
+      - learn/nexus/nexus-primer.md
+      - learn/nexus/nexus-rules.md
+      # - learn/nexus/multiple-appdefs.md
     - pynxtools:
-      - learn/dataconverter-and-readers.md
-      - learn/nexus-validation.md
-      - learn/multi-format-reader.md
+      - learn/pynxtools/dataconverter-and-readers.md
+      - learn/pynxtools/nexus-validation.md
+      - learn/pynxtools/multi-format-reader.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md
@@ -76,6 +82,8 @@ markdown_extensions:
   - pymdownx.emoji
   - mkdocs-click
   - pymdownx.extra
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

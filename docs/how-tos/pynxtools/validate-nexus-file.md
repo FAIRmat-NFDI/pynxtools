@@ -2,61 +2,37 @@
 
 Note: This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation page](../learn/nexus-validation.md).
 
-__The goal__
+In this how-to guide, we will learn how to use different software tools to validate existing NeXus files. Specifically, we want to use tools to validate NeXus files against a given set of NeXus definitions. This can be the official version of the NeXus definitions or a different version used for local development. Here, we will work with two different versions of the definitions.
 
-Use a tool to validate NeXus files to a given set of NeXus definitions:
+  1. [Definitions standardized by the NeXus International Advisory Committee (NIAC)](https://manual.nexusformat.org/)
 
-  1. [FAIRmat](https://fairmat-nfdi.github.io/nexus_definitions/index.html#)
-
-  2. [NIAC](https://manual.nexusformat.org/)
-
+  2. [FAIRmat NeXus proposal](https://fairmat-nfdi.github.io/nexus_definitions/index.html#)
 
 ## Validation of a .nxs file
 
-The validity of NeXus files is fundamental to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented at all in the table? What is the unit of the value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?
+The validity of NeXus files is fundamental to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented in a table? What is the unit of a value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?
 
-The NeXus application definitions define the minimum set of terms that must be used in an instance of that class (i.e., the required terms that you must add to the file in order to be compliant with that application definition). Application definitions also may define terms that are optional in the NeXus data file. The requirements are set by the community via workshops or at conferences. To initiate or propose changes/additions, you can comment the FAIRMat NeXus proposal by going to the [NeXus definitions](https://fairmat-nfdi.github.io/nexus_definitions/index.html#), and using the hypothes.is tool (sign-up/log-in) to give us some feedback (Red boxes in the image. Expand this panel on the left by clicking on the arrow symbol).  
-![image.png](<./attachments/9d748230d54a8059-image.png>)
+The NeXus application definitions define the minimum set of terms that must be reported for a given experiment (i.e., the required terms that you must add to the NeXus file in order to be compliant with that application definition). Application definitions may also define terms that are optional in the NeXus data file. The requirements are set by the community _via_ workshops or at conferences.
 
-Oftentimes, there will be errors in a generated NeXus file (be it by hand or automatically): Typos, missing required concepts, missing attributes, using the incorrect datatype or format (e.g., array instad of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share is FAIR.
+Oftentimes, there will be errors in a generated NeXus file: Typos, missing required concepts, missing attributes, using the incorrect datatype or format (e.g., array instead of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share is FAIR.
 
-The NeXus file is valid if it complies with the respective NeXus application definition.
-
-This validation is done by software.
-
+NeXus files are considered valid if they comply with the respective NeXus application definition.
 
 ### Validation software
 
-There are right now three tools, which can be used for validation of NeXus files. All are different and have individual advantages or disadvantages:
+There are several tools which can be used for validation of NeXus files. All are different and have individual advantages or disadvantages:
 
-1. pynxtools 
+1. [pynxtools](<https://github.com/FAIRmat-NFDI/pynxtools>) - our own software tool
 
-2. cnxvalidate
+2. [cnxvalidate](<https://github.com/nexusformat/cnxvalidate>)
 
-3. punx
+3. [punx](<https://github.com/prjemian/punx>)
 
-Open software is usually shared on Github - There you find usually the most accurate information, as documentation sometimes lags behind. There you see a box with folders and files. Below is the content of the README.md file displayed. This usually shows instructions for installation and handling of the software.
 
-Here are the GitHub links for the three software packages:
-
-[pynxtools](<https://github.com/FAIRmat-NFDI/pynxtools>)
-
-[cnxvalidate](<https://github.com/nexusformat/cnxvalidate>)
-
-[punx](<https://github.com/prjemian/punx>)
-
-In the following, each package and its capabilities is presented.
-
-### Operating systems
-
-Almost all PC users are used to Windows as operating system.
-
-A lot of software development is done on Linux as operating system.
-
-This is not a problem for big companies, but for smaller open software projects, which are often developed without funding, this is a problem.
-
-If you are used to Windows, consider setting up a Linux operating system to eliminate problems in the installation process and ensure compatibility.
-
+??? info "A note on operating systems"
+    Most of these tools were developed using Linux as operating system.
+    If you are on Windows, some of them may not work or you will need additional
+    installation steps than those documented. If you are used to Windows, consider setting up a Linux operating system to eliminate problems in the installation process and ensure compatibility.
 
 ## pynxtools
 
@@ -207,7 +183,7 @@ DEBUG:
                  of NXoptical_spectroscopy.
 ```
 
-or like this, if the respective entry is not found in the defintion:
+or like this, if the respective entry is not found in the definition:
 
 ```
 DEBUG: ===== ATTRS (//entry/instrument/software_RC2/program@url)
@@ -305,7 +281,7 @@ nxvalidate -l appdefdir datafile
 
 1. nxvalidate: calls the software function
 
-2. \-l appdefdir: points to the location of the NeXus definitions you want to use. This is a path to a folder called "defintions".
+2. \-l appdefdir: points to the location of the NeXus definitions you want to use. This is a path to a folder called "definitions".
 
 3. datafile: This is the path to the .nxs file which should be checked.
 
@@ -405,13 +381,13 @@ use cmake, to compile/build the software - this puts together all pieces of soft
 cmake ../
 ```
 
-install cnxvalidate after it was sucessfully build
+install cnxvalidate after it was successfully build
 
 ```
 make
 ```
 
-Now the above mentioned commands should be avaialble. The programm/executable is located at:
+Now the above mentioned commands should be available. The program/executable is located at:
 
 ```
 /home/USER/nexusvalidation/cnxvalidate/build/nxvalidate
@@ -455,7 +431,7 @@ __Get your NeXus file__
 
 put one of created NeXus file (or this [this file](https://zenodo.org/records/13373909/files/NXopt_minimal_example.nxs?download=1)) into the "nexusvalidation" folder (filemanager/explorer).
 
-The file should now be loacted at (assumed the file name is "NXopt_minimal_example.nxs")
+The file should now be located at (assumed the file name is "NXopt_minimal_example.nxs")
 
 ```
 /home/USER/nexusvalidation/NXopt_minimal_example.nxs
@@ -477,7 +453,7 @@ For the provided example, the suitable command looks like:
 /home/USER/nexusvalidation/cnxvalidate/build/nxvalidate -l /home/USER/nexusvalidation/definitions /home/USER/nexusvalidation/NXopt_minimal_example.nxs
 ```
 
-The "-l" option tells the program, that it should look for the nexus definiton at the path after "-l".
+The "-l" option tells the program, that it should look for the nexus definition at the path after "-l".
 
 For the proved file above, the output should look like this:
 
@@ -682,7 +658,7 @@ The program selects the NeXus definitions (set of nxdl.xml files) by itself. It 
 
 Therefore, only the NIAC repository as NeXus definitions is functional.
 
-You may update the repository for the lastest version via:
+You may update the repository for the latest version via:
 
 ```
 punx install
@@ -750,9 +726,9 @@ can be ignored and is a bug right now. If this is the only Error message, then y
 
 ### Further notes
 
-1. Punx only uses the NeXus definiton from the NIAC [NeXus definiton from the NIAC](<https://manual.nexusformat.org/>). The use of the [FAIRmat NeXus definition](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>) is not possible right now.
+1. Punx only uses the [NeXus definitions from the NIAC](<https://manual.nexusformat.org/>). The use of the [FAIRmat NeXus definition](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>) is not possible right now.
 
-2. [Other punx commands are availble](<https://punx.readthedocs.io/en/latest/overview.html#>)
+2. [Other punx commands are available](<https://punx.readthedocs.io/en/latest/overview.html#>)
 
 3. [More details for installation](<https://punx.readthedocs.io/en/latest/install.html>)
 
@@ -785,6 +761,3 @@ For a specifically structured set of data, a parser can be written, which uses t
 1. Best way is to contact the software development team directly via a [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new).
  
 2. ron.hildebrandt(at)physik.hu-berlin.de
-
-
-
