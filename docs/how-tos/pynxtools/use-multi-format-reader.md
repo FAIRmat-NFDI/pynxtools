@@ -8,7 +8,7 @@ While building on the ```BaseReader``` allows for the most flexibility, in most 
 
 Here, we will implement a reader called `MyDataReader` that builds on the `MultiFormatReader`. `MyDataReader` is an example for a reader that can read HDF5 data from a specific technology-partner data set, as well as additional metadata from am electronic lab notebook (in YAML format).
 
-For demonstration purposess, we will work with a very simple mock application definition:
+For demonstration purposes, we will work with a very simple mock application definition:
 
 ```xml  title="NXsimple.nxdl.xml"
 <definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" type="group" name="NXsimple" extends="NXobject" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
@@ -251,7 +251,7 @@ Next up, we can make use of the config file, which is a JSON file that tells the
 }
 ```
 
-Note that here we are using `@`-prefixes which are used to fill the template from the different data sources. We dicuss this below in more detail.
+Note that here we are using `@`-prefixes which are used to fill the template from the different data sources. We discuss this below in more detail.
 
 We also implement a method for setting the config file in the reader:
 

@@ -27,6 +27,21 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
+      - name: Install spellcheck dependencies
+        run: |
+          npm install -g cspell jq
+
+      - name: Run cspell and format results
+        run: |
+          cspell --config cspell.json "docs/**/*.md"
+      
+      - name: Fail on errors
+          run: |
+            if [[ $? -ne 0 ]]; then
+              echo "There are spelling errors in the documentation. Please fix them and try again."
+              exit 1
+            fi
+
       - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
