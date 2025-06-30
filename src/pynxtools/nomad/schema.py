@@ -25,11 +25,12 @@ import types
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
+import zipfile
 from typing import Any, Optional, Union
 
-import orjson
 import h5py
 import numpy as np
+import orjson
 import pandas as pd
 from ase import Atoms
 from ase.data import atomic_numbers
@@ -87,11 +88,10 @@ from pynxtools.nomad.utils import (
     NX_TYPES,
     REPLACEMENT_FOR_NX,
     _rename_nx_for_nomad,
-    get_quantity_base_name,
     get_package_filepath,
+    get_quantity_base_name,
 )
 from pynxtools.units import NXUnitSet, ureg
-
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -559,7 +559,7 @@ def normalize_atom_probe(self, archive, logger):
     build_nomad_topology(archive)
 
 
-BASESECTIONS_MAP: Dict[str, Any] = {
+BASESECTIONS_MAP: dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
@@ -569,7 +569,7 @@ BASESECTIONS_MAP: Dict[str, Any] = {
     "NXdata": [NexusActivityResult],
 }
 
-NORMALIZER_MAP: Dict[str, Any] = {
+NORMALIZER_MAP: dict[str, Any] = {
     _rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     _rename_nx_for_nomad("NXsample"): normalize_sample,
     _rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
@@ -596,18 +596,6 @@ def get_nx_type(nx_type: str) -> Datatype | None:
     if nx_type in NX_TYPES:
         return NX_TYPES[nx_type]().no_type_check().no_shape_check()
     return None
-
-
-# def _to_camel_case(snake_str: str, upper: bool = False) -> str:
-#     """
-#     Take as input a snake case variable and return a camel case one
-#     """
-#     components = snake_str.split("_")
-
-#     if upper:
-#         return "".join(x.capitalize() for x in components)
-
-#     return components[0] + "".join(x.capitalize() for x in components[1:])
 
 
 def _if_base(xml_node: ET.Element) -> bool:

@@ -132,7 +132,7 @@ def load(hdf, lazy=True, unpacker=unpack_dataset, mode="r", *args, **kwargs):
 
     def _recurse(hdfobject, datadict):
         for key, value in hdfobject.items():
-            if type(value) == h5py.Group or isinstance(value, LazyHdfDict):  # noqa: E721
+            if isinstance(value, h5py.Group | LazyHdfDict):
                 if lazy:
                     datadict[key] = LazyHdfDict()
                 else:
@@ -221,6 +221,8 @@ def dump(data, hdf, packer=pack_dataset, mode="w", *args, **kwargs):
 
     def _recurse(datadict, hdfobject):
         for key, value in datadict.items():
+            if isinstance(key, tuple):
+                key = "_".join(str(i) for i in key)
             if isinstance(value, dict | LazyHdfDict):
                 hdfgroup = hdfobject.create_group(key)
                 _recurse(value, hdfgroup)
