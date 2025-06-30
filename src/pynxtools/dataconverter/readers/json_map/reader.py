@@ -45,11 +45,11 @@ def get_val_nested_keystring_from_dict(keystring, data):
     Fetches data from the actual data dict using path strings without a leading '/':
         'path/to/data/in/dict'
     """
-    if isinstance(keystring, (list, dict)):
+    if isinstance(keystring, list | dict):
         return keystring
 
     current_key = keystring.split("/")[0]
-    if isinstance(data[current_key], (dict, hdfdict.LazyHdfDict)):
+    if isinstance(data[current_key], dict | hdfdict.LazyHdfDict):
         return get_val_nested_keystring_from_dict(
             keystring[keystring.find("/") + 1 :], data[current_key]
         )
@@ -68,7 +68,7 @@ def get_attrib_nested_keystring_from_dict(keystring, data):
     Fetches all attributes from the data dict using path strings without a leading '/':
         'path/to/data/in/dict'
     """
-    if isinstance(keystring, (list, dict)):
+    if isinstance(keystring, list | dict):
         return keystring
 
     key_splits = keystring.split("/")
