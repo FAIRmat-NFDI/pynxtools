@@ -156,7 +156,7 @@ class NexusNode(NodeMixin):
 
     name: str
     type: Literal["group", "field", "attribute", "choice"]
-    name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
+    name_type: Literal["specified", "any", "partial"] | None = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
     inheritance: list[ET._Element]
@@ -190,12 +190,12 @@ class NexusNode(NodeMixin):
         self,
         name: str,
         type: Literal["group", "field", "attribute", "choice"],
-        name_type: Optional[Literal["specified", "any", "partial"]] = "specified",
+        name_type: Literal["specified", "any", "partial"] | None = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
-        variadic: Optional[bool] = None,
+        variadic: bool | None = None,
         parent: Optional["NexusNode"] = None,
-        inheritance: Optional[list[Any]] = None,
-        nxdl_base: Optional[str] = None,
+        inheritance: list[Any] | None = None,
+        nxdl_base: str | None = None,
     ) -> None:
         super().__init__()
         self.name = name
@@ -307,9 +307,9 @@ class NexusNode(NodeMixin):
 
     def get_all_direct_children_names(
         self,
-        node_type: Optional[str] = None,
-        nx_class: Optional[str] = None,
-        depth: Optional[int] = None,
+        node_type: str | None = None,
+        nx_class: str | None = None,
+        depth: int | None = None,
         only_appdef: bool = False,
     ) -> set[str]:
         """
@@ -425,7 +425,7 @@ class NexusNode(NodeMixin):
 
         return req_children
 
-    def get_docstring(self, depth: Optional[int] = None) -> dict[str, str]:
+    def get_docstring(self, depth: int | None = None) -> dict[str, str]:
         """
         Gets the docstrings of the current node and its parents up to a certain depth.
 
@@ -705,8 +705,8 @@ class NexusGroup(NexusNode):
     nx_class: str
     occurrence_limits: tuple[
         # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
-        Optional[int],
-        Optional[int],
+        int | None,
+        int | None,
     ] = (None, None)
 
     def _check_sibling_namefit(self):
@@ -860,11 +860,11 @@ class NexusEntity(NexusNode):
     """
 
     type: Literal["field", "attribute"]
-    unit: Optional[NexusUnitCategory] = None
+    unit: NexusUnitCategory | None = None
     dtype: NexusType = "NX_CHAR"
-    items: Optional[list[str]] = None
+    items: list[str] | None = None
     open_enum: bool = False
-    shape: Optional[tuple[Optional[int], ...]] = None
+    shape: tuple[int | None, ...] | None = None
 
     def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
         """Check compatibility of this node with an XML element from the (possible) inheritance"""
@@ -958,7 +958,7 @@ class NexusEntity(NexusNode):
                         return True
                 elem_dim = elem_dimensions.findall("nx:dim", namespaces=namespaces)
                 elem_dimension_rank = rank if rank is not None else len(rank)
-                dims: list[Optional[int]] = [None] * int(rank)
+                dims: list[int | None] = [None] * int(rank)
 
                 for dim in elem_dim:
                     idx = int(dim.attrib["index"])
@@ -1074,7 +1074,7 @@ class NexusEntity(NexusNode):
                 return
         xml_dim = dimension.findall("nx:dim", namespaces=namespaces)
         rank = rank if rank is not None else len(xml_dim)
-        dims: list[Optional[int]] = [None] * int(rank)
+        dims: list[int | None] = [None] * int(rank)
         for dim in xml_dim:
             idx = int(dim.attrib["index"])
             if "value" not in dim.attrib:

@@ -52,7 +52,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     THIS IS JUST A FUNCTION SKELETON AND IS NOT WORKING YET!
     """
 
-    def validate(name: str, data: Union[h5py.Group, h5py.Dataset]):
+    def validate(name: str, data: h5py.Group | h5py.Dataset):
         # Namefit name against tree (use recursive caching)
         pass
 
@@ -112,7 +112,7 @@ def build_nested_dict_from(
     return default_to_regular_dict(data_tree)
 
 
-def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
+def split_class_and_name_of(name: str) -> tuple[str | None, str]:
     """
     Return the class and the name of a data dict entry of the form
     `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
@@ -142,7 +142,7 @@ def best_namefit_of(
     nodes: Iterable[NexusNode],
     expected_types: list[str],
     check_types: bool = False,
-) -> Optional[NexusNode]:
+) -> NexusNode | None:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -525,8 +525,8 @@ def validate_dict_against(
         return path
 
     def _follow_link(
-        keys: Optional[Mapping[str, Any]], prev_path: str, p=False
-    ) -> Optional[Any]:
+        keys: Mapping[str, Any] | None, prev_path: str, p=False
+    ) -> Any | None:
         """
         Resolves internal dictionary "links" by replacing any keys containing a
         {"link": "/path/to/target"} structure with the actual referenced content.
@@ -742,7 +742,7 @@ def validate_dict_against(
 
     def add_best_matches_for(
         key: str, node: NexusNode, check_types: bool = False
-    ) -> Optional[NexusNode]:
+    ) -> NexusNode | None:
         key_components = key[1:].split("/")
         is_last_attr = key_components[-1].startswith("@")
         if is_last_attr:
@@ -894,7 +894,7 @@ def validate_dict_against(
         node: NexusNode,
         keys: Mapping[str, Any],
         prev_path: str = "",
-        ignore_names: Optional[list[str]] = None,
+        ignore_names: list[str] | None = None,
     ):
         for child in node.children:
             if ignore_names is not None and child.name in ignore_names:
@@ -1094,7 +1094,7 @@ def validate_dict_against(
     def check_type_with_tree(
         node: NexusNode,
         path: str,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
             Recursively search for the type of the object from Template
             (described by path) using subtree hanging below the node.
@@ -1476,7 +1476,7 @@ def validate_dict_against(
     return not collector.has_validation_problems()
 
 
-def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
+def populate_full_tree(node: NexusNode, max_depth: int | None = 5, depth: int = 0):
     """
     Recursively populate the full tree.
 

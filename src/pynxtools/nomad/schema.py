@@ -21,15 +21,15 @@ import json
 import os
 import re
 import sys
-import zipfile
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
+import zipfile
 from typing import Any, Optional, Union
 
-import orjson
 import h5py
 import numpy as np
+import orjson
 import pandas as pd
 from ase import Atoms
 from ase.data import atomic_numbers
@@ -87,11 +87,10 @@ from pynxtools.nomad.utils import (
     NX_TYPES,
     REPLACEMENT_FOR_NX,
     _rename_nx_for_nomad,
-    get_quantity_base_name,
     get_package_filepath,
+    get_quantity_base_name,
 )
 from pynxtools.units import NXUnitSet, ureg
-
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -559,7 +558,7 @@ def normalize_atom_probe(self, archive, logger):
     build_nomad_topology(archive)
 
 
-BASESECTIONS_MAP: Dict[str, Any] = {
+BASESECTIONS_MAP: dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
@@ -569,7 +568,7 @@ BASESECTIONS_MAP: Dict[str, Any] = {
     "NXdata": [NexusActivityResult],
 }
 
-NORMALIZER_MAP: Dict[str, Any] = {
+NORMALIZER_MAP: dict[str, Any] = {
     _rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     _rename_nx_for_nomad("NXsample"): normalize_sample,
     _rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
@@ -589,25 +588,13 @@ XML_PARENT_MAP: dict[ET.Element, ET.Element]
 PACKAGE_NAME = "pynxtools.nomad.schema"
 
 
-def get_nx_type(nx_type: str) -> Optional[Datatype]:
+def get_nx_type(nx_type: str) -> Datatype | None:
     """
     Get the nexus type by name
     """
     if nx_type in NX_TYPES:
         return NX_TYPES[nx_type]().no_type_check().no_shape_check()
     return None
-
-
-# def _to_camel_case(snake_str: str, upper: bool = False) -> str:
-#     """
-#     Take as input a snake case variable and return a camel case one
-#     """
-#     components = snake_str.split("_")
-
-#     if upper:
-#         return "".join(x.capitalize() for x in components)
-
-#     return components[0] + "".join(x.capitalize() for x in components[1:])
 
 
 def _if_base(xml_node: ET.Element) -> bool:
@@ -640,13 +627,11 @@ def _if_repeats(name: str, max_occurs: str) -> bool:
     return repeats
 
 
-def _if_template(name: Optional[str]) -> bool:
+def _if_template(name: str | None) -> bool:
     return name is None or name.lower() != name
 
 
-def _get_documentation_url(
-    xml_node: ET.Element, nx_type: Optional[str]
-) -> Optional[str]:
+def _get_documentation_url(xml_node: ET.Element, nx_type: str | None) -> str | None:
     """
     Get documentation url
     """
@@ -737,7 +722,7 @@ def to_section(name: str, **kwargs) -> Section:
     return section
 
 
-def _get_enumeration(xml_node: ET.Element) -> tuple[Optional[MEnum], Optional[bool]]:
+def _get_enumeration(xml_node: ET.Element) -> tuple[MEnum | None, bool | None]:
     """
     Get the enumeration field from xml node
     """
@@ -797,7 +782,7 @@ def _add_common_properties(xml_node: ET.Element, definition: Definition):
 
 
 def _create_attributes(
-    xml_node: ET.Element, definition: Union[Section, Quantity], field: Quantity = None
+    xml_node: ET.Element, definition: Section | Quantity, field: Quantity = None
 ):
     """
     Add all attributes in the given nexus XML node to the given
@@ -1223,7 +1208,7 @@ def _sort_nxdl_files(paths):
     return validated_names
 
 
-def add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
+def add_section_from_nxdl(xml_node: ET.Element) -> Section | None:
     """
     Creates a metainfo section from a nxdl file.
     """
@@ -1288,7 +1273,7 @@ def create_package_from_nxdl_directories() -> Package:
     return package
 
 
-nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
+nexus_metainfo_package: Package | None = None  # pylint: disable=C0103
 
 
 def save_nexus_schema():

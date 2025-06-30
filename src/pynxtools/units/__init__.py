@@ -38,7 +38,7 @@ class NXUnitSet:
     - 'transformation' -> specially handled elsewhere
     """
 
-    mapping: dict[str, Optional[str]] = {
+    mapping: dict[str, str | None] = {
         "NX_ANGLE": "[angle]",
         "NX_ANY": None,
         "NX_AREA": "[area]",
@@ -74,10 +74,10 @@ class NXUnitSet:
         "NX_WAVENUMBER": "1 / [length]",
     }
 
-    _dimensionalities: dict[str, Optional[Any]] = {}
+    _dimensionalities: dict[str, Any | None] = {}
 
     @classmethod
-    def get_dimensionality(cls, nx_unit: str) -> Optional[Any]:
+    def get_dimensionality(cls, nx_unit: str) -> Any | None:
         """
         Get the dimensionality object for a given NeXus unit category or example.
 

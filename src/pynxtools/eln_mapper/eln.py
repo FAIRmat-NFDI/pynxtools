@@ -37,7 +37,7 @@ logger = logging.getLogger("pynxtools")
 NODES_TO_SKIP: list[str] = ["definition"]
 
 
-def clean_filters(filter_list: Optional[list[str]]) -> Optional[list[str]]:
+def clean_filters(filter_list: list[str] | None) -> list[str] | None:
     """
     Clean list of filters by converting keys from data converter style path"
     to NXDL style path:
@@ -48,7 +48,7 @@ def clean_filters(filter_list: Optional[list[str]]) -> Optional[list[str]]:
     return [convert_data_converter_dict_to_nxdl_path(key) for key in filter_list]
 
 
-def _should_skip_iteration(node: NexusNode, filter_list: Optional[list[str]]) -> bool:
+def _should_skip_iteration(node: NexusNode, filter_list: list[str] | None) -> bool:
     """Filter those nodes that are _not_ in filter_list.
 
     Parameters
@@ -67,10 +67,10 @@ class ElnGenerator(ABC):
     def __init__(
         self,
         nxdl: str,
-        output_file: Optional[str] = None,
+        output_file: str | None = None,
         skip_top_levels: int = 0,
-        optionality: Optional[str] = "required",
-        filter: Optional[list[str]] = None,
+        optionality: str | None = "required",
+        filter: list[str] | None = None,
     ) -> None:
         self.nxdl = nxdl
         self.output_file = output_file

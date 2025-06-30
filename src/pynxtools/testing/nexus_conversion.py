@@ -106,7 +106,7 @@ class ReaderTest:
         )
         assert callable(self.reader.read), f"Reader{self.reader} must have read method"
 
-        if isinstance(self.files_or_dir, (list, tuple)):
+        if isinstance(self.files_or_dir, list | tuple):
             example_files = self.files_or_dir
         else:
             example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))

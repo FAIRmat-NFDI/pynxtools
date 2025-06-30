@@ -49,7 +49,7 @@ class FlattenSettings:
     parent_key: str = "/ENTRY[entry]"
     sep: str = "/"
     is_in_section: bool = False
-    ignore_keys: Optional[list] = None
+    ignore_keys: list | None = None
 
 
 def is_section(val: Any) -> bool:
@@ -172,8 +172,8 @@ def flatten_and_replace(settings: FlattenSettings) -> dict:
 
 def parse_yml(
     file_path: str,
-    convert_dict: Optional[dict] = None,
-    replace_nested: Optional[dict] = None,
+    convert_dict: dict | None = None,
+    replace_nested: dict | None = None,
     parent_key: str = "/ENTRY[entry]",
 ) -> dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
@@ -208,8 +208,8 @@ short_notation_regex = re.compile(r"\*\{([\w,]+)\}")
 
 def flatten_json(
     json_data: dict[str, Any],
-    base_key: Optional[str] = None,
-    replacement_key: Optional[str] = None,
+    base_key: str | None = None,
+    replacement_key: str | None = None,
     dont_flatten_link_dict: bool = False,
     create_link_dict: bool = True,
 ) -> dict[str, Any]:
@@ -288,7 +288,7 @@ def flatten_json(
     return flattened_config
 
 
-def parse_json(file_path: Union[str, Path]) -> dict[str, Any]:
+def parse_json(file_path: str | Path) -> dict[str, Any]:
     """Parses a metadata json file into a dictionary.
 
     Args:
@@ -302,7 +302,7 @@ def parse_json(file_path: Union[str, Path]) -> dict[str, Any]:
 
 
 def parse_flatten_json(
-    file_path: Union[str, Path],
+    file_path: str | Path,
     create_link_dict: bool = True,
 ) -> dict[str, Any]:
     """
