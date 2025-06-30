@@ -198,6 +198,7 @@ cython_debug/
 .pyenv
 *.pyc
 *.txt
+!.cspell/custom-dictionary.txt
 !requirements.txt
 !dev-requirements.txt
 !mkdocs-requirements.txt

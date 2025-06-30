@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the master branch
+      - restructure-docs
   
 env:
   python-version: 3.12
@@ -36,11 +37,11 @@ jobs:
           cspell --config cspell.json "docs/**/*.md"
       
       - name: Fail on errors
-          run: |
-            if [[ $? -ne 0 ]]; then
-              echo "There are spelling errors in the documentation. Please fix them and try again."
-              exit 1
-            fi
+        run: |
+          if [[ $? -ne 0 ]]; then
+            echo "There are spelling errors in your code. Please fix them and try again."
+            exit 1
+          fi
 
       - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5

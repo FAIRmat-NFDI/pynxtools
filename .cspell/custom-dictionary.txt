@@ -1,0 +1,89 @@
+# Custom Dictionary Words
+
+## NeXus related words
+AXISNAME
+namefitting
+NIAC
+NXDL
+
+## LateX, XML
+
+# Words related to experimental techniques
+
+# Software
+caplog
+cnxvalidate
+dataconverter
+DECTRIS
+electronanalyzer
+ELECTRONANALYZER
+ellipsometry
+infty
+libiconv
+loadgroup
+mainfile
+MSYS
+nexpy
+nxdls
+PATHCONV
+posint
+punx
+pynxtools
+xarrays
+xdist
+
+# examples
+appdefdir
+CSET
+ellips
+FAIRMAT
+filemanager
+fxcef
+hildebrandt
+hixu
+infile
+kfra
+libhdf
+mydata
+mydatareader
+mynxdl
+nexusvalidate
+nexusvalidation
+NULLTERM
+otherfile
+physik
+STRPAD
+STRSIZE
+xfbaa
+
+# related to experimental techniques
+arpes
+ARPES
+Bluesky
+mbar
+MPES
+Raman
+
+# Names
+Forschungsgemeinschaft
+José
+Kühbach
+Lukas
+lukaspie
+Markus
+mkuehbach
+Mozumder
+NFDI
+Pielsticker
+Shabih
+Sherjeel
+sherjeelshabih
+
+# other languages
+
+# en-UK which requires to many changes
+
+# misc
+appdefs
+hypothes
+speciality
