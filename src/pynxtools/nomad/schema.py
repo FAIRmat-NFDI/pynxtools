@@ -31,7 +31,6 @@ from typing import Any, Optional, Union
 import h5py
 import numpy as np
 import pandas as pd
-import pint
 from ase import Atoms
 from ase.data import atomic_numbers
 from scipy.spatial import cKDTree
@@ -74,7 +73,6 @@ try:
     from nomad.metainfo.metainfo import resolve_variadic_name
     from nomad.normalizing.common import nomad_atoms_from_ase_atoms
     from nomad.normalizing.topology import add_system, add_system_info
-    from nomad.units import ureg
     from nomad.utils import get_logger, hash, strip
 
 except ImportError as exc:
@@ -91,6 +89,7 @@ from pynxtools.nomad.utils import (
     _rename_nx_for_nomad,
     get_quantity_base_name,
 )
+from pynxtools.units import NXUnitSet, ureg
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -325,68 +324,6 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
     if nx_type in NX_TYPES:
         return NX_TYPES[nx_type]().no_type_check().no_shape_check()
     return None
-
-
-class NXUnitSet:
-    """
-    maps from `NX_` token to dimensionality
-    None -> disable dimensionality check
-    '1' -> dimensionless quantities
-    'transformation' -> Specially handled in metainfo
-    """
-
-    mapping: dict = {
-        "NX_ANGLE": "[angle]",
-        "NX_ANY": None,
-        "NX_AREA": "[area]",
-        "NX_CHARGE": "[charge]",
-        "NX_COUNT": "1",
-        "NX_CROSS_SECTION": "[area]",
-        "NX_CURRENT": "[current]",
-        "NX_DIMENSIONLESS": "1",
-        "NX_EMITTANCE": "[length] * [angle]",
-        "NX_ENERGY": "[energy]",
-        "NX_FLUX": "1 / [time] / [area]",
-        "NX_FREQUENCY": "[frequency]",
-        "NX_LENGTH": "[length]",
-        "NX_MASS": "[mass]",
-        "NX_MASS_DENSITY": "[mass] / [volume]",
-        "NX_MOLECULAR_WEIGHT": "[mass] / [substance]",
-        "NX_PERIOD": "[time]",
-        "NX_PER_AREA": "1 / [area]",
-        "NX_PER_LENGTH": "1 / [length]",
-        "NX_POWER": "[power]",
-        "NX_PRESSURE": "[pressure]",
-        "NX_PULSES": "1",
-        "NX_SCATTERING_LENGTH_DENSITY": "1 / [area]",
-        "NX_SOLID_ANGLE": "[angle] * [angle]",
-        "NX_TEMPERATURE": "[temperature]",
-        "NX_TIME": "[time]",
-        "NX_TIME_OF_FLIGHT": "[time]",
-        "NX_TRANSFORMATION": "transformation",
-        "NX_UNITLESS": "1",
-        "NX_VOLTAGE": "[energy] / [current] / [time]",
-        "NX_VOLUME": "[volume]",
-        "NX_WAVELENGTH": "[length]",
-        "NX_WAVENUMBER": "1 / [length]",
-    }
-
-    @staticmethod
-    def normalise(value: str) -> str:
-        """
-        Normalise the given token
-        """
-        value = value.upper()
-        if not value.startswith("NX_"):
-            value = "NX_" + value
-        return value
-
-    @staticmethod
-    def is_nx_token(value: str) -> bool:
-        """
-        Check if a given token is one of NX tokens
-        """
-        return NXUnitSet.normalise(value) in NXUnitSet.mapping.keys()
 
 
 # def _to_camel_case(snake_str: str, upper: bool = False) -> str:
@@ -747,21 +684,16 @@ def _create_field(xml_node: ET.Element, container: Section) -> Quantity:
     # dimensionality
     nx_dimensionality = xml_attrs.get("units", None)
     if nx_dimensionality:
-        dimensionality = NXUnitSet.mapping.get(nx_dimensionality)
-        if not dimensionality and nx_dimensionality != "NX_ANY":
-            try:
-                quantity = 1 * ureg(nx_dimensionality)
-                if quantity.dimensionality == "dimensionless":
-                    dimensionality = "1"
-                else:
-                    dimensionality = str(quantity.dimensionality)
-            except (
-                pint.errors.UndefinedUnitError,
-                pint.errors.DefinitionSyntaxError,
-            ) as err:
-                raise NotImplementedError(
-                    f"Unit {nx_dimensionality} is not supported for {name}."
-                ) from err
+        if nx_dimensionality == "NX_TRANSFORMATION":
+            # TODO: Remove workaround for NX_TRANSFORMATTION
+            nx_dimensionality = "NX_ANY"
+        dimensionality = NXUnitSet.get_dimensionality(nx_dimensionality)
+        if dimensionality is not None:
+            dimensionality = str(dimensionality)
+        elif nx_dimensionality != "NX_ANY":
+            raise NotImplementedError(
+                f"Unit {nx_dimensionality} is not supported for {name}."
+            )
     else:
         dimensionality = None
 

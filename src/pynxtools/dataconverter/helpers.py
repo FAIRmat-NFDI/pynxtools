@@ -49,6 +49,7 @@ logger = logging.getLogger("pynxtools")
 class ValidationProblem(Enum):
     DifferentVariadicNodesWithTheSameName = auto()
     UnitWithoutDocumentation = auto()
+    InvalidUnit = auto()
     InvalidEnum = auto()
     OpenEnumWithNewItem = auto()
     MissingRequiredGroup = auto()
@@ -99,6 +100,13 @@ class Collector:
             logger.info(
                 f"The unit, {path} = {value}, is being written but has no documentation."
             )
+        if log_type == ValidationProblem.InvalidUnit:
+            value = cast(Any, value)
+            log_text = f"The unit '{args[0]}' at {path} does not match with the unit category {value.unit} of '{value.name}'."
+            if len(args) == 2 and args[1] is not None:
+                log_text += f" Based on the 'transformation_type' of the field {path.replace('/@units', '')}, it should match with '{args[1]}'."
+            logger.warning(log_text)
+
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
                 f"The value at {path} should be one of the following: {value}."

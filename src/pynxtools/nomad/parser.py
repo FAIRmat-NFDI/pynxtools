@@ -33,7 +33,6 @@ try:
     from nomad.metainfo import MEnum, MSection
     from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
     from nomad.parsing import MatchingParser
-    from nomad.units import ureg
     from nomad.utils import get_logger
     from pint.errors import UndefinedUnitError
 except ImportError as exc:
@@ -49,6 +48,7 @@ from pynxtools.nomad.utils import (
     get_quantity_base_name,
 )
 from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.units import ureg
 
 
 def _to_group_name(nx_node: ET.Element):
