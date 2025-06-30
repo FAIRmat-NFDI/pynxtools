@@ -8,7 +8,6 @@ import os
 import subprocess
 from fastapi.responses import RedirectResponse
 from ..NeXusOntology.script.generate_ontology import main as generate_ontology
-import logging
 import pygit2
 
 #######################################################################
@@ -38,12 +37,10 @@ def ensure_ontology_file():
         owl_file_path = os.path.join(ontology_dir, owl_file_name)
         # Check if the ontology file exists
         if not os.path.exists(owl_file_path):
-            print(f"Ontology file '{owl_file_name}' not found. Generating it...")
             generate_ontology(full=True, nexus_def_path=nexus_def_path, def_commit=latest_commit_hash)
             # Rename the generated file to include the commit hash
             generated_file_path = os.path.join(ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl")	
             os.rename(generated_file_path, owl_file_path)
-            print(f"Ontology file generated and saved as '{owl_file_name}'.")
 
         # Update the OWL_FILE_PATH to point to the correct file
         OWL_FILE_PATH = owl_file_path
@@ -92,21 +89,14 @@ def startup_event():
 def root():
     return RedirectResponse(url="/docs")
 
-import logging
-logging.basicConfig(level=logging.DEBUG)
 
 @app.get("/superclasses/{class_name}")
 def get_superclasses_route(class_name: str):
-    logging.debug(f"Received request for class_name: {class_name}")
     try:
         ontology = load_ontology()
-        logging.debug("Ontology loaded successfully.")
         superclasses = fetch_superclasses(ontology, class_name)
-        logging.debug(f"Fetched superclasses: {superclasses}")
         return {"superclasses": [str(cls) for cls in superclasses]}
     except ValueError as e:
-        logging.error(f"ValueError: {e}")
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="An internal error occurred.")
