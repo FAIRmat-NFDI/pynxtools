@@ -187,8 +187,8 @@ def validate_hdf_group_against(
     def best_namefit_of(
         name: str,
         nodes: Iterable[NexusNode],
-        hint: Optional[Literal["axis", "signal"]] = None,
-    ) -> Optional[NexusNode]:
+        hint: Literal["axis", "signal"] | None = None,
+    ) -> NexusNode | None:
         """
         Get the best namefit of `name` in `nodes`.
 
@@ -233,10 +233,10 @@ def validate_hdf_group_against(
     )
     def find_node_for(
         path: str,
-        node_type: Optional[Literal["group", "field", "attribute"]] = None,
-        nx_class: Optional[str] = None,
-        hint: Optional[Literal["axis", "signal"]] = None,
-    ) -> Optional[NexusNode]:
+        node_type: Literal["group", "field", "attribute"] | None = None,
+        nx_class: str | None = None,
+        hint: Literal["axis", "signal"] | None = None,
+    ) -> NexusNode | None:
         """
         Find the NexusNode for a given HDF5 path, optionally constrained by node type and NX_class.
 
@@ -324,7 +324,7 @@ def validate_hdf_group_against(
         required_entities.update(required_subentities)
 
     def _variadic_node_exists_for(
-        path: str, variadic_name: str, node_type: Optional[str] = None
+        path: str, variadic_name: str, node_type: str | None = None
     ):
         """
         Check if a variadic node exists that matches a given path and node type.
@@ -593,7 +593,7 @@ def validate_hdf_group_against(
     def handle_field(
         path: str,
         dataset: h5py.Dataset,
-        hint: Optional[Literal["axis", "signal"]] = None,
+        hint: Literal["axis", "signal"] | None = None,
     ):
         """
         Validate a NeXus field (dataset) within the HDF5 structure.
@@ -689,7 +689,7 @@ def validate_hdf_group_against(
     def handle_attributes(
         path: str,
         attrs: h5py.AttributeManager,
-        parent_obj: Union[h5py.Group, h5py.Dataset],
+        parent_obj: h5py.Group | h5py.Dataset,
     ):
         """
         Validate attributes on a given HDF5 object.
@@ -757,7 +757,7 @@ def validate_hdf_group_against(
                 data,
             )
 
-    def validate(path: str, h5_obj: Union[h5py.Group, h5py.Dataset]):
+    def validate(path: str, h5_obj: h5py.Group | h5py.Dataset):
         """
         Dispatch validation for either groups or fields based on object type.
 
@@ -1191,9 +1191,7 @@ def validate_dict_against(
             not_visited.remove(path)
         return path
 
-    def _follow_link(
-        keys: Optional[Mapping[str, Any]], prev_path: str
-    ) -> Optional[Any]:
+    def _follow_link(keys: Mapping[str, Any] | None, prev_path: str) -> Any | None:
         """
         Resolves internal dictionary "links" by replacing any keys containing a
         {"link": "/path/to/target"} structure with the actual referenced content.
@@ -1481,7 +1479,7 @@ def validate_dict_against(
         nodes: Iterable[NexusNode],
         expected_types: list[str],
         check_types: bool = False,
-    ) -> Optional[NexusNode]:
+    ) -> NexusNode | None:
         """
         Get the best namefit of `name` in `keys`.
 
@@ -1559,7 +1557,7 @@ def validate_dict_against(
 
     def add_best_matches_for(
         key: str, node: NexusNode, check_types: bool = False
-    ) -> Optional[NexusNode]:
+    ) -> NexusNode | None:
         key_components = key[1:].split("/")
         is_last_attr = key_components[-1].startswith("@")
         if is_last_attr:
@@ -1729,7 +1727,7 @@ def validate_dict_against(
         node: NexusNode,
         keys: Mapping[str, Any],
         prev_path: str = "",
-        ignore_names: Optional[list[str]] = None,
+        ignore_names: list[str] | None = None,
     ):
         for child in node.children:
             if ignore_names is not None and child.name in ignore_names:
@@ -1862,7 +1860,7 @@ def validate_dict_against(
 
     def get_definition(
         key: str,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Get the definition value (application definition) for a given key.
 
@@ -2031,7 +2029,7 @@ def validate_dict_against(
     return not collector.has_validation_problems()
 
 
-def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
+def populate_full_tree(node: NexusNode, max_depth: int | None = 5, depth: int = 0):
     """
     Recursively populate the full tree.
 
