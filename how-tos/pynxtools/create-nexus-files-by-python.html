@@ -25,7 +25,7 @@
     
     
       
-        <title>Use Python to create NeXus files - Documentation</title>
+        <title>Using Python to create NeXus files - Documentation</title>
       
     
     
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#use-python-to-create-nexus-files" class="md-skip">
+        <a href="#using-python-to-create-nexus-files" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Use Python to create NeXus files
+              Using Python to create NeXus files
             
           </span>
         </div>
@@ -272,7 +272,7 @@
   
   
   <span class="md-ellipsis">
-    Installation guide
+    Installation
     
   </span>
   
@@ -295,7 +295,7 @@
   
   
   <span class="md-ellipsis">
-    Converting research data to NeXus
+    Converting your research data to NeXus
     
   </span>
   
@@ -318,7 +318,7 @@
   
   
   <span class="md-ellipsis">
-    Uploading NeXus files to NOMAD
+    Uploading NeXus data to NOMAD
     
   </span>
   
@@ -341,7 +341,7 @@
   
   
   <span class="md-ellipsis">
-    Development
+    Development guide
     
   </span>
   
@@ -449,7 +449,7 @@
   
   
   <span class="md-ellipsis">
-    Writing a Simple Application Definition
+    Writing an application definition
     
   </span>
   
@@ -621,7 +621,7 @@
   
   
   <span class="md-ellipsis">
-    Use Python to create NeXus files
+    Using Python to create NeXus files
     
   </span>
   
@@ -634,7 +634,7 @@
   
   
   <span class="md-ellipsis">
-    Use Python to create NeXus files
+    Using Python to create NeXus files
     
   </span>
   
@@ -746,7 +746,7 @@
   
   
   <span class="md-ellipsis">
-    Validating NeXus files
+    Validation of NeXus files
     
   </span>
   
@@ -975,7 +975,7 @@
   
   
   <span class="md-ellipsis">
-    NeXus validation
+    Validation of NeXus file
     
   </span>
   
@@ -1120,7 +1120,7 @@
   
   
   <span class="md-ellipsis">
-    Built-in readers
+    Built-in pynxtools readers
     
   </span>
   
@@ -1143,7 +1143,7 @@
   
   
   <span class="md-ellipsis">
-    Plugins
+    FAIRmat-supported pynxtools plugins
     
   </span>
   
@@ -1272,15 +1272,18 @@
 
 
 
-<h1 id="use-python-to-create-nexus-files">Use Python to create NeXus files<a class="headerlink" href="#use-python-to-create-nexus-files" title="Permanent link">&para;</a></h1>
+<h1 id="using-python-to-create-nexus-files">Using Python to create NeXus files<a class="headerlink" href="#using-python-to-create-nexus-files" title="Permanent link">&para;</a></h1>
 <p>In general, we recommend using <a href="https://github.com/FAIRmat-NFDI/pynxtools"><code>pynxtools</code></a> to create NeXus files, which has the inherent advantage that the resulting NeXus file gets automatically validated against the NeXus application definition during conversion.</p>
-<p>However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using <code>pynxtools</code> and its measurement method specific <a href="../../reference/plugins.html">plugins</a></p>
+<p>However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using <code>pynxtools</code> and its measurement method specific <a href="../../reference/plugins.html">plugins</a>.</p>
 <p>This How-To is intended as easy access to FAIR data structures <em>via</em> NeXus. It will demonstrate how NeXus file can be created in Python using <code>h5py</code>.</p>
-<p><strong>Note: You can find all of the data <a href="https://zenodo.org/records/13373909">here</a>.</strong> Specifically, the PYthon script for creating a NeXus file can be downloading here: <a href="https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1">h5py_nexus_file_creation.py</a>.</p>
+<p><strong>Note: You can find all of the data <a href="https://zenodo.org/records/13373909">here</a>.</strong> Specifically, the Python script for creating a NeXus file can be downloading here:</p>
+<ul>
+<li><a href="https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1">h5py_nexus_file_creation.py</a>.</li>
+</ul>
 <p>We will discuss its content below and guide you through step-by-step in creating your NeXus file by hand.</p>
 <h2 id="create-a-nexus-file-through-python-and-h5py">Create a NeXus file through Python and h5py<a class="headerlink" href="#create-a-nexus-file-through-python-and-h5py" title="Permanent link">&para;</a></h2>
 <p>You start by installing <code>h5py</code> via <code>pip</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">`pip install h5py`</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pip install h5py</span>
 </code></pre></div>
 <p>Next, we create the <code>h5py</code> file and fill it with a minimal structure.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Import h5py, to write an hdf5 file</span>
@@ -1447,7 +1450,7 @@ When specifying this version tag, it would be better to include the GitHub commi
 <p>The second line assigns this group the attribute with the name "NX_class" and its value "NXinstrument".</p>
 <h3 id="finishing-the-nexus-file">Finishing the NeXus file<a class="headerlink" href="#finishing-the-nexus-file" title="Permanent link">&para;</a></h3>
 <p>Afterwards, we repeat the process for all required NeXus groups/fields/attributes defined in
-<a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html">NXoptical_spectroscopy</a></p>
+<a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html">NXoptical_spectroscopy</a>.</p>
 <p>The next required entries are located inside the NXinstrument class:</p>
 <ol>
 <li>
@@ -1510,13 +1513,13 @@ When specifying this version tag, it would be better to include the GitHub commi
         
         
           
-          <a href="validate-nexus-file.html" class="md-footer__link md-footer__link--next" aria-label="Next: Validating NeXus files">
+          <a href="validate-nexus-file.html" class="md-footer__link md-footer__link--next" aria-label="Next: Validation of NeXus files">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Validating NeXus files
+                Validation of NeXus files
               </div>
             </div>
             <div class="md-footer__button md-icon">

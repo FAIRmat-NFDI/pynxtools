@@ -25,7 +25,7 @@
     
     
       
-        <title>Built-in readers - Documentation</title>
+        <title>Built-in pynxtools readers - Documentation</title>
       
     
     
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#built-in-readers" class="md-skip">
+        <a href="#built-in-pynxtools-readers" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Built-in readers
+              Built-in pynxtools readers
             
           </span>
         </div>
@@ -272,7 +272,7 @@
   
   
   <span class="md-ellipsis">
-    Installation guide
+    Installation
     
   </span>
   
@@ -295,7 +295,7 @@
   
   
   <span class="md-ellipsis">
-    Converting research data to NeXus
+    Converting your research data to NeXus
     
   </span>
   
@@ -318,7 +318,7 @@
   
   
   <span class="md-ellipsis">
-    Uploading NeXus files to NOMAD
+    Uploading NeXus data to NOMAD
     
   </span>
   
@@ -341,7 +341,7 @@
   
   
   <span class="md-ellipsis">
-    Development
+    Development guide
     
   </span>
   
@@ -447,7 +447,7 @@
   
   
   <span class="md-ellipsis">
-    Writing a Simple Application Definition
+    Writing an application definition
     
   </span>
   
@@ -608,7 +608,7 @@
   
   
   <span class="md-ellipsis">
-    Use Python to create NeXus files
+    Using Python to create NeXus files
     
   </span>
   
@@ -631,7 +631,7 @@
   
   
   <span class="md-ellipsis">
-    Validating NeXus files
+    Validation of NeXus files
     
   </span>
   
@@ -860,7 +860,7 @@
   
   
   <span class="md-ellipsis">
-    NeXus validation
+    Validation of NeXus file
     
   </span>
   
@@ -1016,7 +1016,7 @@
   
   
   <span class="md-ellipsis">
-    Built-in readers
+    Built-in pynxtools readers
     
   </span>
   
@@ -1029,7 +1029,7 @@
   
   
   <span class="md-ellipsis">
-    Built-in readers
+    Built-in pynxtools readers
     
   </span>
   
@@ -1165,7 +1165,7 @@
   
   
   <span class="md-ellipsis">
-    Plugins
+    FAIRmat-supported pynxtools plugins
     
   </span>
   
@@ -1318,8 +1318,8 @@
 
 
 
-<h1 id="built-in-readers">Built-in readers<a class="headerlink" href="#built-in-readers" title="Permanent link">&para;</a></h1>
-<p>There exists a number of <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers">readers</a> directly in pynxtools. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.</p>
+<h1 id="built-in-pynxtools-readers">Built-in <code>pynxtools</code> readers<a class="headerlink" href="#built-in-pynxtools-readers" title="Permanent link">&para;</a></h1>
+<p>There exists a number of <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers">readers</a> directly in <code>pynxtools</code>. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.</p>
 <h2 id="the-basereader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py">BaseReader</a><a class="headerlink" href="#the-basereader" title="Permanent link">&para;</a></h2>
 <p>This is the most simple reader, which is an abstract base class, on top of which a new reader implementation can build. It has an essentially empty read function and is thus only helpful for implementing the correct input/output design of the <code>read</code> function of any reader that is inheriting from this base reader.</p>
 <h2 id="the-multiformatreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py">MultiFormatReader</a><a class="headerlink" href="#the-multiformatreader" title="Permanent link">&para;</a></h2>
@@ -1428,13 +1428,13 @@ Note: This only works for HDF5 files currently.</li>
         
         
           
-          <a href="plugins.html" class="md-footer__link md-footer__link--next" aria-label="Next: Plugins">
+          <a href="plugins.html" class="md-footer__link md-footer__link--next" aria-label="Next: FAIRmat-supported pynxtools plugins">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Plugins
+                FAIRmat-supported pynxtools plugins
               </div>
             </div>
             <div class="md-footer__button md-icon">

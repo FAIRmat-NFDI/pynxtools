@@ -272,7 +272,7 @@
   
   
   <span class="md-ellipsis">
-    Installation guide
+    Installation
     
   </span>
   
@@ -295,7 +295,7 @@
   
   
   <span class="md-ellipsis">
-    Converting research data to NeXus
+    Converting your research data to NeXus
     
   </span>
   
@@ -318,7 +318,7 @@
   
   
   <span class="md-ellipsis">
-    Uploading NeXus files to NOMAD
+    Uploading NeXus data to NOMAD
     
   </span>
   
@@ -341,7 +341,7 @@
   
   
   <span class="md-ellipsis">
-    Development
+    Development guide
     
   </span>
   
@@ -447,7 +447,7 @@
   
   
   <span class="md-ellipsis">
-    Writing a Simple Application Definition
+    Writing an application definition
     
   </span>
   
@@ -608,7 +608,7 @@
   
   
   <span class="md-ellipsis">
-    Use Python to create NeXus files
+    Using Python to create NeXus files
     
   </span>
   
@@ -631,7 +631,7 @@
   
   
   <span class="md-ellipsis">
-    Validating NeXus files
+    Validation of NeXus files
     
   </span>
   
@@ -975,7 +975,7 @@
   
   
   <span class="md-ellipsis">
-    NeXus validation
+    Validation of NeXus file
     
   </span>
   
@@ -1120,7 +1120,7 @@
   
   
   <span class="md-ellipsis">
-    Built-in readers
+    Built-in pynxtools readers
     
   </span>
   
@@ -1143,7 +1143,7 @@
   
   
   <span class="md-ellipsis">
-    Plugins
+    FAIRmat-supported pynxtools plugins
     
   </span>
   
@@ -1297,13 +1297,13 @@
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>See <a href="../../reference/cli-api.html#data-conversion">here</a> for the documentation of the <code>dataconverter</code> API.</p>
 <h3 id="use-with-multiple-input-files">Use with multiple input files<a class="headerlink" href="#use-with-multiple-input-files" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>metadata<span class="w"> </span>data.raw<span class="w"> </span>otherfile<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>--reader<span class="w"> </span>&lt;reader-name&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">dataconverter metadata data.raw otherfile --nxdl nxdl --reader &lt;reader-name&gt;</span>
 </code></pre></div>
 <h3 id="merge-partial-nexus-files-into-one">Merge partial NeXus files into one<a class="headerlink" href="#merge-partial-nexus-files-into-one" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>partial1.nxs<span class="w"> </span>partial2.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">dataconverter --nxdl nxdl partial1.nxs partial2.nxs</span>
 </code></pre></div>
 <h3 id="map-an-hdf5-filejson-file">Map an HDF5 file/JSON file<a class="headerlink" href="#map-an-hdf5-filejson-file" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>any_data.hdf5<span class="w"> </span>--mapping<span class="w"> </span>my_custom_map.mapping.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json</span>
 </code></pre></div>
 <p>You can find actual examples with data files at <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/"><code>examples/json_map</code></a>.</p>
 <h2 id="example-data-for-testing-and-development-purposes">Example data for testing and development purposes<a class="headerlink" href="#example-data-for-testing-and-development-purposes" title="Permanent link">&para;</a></h2>
@@ -1356,13 +1356,13 @@
         
         
           
-          <a href="nexus-validation.html" class="md-footer__link md-footer__link--next" aria-label="Next: NeXus validation">
+          <a href="nexus-validation.html" class="md-footer__link md-footer__link--next" aria-label="Next: Validation of NeXus file">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                NeXus validation
+                Validation of NeXus file
               </div>
             </div>
             <div class="md-footer__button md-icon">

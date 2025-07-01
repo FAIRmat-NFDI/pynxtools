@@ -272,7 +272,7 @@
   
   
   <span class="md-ellipsis">
-    Installation guide
+    Installation
     
   </span>
   
@@ -295,7 +295,7 @@
   
   
   <span class="md-ellipsis">
-    Converting research data to NeXus
+    Converting your research data to NeXus
     
   </span>
   
@@ -318,7 +318,7 @@
   
   
   <span class="md-ellipsis">
-    Uploading NeXus files to NOMAD
+    Uploading NeXus data to NOMAD
     
   </span>
   
@@ -341,7 +341,7 @@
   
   
   <span class="md-ellipsis">
-    Development
+    Development guide
     
   </span>
   
@@ -449,7 +449,7 @@
   
   
   <span class="md-ellipsis">
-    Writing a Simple Application Definition
+    Writing an application definition
     
   </span>
   
@@ -717,7 +717,7 @@
   
   
   <span class="md-ellipsis">
-    Use Python to create NeXus files
+    Using Python to create NeXus files
     
   </span>
   
@@ -740,7 +740,7 @@
   
   
   <span class="md-ellipsis">
-    Validating NeXus files
+    Validation of NeXus files
     
   </span>
   
@@ -969,7 +969,7 @@
   
   
   <span class="md-ellipsis">
-    NeXus validation
+    Validation of NeXus file
     
   </span>
   
@@ -1114,7 +1114,7 @@
   
   
   <span class="md-ellipsis">
-    Built-in readers
+    Built-in pynxtools readers
     
   </span>
   
@@ -1137,7 +1137,7 @@
   
   
   <span class="md-ellipsis">
-    Plugins
+    FAIRmat-supported pynxtools plugins
     
   </span>
   
@@ -1620,7 +1620,7 @@ The ELN file <code>eln_data.yaml</code> looks like this:</p>
 </code></pre></div>
 <h2 id="using-the-reader">Using the reader<a class="headerlink" href="#using-the-reader" title="Permanent link">&para;</a></h2>
 <p>We can call our reader using the following command</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>mock_data.h5<span class="w"> </span>eln_data.yaml<span class="w"> </span>-c<span class="w"> </span>config_file<span class="w"> </span>--reader<span class="w"> </span>mydatareader<span class="w"> </span>--nxdl<span class="w"> </span>NXsimple<span class="w">  </span>--output<span class="w"> </span>output.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="go">dataconverter mock_data.h5 eln_data.yaml -c config_file --reader mydatareader --nxdl NXsimple  --output output.nxs</span>
 </code></pre></div>
 <p>The final <code>output.nxs</code> file gets automatically validated against <code>NXsimple</code>, so we can be sure that it is compliant with that application definition. Here is a look at our final NeXus file:</p>
 <p><img src="media/resulting_file.png" style="width: 50vw; min-width: 330px;" /></p>
