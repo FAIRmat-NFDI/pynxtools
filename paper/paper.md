@@ -141,9 +141,9 @@ __read_nexus__ is a command line tool that annotates and explores NeXus data fil
 
 While pynxtools works as a standalone tool, it can also be integrated directly into Research Data Management Systems (RDMS). Out of the box, the package functions as a plugin within the NOMAD platform. This enables data in the NeXus format to be integrated into NOMAD's metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
 
-- Schema Package: pynxtools adds NeXus definitions to NOMAD's __Metainfo__ data schema, extending it with NeXus-specific quantities and linking them to other standardized representations in NOMAD.
+- Schema Package: pynxtools adds NeXus definitions to NOMAD's __Metainfo__ data schema, extending it with NeXus-specific quantities and them interoperable with NOMAD by linking to other standardized representations.
 
-Dataconverter: The __dataconverter__ is integrated into NOMAD, making NeXus conversion accessible via their GUI. The __dataconverter__ also processes manually entered NOMAD ELN data in the conversion.
+- Dataconverter: The __dataconverter__ is integrated into NOMAD, making NeXus conversion accessible via their GUI. The __dataconverter__ also processes manually entered NOMAD ELN data in the conversion.
 
 - Parser: The NOMAD parser module in pynxtools (__NexusParser__) extracts structured data from NeXus HDF5 files to populate NOMAD with __Metainfo__ object instances as defined by the pynxtools schema package. This enables ingestion of NeXus data directly into NOMAD.
 
