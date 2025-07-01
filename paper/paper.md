@@ -135,7 +135,7 @@ The dataconverter includes an ELN generator that creates either a fillable YAML 
 
 # NeXus reader and annotator (read\_nexus)
 
-__read_nexus__ is a command line tool that annotates and explores NeXus data files by traversing their hierarchical structure and connecting each data item to corresponding NeXus vocabulary concepts, reporting concept definitions and inheritance chains (or 'NOT IN SCHEMA' for unmapped items). The tool identifies default plottable data according to NXdata specifications.It enables semantic querying of data items in NeXus files through the command line option --concept, which finds all data paths matching a given concept. The CLI option --documentation finds the concept and documentation for a specific data path, allowing data processing applications to locate items by concept rather than hardcoded paths.
+__read_nexus__ is a command line tool that annotates and explores NeXus data files by traversing their hierarchical structure and connecting each data item to corresponding NeXus vocabulary concepts, reporting concept definitions and inheritance chains (or 'NOT IN SCHEMA' for unmapped items). The tool identifies default plottable data according to NXdata specifications. It enables semantic querying of data items in NeXus files through the command line option --concept, which finds all data paths matching a given concept. The CLI option --documentation finds the concept and documentation for a specific data path, allowing data processing applications to locate items by concept rather than hardcoded paths.
 
 # NOMAD integration
 
