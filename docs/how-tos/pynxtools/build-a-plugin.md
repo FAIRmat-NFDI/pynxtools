@@ -1,6 +1,6 @@
 # Build your own pynxtools plugin
 
-The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html). The converter allows extending support to other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](../reference/built-in-readers.md) as well as [pynxtools reader plugins](../reference/plugins.md) to convert supported data files for some experimental techniques into NeXus-compliant files.
+The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html). The converter allows extending support to other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](../../reference/built-in-readers.md) as well as [pynxtools reader plugins](../../reference/plugins.md) to convert supported data files for some experimental techniques into NeXus-compliant files.
 
 Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?
 
@@ -105,7 +105,7 @@ user@box:~$ dataconverter generate-template --nxdl NXmynxdl
 
 #### Naming of groups
 
-In case the NXDL does not define a `name` for the group the requested data belongs to, the template dictionary will list it as `/NAME_IN_NXDL[name_in_output_nexus]`. You can choose any name you prefer instead of the suggested `name_in_output_nexus` (see [here](../learn/nexus-rules.md) for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.
+In case the NXDL does not define a `name` for the group the requested data belongs to, the template dictionary will list it as `/NAME_IN_NXDL[name_in_output_nexus]`. You can choose any name you prefer instead of the suggested `name_in_output_nexus` (see [here](../../learn/nexus/nexus-rules.md) for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.
 
 ```json
 {

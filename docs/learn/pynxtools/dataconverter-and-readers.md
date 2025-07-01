@@ -14,8 +14,8 @@ A set of readers has been developed which the converter calls to read in a set o
 
 There exists two different subsets of readers:
 
-1. [Built-in readers](../reference/built-in-readers.md), which are implemented directly in pynxtools and are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
-2. [Reader plugins](../reference/plugins.md) for `pynxtools, which are used for reading data of specific experimental techniques and are typically available as their own Python packages.
+1. [Built-in readers](../../reference/built-in-readers.md), which are implemented directly in pynxtools and are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
+2. [Reader plugins](../../reference/plugins.md) for `pynxtools, which are used for reading data of specific experimental techniques and are typically available as their own Python packages.
 
 ## Matching to NeXus application definitions
 
@@ -25,11 +25,11 @@ The purpose of the dataconverter is to create NeXus/HDF5 files with content that
 
 You should start by installing `pynxtools` and (if needed) one or more of its supported plugins.
 
-- [Installation](../tutorial/installation.md)
+- [Installation](../../tutorial/installation.md)
 
 ## Usage
 
-See [here](../reference/cli-api.md#data-conversion) for the documentation of the `dataconverter` API.
+See [here](../../reference/cli-api.md#data-conversion) for the documentation of the `dataconverter` API.
 
 ### Use with multiple input files
 
@@ -57,4 +57,4 @@ Before using your own data we strongly encourage you to download a set of open-s
 
 Once you have practiced with these tools how to convert these examples, feel free to use the tools for converting your own data. You should feel invited to contact the respective corresponding author(s) of each reader if you run into issues with the reader or feel there is a necessity to include additional data into the NeXus file for your respective application.
 
-We are looking forward to learning from your experience and learn from your use cases. You can find the contact persons [here](../contact.md) or in the respective documentation of each reader (plugin).
+We are looking forward to learning from your experience and learn from your use cases. You can find the contact persons [here](../../contact.md) or in the respective documentation of each reader (plugin).

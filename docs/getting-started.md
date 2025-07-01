@@ -8,7 +8,7 @@ Nothing!
 
 However, to get started, it does not hurt to read the following explanations:
 
-- [A primer on NeXus](learn/nexus-primer.md)
+- [A primer on NeXus](learn/nexus/nexus-primer.md)
 - [What is FAIR data](https://www.nature.com/articles/sdata201618)
 
 ## What you will know at the end of this guide?
@@ -26,7 +26,7 @@ NeXus is a
 
 
 
-For a more detailed description on the general principles of NeXus we recommend reading our [learning page for NeXus](../learn/nexus-primer.md) or the [official NeXus user manual](https://manual.nexusformat.org/user_manual.html).
+For a more detailed description on the general principles of NeXus we recommend reading our [learning page for NeXus](learn/nexus/nexus-primer.md) or the [official NeXus user manual](https://manual.nexusformat.org/user_manual.html).
 
 ## What is FAIRmat?
 

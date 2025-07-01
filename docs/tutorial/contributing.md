@@ -100,7 +100,7 @@ pytest -sv tests
 
 ### Editing the documentation
 
-We are using [`mkdocs](mkdocs) for the documentation. If you edit the documentation, you can build it locally. For this, you need to install an additional set of dependencies:
+We are using [`mkdocs](https://www.mkdocs.org/) for the documentation. If you edit the documentation, you can build it locally. For this, you need to install an additional set of dependencies:
 
 === "uv"
 

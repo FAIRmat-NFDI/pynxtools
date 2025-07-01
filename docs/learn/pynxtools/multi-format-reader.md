@@ -10,7 +10,7 @@ While option 1 is generally not recommended, inheriting and extending the `BaseR
 
 While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the NeXus file based on the read data, in compliance with a NeXus application definition. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for any new data.
 
-Here, we will explain the inner workings of the `MultiFormatReader`. Note that there is also a [how-to guide](../how-tos/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example. In case you simply want to use the `MultiFormatReader` without understanding its inner logic, we recommend you start there.
+Here, we will explain the inner workings of the `MultiFormatReader`. Note that there is also a [how-to guide](../../how-tos/pynxtools/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example. In case you simply want to use the `MultiFormatReader` without understanding its inner logic, we recommend you start there.
 
 ## The basic structure
 

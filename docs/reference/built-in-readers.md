@@ -7,7 +7,7 @@ This is the most simple reader, which is an abstract base class, on top of which
 
 ## The [MultiFormatReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py)
 
-Another reader that can act as the basis for any reader implementation is the `MultiFormatReader`, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described [here](../learn/multi-format-reader.md). There is also a [how-to guide](../how-tos/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example.
+Another reader that can act as the basis for any reader implementation is the `MultiFormatReader`, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described [here](../learn/pynxtools/multi-format-reader.md). There is also a [how-to guide](../how-tos/pynxtools/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example.
 
 ## The [JsonMapReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_map/reader.py)
 

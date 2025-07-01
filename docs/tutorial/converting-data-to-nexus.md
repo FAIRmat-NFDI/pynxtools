@@ -6,11 +6,11 @@ The document is for people who want to standardize their research data by conver
 a NeXus standardized format.
 We cover the basic principles and common principles of NeXus, here.
 For a more detailed description on the general principles of NeXus we recommend reading our
-[learning page for NeXus](../learn/nexus-primer.md) or the [official NeXus user manual](https://manual.nexusformat.org/user_manual.html).
+[learning page for NeXus](../learn/nexus/nexus-primer.md) or the [official NeXus user manual](https://manual.nexusformat.org/user_manual.html).
 
 ## What should you should know before this tutorial?
 
-- You should have a basic understanding of NeXus - [A primer on NeXus](../learn/nexus-primer.md)
+- You should have a basic understanding of NeXus - [A primer on NeXus](../learn/nexus/nexus-primer.md)
 - You should have a basic understanding of [FAIR data](https://www.nature.com/articles/sdata201618)
 
 ## What you will know at the end of this tutorial?

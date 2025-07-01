@@ -76,7 +76,7 @@ You can also install the latest _development_ version with
 
 ### Configuring your `pynxtools` installation
 
-`pynxtools` comes with a list of [built-in readers](../reference/built-in-readers.md) that can be used after after pip installation. In addition, `pynxtools` supports a [plugin mechanism](../how-tos/build-a-plugin.md) for adding file readers for different experimental techniques. The different [FAIRmat-supported plugins](../reference/plugins.md) can be installed together with pynxtools by passing the name of the plugin as an extra to the install call. For example, for the `pynxtools-mpes` plugin, you can run:
+`pynxtools` comes with a list of [built-in readers](../reference/built-in-readers.md) that can be used after after pip installation. In addition, `pynxtools` supports a [plugin mechanism](../how-tos/pynxtools/build-a-plugin.md) for adding file readers for different experimental techniques. The different [FAIRmat-supported plugins](../reference/plugins.md) can be installed together with pynxtools by passing the name of the plugin as an extra to the install call. For example, for the `pynxtools-mpes` plugin, you can run:
 
 === "uv"
 

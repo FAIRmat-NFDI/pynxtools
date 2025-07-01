@@ -2,7 +2,7 @@
 
 In general, we recommend using [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) to create NeXus files, which has the inherent advantage that the resulting NeXus file gets automatically validated against the NeXus application definition during conversion.
 
-However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using `pynxtools` and its measurement method specific [plugins](../reference/plugins.md)
+However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using `pynxtools` and its measurement method specific [plugins](../../reference/plugins.md)
 
 This How-To is intended as easy access to FAIR data structures _via_ NeXus. It will demonstrate how NeXus file can be created in Python using `h5py`.
 
@@ -76,7 +76,7 @@ In the tree structure, the first concept which is not created yet, is the `@vers
 
 5. `NX\_CHAR` indicates the datatype. This should be a string: "The preferred string representation is UTF-8" (more information see [here](<https://manual.nexusformat.org/nxdl-types.html>))
 
-![image.png](<./attachments/51dc82f9f0f5ec2f-image.png>)
+![image.png](<../attachments/51dc82f9f0f5ec2f-image.png>)
 
 We add an instance of this concept by adding an HDF5 attribute:
 
@@ -104,13 +104,13 @@ This is the GitHub website, in which the latest (FAIRmat) NeXus definition of NX
 
 - Now you have to copy the permalink of this file. Go to the top right side of the website. Find the Menu made by 3 dots:
 
-![image.png](<./attachments/c6ab2f4b925aed27-image.png>)
+![image.png](<../attachments/c6ab2f4b925aed27-image.png>)
 
 Copy the permalink and insert it as value for the "URL" attribute (Step 1, Red box in the image)
 
 - Go to "nexus\_definitions" (Step 2, Red box in the image)
 
-![image.png](<./attachments/d8e727b3b32dcbb9-image.png>)
+![image.png](<../attachments/d8e727b3b32dcbb9-image.png>)
 
 On the right side, you should see below "Releases" the "tags" (Red box in the image). Follow this link.
 
@@ -148,7 +148,7 @@ The next required concept of [NXoptical_spectrsocopy](https://fairmat-nfdi.githu
 
 Read the documentation at "▶ Specify the type of the optical experiment. ..." by extending it via click on the triangle symbol. You should see something like this:
 
-![image.png](<./attachments/5cbd8c6a1ca227df-image.png>)
+![image.png](<../attachments/5cbd8c6a1ca227df-image.png>)
 
 There, the value of the field has to be one of the shown list, since it is an enumeration (e.g. "transmission spectroscopy"). Note that this is requires an exact match to one of the enumerated items (case and whitespace sensitive).
 
@@ -176,7 +176,7 @@ The first required group in NXoptical\_spectroscopy on the `ENTRY/` level is "**
 
     2. You can create as many groups with the class `NXinstrument` as you want. Their names have to be different.
 
-    3. For more information, see the [NeXus rules](../learn/nexus-rules.md)
+    3. For more information, see the [NeXus rules](../../learn/nexus/nexus-rules.md)
 
 The Python code to implement the `NXinstrument` group as an HDF5 group named with the name "experiment\_setup\_1"  is:
 
