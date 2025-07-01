@@ -1,4 +1,4 @@
-# Validating NeXus files
+# Validation of NeXus files
 
 Note: This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation page](../../learn/pynxtools/nexus-validation.md).
 

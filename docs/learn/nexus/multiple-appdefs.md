@@ -1,4 +1,4 @@
-# Multiple Application Definitions in NeXus
+# The concept of multiple application definitions
 
 !!! danger "Work in progress"
 

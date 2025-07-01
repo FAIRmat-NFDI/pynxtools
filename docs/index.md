@@ -16,7 +16,7 @@ This documentation covers our contributions to the NeXus standard, and our suppo
 <!-- Finally, a paragraph that describes whom the product is useful for. -->
 The software can also be used as a plugin in the research data management system [**NOMAD**](https://nomad-lab.eu/nomad-lab/), an open-source platform for FAIR materials data management. Learn more in the [NOMAD documentation](https://nomad-lab.eu/prod/v1/staging/docs/).
 
-We are offering a small guide to getting started with NeXus and pynxtools:
+We are offering a small guide to getting started with NeXus, `pynxtools`, and NOMAD:
 
 - [**Getting started**](getting-started.md)
 
@@ -26,33 +26,29 @@ We are offering a small guide to getting started with NeXus and pynxtools:
 
 ### Tutorial
 
-A series of tutorials giving you an overview on how to store or convert your data to NeXus-compliant files.
-
 - [Installation](tutorial/installation.md)
-- [Converting your data to NeXus](tutorial/converting-data-to-nexus.md)
+- [Converting your research to NeXus](tutorial/converting-data-to-nexus.md)
 - [Uploading NeXus data to NOMAD](tutorial/nexus-to-nomad.md)
-- [Development guide](tutorial/nexus-to-nomad.md)
+- [Development guide](tutorial/contributing.md)
 
 </div>
 <div markdown="block">
 
 ### How-to guides
 
-How-to guides provide step-by-step instructions for a wide range of tasks.
-
 #### NeXus data modelling
 
 - [Writing an application definition](how-tos/nexus/writing-an-appdef.md)
-<!-- - [Storing data in multiple application definitions](how-tos/nexus/using-multiple-appdefs.md) -->
+<!-- - [Using multiple application definitions](how-tos/nexus/using-multiple-appdefs.md) -->
 <!-- - [Representing experimental geometries](how-tos/nexus/transformations.md) -->
 
 #### pynxtools
 
-- [Build your own pynxtools plugin](how-tos/pynxtools/build-a-plugin.md)
-- [Implement a reader based on the MultiFormatReader](how-tos/pynxtools/use-multi-format-reader.md)
-- [Using pynxtools test framework for plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
-- [Using pynxtools tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
-- [Creation of NeXus files in python via hard-coding](how-tos/pynxtools/create-nexus-files-by-python.md)
+- [Build your own `pynxtools` plugin](how-tos/pynxtools/build-a-plugin.md)
+- [How to use the built-in `MultiFormatReader`](how-tos/pynxtools/use-multi-format-reader.md)
+- [Test functionality for `pynxtools` plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
+- [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
+- [Using Python to create NeXus files](how-tos/pynxtools/create-nexus-files-by-python.md)
 - [Validation of NeXus files](how-tos/pynxtools/validate-nexus-file.md)
 
 </div>
@@ -63,7 +59,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 
 #### An introduction to NeXus and its design principles
 
-- [An introduction to NeXus](learn/nexus/nexus-primer.md)
+- [A primer on NeXus](learn/nexus/nexus-primer.md)
 - [Rules for storing data in NeXus](learn/nexus/nexus-rules.md)
 <!-- - [The concept of multiple application definitions](learn/multiple-appdefs.md) -->
 
@@ -71,7 +67,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 
 - [Data conversion in `pynxtools`](learn/pynxtools/dataconverter-and-readers.md)
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
-- [The MultiFormatReader as a reader superclass](learn/pynxtools/multi-format-reader.md)
+- [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
 
 </div>
 <div markdown="block">
@@ -88,8 +84,8 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 
 Within FAIRmat, we maintain a number of generic built-in pynxtools readers, together with reader plugins for different experimental techniques. Here you can find more information:
 
-- [Built-in pynxtools readers](reference/built-in-readers.md)
-- [FAIRmat-supported pynxtools plugins](reference/plugins.md)
+- [Built-in `pynxtools` readers](reference/built-in-readers.md)
+- [FAIRmat-supported `pynxtools` plugins](reference/plugins.md)
 
 
 </div>
@@ -99,7 +95,7 @@ Within FAIRmat, we maintain a number of generic built-in pynxtools readers, toge
 
 For questions or suggestions:
 
-- Open an issue on the [pynxtools GitHub](https://github.com/FAIRmat-NFDI/pynxtools/issues)
+- Open an issue on the [`pynxtools` GitHub](https://github.com/FAIRmat-NFDI/pynxtools/issues)
 - Join our [Discord channel ](https://discord.gg/Gyzx3ukUw8)
 - Get in contact with our [lead developers](contact.md).
 

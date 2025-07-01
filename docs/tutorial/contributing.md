@@ -1,4 +1,4 @@
-# Development
+# Development guide
 
 This tutorial will guide you through on how to set up a working environment for developing `pynxtools`.
 

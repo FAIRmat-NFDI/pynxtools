@@ -1,4 +1,4 @@
-# NeXus validation
+# Validation of NeXus file
 
 !!! info "This page is intended to give more information about the validation tools that are part of `pynxtools`. Please also have a look at our comprehensive [how-to guide](../../how-tos/pynxtools/validate-nexus-file.md) on NeXus validation."
 
@@ -17,14 +17,14 @@ This utility outputs a debug log for a given NeXus file by annotating the data a
 
 The following example dataset can be used to test the `read_nexus` module: [src/pynxtools/data/201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs). This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the [NXarpes application definition of NeXus](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
 
-### Using a different set of NeXus definitions
+!!! info "Using a different set of NeXus definitions"
 
-The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
+    The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
 
-The environment variable can be set as follows:
-```
-export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
-```
+    The environment variable can be set as follows:
+    ```
+    export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
+    ```
 
 !!! info "A note to Windows users"
 

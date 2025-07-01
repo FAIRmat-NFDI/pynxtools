@@ -1,5 +1,6 @@
-# Built-in readers
-There exists a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) directly in pynxtools. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
+# Built-in `pynxtools` readers
+
+There exists a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) directly in `pynxtools`. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
 
 ## The [BaseReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py)
 

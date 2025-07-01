@@ -34,19 +34,19 @@ See [here](../../reference/cli-api.md#data-conversion) for the documentation of 
 ### Use with multiple input files
 
 ```console
-user@box:~$ dataconverter metadata data.raw otherfile --nxdl nxdl --reader <reader-name>
+dataconverter metadata data.raw otherfile --nxdl nxdl --reader <reader-name>
 ```
 
 ### Merge partial NeXus files into one
 
 ```console
-user@box:~$ dataconverter --nxdl nxdl partial1.nxs partial2.nxs
+dataconverter --nxdl nxdl partial1.nxs partial2.nxs
 ```
 
 ### Map an HDF5 file/JSON file
 
 ```console
-user@box:~$ dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
+dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 ```
 
 You can find actual examples with data files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/).

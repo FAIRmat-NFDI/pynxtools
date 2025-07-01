@@ -1,4 +1,4 @@
-# Converting research data to NeXus
+# Converting your research data to NeXus
 
 ## Who is this tutorial for?
 
