@@ -1,4 +1,4 @@
-# Uploading NeXus files to NOMAD
+# Uploading NeXus data to NOMAD
 
 Great choice! [NOMAD](https://nomad-lab.eu/nomad-lab/tutorials.html) makes it easier than ever to work with your research data. At this point you probably have an idea of what [FAIR data](https://www.nature.com/articles/sdata201618) is. Even if you don't, it doesn't matter. NOMAD provides a simple graphical interface that let's you collect and have your data ready for publication.
 

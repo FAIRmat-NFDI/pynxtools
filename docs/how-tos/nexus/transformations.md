@@ -1,4 +1,4 @@
-# Storing experimental geometries
+# Representing experimental geometries
 
 !!! danger "Work in progress"
 

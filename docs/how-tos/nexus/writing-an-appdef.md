@@ -1,4 +1,4 @@
-# Writing a Simple Application Definition
+# Writing an application definition
 
 !!! danger "Work in progress"
 

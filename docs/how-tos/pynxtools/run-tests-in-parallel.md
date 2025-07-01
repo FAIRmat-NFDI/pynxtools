@@ -7,7 +7,7 @@ The `pytest` framework allows tests to run in sequential and parallel using thir
 In a local setup, tests can be run sequentially using the following command:
 
 ```console
-$ pytest tests
+pytest tests
 ```
 
 This will execute all tests in a sequential manner. For more details, refer to the official documentation: [How to invoke pytest](https://docs.pytest.org/en/stable/how-to/usage.html).

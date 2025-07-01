@@ -1,12 +1,14 @@
-# Use Python to create NeXus files
+# Using Python to create NeXus files
 
 In general, we recommend using [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) to create NeXus files, which has the inherent advantage that the resulting NeXus file gets automatically validated against the NeXus application definition during conversion.
 
-However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using `pynxtools` and its measurement method specific [plugins](../../reference/plugins.md)
+However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using `pynxtools` and its measurement method specific [plugins](../../reference/plugins.md).
 
 This How-To is intended as easy access to FAIR data structures _via_ NeXus. It will demonstrate how NeXus file can be created in Python using `h5py`.
 
-**Note: You can find all of the data [here](https://zenodo.org/records/13373909).** Specifically, the PYthon script for creating a NeXus file can be downloading here: [h5py_nexus_file_creation.py](https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1).
+**Note: You can find all of the data [here](https://zenodo.org/records/13373909).** Specifically, the Python script for creating a NeXus file can be downloading here:
+
+- [h5py_nexus_file_creation.py](https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1).
 
 We will discuss its content below and guide you through step-by-step in creating your NeXus file by hand.
 
@@ -15,7 +17,7 @@ We will discuss its content below and guide you through step-by-step in creating
 You start by installing `h5py` via `pip`:
 
 ```console
-`pip install h5py`
+pip install h5py
 ```
 
 Next, we create the `h5py` file and fill it with a minimal structure.
@@ -192,7 +194,7 @@ The second line assigns this group the attribute with the name "NX\_class" and i
 ### Finishing the NeXus file
 
 Afterwards, we repeat the process for all required NeXus groups/fields/attributes defined in
-[NXoptical_spectroscopy](<https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html>)
+[NXoptical_spectroscopy](<https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html>).
 
 The next required entries are located inside the NXinstrument class:
 

@@ -1,4 +1,4 @@
-# Installation guide
+# Installation
 
 The document is the entry point for anybody that is new to the NeXus data format and to FAIRmat/NOMAD. It serves as a guide to getting started with the `pynxtools` software.
 
