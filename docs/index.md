@@ -48,7 +48,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 
 #### pynxtools
 
-- [Build your own pynxtools plugin](how-tos/build-a-plugin.md)
+- [Build your own pynxtools plugin](how-tos/pynxtools/build-a-plugin.md)
 - [Implement a reader based on the MultiFormatReader](how-tos/pynxtools/use-multi-format-reader.md)
 - [Using pynxtools test framework for plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
 - [Using pynxtools tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
@@ -63,15 +63,15 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 
 #### An introduction to NeXus and its design principles
 
-- [An introduction to NeXus](learn/nexus-primer.md)
-- [Rules for storing data in NeXus](learn/nexus-rules.md)
+- [An introduction to NeXus](learn/nexus/nexus-primer.md)
+- [Rules for storing data in NeXus](learn/nexus/nexus-rules.md)
 <!-- - [The concept of multiple application definitions](learn/multiple-appdefs.md) -->
 
 #### pynxtools
 
-- [Data conversion in `pynxtools`](learn/dataconverter-and-readers.md)
-- [Validation of NeXus files](learn/nexus-validation.md)
-- [The MultiFormatReader as a reader superclass](learn/multi-format-reader.md)
+- [Data conversion in `pynxtools`](learn/pynxtools/dataconverter-and-readers.md)
+- [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
+- [The MultiFormatReader as a reader superclass](learn/pynxtools/multi-format-reader.md)
 
 </div>
 <div markdown="block">

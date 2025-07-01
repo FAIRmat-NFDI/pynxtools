@@ -1,6 +1,6 @@
 # Validating NeXus files
 
-Note: This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation page](../learn/nexus-validation.md).
+Note: This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation page](../../learn/pynxtools/nexus-validation.md).
 
 In this how-to guide, we will learn how to use different software tools to validate existing NeXus files. Specifically, we want to use tools to validate NeXus files against a given set of NeXus definitions. This can be the official version of the NeXus definitions or a different version used for local development. Here, we will work with two different versions of the definitions.
 
@@ -38,7 +38,7 @@ There are several tools which can be used for validation of NeXus files. All are
 
 pynxtools = Python Nexus Tools
 
-_[> learn more about validation in pynxtools <](../learn/nexus-validation.md)_
+_[> learn more about validation in pynxtools <](../../learn/pynxtools/nexus-validation.md)_
 
 This is a python package which is developed by the FAIRmat consortium.
 
@@ -343,7 +343,7 @@ Click on "HTTPS".
 
 Copy the https link.
 
-![image.png](<./attachments/e28ec15bb537c9b7-image.png>)
+![image.png](<../attachments/e28ec15bb537c9b7-image.png>)
 
 Open the terminal and ensure you are in the `nexusvalidation` folder.
 
@@ -753,7 +753,7 @@ As pynxtools verify_nexus method is right now in development, [not all situation
 
 ### Pynxtools Parsers
 
-For a specifically structured set of data, a parser can be written, which uses the meta data and a pre-structured meta data file, to create a NeXus file. Tough, the parser depends on: Experimental Technique and Setup and has therefore to be written individually. Take a look [here](../reference/plugins.md).
+For a specifically structured set of data, a parser can be written, which uses the meta data and a pre-structured meta data file, to create a NeXus file. Tough, the parser depends on: Experimental Technique and Setup and has therefore to be written individually. Take a look [here](../../reference/plugins.md).
 
 
 ### Feedback and contact
