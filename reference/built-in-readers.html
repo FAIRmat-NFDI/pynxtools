@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1323,7 +1323,7 @@
 <h2 id="the-basereader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py">BaseReader</a><a class="headerlink" href="#the-basereader" title="Permanent link">&para;</a></h2>
 <p>This is the most simple reader, which is an abstract base class, on top of which a new reader implementation can build. It has an essentially empty read function and is thus only helpful for implementing the correct input/output design of the <code>read</code> function of any reader that is inheriting from this base reader.</p>
 <h2 id="the-multiformatreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py">MultiFormatReader</a><a class="headerlink" href="#the-multiformatreader" title="Permanent link">&para;</a></h2>
-<p>Another reader that can act as the basis for any reader implementation is the <code>MultiFormatReader</code>, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described <a href="../learn/multi-format-reader.md">here</a>. There is also a <a href="../how-tos/use-multi-format-reader.md">how-to guide</a> on how to implement a new reader off of the <code>MultiFormatReader</code> using a concrete example.</p>
+<p>Another reader that can act as the basis for any reader implementation is the <code>MultiFormatReader</code>, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described <a href="../learn/pynxtools/multi-format-reader.html">here</a>. There is also a <a href="../how-tos/pynxtools/use-multi-format-reader.html">how-to guide</a> on how to implement a new reader off of the <code>MultiFormatReader</code> using a concrete example.</p>
 <h2 id="the-jsonmapreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_map/reader.py">JsonMapReader</a><a class="headerlink" href="#the-jsonmapreader" title="Permanent link">&para;</a></h2>
 <p>This reader is designed to allow users of <code>pynxtools</code> to convert their existing data with the help of a map file. The map file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:</p>
 <ul>
@@ -1468,7 +1468,7 @@ Note: This only works for HDF5 files currently.</li>
       <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
         <script src="../javascript.js"></script>
       

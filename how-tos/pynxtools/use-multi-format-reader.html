@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1261,7 +1261,7 @@
 
 
 <h1 id="how-to-use-the-built-in-multiformatreader">How to use the built-in MultiFormatReader<a class="headerlink" href="#how-to-use-the-built-in-multiformatreader" title="Permanent link">&para;</a></h1>
-<p>While building on the <code>BaseReader</code> allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, <code>pynxtools</code> has the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a>, which can be readily extended for your own data. In this how-to guide, we will focus on an implementation using a concrete example. If you are also interested in the general structure of the <code>MultiFormatReader</code>, you can find more information <a href="../learn/multi-format-reader.md">here</a>.</p>
+<p>While building on the <code>BaseReader</code> allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, <code>pynxtools</code> has the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a>, which can be readily extended for your own data. In this how-to guide, we will focus on an implementation using a concrete example. If you are also interested in the general structure of the <code>MultiFormatReader</code>, you can find more information <a href="../../learn/pynxtools/multi-format-reader.html">here</a>.</p>
 <h2 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <p><strong>Note: You can find all of the data and the developed python scripts <a href="https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader">here</a>.</strong></p>
 <p>Here, we will implement a reader called <code>MyDataReader</code> that builds on the <code>MultiFormatReader</code>. <code>MyDataReader</code> is an example for a reader that can read HDF5 data from a specific technology-partner data set, as well as additional metadata from am electronic lab notebook (in YAML format).</p>
@@ -1710,7 +1710,7 @@ The ELN file <code>eln_data.yaml</code> looks like this:</p>
       <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
         <script src="../../javascript.js"></script>
       

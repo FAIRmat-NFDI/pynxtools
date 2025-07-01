@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1317,7 +1317,7 @@
 </ol>
 <p>While option 1 is generally not recommended, inheriting and extending the <code>BaseReader</code> has traditionally been the default solution for all existing pynxtools readers and reader plugins. The <code>BaseReader</code>, which is an abstract base class, has an essentially empty <code>read</code> function and is  thus only helpful for implementing the correct input/output design of the <code>read</code> function of any reader which is implemented off of it.</p>
 <p>While building on the <code>BaseReader</code> allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the NeXus file based on the read data, in compliance with a NeXus application definition. For this purpose, <code>pynxtools</code> has the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a>, which can be readily extended for any new data.</p>
-<p>Here, we will explain the inner workings of the <code>MultiFormatReader</code>. Note that there is also a <a href="../how-tos/use-multi-format-reader.md">how-to guide</a> on how to implement a new reader off of the <code>MultiFormatReader</code> using a concrete example. In case you simply want to use the <code>MultiFormatReader</code> without understanding its inner logic, we recommend you start there.</p>
+<p>Here, we will explain the inner workings of the <code>MultiFormatReader</code>. Note that there is also a <a href="../../how-tos/pynxtools/use-multi-format-reader.html">how-to guide</a> on how to implement a new reader off of the <code>MultiFormatReader</code> using a concrete example. In case you simply want to use the <code>MultiFormatReader</code> without understanding its inner logic, we recommend you start there.</p>
 <h2 id="the-basic-structure">The basic structure<a class="headerlink" href="#the-basic-structure" title="Permanent link">&para;</a></h2>
 <p>For extending the <code>MultiFormatReader</code>, the following basic structure must be implemented:</p>
 <div class="highlight"><span class="filename">multi/reader.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="sd">&quot;&quot;&quot;MyDataReader implementation for the DataConverter to convert mydata to NeXus.&quot;&quot;&quot;</span>
@@ -1620,7 +1620,7 @@ the whole parent group <code>/ENTRY/INSTRUMENT[instrument]/energy_resolution</co
       <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
         <script src="../../javascript.js"></script>
       

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1369,7 +1369,7 @@
 
 
 <h1 id="build-your-own-pynxtools-plugin">Build your own pynxtools plugin<a class="headerlink" href="#build-your-own-pynxtools-plugin" title="Permanent link">&para;</a></h1>
-<p>The pynxtools <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter">dataconverter</a> is used to convert experimental data to NeXus/HDF5 files based on any provided <a href="https://manual.nexusformat.org/nxdl.html">NXDL schemas</a>. The converter allows extending support to other data formats by allowing extensions called <code>readers</code>.  There exist a set of <a href="../reference/built-in-readers.md">built-in pynxtools readers</a> as well as <a href="../reference/plugins.md">pynxtools reader plugins</a> to convert supported data files for some experimental techniques into NeXus-compliant files.</p>
+<p>The pynxtools <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter">dataconverter</a> is used to convert experimental data to NeXus/HDF5 files based on any provided <a href="https://manual.nexusformat.org/nxdl.html">NXDL schemas</a>. The converter allows extending support to other data formats by allowing extensions called <code>readers</code>.  There exist a set of <a href="../../reference/built-in-readers.html">built-in pynxtools readers</a> as well as <a href="../../reference/plugins.html">pynxtools reader plugins</a> to convert supported data files for some experimental techniques into NeXus-compliant files.</p>
 <p>Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?</p>
 <p>Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.</p>
 <h2 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
@@ -1448,7 +1448,7 @@ They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... 
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl
 </code></pre></div>
 <h4 id="naming-of-groups">Naming of groups<a class="headerlink" href="#naming-of-groups" title="Permanent link">&para;</a></h4>
-<p>In case the NXDL does not define a <code>name</code> for the group the requested data belongs to, the template dictionary will list it as <code>/NAME_IN_NXDL[name_in_output_nexus]</code>. You can choose any name you prefer instead of the suggested <code>name_in_output_nexus</code> (see <a href="../learn/nexus-rules.md">here</a> for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.</p>
+<p>In case the NXDL does not define a <code>name</code> for the group the requested data belongs to, the template dictionary will list it as <code>/NAME_IN_NXDL[name_in_output_nexus]</code>. You can choose any name you prefer instead of the suggested <code>name_in_output_nexus</code> (see <a href="../../learn/nexus/nexus-rules.html">here</a> for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">}</span>
@@ -1652,7 +1652,7 @@ dataconverter call. Here is its API:</p>
       <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
         <script src="../../javascript.js"></script>
       
