@@ -64,6 +64,10 @@ authors:
     family-names: Hetaba
     orcid: https://orcid.org/0000-0003-4728-0786
     affiliation: 3
+  - given-names: Carlos-Andres
+    family-names: Palma
+    orcid: https://orcid.org/0000-0001-5576-8496
+    affiliation: "1, 6"
   - given-names: Laurenz
     family-names: Rettig
     orcid: https://orcid.org/0000-0002-0725-6696
@@ -100,6 +104,8 @@ affiliations:
     index: 4
   - name: Felix-Bloch-Institut für Festkörperphysik, Universität Leipzig, Leipzig, Germany
     index: 5
+  - name: Institute of Physics, Chinese Academy of Sciences, Beijing, China
+    index: 6
 date: 06 June 2025
 bibliography: paper.bib
 
