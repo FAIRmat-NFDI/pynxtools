@@ -598,15 +598,15 @@ You may update the repository for the latest version via:
 punx install
 ```
 
-The NeXus respective definitions are found here:
+### Running the validation
 
-[NIAC NeXus definitions](<https://manual.nexusformat.org/classes/index.html>)
+The NeXus respective definitions are found [here](<https://manual.nexusformat.org/classes/index.html>).
 
 Search on the right side under "quick search" for "NXopt":
 
 [NXopt NeXus definition](<https://manual.nexusformat.org/classes/contributed_definitions/NXopt.html#index-0>)
 
-This python code creates the respective python file with all required fields:
+This python code creates the respective Python file with all required fields:
 
 [NXopt_minimal_example_NIAC_NeXus_Def.nxs](https://zenodo.org/records/13373909/files/NXopt_minimal_example_NIAC_NeXus_Def.nxs?download=1)
 
@@ -650,7 +650,7 @@ TOTAL    378
 
 The last error message:
 
-```
+```console
 ======= ====== ========== ======================================
 /entry  ERROR  known NXDL NXopt: unrecognized NXDL specification
 ======= ====== ========== ======================================
@@ -660,28 +660,14 @@ can be ignored and is a bug right now. If this is the only Error message, then y
 
 ### Further notes
 
-1. Punx only uses the [NeXus definitions from the NIAC](<https://manual.nexusformat.org/>). The use of the [FAIRmat NeXus definition](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>) is not possible right now.
+1. [More details for installation](<https://punx.readthedocs.io/en/latest/install.html>)
+2. [Other punx commands](<https://punx.readthedocs.io/en/latest/overview.html#>)
+3. [Github project](<https://github.com/prjemian/punx>)
 
-2. [Other punx commands are available](<https://punx.readthedocs.io/en/latest/overview.html#>)
+## Recommended workflow
 
-3. [More details for installation](<https://punx.readthedocs.io/en/latest/install.html>)
+As the `verify_nexus` method from `pynxtools` is right now in development, [not all situations are covered right now](testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _Software solutions_.
 
-4. [Github project](<https://github.com/prjemian/punx>)
+## Pynxtools Reader Plugins
 
-## Summary
-
-This tutorial showed:
-
-1. 3 different tools for NeXus file validation
-
-2. How to install these tools
-
-3. How to use them via Examples
-
-### Recommended workflow
-
-As the `verify_nexus` method from pynxtools is right now in development, [not all situations are covered right now](testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _Software solutions_.
-
-### Pynxtools Reader Plugins
-
-For a specifically structured set of data, a reader plugin can be written, which uses the meta data and a pre-structured meta data fil, to create a NeXus file. Each reader depends on the given experimental technique/setup and therefore has to be written individually. Take a look [here](../../reference/plugins.md).
+For a specifically structured set of data, a reader plugin can be written, which uses the meta data and a pre-structured meta data fil, to create a NeXus file. Each reader depends on the given experimental technique/setup and therefore has to be written individually. Take a look at all [FAIRmat-supported plugins](../../reference/plugins.md).
