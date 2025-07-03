@@ -1224,19 +1224,15 @@ of the concept.</p>
 <p class="admonition-title">Concept and instance names</p>
 <p>In NeXus, we must distinguish carefully between names of concepts and the names given to the actual instance of that concept.</p>
 <ul>
-<li>
-<p><strong>Concept Name:</strong> This is the name given to a NeXus concept, i.e., on the data modelling level in the NeXus definitions.</p>
-</li>
-<li>
-<p><strong>Instance Name:</strong> This is the actual name for a NeXus data instance of the concept (e.g., in an HDF5 file).</p>
-</li>
+<li><strong>Concept Name:</strong> This is the name given to a NeXus concept, i.e., on the data modelling level in the NeXus definitions.</li>
+<li><strong>Instance Name:</strong> This is the actual name for a NeXus data instance of the concept (e.g., in an HDF5 file).</li>
 </ul>
 </div>
 <p>There are three different options for the <code>nameType</code> XML attribute:</p>
 <ul>
-<li>specified</li>
-<li>any</li>
-<li>partial</li>
+<li><code>specified</code></li>
+<li><code>any</code></li>
+<li><code>partial</code></li>
 </ul>
 <p>If <code>nameType=specified</code>, that means that any instance must have the exact same (<strong>fixed</strong>) name as the concept. As an example, if there is a field called <code>my_field</code> with <code>nameType=specified</code> in an application definition, the only allowed name in a file would be <code>my_field</code>. Note that this is also true for concept names containing uppercase letters. "specified" is the default <code>nameType</code>, i.e., if no <code>nameType</code> is given, it is assumed that any instance name must match the
 concept name directly</p>

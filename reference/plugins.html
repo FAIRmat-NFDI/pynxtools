@@ -1091,9 +1091,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#atom-probe-tomography" class="md-nav__link">
+  <a href="#atom-probe-microscopytomography" class="md-nav__link">
     <span class="md-ellipsis">
-      Atom probe tomography
+      Atom probe microscopy/tomography
     </span>
   </a>
   
@@ -1205,9 +1205,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#atom-probe-tomography" class="md-nav__link">
+  <a href="#atom-probe-microscopytomography" class="md-nav__link">
     <span class="md-ellipsis">
-      Atom probe tomography
+      Atom probe microscopy/tomography
     </span>
   </a>
   
@@ -1276,38 +1276,153 @@
 
 <h1 id="fairmat-supported-pynxtools-plugins">FAIRmat-supported <code>pynxtools</code> plugins<a class="headerlink" href="#fairmat-supported-pynxtools-plugins" title="Permanent link">&para;</a></h1>
 <p>There are a number of plugins available for <code>pynxtools</code> that are maintained within FAIRmat. These are extensions of <code>pynxtools</code> used for reading data of specific experimental techniques and/or file formats.</p>
-<h3 id="photoemission-spectroscopy">Photoemission spectroscopy<a class="headerlink" href="#photoemission-spectroscopy" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-mpes"><strong><code>pynxtools-mpes</code></strong></a>: A reader for multi-dimensional photoelectron spectroscopy (MPES) data.</li>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-xps"><strong><code>pynxtools-xps</code></strong></a>: A reader for X-ray photoelectron spectroscopy (XPS) data from various vendors. Documentation can be found <a href="https://fairmat-nfdi.github.io/pynxtools-xps/">here</a>.</li>
-</ul>
-<!-- - [**pynxtools-focus**](https://github.com/FAIRmat-NFDI/pynxtools-focus): A reader for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument.-->
+<h2 id="photoemission-spectroscopy">Photoemission spectroscopy<a class="headerlink" href="#photoemission-spectroscopy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-mpes/">pynxtools-mpes</a></td>
+<td>Reader plugin for multi-dimensional photoelectron spectroscopy (MPES) data.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-mpes/">📦</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-xps/">pynxtools-xps</a></td>
+<td>Reader plugin for X-ray photoelectron spectroscopy (XPS) data from various vendors/sources.</td>
+<td style="text-align: center;"><a href="https://fairmat-nfdi.github.io/pynxtools-xps/">📚</a></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-xps/">📦</a></td>
+</tr>
+</tbody>
+</table>
+<!-- | [pynxtools-focus](https://github.com/FAIRmat-NFDI/pynxtools-focus/) | A reader plugin for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument. | [📚]() | [📦]() | -->
 
-<h3 id="electron-microscopy">Electron microscopy<a class="headerlink" href="#electron-microscopy" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-em"><strong><code>pynxtools-em</code></strong></a>: A reader for electron microscopy data from various vendors. Documentation can be found <a href="https://fairmat-nfdi.github.io/pynxtools-em/">here</a>.</li>
-</ul>
-<h3 id="atom-probe-tomography">Atom probe tomography<a class="headerlink" href="#atom-probe-tomography" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-apm"><strong><code>pynxtools-apm</code></strong></a>: A reader for atom probe as well as related field ion microscopy data. Documentation can be found <a href="https://fairmat-nfdi.github.io/pynxtools-apm/">here</a>.</li>
-</ul>
-<h3 id="optical-spectroscopy">Optical spectroscopy<a class="headerlink" href="#optical-spectroscopy" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-ellips"><strong><code>pynxtools-ellips</code></strong></a>: A reader for ellipsometry data. Documentation can be found <a href="https://fairmat-nfdi.github.io/pynxtools-ellips/">here</a>.</li>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-raman"><strong><code>pynxtools-raman</code></strong></a>: A reader for Raman data.</li>
-</ul>
-<h3 id="scanning-probe-microscopy">Scanning probe microscopy<a class="headerlink" href="#scanning-probe-microscopy" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-spm"><strong><code>pynxtools-spm</code></strong></a>: A reader for scanning tunneling microscopy (SPM) domain data (STM, STS and AFM).</li>
-</ul>
-<h3 id="x-ray-diffraction">X-ray diffraction<a class="headerlink" href="#x-ray-diffraction" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-xrd"><strong><code>pynxtools-xrd</code></strong></a>: A reader for X-ray diffraction data.</li>
-</ul>
-<h3 id="others">Others<a class="headerlink" href="#others" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-igor"><strong><code>pynxtools-igor</code></strong></a>: A general reader for <a href="https://www.wavemetrics.com/">Igor Pro</a> Binary Wave data. Documentation can be found <a href="https://fairmat-nfdi.github.io/pynxtools-igor/">here</a>.</li>
-</ul>
+<h2 id="electron-microscopy">Electron microscopy<a class="headerlink" href="#electron-microscopy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-em/">pynxtools-em</a></td>
+<td>Reader plugin for electron microscopy (EM) data from various vendors/sources.</td>
+<td style="text-align: center;"><a href="https://fairmat-nfdi.github.io/pynxtools-em/">📚</a></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-em/">📦</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="atom-probe-microscopytomography">Atom probe microscopy/tomography<a class="headerlink" href="#atom-probe-microscopytomography" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-apm/">pynxtools-apm</a></td>
+<td>Reader plugin for atom probe microscopy (APM) as well as related field ion microscopy (FIM) data.</td>
+<td style="text-align: center;"><a href="https://fairmat-nfdi.github.io/pynxtools-apm/">📚</a></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-apm/">📦</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="optical-spectroscopy">Optical spectroscopy<a class="headerlink" href="#optical-spectroscopy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-ellips/">pynxtools-ellips</a></td>
+<td>Reader plugin for ellipsometry data.</td>
+<td style="text-align: center;"><a href="https://fairmat-nfdi.github.io/pynxtools-ellips/">📚</a></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-ellips/">📦</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-raman/">pynxtools-raman</a></td>
+<td>Reader plugin for Raman data.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-raman/">📦</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="scanning-probe-microscopy">Scanning probe microscopy<a class="headerlink" href="#scanning-probe-microscopy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-spm/">pynxtools-spm</a></td>
+<td>Reader plugin for scanning probe microscopy (SPM).</td>
+<td style="text-align: center;"><a href="https://fairmat-nfdi.github.io/pynxtools-spm/">📚</a></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-spm/">📦</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="x-ray-diffraction">X-ray diffraction<a class="headerlink" href="#x-ray-diffraction" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-xrd/">pynxtools-xrd</a></td>
+<td>pynxtools reader plugin for X-ray diffraction data.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-xrd/">📦</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="others">Others<a class="headerlink" href="#others" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+<th style="text-align: center;">Docs</th>
+<th style="text-align: center;">PyPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/FAIRmat-NFDI/pynxtools-igor/">pynxtools-igor</a></td>
+<td>A general reader plugin for <a href="https://www.wavemetrics.com/">Igor Pro</a> Binary Wave data.</td>
+<td style="text-align: center;"><a href="https://fairmat-nfdi.github.io/pynxtools-igor/">📚</a></td>
+<td style="text-align: center;"><a href="https://pypi.org/project/pynxtools-igor/">📦</a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>You can install each of the plugins together with <code>pynxtools</code> by passing the name of the plugin as an extra to the pip install call. For example, for the <code>pynxtools-mpes</code> plugin:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">uv</label><label for="__tabbed_1_2">pip</label></div>

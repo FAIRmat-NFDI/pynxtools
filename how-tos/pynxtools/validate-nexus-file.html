@@ -912,6 +912,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#running-the-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#further-notes" class="md-nav__link">
     <span class="md-ellipsis">
       Further notes
@@ -926,16 +935,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Summary
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Summary">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#recommended-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       Recommended workflow
@@ -943,18 +942,13 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#pynxtools-reader-plugins" class="md-nav__link">
     <span class="md-ellipsis">
       Pynxtools Reader Plugins
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1630,6 +1624,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#running-the-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#further-notes" class="md-nav__link">
     <span class="md-ellipsis">
       Further notes
@@ -1644,16 +1647,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Summary
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Summary">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#recommended-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       Recommended workflow
@@ -1661,18 +1654,13 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#pynxtools-reader-plugins" class="md-nav__link">
     <span class="md-ellipsis">
       Pynxtools Reader Plugins
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2127,11 +2115,11 @@ The command used is:</p>
 <p>You may update the repository for the latest version via:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="go">punx install</span>
 </code></pre></div>
-<p>The NeXus respective definitions are found here:</p>
-<p><a href="https://manual.nexusformat.org/classes/index.html">NIAC NeXus definitions</a></p>
+<h3 id="running-the-validation">Running the validation<a class="headerlink" href="#running-the-validation" title="Permanent link">&para;</a></h3>
+<p>The NeXus respective definitions are found <a href="https://manual.nexusformat.org/classes/index.html">here</a>.</p>
 <p>Search on the right side under "quick search" for "NXopt":</p>
 <p><a href="https://manual.nexusformat.org/classes/contributed_definitions/NXopt.html#index-0">NXopt NeXus definition</a></p>
-<p>This python code creates the respective python file with all required fields:</p>
+<p>This python code creates the respective Python file with all required fields:</p>
 <p><a href="https://zenodo.org/records/13373909/files/NXopt_minimal_example_NIAC_NeXus_Def.nxs?download=1">NXopt_minimal_example_NIAC_NeXus_Def.nxs</a></p>
 <p>Here is the Python code:</p>
 <p><a class="md-button" href="https://zenodo.org/records/13373909/files/h5py_nexus_file_creation_NIAC_NeXus_Def.py?download=1" target="_blank">Download h5py_nexus_file_creation_NIAC_NeXus_Def.py</a>.</p>
@@ -2164,43 +2152,21 @@ The command used is:</p>
 <a id="__codelineno-46-23" name="__codelineno-46-23" href="#__codelineno-46-23"></a><span class="go">======== ===== =========================================================== =========</span>
 </code></pre></div>
 <p>The last error message:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>======= ====== ========== ======================================
-<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>/entry  ERROR  known NXDL NXopt: unrecognized NXDL specification
-<a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>======= ====== ========== ======================================
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="go">======= ====== ========== ======================================</span>
+<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a><span class="go">/entry  ERROR  known NXDL NXopt: unrecognized NXDL specification</span>
+<a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a><span class="go">======= ====== ========== ======================================</span>
 </code></pre></div>
 <p>can be ignored and is a bug right now. If this is the only Error message, then your NeXus file is compliant with the NeXus definitions and you can share and publish your data.</p>
 <h3 id="further-notes">Further notes<a class="headerlink" href="#further-notes" title="Permanent link">&para;</a></h3>
 <ol>
-<li>
-<p>Punx only uses the <a href="https://manual.nexusformat.org/">NeXus definitions from the NIAC</a>. The use of the <a href="https://fairmat-nfdi.github.io/nexus_definitions/index.html#">FAIRmat NeXus definition</a> is not possible right now.</p>
-</li>
-<li>
-<p><a href="https://punx.readthedocs.io/en/latest/overview.html#">Other punx commands are available</a></p>
-</li>
-<li>
-<p><a href="https://punx.readthedocs.io/en/latest/install.html">More details for installation</a></p>
-</li>
-<li>
-<p><a href="https://github.com/prjemian/punx">Github project</a></p>
-</li>
+<li><a href="https://punx.readthedocs.io/en/latest/install.html">More details for installation</a></li>
+<li><a href="https://punx.readthedocs.io/en/latest/overview.html#">Other punx commands</a></li>
+<li><a href="https://github.com/prjemian/punx">Github project</a></li>
 </ol>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>This tutorial showed:</p>
-<ol>
-<li>
-<p>3 different tools for NeXus file validation</p>
-</li>
-<li>
-<p>How to install these tools</p>
-</li>
-<li>
-<p>How to use them via Examples</p>
-</li>
-</ol>
-<h3 id="recommended-workflow">Recommended workflow<a class="headerlink" href="#recommended-workflow" title="Permanent link">&para;</a></h3>
-<p>As the <code>verify_nexus</code> method from pynxtools is right now in development, <a href="testing-validation-tools.html">not all situations are covered right now</a>. Therefore, the most reliable method right now is a combination of <em>Human Manual Validation</em> + <em>Software solutions</em>.</p>
-<h3 id="pynxtools-reader-plugins">Pynxtools Reader Plugins<a class="headerlink" href="#pynxtools-reader-plugins" title="Permanent link">&para;</a></h3>
-<p>For a specifically structured set of data, a reader plugin can be written, which uses the meta data and a pre-structured meta data fil, to create a NeXus file. Each reader depends on the given experimental technique/setup and therefore has to be written individually. Take a look <a href="../../reference/plugins.html">here</a>.</p>
+<h2 id="recommended-workflow">Recommended workflow<a class="headerlink" href="#recommended-workflow" title="Permanent link">&para;</a></h2>
+<p>As the <code>verify_nexus</code> method from <code>pynxtools</code> is right now in development, <a href="testing-validation-tools.html">not all situations are covered right now</a>. Therefore, the most reliable method right now is a combination of <em>Human Manual Validation</em> + <em>Software solutions</em>.</p>
+<h2 id="pynxtools-reader-plugins">Pynxtools Reader Plugins<a class="headerlink" href="#pynxtools-reader-plugins" title="Permanent link">&para;</a></h2>
+<p>For a specifically structured set of data, a reader plugin can be written, which uses the meta data and a pre-structured meta data fil, to create a NeXus file. Each reader depends on the given experimental technique/setup and therefore has to be written individually. Take a look at all <a href="../../reference/plugins.html">FAIRmat-supported plugins</a>.</p>
 
 
 
