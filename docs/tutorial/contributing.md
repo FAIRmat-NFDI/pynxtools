@@ -4,14 +4,14 @@ This tutorial will guide you through on how to set up a working environment for 
 
 ## What should you should know before this tutorial?
 
-- You should read our [guide on getting started](../getting-started.md)
-- You should read the [installation tutorial](installation.md)
+- You should read our [guide on getting started](../getting-started.md).
+- You should read the [installation tutorial](installation.md).
 
 ## What you will know at the end of this tutorial?
 
 You will know
 
-- how to setup your environment for developing pynxtools
+- how to setup your environment for developing `pynxtools`
 - how to make changes to the software
 - how to test the software
 - how to contribute on GitHub
@@ -19,13 +19,12 @@ You will know
 
 ## Contributing
 
-??? info "Structure of the pynxtools repository"
+??? info "Structure of the `pynxtools` repository"
     The software tools are located inside [`src/pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools). They are shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests). Some examples from the scientific community are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples). They guide you through the process of converting instrument data into the NeXus standard and visualizing the files' content.
 
 ### Setup
 
-It is recommended to use python 3.11 with a dedicated virtual environment for this package. Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
-[virtual environments](https://realpython.com/python-virtual-environments-a-primer/). We recommend using [`uv`](https://github.com/astral-sh/uv), an extremely fast manager Python package and project manager. In this tutorial, you will find paralleled descriptions, using either `uv` or a more classical approach using `venv` and `pip`.
+It is recommended to use python 3.11 with a dedicated virtual environment for this package. Learn how to manage [python versions](https://github.com/pyenv/pyenv) and [virtual environments](https://realpython.com/python-virtual-environments-a-primer/). We recommend using [`uv`](https://github.com/astral-sh/uv), an extremely fast manager Python package and project manager. In this tutorial, you will find paralleled descriptions, using either `uv` or a more classical approach using `venv` and `pip`.
 
 Start by creating a virtual environment:
 
@@ -50,7 +49,7 @@ That command creates a new virtual environment in a directory called .venv.
 
 We start by cloning the repository:
 
-```bash
+```console
 git clone https://github.com/FAIRmat-NFDI/pynxtools.git \\
     --branch master \\
     --recursive pynxtools
@@ -84,7 +83,7 @@ We are using ruff and mypy for linting, formatting, and type checking. It is rec
 
 Install the precommit by running
 
-```bash
+```console
 pre-commit install
 ```
 
@@ -94,7 +93,7 @@ from the root of this repository.
 
 There exist unit tests for the software written in [pytest](https://docs.pytest.org/en/stable/) which can be used as follows:
 
-```shell
+```console
 pytest -sv tests
 ```
 
@@ -113,15 +112,15 @@ We are using [`mkdocs](https://www.mkdocs.org/) for the documentation. If you ed
     ```bash
     pip install -e ".[docs]"
     ```
-You can then serve the documentation by running
+You can then serve the documentation locally by running
 
-```shell
+```console
 mkdocs serve
 ```
 
 ### Running the examples
 
-A number of examples exist which document how the tools can be used. For a standalone usage convenient jupyter notebooks are available for some of the tools. To use these notebooks, jupyter and related tools have to be installed in the development environment as follows:
+A number of examples exist which document how the tools can be used. For a standalone usage, convenient Jupyter notebooks are available for some of the tools. To use these notebooks, Jupyter and related tools have to be installed in the development environment as follows:
 
 === "uv"
 
@@ -141,7 +140,7 @@ A number of examples exist which document how the tools can be used. For a stand
 
 ### Contributing to the package on Github
 
-Once you are happy with the changes, please commit them on a separate branch and create a pull request on GitHub. We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted
+Once you are happy with the changes, please commit them on a separate branch and create a pull request on GitHub. We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted.
 
 ## Developing pynxtools as a NOMAD plugin
 

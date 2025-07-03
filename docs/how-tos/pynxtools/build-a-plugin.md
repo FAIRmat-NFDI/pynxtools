@@ -1,8 +1,8 @@
 # Build your own pynxtools plugin
 
-The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html). The converter allows extending support to other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](../../reference/built-in-readers.md) as well as [pynxtools reader plugins](../../reference/plugins.md) to convert supported data files for some experimental techniques into NeXus-compliant files.
+The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any of the provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html). The converter can be extending to support other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](../../reference/built-in-readers.md) as well as [`pynxtools` reader plugins](../../reference/plugins.md) to convert supported data files for some experimental techniques into NeXus-compliant files.
 
-Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?
+Your current data is not supported yet by the built-in `pynxtools` readers or the officially supported `pynxtools` plugins?
 
 Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.
 
@@ -29,7 +29,7 @@ pynxtools-plugin
 └── pyproject.toml
 ```
 
-To identify `pynxtools-plugin` as a plugin for pynxtools, an entry point must be established (in the `pyproject.toml` file):
+To identify `pynxtools-plugin` as a plugin for `pynxtools`, an entry point must be established (in the `pyproject.toml` file):
 
 ``` toml title="pyproject.toml"
 [project.entry-points."pynxtools.reader"]
@@ -86,8 +86,7 @@ READER = MyDataReader
 
 The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the NeXus application definition. The template contains keys that match the concepts in the provided NXDL file.
 
-The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file.
-They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... . Practically you can pass any value that can be handled by the `h5py` package.
+The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file. They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... . Practically you can pass any value that can be handled by the [`h5py` package](https://www.h5py.org/).
 
 Example for a template entry:
 
@@ -157,7 +156,7 @@ You can find an extensive how-to guide to build off the `MultiFormatReader` [her
 The dataconverter can be executed using:
 
 ```console
-user@box:~$ dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to_output.nxs
+dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to_output.nxs
 ```
 
 Here, the ``--reader`` flag must match the reader name defined in `[project.entry-points."pynxtools.reader"]` in the pyproject.toml file. The NXDL name passed to ``--nxdl``must be a valid NeXus NXDL/XML file in `pynxtools.definitions`.

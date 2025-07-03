@@ -31,6 +31,7 @@ punx
 pynxtools
 xarrays
 xdist
+Zenodo
 
 # examples
 appdefdir
