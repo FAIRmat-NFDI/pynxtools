@@ -272,7 +272,7 @@
   
   
   <span class="md-ellipsis">
-    Installation
+    Installation guide
     
   </span>
   
@@ -1276,16 +1276,16 @@
 <p>In general, we recommend using <a href="https://github.com/FAIRmat-NFDI/pynxtools"><code>pynxtools</code></a> to create NeXus files, which has the inherent advantage that the resulting NeXus file gets automatically validated against the NeXus application definition during conversion.</p>
 <p>However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs) directly using Python. For static data structures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, we strongly recommend using <code>pynxtools</code> and its measurement method specific <a href="../../reference/plugins.html">plugins</a>.</p>
 <p>This How-To is intended as easy access to FAIR data structures <em>via</em> NeXus. It will demonstrate how NeXus file can be created in Python using <code>h5py</code>.</p>
-<p><strong>Note: You can find all of the data <a href="https://zenodo.org/records/13373909">here</a>.</strong> Specifically, the Python script for creating a NeXus file can be downloading here:</p>
-<ul>
-<li><a href="https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1">h5py_nexus_file_creation.py</a>.</li>
-</ul>
+<p><strong>You can find all of the data on Zenodo:</strong></p>
+<p><a class="md-button" href="https://zenodo.org/records/13373909" target="_blank">Download from Zenodo</a></p>
+<p>Specifically, the Python script for creating a NeXus file can be downloaded here:</p>
+<p><a class="md-button" href="https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1" target="_blank">Download h5py_nexus_file_creation.py</a></p>
 <p>We will discuss its content below and guide you through step-by-step in creating your NeXus file by hand.</p>
 <h2 id="create-a-nexus-file-through-python-and-h5py">Create a NeXus file through Python and h5py<a class="headerlink" href="#create-a-nexus-file-through-python-and-h5py" title="Permanent link">&para;</a></h2>
 <p>You start by installing <code>h5py</code> via <code>pip</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pip install h5py</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>h5py
 </code></pre></div>
-<p>Next, we create the <code>h5py</code> file and fill it with a minimal structure.</p>
+<p>Next, we create the Python file and fill it with a minimal structure.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Import h5py, to write an hdf5 file</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -1343,7 +1343,7 @@
 <p><code>NX\_CHAR</code> indicates the datatype. This should be a string: "The preferred string representation is UTF-8" (more information see <a href="https://manual.nexusformat.org/nxdl-types.html">here</a>)</p>
 </li>
 </ol>
-<p><img alt="image.png" src="../attachments/51dc82f9f0f5ec2f-image.png" /></p>
+<p><img alt="image.png" src="../media/51dc82f9f0f5ec2f-image.png" /></p>
 <p>We add an instance of this concept by adding an HDF5 attribute:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/definition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;v2024.02&#39;</span>
 </code></pre></div>
@@ -1365,12 +1365,12 @@
 <ul>
 <li>Now you have to copy the permalink of this file. Go to the top right side of the website. Find the Menu made by 3 dots:</li>
 </ul>
-<p><img alt="image.png" src="../attachments/c6ab2f4b925aed27-image.png" /></p>
+<p><img alt="image.png" src="../media/c6ab2f4b925aed27-image.png" /></p>
 <p>Copy the permalink and insert it as value for the "URL" attribute (Step 1, Red box in the image)</p>
 <ul>
 <li>Go to "nexus_definitions" (Step 2, Red box in the image)</li>
 </ul>
-<p><img alt="image.png" src="../attachments/d8e727b3b32dcbb9-image.png" /></p>
+<p><img alt="image.png" src="../media/d8e727b3b32dcbb9-image.png" /></p>
 <p>On the right side, you should see below "Releases" the "tags" (Red box in the image). Follow this link.</p>
 <ul>
 <li>Copy the latest tag, which should look similar to "v2024.02". Insert it as value for the "version" attribute.</li>
@@ -1384,7 +1384,7 @@ When specifying this version tag, it would be better to include the GitHub commi
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="s1">&#39;v2022.07.post1.dev1284+gf75a2983&#39;</span>
 </code></pre></div>
 <h3 id="adding-a-field">Adding a field<a class="headerlink" href="#adding-a-field" title="Permanent link">&para;</a></h3>
-<p>The next required concept of <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html">NXoptical_spectrsocopy</a> is "<strong>experiment_type"</strong>.</p>
+<p>The next required concept of <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html">NXoptical_spectroscopy</a> is "<strong>experiment_type"</strong>.</p>
 <p><strong>experiment_type</strong>: (required) <a href="https://fairmat-nfdi.github.io/nexus_definitions/nxdl-types.html#nx-char">NX_CHAR</a></p>
 <ol>
 <li>
@@ -1400,14 +1400,14 @@ When specifying this version tag, it would be better to include the GitHub commi
 <p>The "required" indicates that this group/field has to be added to be in line with the NeXus definition "NXoptical_spectroscopy".</p>
 </li>
 <li>
-<p><code>NX\_CHAR</code> indicates the datatype. This should be a string (see above).</p>
+<p><code>NX\_CHAR</code> indicates the datatype. This should NXoptical_spectrs be a string (see above).</p>
 </li>
 <li>
 <p>The presence of the datatype <code>NX\_CHAR</code> indicates that this is a field. It is NOT a group.</p>
 </li>
 </ol>
 <p>Read the documentation at "▶ Specify the type of the optical experiment. ..." by extending it via click on the triangle symbol. You should see something like this:</p>
-<p><img alt="image.png" src="../attachments/5cbd8c6a1ca227df-image.png" /></p>
+<p><img alt="image.png" src="../media/5cbd8c6a1ca227df-image.png" /></p>
 <p>There, the value of the field has to be one of the shown list, since it is an enumeration (e.g. "transmission spectroscopy"). Note that this is requires an exact match to one of the enumerated items (case and whitespace sensitive).</p>
 <p>Therefore, the Python script has to be extended by:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/experiment_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;transmission spectroscopy&#39;</span>
@@ -1464,7 +1464,7 @@ When specifying this version tag, it would be better to include the GitHub commi
 <p>Note that you can also add instances for recommended or optional concepts to the file by using the same Python functionality as above. The difference to the required concept is that they <em>have</em> to be present in order for the file to comply with the application definitions, whereas recommended/optional files <em>can</em>, but don't need to be present.</p>
 <h2 id="whats-next">What's next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Once you have a finished NeXus file, you may continue <a href="validate-nexus-file.html">by validating the NeXus file_</a>.</li>
+<li>Once you have a finished NeXus file, you may continue <a href="validate-nexus-file.html">by validating the NeXus file</a>.</li>
 <li>If you find yourself in the situation that you need to run such Python code routinely to convert your data, we strongly recommend creating your own reader or plugin in the <code>pynxtools</code> ecosystem. You can find a how-to guide to get you started <a href="build-a-plugin.html">here</a>.</li>
 </ul>
 

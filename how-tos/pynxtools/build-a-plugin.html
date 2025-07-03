@@ -272,7 +272,7 @@
   
   
   <span class="md-ellipsis">
-    Installation
+    Installation guide
     
   </span>
   
@@ -1369,8 +1369,8 @@
 
 
 <h1 id="build-your-own-pynxtools-plugin">Build your own pynxtools plugin<a class="headerlink" href="#build-your-own-pynxtools-plugin" title="Permanent link">&para;</a></h1>
-<p>The pynxtools <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter">dataconverter</a> is used to convert experimental data to NeXus/HDF5 files based on any provided <a href="https://manual.nexusformat.org/nxdl.html">NXDL schemas</a>. The converter allows extending support to other data formats by allowing extensions called <code>readers</code>.  There exist a set of <a href="../../reference/built-in-readers.html">built-in pynxtools readers</a> as well as <a href="../../reference/plugins.html">pynxtools reader plugins</a> to convert supported data files for some experimental techniques into NeXus-compliant files.</p>
-<p>Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?</p>
+<p>The pynxtools <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter">dataconverter</a> is used to convert experimental data to NeXus/HDF5 files based on any of the provided <a href="https://manual.nexusformat.org/nxdl.html">NXDL schemas</a>. The converter can be extending to support other data formats by allowing extensions called <code>readers</code>.  There exist a set of <a href="../../reference/built-in-readers.html">built-in pynxtools readers</a> as well as <a href="../../reference/plugins.html"><code>pynxtools</code> reader plugins</a> to convert supported data files for some experimental techniques into NeXus-compliant files.</p>
+<p>Your current data is not supported yet by the built-in <code>pynxtools</code> readers or the officially supported <code>pynxtools</code> plugins?</p>
 <p>Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.</p>
 <h2 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <p>You should start by creating a clean repository that implements the following structure (for a plugin called <code>pynxtools-plugin</code>):</p>
@@ -1391,7 +1391,7 @@
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>├── dev-requirements.txt
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>└── pyproject.toml
 </code></pre></div>
-<p>To identify <code>pynxtools-plugin</code> as a plugin for pynxtools, an entry point must be established (in the <code>pyproject.toml</code> file):</p>
+<p>To identify <code>pynxtools-plugin</code> as a plugin for <code>pynxtools</code>, an entry point must be established (in the <code>pyproject.toml</code> file):</p>
 <div class="highlight"><span class="filename">pyproject.toml</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">[project.entry-points.</span><span class="s2">&quot;pynxtools.reader&quot;</span><span class="k">]</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">mydatareader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;pynxtools_plugin.reader:MyDataReader&quot;</span>
 </code></pre></div>
@@ -1437,8 +1437,7 @@
 </code></pre></div>
 <h3 id="the-reader-template-dictionary">The reader template dictionary<a class="headerlink" href="#the-reader-template-dictionary" title="Permanent link">&para;</a></h3>
 <p>The read function takes a <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py"><code>Template</code></a> dictionary, which is used to map from the measurement (meta)data to the concepts defined in the NeXus application definition. The template contains keys that match the concepts in the provided NXDL file.</p>
-<p>The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file.
-They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... . Practically you can pass any value that can be handled by the <code>h5py</code> package.</p>
+<p>The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file. They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... . Practically you can pass any value that can be handled by the <a href="https://www.h5py.org/"><code>h5py</code> package</a>.</p>
 <p>Example for a template entry:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;/entry/instrument/source/type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span>
@@ -1477,7 +1476,7 @@ They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... 
 <p>You can find an extensive how-to guide to build off the <code>MultiFormatReader</code> <a href="use-multi-format-reader.html">here</a>.</p>
 <h2 id="calling-the-reader-from-the-command-line">Calling the reader from the command line<a class="headerlink" href="#calling-the-reader-from-the-command-line" title="Permanent link">&para;</a></h2>
 <p>The dataconverter can be executed using:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--reader<span class="w"> </span>mydatareader<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>--output<span class="w"> </span>path_to_output.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="go">dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to_output.nxs</span>
 </code></pre></div>
 <p>Here, the <code>--reader</code> flag must match the reader name defined in <code>[project.entry-points."pynxtools.reader"]</code> in the pyproject.toml file. The NXDL name passed to <code>--nxdl</code>must be a valid NeXus NXDL/XML file in <code>pynxtools.definitions</code>.</p>
 <p>Aside from this default structure, there are many more flags that can be passed to the

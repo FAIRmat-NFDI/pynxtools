@@ -274,7 +274,7 @@
   
   
   <span class="md-ellipsis">
-    Installation
+    Installation guide
     
   </span>
   
@@ -1261,48 +1261,60 @@ For a more detailed description on the general principles of NeXus we recommend 
 <a href="../learn/nexus/nexus-primer.html">learning page for NeXus</a> or the <a href="https://manual.nexusformat.org/user_manual.html">official NeXus user manual</a>.</p>
 <h2 id="what-should-you-should-know-before-this-tutorial">What should you should know before this tutorial?<a class="headerlink" href="#what-should-you-should-know-before-this-tutorial" title="Permanent link">&para;</a></h2>
 <ul>
-<li>You should have a basic understanding of NeXus - <a href="../learn/nexus/nexus-primer.html">A primer on NeXus</a></li>
-<li>You should have a basic understanding of <a href="https://www.nature.com/articles/sdata201618">FAIR data</a></li>
+<li>You should have a basic understanding of NeXus: see <a href="../learn/nexus/nexus-primer.html">our primer on NeXus</a>.</li>
+<li>You should have a basic understanding of <a href="https://www.nature.com/articles/sdata201618">FAIR data</a>.</li>
+<li>You should have installed <code>pynxtools</code>: <a href="installation.html">Installation tutorial</a>.</li>
 </ul>
 <h2 id="what-you-will-know-at-the-end-of-this-tutorial">What you will know at the end of this tutorial?<a class="headerlink" href="#what-you-will-know-at-the-end-of-this-tutorial" title="Permanent link">&para;</a></h2>
 <p>You will have</p>
 <ul>
-<li>a basic understanding how to use the NeXus data converter from the pynxtools package</li>
+<li>a basic understanding how to use the NeXus data converter from the <code>pynxtools</code> package</li>
 </ul>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
-<p>We use a Python tool to make converting our research data easier. This has a number of <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers">readers</a> that support multiple file formats. You can browse the separate folders to find the reader that might work for you. A generic reader is the <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map">JSON Map Reader</a>. In addition, we provide multiple <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#plugins">reader plugins</a> for different experimental techniques.</p>
-<p>We will use the <a href="https://github.com/FAIRmat-NFDI/pynxtools-xps">XPS reader plugin</a> with a <a href="https://www.specs-group.com/nc/specs/products/detail/prodigy/">SpecsLabProdigy</a> file (file extension: .sle) as an example.</p>
+<p><code>pynxtools</code> has a number of <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers">readers</a> that support reading and converting multiple file formats. A generic reader is the <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map">JSON Map Reader</a>. In addition, we provide multiple <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#plugins">reader plugins</a> for different experimental techniques.</p>
+<p>We will use the <a href="https://github.com/FAIRmat-NFDI/pynxtools-xps">XPS reader plugin</a> with a <a href="https://www.specs-group.com/nc/specs/products/detail/prodigy/">SpecsLabProdigy</a> file (file extension: <code>.sle</code>) as an example.</p>
 <h3 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
-<p>Download the example files from here: <a href="https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools-xps/tree/main/examples/specs/sle">Example files</a></p>
+<p>Download the example files from here:</p>
+<p><a class="md-button" href="https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools-xps/tree/main/examples/specs/sle" target="_blank">Download example files</a></p>
 </li>
 <li>
 <p><strong>Extract</strong> the zip and copy the files in your current working directory. You can find the working directory by typing the following in your terminal:</p>
-</li>
-</ol>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pwd</span>
 </code></pre></div>
-<ol>
-<li>Install <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation">pynxtools</a> with the <a href="https://github.com/FAIRmat-NFDI/pynxtools-xps">XPS reader plugin</a>:</li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">pip install pynxtools[xps]</span>
+</li>
+<li>
+<p>Install <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation">pynxtools</a> with the <a href="https://github.com/FAIRmat-NFDI/pynxtools-xps">XPS reader plugin</a>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">uv</label><label for="__tabbed_1_2">pip</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pynxtools<span class="o">[</span>xps<span class="o">]</span>
 </code></pre></div>
-<ol>
-<li>Verify you can run the <code>dataconverter</code> in a terminal window. Open a terminal with the Python environment where you installed <code>pynxtools</code>. Then type the following:</li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">dataconverter --help</span>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>pynxtools<span class="o">[</span>xps<span class="o">]</span>
 </code></pre></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Verify you can run the <code>dataconverter</code> in a terminal window. Open a terminal with the Python environment where you installed <code>pynxtools</code>. Then type the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">dataconverter --help</span>
+</code></pre></div>
+</li>
+</ol>
 <h2 id="converting-the-example-files">Converting the example files<a class="headerlink" href="#converting-the-example-files" title="Permanent link">&para;</a></h2>
 <p>Once you have your files copied into the working directory, your directory structure should look like this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>├── README.md
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── EX439_S718_Au.sle
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>├── eln_data_sle.yaml
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>└── params.yaml
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>├── README.md
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── EX439_S718_Au.sle
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>├── eln_data_sle.yaml
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>└── params.yaml
 </code></pre></div>
 <p>The <code>eln_data_sle.yaml</code> YAML file is another data file containing additional information (e.g., information about the experimenter) that is not provided in the main data file.</p>
 <p>Next, you will run the conversion routine from your Python environment:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">dataconverter --params-file params.yaml</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">dataconverter --params-file params.yaml</span>
 </code></pre></div>
 <p>Here we use a <code>params.yaml</code> parameter file to configure the converter.  This will create a file called <code>Au_25_mbar_O2_no_align.nxs</code> in your current directory.</p>
 <p><strong>Congrats! You now have a FAIR NeXus file!</strong></p>
@@ -1336,7 +1348,7 @@ For a more detailed description on the general principles of NeXus we recommend 
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="installation.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation">
+          <a href="installation.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation guide">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1346,7 +1358,7 @@ For a more detailed description on the general principles of NeXus we recommend 
                 Previous
               </span>
               <div class="md-ellipsis">
-                Installation
+                Installation guide
               </div>
             </div>
           </a>

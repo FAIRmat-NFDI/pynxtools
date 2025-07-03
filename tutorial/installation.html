@@ -25,7 +25,7 @@
     
     
       
-        <title>Installation - Documentation</title>
+        <title>Installation guide - Documentation</title>
       
     
     
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#installation-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installation
+              Installation guide
             
           </span>
         </div>
@@ -283,7 +283,7 @@
   
   
   <span class="md-ellipsis">
-    Installation
+    Installation guide
     
   </span>
   
@@ -296,7 +296,7 @@
   
   
   <span class="md-ellipsis">
-    Installation
+    Installation guide
     
   </span>
   
@@ -346,7 +346,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation_1" class="md-nav__link">
+  <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
       Installation
     </span>
@@ -1213,7 +1213,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation_1" class="md-nav__link">
+  <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
       Installation
     </span>
@@ -1270,7 +1270,7 @@
 
 
 
-<h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
+<h1 id="installation-guide">Installation guide<a class="headerlink" href="#installation-guide" title="Permanent link">&para;</a></h1>
 <p>The document is the entry point for anybody that is new to the NeXus data format and to FAIRmat/NOMAD. It serves as a guide to getting started with the <code>pynxtools</code> software.</p>
 <h2 id="what-should-you-should-know-before-this-tutorial">What should you should know before this tutorial?<a class="headerlink" href="#what-should-you-should-know-before-this-tutorial" title="Permanent link">&para;</a></h2>
 <p>However, to get started, it does not hurt to  the following explanations:</p>
@@ -1280,13 +1280,12 @@
 <h2 id="what-you-will-know-at-the-end-of-this-tutorial">What you will know at the end of this tutorial?<a class="headerlink" href="#what-you-will-know-at-the-end-of-this-tutorial" title="Permanent link">&para;</a></h2>
 <p>You will know</p>
 <ul>
-<li>how to install pynxtools</li>
-<li>how to configure your pynxtools installation</li>
-<li>how to install pynxtools together with NOMAD</li>
+<li>how to install <code>pynxtools</code></li>
+<li>how to configure your <code>pynxtools</code> installation</li>
+<li>how to install <code>pynxtools</code> together with NOMAD</li>
 </ul>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
-<p>It is recommended to use python 3.11 with a dedicated virtual environment for this package. Learn how to manage <a href="https://github.com/pyenv/pyenv">python versions</a> and
-<a href="https://realpython.com/python-virtual-environments-a-primer/">virtual environments</a>.</p>
+<p>It is recommended to use python 3.11 with a dedicated virtual environment for this package. Learn how to manage <a href="https://github.com/pyenv/pyenv">python versions</a> and <a href="https://realpython.com/python-virtual-environments-a-primer/">virtual environments</a>.</p>
 <p>There are many alternatives to managing virtual environments and package dependencies (requirements). We recommend using <a href="https://github.com/astral-sh/uv"><code>uv</code></a>, an extremely fast manager Python package and project manager. In this tutorial, you will find paralleled descriptions, using either <code>uv</code> or a more classical approach using <code>venv</code> and <code>pip</code>.</p>
 <p>Start by creating a virtual environment:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">uv</label><label for="__tabbed_1_2">venv</label></div>
@@ -1303,8 +1302,8 @@
 </div>
 </div>
 </div>
-<p>That command creates a new virtual environment in a directory called .venv.</p>
-<h2 id="installation_1">Installation<a class="headerlink" href="#installation_1" title="Permanent link">&para;</a></h2>
+<p>That command creates a new virtual environment in a directory called <code>.venv</code>.</p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>Install the latest stable version of this package from PyPI with</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">uv</label><label for="__tabbed_2_2">pip</label></div>
 <div class="tabbed-content">
@@ -1332,7 +1331,7 @@
 </div>
 </div>
 <h3 id="configuring-your-pynxtools-installation">Configuring your <code>pynxtools</code> installation<a class="headerlink" href="#configuring-your-pynxtools-installation" title="Permanent link">&para;</a></h3>
-<p><code>pynxtools</code> comes with a list of <a href="../reference/built-in-readers.html">built-in readers</a> that can be used after after pip installation. In addition, <code>pynxtools</code> supports a <a href="../how-tos/pynxtools/build-a-plugin.html">plugin mechanism</a> for adding file readers for different experimental techniques. The different <a href="../reference/plugins.html">FAIRmat-supported plugins</a> can be installed together with pynxtools by passing the name of the plugin as an extra to the install call. For example, for the <code>pynxtools-mpes</code> plugin, you can run:</p>
+<p><code>pynxtools</code> comes with a list of <a href="../reference/built-in-readers.html">built-in readers</a> that can be used after after pip installation. In addition, <code>pynxtools</code> supports a <a href="../how-tos/pynxtools/build-a-plugin.html">plugin mechanism</a> for adding file readers for different experimental techniques. The different <a href="../reference/plugins.html">FAIRmat-supported plugins</a> can be installed together with <code>pynxtools</code> by passing the name of the plugin as an extra to the install call. For example, for the <code>pynxtools-mpes</code> plugin, you can run:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">uv</label><label for="__tabbed_4_2">pip</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1359,10 +1358,10 @@
 </div>
 </div>
 <p>Note that in this case, the latest version of the plugin(s) from PyPI are installed.</p>
-<h3 id="how-to-install-pynxtools-with-nomad">How to install pynxtools with NOMAD<a class="headerlink" href="#how-to-install-pynxtools-with-nomad" title="Permanent link">&para;</a></h3>
-<p>To use pynxtools with NOMAD, simply install it in the same environment as the <code>nomad-lab</code> package. NOMAD will recognize pynxtools as a plugin automatically and offer automatic parsing of <code>.nxs</code> files. In addition, NOMAD will install a schema for NeXus application definitions.</p>
-<h2 id="start-using-pynxtools">Start using pynxtools<a class="headerlink" href="#start-using-pynxtools" title="Permanent link">&para;</a></h2>
-<p>That's it! You can now use pynxtools and the plugins that you have installed!</p>
+<h3 id="how-to-install-pynxtools-with-nomad">How to install <code>pynxtools</code> with NOMAD<a class="headerlink" href="#how-to-install-pynxtools-with-nomad" title="Permanent link">&para;</a></h3>
+<p>To use <code>pynxtools</code> with NOMAD, simply install it in the same environment as the <code>nomad-lab</code> package. NOMAD will recognize <code>pynxtools</code> as a plugin automatically and offer automatic parsing of <code>.nxs</code> files. In addition, NOMAD will install a schema for NeXus application definitions.</p>
+<h2 id="start-using-pynxtools">Start using <code>pynxtools</code><a class="headerlink" href="#start-using-pynxtools" title="Permanent link">&para;</a></h2>
+<p>That's it! You can now use <code>pynxtools</code> and the plugins that you have installed!</p>
 
 
 
