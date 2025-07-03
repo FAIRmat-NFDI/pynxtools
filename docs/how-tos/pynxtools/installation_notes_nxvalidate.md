@@ -1,9 +1,11 @@
 
-This lists some notes for installation of nxvalidate on Ubuntu and Windows. For windows, the installation of the XML2 library was not sucessful. This should be possible, but could not reproduced yet.
+# Notes on cnxvalidate installation
+
+This lists some notes for installation of nxvalidate on Ubuntu and Windows. For windows, the installation of the XML2 library was not successful. This should be possible, but could not reproduced yet.
 
 
 
-# cnxvalidate installation on Ubuntu 22.04
+## cnxvalidate installation on Ubuntu 22.04
 
 These commands install nxvaldiate on a fresh Ubuntu 22.04 system (tested with Linux running from USB stick).
 
@@ -28,7 +30,7 @@ cmake ../
 make
 ```
 
-# cnxvalidate installation on windows:
+## cnxvalidate installation on Windows:
 
 ## -- CMAKE
 

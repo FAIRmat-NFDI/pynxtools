@@ -3,6 +3,7 @@
 `pynxtools` supports a number of command line applications. This page provides documentation for their current API.
 
 ## Data conversion
+
 Note that simply calling `dataconverter` defaults to `dataconverter convert`.
 
 ::: mkdocs-click
@@ -32,8 +33,8 @@ Note that simply calling `dataconverter` defaults to `dataconverter convert`.
 
 NOTE: Only one option from (`-d` and `-c`) is acceptable.
 
-
 ## ELN generation
+
 ::: mkdocs-click
     :module: pynxtools.eln_mapper.eln_mapper
     :command: get_eln

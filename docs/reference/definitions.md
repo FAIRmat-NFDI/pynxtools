@@ -12,5 +12,3 @@ Consider it as the public review stage of these application definitions.
 However, there might be some parts which are still under discussion and will be subject to change.
 
 Note: To connect NeXus concepts with semantic web tools, efforts are underway to represent them using the [W3C Web Ontology Language (OWL)](https://www.w3.org/OWL/). See the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology) for more details.
-
-
