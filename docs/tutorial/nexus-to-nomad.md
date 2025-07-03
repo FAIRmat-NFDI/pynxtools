@@ -61,7 +61,7 @@ NOMAD also interprets and **normalizes** this data to make it interoperable with
 
 Feel free to explore more!
 
-### Learn more
+## Learn more
 
 Learn more about uploading and publishing experimental data in NOMAD:
 

@@ -71,14 +71,22 @@ WARNING: Field /entry/instrument/beam_incident/wavelength/@units written without
 
 ### Installation of *verify_nexus*
 
-The `verify_nexus` function is currently under development (Aug 2024). Therefore, you have to install pynxtools from its feature branch until this function is published.
-Do this to install pynxtools with verify\_nexus via;
+The `verify_nexus` function is currently under development (July 2025). Therefore, you have to install pynxtools from its feature branch until this function is published.
 
-```console
-pip install git+https://github.com/FAIRmat-NFDI/pynxtools@hdf-based-validation
-```
+You can install the development version of `pynxtools` using this feature branch:
 
-Then, you should be able to call its help function:
+=== "uv"
+    ```console
+    uv pip install git+https://github.com/FAIRmat-NFDI/pynxtools@hdf-based-validation
+    ```
+
+=== "pip"
+
+    ```console
+    pip install git+https://github.com/FAIRmat-NFDI/pynxtools@hdf-based-validation
+    ```
+
+This installs a command line tool called `verify_nexus`. You can call its help function:
 
 ```console
 verify_nexus --help
@@ -96,45 +104,32 @@ Options:
 ```
 
 ??? Info "Development version installation"
+    If this installation procedure above does not work, you can use the development installation by using git:
 
-  If this installation procedure above does not work, you can use the development installation by using git:
-
-  ```console
-  python -m venv .py39
-  source .py39/bin/activate
-  git clone https://github.com/FAIRmat-NFDI/pynxtools.git
-  cd pynxtools/
-  git checkout hdf-based-validation
-  git submodule sync –recursive
-  git submodule update --init --recursive --jobs=4
-  python -m pip install --upgrade pip
-  python -m pip install -e .
-  python -m pip install -e ".[dev]“
-  verify_nexus --help
-  ```
+    ```console
+    python -m venv .py39
+    source .py39/bin/activate
+    git clone https://github.com/FAIRmat-NFDI/pynxtools.git
+    cd pynxtools/
+    git checkout hdf-based-validation
+    git submodule sync –recursive
+    git submodule update --init --recursive --jobs=4
+    uv pip install --upgrade pip
+    uv pip install -e .
+    uv pip install -e ".[dev]“
+    verify_nexus --help
+    ```
 
 ### Using **`verify_nexus`**
 
-Open your terminal. Assuming there is a folder at:
+We will use the `verify_nexus` using an example file containing data in the `NXraman` format:
 
-For Linux:
+[Download Raman.nxs file](https://zenodo.org/records/13373909/files/Raman.nxs?download=1){:target="_blank" .md-button }
 
-```console
-/home/USER/nexusvalidation
-```
-
-For Windows:
+Invoke `verify_nexus` with the command:
 
 ```console
-C:\nexusvalidation
-```
-
-Put into this folder your NeXus file, for example this [Raman.nxs file](https://zenodo.org/records/13373909/files/Raman.nxs?download=1).
-
-Use verify_nexus with the command:
-
-```console
-verify_nexus C:\nexusvalidation\Raman.nxs
+verify_nexus Raman.nxs
 ```
 
 The respective output is:
@@ -150,7 +145,7 @@ Invalid: The entry `entry` in file `Raman.nxs` is NOT a valid file according to 
 
 ## `pynxtools` - **`read_nexus`**
 
-While `verify_nexus´ is used as a straightforward tool for validating a NeXus file, `read_nexus` outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
+While `verify_nexus` is used as a tool for _validating_ a NeXus file, `read_nexus` is an _annotator_ tools. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
 The command used is:
 
 ```console
@@ -196,31 +191,17 @@ The first example was for for `experiment_type` entry in the `NXoptical_spectros
 
 The second example was for the `software_TYPE` attribute `@URL` entry in the `NXoptical_spectroscopy` definition. Here the problem was that "url" was used instead of "URL".
 
-### Using `read_nexus*`
+### Using `read_nexus`
 
-Open your terminal. Assuming there is a folder at:
+We will demonstrate the usage of `read_nexus` using the Raman.nxs file from above.
 
-For Linux:
-
-```console
-/home/USER/nexusvalidation
-```
-
-For Windows:
+To trigger the annotator tool, use:
 
 ```console
-C:\nexusvalidation
+read_nexus -f Raman.nxs
 ```
 
-Put into this folder your NeXus file, for example the [Raman.nxs file](https://zenodo.org/records/13373909/files/Raman.nxs?download=1).
-
-Then use:
-
-```console
-read_nexus -f C:\nexusvalidation\Raman.nxs
-```
-
-shows the output like this:
+The output will look like this:
 
 ```console
 ===== FIELD (//entry/data/spectrum_data_y): <HDF5 dataset "spectrum_data_y": shape (1600,), type "<f8">
@@ -428,9 +409,9 @@ The errors tell you now which things are missing (message="Required group missin
 
 Now adjust the file creation, and add the respective fields to make your NeXus file compliant with the NeXus definitions. This way, you can ensure that your data is FAIR, which is then ready for sharing and publication.
 
-## punx - Python Utilities for NeXus HDF5 files_
+## punx - Python Utilities for NeXus HDF5 files
 
-[Official docs](<https://punx.readthedocs.io/en/latest/validate.html#validate>)
+- [Official punx docs](<https://punx.readthedocs.io/en/latest/validate.html#validate>)
 
 This is Python package, and can therefore be used on Linux and Windows systems.
 
@@ -448,20 +429,39 @@ punx validate [-h] [--report REPORT] infile
 
 The package can be installed via pip:
 
-```console
-pip install punx
-```
+=== "uv"
+    ```console
+    uv pip install punx
+    ```
 
-This software is based on other powerful software packages or libraries, therefore as well other packages have to be installed:
+=== "pip"
 
-```console
-pip install h5py
-pip install lxml
-pip install numpy
-pip install PyQt5
-pip install requests
-pip install pyRestTable
-```
+    ```console
+    pip install punx
+    ```
+
+This software is based on other powerful software packages or libraries, therefore some other packages have to be installed as well:
+
+=== "uv"
+    ```console
+    uv pip install h5py
+    uv pip install lxml
+    uv pip install numpy
+    uv pip install PyQt5
+    uv pip install requests
+    uv pip install pyRestTable
+    ```
+
+=== "pip"
+
+    ```console
+    pip install h5py
+    pip install lxml
+    pip install numpy
+    pip install PyQt5
+    pip install requests
+    pip install pyRestTable
+    ```
 
 Then you should be able to test the package by:
 
@@ -557,34 +557,15 @@ C:\Users\rh83hixu\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qb
 
 ### Using punx
 
-Open your terminal. Assuming there is a folder at:
-
-=== "Linux"
-    ```console
-    /home/USER/nexusvalidation
-    ```
-
-=== "Windows"
-
-    ```console
-    C:\nexusvalidation
-    ```
-
-Put a NeXus file into this folder. For example, this file:
+We will test `punx` using this file:
 
 [Download SiO2onSi.ellips.nxs](https://zenodo.org/records/13373909/files/SiO2onSi.ellips.nxs?download=1){:target="_blank" .md-button }
 
-Then the command is (for Windows):
+You can start the `punx` validation using
 
-=== "Linux"
-    ```console
-    punx validate C:\nexusvalidation\SiO2onSi.ellips.nxs
-    ```
-
-=== "Windows"
-    ```console
-    punx validate C:\nexusvalidation\SiO2onSi.ellips.nxs
-    ```
+```console
+punx validate C:\nexusvalidation\SiO2onSi.ellips.nxs
+```
 
 The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file.
 
@@ -598,15 +579,15 @@ You may update the repository for the latest version via:
 punx install
 ```
 
-The NeXus respective definitions are found here:
+### Running the validation
 
-[NIAC NeXus definitions](<https://manual.nexusformat.org/classes/index.html>)
+The NeXus respective definitions are found [here](<https://manual.nexusformat.org/classes/index.html>).
 
 Search on the right side under "quick search" for "NXopt":
 
 [NXopt NeXus definition](<https://manual.nexusformat.org/classes/contributed_definitions/NXopt.html#index-0>)
 
-This python code creates the respective python file with all required fields:
+This python code creates the respective Python file with all required fields:
 
 [NXopt_minimal_example_NIAC_NeXus_Def.nxs](https://zenodo.org/records/13373909/files/NXopt_minimal_example_NIAC_NeXus_Def.nxs?download=1)
 
@@ -650,7 +631,7 @@ TOTAL    378
 
 The last error message:
 
-```
+```console
 ======= ====== ========== ======================================
 /entry  ERROR  known NXDL NXopt: unrecognized NXDL specification
 ======= ====== ========== ======================================
@@ -660,28 +641,14 @@ can be ignored and is a bug right now. If this is the only Error message, then y
 
 ### Further notes
 
-1. Punx only uses the [NeXus definitions from the NIAC](<https://manual.nexusformat.org/>). The use of the [FAIRmat NeXus definition](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>) is not possible right now.
+1. [More details for installation](<https://punx.readthedocs.io/en/latest/install.html>)
+2. [Other punx commands](<https://punx.readthedocs.io/en/latest/overview.html#>)
+3. [Github project](<https://github.com/prjemian/punx>)
 
-2. [Other punx commands are available](<https://punx.readthedocs.io/en/latest/overview.html#>)
+## Recommended workflow
 
-3. [More details for installation](<https://punx.readthedocs.io/en/latest/install.html>)
+As the `verify_nexus` method from `pynxtools` is right now in development, [not all situations are covered right now](testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _Software solutions_.
 
-4. [Github project](<https://github.com/prjemian/punx>)
+## Pynxtools Reader Plugins
 
-## Summary
-
-This tutorial showed:
-
-1. 3 different tools for NeXus file validation
-
-2. How to install these tools
-
-3. How to use them via Examples
-
-### Recommended workflow
-
-As the `verify_nexus` method from pynxtools is right now in development, [not all situations are covered right now](testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _Software solutions_.
-
-### Pynxtools Reader Plugins
-
-For a specifically structured set of data, a reader plugin can be written, which uses the meta data and a pre-structured meta data fil, to create a NeXus file. Each reader depends on the given experimental technique/setup and therefore has to be written individually. Take a look [here](../../reference/plugins.md).
+For a specifically structured set of data, a reader plugin can be written, which uses the meta data and a pre-structured meta data fil, to create a NeXus file. Each reader depends on the given experimental technique/setup and therefore has to be written individually. Take a look at all [FAIRmat-supported plugins](../../reference/plugins.md).

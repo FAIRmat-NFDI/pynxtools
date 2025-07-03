@@ -1,17 +1,20 @@
 # Test functionality for `pynxtools` plugins
 
-`pynxtools` contains a sub-package called `testing` which should be utilized to write automated tests for `pynxtools` reader plugins. This allows using comprehensive tests of the plugin's functionality, without requiring in-depth knowledge of the internal architecture of `pynxtools`, and irrespective of the technical details of the raw data files and the internal design of the plugin (note: it is assumed that the plugin was built from the [plugin template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) or has the same structure internally).
+`pynxtools` contains a sub-module called `testing` which should be utilized to write automated tests for `pynxtools` reader plugins. This enables comprehensive tests of the plugin's functionality without needing detailed knowledge of the internal architecture of `pynxtools`, the technical details of the raw data files, or the plugin’s internal design.
+
+!!! Note "Note"
+    It is assumed that the plugin has the same structure internally as the [existing `pynxtools` plugins](../../reference/plugins.md).
 
 ## Why we need a test framework
 
 To test integration of a plugin with the `pynxtools` core system, we need to:
 
 1. Test the plugin's integration with `pynxtools` from the plugin's CI/CD.
-2. Test in the pynxtools's CI/CD if the plugin has been integrated with `pynxtools` properly.
+2. Test in the `pynxtools` CI/CD if the plugin can be integrated with `pynxtools` properly.
 
 ## How to write an integration test for a reader plugin with `pynxtools.testing`
 
-It is very simple to write a test to verify the plugin integration with `pynxtools` within the plugin's tests directory. The developer can place the test where they want, but they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo plugin) plugin is given below:
+It is very simple to write a test to verify the plugin integration with `pynxtools` within the plugin's tests directory. The developer can place the test where they want, but they need to use the provided test interface from `pynxtools.testing`. An example test for a demo plugin `pynxtools-FOO` (which contains a reader called `foo` for an application definition `NXfoo`) is given below:
 
 ```python title="test_plugin.py"
 import os
@@ -64,20 +67,20 @@ Alongside the test data in `tests/data`, it is also possible to add other types 
 
 You can also pass additional parameters to `test.convert_to_nexus`:
 
-- `caplog_level` (str): Can be either "ERROR" (by default) or "warning". This parameter determines the level at which the caplog is set during testing. If it is "WARNING", the test will also fail if any warnings are reported by the reader.
+- `caplog_level` (str): This parameter determines the level at which the caplog is set during testing. This can be either "ERROR" (by default) or "WARNING". If it is "WARNING", the test will also fail if any warnings are reported by the reader.
 
-- `ignore_undocumented` (boolean): If true, the test skips the verification of undocumented keys. Otherwise, a warning massages for undocumented keys is raised
+- `ignore_undocumented` (boolean): If true, the test skips the verification of undocumented keys. Otherwise, a warning message for undocumented keys is logged.
 
 ## How to write an integration test for a NOMAD example in a reader plugin
 
-It is also possible to ship examples for NOMAD directly with the reader plugin. As an example, `pynxtools-mpes` comes with its own NOMAD example (see [here](https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad)) using the ExampleUploadEntryPoint of NOMAD (see [here](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html) for more documentation).
+It is also possible to ship NOMAD Example Uploads directly with the reader plugin. As an example, `pynxtools-mpes` comes with its own NOMAD example (see [here](https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad)) using the `ExampleUploadEntryPoint` of NOMAD (see [here](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html) for more documentation).
 
 The `testing` sub-package of `pynxtools` provides two functionalities for testing the `ExampleUploadEntryPoint` defined in a `pynxtools` plugin:
 
-1) Test that the ExampleUploadEntryPoint can be properly loaded
-2) Test that the schemas and files in the example folder(s) can be parsed by NOMAD
+1. Test that the `ExampleUploadEntryPoint` instance can be properly loaded.
+2. Test that the schemas and files in the example folder(s) can be parsed by NOMAD.
 
-We will write a test for a `pynxtools_foo_example_entrypoint` defined in the pyproject.toml file of a demo `pynxtools-FOO` (here the actual example data resides in the folder `src/pynxtools_foo/nomad/examples`):
+We will write a test for a `pynxtools_foo_example_entrypoint` defined in the pyproject.toml file of a demo `pynxtools-FOO` repository. Here the actual example data resides in the folder `src/pynxtools_foo/nomad/examples` and the plugin package is called `pynxtools_foo`:
 
 ```python title="pyproject.toml"
 [project.entry-points.'nomad.plugin']
@@ -89,9 +92,7 @@ from nomad.config.models.plugins import ExampleUploadEntryPoint
 
 pynxtools_foo_example_entrypoint = ExampleUploadEntryPoint(
     title="My example upload",
-    description="""
-        This is an example upload for the pynxtools-FOO package.
-    """,
+    description="This is an example upload for the pynxtools-FOO package.",
     plugin_package="pynxtools_foo",
     resources=["nomad/examples/*"],
 )
@@ -110,7 +111,6 @@ from pynxtools.testing.nomad_example import (
 
 from pynxtools_foo.nomad.entrypoints import pynxtools_foo_example_entrypoint
 
-
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
@@ -120,7 +120,6 @@ EXAMPLE_PATH = os.path.join(
     "examples",
 )
 
-
 @pytest.mark.parametrize(
     "mainfile",
     get_file_parameter(EXAMPLE_PATH),
@@ -128,7 +127,7 @@ EXAMPLE_PATH = os.path.join(
 def test_parse_nomad_examples(mainfile):
     """Test if NOMAD examples work."""
     archive_dict = parse_nomad_examples(mainfile)
-    # Here, you can also implement more logic if you know the contents of the archive_dict
+    # Here, you can also implement more logic if you know the contents of the `archive_dict`.
 
 
 @pytest.mark.parametrize(
