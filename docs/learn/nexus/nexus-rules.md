@@ -13,9 +13,9 @@ In general, the names of NeXus group and field items are validated according to 
     - any combination of upper and lower case letter, numbers, underscores and periods, except that periods cannot be at the start or end of the string
     - This statement is equivalent to matching  this regular expression (named `validItemName` in the [nxdl.xsd](https://github.com/nexusformat/definitions/blob/main/nxdl.xsd) XML Schema file):
 
-    ```
-    ^[a-zA-Z0-9_]([a-zA-Z0-9_.]*[a-zA-Z0-9_])?$
-    ```
+      ```regex
+      ^[a-zA-Z0-9_]([a-zA-Z0-9_.]*[a-zA-Z0-9_])?$
+      ```
 
 - Invalid names:
     - any name not matching this `validItemName` regular expression
@@ -28,18 +28,16 @@ This matching is based on a combination of the `name` and the `nameType` attribu
 of the concept.
 
 !!! info "Concept and instance names"
-
     In NeXus, we must distinguish carefully between names of concepts and the names given to the actual instance of that concept.
-    
-    - **Concept Name:** This is the name given to a NeXus concept, i.e., on the data modelling level in the NeXus definitions.
 
+    - **Concept Name:** This is the name given to a NeXus concept, i.e., on the data modelling level in the NeXus definitions.
     - **Instance Name:** This is the actual name for a NeXus data instance of the concept (e.g., in an HDF5 file).
 
 There are three different options for the `nameType` XML attribute:
 
-- specified
-- any
-- partial
+- `specified`
+- `any`
+- `partial`
 
 If `nameType=specified`, that means that any instance must have the exact same (**fixed**) name as the concept. As an example, if there is a field called `my_field` with `nameType=specified` in an application definition, the only allowed name in a file would be `my_field`. Note that this is also true for concept names containing uppercase letters. "specified" is the default `nameType`, i.e., if no `nameType` is given, it is assumed that any instance name must match the
 concept name directly

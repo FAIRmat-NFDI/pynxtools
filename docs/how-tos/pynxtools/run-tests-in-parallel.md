@@ -10,7 +10,9 @@ In a local setup, tests can be run sequentially using the following command:
 pytest tests
 ```
 
-This will execute all tests in a sequential manner. For more details, refer to the official documentation: [How to invoke pytest](https://docs.pytest.org/en/stable/how-to/usage.html).
+This will execute all tests in a sequential manner. For more details, refer to the official documentation:
+
+- [How to invoke pytest](https://docs.pytest.org/en/stable/how-to/usage.html)
 
 ## Running Tests in Parallel
 
