@@ -29,4 +29,4 @@ Additional information (i.e., not in this tutorial but linked to this):
 
 
 The requirements are set by the community _via_ workshops or at conferences. To initiate or propose changes/additions, you can comment the FAIRMat NeXus proposal by going to the [NeXus definitions](https://fairmat-nfdi.github.io/nexus_definitions/index.html#), and using the hypothes.is tool (sign-up/log-in) to give us some feedback (Red boxes in the image. Expand this panel on the left by clicking on the arrow symbol).  
-![image.png](<../attachments/9d748230d54a8059-image.png>)
+![image.png](<../media/9d748230d54a8059-image.png>)

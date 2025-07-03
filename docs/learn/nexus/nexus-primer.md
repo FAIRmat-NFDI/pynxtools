@@ -1,16 +1,12 @@
 # A primer on NeXus
 
-NeXus is is a description of a common data exchange format initially developed for neutron, X-ray, and muon experiments. Within FAIRmat we extensively extended the format to cover a range of experiments with major support for APM, ARPES, XPS, and optical spectroscopy, but we also give advice and guidance for developing standards for other formats as well.
+NeXus is a common data exchange format initially developed for neutron, X-ray, and muon experiments. Within FAIRmat we extensively extended the format to cover a range of experiments with major support for APM, ARPES, XPS, and optical spectroscopy, but we also give advice and guidance for developing standards for other formats as well.
 
 ## What is NeXus?
 
-Sometimes, NeXus is seen as writing data to some form of file in HDF5 format.
-While this is partly true, NeXus is independent of the actual storage format, but is typically written into an HDF5 file.
+Sometimes, NeXus is seen as writing data to some form of file in HDF5 format. While this is partly true, NeXus is independent of the actual storage format, but is typically written into an HDF5 file.
 
-But what is NeXus then? It is the conceptual layer above the file structure.
-It is a contract on which data has to be present and how to name them in a given dataset.
-Hence, the use of NeXus helps to make data FAIR.
-It especially covers the interoperability and reproducibility part of research data.
+But what is NeXus then? It is the conceptual layer above the file structure. It is a contract on which data has to be present and how to name them in a given dataset. Hence, the use of NeXus helps to make data FAIR. It especially covers the interoperability and reproducibility part of research data.
 
 !!! info "NeXus path notations"
 
@@ -21,7 +17,6 @@ It especially covers the interoperability and reproducibility part of research d
     - **Instance Path Notation:** It represents the actual location of a field or group in a NeXus data instance (e.g., an HDF5 file). An example is `my_file.nxs:/entry/instrument/detector`.
 
     - **Combined Notation:** In pynxtools, we sometimes use templates and configuration files to match data instances from other sources to the terms defined in NeXus application definitions and base classes. We represent these NeXus concepts using a mixed notation, where uppercase indicates a selectable (part of the) name and lowercase a fixed name. Examples include `NXexperiment:ENTRY[my_experiment.nxs:entry]/INSTRUMENT[instrument]/DETECTOR[detector]` and `NXexperiment:ENTRY[my_experiment.nxs:entry]/my_INSTRUMENT[my_instrument]/DETECTOR[detector]`. In this notation, we combine concept (outside the square brackets) and instance paths (inside the square brackets). The leftmost entries may include the NeXus class or file reference.
-
 
 ## NeXus as a tool for FAIR data
 

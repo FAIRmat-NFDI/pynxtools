@@ -6,9 +6,13 @@ However, in some cases, it might be simpler to create the NeXus NeXus file (.nxs
 
 This How-To is intended as easy access to FAIR data structures _via_ NeXus. It will demonstrate how NeXus file can be created in Python using `h5py`.
 
-**Note: You can find all of the data [here](https://zenodo.org/records/13373909).** Specifically, the Python script for creating a NeXus file can be downloading here:
+**You can find all of the data on Zenodo:**
 
-- [h5py_nexus_file_creation.py](https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1).
+[Download from Zenodo](https://zenodo.org/records/13373909){:target="_blank" .md-button }
+
+Specifically, the Python script for creating a NeXus file can be downloaded here:
+
+[Download h5py_nexus_file_creation.py](https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1){:target="_blank" .md-button }
 
 We will discuss its content below and guide you through step-by-step in creating your NeXus file by hand.
 
@@ -16,11 +20,11 @@ We will discuss its content below and guide you through step-by-step in creating
 
 You start by installing `h5py` via `pip`:
 
-```console
+```bash
 pip install h5py
 ```
 
-Next, we create the `h5py` file and fill it with a minimal structure.
+Next, we create the Python file and fill it with a minimal structure.
 
 ``` python
 # Import h5py, to write an hdf5 file
@@ -78,7 +82,7 @@ In the tree structure, the first concept which is not created yet, is the `@vers
 
 5. `NX\_CHAR` indicates the datatype. This should be a string: "The preferred string representation is UTF-8" (more information see [here](<https://manual.nexusformat.org/nxdl-types.html>))
 
-![image.png](<../attachments/51dc82f9f0f5ec2f-image.png>)
+![image.png](<../media/51dc82f9f0f5ec2f-image.png>)
 
 We add an instance of this concept by adding an HDF5 attribute:
 
@@ -106,13 +110,13 @@ This is the GitHub website, in which the latest (FAIRmat) NeXus definition of NX
 
 - Now you have to copy the permalink of this file. Go to the top right side of the website. Find the Menu made by 3 dots:
 
-![image.png](<../attachments/c6ab2f4b925aed27-image.png>)
+![image.png](<../media/c6ab2f4b925aed27-image.png>)
 
 Copy the permalink and insert it as value for the "URL" attribute (Step 1, Red box in the image)
 
 - Go to "nexus\_definitions" (Step 2, Red box in the image)
 
-![image.png](<../attachments/d8e727b3b32dcbb9-image.png>)
+![image.png](<../media/d8e727b3b32dcbb9-image.png>)
 
 On the right side, you should see below "Releases" the "tags" (Red box in the image). Follow this link.
 
@@ -132,7 +136,7 @@ get_nexus_version()
 
 ### Adding a field
 
-The next required concept of [NXoptical_spectrsocopy](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html) is "**experiment\_type"**.
+The next required concept of [NXoptical_spectroscopy](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html) is "**experiment\_type"**.
 
 **experiment\_type**: (required) [NX\_CHAR](<https://fairmat-nfdi.github.io/nexus_definitions/nxdl-types.html#nx-char>)
 
@@ -144,13 +148,13 @@ The next required concept of [NXoptical_spectrsocopy](https://fairmat-nfdi.githu
 
 4. The "required" indicates that this group/field has to be added to be in line with the NeXus definition "NXoptical\_spectroscopy".
 
-5. `NX\_CHAR` indicates the datatype. This should be a string (see above).
+5. `NX\_CHAR` indicates the datatype. This should NXoptical_spectrs be a string (see above).
 
 6. The presence of the datatype `NX\_CHAR` indicates that this is a field. It is NOT a group.
 
 Read the documentation at "▶ Specify the type of the optical experiment. ..." by extending it via click on the triangle symbol. You should see something like this:
 
-![image.png](<../attachments/5cbd8c6a1ca227df-image.png>)
+![image.png](<../media/5cbd8c6a1ca227df-image.png>)
 
 There, the value of the field has to be one of the shown list, since it is an enumeration (e.g. "transmission spectroscopy"). Note that this is requires an exact match to one of the enumerated items (case and whitespace sensitive).
 
@@ -208,5 +212,5 @@ Note that you can also add instances for recommended or optional concepts to the
 
 ## What's next?
 
-- Once you have a finished NeXus file, you may continue [by validating the NeXus file_](validate-nexus-file.md).
+- Once you have a finished NeXus file, you may continue [by validating the NeXus file](validate-nexus-file.md).
 - If you find yourself in the situation that you need to run such Python code routinely to convert your data, we strongly recommend creating your own reader or plugin in the `pynxtools` ecosystem. You can find a how-to guide to get you started [here](build-a-plugin.md).
