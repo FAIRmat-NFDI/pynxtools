@@ -18,12 +18,12 @@ authors:
   - given-names: Lukas
     surname: Pielsticker
     orcid: https://orcid.org/0000-0001-9361-8333
-    affiliation: "1,3"
+    affiliation: "1,2"
     equal-contrib: true
   - given-names: Florian
     surname: Dobener
     orcid: https://orcid.org/0000-0003-1987-6224
-    affiliation: 1
+    affiliation: "1,3"
   - given-names: Andrea
     surname: Albino
     orcid: https://orcid.org/0000-0001-9280-7431
@@ -35,7 +35,7 @@ authors:
   - given-names: Carola
     surname: Emminger
     orcid: https://orcid.org/0000-0003-4793-1809
-    affiliation: "1, 5"
+    affiliation: "1, 4"
   - given-names: Lev
     surname: Ginzburg
     orcid: https://orcid.org/0000-0001-8929-1040
@@ -43,14 +43,10 @@ authors:
   - given-names: Ron
     surname: Hildebrandt
     orcid: https://orcid.org/0000-0001-6932-604X
-    affiliation: "1, 5"
+    affiliation: "1, 4"
   - given-names: Markus
     surname: Kühbach
     orcid: https://orcid.org/0000-0002-7117-5196
-    affiliation: 1
-  - given-names: José Antonio
-    surname: Márquez Prieto
-    orcid: https://orcid.org/0000-0002-8173-2566
     affiliation: 1
   - given-names: Rubel
     surname: Mozumder
@@ -59,25 +55,35 @@ authors:
   - given-names: Tommaso
     surname: Pincelli
     orcid: https://orcid.org/0000-0003-2692-2540
+    affiliation: 5
+  - given-names: Martin
+    surname: Aeschlimann
+    orcid: https://orcid.org/0000-0003-3413-5029
+    affiliation: 3
+  - given-names: Marius
+    surname: Grundmann
+    orcid: https://orcid.org/0000-0001-7554-182X
     affiliation: 4
   - given-names: Walid
     surname: Hetaba
     orcid: https://orcid.org/0000-0003-4728-0786
-    affiliation: 3
+    affiliation: 2
   - given-names: Carlos-Andres
     surname: Palma
     orcid: https://orcid.org/0000-0001-5576-8496
     affiliation: "1, 6"
-  - given-names: Marius
-    surname: Grundmann
-    orcid: https://orcid.org/0000-0001-7554-182X
-  - given-names: Carlos-Andres
-    family-names: Palma
-    orcid: https://orcid.org/0000-0001-5576-8496
   - given-names: Laurenz
     surname: Rettig
     orcid: https://orcid.org/0000-0002-0725-6696
-    affiliation: 4
+    affiliation: 5
+  - given-names: Markus
+    surname: Scheidgen
+    orcid: https://orcid.org/0000-0002-8038-2277
+    affiliation: 1
+  - given-names: José Antonio
+    surname: Márquez Prieto
+    orcid: https://orcid.org/0000-0002-8173-2566
+    affiliation: 1
   - given-names: Christoph
     surname: Koch
     orcid: https://orcid.org/0000-0002-3984-1523
@@ -85,11 +91,7 @@ authors:
   - given-names: Heiko B.
     surname: Weber
     orcid: https://orcid.org/0000-0002-6403-9022
-    affiliation: 2
-  - given-names: Markus
-    surname: Scheidgen
-    orcid: https://orcid.org/0000-0002-8038-2277
-    affiliation: 1
+    affiliation: 7
   - given-names: Claudia
     surname: Draxl
     orcid: https://orcid.org/0000-0003-3523-6657
@@ -100,27 +102,29 @@ authors:
     affiliation: 1
 
 affiliations:
-  - name: Physics Department and CSMB, Humboldt-Universität zu Berlin, Berlin, Germany
+  - name: Physics Department and CSMB, Humboldt-Universität zu Berlin, Zum Großen Windkanal 2, D-12489 Berlin, Germany
     index: 1
     ror: 01hcx6992
-  - name: Lehrstuhl für Angewandte Physik, Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany
+  - name: Department Heterogeneous Reactions, Max Planck Institute for Chemical Energy Conversion, Stiftstraße 34-36, D-45470 Mülheim an der Ruhr, Germany
     index: 2
-    ror: 00f7hpc57
-  - name: Department Heterogeneous Reactions, Max Planck Institute for Chemical Energy Conversion, Mülheim an der Ruhr, Germany
-    index: 3
     ror: 01y9arx16
-  - name: Department of Physical Chemistry, Fritz Haber Institute of the Max Planck Society, Berlin, DE
+  - name: Department of Physics, RPTU Kaiserslautern-Landau, Erwin-Schrödinger-Str. 46, D-67663 Kaiserslautern, Germany
+    index: 3
+    ror: 01qrts582
+  - name: Felix Bloch Institute for Solid State Physics, Leipzig University, Linnestr. 5, D-04103 Leipzig, Germany
     index: 4
-    ror: 03k9qs827
-  - name: Felix-Bloch-Institut für Festkörperphysik, Universität Leipzig, Leipzig, Germany
-    index: 5
-<<<<<<< HEAD
-  - name: Institute of Physics, Chinese Academy of Sciences, Beijing, China
-    index: 6
-=======
     ror: 03s7gtk40
->>>>>>> f2c975e7 (Fixes)
-date: 06 June 2025
+  - name: Department of Physical Chemistry, Fritz Haber Institute of the Max Planck Society, Faradayweg 4-6, D-14195 Berlin, DE
+    index: 5
+    ror: 03k9qs827
+  - name: Institute of Physics, Chinese Academy of Sciences, No.8, 3rd South Street, Zhongguancun, Haidian District, Beijing, China
+    index: 6
+    ror: 05cvf7v30
+  - name: Lehrstuhl für Angewandte Physik, Friedrich-Alexander-Universität Erlangen-Nürnberg, Staudtstr. 7, D-91058 Erlangen, Germany
+    index: 7
+    ror: 00f7hpc57
+
+date: 07 July 2025
 bibliography: paper.bib
 
 ---
