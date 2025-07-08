@@ -1176,7 +1176,10 @@
 <p>In a local setup, tests can be run sequentially using the following command:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pytest tests</span>
 </code></pre></div>
-<p>This will execute all tests in a sequential manner. For more details, refer to the official documentation: <a href="https://docs.pytest.org/en/stable/how-to/usage.html">How to invoke pytest</a>.</p>
+<p>This will execute all tests in a sequential manner. For more details, refer to the official documentation:</p>
+<ul>
+<li><a href="https://docs.pytest.org/en/stable/how-to/usage.html">How to invoke pytest</a></li>
+</ul>
 <h2 id="running-tests-in-parallel">Running Tests in Parallel<a class="headerlink" href="#running-tests-in-parallel" title="Permanent link">&para;</a></h2>
 <p>The <code>pytest-xdist</code> plugin can be used to speed up test execution by distributing tests among available workers. To prevent race conditions, tests that share the same resources are grouped using the <code>@pytest.mark.xdist_group(name="group_name")</code> fixture. These grouped tests must be run with the <code>--dist loadgroup</code> flag. For example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">pytest tests -n auto --dist loadgroup</span>
