@@ -198,6 +198,7 @@ cython_debug/
 .pyenv
 *.pyc
 *.txt
+!project-words.txt
 !requirements.txt
 !dev-requirements.txt
 !mkdocs-requirements.txt
