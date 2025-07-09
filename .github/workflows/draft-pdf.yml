@@ -16,7 +16,7 @@ jobs:
         uses: codespell-project/actions-codespell@v2
         with:
           path: paper
-          skip: structures,Noe # Comming from bib
+          skip: *.bib
       - name: Build draft PDF
         uses: openjournals/openjournals-draft-action@master
         with:
