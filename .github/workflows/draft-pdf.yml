@@ -16,7 +16,7 @@ jobs:
         uses: streetsidesoftware/cspell-action@v7
         with:
           files: paper/*.md
-          config: cspell.config.yaml
+          config: .cspell/cspell.config.yaml
           strict: true
       - name: Build draft PDF
         uses: openjournals/openjournals-draft-action@master
