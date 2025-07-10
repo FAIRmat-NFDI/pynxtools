@@ -2,10 +2,10 @@
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
 version: '0.2'
 dictionaryDefinitions:
-  - name: project-words
-    path: './project-words.txt'
+  - name: custom-dictionary
+    path: './custom-dictionary.txt'
     addWords: true
 dictionaries:
-  - project-words
+  - custom-dictionary
 ignorePaths:
   - 'paper/paper.bib'
