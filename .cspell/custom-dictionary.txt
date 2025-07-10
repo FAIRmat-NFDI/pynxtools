@@ -1,90 +1,66 @@
 # Custom Dictionary Words
 
-## NeXus related words
-AXISNAME
-namefitting
-NIAC
-NXDL
+## Paper related words
 
-## LateX, XML
-
-# Words related to experimental techniques
-
-# Software
-caplog
-cnxvalidate
-dataconverter
-DECTRIS
-electronanalyzer
-ELECTRONANALYZER
-ellipsometry
-infty
-libiconv
-loadgroup
-mainfile
-MSYS
-nexpy
-nxdls
-PATHCONV
-posint
-punx
-pynxtools
-xarrays
-xdist
-Zenodo
-
-# examples
-appdefdir
-CSET
-ellips
-FAIRMAT
-filemanager
-fxcef
-hildebrandt
-hixu
-infile
-kfra
-libhdf
-mydata
-mydatareader
-mynxdl
-nexusvalidate
-nexusvalidation
-NULLTERM
-otherfile
-physik
-STRPAD
-STRSIZE
-xfbaa
-
-# related to experimental techniques
-arpes
-ARPES
-Bluesky
-mbar
-MPES
-Raman
-
-# Names
+Aeschlimann
+Angewandte
+Behnel
+Brockhauser
+Carola
+CSMB
+Dataconverter
+Dobener
+Druskat
+Draxl
+Emminger
+Erlangen
+Faradayweg
+Florian
 Forschungsgemeinschaft
+Ghiringhelli
+Ginzburg
+Großen
+Grundmann
+Haidian
+Heiko
+Hetaba
+Hildebrandt
+Hjorth
+Hoyer
+Jemian
 José
+Klosowski
+Koennecke
 Kühbach
+Laurenz
+Lehrstuhl
+Linnestr
 Lukas
-lukaspie
+Márquez
 Markus
-mkuehbach
+Metainfo
 Mozumder
-NFDI
+Mülheim
 Pielsticker
+Physik
+Pincelli
+Prieto
+RDMS
+RPTU
+Rettig
+Sandor
+Scheidgen
 Shabih
 Sherjeel
-sherjeelshabih
-
-# other languages
-
-# en-UK which requires to many changes
-
-# misc
-appdefs
-hypothes
-speciality
+Staudtstr
+Stiftstraße
+Tommaso
+Universität
+Walid
+Windkanal
+Zhongguancun
+dataconverter
+orcid
+plottable
+pynxtools
+qrts
