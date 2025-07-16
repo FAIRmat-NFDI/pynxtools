@@ -168,7 +168,7 @@ The `NOMAD` Parser module in pynxtools (_NexusParser_) extracts structured data 
 pynxtools contains an integrated Search Application for NeXus data within `NOMAD`, powered by `Elasticsearch` [@elasticsearch:2025]. This provides a search dashboard whereby users can efficiently filter uploaded data based on parameters like experiment type, upload timestamp, and domain- and technique-specific quantities. The entire pynxtools workflow (conversion, parsing, and normalization) is exemplified in a representative `NOMAD` Example Upload that is shipped with the package. This example helps new users understand the workflow and serves as a template to adapt the plugin to new NeXus applications.
 
 # Funding
-The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).
+The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - project 460197019 (FAIRmat).
 
 # Acknowledgements
 
