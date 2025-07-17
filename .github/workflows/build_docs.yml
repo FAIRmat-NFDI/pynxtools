@@ -34,6 +34,7 @@ jobs:
           files: "docs/**/*.md"
           config: cspell.json
           strict: true
+          incremental_files_only: false
 
       - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
