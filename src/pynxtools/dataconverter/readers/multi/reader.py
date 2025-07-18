@@ -21,7 +21,7 @@ import ast
 import logging
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import (
@@ -85,15 +85,15 @@ class ParseJsonCallbacks:
             The callback to retrieve links under the specified key.
         eln_callback (Callable[[str], Any]):
             The callback to retrieve eln values under the specified key.
-        dims (List[str]):
+        dims (list[str]):
             The dimension labels of the data. Defaults to None.
         entry_name (str):
             The current entry name to use.
     """
 
-    special_key_map: Dict[str, Callable[[str, str], Any]]
+    special_key_map: dict[str, Callable[[str, str], Any]]
     entry_name: str
-    dims: Callable[[str, str], List[str]]
+    dims: Callable[[str, str], list[str]]
 
     def __init__(
         self,
@@ -101,7 +101,7 @@ class ParseJsonCallbacks:
         data_callback: Optional[Callable[[str, str], Any]] = None,
         link_callback: Optional[Callable[[str, str], Any]] = None,
         eln_callback: Optional[Callable[[str, str], Any]] = None,
-        dims: Optional[Callable[[str, str], List[str]]] = None,
+        dims: Optional[Callable[[str, str], list[str]]] = None,
         entry_name: str = "entry",
     ):
         self.special_key_map = {
@@ -114,7 +114,7 @@ class ParseJsonCallbacks:
         self.dims = dims if dims is not None else lambda *_, **__: []
         self.entry_name = entry_name
 
-    def link_callback(self, key: str, value: str) -> Dict[str, Any]:
+    def link_callback(self, key: str, value: str) -> dict[str, Any]:
         """
         Modify links to dictionaries with the correct entry name.
         """
@@ -136,10 +136,10 @@ class ParseJsonCallbacks:
 
 
 def resolve_special_keys(
-    new_entry_dict: Dict[str, Any],
+    new_entry_dict: dict[str, Any],
     key: str,
     value: Any,
-    optional_groups_to_remove: List[str],
+    optional_groups_to_remove: list[str],
     callbacks: ParseJsonCallbacks,
     suppress_warning: bool = False,
 ) -> None:
@@ -165,7 +165,7 @@ def resolve_special_keys(
 
         return value
 
-    def parse_config_value(value: str) -> Tuple[str, Any]:
+    def parse_config_value(value: str) -> tuple[str, Any]:
         """
         Separates the prefixes (denoted by "@") from the rest
         of the value.
@@ -177,7 +177,7 @@ def resolve_special_keys(
 
         Returns
         -------
-        Tuple[str, Any]
+        tuple[str, Any]
             Tuple like (prefix, path).
 
         """
@@ -193,7 +193,7 @@ def resolve_special_keys(
         new_entry_dict[key] = value
         return
 
-    prefixes: List[Tuple[str, str]] = []
+    prefixes: list[tuple[str, str]] = []
 
     try:
         # Safely evaluate the string to a list
@@ -237,8 +237,8 @@ def resolve_special_keys(
 
 
 def fill_from_config(
-    config_dict: Dict[str, Any],
-    entry_names: List[str],
+    config_dict: dict[str, Any],
+    entry_names: list[str],
     callbacks: Optional[ParseJsonCallbacks] = None,
     suppress_warning: bool = False,
 ) -> dict:
@@ -256,7 +256,7 @@ def fill_from_config(
                 return True
         return False
 
-    def dict_sort_key(keyval: Tuple[str, Any]) -> bool:
+    def dict_sort_key(keyval: tuple[str, Any]) -> bool:
         """
         The function to sort the dict by.
         This just sets False for keys starting with "!" to put them at the beginning.
@@ -271,7 +271,7 @@ def fill_from_config(
         # Use default callbacks if none are explicitly provided
         callbacks = ParseJsonCallbacks()
 
-    optional_groups_to_remove: List[str] = []
+    optional_groups_to_remove: list[str] = []
     new_entry_dict = {}
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
@@ -319,13 +319,13 @@ class MultiFormatReader(BaseReader):
     """
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls: List[str] = []
-    extensions: Dict[str, Callable[[Any], dict]] = {}
-    kwargs: Optional[Dict[str, Any]] = None
+    supported_nxdls: list[str] = []
+    extensions: dict[str, Callable[[Any], dict]] = {}
+    kwargs: Optional[dict[str, Any]] = None
     overwrite_keys: bool = True
-    processing_order: Optional[List[str]] = None
+    processing_order: Optional[list[str]] = None
     config_file: Optional[str] = None
-    config_dict: Dict[str, Any]
+    config_dict: dict[str, Any]
 
     def __init__(self, config_file: Optional[str] = None):
         self.callbacks = ParseJsonCallbacks(
@@ -337,7 +337,7 @@ class MultiFormatReader(BaseReader):
         self.config_file = config_file
         self.config_dict = {}
 
-    def setup_template(self) -> Dict[str, Any]:
+    def setup_template(self) -> dict[str, Any]:
         """
         Setups the initial data in the template.
         This may be used to set fixed information, e.g., about the reader.
@@ -345,7 +345,7 @@ class MultiFormatReader(BaseReader):
         return {}
 
     # pylint: disable=unused-argument
-    def handle_objects(self, objects: Tuple[Any]) -> Dict[str, Any]:
+    def handle_objects(self, objects: tuple[Any]) -> dict[str, Any]:
         """
         Handles the objects passed into the reader.
         """
@@ -372,13 +372,13 @@ class MultiFormatReader(BaseReader):
         """
         return {}
 
-    def get_data_dims(self, key: str, path: str) -> List[str]:
+    def get_data_dims(self, key: str, path: str) -> list[str]:
         """
         Returns the dimensions of the data from the given path.
         """
         return []
 
-    def get_entry_names(self) -> List[str]:
+    def get_entry_names(self) -> list[str]:
         """
         Returns a list of entry names which should be constructed from the data.
         Defaults to creating a single entry named "entry".
@@ -393,8 +393,8 @@ class MultiFormatReader(BaseReader):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Optional[Tuple[Any]] = None,
+        file_paths: tuple[str] = None,
+        objects: Optional[tuple[Any]] = None,
         **kwargs,
     ) -> dict:
         """
@@ -407,7 +407,7 @@ class MultiFormatReader(BaseReader):
 
         template = Template(overwrite_keys=self.overwrite_keys)
 
-        def get_processing_order(path: str) -> Tuple[int, Union[str, int]]:
+        def get_processing_order(path: str) -> tuple[int, Union[str, int]]:
             """
             Returns the processing order of the file.
             """

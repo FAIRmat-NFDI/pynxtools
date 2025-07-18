@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from typing import Dict, Optional, Set
+from typing import Optional
 
 import lxml.etree as ET
 import numpy as np
@@ -33,7 +33,6 @@ try:
     from nomad.metainfo import MEnum, MSection
     from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
     from nomad.parsing import MatchingParser
-    from nomad.units import ureg
     from nomad.utils import get_logger
     from pint.errors import UndefinedUnitError
 except ImportError as exc:
@@ -43,9 +42,13 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __FIELD_STATISTICS as FIELD_STATISTICS
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, get_quantity_base_name
-from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.nomad.utils import (
+    FIELD_STATISTICS,
+    REPLACEMENT_FOR_NX,
+    get_quantity_base_name,
+)
+from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.units import ureg
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -369,7 +372,7 @@ class NexusParser(MatchingParser):
                     exc_info=e,
                 )
 
-    def __nexus_populate(self, params: dict, attr=None):  # pylint: disable=W0613
+    def _nexus_populate(self, params: dict, attr=None):  # pylint: disable=W0613
         """
         Walks through name_list and generate nxdl nodes
         (hdf_info, nx_def, nx_path, val, logger) = params
@@ -434,13 +437,13 @@ class NexusParser(MatchingParser):
                 filtered.append(individual)
         return filtered
 
-    def _get_chemical_formulas(self) -> Set[str]:
+    def _get_chemical_formulas(self) -> set[str]:
         """
         Parses the descriptive chemical formula from a nexus entry.
         """
         material = self.archive.m_setdefault("results.material")
-        element_set: Set[str] = set()
-        chemical_formulas: Set[str] = set()
+        element_set: set[str] = set()
+        chemical_formulas: set[str] = set()
 
         # DEBUG added here 'sample' only to test that I think the root cause
         # of the bug is that when the appdef defines at the level of the HDF5
@@ -523,7 +526,7 @@ class NexusParser(MatchingParser):
         mainfile: str,
         archive: EntryArchive,
         logger=None,
-        child_archives: Dict[str, EntryArchive] = None,
+        child_archives: dict[str, EntryArchive] = None,
     ) -> None:
         if DEBUG_PYNXTOOLS_WITH_NOMAD:
             import debugpy  # will connect to debugger if in debug mode
@@ -543,7 +546,7 @@ class NexusParser(MatchingParser):
         # .volumes/fs/<upload type>/<upload 2char>/<upoad>/<raw/arch>/[subdirs?]/<filename>
         self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
         nexus_helper = HandleNexus(logger, mainfile)
-        nexus_helper.process_nexus_master_file(self.__nexus_populate)
+        nexus_helper.process_nexus_master_file(self._nexus_populate)
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:

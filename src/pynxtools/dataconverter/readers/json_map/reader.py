@@ -19,11 +19,11 @@
 
 import json
 import pickle
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
-import yaml
 import xarray
+import yaml
 from mergedeep import merge
 
 from pynxtools.dataconverter import hdfdict
@@ -166,8 +166,8 @@ class JsonMapReader(BaseReader):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
     ) -> dict:
         """
         Reads data from given file and returns a filled template dictionary.
@@ -186,7 +186,7 @@ class JsonMapReader(BaseReader):
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex(".") :]
             if file_extension == ".json":
-                with open(file_path, "r", encoding="utf-8") as input_file:
+                with open(file_path, encoding="utf-8") as input_file:
                     if ".mapping" in file_path:
                         mapping = json.loads(input_file.read())
                     else:
@@ -195,7 +195,7 @@ class JsonMapReader(BaseReader):
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
                     data = pickle.load(input_file)  # type: ignore[arg-type]
             elif file_extension == ".yaml":
-                with open(file_path, "r") as input_file:
+                with open(file_path) as input_file:
                     merge(data, yaml.safe_load(input_file))
             else:
                 is_hdf5 = False
@@ -216,7 +216,7 @@ class JsonMapReader(BaseReader):
                 template = Template(
                     {x: "/hierarchical/path/in/your/datafile" for x in template}
                 )
-                raise IOError(
+                raise OSError(
                     "Please supply a JSON mapping file: "
                     " my_nxdl_map.mapping.json\n\n You can use this "
                     "template for the required fields: \n" + str(template)

@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
+import difflib
 import logging
 import os
-import difflib
 
 import lxml.etree as ET
 import numpy as np
@@ -177,15 +177,21 @@ def test_nexus(tmp_path):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     nexus_helper = HandleNexus(logger, example_data, None, None)
+
+    default_print_options = {
+        "edgeitems": 3,
+        "threshold": 1000,
+        "precision": 8,
+        "linewidth": 75,
+    }
+
+    np.set_printoptions(**default_print_options)
     nexus_helper.process_nexus_master_file(None)
 
-    with open(
-        os.path.join(tmp_path, "nexus_test.log"), "r", encoding="utf-8"
-    ) as logfile:
+    with open(os.path.join(tmp_path, "nexus_test.log"), encoding="utf-8") as logfile:
         log = logfile.readlines()
     with open(
         os.path.join(dirpath, "Ref_nexus_test.log"),
-        "r",
         encoding="utf-8",
     ) as reffile:
         ref = reffile.readlines()
@@ -202,11 +208,6 @@ def test_nexus(tmp_path):
         pytest.fail(
             f"Log output does not match reference even though each individual line matches."
         )
-
-    # import filecmp
-    # # didn't work with filecmp library
-    # log = os.path.join(local_dir, '../data/nexus_test_data/nexus_test.log')
-    # ref = os.path.join(local_dir, '../data/nexus_test_data/Ref_nexus_test.log')
 
 
 def test_get_node_at_nxdl_path():
@@ -288,7 +289,7 @@ def test_c_option(tmp_path):
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(tmp_file, "w")
 
-    with open(ref_file, encoding="utf-8", mode="r") as ref_f:
+    with open(ref_file, encoding="utf-8") as ref_f:
         ref = ref_f.readlines()
 
     handler = logging.FileHandler(tmp_file, "w")
@@ -300,7 +301,7 @@ def test_c_option(tmp_path):
     nexus_helper = HandleNexus(logger, None, None, "/NXbeam")
     nexus_helper.process_nexus_master_file(None)
 
-    with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
+    with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
 
     assert tmp == ref
@@ -314,7 +315,7 @@ def test_c_option(tmp_path):
     nexus_helper = HandleNexus(logger, None, None, "/NXdetector/data")
     nexus_helper.process_nexus_master_file(None)
 
-    with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
+    with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
     assert tmp[0] == "INFO: entry/instrument/analyser/data\n"
 
@@ -327,7 +328,7 @@ def test_c_option(tmp_path):
     nexus_helper = HandleNexus(logger, None, None, "/NXdata@signal")
     nexus_helper.process_nexus_master_file(None)
 
-    with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
+    with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
     assert tmp[0] == "INFO: entry/data@signal\n"
 
@@ -349,7 +350,7 @@ def test_d_option(tmp_path):
     nexus_helper = HandleNexus(logger, None, "/entry/instrument/analyser/data", None)
     nexus_helper.process_nexus_master_file(None)
 
-    with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
+    with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
 
     assert (

@@ -18,7 +18,9 @@ except ImportError as exc:
 from pynxtools.dataconverter import convert as pynxtools_converter
 from pynxtools.dataconverter import writer as pynxtools_writer
 from pynxtools.dataconverter.template import Template
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_app_defs_names  # pylint: disable=import-error
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_app_defs_names,  # pylint: disable=import-error
+)
 
 m_package = Package(name="nexus_data_converter")
 
@@ -176,7 +178,7 @@ class ElnYamlConverter(EntryData):
     )
 
     def normalize(self, archive, logger):
-        super(ElnYamlConverter, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         eln_dict = create_eln_dict(archive)
         write_yaml(archive, archive.data.output, eln_dict)
@@ -203,6 +205,12 @@ class NexusDataConverter(EntryData):
         a_browser=dict(adaptor="RawFileAdaptor"),
     )
 
+    filter = Quantity(
+        type=str,
+        description="Filter to select additional input files to be converted to NeXus",
+        a_eln=dict(component="StringEditQuantity"),
+    )
+
     output = Quantity(
         type=str,
         description="Output Nexus filename to save all the data. Default: output.nxs",
@@ -211,19 +219,21 @@ class NexusDataConverter(EntryData):
         default="output.nxs",
     )
 
-    filter = Quantity(
-        type=str,
-        description="Filter to select additional input files to be converted to NeXus",
-        a_eln=dict(component="StringEditQuantity"),
+    export = Quantity(
+        type=bool,
+        description="Indicates if conversion to NeXus shall happen automatically when ELN is saved",
+        a_eln=dict(component="BoolEditQuantity"),
+        default=True,
     )
 
     nexus_view = Quantity(
         type=ArchiveSection,
         description="Link to the NeXus Entry",
+        a_eln=dict(overview=True),
     )
 
     def normalize(self, archive, logger):
-        super(NexusDataConverter, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         raw_path = archive.m_context.raw_path()
         eln_dict = create_eln_dict(archive)
@@ -235,6 +245,9 @@ class NexusDataConverter(EntryData):
             eln_fname = f"{archive.data.output}_eln_data.yaml"
             write_yaml(archive, eln_fname, eln_dict)
             input_file_list.append(eln_fname)
+
+        if not self.export:
+            return
 
         # collect extra input files
         input_list = [os.path.join(raw_path, file) for file in input_file_list]

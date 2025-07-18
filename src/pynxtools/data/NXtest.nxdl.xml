@@ -23,6 +23,15 @@
             <field name="required_field" required="true" type="NX_INT">
                 <doc>A dummy entry to test optional parent check for a required child.</doc>
             </field>
+            <field name="required_field_set" optional="true" type="NX_INT">
+                <doc>A dummy entry to test reserved suffixes.</doc>
+            </field>
+            <field name="some_field_set" optional="true" type="NX_INT">
+                <doc>
+                    A dummy entry to test reserved suffixes where the actual field is not given.
+                    Note that this is not allowed by NeXus, but we do this here to test the validation.
+                </doc>
+            </field>
             <field name="optional_field" optional="true" type="NX_INT">
                 <doc>A dummy entry to test optional parent check for an optional child.</doc>
             </field>
@@ -36,8 +45,8 @@
         </group>
         <group type="NXdata" name="specified_group" nameType="specified">
             <doc>A group with a name and nameType="specified".</doc>
-            <field name="specified_field" type="NX_FLOAT" units="NX_ANY">
-                <attribute name="specified_attr_in_field"/>
+            <field name="specified_field" nameType="specified" type="NX_FLOAT" units="NX_ANY">
+                <attribute name="specified_attr_in_field" nameType="specified"/>
             </field>
             <attribute name="specified_attr"/>
         </group>
@@ -123,6 +132,7 @@
         </group>
         <group name="identified_calibration" type="NXcalibration" optional="true">
             <field name="identifier_1"/>
+            <field name="identifier_2" optional="True"/>
         </group>
         <group name="named_collection" type="NXcollection" optional="true"/>
     </group>

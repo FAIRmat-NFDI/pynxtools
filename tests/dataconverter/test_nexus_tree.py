@@ -1,6 +1,7 @@
-from typing import Any, List, Tuple, get_args
+from typing import Any, get_args
 
 from anytree import Resolver
+
 from pynxtools.dataconverter.nexus_tree import (
     NexusNode,
     NexusType,
@@ -39,11 +40,11 @@ def test_correct_extension_of_tree():
     nxtest = generate_tree_from("NXtest")
     nxtest_extended = generate_tree_from("NXtest_extended")
 
-    def get_node_fields(tree: NexusNode) -> List[Tuple[str, Any]]:
+    def get_node_fields(tree: NexusNode) -> list[tuple[str, Any]]:
         return list(
             filter(
                 lambda x: not x[0].startswith("_")
-                and x[0] not in ("inheritance", "is_a", "parent_of"),
+                and x[0] not in ("inheritance", "is_a", "parent_of", "nxdl_base"),
                 tree.__dict__.items(),
             )
         )

@@ -29,16 +29,18 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import lru_cache, reduce
-from typing import Any, List, Literal, Optional, Set, Tuple, Union
+from typing import Any, Literal, Optional, Union
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
+from pynxtools import NX_DOC_BASES, get_definitions_url
 from pynxtools.dataconverter.helpers import (
+    NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
-    is_variadic,
     is_appdef,
+    is_variadic,
     remove_namespace_from_tag,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -128,7 +130,7 @@ class NexusNode(NodeMixin):
             This is set automatically on init and will be True if the `nameTYPE` is "any"
             or "partial" and False otherwise.
             Defaults to False.
-        inheritance (List[InstanceOf[ET._Element]]):
+        inheritance (list[InstanceOf[ET._Element]]):
             The inheritance chain of the node.
             The first element of the list is the xml representation of this node.
             All following elements are the xml nodes of the node if these are
@@ -140,14 +142,16 @@ class NexusNode(NodeMixin):
             for a tree, i.e., setting the parent of a node is enough to add it to the tree
             and to its parent's children.
             For the root this is None.
-        is_a: List["NexusNode"]:
+        is_a: list["NexusNode"]:
             A list of NexusNodes the current node represents.
             This is used for attaching siblings to the current node, e.g.,
             if the parent appdef has a field `DATA(NXdata)` and the current appdef
             has a field `my_data(NXdata)` the relation `my_data` `is_a` `DATA` is set.
-        parent_of: List["NexusNode"]:
+        parent_of: list["NexusNode"]:
             The inverse of the above `is_a`. In the example case
             `DATA` `parent_of` `my_data`.
+        nxdl_base: str
+            Base of the NXDL file where the XML element for this node is  defined
     """
 
     name: str
@@ -155,9 +159,10 @@ class NexusNode(NodeMixin):
     name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
-    inheritance: List[ET._Element]
-    is_a: List["NexusNode"]
-    parent_of: List["NexusNode"]
+    inheritance: list[ET._Element]
+    is_a: list["NexusNode"]
+    parent_of: list["NexusNode"]
+    nxdl_base: str
 
     def _set_optionality(self):
         """
@@ -189,13 +194,15 @@ class NexusNode(NodeMixin):
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
         parent: Optional["NexusNode"] = None,
-        inheritance: Optional[List[Any]] = None,
+        inheritance: Optional[list[Any]] = None,
+        nxdl_base: Optional[str] = None,
     ) -> None:
         super().__init__()
         self.name = name
         self.type = type
         self.name_type = name_type
         self.optionality = optionality
+        self.nxdl_base = nxdl_base
         self.variadic = is_variadic(self.name, self.name_type)
         if variadic is not None:
             self.variadic = variadic
@@ -207,19 +214,6 @@ class NexusNode(NodeMixin):
         self.is_a = []
         self.parent_of = []
 
-    def _construct_inheritance_chain_from_parent(self):
-        """
-        Builds the inheritance chain of the current node based on the parent node.
-        """
-        if self.parent is None:
-            return
-        for xml_elem in self.parent.inheritance:
-            elem = xml_elem.find(
-                f"nx:{self.type}/[@name='{self.name}']", namespaces=namespaces
-            )
-            if elem is not None:
-                self.inheritance.append(elem)
-
     def get_path(self) -> str:
         """
         Gets the path of the current node based on the node name.
@@ -228,14 +222,14 @@ class NexusNode(NodeMixin):
             str: The full path up to the parent of the current node.
         """
         current_node = self
-        names: List[str] = []
+        names: list[str] = []
         while current_node.parent is not None:
             names.insert(0, current_node.name)
             current_node = current_node.parent
         return "/" + "/".join(names)
 
     def search_add_child_for_multiple(
-        self, names: Tuple[str, ...]
+        self, names: tuple[str, ...]
     ) -> Optional["NexusNode"]:
         """
         Searchs and adds a child with one of the names in `names` to the current node.
@@ -243,7 +237,7 @@ class NexusNode(NodeMixin):
         The found child is then returned.
 
         Args:
-            name (Tuple[str, ...]):
+            name (tuple[str, ...]):
                 A tuple of names of the child to search for.
 
         Returns:
@@ -317,7 +311,7 @@ class NexusNode(NodeMixin):
         nx_class: Optional[str] = None,
         depth: Optional[int] = None,
         only_appdef: bool = False,
-    ) -> Set[str]:
+    ) -> set[str]:
         """
         Get all children names of the current node up to a certain depth.
         Only `field`, `group` `choice` or `attribute` are considered as children.
@@ -347,8 +341,9 @@ class NexusNode(NodeMixin):
             ValueError: If depth is not int or negativ.
 
         Returns:
-            Set[str]: A set of children names.
+            set[str]: A set of children names.
         """
+
         if depth is not None and (not isinstance(depth, int) or depth < 0):
             raise ValueError("Depth must be a positive integer or None")
 
@@ -381,7 +376,7 @@ class NexusNode(NodeMixin):
         self,
         prev_path: str = "",
         level: Literal["required", "recommended", "optional"] = "required",
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Gets all required fields and attributes names of the current node and its children.
 
@@ -399,7 +394,7 @@ class NexusNode(NodeMixin):
                 Defaults to "required".
 
         Returns:
-            List[str]: A list of required fields and attributes names.
+            list[str]: A list of required fields and attributes names.
         """
         lvl_map = {
             "required": ("required",),
@@ -430,7 +425,7 @@ class NexusNode(NodeMixin):
 
         return req_children
 
-    def get_docstring(self, depth: Optional[int] = None) -> List[str]:
+    def get_docstring(self, depth: Optional[int] = None) -> dict[str, str]:
         """
         Gets the docstrings of the current node and its parents up to a certain depth.
 
@@ -444,20 +439,54 @@ class NexusNode(NodeMixin):
             ValueError: If depth is not int or negativ.
 
         Returns:
-            List[str]: A list of docstrings one for each parent doc.
+            list[str]: A list of docstrings one for each parent doc.
         """
         if depth is not None and depth < 0:
             raise ValueError("Depth must be a positive integer or None")
 
-        docstrings = []
+        docstrings = {}
         for elem in self.inheritance[:depth][::-1]:
             doc = elem.find("nx:doc", namespaces=namespaces)
+
             if doc is not None:
-                docstrings.append(doc.text)
+                name = elem.attrib.get("name")
+                if not name:
+                    name = elem.attrib["type"][2:].upper()
+                docstrings[name] = doc.text
 
         return docstrings
 
-    def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
+    def get_link(self) -> str:
+        """
+        Get documentation url
+        """
+
+        anchor_segments = [self.type]
+        current_node = self
+
+        while True:
+            if not current_node:
+                break
+
+            segment = current_node.name
+            anchor_segments.append(current_node.name.replace("_", "-"))  # type: ignore[arg-type]
+            current_node = current_node.parent
+
+        definitions_url = get_definitions_url()
+        doc_base = NX_DOC_BASES.get(
+            definitions_url, "https://manual.nexusformat.org/classes"
+        )
+        nx_file = self.nxdl_base.split("/definitions/")[-1].split(".nxdl.xml")[0]
+
+        # add the name of the base file at the end, drop the appdef name
+        anchor_segments = anchor_segments[:-1]
+        anchor_segments += [self.nxdl_base.split("/")[-1].split(".nxdl.xml")[0].lower()]  # type: ignore[list-item]
+
+        anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
+
+        return f"{doc_base}/{nx_file}.html#{anchor}"
+
+    def _build_inheritance_chain(self, xml_elem: ET._Element) -> list[ET._Element]:
         """
         Builds the inheritance chain based on the given xml node and the inheritance
         chain of this node.
@@ -466,7 +495,7 @@ class NexusNode(NodeMixin):
             xml_elem (ET._Element): The xml element to build the inheritance chain for.
 
         Returns:
-            List[ET._Element]:
+            list[ET._Element]:
                 The list of xml nodes representing the inheritance chain.
                 This represents the direct field or group inside the specific xml file.
         """
@@ -559,6 +588,8 @@ class NexusNode(NodeMixin):
                 name_type=name_type,
                 type=tag,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
+                inheritance=[xml_elem],
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name")
@@ -575,6 +606,7 @@ class NexusNode(NodeMixin):
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         elif tag == "choice":
             current_elem = NexusChoice(
@@ -582,6 +614,7 @@ class NexusNode(NodeMixin):
                 name=xml_elem.attrib["name"],
                 name_type=name_type,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         else:
             # TODO: Tags: link
@@ -640,6 +673,19 @@ class NexusChoice(NexusNode):
         self._construct_inheritance_chain_from_parent()
         self._set_optionality()
 
+    def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
+        if self.parent is None:
+            return
+        for xml_elem in self.parent.inheritance:
+            elem = xml_elem.find(
+                f"nx:{self.type}/[@name='{self.name}']", namespaces=namespaces
+            )
+            if elem is not None:
+                self.inheritance.append(elem)
+
 
 class NexusGroup(NexusNode):
     """
@@ -648,7 +694,7 @@ class NexusGroup(NexusNode):
 
     Args:
         nx_class (str):
-        occurence_limits (Tuple[Optional[int], Optional[int]]):
+        occurence_limits (tuple[Optional[int], Optional[int]]):
             Denotes the minimum and maximum number of occurrences of the group.
             First element denotes the minimum, second one the maximum.
             If the respective value is None, then there is no limit.
@@ -657,7 +703,7 @@ class NexusGroup(NexusNode):
     """
 
     nx_class: str
-    occurrence_limits: Tuple[
+    occurrence_limits: tuple[
         # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
         Optional[int],
         Optional[int],
@@ -791,7 +837,7 @@ class NexusEntity(NexusNode):
             Also the base classes of these entities are considered.
             If it is not present in any of the xml nodes, it will be set to `NX_CHAR`.
             Defaults to "NX_CHAR".
-        items (Optional[List[str]]):
+        items (Optional[list[str]]):
             This is a restriction of the field value to a list of items.
             Only applies to nodes of dtype `NX_CHAR`.
             This is set automatically on init based on the values found in the nxdl file.
@@ -802,7 +848,7 @@ class NexusEntity(NexusNode):
             If enumerations are used, the enumeration can be open (i.e., the value is not limited
             to the enumeration items) or closed (i.e., the value must exactly match one of the
             enumeration items). This is controlled by the open_enum boolean. By default, it is closed.
-        shape (Optional[Tuple[Optional[int], ...]]):
+        shape (Optional[tuple[Optional[int], ...]]):
             The shape of the entity as given by the dimensions tag.
             This is set automatically on init based on the values found in the nxdl file.
             Also the base classes of these entities are considered.
@@ -816,9 +862,148 @@ class NexusEntity(NexusNode):
     type: Literal["field", "attribute"]
     unit: Optional[NexusUnitCategory] = None
     dtype: NexusType = "NX_CHAR"
-    items: Optional[List[str]] = None
+    items: Optional[list[str]] = None
     open_enum: bool = False
-    shape: Optional[Tuple[Optional[int], ...]] = None
+    shape: Optional[tuple[Optional[int], ...]] = None
+
+    def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
+        """Check compatibility of this node with an XML element from the (possible) inheritance"""
+
+        def _check_name_fit(xml_elem: ET._Element) -> bool:
+            elem_name = xml_elem.attrib.get("name")
+            name_any = is_name_type(xml_elem, "any")
+            name_partial = is_name_type(xml_elem, "partial")
+
+            if get_nx_namefit(self.name, elem_name, name_any, name_partial) < 0:
+                return False
+            return True
+
+        def _check_type_fit(xml_elem: ET._Element) -> bool:
+            elem_type = xml_elem.attrib.get("type")
+            if elem_type:
+                if not set(NEXUS_TO_PYTHON_DATA_TYPES[self.dtype]).issubset(
+                    NEXUS_TO_PYTHON_DATA_TYPES[elem_type]
+                ):
+                    return False
+            return True
+
+        def _check_units_fit(xml_elem: ET._Element) -> bool:
+            elem_units = xml_elem.attrib.get("units")
+            if elem_units and elem_units != "NX_ANY":
+                if elem_units != self.unit:
+                    if not elem_units == "NX_TRANSFORMATION" and self.unit in [
+                        "NX_LENGTH",
+                        "NX_ANGLE",
+                        "NX_UNITLESS",
+                    ]:
+                        return False
+            return True
+
+        def _check_enum_fit(xml_elem: ET._Element) -> bool:
+            elem_enum = xml_elem.find(f"nx:enumeration", namespaces=namespaces)
+            if elem_enum is not None:
+                if self.items is None:
+                    # Case where inherited entity is enumerated, but current node isn't
+                    return True
+                elem_enum_open = elem_enum.attrib.get("open", "false")
+
+                if elem_enum_open == "true":
+                    return True
+
+                elem_enum_items = []
+                for items in elem_enum.findall(f"nx:item", namespaces=namespaces):
+                    value = items.attrib["value"]
+                    if value[0] == "[" and value[-1] == "]":
+                        import ast
+
+                        try:
+                            elem_enum_items.append(ast.literal_eval(value))
+                        except (ValueError, SyntaxError):
+                            raise Exception(
+                                f"Error parsing enumeration item in the provided NXDL: {value}"
+                            )
+                    else:
+                        elem_enum_items.append(value)
+
+                def convert_to_hashable(item):
+                    """Convert lists to tuples for hashable types, leave non-list items as they are."""
+                    if isinstance(item, list):
+                        return tuple(item)  # Convert sublists to tuples
+                    return item  # Non-list items remain as they are
+
+                set_items = {convert_to_hashable(sublist) for sublist in self.items}
+                set_elem_enum_items = {
+                    convert_to_hashable(sublist) for sublist in elem_enum_items
+                }
+
+                if not set(set_items).issubset(set_elem_enum_items):
+                    if self.name == "definition":
+                        pass
+                    else:
+                        # TODO: should we be this strict here? Or can appdefs define additional terms?
+                        pass
+            return True
+
+        def _check_dimensions_fit(xml_elem: ET._Element) -> bool:
+            if not self.shape:
+                return True
+            elem_dimensions = xml_elem.find(f"nx:dimensions", namespaces=namespaces)
+            if elem_dimensions is not None:
+                rank = elem_dimensions.attrib.get("rank")
+                if rank is not None and not isinstance(rank, int):
+                    try:
+                        int(rank)
+                    except ValueError:
+                        # TODO: Handling of symbols
+                        return True
+                elem_dim = elem_dimensions.findall("nx:dim", namespaces=namespaces)
+                elem_dimension_rank = rank if rank is not None else len(rank)
+                dims: list[Optional[int]] = [None] * int(rank)
+
+                for dim in elem_dim:
+                    idx = int(dim.attrib["index"])
+                    if value := dim.attrib.get("value", None):
+                        # If not, this is probably an old dim element with ref.
+                        try:
+                            value = int(value)
+                            dims[idx] = value
+                        except ValueError:
+                            # TODO: Handling of symbols
+                            pass
+                elem_shape = tuple(dims)
+
+                if elem_shape:
+                    if elem_shape != self.shape:
+                        return False
+
+            return True
+
+        check_functions = [
+            _check_name_fit,
+            _check_type_fit,
+            _check_units_fit,
+            _check_enum_fit,
+            # TODO: check if any inheritance is wrongfully assigned without dim checks
+            # _check_dimensions_fit,
+        ]
+
+        for func in check_functions:
+            if not func(xml_elem):
+                return False
+        return True
+
+    def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
+        if self.parent is None:
+            return
+        for xml_elem in self.parent.inheritance:
+            subelems = xml_elem.findall(f"nx:{self.type}", namespaces=namespaces)
+            if subelems is not None:
+                for elem in subelems:
+                    if self._check_compatibility_with(elem):
+                        self.inheritance.append(elem)
 
     def _set_type(self):
         """
@@ -889,7 +1074,7 @@ class NexusEntity(NexusNode):
                 return
         xml_dim = dimension.findall("nx:dim", namespaces=namespaces)
         rank = rank if rank is not None else len(xml_dim)
-        dims: List[Optional[int]] = [None] * int(rank)
+        dims: list[Optional[int]] = [None] * int(rank)
         for dim in xml_dim:
             idx = int(dim.attrib["index"])
             if "value" not in dim.attrib:
@@ -906,7 +1091,13 @@ class NexusEntity(NexusNode):
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
+        self._set_unit()
+        self._set_type()
+        self._set_items_and_enum_type()
+        self._set_optionality()
+        self._set_shape()
         self._construct_inheritance_chain_from_parent()
+        # Set all parameters again based on the acquired inheritance
         self._set_unit()
         self._set_type()
         self._set_items_and_enum_type()
@@ -932,7 +1123,7 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str) -> NexusNode:
+def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     """
     Generates a NexusNode tree from an application definition.
     NexusNode is based on anytree nodes and anytree's functions can be used
@@ -940,6 +1131,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
 
     Args:
         appdef (str): The application definition name to generate the NexusNode tree from.
+        set_root_attr (bool): Whether or not to set the root attributes.
 
     Returns:
         NexusNode: The tree representing the application definition.
@@ -968,6 +1160,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
             add_children_to(current_elem, child)
 
     appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
+
     global namespaces
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
@@ -983,12 +1176,14 @@ def generate_tree_from(appdef: str) -> NexusNode:
         variadic=False,
         parent=None,
         inheritance=appdef_inheritance_chain,
+        nxdl_base=appdef_xml_root.base,
     )
     # Set root attributes
-    nx_root, _ = get_nxdl_root_and_path("NXroot")
-    for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
-        child = tree.add_node_from(root_attrib)
-        child.optionality = "optional"
+    if set_root_attr:
+        nx_root, _ = get_nxdl_root_and_path("NXroot")
+        for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
+            child = tree.add_node_from(root_attrib)
+            child.optionality = "optional"
 
     entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
     add_children_to(tree, entry)
@@ -996,5 +1191,4 @@ def generate_tree_from(appdef: str) -> NexusNode:
     # Add all fields and attributes from the parent appdefs
     if len(appdef_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
-
     return tree

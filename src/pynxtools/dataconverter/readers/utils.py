@@ -23,7 +23,7 @@ import re
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 import yaml
 
@@ -81,14 +81,14 @@ def is_value_unit_pair(val: Any) -> bool:
     return False
 
 
-def uniquify_keys(ldic: list) -> List[Any]:
+def uniquify_keys(ldic: list) -> list[Any]:
     """Uniquifys keys in a list of tuple lists containing key value pairs.
 
     Args:
         ldic (list): List of lists of length two, containing key value pairs.
 
     Returns:
-        List[Any]: Uniquified list, where duplicate keys are appended with 1, 2, etc.
+        list[Any]: Uniquified list, where duplicate keys are appended with 1, 2, etc.
     """
     dic: dict = {}
     for key, val in ldic:
@@ -107,7 +107,7 @@ def uniquify_keys(ldic: list) -> List[Any]:
     return list(map(list, dic.items()))
 
 
-def parse_section(key: str, val: Any, settings: FlattenSettings) -> List[Any]:
+def parse_section(key: str, val: Any, settings: FlattenSettings) -> list[Any]:
     """Parse a section, i.e. an entry containing a list of entries.
 
     Args:
@@ -116,12 +116,12 @@ def parse_section(key: str, val: Any, settings: FlattenSettings) -> List[Any]:
         settings (FlattenSettings): The flattening settings.
 
     Returns:
-        List[Any]: A list of list tuples containing key, value pairs.
+        list[Any]: A list of list tuples containing key, value pairs.
     """
     if not is_section(val):
         return [(key, val)]
 
-    groups: List[Any] = []
+    groups: list[Any] = []
     for group in val:
         groups.extend(
             flatten_and_replace(
@@ -142,7 +142,7 @@ def flatten_and_replace(settings: FlattenSettings) -> dict:
     Returns:
         dict: Flattened dictionary
     """
-    items: List[Any] = []
+    items: list[Any] = []
     for key, val in settings.dic.items():
         if settings.ignore_keys and key in settings.ignore_keys:
             continue
@@ -175,14 +175,14 @@ def parse_yml(
     convert_dict: Optional[dict] = None,
     replace_nested: Optional[dict] = None,
     parent_key: str = "/ENTRY[entry]",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
 
     Args:
         file_path (str): The file path of the yml file.
 
     Returns:
-        Dict[str, Any]: The dictionary containing the data readout from the yml.
+        dict[str, Any]: The dictionary containing the data readout from the yml.
     """
     if convert_dict is None:
         convert_dict = {}
@@ -207,17 +207,17 @@ short_notation_regex = re.compile(r"\*\{([\w,]+)\}")
 
 
 def flatten_json(
-    json_data: Dict[str, Any],
+    json_data: dict[str, Any],
     base_key: Optional[str] = None,
     replacement_key: Optional[str] = None,
     dont_flatten_link_dict: bool = False,
     create_link_dict: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Flattens a json dict into a flat dictionary of absolute paths.
 
     Args:
-        json_data (Dict[str, Any]): The dictionary read from the json file.
+        json_data (dict[str, Any]): The dictionary read from the json file.
         base_key (Optional[str], optional):
             A base key to prefix to all keys.
             Defaults to None.
@@ -232,7 +232,7 @@ def flatten_json(
             Defaults to True.
 
     Returns:
-        Dict[str, Any]: The flattened dict
+        dict[str, Any]: The flattened dict
     """
     if (
         dont_flatten_link_dict
@@ -288,23 +288,23 @@ def flatten_json(
     return flattened_config
 
 
-def parse_json(file_path: Union[str, Path]) -> Dict[str, Any]:
+def parse_json(file_path: Union[str, Path]) -> dict[str, Any]:
     """Parses a metadata json file into a dictionary.
 
     Args:
         file_path (str): The file path of the json file.
 
     Returns:
-        Dict[str, Any]: The dictionary containing the data readout from the json.
+        dict[str, Any]: The dictionary containing the data readout from the json.
     """
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(file_path, encoding="utf-8") as file:
         return json.load(file)
 
 
 def parse_flatten_json(
     file_path: Union[str, Path],
     create_link_dict: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Parses a metadata json file into a dictionary and
     flattens it into a flat dictionary of absolute paths.
@@ -316,13 +316,13 @@ def parse_flatten_json(
             Defaults to True.
 
     Returns:
-        Dict[str, Any]:
+        dict[str, Any]:
             The flattened dictionary containing the data readout from the json.
     """
     return flatten_json(parse_json(file_path), create_link_dict=create_link_dict)
 
 
-def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
+def handle_objects(objects: tuple[Any]) -> dict[str, Any]:
     """Handle objects and generate template entries from them"""
     if objects is None:
         return {}

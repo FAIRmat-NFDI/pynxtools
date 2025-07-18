@@ -18,14 +18,13 @@
 """Test for NOMAD examples in reader plugins."""
 
 import os
-from typing import Any, Dict, List
 import tempfile
+from typing import Any
+
 import pytest
 
 try:
-    from nomad.config.models.plugins import (
-        ExampleUploadEntryPoint,
-    )
+    from nomad.config.models.plugins import ExampleUploadEntryPoint
     from nomad.datamodel import Context, EntryArchive
     from nomad.parsing.parser import ArchiveParser
 except ImportError:
@@ -69,14 +68,14 @@ def get_file_parameter(example_path: str):
                 yield pytest.param(os.path.join(root, file), id=file)
 
 
-def parse_nomad_examples(mainfile: str) -> Dict[str, Any]:
+def parse_nomad_examples(mainfile: str) -> dict[str, Any]:
     """Parse a NOMAD example file and return its dictionary representation.
 
     Args:
         mainfile (str): The path to the NOMAD example file to be parsed.
 
     Returns:
-        Dict[str, Any]: A dictionary representation of the parsed NOMAD example.
+        dict[str, Any]: A dictionary representation of the parsed NOMAD example.
 
     Raises:
         FileNotFoundError: If the mainfile does not exist.

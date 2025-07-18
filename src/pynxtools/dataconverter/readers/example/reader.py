@@ -19,7 +19,7 @@
 
 import json
 import os
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -37,19 +37,19 @@ class ExampleReader(BaseReader):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
         **_,
     ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         data: dict = {}
 
         if not file_paths:
-            raise IOError("No input files were given to Example Reader.")
+            raise OSError("No input files were given to Example Reader.")
 
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex(".") :]
-            with open(file_path, "r", encoding="utf-8") as input_file:
+            with open(file_path, encoding="utf-8") as input_file:
                 if file_extension == ".json":
                     data = json.loads(input_file.read())
 

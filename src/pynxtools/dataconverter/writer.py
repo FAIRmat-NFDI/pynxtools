@@ -230,10 +230,12 @@ class Writer:
             del elem.attrib["name"]
 
         # Fetch values for required attributes requested by the NXDL
-        for attr_name in elem.findall(f"{self.nxs_namespace}attribute"):
-            key = f"{path}/@{attr_name.get('name')}"
+        for attr in elem.findall(f"{self.nxs_namespace}attribute"):
+            name = attr.get("name")
+            key = f"{path}/@{name}"
             if key in self.data:
-                elem.attrib[attr_name.get("name")] = self.data[key]
+                value = self.data[key]
+                elem.attrib[name] = str(value) if isinstance(value, list) else value
 
         return elem.attrib
 
@@ -248,7 +250,12 @@ class Writer:
             attrs = self.__nxdl_to_attrs(parent_path)
 
             if attrs is not None:
-                grp.attrs["NX_class"] = attrs["type"]
+                if nx_class := attrs.get("type"):
+                    grp.attrs["NX_class"] = nx_class
+                else:
+                    logger.error(
+                        f"No attribute 'NX_class' could be written for {parent_path}."
+                    )
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -293,7 +300,7 @@ class Writer:
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
-                raise IOError(
+                raise OSError(
                     f"Unknown error occured writing the path: {path} "
                     f"with the following message: {str(exc)}"
                 ) from exc
@@ -328,7 +335,7 @@ class Writer:
                     )
                     dataset.attrs[entry_name[1:]] = data
             except Exception as exc:
-                raise IOError(
+                raise OSError(
                     f"Unknown error occured writing the path: {path}"
                     f", while writing the value: {value} "
                     f"with the following message: {str(exc)}"

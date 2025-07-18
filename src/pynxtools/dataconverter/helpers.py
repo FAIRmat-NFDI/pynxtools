@@ -21,10 +21,11 @@ import json
 import logging
 import os
 import re
+from collections.abc import Sequence
 from datetime import datetime, timezone
-from enum import Enum
-from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union, Sequence
+from enum import Enum, auto
+from functools import cache, lru_cache
+from typing import Any, Callable, Optional, Union, cast
 
 import h5py
 import lxml.etree as ET
@@ -46,27 +47,35 @@ logger = logging.getLogger("pynxtools")
 
 
 class ValidationProblem(Enum):
-    UnitWithoutDocumentation = 1
-    InvalidEnum = 2
-    OpenEnumWithNewItem = 3
-    MissingRequiredGroup = 4
-    MissingRequiredField = 5
-    MissingRequiredAttribute = 6
-    InvalidType = 7
-    InvalidDatetime = 8
-    IsNotPosInt = 9
-    ExpectedGroup = 10
-    MissingDocumentation = 11
-    MissingUnit = 12
-    ChoiceValidationError = 13
-    UnitWithoutField = 14
-    AttributeForNonExistingField = 15
-    BrokenLink = 16
-    FailedNamefitting = 17
-    NXdataMissingSignalData = 18
-    NXdataMissingAxisData = 19
-    NXdataAxisMismatch = 20
-    KeyToBeRemoved = 21
+    DifferentVariadicNodesWithTheSameName = auto()
+    UnitWithoutDocumentation = auto()
+    InvalidUnit = auto()
+    InvalidEnum = auto()
+    OpenEnumWithNewItem = auto()
+    MissingRequiredGroup = auto()
+    MissingRequiredField = auto()
+    MissingRequiredAttribute = auto()
+    InvalidType = auto()
+    InvalidDatetime = auto()
+    IsNotPosInt = auto()
+    ExpectedGroup = auto()
+    ExpectedField = auto()
+    MissingDocumentation = auto()
+    MissingUnit = auto()
+    ChoiceValidationError = auto()
+    UnitWithoutField = auto()
+    AttributeForNonExistingField = auto()
+    BrokenLink = auto()
+    FailedNamefitting = auto()
+    NXdataMissingSignalData = auto()
+    NXdataMissingAxisData = auto()
+    NXdataAxisMismatch = auto()
+    KeyToBeRemoved = auto()
+    InvalidConceptForNonVariadic = auto()
+    ReservedSuffixWithoutField = auto()
+    ReservedPrefixInWrongContext = auto()
+    InvalidNexusTypeForNamedConcept = auto()
+    KeysWithAndWithoutConcept = auto()
 
 
 class Collector:
@@ -80,10 +89,24 @@ class Collector:
         if value is None:
             value = "<unknown>"
 
+        if log_type == ValidationProblem.DifferentVariadicNodesWithTheSameName:
+            value = cast(Any, value)
+            logger.warning(
+                f"Instance name '{path}' used for multiple different concepts: "
+                f"{', '.join(sorted(set(c for c, _ in value)))}. "
+                f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
+            )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.info(
                 f"The unit, {path} = {value}, is being written but has no documentation."
             )
+        if log_type == ValidationProblem.InvalidUnit:
+            value = cast(Any, value)
+            log_text = f"The unit '{args[0]}' at {path} does not match with the unit category {value.unit} of '{value.name}'."
+            if len(args) == 2 and args[1] is not None:
+                log_text += f" Based on the 'transformation_type' of the field {path.replace('/@units', '')}, it should match with '{args[1]}'."
+            logger.warning(log_text)
+
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
                 f"The value at {path} should be one of the following: {value}."
@@ -115,9 +138,9 @@ class Collector:
                 f"The value at {path} should be a positive int, but is {value}."
             )
         elif log_type == ValidationProblem.ExpectedGroup:
-            logger.warning(
-                f"Expected a group at {path} but found a field or attribute."
-            )
+            logger.error(f"Expected a group at {path} but found a field or attribute.")
+        elif log_type == ValidationProblem.ExpectedField:
+            logger.error(f"Expected a field at {path} but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
             if "@" in path.rsplit("/")[-1]:
                 logger.warning(f"Attribute {path} written without documentation.")
@@ -137,7 +160,7 @@ class Collector:
                 "but the field does not exist."
             )
         elif log_type == ValidationProblem.BrokenLink:
-            logger.warning(f"Broken link at {path} to {value}")
+            logger.warning(f"Broken link at {path} to {value}.")
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
         elif log_type == ValidationProblem.NXdataMissingSignalData:
@@ -149,7 +172,34 @@ class Collector:
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
         elif log_type == ValidationProblem.KeyToBeRemoved:
-            logger.warning(f"The attribute {path} will not be written.")
+            logger.warning(f"The {value} {path} will not be written.")
+        elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
+            value = cast(Any, value)
+            log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"
+            if value.type == "group":
+                log_text += f", which should be of type {value.nx_class}."
+            logger.warning(log_text)
+        elif log_type == ValidationProblem.ReservedSuffixWithoutField:
+            logger.warning(
+                f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
+            )
+        elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
+            log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."
+            # Note that value=None" gets converted to "<unknown>"
+            if value != "<unknown>":
+                log_text += f" It is only valid in the context of {value}."
+            logger.error(log_text)
+        elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
+            value = cast(Any, value)
+            logger.error(
+                f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
+                f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
+            )
+        elif log_type == ValidationProblem.KeysWithAndWithoutConcept:
+            value = cast(Any, value)
+            logger.warning(
+                f"The key '{path}' uses the valid concept name '{args[0]}', but there is another valid key {value} that uses the non-variadic name of the node.'"
+            )
 
     def collect_and_log(
         self,
@@ -261,7 +311,7 @@ def is_appdef(xml_elem: ET._Element) -> bool:
     return get_appdef_root(xml_elem).attrib.get("category") == "application"
 
 
-def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
+def get_all_parents_for(xml_elem: ET._Element) -> list[ET._Element]:
     """
     Get all parents from the nxdl (via extends keyword)
 
@@ -269,7 +319,7 @@ def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
         xml_elem (ET._Element): The element to get the parents for.
 
     Returns:
-        List[ET._Element]: The list of parents xml nodes.
+        list[ET._Element]: The list of parents xml nodes.
     """
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
@@ -371,7 +421,7 @@ def get_all_defined_required_children_for_elem(xml_element):
     return list_of_children_to_add
 
 
-visited_paths: List[str] = []
+visited_paths: list[str] = []
 
 
 def get_all_defined_required_children(nxdl_path, nxdl_name):
@@ -564,15 +614,17 @@ def get_name_from_data_dict_entry(entry: str) -> str:
     ENTRY[entry] -> entry
     """
 
-    @lru_cache(maxsize=None)
+    @cache
     def get_regex():
         return re.compile(r"(?<=\[)(.*?)(?=\])")
 
     results = get_regex().search(entry)
     if results is None:
         return entry
+
     if entry[0] == "@":
-        return "@" + results.group(1)
+        name = results.group(1)
+        return name if name.startswith("@") else "@" + name
     return results.group(1)
 
 
@@ -587,7 +639,7 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
-def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
+def is_value_valid_element_of_enum(value, elist) -> tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     for elem in elist:
         enums = get_enums(elem)
@@ -651,6 +703,30 @@ def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     raise ValueError(f"Could not interpret string '{value}' as boolean.")
 
 
+def convert_int_to_float(value):
+    """
+    Converts int-like values to float, including values in arrays, and lists
+
+    Args:
+        value: The input value, which can be a single value, list, or numpy array.
+
+    Returns:
+        The input value with all int-like values converted to float.
+    """
+    if isinstance(value, int):
+        return float(value)
+    elif isinstance(value, list):
+        return [convert_int_to_float(v) for v in value]
+    elif isinstance(value, tuple):
+        return tuple(convert_int_to_float(v) for v in value)
+    elif isinstance(value, set):
+        return {convert_int_to_float(v) for v in value}
+    elif isinstance(value, np.ndarray) and np.issubdtype(value.dtype, np.integer):
+        return value.astype(float)
+    else:
+        return value
+
+
 def is_valid_data_field(
     value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
 ) -> Any:
@@ -673,6 +749,12 @@ def is_valid_data_field(
             try:
                 value = convert_str_to_bool_safe(value)
             except (ValueError, TypeError):
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+                )
+        elif accepted_types[0] is float:
+            value = convert_int_to_float(value)
+            if not is_valid_data_type(value, accepted_types):
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidType, accepted_types, nxdl_type
                 )
@@ -711,8 +793,8 @@ def is_valid_data_field(
     return value
 
 
-@lru_cache(maxsize=None)
-def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> List[str]:
+@cache
+def path_in_data_dict(nxdl_path: str, data_keys: tuple[str, ...]) -> list[str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
     found_keys = []
     for key in data_keys:
@@ -1008,7 +1090,7 @@ def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
         for sym in symbol_list_for_data_seperation:
             if sym in str_value:
                 parts = str_value.split(sym)
-                modified_parts: List = []
+                modified_parts: list = []
                 for part in parts:
                     part = transform_to_intended_dt(part)
                     if isinstance(part, (int, float)):

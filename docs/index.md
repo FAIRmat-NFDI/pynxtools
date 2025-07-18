@@ -41,6 +41,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 - [Validation of NeXus files](how-tos/validate-nexus-file.md)
 - [Creation of NeXus files in python via hard-coding](how-tos/create-nexus-files-by-python.md)
 - [Using pynxtools test framework for plugins](how-tos/using-pynxtools-test-framework.md)
+- [Using pynxtools tests in parallel](how-tos/run-tests-in-parallel.md)
 
 __The following How-to guides are still under development:__
 

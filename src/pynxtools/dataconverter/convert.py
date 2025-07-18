@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import List, Literal, Optional, Tuple
+from typing import Literal, Optional
 
 import click
 import lxml.etree as ET
@@ -82,7 +82,7 @@ def get_reader(reader_name) -> BaseReader:
     return module.READER  # type: ignore[attr-defined]
 
 
-def get_names_of_all_readers() -> List[str]:
+def get_names_of_all_readers() -> list[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = (
         f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
@@ -176,17 +176,11 @@ def transfer_data_into_template(
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:
-        valid, keys_to_remove = validate_dict_against(
+        valid = validate_dict_against(
             nxdl_name,
             data,
             ignore_undocumented=ignore_undocumented,
         )
-
-        # remove attributes that belong to non-existing fields
-
-        for key in keys_to_remove:
-            # data.__delitem__(key)
-            del data[key]
 
         if fail and not valid:
             raise ValidationFailed(
@@ -198,7 +192,7 @@ def transfer_data_into_template(
 
 # pylint: disable=too-many-arguments,too-many-locals,W1203
 def convert(
-    input_file: Tuple[str, ...],
+    input_file: tuple[str, ...],
     reader: str,
     nxdl: str,
     output: str,
@@ -209,7 +203,7 @@ def convert(
 
     Parameters
     ----------
-    input_file : Tuple[str]
+    input_file : tuple[str]
         Tuple of files or file
     reader: str
         Name of reader such as xps
@@ -358,8 +352,8 @@ def main_cli():
 )
 # pylint: disable=too-many-arguments
 def convert_cli(
-    files: Tuple[str, ...],
-    input_file: Tuple[str, ...],
+    files: tuple[str, ...],
+    input_file: tuple[str, ...],
     reader: str,
     nxdl: str,
     output: str,
@@ -379,12 +373,10 @@ def convert_cli(
         except TypeError as exc:
             sys.tracebacklimit = 0
             raise click.UsageError(
-                (
-                    "Please make sure you have the following entries in your "
-                    "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
-                    "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
-                    "put-file: value"
-                )
+                "Please make sure you have the following entries in your "
+                "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
+                "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
+                "put-file: value"
             ) from exc
     if nxdl is None:
         raise click.UsageError("Missing option '--nxdl'")

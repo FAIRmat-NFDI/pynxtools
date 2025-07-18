@@ -111,8 +111,13 @@ nexus_app = AppEntryPoint(
             ),
             Column(
                 title="Start Time",
-                search_quantity=f"data.ENTRY[*].start_time#{schema}",
+                search_quantity=f"data.datetime#{schema}",
                 selected=True,
+            ),
+            Column(
+                title="Start Times by Entry",
+                search_quantity=f"data.ENTRY[*].start_time__field#{schema}",
+                selected=False,
             ),
             Column(
                 title="Description",
@@ -261,6 +266,11 @@ nexus_app = AppEntryPoint(
                 ),
                 MenuItemHistogram(
                     title="Start Time",
+                    x=f"data.datetime#{schema}",
+                    autorange=True,
+                ),
+                MenuItemHistogram(
+                    title="Start Time by Entry",
                     x=f"data.ENTRY.start_time__field#{schema}",
                     autorange=True,
                 ),
@@ -351,24 +361,17 @@ simple_nexus_example = ExampleUploadEntryPoint(
     title="Simple NeXus Example",
     category="NeXus Experiment Examples",
     description="""
-        This example show 3 use cases on how NeXus experiment data can be handled in NOMAD.
-        Example 1 - ELN Export
-        This example shows how a simple ELN can be set up in NOMAD which can be then
-        exported in to an RDM agnostic eln_data.yaml format. The example also shows how such
-        eln file can be used together with some experiment data to be converted by pynxtools
-        to a valid NeXus file.
-        Example 2 - Interface for Data Conversion to NeXus Format
-        This example shows how NOMAD GUI allows converting experiment data with
-        attached eln notes to NeXus file.
-        Example 3 - Sensor Scan - IV Temperature Curve
+        Sensor Scan - IV Temperature Curve
         This example shows how experimental data can be mapped to a Nexus application definition.
         Here, data from an IV Temperature measurements as taken by a Python framework is
         converted to [`NXiv_temp`](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
         We also demonstrate the use of Nexus ELN features of NOMAD to add further details
         which were not provided by the data acquisition software.
-        This example combines Example 1, and 2, and demonstrates how a NOMAD ELN can be built
-        to collect additional information, and combine it with experimental data to convert
-        them into exportable NeXus file, which is also directly searchable in NOMAD.
+        This example demonstrates how
+        - a NOMAD ELN can be built and its content can be written to an RDM platform agnostic yaml format
+        - NOMAD ELN can be used to combine ELN data with experiment data and export them to NeXus
+        - NeXus data is represented as an Entry with searchable quantities in NOMAD
+        - NORTH tools can be used to work with data in NOMAD uploads
     """,
     plugin_package="pynxtools",
     resources=["nomad/examples/*"],
