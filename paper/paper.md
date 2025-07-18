@@ -141,7 +141,7 @@ Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data prin
 
 The _dataconverter_, core module of pynxtools, combines instrument output files and data from electronic lab notebooks into NeXus-compliant HDF5 files. The converter performs three key operations: reading experimental data through specialized readers, validating against NeXus application definitions to ensure compliance with existence, shape, and format constraints, and writing valid NeXus/HDF5 output files.
 
-The _dataconverter_ provides a CLI to produce NeXus files where users can use one of the built-in readers for generic functionality or technique-specific reader plugins, distributed as separate Python packages.
+The `dataconverter` provides a CLI to produce NeXus files where users can use one of the built-in readers for generic functionality or technique-specific reader plugins, which are distributed as separate Python packages.
 
 For developers, the `dataconverter` provides an abstract `reader` class for building plugins that process experiment-specific formats and populate the NeXus specification. It passes a `Template`, a subclass of Python’s dictionary, to the `reader` as a form to fill. The `Template` ensures structural compliance with the chosen NeXus application definition and organizes data by NeXus's required, recommended, and optional levels.
 
