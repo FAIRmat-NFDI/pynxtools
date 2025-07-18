@@ -143,7 +143,7 @@ The _dataconverter_, core module of pynxtools, combines instrument output files 
 
 The _dataconverter_ provides a CLI to produce NeXus files where users can use one of the built-in readers for generic functionality or technique-specific reader plugins, distributed as separate Python packages.
 
-For developers, the _dataconverter_ provides an abstract _reader_ class for building plugins that process experiment-specific formats and populate the NeXus specification. It passes a _Template_, a subclass of Python’s dict, to the _reader_ as a form to fill. The _Template_ ensures structural compliance with the chosen NeXus application definition and organizes data by NeXus's required, recommended, and optional levels.
+For developers, the `dataconverter` provides an abstract `reader` class for building plugins that process experiment-specific formats and populate the NeXus specification. It passes a `Template`, a subclass of Python’s dictionary, to the `reader` as a form to fill. The `Template` ensures structural compliance with the chosen NeXus application definition and organizes data by NeXus's required, recommended, and optional levels.
 
 The _dataconverter_ validates _reader_ output against the selected NeXus application definition, checking for instances of required concepts, complex dependencies (like inheritance and nested group rules), and data integrity (type, shape, constraints). It reports errors for invalid required concepts and emits CLI warnings for unmatched or invalid data, aiding practical NeXus file creation.
 
