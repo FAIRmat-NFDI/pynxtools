@@ -36,11 +36,14 @@ Laurenz
 Lehrstuhl
 Linnestr
 Lukas
+lxml
 Márquez
 Markus
 Metainfo
+mergedeep
 Mozumder
 Mülheim
+numpy
 Pielsticker
 Physik
 Pincelli
@@ -64,3 +67,5 @@ orcid
 plottable
 pynxtools
 qrts
+scipy
+xarray
