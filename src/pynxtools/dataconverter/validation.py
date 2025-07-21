@@ -1342,9 +1342,14 @@ def validate_dict_against(
             mapping[variant_path] = is_valid_data_field(
                 keys[variant],
                 node.dtype,
+                variant_path,
+            )
+            is_valid_enum(
+                mapping[variant_path],
                 node.items,
                 node.open_enum,
                 variant_path,
+                mapping,
             )
 
             check_reserved_suffix(variant_path, keys)
@@ -1410,9 +1415,14 @@ def validate_dict_against(
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
                 node.dtype,
+                variant_path,
+            )
+            is_valid_enum(
+                mapping[variant_path],
                 node.items,
                 node.open_enum,
                 variant_path,
+                mapping,
             )
             check_reserved_prefix(
                 variant_path, get_definition(variant_path), "attribute"
@@ -1641,7 +1651,16 @@ def validate_dict_against(
                     keys_to_remove.append(key)
                     return False
                 resolved_link[key] = is_valid_data_field(
-                    resolved_link[key], node.dtype, node.items, node.open_enum, key
+                    resolved_link[key],
+                    node.dtype,
+                    key,
+                )
+                is_valid_enum(
+                    resolved_link[key],
+                    node.items,
+                    node.open_enum,
+                    key,
+                    mapping,
                 )
 
             return True
@@ -1656,7 +1675,16 @@ def validate_dict_against(
 
         # Check general validity
         mapping[key] = is_valid_data_field(
-            mapping[key], node.dtype, node.items, node.open_enum, key
+            mapping[key],
+            node.dtype,
+            key,
+        )
+        is_valid_enum(
+            mapping[key],
+            node.items,
+            node.open_enum,
+            key,
+            mapping,
         )
 
         # Check main field exists for units

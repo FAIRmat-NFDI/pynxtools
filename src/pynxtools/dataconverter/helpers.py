@@ -87,7 +87,8 @@ class ValidationProblem(Enum):
     UnitWithoutDocumentation = auto()
     InvalidUnit = auto()
     InvalidEnum = auto()
-    OpenEnumWithNewItem = auto()
+    OpenEnumWithCorrectNewItem = auto()
+    OpenEnumWithIncorrectNewItem = auto()
     MissingRequiredGroup = auto()
     MissingRequiredField = auto()
     MissingRequiredAttribute = auto()
@@ -154,10 +155,21 @@ class Collector:
             logger.warning(
                 f"The value at {path} should be one of the following: {value}."
             )
-        elif log_type == ValidationProblem.OpenEnumWithNewItem:
+        elif log_type == ValidationProblem.OpenEnumWithCorrectNewItem:
             logger.info(
-                f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
+        elif log_type == ValidationProblem.OpenEnumWithIncorrectNewItem:
+            actual_value, custom_attr = args
+
+            log_text = f"The value '{actual_value}' at {path} does not match with the enumerated items from the open enumeration: {value}."
+            if custom_attr == "custom_missing":
+                log_text += f" When a different value is used, a boolean 'custom' attribute must be added."
+                logger.warning(log_text)
+            elif custom_attr == "custom_false":
+                log_text += f" When a different value is used, the boolean 'custom' attribute cannot be False."
+                logger.warning(log_text)
+
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
@@ -287,9 +299,9 @@ class Collector:
         # info messages should not fail validation
         if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
-            ValidationProblem.OpenEnumWithNewItem,
             ValidationProblem.CompressionStrengthZero,
             ValidationProblem.MissingNXclass,
+            ValidationProblem.OpenEnumWithCorrectNewItem,
         ):
             if self.logging and message not in self.data["info"]:
                 self._log(path, log_type, value, *args, **kwargs)
@@ -804,9 +816,7 @@ def convert_int_to_float(value):
         return value
 
 
-def is_valid_data_field(
-    value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
-) -> Any:
+def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     """Checks whether a given value is valid according to the type defined in the NXDL."""
 
     def validate_data_value(
@@ -843,25 +853,25 @@ def is_valid_data_field(
                     path, ValidationProblem.InvalidDatetime, value
                 )
 
-        if nxdl_enum is not None:
-            if (
-                isinstance(value, np.ndarray)
-                and isinstance(nxdl_enum, list)
-                and isinstance(nxdl_enum[0], list)
-            ):
-                enum_value = list(value)
-            else:
-                enum_value = value
+        # if nxdl_enum is not None:
+        #     if (
+        #         isinstance(value, np.ndarray)
+        #         and isinstance(nxdl_enum, list)
+        #         and isinstance(nxdl_enum[0], list)
+        #     ):
+        #         enum_value = list(value)
+        #     else:
+        #         enum_value = value
 
-            if enum_value not in nxdl_enum:
-                if nxdl_enum_open:
-                    collector.collect_and_log(
-                        path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
-                    )
-                else:
-                    collector.collect_and_log(
-                        path, ValidationProblem.InvalidEnum, nxdl_enum
-                    )
+        #     if enum_value not in nxdl_enum:
+        #         if nxdl_enum_open:
+        #             collector.collect_and_log(
+        #                 path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
+        #             )
+        #         else:
+        #             collector.collect_and_log(
+        #                 path, ValidationProblem.InvalidEnum, nxdl_enum
+        #             )
 
         return value
 

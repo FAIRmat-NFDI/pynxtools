@@ -875,15 +875,77 @@ def format_error_message(msg: str) -> str:
         ),
         pytest.param(
             alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
-                "a very different type",
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            "a very different type",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        True,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    "3rd option",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                True,
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the "
-                "enumerated items from the open enumeration: ['1st type open', '2nd type open']."
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option'].",
             ],
             id="open-enum-with-new-item",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            "a very different type",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        False,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    "3rd option",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                False,
+            ),
+            [
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False.",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False.",
+            ],
+            id="open-enum-with-new-item-custom-false",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                    "a very different type",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                "3rd option",
+            ),
+            [
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
+                "When a different value is used, a boolean 'custom' attribute must be added.",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
+                "When a different value is used, a boolean 'custom' attribute must be added.",
+            ],
+            id="open-enum-with-new-item-custom-missing",
         ),
         pytest.param(
             set_to_none_in_dict(
