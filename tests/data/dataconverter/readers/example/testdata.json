@@ -16,6 +16,7 @@
     "program_name": "Nexus Parser",
     "type": "2nd type",
     "type2": "2nd type",
+    "@attribute_with_open_enum":"1st option",
     "date_value": "2022-01-22T12:14:12.05018+00:00",
     "date_value_units": "",
     "required_child": 1,

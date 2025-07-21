@@ -1708,12 +1708,16 @@ def format_error_message(msg: str) -> str:
         ),
         pytest.param(
             alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
-                "Wrong source type",
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
+                    "Wrong source type",
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@custom",
+                True,
             ),
             [
-                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type does not match with the enumerated "
+                "The value 'Wrong source type' at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type does not match with the enumerated "
                 "items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', "
                 "'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', "
                 "'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', "
