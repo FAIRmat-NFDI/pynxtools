@@ -1,5 +1,5 @@
 ---
-title: 'pynxtools: A framework for generating NeXus files from formats across disciplines'
+title: 'pynxtools: A flexible Python framework for generating and verifying NeXus files'
 tags:
   - Python
   - NeXus
