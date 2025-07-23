@@ -55,7 +55,13 @@ def _get_def_map(file: str) -> dict[str, str]:
     "file",
     type=click.Path(exists=True),
 )
-def verify(file: str):
+@click.option(
+    "--ignore-undocumented",
+    is_flag=True,
+    default=False,
+    help="Ignore all undocumented concepts during validation.",
+)
+def verify(file: str, ignore_undocumented: bool = False):
     """
     Verifies a NeXus HDF5 file.
 
@@ -78,7 +84,9 @@ def verify(file: str):
 
     with File(file, "r") as h5file:
         for entry, nxdl in def_map.items():
-            is_valid = validate_hdf_group_against(nxdl, h5file[entry])
+            is_valid = validate_hdf_group_against(
+                nxdl, h5file[entry], ignore_undocumented
+            )
 
             if is_valid:
                 logger.info(

@@ -792,7 +792,6 @@ def is_valid_data_field(
             r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
             r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
         )
-        print(value)
         results = iso8601.search(clean_str_attr(value))
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
@@ -1152,6 +1151,4 @@ def clean_str_attr(
     if isinstance(attr, str):
         return attr
 
-    raise TypeError(
-        "Invalid type {type} for attribute. Should be either None, bytes or str."
-    )
+    return attr
