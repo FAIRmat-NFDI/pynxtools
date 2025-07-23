@@ -402,20 +402,10 @@ def get_nxdl_root_and_path(nxdl: str):
     if nxdl in special_names:
         nxdl_f_path = special_names[nxdl]
     else:
-        nxdl_f_path = next(x for x in probable_file_paths if os.path.exists(x))
-        # nxdl_f_path = os.path.join(
-        #     definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
-        # )
-        # if not os.path.exists(nxdl_f_path):
-        #     nxdl_f_path = os.path.join(
-        #         definitions_path, "applications", f"{nxdl}.nxdl.xml"
-        #     )
-        # if not os.path.exists(nxdl_f_path):
-        #     nxdl_f_path = os.path.join(
-        #         definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
-        #     )
-        # if not os.path.exists(nxdl_f_path):
-        #     raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
+        nxdl_f_path = next((x for x in probable_file_paths if os.path.exists(x)), None)
+
+        if nxdl_f_path is None:
+            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
 
