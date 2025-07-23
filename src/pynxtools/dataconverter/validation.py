@@ -268,9 +268,9 @@ def validate_hdf_group_against(
 
         return node
 
-    def remove_from_req_fields(path: str):
-        if path in required_fields:
-            required_fields.remove(path)
+    def remove_from_req_concepts(path: str):
+        if path in required_concepts:
+            required_concepts.remove(path)
 
     def _check_for_nxcollection_parent(node: NexusNode):
         """
@@ -317,9 +317,7 @@ def validate_hdf_group_against(
             "_offset",
         )
 
-        # TODO: implement correct check
-
-        print(data)
+        return
 
         for suffix in reserved_suffixes:
             if path.endswith(suffix):
@@ -346,7 +344,7 @@ def validate_hdf_group_against(
 
     def check_reserved_prefix(
         path: str,
-        data: Union[h5py.Group, h5py.Dataset, h5py.AttributeManager],
+        appdef_name: str,
         nx_type: Literal["group", "field", "attribute"],
     ):
         """
@@ -355,8 +353,8 @@ def validate_hdf_group_against(
         Args:
             path (str):
                 The full path in th3 HDF5 file (e.g., "/entry1/sample/temperature_errors").
-            data Union[h5py.Dataset, h5py.AttributeManager]:
-                The subset of the HDF5 data to check
+            appdef_name (str):
+                Name of the application definition (e.g. NXmx, NXmpes, etc.)
             nx_type (Literal["group", "field", "attribute"]):
                 The NeXus type the key represents. Determines which reserved prefixes are relevant.
 
@@ -385,13 +383,11 @@ def validate_hdf_group_against(
         if not prefixes:
             return True
 
-        name = path.rsplit("/", 1)[-1]
-
-        if not name.startswith(tuple(prefixes)):
+        if not path.startswith(tuple(prefixes)):
             return False  # Irrelevant prefix, no check needed
 
         for prefix, allowed_context in prefixes.items():
-            if not name.startswith(prefix):
+            if not path.startswith(prefix):
                 continue
 
             if allowed_context is None:
@@ -400,29 +396,22 @@ def validate_hdf_group_against(
                     prefix,
                     ValidationProblem.ReservedPrefixInWrongContext,
                     None,
-                    path,
+                    appdef_name,
                 )
-                return False
+                return
             if allowed_context == "all":
                 # We can freely use this prefix everywhere.
-                return True
-
-            # TODO: this is not working yet for HDF5 paths
-
-            # Check that the prefix is used in the correct context.
-            entry_name = path.split("/", 1)[0]
-            definition_key = f"{entry_name}/definition"
-            definition_value = data.get(definition_key)
-            if definition_value != allowed_context:
+                return
+            if allowed_context != appdef_name:
                 collector.collect_and_log(
                     prefix,
                     ValidationProblem.ReservedPrefixInWrongContext,
                     allowed_context,
-                    path,
+                    appdef_name,
                 )
-                return False
+                return
 
-        return True
+        return
 
     def handle_group(path: str, data: h5py.Group):
         node = find_node_for(
@@ -439,7 +428,7 @@ def validate_hdf_group_against(
             # NXcollection found in parents, stop checking
             return
 
-        check_reserved_prefix(path, data, "group")
+        check_reserved_prefix(path, appdef_node.name, "group")
 
         if node.nx_class == "NXdata":
             handle_nxdata(path, data)
@@ -546,7 +535,7 @@ def validate_hdf_group_against(
                     path, ValidationProblem.MissingDocumentation, None
                 )
             return
-        remove_from_req_fields(node.get_path())
+        remove_from_req_concepts(node.get_path())
 
         if _check_for_nxcollection_parent(node):
             # NXcollection found in parents, stop checking
@@ -556,7 +545,7 @@ def validate_hdf_group_against(
             clean_str_attr(data[()]), node.dtype, node.items, node.open_enum, path
         )
         check_reserved_suffix(path, data)
-        check_reserved_prefix(path, data, "field")
+        check_reserved_prefix(path, appdef_node.name, "field")
 
         units = data.attrs.get("units")
         if node.unit is not None:
@@ -567,7 +556,7 @@ def validate_hdf_group_against(
                     )
                     return
                 units_path = f"{node.get_path()}/@units"
-                remove_from_req_fields(units_path)
+                remove_from_req_concepts(units_path)
 
                 # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
                 if (
@@ -602,7 +591,7 @@ def validate_hdf_group_against(
                         None,
                     )
                 continue
-            remove_from_req_fields(node.get_path())
+            remove_from_req_concepts(node.get_path())
 
             if _check_for_nxcollection_parent(node):
                 # NXcollection found in parents, stop checking
@@ -615,7 +604,7 @@ def validate_hdf_group_against(
                 node.open_enum,
                 node.get_path(),
             )
-            check_reserved_prefix(path, data, "attribute")
+            check_reserved_prefix(path, appdef_node.name, "attribute")
 
     def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
@@ -626,13 +615,13 @@ def validate_hdf_group_against(
 
         handle_attributes(path, data.attrs)
 
-    appdef = generate_tree_from(appdef)
-    required_fields = appdef.required_fields_and_attrs_names()
-    tree = appdef.search_add_child_for("ENTRY")
+    appdef_node = generate_tree_from(appdef)
+    required_concepts = appdef_node.required_fields_and_attrs_names()
+    tree = appdef_node.search_add_child_for("ENTRY")
     entry_name = data.name
     data.visititems(validate)
 
-    for req_field in required_fields:
+    for req_field in required_concepts:
         if "@" in req_field:
             collector.collect_and_log(
                 req_field, ValidationProblem.MissingRequiredAttribute, None
@@ -1033,8 +1022,8 @@ def validate_dict_against(
                 variant_path,
             )
 
-            _ = check_reserved_suffix(variant_path, mapping)
-            _ = check_reserved_prefix(variant_path, mapping, "field")
+            check_reserved_suffix(variant_path, mapping)
+            check_reserved_prefix(variant_path, mapping, "field")
 
             # Check unit category
             if node.unit is not None:
@@ -1098,7 +1087,7 @@ def validate_dict_against(
                 node.open_enum,
                 variant_path,
             )
-            _ = check_reserved_prefix(variant_path, mapping, "attribute")
+            check_reserved_prefix(variant_path, mapping, "attribute")
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -1507,11 +1496,6 @@ def validate_dict_against(
             mapping (MutableMapping[str, Any]):
                 The mapping containing the data to validate.
                 This should be a dict of `/` separated paths.
-
-        Returns:
-            bool:
-                True if the suffix usage is valid or not applicable.
-                False if the suffix is used without the expected associated base field.
         """
         reserved_suffixes = (
             "_end",
@@ -1546,16 +1530,16 @@ def validate_dict_against(
                         associated_field,
                         suffix,
                     )
-                    return False
+                    return
                 break  # We found the suffix and it passed
 
-        return True
+        return
 
     def check_reserved_prefix(
         key: str,
         mapping: MutableMapping[str, Any],
         nx_type: Literal["group", "field", "attribute"],
-    ) -> bool:
+    ):
         """
         Check if a reserved prefix was used in the correct context.
 
@@ -1567,12 +1551,6 @@ def validate_dict_against(
                 Attributes are denoted with `@` in front of the last element.
             nx_type (Literal["group", "field", "attribute"]):
                 The NeXus type the key represents. Determines which reserved prefixes are relevant.
-
-
-        Returns:
-            bool:
-                True if the prefix usage is valid or not applicable.
-                False if an invalid or misapplied reserved prefix is detected.
         """
         reserved_prefixes = {
             "attribute": {
@@ -1592,12 +1570,12 @@ def validate_dict_against(
 
         prefixes = reserved_prefixes.get(nx_type)
         if not prefixes:
-            return True
+            return
 
         name = key.rsplit("/", 1)[-1]
 
         if not name.startswith(tuple(prefixes)):
-            return False  # Irrelevant prefix, no check needed
+            return  # Irrelevant prefix, no check needed
 
         for prefix, allowed_context in prefixes.items():
             if not name.startswith(prefix):
@@ -1611,30 +1589,28 @@ def validate_dict_against(
                     None,
                     key,
                 )
-                return False
+                return
             if allowed_context == "all":
                 # We can freely use this prefix everywhere.
-                return True
+                return
 
-            # # TODO: the actual check does not yet work
+            # Check that the prefix is used in the correct context.
+            match = re.match(r"(/ENTRY\[[^]]+])", key)
+            definition_value = None
+            if match:
+                definition_key = f"{match.group(1)}/definition"
+                definition_value = mapping.get(definition_key)
 
-            # # Check that the prefix is used in the correct context.
-            # match = re.match(r"(/ENTRY\[[^]]+])", key)
-            # definition_value = None
-            # if match:
-            #     definition_key = f"{match.group(1)}/definition"
-            #     definition_value = mapping.get(definition_key)
+            if definition_value != allowed_context:
+                collector.collect_and_log(
+                    prefix,
+                    ValidationProblem.ReservedPrefixInWrongContext,
+                    allowed_context,
+                    key,
+                )
+                return
 
-            # if definition_value != allowed_context:
-            #     collector.collect_and_log(
-            #         prefix,
-            #         ValidationProblem.ReservedPrefixInWrongContext,
-            #         allowed_context,
-            #         key,
-            #     )
-            #     return False
-
-        return True
+        return
 
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,
