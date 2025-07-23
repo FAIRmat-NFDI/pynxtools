@@ -39,15 +39,16 @@ else:
 from pint import UndefinedUnitError
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.units import ureg
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_enums,
     get_inherited_nodes,
     get_nexus_definitions_path,
     get_node_at_nxdl_path,
+)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_required_string as nexus_get_required_string,
 )
-from pynxtools.units import ureg
+
 logger = logging.getLogger("pynxtools")
 
 
@@ -132,7 +133,10 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(f"Missing field: {path}")
+            logger.warning(
+                f"The field corresponding to {path} is required "
+                "and hasn't been supplied by the reader.",
+            )
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
                 f"The value at {path} should be one of the following Python types: {value}"
@@ -345,7 +349,7 @@ def is_appdef(xml_elem: ET._Element) -> bool:
     return get_appdef_root(xml_elem).attrib.get("category") == "application"
 
 
-def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
+def get_all_parents_for(xml_elem: ET._Element) -> list[ET._Element]:
     """
     Get all parents from the nxdl (via extends keyword)
 
@@ -353,12 +357,12 @@ def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
         xml_elem (ET._Element): The element to get the parents for.
 
     Returns:
-        List[ET._Element]: The list of parents xml nodes.
+        list[ET._Element]: The list of parents xml nodes.
     """
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
     extends = root.get("extends")
-    while extends is not None and extends != "NXobject":
+    while extends is not None:
         parent_xml_root, _ = get_nxdl_root_and_path(extends)
         extends = parent_xml_root.get("extends")
         inheritance_chain.append(parent_xml_root)
@@ -746,6 +750,7 @@ def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     if value.lower() == "false":
         return False
     raise ValueError(f"Could not interpret string '{value}' as boolean.")
+
 
 def convert_int_to_float(value):
     """

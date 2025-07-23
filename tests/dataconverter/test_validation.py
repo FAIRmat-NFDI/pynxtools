@@ -19,9 +19,9 @@
 import logging
 from typing import Optional
 
-from click.testing import CliRunner
 import numpy as np
 import pytest
+from click.testing import CliRunner
 
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
@@ -581,7 +581,7 @@ TEMPLATE["required"][
             [
                 "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value to /a-link.",
                 "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value will not be written.",
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value is required and hasn't been supplied by the reader.",
+                "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value is required and hasn't been supplied by the reader.",
             ],
             id="link-dict-instead-of-int",
         ),
@@ -742,7 +742,7 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/"
+                "The field corresponding to /ENTRY[my_entry]/"
                 "NXODD_name[nxodd_two_name]/bool_value is"
                 " required and hasn't been supplied by the reader.",
                 "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value, but the field does not exist.",
@@ -790,7 +790,7 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader."
+                "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader."
             ],
             id="missing-required-value",
         ),
@@ -879,7 +879,7 @@ TEMPLATE["required"][
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
+                "The field corresponding to /ENTRY[my_entry]/optional_parent/"
                 "required_child is required and hasn't been supplied by the reader."
             ],
             id="atleast-one-required-child-not-provided-optional-parent",
@@ -891,7 +891,7 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/"
+                "The field corresponding to /ENTRY[my_entry]/"
                 "OPTIONAL_group[my_group]/required_field "
                 "is required and hasn't been supplied by the reader."
             ],
@@ -1658,7 +1658,7 @@ TEMPLATE["required"][
                 "456",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/identified_calibration/identifier_1 is required "
+                "The field corresponding to /ENTRY[my_entry]/identified_calibration/identifier_1 is required "
                 "and hasn't been supplied by the reader."
             ],
             id="group-with-correct-concept-and-non-concept-sibling",
@@ -1873,7 +1873,6 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             assert len(caplog.records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
-    assert error_message in caplog.text
 
 
 data_dict_list = [
@@ -1909,9 +1908,9 @@ data_dict_list = [
 ]
 
 
-@pytest.mark.parametrize("data_dict, error_massages", data_dict_list)
-def test_nexus_file_validate(data_dict, error_massages, tmp_path, caplog):
-    if not data_dict and not error_massages:
+@pytest.mark.parametrize("data_dict, error_messages", data_dict_list)
+def test_validate_nexus_file(data_dict, error_messages, tmp_path, caplog):
+    if not data_dict and not error_messages:
         return
 
     caplog_level = "INFO"
@@ -1926,16 +1925,16 @@ def test_nexus_file_validate(data_dict, error_massages, tmp_path, caplog):
     Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
     with caplog.at_level(caplog_level):
         _ = CliRunner().invoke(verify, [str(hdf_file_path)])
-    error_massages = error_massages["error_messages"]
+    error_messages = error_messages["error_messages"]
     for record in caplog.records:
         try:
-            assert (
-                record.msg in error_massages
-            ), f"Error message not found: {record.msg}"
+            assert record.msg in error_messages, (
+                f"Error message not found: {record.msg}"
+            )
         except AssertionError:
             # Only for detecting entry or missing application definition massage
-            assert (
-                error_massages[-1] in record.msg
-            ), f"Error message not found: {record.msg}"
+            assert error_messages[-1] in record.msg, (
+                f"Error message not found: {record.msg}"
+            )
 
     os.remove(hdf_file_path)

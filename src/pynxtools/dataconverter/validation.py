@@ -40,7 +40,6 @@ from pynxtools.dataconverter.helpers import (
     collector,
     convert_nexus_to_caps,
     is_valid_data_field,
-    is_valid_unit,
 )
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
@@ -57,7 +56,84 @@ if DEBUG_VALIDATION:
     # debugpy.breakpoint()
 
 
-def best_namefit_of_(name: str, concepts: Set[str]) -> str:
+def build_nested_dict_from(
+    mapping: Mapping[str, Any],
+) -> Mapping[str, Any]:
+    """
+    Creates a nested mapping from a `/` separated flat mapping.
+
+    Args:
+        mapping (Mapping[str, Any]):
+            The mapping to nest.
+
+    Returns:
+        Mapping[str, Any]: The nested mapping.
+    """
+
+    # Based on
+    # https://stackoverflow.com/questions/50607128/
+    # creating-a-nested-dictionary-from-a-flattened-dictionary
+    def get_from(data_tree, map_list):
+        """Iterate nested dictionary"""
+        return reduce(getitem, map_list, data_tree)
+
+    # instantiate nested defaultdict of defaultdicts
+    def tree():
+        return defaultdict(tree)
+
+    def default_to_regular_dict(d):
+        """Convert nested defaultdict to regular dict of dicts."""
+        if isinstance(d, defaultdict):
+            d = {k: default_to_regular_dict(v) for k, v in d.items()}
+        return d
+
+    data_tree = tree()
+
+    # iterate input dictionary
+    for k, v in mapping.items():
+        if v is None:
+            continue
+        _, *keys, final_key = k.split("/")
+        # if final_key.startswith("@") and "/" + "/".join(keys) not in mapping:
+        # Don't add attributes if the field is not present
+        # continue
+        data = get_from(data_tree, keys)
+        if not isinstance(data, defaultdict):
+            # Deal with attributes for fields
+            # Store them in a new key with the name `field_name@attribute_name``
+            get_from(data_tree, keys[:-1])[f"{keys[-1]}{final_key}"] = v
+        else:
+            data[final_key] = v
+
+    return default_to_regular_dict(data_tree)
+
+
+def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
+    """
+    Return the class and the name of a data dict entry of the form
+    `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
+    If this is a simple string it will just return this string, i.e.
+    `split_class_and_name_of("entry")` will return `None, "entry"`.
+
+    Args:
+        name (str): The data dict entry
+
+    Returns:
+        tuple[Optional[str], str]:
+            First element is the class name of the entry, second element is the name.
+            The class name will be None if it is not present.
+    """
+    name_match = re.search(r"([^\[]+)\[([^\]]+)\](\@.*)?", name)
+    if name_match is None:
+        return None, name
+
+    prefix = name_match.group(3)
+    return name_match.group(
+        1
+    ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
+
+
+def best_namefit_of_(name: str, concepts: set[str]) -> str:
     if not concepts:
         return None
 
@@ -71,6 +147,153 @@ def best_namefit_of_(name: str, concepts: Set[str]) -> str:
         return None
 
     return best_match
+
+
+def best_namefit_of(
+    name: str,
+    nodes: Iterable[NexusNode],
+    expected_types: list[str],
+    check_types: bool = False,
+) -> Optional[NexusNode]:
+    """
+    Get the best namefit of `name` in `keys`.
+
+    Args:
+        name (str): The name to fit against the keys.
+        nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+
+    Returns:
+        Optional[NexusNode]: The best fitting node. None if no fit was found.
+    """
+    if not nodes:
+        return None
+
+    concept_name, instance_name = split_class_and_name_of(name)
+
+    best_match = None
+
+    for node in nodes:
+        if not node.variadic:
+            if instance_name == node.name:
+                if node.type not in expected_types and check_types:
+                    expected_types_str = " or ".join(expected_types)
+                    collector.collect_and_log(
+                        name,
+                        ValidationProblem.InvalidNexusTypeForNamedConcept,
+                        node,
+                        expected_types_str,
+                    )
+                    raise TypeError(
+                        f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
+                        f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
+                        f"type '{node.type}')."
+                    )
+                if concept_name and concept_name != node.name:
+                    inherited_names = [
+                        name
+                        if (name := elem.attrib.get("name")) is not None
+                        else type_attr[2:].upper()
+                        for elem in node.inheritance
+                        if (name := elem.attrib.get("name")) is not None
+                        or (type_attr := elem.attrib.get("type"))
+                        and len(type_attr) > 2
+                    ]
+                    if concept_name not in inherited_names:
+                        if node.type == "group":
+                            if concept_name != node.nx_class[2:].upper():
+                                collector.collect_and_log(
+                                    concept_name,
+                                    ValidationProblem.InvalidConceptForNonVariadic,
+                                    node,
+                                )
+                        else:
+                            collector.collect_and_log(
+                                concept_name,
+                                ValidationProblem.InvalidConceptForNonVariadic,
+                                node,
+                            )
+                        return None
+                return node
+        else:
+            if concept_name and concept_name == node.name:
+                if instance_name == node.name:
+                    return node
+
+                name_any = node.name_type == "any"
+                name_partial = node.name_type == "partial"
+
+                score = get_nx_namefit(instance_name, node.name, name_any, name_partial)
+                if score > -1:
+                    best_match = node
+
+    return best_match
+
+
+def is_valid_unit_for_node(
+    node: NexusNode, unit: str, unit_path: str, hints: dict[str, Any]
+) -> None:
+    """
+    Validate whether a unit string is compatible with the expected unit category for a given NeXus node.
+
+    This function checks if the provided `unit` string matches the expected unit dimensionality
+    defined in the node's `unit` field. Special logic is applied for "NX_TRANSFORMATION", where
+    the dimensionality depends on the `transformation_type` hint.
+
+    If the unit does not match the expected dimensionality, a validation problem is logged.
+
+    Args:
+        node (NexusNode): The node containing unit metadata to validate against.
+        unit (str): The unit string to validate (e.g., "m", "eV", "1", "").
+        unit_path (str): The path to the unit in the NeXus template, used for logging.
+        hints (dict[str, Any]): Additional metadata used during validation. For example,
+            hints["transformation_type"] may be used to determine the expected unit category
+            if the node represents a transformation.
+    """
+
+    def clean_str_attr(
+        attr: Optional[Union[str, bytes]], encoding="utf-8"
+    ) -> Optional[str]:
+        """
+        Cleans the string attribute which means it will decode bytes to str if necessary.
+        If `attr` is not str, bytes or None it raises a TypeError.
+        """
+        if attr is None:
+            return attr
+        if isinstance(attr, bytes):
+            return attr.decode(encoding)
+        if isinstance(attr, str):
+            return attr
+
+        raise TypeError(
+            "Invalid type {type} for attribute. Should be either None, bytes or str."
+        )
+
+    # Need to use a list as `NXtransformation` is a special use case
+    if node.unit == "NX_TRANSFORMATION":
+        # NX_TRANSFORMATIONS is a pseudo unit
+        # and can be either an angle, a length or unitless
+        # depending on the transformation type.
+        if (transformation_type := hints.get("transformation_type")) is not None:
+            category_map: dict[str, str] = {
+                "translation": "NX_LENGTH",
+                "rotation": "NX_ANGLE",
+            }
+            node_unit_category = category_map.get(transformation_type, "NX_UNITLESS")
+        else:
+            node_unit_category = "NX_UNITLESS"
+        log_input = node_unit_category
+    else:
+        node_unit_category = node.unit
+        log_input = None
+
+    unit = clean_str_attr(unit)
+
+    if NXUnitSet.matches(node_unit_category, unit):
+        return
+
+    collector.collect_and_log(
+        unit_path, ValidationProblem.InvalidUnit, node, unit, log_input
+    )
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
@@ -196,229 +419,6 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         )
 
     return not collector.has_validation_problems()
-
-
-def build_nested_dict_from(
-    mapping: Mapping[str, Any],
-) -> Mapping[str, Any]:
-    """
-    Creates a nested mapping from a `/` separated flat mapping.
-
-    Args:
-        mapping (Mapping[str, Any]):
-            The mapping to nest.
-
-    Returns:
-        Mapping[str, Any]: The nested mapping.
-    """
-
-    # Based on
-    # https://stackoverflow.com/questions/50607128/
-    # creating-a-nested-dictionary-from-a-flattened-dictionary
-    def get_from(data_tree, map_list):
-        """Iterate nested dictionary"""
-        return reduce(getitem, map_list, data_tree)
-
-    # instantiate nested defaultdict of defaultdicts
-    def tree():
-        return defaultdict(tree)
-
-    def default_to_regular_dict(d):
-        """Convert nested defaultdict to regular dict of dicts."""
-        if isinstance(d, defaultdict):
-            d = {k: default_to_regular_dict(v) for k, v in d.items()}
-        return d
-
-    data_tree = tree()
-
-    # iterate input dictionary
-    for k, v in mapping.items():
-        if v is None:
-            continue
-        _, *keys, final_key = k.split("/")
-        # if final_key.startswith("@") and "/" + "/".join(keys) not in mapping:
-        # Don't add attributes if the field is not present
-        # continue
-        data = get_from(data_tree, keys)
-        if not isinstance(data, defaultdict):
-            # Deal with attributes for fields
-            # Store them in a new key with the name `field_name@attribute_name``
-            get_from(data_tree, keys[:-1])[f"{keys[-1]}{final_key}"] = v
-        else:
-            data[final_key] = v
-
-    return default_to_regular_dict(data_tree)
-
-
-def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
-    """
-    Return the class and the name of a data dict entry of the form
-    `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
-    If this is a simple string it will just return this string, i.e.
-    `split_class_and_name_of("entry")` will return `None, "entry"`.
-
-    Args:
-        name (str): The data dict entry
-
-    Returns:
-        tuple[Optional[str], str]:
-            First element is the class name of the entry, second element is the name.
-            The class name will be None if it is not present.
-    """
-    name_match = re.search(r"([^\[]+)\[([^\]]+)\](\@.*)?", name)
-    if name_match is None:
-        return None, name
-
-    prefix = name_match.group(3)
-    return name_match.group(
-        1
-    ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
-
-
-def best_namefit_of(
-    name: str,
-    nodes: Iterable[NexusNode],
-    expected_types: list[str],
-    check_types: bool = False,
-) -> Optional[NexusNode]:
-    """
-    Get the best namefit of `name` in `keys`.
-
-    Args:
-        name (str): The name to fit against the keys.
-        nodes (Iterable[NexusNode]): The nodes to fit `name` against.
-
-    Returns:
-        Optional[NexusNode]: The best fitting node. None if no fit was found.
-    """
-    if not nodes:
-        return None
-
-    concept_name, instance_name = split_class_and_name_of(name)
-
-    best_match = None
-
-    for node in nodes:
-        if not node.variadic:
-            if instance_name == node.name:
-                if node.type not in expected_types and check_types:
-                    expected_types_str = " or ".join(expected_types)
-                    collector.collect_and_log(
-                        name,
-                        ValidationProblem.InvalidNexusTypeForNamedConcept,
-                        node,
-                        expected_types_str,
-                    )
-                    raise TypeError(
-                        f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
-                        f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
-                        f"type '{node.type}')."
-                    )
-                if concept_name and concept_name != node.name:
-                    inherited_names = [
-                        name
-                        if (name := elem.attrib.get("name")) is not None
-                        else type_attr[2:].upper()
-                        for elem in node.inheritance
-                        if (name := elem.attrib.get("name")) is not None
-                        or (type_attr := elem.attrib.get("type"))
-                        and len(type_attr) > 2
-                    ]
-                    if concept_name not in inherited_names:
-                        if node.type == "group":
-                            if concept_name != node.nx_class[2:].upper():
-                                collector.collect_and_log(
-                                    concept_name,
-                                    ValidationProblem.InvalidConceptForNonVariadic,
-                                    node,
-                                )
-                        else:
-                            collector.collect_and_log(
-                                concept_name,
-                                ValidationProblem.InvalidConceptForNonVariadic,
-                                node,
-                            )
-                        return None
-                return node
-        else:
-            if concept_name and concept_name == node.name:
-                if instance_name == node.name:
-                    return node
-
-                name_any = node.name_type == "any"
-                name_partial = node.name_type == "partial"
-
-                score = get_nx_namefit(instance_name, node.name, name_any, name_partial)
-                if score > -1:
-                    best_match = node
-
-    return best_match
-
-
-def is_valid_unit_for_node(
-    node: NexusNode, unit: str, unit_path: str, hints: dict[str, Any]
-) -> None:
-    """
-    Validate whether a unit string is compatible with the expected unit category for a given NeXus node.
-
-    This function checks if the provided `unit` string matches the expected unit dimensionality
-    defined in the node's `unit` field. Special logic is applied for "NX_TRANSFORMATION", where
-    the dimensionality depends on the `transformation_type` hint.
-
-    If the unit does not match the expected dimensionality, a validation problem is logged.
-
-    Args:
-        node (NexusNode): The node containing unit metadata to validate against.
-        unit (str): The unit string to validate (e.g., "m", "eV", "1", "").
-        unit_path (str): The path to the unit in the NeXus template, used for logging.
-        hints (dict[str, Any]): Additional metadata used during validation. For example,
-            hints["transformation_type"] may be used to determine the expected unit category
-            if the node represents a transformation.
-    """
-    def clean_str_attr(
-        attr: Optional[Union[str, bytes]], encoding="utf-8"
-    ) -> Optional[str]:
-        """
-        Cleans the string attribute which means it will decode bytes to str if necessary.
-        If `attr` is not str, bytes or None it raises a TypeError.
-        """
-        if attr is None:
-            return attr
-        if isinstance(attr, bytes):
-            return attr.decode(encoding)
-        if isinstance(attr, str):
-            return attr
-
-        raise TypeError(
-            "Invalid type {type} for attribute. Should be either None, bytes or str."
-        )
-    
-    # Need to use a list as `NXtransformation` is a special use case
-    if node.unit == "NX_TRANSFORMATION":
-        # NX_TRANSFORMATIONS is a pseudo unit
-        # and can be either an angle, a length or unitless
-        # depending on the transformation type.
-        if (transformation_type := hints.get("transformation_type")) is not None:
-            category_map: dict[str, str] = {
-                "translation": "NX_LENGTH",
-                "rotation": "NX_ANGLE",
-            }
-            node_unit_category = category_map.get(transformation_type, "NX_UNITLESS")
-        else:
-            node_unit_category = "NX_UNITLESS"
-        log_input = node_unit_category
-    else:
-        node_unit_category = node.unit
-        log_input = None
-
-    unit = clean_str_attr(unit)
-
-    if NXUnitSet.matches(node_unit_category, unit):
-        return
-
-    collector.collect_and_log(
-        unit_path, ValidationProblem.InvalidUnit, node, unit, log_input
-    )
 
 
 def validate_dict_against(
@@ -1504,9 +1504,7 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # be fixed.
         return
     for child in node.get_all_direct_children_names():
-
-        # child_node = node.search_add_child_for(child)
-        child_node = node.search_child_with_name(child)
+        child_node = node.search_add_child_for(child)
 
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 
