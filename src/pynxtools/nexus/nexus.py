@@ -865,8 +865,8 @@ class HandleNexus:
     required=False,
     default=None,
     help=(
-        "Definition path in nexus output (.nxs) file. Returns debug"
-        " log relevant with that definition path. Example: /entry/data/delays"
+        "Definition path in nexus output (.nxs) file. Returns debug "
+        "log relevant with that definition path. Example input: /entry/data/delays"
     ),
 )
 @click.option(
@@ -875,9 +875,9 @@ class HandleNexus:
     required=False,
     default=None,
     help=(
-        "Concept path from application definition file (.nxdl,xml). Finds out"
-        " all the available concept definition (IS-A realation) for rendered"
-        " concept path. Example: /NXarpes/ENTRY/INSTRUMENT/analyser"
+        "Concept path from application definition file (.nxdl.xml). Finds out "
+        "all the available concept definition (IS-A relation) for a given "
+        "concept path. Example input: /NXarpes/ENTRY/INSTRUMENT/analyser"
     ),
 )
 def main(nexus_file, documentation, concept):
