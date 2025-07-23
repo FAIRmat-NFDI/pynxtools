@@ -90,7 +90,6 @@ class ValidationProblem(Enum):
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
-    # DoNotCompressStringsBoolean = auto()
 
 
 class Collector:
@@ -225,18 +224,6 @@ class Collector:
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
-        # elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
-        #     value = cast(dict, value)
-        #     dtype = type(value["compress"]).__name__
-        #     dtype_map = {
-        #         "str": "string",
-        #         "bool": "boolean",
-        #     }
-        #     dtype_str = dtype_map.get(dtype, dtype)
-
-        #     logger.info(
-        #         f"Compression for {path} = {value} should not be used for {dtype_str} values."
-        #     )
 
     def collect_and_log(
         self,
@@ -811,7 +798,7 @@ def is_valid_data_field(
             collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
         if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-            results = ISO8601.search(value)
+            results = ISO8601.search(clean_str_attr(value))
             if results is None:
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidDatetime, value
@@ -845,12 +832,6 @@ def is_valid_data_field(
             return validate_data_value(
                 value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
             )
-
-        # TODO: Do we need to issue a warning if string/bool compression is used
-        # # elif isinstance(compressed_value, (str, bool)):
-        #     collector.collect_and_log(
-        #         path, ValidationProblem.DoNotCompressStringsBoolean, value
-        #     )
 
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(
@@ -1183,3 +1164,22 @@ def nested_dict_to_slash_separated_path(
             nested_dict_to_slash_separated_path(val, flattened_dict, path)
         else:
             flattened_dict[path] = val
+
+
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )
