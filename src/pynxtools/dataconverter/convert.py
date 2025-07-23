@@ -43,18 +43,7 @@ from pynxtools.dataconverter.writer import Writer
 logger = logging.getLogger("pynxtools")
 
 
-if sys.version_info >= (3, 10):
-    from importlib.metadata import entry_points
-else:
-    try:
-        from importlib_metadata import entry_points
-    except ImportError:
-        # If importlib_metadata is not present
-        # we provide a dummy function just returning an empty list.
-        # pylint: disable=W0613
-        def entry_points(group):
-            """Dummy function for importlib_metadata"""
-            return []
+from importlib.metadata import entry_points
 
 
 class ValidationFailed(Exception):
@@ -106,7 +95,7 @@ def transfer_data_into_template(
     input_file,
     reader,
     nxdl_name,
-    nxdl_root: Optional[ET._Element] = None,
+    nxdl_root: ET._Element | None = None,
     skip_verify: bool = False,
     **kwargs,
 ):

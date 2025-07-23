@@ -28,7 +28,7 @@ from pynxtools.dataconverter.validation import validate_dict_against
 from .test_helpers import alter_dict  # pylint: disable=unused-import
 
 
-def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):
+def set_to_none_in_dict(data_dict: Template | None, key: str, optionality: str):
     """Helper function to forcefully set path to 'None'"""
     if data_dict is None:
         return None
@@ -39,8 +39,8 @@ def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: st
 
 
 def set_whole_group_to_none(
-    data_dict: Optional[Template], key: str, optionality: str
-) -> Optional[Template]:
+    data_dict: Template | None, key: str, optionality: str
+) -> Template | None:
     """Set a whole path to None in the dict"""
     if data_dict is None:
         return None

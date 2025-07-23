@@ -77,10 +77,10 @@ from pynxtools.eln_mapper.schema_eln import NomadElnGenerator
 def get_eln(
     nxdl: str,
     skip_top_levels: int,
-    output_file: Optional[str],
+    output_file: str | None,
     eln_type: str,
-    optionality: Optional[str],
-    filter_file: Optional[Union[str, Path]],
+    optionality: str | None,
+    filter_file: str | Path | None,
 ):
     """Helper tool for generating ELN files in YAML format."""
     filter = None
@@ -101,7 +101,7 @@ def get_eln(
 
     eln_type = eln_type.lower()
 
-    eln_generator: Union[ReaderElnGenerator, NomadElnGenerator]
+    eln_generator: ReaderElnGenerator | NomadElnGenerator
 
     if eln_type == "reader":
         eln_generator = ReaderElnGenerator(
