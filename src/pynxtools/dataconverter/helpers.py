@@ -198,7 +198,7 @@ class Collector:
                 f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
             )
         elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
-            log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."
+            log_text = f"Reserved prefix {path} was used in {args[0] if args else '<unknown>'}, but is not valid here."
             # Note that value=None" gets converted to "<unknown>"
             if value != "<unknown>":
                 log_text += f" It is only valid in the context of {value}."
