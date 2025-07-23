@@ -153,12 +153,12 @@ class NexusNode(NodeMixin):
         nxdl_base: str
             Base of the NXDL file where the XML element for this node is  defined
     """
+
     # TODO rename type to nx_type in every place
     name: str
     type: Literal["group", "field", "attribute", "choice"]
     name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
-    name_type: Literal["any", "partial"]
     variadic: bool = False
     inheritance: list[ET._Element]
     is_a: list["NexusNode"]
@@ -201,7 +201,6 @@ class NexusNode(NodeMixin):
         name_type: Optional[Literal["specified", "any", "partial"]] = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
-        name_type: Optional[Literal["any", "partial"]] = None,
         parent: Optional["NexusNode"] = None,
         inheritance: Optional[list[Any]] = None,
         nxdl_base: Optional[str] = None,
@@ -299,7 +298,7 @@ class NexusNode(NodeMixin):
                 return self.add_node_from(xml_elem[0])
             return existing_child
         return None
-    
+
         # if isinstance(names, str):
         #         names = (names,)
         #     for name in names:
@@ -325,16 +324,6 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.inheritance and child.inheritance[0] == xml_elem:
                 return child
-        return None
-
-        if isinstance(names, str):
-            names = (names,)
-        for name in names:
-            direct_child = next((x for x in self.children if x.name == name), None)
-            if direct_child is not None:
-                return direct_child
-            if name in self.get_all_direct_children_names():
-                return self.add_inherited_node(name)
         return None
 
     def get_all_direct_children_names(

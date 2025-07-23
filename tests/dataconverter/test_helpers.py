@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 import pytest
+
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 
