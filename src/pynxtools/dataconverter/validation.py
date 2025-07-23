@@ -285,9 +285,7 @@ def validate_hdf_group_against(
 
         return False
 
-    def check_reserved_suffix(
-        path: str, data: Union[h5py.Dataset, h5py.AttributeManager]
-    ):
+    def check_reserved_suffix(path: str, parent_data: Union[h5py.Group]):
         """
         Check if an associated field exists for a key with a reserved suffix.
 
@@ -296,15 +294,11 @@ def validate_hdf_group_against(
 
         Args:
             path (str):
-                The full path in th3 HDF5 file (e.g., "/entry1/sample/temperature_errors").
-            data Union[h5py.Dataset, h5py.AttributeManager]:
-                The subset of the HDF5 data to check
-
-        Returns:
-            bool:
-                True if the suffix usage is valid or not applicable.
-                False if the suffix is used without the expected associated base field.
+                The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
+            data Union[h5py.Group]:
+                The parent group of the field/attribute path to check
         """
+
         reserved_suffixes = (
             "_end",
             "_increment_set",
@@ -317,30 +311,22 @@ def validate_hdf_group_against(
             "_offset",
         )
 
-        return
+        name = path.strip("/").split("/")[-1]
 
         for suffix in reserved_suffixes:
-            if path.endswith(suffix):
-                associated_field = path.rsplit(suffix, 1)[0]
+            if name.endswith(suffix):
+                associated_field = name.rsplit(suffix, 1)[0]
 
-                if not any(
-                    key.startswith(path + "/")
-                    and (
-                        key.endswith(associated_field)
-                        or key.endswith(f"[{associated_field}]")
-                    )
-                    for key in data
-                ):
+                if associated_field not in parent_data:
                     collector.collect_and_log(
                         path,
                         ValidationProblem.ReservedSuffixWithoutField,
                         associated_field,
                         suffix,
                     )
-                    return False
+                    return
                 break  # We found the suffix and it passed
-
-        return True
+        return
 
     def check_reserved_prefix(
         path: str,
@@ -544,7 +530,6 @@ def validate_hdf_group_against(
         is_valid_data_field(
             clean_str_attr(data[()]), node.dtype, node.items, node.open_enum, path
         )
-        check_reserved_suffix(path, data)
         check_reserved_prefix(path, appdef_node.name, "field")
 
         units = data.attrs.get("units")
@@ -606,14 +591,16 @@ def validate_hdf_group_against(
             )
             check_reserved_prefix(path, appdef_node.name, "attribute")
 
-    def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
+    def validate(path: str, item_data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
-        if isinstance(data, h5py.Group):
-            handle_group(path, data)
-        elif isinstance(data, h5py.Dataset):
-            handle_field(path, data)
+        if isinstance(item_data, h5py.Group):
+            handle_group(path, item_data)
+        elif isinstance(item_data, h5py.Dataset):
+            handle_field(path, item_data)
+            parent_path = path.strip("/").rsplit("/", 1)[0]
+            check_reserved_suffix(path, data[parent_path])
 
-        handle_attributes(path, data.attrs)
+        handle_attributes(path, item_data.attrs)
 
     appdef_node = generate_tree_from(appdef)
     required_concepts = appdef_node.required_fields_and_attrs_names()
@@ -621,14 +608,14 @@ def validate_hdf_group_against(
     entry_name = data.name
     data.visititems(validate)
 
-    for req_field in required_concepts:
-        if "@" in req_field:
+    for req_concept in required_concepts:
+        if "@" in req_concept:
             collector.collect_and_log(
-                req_field, ValidationProblem.MissingRequiredAttribute, None
+                req_concept, ValidationProblem.MissingRequiredAttribute, None
             )
             continue
         collector.collect_and_log(
-            req_field, ValidationProblem.MissingRequiredField, None
+            req_concept, ValidationProblem.MissingRequiredField, None
         )
 
     return not collector.has_validation_problems()
