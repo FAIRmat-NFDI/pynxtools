@@ -716,6 +716,9 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
     if not isinstance(value, np.ndarray):
         value = np.array(value)
+    # Handle 'object' dtype separately (for lists from HDF5 files)
+    if value.dtype == np.dtype("O"):
+        return all(isinstance(v, accepted_types) for v in value.flat)
     return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
