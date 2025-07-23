@@ -1180,6 +1180,4 @@ def clean_str_attr(
     if isinstance(attr, str):
         return attr
 
-    raise TypeError(
-        "Invalid type {type} for attribute. Should be either None, bytes or str."
-    )
+    return attr
