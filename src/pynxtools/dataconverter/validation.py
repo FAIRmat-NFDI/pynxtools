@@ -422,96 +422,66 @@ def validate_hdf_group_against(
             return
 
     def handle_nxdata(path: str, data: h5py.Group):
-        return
-        # TODO: implement proper check for NXdata
-        # def check_nxdata():
-        #     data = (
-        #         keys.get(f"DATA[{signal}]")
-        #         if f"DATA[{signal}]" in keys
-        #         else keys.get(signal)
-        #     )
-        #     if data is None:
-        #         collector.collect_and_log(
-        #             f"{prev_path}/{signal}",
-        #             ValidationProblem.NXdataMissingSignalData,
-        #             None,
-        #         )
-        #     else:
-        #         # Attach the base class to the inheritance chain
-        #         # if the concept for signal is already defined in the appdef
-        #         # TODO: This appends the base class multiple times
-        #         # it should be done only once
-        #         data_node = node.search_add_child_for_multiple((signal, "DATA"))
-        #         data_bc_node = node.search_add_child_for("DATA")
-        #         data_node.inheritance.append(data_bc_node.inheritance[0])
-        #         for child in data_node.get_all_direct_children_names():
-        #             data_node.search_add_child_for(child)
+        def check_nxdata():
+            data_field = data.get(signal)
 
-        #         handle_field(
-        #             node.search_add_child_for_multiple((signal, "DATA")),
-        #             keys,
-        #             prev_path=prev_path,
-        #         )
+            if data_field is None:
+                collector.collect_and_log(
+                    f"{path}/{signal}",
+                    ValidationProblem.NXdataMissingSignalData,
+                    None,
+                )
+            else:
+                handle_field(
+                    f"{path}/{signal}",
+                    data_field,
+                )
 
-        #     # check NXdata attributes
-        #     for attr in ("signal", "auxiliary_signals", "axes"):
-        #         handle_attribute(
-        #             node.search_add_child_for(attr),
-        #             keys,
-        #             prev_path=prev_path,
-        #         )
+            # check NXdata attributes
+            attrs = ("signal", "auxiliary_signals", "axes")
+            data_attrs = {k: data.attrs[k] for k in attrs if k in data.attrs}
 
-        #     for i, axis in enumerate(axes):
-        #         if axis == ".":
-        #             continue
-        #         index = keys.get(f"{axis}_indices", i)
+            handle_attributes(path, data_attrs)
 
-        #         if f"AXISNAME[{axis}]" in keys:
-        #             axis = f"AXISNAME[{axis}]"
-        #         axis_data = _follow_link(keys.get(axis), prev_path)
-        #         if axis_data is None:
-        #             collector.collect_and_log(
-        #                 f"{prev_path}/{axis}",
-        #                 ValidationProblem.NXdataMissingAxisData,
-        #                 None,
-        #             )
-        #             break
-        #         else:
-        #             # Attach the base class to the inheritance chain
-        #             # if the concept for the axis is already defined in the appdef
-        #             # TODO: This appends the base class multiple times
-        #             # it should be done only once
-        #             axis_node = node.search_add_child_for_multiple((axis, "AXISNAME"))
-        #             axis_bc_node = node.search_add_child_for("AXISNAME")
-        #             axis_node.inheritance.append(axis_bc_node.inheritance[0])
-        #             for child in axis_node.get_all_direct_children_names():
-        #                 axis_node.search_add_child_for(child)
+            for i, axis in enumerate(axes):
+                if axis == ".":
+                    continue
+                index = data.get(f"{axis}_indices", i)
 
-        #             handle_field(
-        #                 node.search_add_child_for_multiple((axis, "AXISNAME")),
-        #                 keys,
-        #                 prev_path=prev_path,
-        #             )
-        #         if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
-        #             collector.collect_and_log(
-        #                 f"{prev_path}/{axis}",
-        #                 ValidationProblem.NXdataAxisMismatch,
-        #                 f"{prev_path}/{signal}",
-        #                 index,
-        #             )
+                axis_field = data.get(axis)
 
-        # keys = _follow_link(keys, prev_path)
-        # signal = keys.get("@signal")
-        # aux_signals = keys.get("@auxiliary_signals", [])
-        # axes = keys.get("@axes", [])
-        # if isinstance(axes, str):
-        #     axes = [axes]
+                if axis_field is None:
+                    collector.collect_and_log(
+                        f"{path}/{axis}",
+                        ValidationProblem.NXdataMissingAxisData,
+                        None,
+                    )
+                    break
+                else:
+                    handle_field(
+                        f"{path}/{axis}",
+                        data_field,
+                    )
+                if np.shape(data_field)[index] != len(axis_field):
+                    collector.collect_and_log(
+                        f"{path}/{axis}",
+                        ValidationProblem.NXdataAxisMismatch,
+                        f"{path}/{signal}",
+                        index,
+                    )
 
-        # if signal is not None:
-        #     check_nxdata()
+        signal = data.attrs.get("signal")
+        aux_signals = data.attrs.get("auxiliary_signals", [])
+        axes = data.attrs.get("axes", [])
 
-        # indices = map(lambda x: f"{x}_indices", axes)
-        # errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
+        if isinstance(axes, str):
+            axes = [axes]
+
+        if signal is not None:
+            check_nxdata()
+
+        indices = map(lambda x: f"{x}_indices", axes)
+        errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
 
     def handle_field(path: str, data: h5py.Dataset):
         node = find_node_for(path, node_type="field")
@@ -582,8 +552,10 @@ def validate_hdf_group_against(
                 # NXcollection found in parents, stop checking
                 return
 
+            attr_data = clean_str_attr(attrs.get(attr_name))
+
             is_valid_data_field(
-                attrs.get(attr_name),
+                attr_data,
                 node.dtype,
                 node.items,
                 node.open_enum,
