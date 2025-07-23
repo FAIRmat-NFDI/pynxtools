@@ -387,8 +387,6 @@ def get_nxdl_root_and_path(nxdl: str):
     special_names = {
         "NXtest": os.path.join(data_path, "NXtest.nxdl.xml"),
         "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
-        "NXhdf5_validator_1": os.path.join(data_path, "NXhdf5_validator_1.nxdl.xml"),
-        "NXhdf5_validator_2": os.path.join(data_path, "NXhdf5_validator_2.nxdl.xml"),
     }
 
     probable_file_paths = [
