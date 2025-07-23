@@ -1,14 +1,16 @@
 # How to use the built-in MultiFormatReader
 
-While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data. In this how-to guide, we will focus on an implementation using a concrete example. If you are also interested in the general structure of the `MultiFormatReader`, you can find more information [here](../learn/multi-format-reader.md).
+While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data. In this how-to guide, we will focus on an implementation using a concrete example. If you are also interested in the general structure of the `MultiFormatReader`, you can find more information [here](../../learn/pynxtools/multi-format-reader.md).
 
 ## Getting started
 
-**Note: You can find all of the data and the developed python scripts [here](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader).**
+**You can find all of the data and the developed Python scripts here**:
+
+[Download](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader){:target="_blank" .md-button }
 
 Here, we will implement a reader called `MyDataReader` that builds on the `MultiFormatReader`. `MyDataReader` is an example for a reader that can read HDF5 data from a specific technology-partner data set, as well as additional metadata from am electronic lab notebook (in YAML format).
 
-For demonstration purposess, we will work with a very simple mock application definition:
+For demonstration purposes, we will work with a very simple mock application definition:
 
 ```xml  title="NXsimple.nxdl.xml"
 <definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" type="group" name="NXsimple" extends="NXobject" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
@@ -44,7 +46,7 @@ For demonstration purposess, we will work with a very simple mock application de
                      Version of the instrument.
                 </doc>
             </attribute>
-            <group type="NXdetector">
+            <group type="NXdetector" optional="true">
                 <field name="count_time" type="NX_NUMBER" units="NX_TIME" recommended="true">
                     <doc>
                          Elapsed actual counting time
@@ -66,10 +68,9 @@ For demonstration purposess, we will work with a very simple mock application de
 </definition>
 ```
 
-The NXDL requires a user, some sample information, some instrument metadata, and the measured data to be written. Some groups, fields, and attributes are strictly required (the default), others just recommended.
+The application definitions requires a user, some sample information, some instrument metadata, and the measured data to be written. Some groups, fields, and attributes are strictly required (the default), others are just recommended or optional.
 
-Note that in order to be recognized as a valid application definition, this file should be copied to the `definitions` submodule at `pynxtools.definitions`.
-
+Note that in order to be recognized as a valid application definition, this file should be copied to the `applications` folder within the `definitions` submodule at `pynxtools.definitions`.
 
 We first start by implementing the class and its ``__init__`` call:
 
@@ -108,9 +109,11 @@ Note that here we are adding handlers for three types of data file extensions:
 
 ## Reading in the instrument's data and metadata
 
-First, we will have a look at the HDF5 file. This mock HDF5 file was generated with `h5py` using a [simple script](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader/create_mock_data.py).
+First, we will have a look at the HDF5 file. This mock HDF5 file was generated with `h5py` using a simple script:
 
-<img src="media/mock_data.png" style="width: 50vw; min-width: 330px;" />
+[Download create_mock_data.py](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader/create_mock_data.py){:target="_blank" .md-button }
+
+<img src="../media/mock_data.png" style="width: 50vw; min-width: 330px;" />
 
 Here, we see that we have a `data` group with x and y values, as well as some additional metadata for the instrument.
 
@@ -139,7 +142,7 @@ def handle_hdf5_file(filepath):
     return {}
 ```
 
-Note that here we are returning an empty dictionary because we don't want to fill the template just yet, but only read in the HDF5 data for now. We will use the config file later to fill the template with the read-in data. Note that it is also possible to return a dictionary here to update the template directly.
+Note that here we are returning an empty dictionary because we don't want to fill the template just yet, but only read in the HDF5 data for now. We will use the **config file** later to fill the template with the read-in data. Note that it is also possible to return a dictionary here to update the template directly.
 
 `self.hdf5_data` will look like this:
 
@@ -158,8 +161,7 @@ Note that here we are returning an empty dictionary because we don't want to fil
 
 ## Reading in ELN data
 
-As we can see in the application definition `NXsimple` above, there are some concepts defined for which there is no equivalent metadata in the HDF5 file. We are therefore using a YAML ELN file to add additional metadata.
-The ELN file `eln_data.yaml` looks like this:
+As we can see in the application definition `NXsimple` above, there are some concepts defined for which there is no equivalent metadata in the HDF5 file. We are therefore using a YAML ELN file to add additional metadata. The ELN file `eln_data.yaml` looks like this:
 
 ```yaml  title="eln_data.yaml"
 title: My experiment
@@ -218,14 +220,14 @@ Note that here we are using `parent_key="/ENTRY[entry]"` as well as a `CONVERT_D
 
 ## Parsing the config file
 
-Next up, we can make use of the config file, which is a JSON file that tells the reader how to map the concepts from the HDF5 and ELN files in order to populate the template designed to match `NXsimple`. The choices made in the config file define how semantics from the source (data file) and target (NeXus application definition) side are mapped. Essentially, the config file should contain all keys that are present in the NXDL. In our case, the config file looks like this:
+Next up, we can make use of the **config file**, which is a JSON file that tells the reader how to map the concepts from the HDF5 and ELN files in order to populate the template designed to match `NXsimple`. The choices made in the config file define how semantics from the source (data file) and target (NeXus application definition) side are mapped. Essentially, the config file should contain all keys that are present in the NXDL. In our case, the config file looks like this:
 
 ```json title="config_file.json"
 {
   "/ENTRY/title": "@eln", 
   "/ENTRY/USER[user]": {
     "name":"@eln",
-    "address":@eln:"/ENTRY/USER[user]/address",
+    "address":"@eln:/ENTRY/USER[user]/address",
   }, 
   "/ENTRY/INSTRUMENT[instrument]": {
     "@version":"@attrs:metadata/instrument/version",
@@ -251,7 +253,7 @@ Next up, we can make use of the config file, which is a JSON file that tells the
 }
 ```
 
-Note that here we are using `@`-prefixes which are used to fill the template from the different data sources. We dicuss this below in more detail.
+Note that here we are using `@`-prefixes which are used to fill the template from the different data sources. We discuss this below in more detail.
 
 We also implement a method for setting the config file in the reader:
 
@@ -301,7 +303,7 @@ def get_eln_data(self, key: str, path: str) -> Any:
         return self.eln_data.get(key)
 ```
 
-Here, we are making use of the fact that we have used `CONVERT_DICT` in the `parse_yml` function above. Thus, the keys of the `self.eln_data` dictionary are exactly the same as those in the config file (for example, the config key `"/ENTRY[entry]/USER[user]/address"` also exists in `self.eln_data`). Therefore, we can just get this data using the `key` coming from the config file. 
+Here, we are making use of the fact that we have used `CONVERT_DICT` in the `parse_yml` function above. Thus, the keys of the `self.eln_data` dictionary are exactly the same as those in the config file (for example, the config key `"/ENTRY[entry]/USER[user]/address"` also exists in `self.eln_data`). Therefore, we can just get this data using the `key` coming from the config file.
 
 Finally, we also need to address the `@data` prefix, which gets used in the `data_callback` to populate the NXdata group in the template. Note that here we use the same `@data` prefix to fill the `x_values` as well as the `data` (from `y_values`) fields. We achieve this by using the path that follows `@data:` in the config file:
 
@@ -423,7 +425,7 @@ READER = MyDataReader
 We can call our reader using the following command
 
 ```console
-user@box:~$ dataconverter mock_data.h5 eln_data.yaml -c config_file --reader mydatareader --nxdl NXsimple  --output output.nxs
+dataconverter mock_data.h5 eln_data.yaml -c config_file --reader mydatareader --nxdl NXsimple  --output output.nxs
 ```
 
 The final `output.nxs` file gets automatically validated against `NXsimple`, so we can be sure that it is compliant with that application definition. Here is a look at our final NeXus file:

@@ -23,7 +23,7 @@
 -->
 <definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" type="group" name="NXsimple" extends="NXobject" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
     <doc>
-         Mock application definition.
+        Mock application definition.
     </doc>
     <group type="NXentry">
         <field name="definition">
@@ -36,28 +36,28 @@
         <group type="NXuser" recommended="true">
             <field name="name">
                 <doc>
-                     Name of the user.
+                    Name of the user.
                 </doc>
             </field>
             <field name="address" recommended="true">
                 <doc>
-                     Name of the affiliation of the user.
+                    Name of the affiliation of the user.
                 </doc>
             </field>
         </group>
         <group type="NXinstrument">
             <doc>
-                 Description of the instrument and its individual parts.
+                Description of the instrument and its individual parts.
             </doc>
             <attribute name="version">
                 <doc>
-                     Version of the instrument.
+                    Version of the instrument.
                 </doc>
             </attribute>
-            <group type="NXdetector">
+            <group type="NXdetector" optional="true">
                 <field name="count_time" type="NX_NUMBER" units="NX_TIME" recommended="true">
                     <doc>
-                         Elapsed actual counting time
+                        Elapsed actual counting time
                     </doc>
                 </field>
             </group>
@@ -69,7 +69,7 @@
         </group>
         <group name="data" type="NXdata">
             <doc>
-                 The default NXdata group containing a view on the measured data.
+                The default NXdata group containing a view on the measured data.
             </doc>
         </group>
     </group>

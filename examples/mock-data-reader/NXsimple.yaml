@@ -23,12 +23,13 @@ NXsimple(NXobject):
       \@version:
         doc: |
           Version of the instrument.
-    (NXdetector):
-      count_time(NX_NUMBER):
-        unit: NX_TIME
-        exists: recommended
-        doc: |
-          Elapsed actual counting time
+      (NXdetector):
+        exists: optional
+        count_time(NX_NUMBER):
+          unit: NX_TIME
+          exists: recommended
+          doc: |
+            Elapsed actual counting time
     sample(NXsample):
       name:
       physical_form:

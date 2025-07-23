@@ -1,4 +1,4 @@
-# Multiple Application Definitions in NeXus
+# The concept of multiple application definitions
 
 !!! danger "Work in progress"
 
@@ -20,8 +20,9 @@ The solution for this problem is to specify multiple application definitions whi
 This comes, however, with a few drawbacks. One of them is that it is currently not possible to write a file which wants to use two different application definitions which have conflicting fields. While this is generally possible in the framework of NeXus, since every application definition creates their own namespace, this is not supported when the paths are reduced to entry path notation.
 
 ToDo:
+
 - Make an example of NXexperiment, NXtime_resolved and NXenergy_resolved and show how it is combined into the instance path.
 - Also show this for a conflict. Compare concept path (no problem) to instance path (colliding).
-- Write a part how it is described in the file that it follows two appdefs `/entry/definitions` as array containing both appdefs.
+- Write a part how it is described in the file that it follows two application definitions `/entry/definitions` as array containing both application definitions.
 - Explain that this is no problem with the expanded concept path notation but fails when we only use the instance path.
-- Explain the reader concept: One reader for one appdef, then pynxtools will figure out how to combine them (this is domain knowledge for the FAIRmat reader -> will be different when a read/write tool is written somewhere else).
+- Explain the reader concept: One reader for one application definition, then pynxtools will figure out how to combine them (this is domain knowledge for the FAIRmat reader -> will be different when a read/write tool is written somewhere else).

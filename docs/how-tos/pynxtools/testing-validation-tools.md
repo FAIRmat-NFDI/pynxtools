@@ -99,7 +99,7 @@ _Total 8 or 9 Errors_
 
 1. "Data type mismatch, expected NX\_BOOLEAN" --> "NeXus interprets NX\_BOOLEAN differently than h5py. NeXus uses an integer of 1 byte for NX\_BOOLEAN. This is an int8 or uint8." --> [https://github.com/nexusformat/cnxvalidate/issues/34](<https://github.com/nexusformat/cnxvalidate/issues/34>)
 
-2. Required group missing for "NXbeam" and "NXdetector". Probem with NeXus requirement as given in the .yaml file by: "exists: [min, 1, max, infty]"?
+2. Required group missing for "NXbeam" and "NXdetector". Problem with NeXus requirement as given in the .yaml file by: "exists: [min, 1, max, infty]"?
 
 3. "Required units attribute missing" for entry/data\_collection/measured\_data --> ? unclear. Units are assigned in NeXus file.
 
@@ -145,7 +145,7 @@ here are some examples of the "messages" of the warnings:
 
 # 4. Example from punx
 `punx validate SiO2onSi.ellips.nxs`
-Not possible, as only the NIAC NeXus definitoon can right now be used as reference. Unclear if the `punx install` functionality is working or still developed.
+Not possible, as only the NIAC NeXus definition can right now be used as reference. Unclear if the `punx install` functionality is working or still developed.
 
 
 # Summary

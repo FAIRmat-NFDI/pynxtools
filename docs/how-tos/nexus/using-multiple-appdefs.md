@@ -1,4 +1,4 @@
-# Storing data following multiple appdefs
+# Using multiple application definitions
 
 !!! danger "Work in progress"
 
