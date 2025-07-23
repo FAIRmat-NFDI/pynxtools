@@ -272,6 +272,19 @@ def validate_hdf_group_against(
         if path in required_fields:
             required_fields.remove(path)
 
+    def _check_for_nxcollection_parent(node: NexusNode):
+        """
+        Check if a parent "NXcollection" exist
+        """
+        parent = node.parent
+        while parent:
+            if parent.type == "group" and parent.nx_class == "NXcollection":
+                # Found a parent collection group
+                return True
+            parent = parent.parent
+
+        return False
+
     def check_reserved_suffix(
         path: str, data: Union[h5py.Dataset, h5py.AttributeManager]
     ):
@@ -306,28 +319,28 @@ def validate_hdf_group_against(
 
         # TODO: implement correct check
 
-        # parent_path, instance_name = path.rsplit("/", 1)
+        print(data)
 
-        # for suffix in reserved_suffixes:
-        #     if instance_name.endswith(suffix):
-        #         associated_field = instance_name.rsplit(suffix, 1)[0]
+        for suffix in reserved_suffixes:
+            if path.endswith(suffix):
+                associated_field = path.rsplit(suffix, 1)[0]
 
-        #         if not any(
-        #             k.startswith(parent_path + "/")
-        #             and (
-        #                 k.endswith(associated_field)
-        #                 or k.endswith(f"[{associated_field}]")
-        #             )
-        #             for k in data
-        #         ):
-        #             collector.collect_and_log(
-        #                 path,
-        #                 ValidationProblem.ReservedSuffixWithoutField,
-        #                 associated_field,
-        #                 suffix,
-        #             )
-        #             return False
-        #         break  # We found the suffix and it passed
+                if not any(
+                    key.startswith(path + "/")
+                    and (
+                        key.endswith(associated_field)
+                        or key.endswith(f"[{associated_field}]")
+                    )
+                    for key in data
+                ):
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.ReservedSuffixWithoutField,
+                        associated_field,
+                        suffix,
+                    )
+                    return False
+                break  # We found the suffix and it passed
 
         return True
 
@@ -422,7 +435,10 @@ def validate_hdf_group_against(
                 )
             return
 
-        # TODO: Do actual group checks
+        if _check_for_nxcollection_parent(node):
+            # NXcollection found in parents, stop checking
+            return
+
         check_reserved_prefix(path, data, "group")
 
         if node.nx_class == "NXdata":
@@ -531,6 +547,11 @@ def validate_hdf_group_against(
                 )
             return
         remove_from_req_fields(node.get_path())
+
+        if _check_for_nxcollection_parent(node):
+            # NXcollection found in parents, stop checking
+            return
+
         is_valid_data_field(
             clean_str_attr(data[()]), node.dtype, node.items, node.open_enum, path
         )
@@ -582,6 +603,11 @@ def validate_hdf_group_against(
                     )
                 continue
             remove_from_req_fields(node.get_path())
+
+            if _check_for_nxcollection_parent(node):
+                # NXcollection found in parents, stop checking
+                return
+
             is_valid_data_field(
                 attrs.get(attr_name),
                 node.dtype,
