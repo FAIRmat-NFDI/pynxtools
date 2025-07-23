@@ -51,7 +51,8 @@ class ValidationProblem(Enum):
     UnitWithoutDocumentation = auto()
     InvalidUnit = auto()
     InvalidEnum = auto()
-    OpenEnumWithNewItem = auto()
+    OpenEnumWithCorrectNewItem = auto()
+    OpenEnumWithIncorrectNewItem = auto()
     MissingRequiredGroup = auto()
     MissingRequiredField = auto()
     MissingRequiredAttribute = auto()
@@ -111,10 +112,22 @@ class Collector:
             logger.warning(
                 f"The value at {path} should be one of the following: {value}."
             )
-        elif log_type == ValidationProblem.OpenEnumWithNewItem:
+        elif log_type == ValidationProblem.OpenEnumWithCorrectNewItem:
+            actual_value = args[0]
             logger.info(
-                f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
+                f"The value '{actual_value}' at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
+        elif log_type == ValidationProblem.OpenEnumWithIncorrectNewItem:
+            actual_value, custom_attr = args
+
+            log_text = f"The value '{actual_value}' at {path} does not match with the enumerated items from the open enumeration: {value}."
+            if custom_attr == "custom_missing":
+                log_text += f" When a different value is used, a boolean 'custom' attribute must be added."
+                logger.warning(log_text)
+            elif custom_attr == "custom_false":
+                log_text += f" When a different value is used, the boolean 'custom' attribute cannot be False."
+                logger.warning(log_text)
+
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
@@ -221,7 +234,7 @@ class Collector:
         # info messages should not fail validation
         if log_type not in (
             ValidationProblem.UnitWithoutDocumentation,
-            ValidationProblem.OpenEnumWithNewItem,
+            ValidationProblem.OpenEnumWithCorrectNewItem,
         ):
             self.data.add(path + str(log_type) + str(value))
 
@@ -727,9 +740,7 @@ def convert_int_to_float(value):
         return value
 
 
-def is_valid_data_field(
-    value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
-) -> Any:
+def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     # todo: Check this function and write test for it. It seems the function is not
     # working as expected.
     """Checks whether a given value is valid according to the type defined in the NXDL.
@@ -774,23 +785,6 @@ def is_valid_data_field(
         results = iso8601.search(value)
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
-
-    # Check enumeration
-    if nxdl_enum is not None and value not in nxdl_enum:
-        if nxdl_enum_open:
-            collector.collect_and_log(
-                path,
-                ValidationProblem.OpenEnumWithNewItem,
-                nxdl_enum,
-            )
-        else:
-            collector.collect_and_log(
-                path,
-                ValidationProblem.InvalidEnum,
-                nxdl_enum,
-            )
-
-    return value
 
 
 @cache
