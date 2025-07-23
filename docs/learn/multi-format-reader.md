@@ -50,7 +50,7 @@ def read(
 ) -> dict:
     self.kwargs = kwargs
     self.config_file = self.kwargs.get("config_file", self.config_file)
-    self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)   
+    self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)
 ```
 
 ## Template initialization and processing order
@@ -142,10 +142,10 @@ Next up, we can make use of the config file, which is a JSON file that tells the
 
 ```json
 {
-  "/ENTRY/title": "@attrs:metadata/title", 
+  "/ENTRY/title": "@attrs:metadata/title",
   "/ENTRY/USER[user]": {
     "name": "my_name",
-  }, 
+  },
   "/ENTRY/INSTRUMENT[instrument]": {
     "name":"@eln",
     "temperature_sensor": {
@@ -157,7 +157,7 @@ Next up, we can make use of the config file, which is a JSON file that tells the
     "temperature_env": {
       "temperature_sensor": "@link:/entry/instrument/temperature_sensor"
     }
-  },  
+  },
   "/ENTRY/data": {
     "@axes": "@data:dims",
     "AXISNAME_indices[@*_indices]": "@data:*.index",
@@ -263,16 +263,16 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
   ```
   that allows filling multiple fields of the same type from a list of dimensions. This can be particularly helpful for writing `DATA` and `AXISNAME` fields that are all stored under similar paths in the read-in data.
   For this, the `get_data_dims` method needs to be implemented. For a given path, it should return a list of all data axes available to replace the wildcard.
-    
+
     The same wildcard notation can also be used within a name to repeat entries with different names (e.g., field_*{my, name, etc} is converted into three keys with * replaced by my, name, etc, respectively). As an example, for multiple lenses and their voltage readouts, one could write:
   ```json
-  "LENS_EM[lens_*{A,B,Foc}]": {
+  "ELECTROMAGNETIC_LENS[lens_*{A,B,Foc}]": {
     "name": "*",
     "voltage": "@attrs:metadata/file/Lens:*:V",
     "voltage/@units": "V"
   },
   ```
-  which would write `NXlens_em` instances named `lens_A`, `lens_B`, and `lens_Foc`.
+  which would write `NXelectromagnetic_lens` instances named `lens_A`, `lens_B`, and `lens_Foc`.
 
 - **Required fields in optional groups**: There will sometimes be the situation that there is an optional NeXus group in an application definition, that (if implemented) requires some sub-element. As an example, for the instrument's energy resolution, the only value expected to come from a data source is the `resolution`, whereas other fields are hardcoded.
   ```json
