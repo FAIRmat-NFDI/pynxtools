@@ -504,15 +504,14 @@ def validate_hdf_group_against(
 
         units = data.attrs.get("units")
         if node.unit is not None:
+            units_path = f"{node.get_path()}/@units"
+            remove_from_req_concepts(units_path)
             if node.unit != "NX_UNITLESS":
                 if units is None:
                     collector.collect_and_log(
                         f"{path}/@units", ValidationProblem.MissingUnit, node.unit
                     )
                     return
-                units_path = f"{node.get_path()}/@units"
-                remove_from_req_concepts(units_path)
-
                 # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
                 if (
                     transformation_type := data.attrs.get("transformation_type")

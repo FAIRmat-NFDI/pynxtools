@@ -711,7 +711,7 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
             for v in value.flat
         )
 
-    return any(np.issubdtype(value.dtype, np.dtype(dtype)) for dtype in accepted_types)
+    return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
 def is_positive_int(value: Any) -> bool:
