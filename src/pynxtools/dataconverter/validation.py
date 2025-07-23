@@ -37,6 +37,7 @@ from cachetools.keys import hashkey
 from pynxtools.dataconverter.helpers import (
     Collector,
     ValidationProblem,
+    clean_str_attr,
     collector,
     convert_nexus_to_caps,
     is_valid_data_field,
@@ -133,104 +134,8 @@ def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of_(name: str, concepts: set[str]) -> str:
-    if not concepts:
-        return None
-
-    if name in concepts:
-        return name
-
-    best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name, x)), concepts), key=lambda x: x[1]
-    )
-    if score < 0:
-        return None
-
-    return best_match
-
-
-def best_namefit_of(
-    name: str,
-    nodes: Iterable[NexusNode],
-    expected_types: list[str],
-    check_types: bool = False,
-) -> Optional[NexusNode]:
-    """
-    Get the best namefit of `name` in `keys`.
-
-    Args:
-        name (str): The name to fit against the keys.
-        nodes (Iterable[NexusNode]): The nodes to fit `name` against.
-
-    Returns:
-        Optional[NexusNode]: The best fitting node. None if no fit was found.
-    """
-    if not nodes:
-        return None
-
-    concept_name, instance_name = split_class_and_name_of(name)
-
-    best_match = None
-
-    for node in nodes:
-        if not node.variadic:
-            if instance_name == node.name:
-                if node.type not in expected_types and check_types:
-                    expected_types_str = " or ".join(expected_types)
-                    collector.collect_and_log(
-                        name,
-                        ValidationProblem.InvalidNexusTypeForNamedConcept,
-                        node,
-                        expected_types_str,
-                    )
-                    raise TypeError(
-                        f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
-                        f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
-                        f"type '{node.type}')."
-                    )
-                if concept_name and concept_name != node.name:
-                    inherited_names = [
-                        name
-                        if (name := elem.attrib.get("name")) is not None
-                        else type_attr[2:].upper()
-                        for elem in node.inheritance
-                        if (name := elem.attrib.get("name")) is not None
-                        or (type_attr := elem.attrib.get("type"))
-                        and len(type_attr) > 2
-                    ]
-                    if concept_name not in inherited_names:
-                        if node.type == "group":
-                            if concept_name != node.nx_class[2:].upper():
-                                collector.collect_and_log(
-                                    concept_name,
-                                    ValidationProblem.InvalidConceptForNonVariadic,
-                                    node,
-                                )
-                        else:
-                            collector.collect_and_log(
-                                concept_name,
-                                ValidationProblem.InvalidConceptForNonVariadic,
-                                node,
-                            )
-                        return None
-                return node
-        else:
-            if concept_name and concept_name == node.name:
-                if instance_name == node.name:
-                    return node
-
-                name_any = node.name_type == "any"
-                name_partial = node.name_type == "partial"
-
-                score = get_nx_namefit(instance_name, node.name, name_any, name_partial)
-                if score > -1:
-                    best_match = node
-
-    return best_match
-
-
 def is_valid_unit_for_node(
-    node: NexusNode, unit: str, unit_path: str, hints: dict[str, Any]
+    node: NexusEntity, unit: str, unit_path: str, hints: dict[str, Any]
 ) -> None:
     """
     Validate whether a unit string is compatible with the expected unit category for a given NeXus node.
@@ -249,24 +154,6 @@ def is_valid_unit_for_node(
             hints["transformation_type"] may be used to determine the expected unit category
             if the node represents a transformation.
     """
-
-    def clean_str_attr(
-        attr: Optional[Union[str, bytes]], encoding="utf-8"
-    ) -> Optional[str]:
-        """
-        Cleans the string attribute which means it will decode bytes to str if necessary.
-        If `attr` is not str, bytes or None it raises a TypeError.
-        """
-        if attr is None:
-            return attr
-        if isinstance(attr, bytes):
-            return attr.decode(encoding)
-        if isinstance(attr, str):
-            return attr
-
-        raise TypeError(
-            "Invalid type {type} for attribute. Should be either None, bytes or str."
-        )
 
     # Need to use a list as `NXtransformation` is a special use case
     if node.unit == "NX_TRANSFORMATION":
@@ -308,6 +195,41 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         bool: True if the group is valid according to `appdef`, False otherwise.
     """
 
+    def best_namefit_of(
+        name: str,
+        nodes: Iterable[NexusNode],
+    ) -> Optional[NexusNode]:
+        """
+        Get the best namefit of `name` in `nodes`.
+
+        Args:
+            name (str): The name to fit against the nodes.
+            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+            node_type (str): The type (group, field, attribute) that is expected
+
+        Returns:
+            Optional[NexusNode]: The best fitting node. None if no fit was found.
+        """
+        if not nodes:
+            return None
+
+        best_match = None
+        best_score = -1
+
+        for node in nodes:
+            if not node.variadic:
+                if name == node.name:
+                    return node
+            else:
+                name_any = node.name_type == "any"
+                name_partial = node.name_type == "partial"
+                score = get_nx_namefit(name, node.name, name_any, name_partial)
+                if score > best_score:
+                    best_match = node
+                    best_score = score
+
+        return best_match
+
     # Only cache based on path. That way we retain the nx_class information
     # in the tree
     # Allow for 10000 cache entries. This should be enough for most cases
@@ -316,7 +238,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         key=lambda path, node_type=None, nx_class=None: hashkey(path),
     )
     def find_node_for(
-        path: str, node_type: Optional[str] = None, nx_class: Optional[str] = None
+        path: str, node_type, nx_class: Optional[str] = None
     ) -> Optional[NexusNode]:
         if path == "":
             return tree
@@ -327,18 +249,161 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         if node is None:
             return None
 
-        best_child = best_namefit_of_(
-            last_elem,
-            node.get_all_direct_children_names(nx_class=nx_class, node_type=node_type),
-        )
-        if best_child is None:
+        children_to_check = [
+            node.search_add_child_for(child)
+            for child in node.get_all_direct_children_names(
+                nx_class=nx_class, node_type=node_type
+            )
+        ]
+        node = best_namefit_of(last_elem, children_to_check)
+
+        if node is None:
             return None
 
-        return node.search_add_child_for(best_child)
+        return node
 
     def remove_from_req_fields(path: str):
         if path in required_fields:
             required_fields.remove(path)
+
+    def check_reserved_suffix(
+        path: str, data: Union[h5py.Dataset, h5py.AttributeManager]
+    ):
+        """
+        Check if an associated field exists for a key with a reserved suffix.
+
+        Reserved suffixes imply the presence of an associated base field (e.g.,
+        "temperature_errors" implies "temperature" must exist in the mapping).
+
+        Args:
+            path (str):
+                The full path in th3 HDF5 file (e.g., "/entry1/sample/temperature_errors").
+            data Union[h5py.Dataset, h5py.AttributeManager]:
+                The subset of the HDF5 data to check
+
+        Returns:
+            bool:
+                True if the suffix usage is valid or not applicable.
+                False if the suffix is used without the expected associated base field.
+        """
+        reserved_suffixes = (
+            "_end",
+            "_increment_set",
+            "_errors",
+            "_indices",
+            "_mask",
+            "_set",
+            "_weights",
+            "_scaling_factor",
+            "_offset",
+        )
+
+        # TODO: implement correct check
+
+        # parent_path, instance_name = path.rsplit("/", 1)
+
+        # for suffix in reserved_suffixes:
+        #     if instance_name.endswith(suffix):
+        #         associated_field = instance_name.rsplit(suffix, 1)[0]
+
+        #         if not any(
+        #             k.startswith(parent_path + "/")
+        #             and (
+        #                 k.endswith(associated_field)
+        #                 or k.endswith(f"[{associated_field}]")
+        #             )
+        #             for k in data
+        #         ):
+        #             collector.collect_and_log(
+        #                 path,
+        #                 ValidationProblem.ReservedSuffixWithoutField,
+        #                 associated_field,
+        #                 suffix,
+        #             )
+        #             return False
+        #         break  # We found the suffix and it passed
+
+        return True
+
+    def check_reserved_prefix(
+        path: str,
+        data: Union[h5py.Group, h5py.Dataset, h5py.AttributeManager],
+        nx_type: Literal["group", "field", "attribute"],
+    ):
+        """
+        Check if a reserved prefix was used in the correct context.
+
+        Args:
+            path (str):
+                The full path in th3 HDF5 file (e.g., "/entry1/sample/temperature_errors").
+            data Union[h5py.Dataset, h5py.AttributeManager]:
+                The subset of the HDF5 data to check
+            nx_type (Literal["group", "field", "attribute"]):
+                The NeXus type the key represents. Determines which reserved prefixes are relevant.
+
+        Returns:
+            bool:
+                True if the prefix usage is valid or not applicable.
+                False if an invalid or misapplied reserved prefix is detected.
+        """
+        reserved_prefixes = {
+            "attribute": {
+                "@BLUESKY_": None,  # do not use anywhere
+                "@DECTRIS_": "NXmx",
+                "@IDF_": None,  # do not use anywhere
+                "@NDAttr": None,
+                "@NX_": "all",
+                "@PDBX_": None,  # do not use anywhere
+                "@SAS_": "NXcanSAS",
+                "@SILX_": None,  # do not use anywhere
+            },
+            "field": {
+                "DECTRIS_": "NXmx",
+            },
+        }
+
+        prefixes = reserved_prefixes.get(nx_type)
+        if not prefixes:
+            return True
+
+        name = path.rsplit("/", 1)[-1]
+
+        if not name.startswith(tuple(prefixes)):
+            return False  # Irrelevant prefix, no check needed
+
+        for prefix, allowed_context in prefixes.items():
+            if not name.startswith(prefix):
+                continue
+
+            if allowed_context is None:
+                # This prefix is disallowed entirely
+                collector.collect_and_log(
+                    prefix,
+                    ValidationProblem.ReservedPrefixInWrongContext,
+                    None,
+                    path,
+                )
+                return False
+            if allowed_context == "all":
+                # We can freely use this prefix everywhere.
+                return True
+
+            # TODO: this is not working yet for HDF5 paths
+
+            # Check that the prefix is used in the correct context.
+            entry_name = path.split("/", 1)[0]
+            definition_key = f"{entry_name}/definition"
+            definition_value = data.get(definition_key)
+            if definition_value != allowed_context:
+                collector.collect_and_log(
+                    prefix,
+                    ValidationProblem.ReservedPrefixInWrongContext,
+                    allowed_context,
+                    path,
+                )
+                return False
+
+        return True
 
     def handle_group(path: str, data: h5py.Group):
         node = find_node_for(
@@ -351,6 +416,104 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
             return
 
         # TODO: Do actual group checks
+        check_reserved_prefix(path, data, "group")
+
+        if node.nx_class == "NXdata":
+            handle_nxdata(path, data)
+        if node.nx_class == "NXcollection":
+            return
+
+    def handle_nxdata(path: str, data: h5py.Group):
+        return
+        # TODO: implement proper check for NXdata
+        # def check_nxdata():
+        #     data = (
+        #         keys.get(f"DATA[{signal}]")
+        #         if f"DATA[{signal}]" in keys
+        #         else keys.get(signal)
+        #     )
+        #     if data is None:
+        #         collector.collect_and_log(
+        #             f"{prev_path}/{signal}",
+        #             ValidationProblem.NXdataMissingSignalData,
+        #             None,
+        #         )
+        #     else:
+        #         # Attach the base class to the inheritance chain
+        #         # if the concept for signal is already defined in the appdef
+        #         # TODO: This appends the base class multiple times
+        #         # it should be done only once
+        #         data_node = node.search_add_child_for_multiple((signal, "DATA"))
+        #         data_bc_node = node.search_add_child_for("DATA")
+        #         data_node.inheritance.append(data_bc_node.inheritance[0])
+        #         for child in data_node.get_all_direct_children_names():
+        #             data_node.search_add_child_for(child)
+
+        #         handle_field(
+        #             node.search_add_child_for_multiple((signal, "DATA")),
+        #             keys,
+        #             prev_path=prev_path,
+        #         )
+
+        #     # check NXdata attributes
+        #     for attr in ("signal", "auxiliary_signals", "axes"):
+        #         handle_attribute(
+        #             node.search_add_child_for(attr),
+        #             keys,
+        #             prev_path=prev_path,
+        #         )
+
+        #     for i, axis in enumerate(axes):
+        #         if axis == ".":
+        #             continue
+        #         index = keys.get(f"{axis}_indices", i)
+
+        #         if f"AXISNAME[{axis}]" in keys:
+        #             axis = f"AXISNAME[{axis}]"
+        #         axis_data = _follow_link(keys.get(axis), prev_path)
+        #         if axis_data is None:
+        #             collector.collect_and_log(
+        #                 f"{prev_path}/{axis}",
+        #                 ValidationProblem.NXdataMissingAxisData,
+        #                 None,
+        #             )
+        #             break
+        #         else:
+        #             # Attach the base class to the inheritance chain
+        #             # if the concept for the axis is already defined in the appdef
+        #             # TODO: This appends the base class multiple times
+        #             # it should be done only once
+        #             axis_node = node.search_add_child_for_multiple((axis, "AXISNAME"))
+        #             axis_bc_node = node.search_add_child_for("AXISNAME")
+        #             axis_node.inheritance.append(axis_bc_node.inheritance[0])
+        #             for child in axis_node.get_all_direct_children_names():
+        #                 axis_node.search_add_child_for(child)
+
+        #             handle_field(
+        #                 node.search_add_child_for_multiple((axis, "AXISNAME")),
+        #                 keys,
+        #                 prev_path=prev_path,
+        #             )
+        #         if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
+        #             collector.collect_and_log(
+        #                 f"{prev_path}/{axis}",
+        #                 ValidationProblem.NXdataAxisMismatch,
+        #                 f"{prev_path}/{signal}",
+        #                 index,
+        #             )
+
+        # keys = _follow_link(keys, prev_path)
+        # signal = keys.get("@signal")
+        # aux_signals = keys.get("@auxiliary_signals", [])
+        # axes = keys.get("@axes", [])
+        # if isinstance(axes, str):
+        #     axes = [axes]
+
+        # if signal is not None:
+        #     check_nxdata()
+
+        # indices = map(lambda x: f"{x}_indices", axes)
+        # errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
 
     def handle_field(path: str, data: h5py.Dataset):
         node = find_node_for(path, node_type="field")
@@ -360,17 +523,31 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
             )
             return
         remove_from_req_fields(node.get_path())
-        is_valid_data_field(data[()], node.dtype, path)
+        is_valid_data_field(data[()], node.dtype, node.items, node.open_enum, path)
+        check_reserved_suffix(path, data)
+        check_reserved_prefix(path, data, "field")
 
         units = data.attrs.get("units")
         if node.unit is not None:
-            if units is None:
-                collector.collect_and_log(
-                    f"{path}/@units", ValidationProblem.MissingUnit, node.unit
-                )
-                return
-            remove_from_req_fields(f"{node.get_path()}/@units")
-            is_valid_unit(units, node.unit, None)
+            if node.unit != "NX_UNITLESS":
+                if units is None:
+                    collector.collect_and_log(
+                        f"{path}/@units", ValidationProblem.MissingUnit, node.unit
+                    )
+                    return
+                units_path = f"{node.get_path()}/@units"
+                remove_from_req_fields(units_path)
+
+                # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                if (
+                    transformation_type := data.attrs.get("transformation_type")
+                ) is not None:
+                    hints = {"transformation_type": transformation_type}
+                else:
+                    hints = {}
+
+                is_valid_unit_for_node(node, units, units_path, hints)
+
         elif units is not None:
             collector.collect_and_log(
                 f"{entry_name}/{path}/@units",
@@ -391,7 +568,14 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
                 )
                 continue
             remove_from_req_fields(node.get_path())
-            is_valid_data_field(attrs.get(attr_name), node.dtype, node.get_path())
+            is_valid_data_field(
+                attrs.get(attr_name),
+                node.dtype,
+                node.items,
+                node.open_enum,
+                node.get_path(),
+            )
+            check_reserved_prefix(path, data, "attribute")
 
     def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
@@ -904,6 +1088,87 @@ def validate_dict_against(
         # TODO: Raise error or log the issue?
         pass
 
+    def best_namefit_of(
+        name: str,
+        nodes: Iterable[NexusNode],
+        expected_types: list[str],
+        check_types: bool = False,
+    ) -> Optional[NexusNode]:
+        """
+        Get the best namefit of `name` in `keys`.
+
+        Args:
+            name (str): The name to fit against the keys.
+            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+
+        Returns:
+            Optional[NexusNode]: The best fitting node. None if no fit was found.
+        """
+        if not nodes:
+            return None
+
+        concept_name, instance_name = split_class_and_name_of(name)
+
+        best_match = None
+
+        for node in nodes:
+            if not node.variadic:
+                if instance_name == node.name:
+                    if node.type not in expected_types and check_types:
+                        expected_types_str = " or ".join(expected_types)
+                        collector.collect_and_log(
+                            name,
+                            ValidationProblem.InvalidNexusTypeForNamedConcept,
+                            node,
+                            expected_types_str,
+                        )
+                        raise TypeError(
+                            f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
+                            f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
+                            f"type '{node.type}')."
+                        )
+                    if concept_name and concept_name != node.name:
+                        inherited_names = [
+                            name
+                            if (name := elem.attrib.get("name")) is not None
+                            else type_attr[2:].upper()
+                            for elem in node.inheritance
+                            if (name := elem.attrib.get("name")) is not None
+                            or (type_attr := elem.attrib.get("type"))
+                            and len(type_attr) > 2
+                        ]
+                        if concept_name not in inherited_names:
+                            if node.type == "group":
+                                if concept_name != node.nx_class[2:].upper():
+                                    collector.collect_and_log(
+                                        concept_name,
+                                        ValidationProblem.InvalidConceptForNonVariadic,
+                                        node,
+                                    )
+                            else:
+                                collector.collect_and_log(
+                                    concept_name,
+                                    ValidationProblem.InvalidConceptForNonVariadic,
+                                    node,
+                                )
+                            return None
+                    return node
+            else:
+                if concept_name and concept_name == node.name:
+                    if instance_name == node.name:
+                        return node
+
+                    name_any = node.name_type == "any"
+                    name_partial = node.name_type == "partial"
+
+                    score = get_nx_namefit(
+                        instance_name, node.name, name_any, name_partial
+                    )
+                    if score > -1:
+                        best_match = node
+
+        return best_match
+
     def add_best_matches_for(
         key: str, node: NexusNode, check_types: bool = False
     ) -> Optional[NexusNode]:
@@ -1311,21 +1576,23 @@ def validate_dict_against(
                 # We can freely use this prefix everywhere.
                 return True
 
-            # Check that the prefix is used in the correct context.
-            match = re.match(r"(/ENTRY\[[^]]+])", key)
-            definition_value = None
-            if match:
-                definition_key = f"{match.group(1)}/definition"
-                definition_value = mapping.get(definition_key)
+            # # TODO: the actual check does not yet work
 
-            if definition_value != allowed_context:
-                collector.collect_and_log(
-                    prefix,
-                    ValidationProblem.ReservedPrefixInWrongContext,
-                    allowed_context,
-                    key,
-                )
-                return False
+            # # Check that the prefix is used in the correct context.
+            # match = re.match(r"(/ENTRY\[[^]]+])", key)
+            # definition_value = None
+            # if match:
+            #     definition_key = f"{match.group(1)}/definition"
+            #     definition_value = mapping.get(definition_key)
+
+            # if definition_value != allowed_context:
+            #     collector.collect_and_log(
+            #         prefix,
+            #         ValidationProblem.ReservedPrefixInWrongContext,
+            #         allowed_context,
+            #         key,
+            #     )
+            #     return False
 
         return True
 
