@@ -183,13 +183,19 @@ def is_valid_unit_for_node(
     )
 
 
-def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
+def validate_hdf_group_against(
+    appdef: str, data: h5py.Group, ignore_undocumented: bool = False
+) -> bool:
     """
     Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
 
     Args:
         appdef (str): The application definition to validate against.
         data (h5py.Group): The h5py group to validate.
+        ignore_undocumented (bool, optional):
+            Ignore all undocumented items in the verification
+            and just check if the required concepts are properly set.
+            Defaults to False.
 
     Returns:
         bool: True if the group is valid according to `appdef`, False otherwise.
@@ -410,9 +416,10 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
             path, node_type="group", nx_class=data.attrs.get("NX_class")
         )
         if node is None:
-            collector.collect_and_log(
-                path, ValidationProblem.MissingDocumentation, None
-            )
+            if not ignore_undocumented:
+                collector.collect_and_log(
+                    path, ValidationProblem.MissingDocumentation, None
+                )
             return
 
         # TODO: Do actual group checks
@@ -518,12 +525,15 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
     def handle_field(path: str, data: h5py.Dataset):
         node = find_node_for(path, node_type="field")
         if node is None:
-            collector.collect_and_log(
-                path, ValidationProblem.MissingDocumentation, None
-            )
+            if not ignore_undocumented:
+                collector.collect_and_log(
+                    path, ValidationProblem.MissingDocumentation, None
+                )
             return
         remove_from_req_fields(node.get_path())
-        is_valid_data_field(data[()], node.dtype, node.items, node.open_enum, path)
+        is_valid_data_field(
+            clean_str_attr(data[()]), node.dtype, node.items, node.open_enum, path
+        )
         check_reserved_suffix(path, data)
         check_reserved_prefix(path, data, "field")
 
@@ -549,11 +559,12 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
                 is_valid_unit_for_node(node, units, units_path, hints)
 
         elif units is not None:
-            collector.collect_and_log(
-                f"{entry_name}/{path}/@units",
-                ValidationProblem.MissingDocumentation,
-                path,
-            )
+            if not ignore_undocumented:
+                collector.collect_and_log(
+                    f"{entry_name}/{path}/@units",
+                    ValidationProblem.MissingDocumentation,
+                    path,
+                )
 
     def handle_attributes(path: str, attrs: h5py.AttributeManager):
         for attr_name in attrs:
@@ -563,9 +574,12 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
 
             node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
             if node is None:
-                collector.collect_and_log(
-                    f"{path}/@{attr_name}", ValidationProblem.MissingDocumentation, None
-                )
+                if not ignore_undocumented:
+                    collector.collect_and_log(
+                        f"{path}/@{attr_name}",
+                        ValidationProblem.MissingDocumentation,
+                        None,
+                    )
                 continue
             remove_from_req_fields(node.get_path())
             is_valid_data_field(
