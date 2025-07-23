@@ -718,8 +718,12 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
         value = np.array(value)
     # Handle 'object' dtype separately (for lists from HDF5 files)
     if value.dtype == np.dtype("O"):
-        return all(isinstance(v, accepted_types) for v in value.flat)
-    return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
+        return all(
+            isinstance(v.decode() if isinstance(v, bytes) else v, accepted_types)
+            for v in value.flat
+        )
+
+    return any(np.issubdtype(value.dtype, np.dtype(dtype)) for dtype in accepted_types)
 
 
 def is_positive_int(value: Any) -> bool:
