@@ -792,7 +792,8 @@ def is_valid_data_field(
             r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
             r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
         )
-        results = iso8601.search(value)
+        print(value)
+        results = iso8601.search(clean_str_attr(value))
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
 
@@ -1135,3 +1136,22 @@ def nested_dict_to_slash_separated_path(
             nested_dict_to_slash_separated_path(val, flattened_dict, path)
         else:
             flattened_dict[path] = val
+
+
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )

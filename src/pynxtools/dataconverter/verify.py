@@ -22,7 +22,7 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 from os import path
-from typing import Dict, Union
+from typing import Union
 
 import click
 from h5py import File, is_hdf5
@@ -34,8 +34,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def _get_def_map(file: str) -> Dict[str, str]:
-    def_map: Dict[str, str] = {}
+def _get_def_map(file: str) -> dict[str, str]:
+    def_map: dict[str, str] = {}
     with File(file, "r") as h5file:
         for entry_name, dataset in h5file.items():
             if (
@@ -50,9 +50,17 @@ def _get_def_map(file: str) -> Dict[str, str]:
 
 
 @click.command()
-@click.argument("file")
+# @click.argument("file")
+@click.argument(
+    "file",
+    type=click.Path(exists=True),
+)
 def verify(file: str):
-    """Verifies a nexus file"""
+    """
+    Verifies a NeXus HDF5 file.
+
+    FILE: The path to the NeXus file to validate.
+    """
 
     if not path.exists(file):
         raise click.FileError(file, hint=f'File "{file}" does not exist.')
