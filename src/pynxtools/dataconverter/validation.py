@@ -371,10 +371,15 @@ def validate_hdf_group_against(
 
         prefixes = reserved_prefixes.get(nx_type)
         if not prefixes:
-            return True
+            return
+
+        path = path.rsplit("/")[-1]
+
+        if nx_type == "attribute":
+            path = f"@{path}"
 
         if not path.startswith(tuple(prefixes)):
-            return False  # Irrelevant prefix, no check needed
+            return  # Irrelevant prefix, no check needed
 
         for prefix, allowed_context in prefixes.items():
             if not path.startswith(prefix):
@@ -392,6 +397,7 @@ def validate_hdf_group_against(
             if allowed_context == "all":
                 # We can freely use this prefix everywhere.
                 return
+
             if allowed_context != appdef_name:
                 collector.collect_and_log(
                     prefix,
@@ -404,6 +410,8 @@ def validate_hdf_group_against(
         return
 
     def handle_group(path: str, data: h5py.Group):
+        check_reserved_prefix(path, appdef_node.name, "group")
+
         node = find_node_for(
             path, node_type="group", nx_class=data.attrs.get("NX_class")
         )
@@ -413,13 +421,11 @@ def validate_hdf_group_against(
                     path, ValidationProblem.MissingDocumentation, None
                 )
             return
-        remove_from_req_groups(path)
+        remove_from_req_groups(node.get_path())
 
         if _check_for_nxcollection_parent(node):
             # NXcollection found in parents, stop checking
             return
-
-        check_reserved_prefix(path, appdef_node.name, "group")
 
         if node.nx_class == "NXdata":
             handle_nxdata(path, data)
@@ -489,6 +495,8 @@ def validate_hdf_group_against(
         errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
 
     def handle_field(path: str, data: h5py.Dataset):
+        check_reserved_prefix(path, appdef_node.name, "field")
+
         node = find_node_for(path, node_type="field")
         if node is None:
             if not ignore_undocumented:
@@ -496,8 +504,6 @@ def validate_hdf_group_against(
                     path, ValidationProblem.MissingDocumentation, None
                 )
             return
-        if "bool_value" in path:
-            print(path, data.attrs.keys(), data.attrs.values())
         remove_from_req_entities(node.get_path())
 
         if _check_for_nxcollection_parent(node):
@@ -507,7 +513,6 @@ def validate_hdf_group_against(
         is_valid_data_field(
             clean_str_attr(data[()]), node.dtype, node.items, node.open_enum, path
         )
-        check_reserved_prefix(path, appdef_node.name, "field")
 
         units = data.attrs.get("units")
         if node.unit is not None:
@@ -543,6 +548,8 @@ def validate_hdf_group_against(
                 # Ignore special attrs
                 continue
 
+            check_reserved_prefix(attr_name, appdef_node.name, "attribute")
+
             node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
             if node is None:
                 if not ignore_undocumented:
@@ -567,7 +574,6 @@ def validate_hdf_group_against(
                 node.open_enum,
                 node.get_path(),
             )
-            check_reserved_prefix(path, appdef_node.name, "attribute")
 
     def validate(path: str, item_data: Union[h5py.Group, h5py.Dataset]):
         if isinstance(item_data, h5py.Group):
@@ -583,6 +589,7 @@ def validate_hdf_group_against(
     required_groups = appdef_node.required_groups()
     required_entities = appdef_node.required_fields_and_attrs_names()
     tree = appdef_node.search_add_child_for("ENTRY")
+    remove_from_req_groups(tree.get_path())
     entry_name = data.name
     data.visititems(validate)
 
