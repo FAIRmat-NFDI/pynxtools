@@ -268,9 +268,13 @@ def validate_hdf_group_against(
 
         return node
 
-    def remove_from_req_concepts(path: str):
-        if path in required_concepts:
-            required_concepts.remove(path)
+    def remove_from_req_groups(path: str):
+        if path in required_groups:
+            required_groups.remove(path)
+
+    def remove_from_req_entities(path: str):
+        if path in required_entities:
+            required_entities.remove(path)
 
     def _check_for_nxcollection_parent(node: NexusNode):
         """
@@ -409,6 +413,7 @@ def validate_hdf_group_against(
                     path, ValidationProblem.MissingDocumentation, None
                 )
             return
+        remove_from_req_groups(path)
 
         if _check_for_nxcollection_parent(node):
             # NXcollection found in parents, stop checking
@@ -491,7 +496,9 @@ def validate_hdf_group_against(
                     path, ValidationProblem.MissingDocumentation, None
                 )
             return
-        remove_from_req_concepts(node.get_path())
+        if "bool_value" in path:
+            print(path, data.attrs.keys(), data.attrs.values())
+        remove_from_req_entities(node.get_path())
 
         if _check_for_nxcollection_parent(node):
             # NXcollection found in parents, stop checking
@@ -505,7 +512,7 @@ def validate_hdf_group_against(
         units = data.attrs.get("units")
         if node.unit is not None:
             units_path = f"{node.get_path()}/@units"
-            remove_from_req_concepts(units_path)
+            remove_from_req_entities(units_path)
             if node.unit != "NX_UNITLESS":
                 if units is None:
                     collector.collect_and_log(
@@ -526,7 +533,7 @@ def validate_hdf_group_against(
             if not ignore_undocumented:
                 collector.collect_and_log(
                     f"{entry_name}/{path}/@units",
-                    ValidationProblem.MissingDocumentation,
+                    ValidationProblem.ValidationProblem.UnitWithoutDocumentation,
                     path,
                 )
 
@@ -545,7 +552,7 @@ def validate_hdf_group_against(
                         None,
                     )
                 continue
-            remove_from_req_concepts(node.get_path())
+            remove_from_req_entities(node.get_path())
 
             if _check_for_nxcollection_parent(node):
                 # NXcollection found in parents, stop checking
@@ -563,7 +570,6 @@ def validate_hdf_group_against(
             check_reserved_prefix(path, appdef_node.name, "attribute")
 
     def validate(path: str, item_data: Union[h5py.Group, h5py.Dataset]):
-        # Namefit name against tree (use recursive caching)
         if isinstance(item_data, h5py.Group):
             handle_group(path, item_data)
         elif isinstance(item_data, h5py.Dataset):
@@ -574,12 +580,21 @@ def validate_hdf_group_against(
         handle_attributes(path, item_data.attrs)
 
     appdef_node = generate_tree_from(appdef)
-    required_concepts = appdef_node.required_fields_and_attrs_names()
+    required_groups = appdef_node.required_groups()
+    required_entities = appdef_node.required_fields_and_attrs_names()
     tree = appdef_node.search_add_child_for("ENTRY")
     entry_name = data.name
     data.visititems(validate)
 
-    for req_concept in required_concepts:
+    for req_concept in required_groups:
+        collector.collect_and_log(
+            req_concept, ValidationProblem.MissingRequiredGroup, None
+        )
+
+    for req_concept in required_entities:
+        # Skip if the entire group is missing
+        if any(req_concept.startswith(group) for group in required_groups):
+            continue
         if "@" in req_concept:
             collector.collect_and_log(
                 req_concept, ValidationProblem.MissingRequiredAttribute, None
