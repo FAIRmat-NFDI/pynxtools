@@ -393,6 +393,51 @@ class NexusNode(NodeMixin):
 
         return names
 
+    def required_groups(
+        self,
+        prev_path: str = "",
+        level: Literal["required", "recommended", "optional"] = "required",
+    ) -> list[str]:
+        """
+        Gets all required groups names of the current node and its children.
+
+        Args:
+            prev_path (str, optional):
+                The path prefix to attach to the names found at this node. Defaults to "".
+            level (Literal["required", "recommended", "optional"], optional):
+                Denotes which level of requiredness should be returned.
+                Setting this to `required` will return only required fields and attributes.
+                Setting this to `recommended` will return
+                both required and recommended fields and attributes.
+                Setting this to "optional" will return all fields and attributes
+                directly present in the application definition but no fields
+                inherited from the base classes.
+                Defaults to "required".
+
+        Returns:
+            list[str]: A list of required fields and attributes names.
+        """
+        lvl_map = {
+            "required": ("required",),
+            "recommended": ("recommended", "required"),
+            "optional": ("optional", "recommended", "required"),
+        }
+
+        req_children = []
+        optionalities = lvl_map.get(level, ("required",))
+        for child in self.children:
+            if child.optionality not in optionalities:
+                continue
+
+            if child.type == "group":
+                req_children.append(f"{prev_path}/{child.name}")
+
+        req_children.extend(
+            child.required_groups(prev_path=f"{prev_path}/{child.name}", level=level)
+        )
+
+        return req_children
+
     def required_fields_and_attrs_names(
         self,
         prev_path: str = "",
