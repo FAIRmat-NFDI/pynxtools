@@ -111,9 +111,7 @@ class Collector:
                 f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
             )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.info(
-                f"The unit, {path} = {value}, is being written but has no documentation."
-            )
+            logger.info(f"The unit, {path} = {value}, has no documentation.")
         if log_type == ValidationProblem.InvalidUnit:
             value = cast(Any, value)
             log_text = f"The unit '{args[0]}' at {path} does not match with the unit category {value.unit} of '{value.name}'."
@@ -157,9 +155,9 @@ class Collector:
             logger.error(f"Expected a field at {path} but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
             if "@" in path.rsplit("/")[-1]:
-                logger.warning(f"Attribute {path} written without documentation.")
+                logger.warning(f"Attribute {path} is not documented.")
             else:
-                logger.warning(f"Field {path} written without documentation.")
+                logger.warning(f"Field {path} is not documented.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
