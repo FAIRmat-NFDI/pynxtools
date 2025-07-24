@@ -432,9 +432,11 @@ class NexusNode(NodeMixin):
             if child.type == "group":
                 req_children.append(f"{prev_path}/{child.name}")
 
-        req_children.extend(
-            child.required_groups(prev_path=f"{prev_path}/{child.name}", level=level)
-        )
+            req_children.extend(
+                child.required_groups(
+                    prev_path=f"{prev_path}/{child.name}", level=level
+                )
+            )
 
         return req_children
 

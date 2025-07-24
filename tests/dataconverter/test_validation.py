@@ -27,7 +27,7 @@ from click.testing import CliRunner
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
-from pynxtools.dataconverter.verify import verify_cli
+from pynxtools.dataconverter.verify import verify
 from pynxtools.dataconverter.writer import Writer
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
@@ -951,7 +951,7 @@ def format_error_message(msg: str) -> str:
                 "The required group, /ENTRY[my_entry]/specified_group, hasn't been supplied.",
                 "Given group name 'SAMPLE' conflicts with the non-variadic name 'specified_group (req)', "
                 "which should be of type NXdata.",
-                "Field /ENTRY[my_entry]/SAMPLE[specified_group]/specified_field written without documentation.",
+                "Field /ENTRY[my_entry]/SAMPLE[specified_group]/specified_field is not documented.",
             ],
             id="illegal-concept-name-for-nonvariadic-group",
         ),
@@ -1056,7 +1056,7 @@ def format_error_message(msg: str) -> str:
             [
                 "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field but found a group.",
                 "Expected a group at /ENTRY[my_entry]/USER[my_user] but found a field or attribute.",
-                "Field /ENTRY[my_entry]/USER[my_user] written without documentation.",
+                "Field /ENTRY[my_entry]/USER[my_user] is not documented.",
             ],
             id="appdef-links-with-wrong-nexus-types",
         ),
@@ -1103,7 +1103,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Expected a group at /ENTRY[my_entry]/SAMPLE[my_sample] but found a field or attribute.",
-                "Field /ENTRY[my_entry]/SAMPLE[my_sample] written without documentation.",
+                "Field /ENTRY[my_entry]/SAMPLE[my_sample] is not documented.",
                 "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name but found a group.",
             ],
             id="baseclass-links-with-wrong-nexus-types",
@@ -1383,9 +1383,7 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/required_group/illegal_name",
                 1,
             ),
-            [
-                "Field /ENTRY[my_entry]/required_group/illegal_name written without documentation."
-            ],
+            ["Field /ENTRY[my_entry]/required_group/illegal_name is not documented."],
             id="add-undocumented-field",
         ),
         pytest.param(
@@ -1399,7 +1397,7 @@ def format_error_message(msg: str) -> str:
                 "illegal_attribute",
             ),
             [
-                "Attribute /ENTRY[my_entry]/required_group/author/@illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/required_group/author/@illegal is not documented."
             ],
             id="add-undocumented-attribute",
         ),
@@ -1419,7 +1417,7 @@ def format_error_message(msg: str) -> str:
                 "unknown",
             ),
             [
-                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal is not documented."
             ],
             id="group-with-illegal-attributes",
         ),
@@ -1430,7 +1428,7 @@ def format_error_message(msg: str) -> str:
                 "s",
             ),
             [
-                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s, is being written but has no documentation."
+                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s, has no documentation."
             ],
             id="field-with-illegal-unit",
         ),
@@ -1441,7 +1439,7 @@ def format_error_message(msg: str) -> str:
                 1,
             ),
             [
-                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type written without documentation."
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type is not documented."
             ],
             id="bad-namefitting",
         ),
@@ -1451,7 +1449,7 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/data/test",
                 1,
             ),
-            ["Field /ENTRY[my_entry]/data/test written without documentation."],
+            ["Field /ENTRY[my_entry]/data/test is not documented."],
             id="namefitting-of-illegal-named-group",
         ),
         pytest.param(
@@ -1460,7 +1458,7 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/USE[user]/name",
                 "Some name",
             ),
-            ["Field /ENTRY[my_entry]/USE[user]/name written without documentation."],
+            ["Field /ENTRY[my_entry]/USE[user]/name is not documented."],
             id="namefitting-of-group-with-typo",
         ),
         pytest.param(
@@ -1469,7 +1467,7 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/USE[user]/test",
                 "Some name",
             ),
-            ["Field /ENTRY[my_entry]/USE[user]/test written without documentation."],
+            ["Field /ENTRY[my_entry]/USE[user]/test is not documented."],
             id="namefitting-of-group-with-typo-and-new-field",
         ),
         pytest.param(
@@ -1553,7 +1551,7 @@ def format_error_message(msg: str) -> str:
                 1,
             ),
             [
-                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name written without documentation."
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name is not documented."
             ],
             id="baseclass-add-undocumented-field",
         ),
@@ -1564,7 +1562,7 @@ def format_error_message(msg: str) -> str:
                 "illegal_attribute",
             ),
             [
-                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal is not documented."
             ],
             id="baseclass-add-undocumented-attribute",
         ),
@@ -1592,7 +1590,7 @@ def format_error_message(msg: str) -> str:
                 "s",
             ),
             [
-                "The unit, /ENTRY[my_entry]/required_group/author/@units = s, is being written but has no documentation."
+                "The unit, /ENTRY[my_entry]/required_group/author/@units = s, has no documentation."
             ],
             id="baseclass-field-with-illegal-unit",
         ),
@@ -1741,27 +1739,27 @@ def format_error_message(msg: str) -> str:
                         alter_dict(
                             TEMPLATE,
                             "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
-                            "some text",
+                            1.0,
                         ),
                         "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
-                        "some text",
+                        1.0,
                     ),
                     "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
-                    "some text",
+                    1,
                 ),
                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
-                "some text",
+                1.0,
             ),
             [
                 "Reserved prefix @BLUESKY_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid here.",
-                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr written without documentation.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr is not documented.",
                 "Reserved prefix @DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid here. "
                 "It is only valid in the context of NXmx.",
-                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr written without documentation.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr is not documented.",
                 "Reserved prefix DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid here. "
                 "It is only valid in the context of NXmx.",
-                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field written without documentation.",
-                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr written without documentation.",
+                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field is not documented.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr is not documented.",
             ],
             id="reserved-prefix",
         ),
@@ -2200,61 +2198,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         #     ),
         #     [],
         #     id="array-of-int-instead-of-float",
-        # ),
-        # pytest.param(
-        #     set_to_none_in_dict(
-        #         TEMPLATE,
-        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
-        #         "required",
-        #     ),
-        #     [
-        #         "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
-        #         "/bool_value is"
-        #         " required and hasn't been supplied by the reader.",
-        #         "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value, but the field does not exist.",
-        #     ],
-        #     id="empty-required-field",
-        # ),
-        # pytest.param(
-        #     set_to_none_in_dict(
-        #         TEMPLATE,
-        #         "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
-        #         "required",
-        #     ),
-        #     [
-        #         "The field corresponding to /ENTRY[my_entry]/"
-        #         "NXODD_name[nxodd_two_name]/bool_value is"
-        #         " required and hasn't been supplied by the reader.",
-        #         "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value, but the field does not exist.",
-        #     ],
-        #     id="empty-required-field",
-        # ),
-        # pytest.param(
-        #     remove_from_dict(
-        #         TEMPLATE,
-        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-        #         "optional",
-        #     ),
-        #     [
-        #         "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value.",
-        #         "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units will not be written.",
-        #     ],
-        #     id="removed-optional-value-with-unit-remaining",
-        # ),
-        # pytest.param(
-        #     remove_from_dict(
-        #         remove_from_dict(
-        #             TEMPLATE,
-        #             "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
-        #             "required",
-        #         ),
-        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units",
-        #         "required",
-        #     ),
-        #     [
-        #         "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader."
-        #     ],
-        #     id="missing-required-value",
         # ),
         # pytest.param(
         #     remove_from_dict(
@@ -3047,37 +2990,34 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         #     ],
         #     id="reserved-suffix-from-baseclass",
         # ),
-        # pytest.param(
-        #     alter_dict(
-        #         alter_dict(
-        #             alter_dict(
-        #                 alter_dict(
-        #                     TEMPLATE,
-        #                     "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
-        #                     "some text",
-        #                 ),
-        #                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
-        #                 "some text",
-        #             ),
-        #             "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
-        #             "some text",
-        #         ),
-        #         "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
-        #         "some text",
-        #     ),
-        #     [
-        #         "Reserved prefix @BLUESKY_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid here.",
-        #         "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr written without documentation.",
-        #         "Reserved prefix @DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid here. "
-        #         "It is only valid in the context of NXmx.",
-        #         "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr written without documentation.",
-        #         "Reserved prefix DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid here. "
-        #         "It is only valid in the context of NXmx.",
-        #         "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field written without documentation.",
-        #         "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr written without documentation.",
-        #     ],
-        #     id="reserved-prefix",
-        # ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
+                            1.0,
+                        ),
+                        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
+                        1.0,
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
+                    1,
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
+                1.0,
+            ),
+            [
+                "Reserved prefix @BLUESKY_ was used in NXtest, but is not valid here.",
+                "Attribute my_group/@BLUESKY_attr is not documented.",
+                "Reserved prefix @DECTRIS_ was used in NXtest, but is not valid here. It is only valid in the context of NXmx.",
+                "Attribute my_group/@DECTRIS_attr is not documented.",
+                "Attribute my_group/@NX_attr is not documented.",
+                "Reserved prefix DECTRIS_ was used in NXtest, but is not valid here. It is only valid in the context of NXmx.",
+            ],
+            id="reserved-prefix",
+        ),
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
@@ -3097,8 +3037,8 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
-            _ = CliRunner().invoke(verify_cli, [str(hdf_file_path)])
-        # assert caplog.text == ""
+            assert verify(str(hdf_file_path))
+        assert caplog.text == ""
     else:
         if request.node.callspec.id in (
             "field-with-illegal-unit",
@@ -3107,11 +3047,11 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             "baseclass-open-enum-with-new-item",
         ):
             with caplog.at_level(logging.INFO):
-                _ = CliRunner().invoke(verify_cli, [str(hdf_file_path)])
+                assert verify(str(hdf_file_path))
                 assert error_messages[0] in caplog.text
         else:
             with caplog.at_level(logging.WARNING):
-                _ = CliRunner().invoke(verify_cli, [str(hdf_file_path)])
+                assert not verify(str(hdf_file_path))
             assert len(caplog.records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
