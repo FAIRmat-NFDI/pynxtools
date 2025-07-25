@@ -111,7 +111,7 @@ class Collector:
                 f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
             )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.info(f"The unit, {path} = {value}, has no documentation.")
+            logger.info(f"The unit {path} = {value} has no documentation.")
         if log_type == ValidationProblem.InvalidUnit:
             value = cast(Any, value)
             log_text = f"The unit '{args[0]}' at {path} does not match with the unit category {value.unit} of '{value.name}'."
@@ -128,7 +128,7 @@ class Collector:
                 f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
-            logger.warning(f"The required group, {path}, hasn't been supplied.")
+            logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
             logger.warning(
                 f"The field corresponding to {path} is required "
@@ -152,12 +152,12 @@ class Collector:
         elif log_type == ValidationProblem.ExpectedGroup:
             logger.error(f"Expected a group at {path} but found a field or attribute.")
         elif log_type == ValidationProblem.ExpectedField:
-            logger.error(f"Expected a field at {path} but found a group.")
+            logger.error(f"Expected a field at {path}, but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
             if "@" in path.rsplit("/")[-1]:
-                logger.warning(f"Attribute {path} is not documented.")
+                logger.warning(f"Attribute {path} has no documentation.")
             else:
-                logger.warning(f"Field {path} is not documented.")
+                logger.warning(f"Field {path} has no documentation.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
@@ -205,7 +205,8 @@ class Collector:
             value = cast(Any, value)
             logger.error(
                 f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
-                f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
+                f"conflicts with another existing concept {value.get_path()} of the same name, which "
+                f"is of type '{value.type}'."
             )
         elif log_type == ValidationProblem.KeysWithAndWithoutConcept:
             value = cast(Any, value)
@@ -248,7 +249,7 @@ class Collector:
         ):
             self.data.add(path + str(log_type) + str(value))
 
-    def has_validation_problems(self):
+    def has_validation_problems(self) -> bool:
         """Returns True if there were any validation problems."""
         return len(self.data) > 0
 
