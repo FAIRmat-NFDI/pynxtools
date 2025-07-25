@@ -130,10 +130,9 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(
-                f"The field corresponding to {path} is required "
-                "and hasn't been supplied by the reader.",
-            )
+            logger.warning(f"The required field {path} hasn't been supplied.")
+        elif log_type == ValidationProblem.MissingRequiredAttribute:
+            logger.warning(f"The required attribute {path} hasn't been supplied.")
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
                 f"The value at {path} should be one of the following Python types: {value}"
@@ -150,7 +149,7 @@ class Collector:
                 f"The value at {path} should be a positive int, but is {value}."
             )
         elif log_type == ValidationProblem.ExpectedGroup:
-            logger.error(f"Expected a group at {path} but found a field or attribute.")
+            logger.error(f"Expected a group at {path}, but found a field or attribute.")
         elif log_type == ValidationProblem.ExpectedField:
             logger.error(f"Expected a field at {path}, but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
@@ -162,8 +161,6 @@ class Collector:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
             )
-        elif log_type == ValidationProblem.MissingRequiredAttribute:
-            logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
             logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingConcept:

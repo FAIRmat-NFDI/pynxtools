@@ -746,6 +746,12 @@ def validate_hdf_group_against(
         if any(req_concept.startswith(group) for group in required_groups):
             continue
         if "@" in req_concept:
+            # Skip if the entire field is missing
+            if any(
+                req_concept.rsplit("@", -1)[0].startswith(group)
+                for group in required_entities
+            ):
+                continue
             collector.collect_and_log(
                 f"{entry_name}/{req_concept}",
                 ValidationProblem.MissingRequiredAttribute,
