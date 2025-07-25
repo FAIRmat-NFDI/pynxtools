@@ -722,6 +722,8 @@ def validate_hdf_group_against(
             check_reserved_suffix(f"{entry_name}/{path}", data[parent_path])
         handle_attributes(path, item_data.attrs)
 
+    collector.clear()
+
     appdef_node = generate_tree_from(appdef)
     tree = appdef_node.search_add_child_for("ENTRY")
     entry_name = data.name

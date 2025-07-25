@@ -2380,7 +2380,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "translation",
             ),
             [
-                "Field /my_entry/my_instrument/source/transformations/translation_no_units/@units requires a unit in the unit category NX_TRANSFORMATION.",
+                "Field /my_entry/my_instrument/source/transformations/translation_no_units requires a unit in the unit category NX_TRANSFORMATION.",
                 "The unit 'm' at /my_entry/my_instrument/source/transformations/wrong_translation/@units does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. "
                 "Based on the 'transformation_type' of the field /my_entry/my_instrument/source/transformations/wrong_translation, it should match with 'NX_ANGLE'.",
             ],
@@ -2421,7 +2421,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "rotation",
             ),
             [
-                "Field /my_entry/my_instrument/source/transformations/rotation_no_units/@units requires a unit in the unit category NX_TRANSFORMATION.",
+                "Field /my_entry/my_instrument/source/transformations/rotation_no_units requires a unit in the unit category NX_TRANSFORMATION.",
                 "The unit 'degree' at /my_entry/my_instrument/source/transformations/wrong_rotation/@units does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. "
                 "Based on the 'transformation_type' of the field /my_entry/my_instrument/source/transformations/wrong_rotation, it should match with 'NX_LENGTH'.",
             ],
@@ -2442,7 +2442,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "m",
             ),
             [
-                "Field /my_entry/my_instrument/source/transformations/direction/@units requires a unit in the unit category NX_TRANSFORMATION.",
+                "Field /my_entry/my_instrument/source/transformations/direction requires a unit in the unit category NX_TRANSFORMATION.",
                 "The unit 'm' at /my_entry/my_instrument/source/transformations/direction_with_unit/@units does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. "
                 "Based on the 'transformation_type' of the field /my_entry/my_instrument/source/transformations/direction_with_unit, it should match with 'NX_UNITLESS'.",
             ],
@@ -2520,7 +2520,10 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[my_entry]/USE[user]/test",
                 "Some name",
             ),
-            ["Field /my_entry/user/test has no documentation."],
+            [
+                "Field /my_entry/user/test has no documentation.",
+                "The field corresponding to /my_entry/user/name is required and hasn't been supplied by the reader.",
+            ],
             id="namefitting-of-group-with-typo-and-new-field",
         ),
         pytest.param(
@@ -2769,9 +2772,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
-    # if not data_dict:
-    #     return
-
     caplog.clear()
 
     caplog_level = "INFO"
