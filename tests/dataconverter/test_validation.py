@@ -561,7 +561,7 @@ def format_error_message(msg: str) -> str:
             [
                 "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value to /a-link.",
                 "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value will not be written.",
-                "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value is required and hasn't been supplied by the reader.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value hasn't been supplied.",
             ],
             id="link-dict-instead-of-int",
         ),
@@ -709,9 +709,7 @@ def format_error_message(msg: str) -> str:
                 "required",
             ),
             [
-                "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
-                "/bool_value is"
-                " required and hasn't been supplied by the reader.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value hasn't been supplied.",
                 "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value, but the field does not exist.",
             ],
             id="empty-required-field",
@@ -723,9 +721,7 @@ def format_error_message(msg: str) -> str:
                 "required",
             ),
             [
-                "The field corresponding to /ENTRY[my_entry]/"
-                "NXODD_name[nxodd_two_name]/bool_value is"
-                " required and hasn't been supplied by the reader.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value hasn't been supplied.",
                 "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value, but the field does not exist.",
             ],
             id="empty-required-field",
@@ -753,7 +749,7 @@ def format_error_message(msg: str) -> str:
                 "required",
             ),
             [
-                "The field corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value hasn't been supplied."
             ],
             id="missing-required-value",
         ),
@@ -764,7 +760,7 @@ def format_error_message(msg: str) -> str:
                 "required",
             ),
             [
-                'Missing attribute: "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute"'
+                "The required attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute hasn't been supplied."
             ],
             id="missing-required-group-attribute",
         ),
@@ -841,8 +837,7 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
             ),
             [
-                "The field corresponding to /ENTRY[my_entry]/optional_parent/"
-                "required_child is required and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/optional_parent/required_child hasn't been supplied."
             ],
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
@@ -853,9 +848,7 @@ def format_error_message(msg: str) -> str:
                 "required",
             ),
             [
-                "The field corresponding to /ENTRY[my_entry]/"
-                "OPTIONAL_group[my_group]/required_field "
-                "is required and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field hasn't been supplied."
             ],
             id="required-field-not-provided-in-variadic-optional-group",
         ),
@@ -1004,8 +997,8 @@ def format_error_message(msg: str) -> str:
                 {"link": "/my_entry/specified_group"},
             ),
             [
-                "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field but found a group.",
-                "Expected a group at /ENTRY[my_entry]/USER[my_user] but found a field or attribute.",
+                "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field, but found a group.",
+                "Expected a group at /ENTRY[my_entry]/USER[my_user], but found a field or attribute.",
                 "Field /ENTRY[my_entry]/USER[my_user] has no documentation.",
             ],
             id="appdef-links-with-wrong-nexus-types",
@@ -1052,9 +1045,9 @@ def format_error_message(msg: str) -> str:
                 {"link": "/my_entry/my_group"},
             ),
             [
-                "Expected a group at /ENTRY[my_entry]/SAMPLE[my_sample] but found a field or attribute.",
+                "Expected a group at /ENTRY[my_entry]/SAMPLE[my_sample], but found a field or attribute.",
                 "Field /ENTRY[my_entry]/SAMPLE[my_sample] has no documentation.",
-                "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name but found a group.",
+                "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name, but found a group.",
             ],
             id="baseclass-links-with-wrong-nexus-types",
         ),
@@ -1601,8 +1594,7 @@ def format_error_message(msg: str) -> str:
                 "456",
             ),
             [
-                "The field corresponding to /ENTRY[my_entry]/identified_calibration/identifier_1 is required "
-                "and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/identified_calibration/identifier_1 hasn't been supplied."
             ],
             id="group-with-correct-concept-and-non-concept-sibling",
         ),
@@ -1931,6 +1923,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "No path '/a-link' available to be linked.",
+                "The required field /my_entry/nxodd_name/int_value hasn't been supplied.",
             ],
             id="link-dict-instead-of-int",
         ),
@@ -2055,7 +2048,9 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute",
                 "required",
             ),
-            ['Missing attribute: "/my_entry/nxodd_name/@group_attribute"'],
+            [
+                "The required attribute /my_entry/nxodd_name/@group_attribute hasn't been supplied."
+            ],
             id="missing-required-group-attribute",
         ),
         pytest.param(
@@ -2068,7 +2063,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[my_entry]/NXODD_name",
                 "optional",
             ),
-            ["The required group /ENTRY/NXODD_name hasn't been supplied."],
+            ["The required group /my_entry/NXODD_name hasn't been supplied."],
             id="all-required-fields-set-to-none",
         ),
         pytest.param(
@@ -2467,7 +2462,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "Field /my_entry/user/test has no documentation.",
-                "The field corresponding to /my_entry/user/name is required and hasn't been supplied by the reader.",
+                "The required field /my_entry/user/name hasn't been supplied.",
             ],
             id="namefitting-of-group-with-typo-and-new-field",
         ),
@@ -2751,4 +2746,4 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
 
-    os.remove(hdf_file_path)
+    # os.remove(hdf_file_path)
