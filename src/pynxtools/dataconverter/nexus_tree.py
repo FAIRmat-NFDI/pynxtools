@@ -426,7 +426,9 @@ class NexusNode(NodeMixin):
         req_children = []
         optionalities = lvl_map.get(level, ("required",))
         for child in self.children:
-            if child.type == "group" and child.optionality in optionalities:
+            if child.optionality not in optionalities:
+                continue
+            if child.type == "group":
                 req_children.append(f"{prev_path}/{child.name}")
 
             req_children.extend(
@@ -470,11 +472,13 @@ class NexusNode(NodeMixin):
         req_children = []
         optionalities = lvl_map.get(level, ("required",))
         for child in self.children:
-            if child.type == "attribute" and child.optionality in optionalities:
+            if child.optionality not in optionalities:
+                continue
+            if child.type == "attribute":
                 req_children.append(f"{prev_path}/@{child.name}")
                 continue
 
-            if child.type == "field" and child.optionality in optionalities:
+            if child.type == "field":
                 req_children.append(f"{prev_path}/{child.name}")
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
