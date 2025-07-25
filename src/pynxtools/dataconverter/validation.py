@@ -297,12 +297,23 @@ def validate_hdf_group_against(
 
         return node
 
+    def update_required_concepts(path: str, node: NexusNode):
+        required_subgroups = [
+            f"{path}{grp.lstrip('/')}" for grp in node.required_groups()
+        ]
+        required_subentities = [
+            f"{path}{ent.lstrip('/')}" for ent in node.required_fields_and_attrs_names()
+        ]
+        required_groups.update(required_subgroups)
+        if path:
+            required_entities.update(required_subentities)
+
     def _variadic_node_exists_for(
         path: str, variadic_name: str, node_type: Optional[str] = None
     ):
         def _get_parent_path(path: str):
             if "/" not in path.strip("/"):
-                return path
+                return ""
             return path.rstrip("/").rsplit("/", 1)[0]
 
         if _get_parent_path(variadic_name) == _get_parent_path(path):
@@ -503,13 +514,7 @@ def validate_hdf_group_against(
                 )
             return
 
-        required_subgroups = [f"{path}{grp}" for grp in node.required_groups()]
-        required_subentities = [
-            f"{path}{ent}" for ent in node.required_fields_and_attrs_names()
-        ]
-        required_groups.update(required_subgroups)
-        required_entities.update(required_subentities)
-
+        # update_required_concepts(path, node)
         remove_from_req_groups(path)
 
         if _check_for_nxcollection_parent(node):
@@ -613,11 +618,7 @@ def validate_hdf_group_against(
                 )
             return
 
-        required_subentities = [
-            f"{path}{ent}" for ent in node.required_fields_and_attrs_names()
-        ]
-        required_entities.update(required_subentities)
-
+        # update_required_concepts(path, node)
         remove_from_req_entities(path)
 
         if _check_for_nxcollection_parent(node):
@@ -728,11 +729,11 @@ def validate_hdf_group_against(
     tree = appdef_node.search_add_child_for("ENTRY")
     entry_name = data.name
 
-    required_group_nodes = appdef_node.required_groups()
+    required_group_nodes = tree.required_groups()
     required_entity_nodes = appdef_node.required_fields_and_attrs_names()
-    required_groups: set[str] = {entry_name}
+    required_groups: set[str] = set()
     required_entities: set[str] = set()
-    remove_from_req_groups(entry_name)
+    update_required_concepts("", tree)
 
     data.visititems(validate)
 

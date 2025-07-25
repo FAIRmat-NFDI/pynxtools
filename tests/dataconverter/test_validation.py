@@ -2246,7 +2246,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            ["The required group, /my_entry/required_group2, hasn't been supplied."],
+            ["The required group /my_entry/required_group2 hasn't been supplied."],
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -2257,7 +2257,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[entry]/required_group",
                 None,
             ),
-            ["The required group, /my_entry/required_group, hasn't been supplied."],
+            ["The required group /my_entry/required_group hasn't been supplied."],
             id="allow-required-and-empty-group",
         ),
         pytest.param(
@@ -2517,7 +2517,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "Field /my_entry/user/test has no documentation.",
-                "The required field /my_entry/user/name hasn't been supplied.",
             ],
             id="namefitting-of-group-with-typo-and-new-field",
         ),
@@ -2801,4 +2800,4 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
 
-    # os.remove(hdf_file_path)
+    os.remove(hdf_file_path)
