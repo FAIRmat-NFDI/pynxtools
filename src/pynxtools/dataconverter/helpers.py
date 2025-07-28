@@ -708,7 +708,7 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     # Handle 'object' dtype separately (for lists from HDF5 files)
     if value.dtype == np.dtype("O"):
         return all(
-            isinstance(v.decode() if isinstance(v, bytes) else v, accepted_types)
+            isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
             for v in value.flat
         )
 

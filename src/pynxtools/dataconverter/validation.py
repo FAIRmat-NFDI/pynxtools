@@ -31,7 +31,6 @@ if DEBUG_VALIDATION:
 import h5py
 import lxml.etree as ET
 import numpy as np
-from anytree import Resolver
 from cachetools import LRUCache, cached
 from cachetools.keys import hashkey
 
