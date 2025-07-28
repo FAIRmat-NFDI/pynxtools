@@ -1850,7 +1850,7 @@ def format_error_message(msg: str) -> str:
     ],
 )
 def test_validate_data_dict(data_dict, error_messages, caplog, request):
-    """Unit test for the data validation routine."""
+    """Unit test for the data validation routine on the template."""
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
@@ -2857,9 +2857,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
-    caplog.clear()
-
-    caplog_level = "INFO"
+    """Unit test for the data validation routine for a NeXus HDf5 file."""
     template = Template()
 
     for key, val in data_dict.items():
@@ -2988,7 +2986,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
     ],
 )
 def test_validate_cli(caplog, cli_inputs, error_messages):
-    """A test for the convert CLI."""
+    """Unit test for the HDF5 validation CLI."""
     runner = CliRunner()
 
     if not error_messages:

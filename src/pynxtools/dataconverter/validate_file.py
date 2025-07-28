@@ -35,6 +35,16 @@ logger.setLevel(logging.INFO)
 
 
 def _get_def_map(file: str) -> dict[str, str]:
+    """
+    Extract the application definitions used by each NXentry in a NeXus HDF5 file.
+
+    Args:
+        file (str): Path to the NeXus HDF5 file.
+
+    Returns:
+        dict[str, str]: A mapping from NXentry names to their corresponding
+                        NXDL (NeXus Definition Language) application definitions.
+    """
     def_map: dict[str, str] = {}
     with File(file, "r") as h5file:
         for entry_name, dataset in h5file.items():
@@ -51,11 +61,15 @@ def _get_def_map(file: str) -> dict[str, str]:
 
 def validate(file: str, ignore_undocumented: bool = False):
     """
-    Validates a NeXus HDF5 file.
+    Validate a NeXus HDF5 file against its declared application definitions.
 
-    FILE: The path to the NeXus file to validate.
+    Args:
+        file (str): Path to the NeXus HDF5 file.
+        ignore_undocumented (bool): If True, ignore undocumented concepts during validation.
+
+    Raises:
+        click.FileError: If the file does not exist, is not a file, or is not a valid HDF5 file.
     """
-
     if not path.exists(file):
         raise click.FileError(file, hint=f'File "{file}" does not exist.')
 
@@ -103,4 +117,9 @@ def validate(file: str, ignore_undocumented: bool = False):
     help="Ignore all undocumented concepts during validation.",
 )
 def validate_cli(file: str, ignore_undocumented: bool = False):
+    """
+    Validates a NeXus HDF5 file.
+
+    FILE: The path to the NeXus file to validate.
+    """
     validate(file, ignore_undocumented)
