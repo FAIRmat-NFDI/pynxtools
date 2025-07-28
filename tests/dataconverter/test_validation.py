@@ -2562,6 +2562,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "Field /my_entry/user/test has no documentation.",
+                "The required field /my_entry/user/name hasn't been supplied.",
             ],
             id="namefitting-of-group-with-typo-and-new-field",
         ),
