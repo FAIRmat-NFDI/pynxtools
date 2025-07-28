@@ -18,6 +18,7 @@
 #
 DEBUG_VALIDATION = False
 import copy
+import os
 import re
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, MutableMapping
@@ -184,7 +185,10 @@ def is_valid_unit_for_node(
 
 
 def validate_hdf_group_against(
-    appdef: str, data: h5py.Group, ignore_undocumented: bool = False
+    appdef: str,
+    data: h5py.Group,
+    file: str,
+    ignore_undocumented: bool = False,
 ) -> bool:
     """
     Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
@@ -192,6 +196,7 @@ def validate_hdf_group_against(
     Args:
         appdef (str): The application definition to validate against.
         data (h5py.Group): The h5py group to validate.
+        file (str): The filename of the HDF5 group.
         ignore_undocumented (bool, optional):
             Ignore all undocumented items in the verification
             and just check if the required concepts are properly set.
@@ -500,6 +505,59 @@ def validate_hdf_group_against(
 
         return
 
+    def follow_target(path: str, target: str):
+        def parse_target(target: str):
+            if ":" in target and not target.startswith("/"):
+                # Probably external: "filename:path"
+                external_file, internal_path = target.split(":", 1)
+                return external_file, internal_path
+            else:
+                # Internal path only
+                return None, target
+
+        external_file, internal_path = parse_target(target)
+
+        if external_file is None:
+            # Internal path check
+            if internal_path.startswith(entry_name):
+                if internal_path not in data:
+                    collector.collect_and_log(
+                        path, ValidationProblem.BrokenLink, target
+                    )
+            else:
+                try:
+                    with h5py.File(file, "r") as h5file:
+                        if internal_path not in h5file:
+                            collector.collect_and_log(
+                                path, ValidationProblem.BrokenLink, target
+                            )
+                except Exception:
+                    collector.collect_and_log(
+                        path, ValidationProblem.BrokenLink, target
+                    )
+        else:
+            # External path check
+            try:
+                with h5py.File(file, "r") as h5file:
+                    base_path = os.path.dirname(h5file.filename)
+            except Exception:
+                collector.collect_and_log(path, ValidationProblem.BrokenLink, target)
+                return
+
+            external_path = os.path.join(base_path, external_file)
+            if not os.path.exists(external_path):
+                collector.collect_and_log(path, ValidationProblem.BrokenLink, target)
+                return
+
+            try:
+                with h5py.File(external_path, "r") as external_h5:
+                    if internal_path not in external_h5:
+                        collector.collect_and_log(
+                            path, ValidationProblem.BrokenLink, target
+                        )
+            except Exception:
+                collector.collect_and_log(path, ValidationProblem.BrokenLink, target)
+
     def handle_group(path: str, data: h5py.Group):
         full_path = f"{entry_name}/{path}"
 
@@ -667,6 +725,10 @@ def validate_hdf_group_against(
             full_path = f"{entry_name}/{path}/@{attr_name}"
             if attr_name in ("NX_class", "units"):
                 # Ignore special attrs
+                continue
+            elif attr_name == "target":
+                target = attrs.get(attr_name, "")
+                follow_target(full_path, target)
                 continue
             check_reserved_prefix(attr_name, appdef_node.name, "attribute")
 

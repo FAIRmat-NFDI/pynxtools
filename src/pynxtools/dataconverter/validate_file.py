@@ -68,12 +68,15 @@ def validate(file: str, ignore_undocumented: bool = False):
     def_map = _get_def_map(file)
 
     if not def_map:
-        logger.info(f"Could not find any valid entry in file {file}")
+        logger.warning(f"Could not find any valid entry in file {file}")
 
     with File(file, "r") as h5file:
         for entry, nxdl in def_map.items():
             is_valid = validate_hdf_group_against(
-                nxdl, h5file[entry], ignore_undocumented
+                nxdl,
+                h5file[entry],
+                file,
+                ignore_undocumented,
             )
 
             if is_valid:
