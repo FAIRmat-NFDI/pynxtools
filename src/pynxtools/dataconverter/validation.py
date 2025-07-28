@@ -726,11 +726,6 @@ def validate_hdf_group_against(
             )
 
     def validate(path: str, h5_obj: Union[h5py.Group, h5py.Dataset]):
-        if obj_id := h5_obj.id.__hash__() not in seen_ids:
-            seen_ids.add(obj_id)
-        else:
-            return
-
         if isinstance(h5_obj, h5py.Group):
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
@@ -739,7 +734,7 @@ def validate_hdf_group_against(
             check_reserved_suffix(f"{entry_name}/{path}", data[parent_path])
         handle_attributes(path, h5_obj.attrs)
 
-    def visit_links(group: h5py.Group, path: str = "", filename: str = ""):
+    def visititems(group: h5py.Group, path: str = "", filename: str = ""):
         for name in group:
             full_path = f"{path}/{name}".lstrip("/")
             link = group.get(name, getlink=True)
@@ -798,7 +793,7 @@ def validate_hdf_group_against(
                 validate(full_path, resolved_obj)
                 if isinstance(resolved_obj, h5py.Group):
                     # recurse into subgroups
-                    visit_links(resolved_obj, full_path, filename)
+                    visititems(resolved_obj, full_path, filename)
 
     collector.clear()
 
@@ -806,16 +801,11 @@ def validate_hdf_group_against(
     tree = appdef_node.search_add_child_for("ENTRY")
     entry_name = data.name
 
-    # We store all HDf5 IDs to avoid repetitive checking when resolving links
-    seen_ids = set()
-
     required_groups: set[str] = set()
     required_entities: set[str] = set()
     update_required_concepts("", tree)
 
-    # data.visititems(validate)
-    data.visititems(validate)
-    visit_links(data, filename=filename)
+    visititems(data, filename=filename)
 
     for req_concept in sorted(required_groups):
         collector.collect_and_log(
