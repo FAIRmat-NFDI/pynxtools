@@ -78,6 +78,8 @@ class ValidationProblem(Enum):
     UnitWithoutField = auto()
     AttributeForNonExistingConcept = auto()
     BrokenLink = auto()
+    MissingTargetAttribute = auto()
+    TargetAttributeMismatch = auto()
     FailedNamefitting = auto()
     NXdataMissingSignalData = auto()
     NXdataMissingAxisData = auto()
@@ -170,6 +172,15 @@ class Collector:
             )
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
+        elif log_type == ValidationProblem.MissingTargetAttribute:
+            logger.info(
+                f"A link was used for {path}, but no '@target' attribute was found."
+            )
+        elif log_type == ValidationProblem.TargetAttributeMismatch:
+            logger.info(
+                f"A link was used for {path}, but its @target attribute '{value}' "
+                f"does not match with the link's target '{args[0]}'."
+            )
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
         elif log_type == ValidationProblem.NXdataMissingSignalData:

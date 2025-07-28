@@ -2257,10 +2257,11 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
-                    "test",  # {"link": "/my_entry/nxodd_name/char_value"},
+                    # {"link": "/my_entry/nxodd_name/char_value"},
+                    {"link": "/my_entry/required_group2/description"},
                 ),
                 "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
-                "/my_entry/nxodd_name/char_value",
+                "/my_entry/required_group2/description",
             ),
             [],
             id="internal-link-with-target",
@@ -2270,15 +2271,18 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
-                    "test",  # ,{"link": "/my_entry/nxodd_name/char_value"},
+                    # {"link": "/my_entry/nxodd_name/char_value"},
+                    {"link": "/my_entry/required_group2/description"},
                 ),
                 "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
-                "/another_entry/nxodd_name/char_value",
+                "/another_entry/required_group2/description",
             ),
             [
-                "Broken link at /my_entry/identified_calibration/identifier_1/@target to /another_entry/nxodd_name/char_value."
+                "A link was used for identified_calibration/identifier_1, but its @target attribute "
+                "'/another_entry/required_group2/description' does not match with the link's "
+                "target '/my_entry/required_group2/description'."
             ],
-            id="internal-link-with-broken-target",
+            id="internal-link-with-wrong-target",
         ),
         pytest.param(
             alter_dict(
@@ -2856,13 +2860,14 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
     if not error_messages:
         with caplog.at_level(logging.WARNING):
             _ = validate(str(hdf_file_path))
-        # assert caplog.text == ""
+        assert caplog.text == ""
     else:
         if request.node.callspec.id in (
             "field-with-illegal-unit",
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
+            "internal-link-with-wrong-target",
         ):
             with caplog.at_level(logging.INFO):
                 _ = validate(str(hdf_file_path))
