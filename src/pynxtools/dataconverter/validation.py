@@ -315,8 +315,7 @@ def validate_hdf_group_against(
         ]
 
         required_groups.update(required_subgroups)
-        if path:
-            required_entities.update(required_subentities)
+        required_entities.update(required_subentities)
 
     def _variadic_node_exists_for(
         path: str, variadic_name: str, node_type: Optional[str] = None
