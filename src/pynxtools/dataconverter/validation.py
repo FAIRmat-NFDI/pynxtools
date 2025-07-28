@@ -298,12 +298,16 @@ def validate_hdf_group_against(
         return node
 
     def update_required_concepts(path: str, node: NexusNode):
+        prefix = f"{path}/" if path else ""
+
         required_subgroups = [
-            f"{path}{grp.lstrip('/')}" for grp in node.required_groups()
+            f"{prefix}{grp.lstrip('/')}" for grp in node.required_groups()
         ]
         required_subentities = [
-            f"{path}{ent.lstrip('/')}" for ent in node.required_fields_and_attrs_names()
+            f"{prefix}{ent.lstrip('/')}"
+            for ent in node.required_fields_and_attrs_names()
         ]
+
         required_groups.update(required_subgroups)
         if path:
             required_entities.update(required_subentities)
@@ -514,7 +518,7 @@ def validate_hdf_group_against(
                 )
             return
 
-        # update_required_concepts(path, node)
+        update_required_concepts(path, node)
         remove_from_req_groups(path)
 
         if _check_for_nxcollection_parent(node):
@@ -618,7 +622,7 @@ def validate_hdf_group_against(
                 )
             return
 
-        # update_required_concepts(path, node)
+        update_required_concepts(path, node)
         remove_from_req_entities(path)
 
         if _check_for_nxcollection_parent(node):
