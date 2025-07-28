@@ -196,7 +196,7 @@ def validate_hdf_group_against(
     Args:
         appdef (str): The application definition to validate against.
         data (h5py.Group): The h5py group to validate.
-        filename (str): The filename of the HDF5 group.
+        filename (str): The filename of the h5py group.
         ignore_undocumented (bool, optional):
             Ignore all undocumented items in the verification
             and just check if the required concepts are properly set.
@@ -253,6 +253,19 @@ def validate_hdf_group_against(
         node_type: Optional[Literal["group", "field", "attribute"]] = None,
         nx_class: Optional[str] = None,
     ) -> Optional[NexusNode]:
+        """
+        Find the NexusNode for a given HDF5 path, optionally constrained by node type and NX_class.
+
+        Uses caching for performance.
+
+        Args:
+            path (str): The HDF5 path.
+            node_type (Optional[str]): Node type filter: 'group', 'field', or 'attribute'.
+            nx_class (Optional[str]): NX_class to restrict search for groups.
+
+        Returns:
+            Optional[NexusNode]: Matching node, or None if no match found.
+        """
         if path == "":
             return tree
 
@@ -303,6 +316,13 @@ def validate_hdf_group_against(
         return node
 
     def update_required_concepts(path: str, node: NexusNode):
+        """
+        Update the sets of required groups and entities based on the current node.
+
+        Args:
+            path (str): Current path in the HDF5 tree.
+            node (NexusNode): The node to extract required concepts from.
+        """
         prefix = f"{path}/" if path else ""
 
         required_subgroups = [
@@ -320,7 +340,39 @@ def validate_hdf_group_against(
     def _variadic_node_exists_for(
         path: str, variadic_name: str, node_type: Optional[str] = None
     ):
-        def _get_parent_path(path: str):
+        """
+        Check if a variadic node exists that matches a given path and node type.
+
+        Args:
+            path (str): Path to check.
+            variadic_name (str): Variadic name to compare.
+            node_type (Optional[str]): Type of node to restrict search.
+
+        Returns:
+            bool: True if a matching variadic node exists.
+        """
+
+        def _get_parent_path(path: str) -> str:
+            """
+            Return the parent path of a given HDF5 path.
+
+            Args:
+                path (str): A full HDF5 path (e.g., "/entry/sample/temperature").
+
+            Returns:
+                str: The parent path (e.g., "/entry/sample"). If the path has no parent,
+                    returns an empty string.
+
+            Example:
+                >>> _get_parent_path("/entry/sample/temperature")
+                '/entry/sample'
+
+                >>> _get_parent_path("temperature")
+                ''
+
+                >>> _get_parent_path("/temperature")
+                ''
+            """
             if "/" not in path.strip("/"):
                 return ""
             return path.rstrip("/").rsplit("/", 1)[0]
@@ -340,6 +392,12 @@ def validate_hdf_group_against(
             return False
 
     def remove_from_req_groups(path: str):
+        """
+        Remove a path from the set of required groups, accounting for variadic nodes.
+
+        Args:
+            path (str): The path to remove.
+        """
         if path in required_groups:
             required_groups.remove(path)
         else:
@@ -349,6 +407,13 @@ def validate_hdf_group_against(
                     required_groups.remove(grp)
 
     def remove_from_req_entities(path: str):
+        """
+        Remove a path from the set of required entities (fields/attributes),
+        accounting for variadic nodes.
+
+        Args:
+            path (str): The path to remove.
+        """
         if path in required_entities:
             required_entities.remove(path)
         else:
@@ -374,7 +439,13 @@ def validate_hdf_group_against(
 
     def _check_for_nxcollection_parent(node: NexusNode):
         """
-        Check if a parent "NXcollection" exist
+        Check if the given node has a parent group of type NXcollection.
+
+        Args:
+            node (NexusNode): The node to check.
+
+        Returns:
+            bool: True if a parent NXcollection group exists.
         """
         parent = node.parent
         while parent:
@@ -385,7 +456,7 @@ def validate_hdf_group_against(
 
         return False
 
-    def check_reserved_suffix(path: str, parent_data: Union[h5py.Group]):
+    def check_reserved_suffix(path: str, parent_data: h5py.Group):
         """
         Check if an associated field exists for a key with a reserved suffix.
 
@@ -395,8 +466,8 @@ def validate_hdf_group_against(
         Args:
             path (str):
                 The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
-            data Union[h5py.Group]:
-                The parent group of the field/attribute path to check
+            parent_data (h5py.Group):
+                The parent group of the field/attribute path to check.
         """
 
         reserved_suffixes = (
@@ -438,16 +509,12 @@ def validate_hdf_group_against(
 
         Args:
             path (str):
-                The full path in th3 HDF5 file (e.g., "/entry1/sample/temperature_errors").
+                The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
             appdef_name (str):
                 Name of the application definition (e.g. NXmx, NXmpes, etc.)
             nx_type (Literal["group", "field", "attribute"]):
                 The NeXus type the key represents. Determines which reserved prefixes are relevant.
 
-        Returns:
-            bool:
-                True if the prefix usage is valid or not applicable.
-                False if an invalid or misapplied reserved prefix is detected.
         """
         reserved_prefixes = {
             "attribute": {
@@ -506,6 +573,13 @@ def validate_hdf_group_against(
         return
 
     def handle_group(path: str, data: h5py.Group):
+        """
+        Handle validation logic for HDF5 groups.
+
+        Args:
+            path (str): Relative HDF5 path to the group.
+            data (h5py.Group): The group object.
+        """
         full_path = f"{entry_name}/{path}"
 
         check_reserved_prefix(full_path, appdef_node.name, "group")
@@ -536,6 +610,13 @@ def validate_hdf_group_against(
             return
 
     def handle_nxdata(path: str, data: h5py.Group):
+        """
+        Handle validation of NXdata groups, including signal, axes, and auxiliary signals.
+
+        Args:
+            path (str): HDF5 path to the NXdata group.
+            data (h5py.Group): The NXdata group object.
+        """
         full_path = f"{entry_name}/{path}"
 
         def check_nxdata():
@@ -600,6 +681,13 @@ def validate_hdf_group_against(
         errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
 
     def handle_field(path: str, data: h5py.Dataset):
+        """
+        Validate a NeXus field (dataset) within the HDF5 structure.
+
+        Args:
+            path (str): Path to the dataset.
+            data (h5py.Dataset): Dataset object.
+        """
         full_path = f"{entry_name}/{path}"
         check_reserved_prefix(full_path, appdef_node.name, "field")
         try:
@@ -668,6 +756,13 @@ def validate_hdf_group_against(
                 )
 
     def handle_attributes(path: str, attrs: h5py.AttributeManager):
+        """
+        Validate attributes on a given HDF5 object.
+
+        Args:
+            path (str): Path to the object the attributes belong to.
+            attrs (h5py.AttributeManager): The attributes collection.
+        """
         for attr_name in attrs:
             full_path = f"{entry_name}/{path}/@{attr_name}"
             if attr_name in ("NX_class", "units", "target"):
@@ -725,6 +820,13 @@ def validate_hdf_group_against(
             )
 
     def validate(path: str, h5_obj: Union[h5py.Group, h5py.Dataset]):
+        """
+        Dispatch validation for either groups or fields based on object type.
+
+        Args:
+            path (str): Path to the object.
+            h5_obj (Union[h5py.Group, h5py.Dataset]): The HDF5 object to validate.
+        """
         if isinstance(h5_obj, h5py.Group):
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
@@ -734,6 +836,14 @@ def validate_hdf_group_against(
         handle_attributes(path, h5_obj.attrs)
 
     def visititems(group: h5py.Group, path: str = "", filename: str = ""):
+        """
+        Recursively visit all items in a group and apply validation.
+
+        Args:
+            group (h5py.Group): The group to walk.
+            path (str, optional): Current HDF5 path.
+            filename (str, optional): Name of the file for resolving links.
+        """
         for name in group:
             full_path = f"{path}/{name}".lstrip("/")
             link = group.get(name, getlink=True)
