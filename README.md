@@ -11,7 +11,7 @@
 <table align="center">
 <tr><td align="center" width="10000">
 
-# <strong> pynxtools: FAIR data handling using NeXuss </strong>
+# <strong> pynxtools: FAIR data handling using NeXus </strong>
 </td></tr></table>
 
 

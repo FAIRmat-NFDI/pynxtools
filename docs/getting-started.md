@@ -15,12 +15,12 @@ However, to get started, it does not hurt to read the following explanations:
 
 You will have
 
-- a basic understanding of what this software is about and which capabilities it contains
-- how the different software tools are connected which each other.
+- a basic understanding of what this software is about and its capabilities
+- how the different software tools are interconnected
 
 ## What is NeXus?
 
-NeXus is a framework for describing and standardizing experimental data. NeXus provides domain-specific rules for organizing data within files in addition to a dictionary of well-defined domain-specific field concepts. It helps communities to agree on terms to describe their data, acting as a contract on which data has to be present and how to name them in a given dataset.
+NeXus is a data format intended for describing and standardizing experimental data. NeXus provides a specific grammar and syntactic rules via NXDL (NeXus Definition Language) for organizing data within files in addition to a dictionary of well-defined domain-specific field concepts. Since each individual concept is properly documented, it allows communities to agree on terms describing their data. Thus, NeXus acts as a contract on which concepts have to be present and how to name them in a given dataset.
 
 For a more detailed description on the general principles of NeXus we recommend:
 
@@ -33,7 +33,7 @@ FAIRmat is one of the consortia of the German National Research Data Infrastruct
 
 ## What is NOMAD?
 
-Within FAIRmat, we develop **NOMAD**: an open source research data management system for making materials science data searchable and publishable. NOMAD can host all kinds of data from materials science - including, but not limited to, NeXus data.
+Within FAIRmat, we develop **NOMAD**: an open source research data management system for making materials science data searchable and publishable. NOMAD hosts a wide variety of datasets from different domains of materials science - including, but not limited to, NeXus data.
 
 - [NOMAD Homepage](https://nomad-lab.eu/)
 - [NOMAD documentation](https://nomad-lab.eu/prod/v1/staging/docs/)
@@ -51,7 +51,7 @@ Within FAIRmat, we develop **NOMAD**: an open source research data management sy
 
 ## Does `pynxtools` require NOMAD or NOMAD OASIS?
 
-No. You can use `pynxtools` perfectly fine as a standalone tool for converting data from experiments to NeXus-compliant files. Therefore, this tool acts as the framework to design instances of data within the NeXus universe. The software _can_, however, be used as a **NOMAD plugin** to parse NeXus files, please see the section below for details.
+No. With the available [plugins](./reference/plugins.md) or community-developed plugins, you can use `pynxtools` as a standalone tool for converting raw data from experiments to NeXus-compliant files. Therefore, this tool acts as the framework to design instances of data within the NeXus universe. The software _can_, however, be used as a **NOMAD plugin** to parse NeXus files, please see the section below for details.
 
 ## How to use `pynxtools` with NOMAD
 

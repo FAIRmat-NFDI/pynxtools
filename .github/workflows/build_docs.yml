@@ -31,7 +31,9 @@ jobs:
       - name: Check spelling
         uses: streetsidesoftware/cspell-action@v7
         with:
-          files: "docs/**/*.md"
+          files: 
+            - "docs/**/*.md"
+            - "README.md"
           config: cspell.json
           strict: true
           incremental_files_only: false
