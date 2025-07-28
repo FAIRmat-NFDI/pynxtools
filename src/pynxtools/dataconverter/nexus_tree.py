@@ -397,6 +397,7 @@ class NexusNode(NodeMixin):
         self,
         prev_path: str = "",
         level: Literal["required", "recommended", "optional"] = "required",
+        traverse_children: bool = True,
     ) -> list[str]:
         """
         Gets all required groups names of the current node and its children.
@@ -413,6 +414,9 @@ class NexusNode(NodeMixin):
                 directly present in the application definition but no fields
                 inherited from the base classes.
                 Defaults to "required".
+            traverse_children (bool):
+                Denotes if the children shall also be searched.
+                Default to True.
 
         Returns:
             list[str]: A list of required fields and attributes names.
@@ -431,11 +435,12 @@ class NexusNode(NodeMixin):
             if child.type == "group":
                 req_children.append(f"{prev_path}/{child.name}")
 
-            req_children.extend(
-                child.required_groups(
-                    prev_path=f"{prev_path}/{child.name}", level=level
+            if traverse_children:
+                req_children.extend(
+                    child.required_groups(
+                        prev_path=f"{prev_path}/{child.name}", level=level
+                    )
                 )
-            )
 
         return req_children
 
@@ -443,6 +448,7 @@ class NexusNode(NodeMixin):
         self,
         prev_path: str = "",
         level: Literal["required", "recommended", "optional"] = "required",
+        traverse_children: bool = True,
     ) -> list[str]:
         """
         Gets all required fields and attributes names of the current node and its children.
@@ -459,6 +465,9 @@ class NexusNode(NodeMixin):
                 directly present in the application definition but no fields
                 inherited from the base classes.
                 Defaults to "required".
+            traverse_children (bool):
+                Denotes if the children shall also be searched.
+                Default to True.
 
         Returns:
             list[str]: A list of required fields and attributes names.
@@ -488,6 +497,13 @@ class NexusNode(NodeMixin):
                     prev_path=f"{prev_path}/{child.name}", level=level
                 )
             )
+
+            if traverse_children:
+                req_children.extend(
+                    child.required_groups(
+                        prev_path=f"{prev_path}/{child.name}", level=level
+                    )
+                )
 
         return req_children
 

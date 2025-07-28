@@ -26,7 +26,7 @@ from click.testing import CliRunner
 
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.validate_file import validate
+from pynxtools.dataconverter.validate_file import validate, validate_cli
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 
@@ -2854,7 +2854,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
 
     nxdl_name = "NXtest"
     _, nxdl_path = get_nxdl_root_and_path(nxdl=nxdl_name)
-    hdf_file_path = tmp_path / f"hdf5_validator_testt_{request.node.name}.nxs"
+    hdf_file_path = tmp_path / f"hdf5_validator_test_{request.node.callspec.id}.nxs"
     Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
 
     if not error_messages:
@@ -2880,3 +2880,114 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
                 assert expected_message == format_error_message(rec.message)
 
     os.remove(hdf_file_path)
+
+
+@pytest.mark.parametrize(
+    "cli_inputs,error_messages",
+    [
+        pytest.param(
+            ["tests/data/validation/NXtest_file.nxs"],
+            [
+                "The entry `my_entry` in file `tests/data/validation/NXtest_file.nxs` is a valid file according to the `NXtest` application definition."
+            ],
+            id="nxtest-compliant-file",
+        ),
+        pytest.param(
+            ["src/pynxtools/data/201805_WSe2_arpes.nxs", "--ignore-undocumented"],
+            [
+                # "The unit /entry/data/data/@units = counts has no documentation.",
+                # "The unit /entry/data/angles/@units = counts has no documentation.",
+                # "The unit /entry/data/energies/@units = counts has no documentation.",
+                # "The unit /entry/data/delays/@units = counts has no documentation.",
+                # "The unit /entry/data/angles/@units = 1/Å has no documentation.",
+                # "The unit /entry/data/data/@units = counts has no documentation.",
+                # "The unit /entry/data/delays/@units = fs has no documentation.",
+                # "The unit /entry/data/energies/@units = eV has no documentation.",
+                # "Field /entry/instrument/analyser/amplifier_type has no documentation.",
+                # "Field /entry/instrument/analyser/contrast_aperture has no documentation.",
+                # "Field /entry/instrument/analyser/detector_type has no documentation.",
+                # "Field /entry/instrument/analyser/dispersion_scheme has no documentation.",
+                # "Field /entry/instrument/analyser/extractor_voltage has no documentation.",
+                # "Field /entry/instrument/analyser/field_aperture_x has no documentation.",
+                # "Field /entry/instrument/analyser/field_aperture_y has no documentation.",
+                # "Field /entry/instrument/analyser/magnification has no documentation.",
+                # "Field /entry/instrument/analyser/projection has no documentation.",
+                # "Field /entry/instrument/analyser/sensor_count has no documentation.",
+                # "Field /entry/instrument/analyser/working_distance has no documentation.",
+                # "Field /entry/instrument/beam_probe_0/photon_energy has no documentation.",
+                # "Field /entry/instrument/beam_probe_0/polarization_angle has no documentation.",
+                # "Field /entry/instrument/beam_probe_0/polarization_ellipticity has no documentation.",
+                # "Field /entry/instrument/beam_probe_0/size_x has no documentation.",
+                # "Field /entry/instrument/beam_probe_0/size_y has no documentation.",
+                # "Field /entry/instrument/beam_pump_0/center_wavelength has no documentation.",
+                # "Field /entry/instrument/beam_pump_0/photon_energy has no documentation.",
+                # "Field /entry/instrument/beam_pump_0/polarization_angle has no documentation.",
+                # "Field /entry/instrument/beam_pump_0/polarization_ellipticity has no documentation.",
+                # "Field /entry/instrument/beam_pump_0/size_x has no documentation.",
+                # "Field /entry/instrument/beam_pump_0/size_y has no documentation.",
+                # "Field /entry/instrument/energy_resolution has no documentation.",
+                # "Field /entry/instrument/manipulator/pos_x1 has no documentation.",
+                # "Field /entry/instrument/manipulator/pos_x2 has no documentation.",
+                # "Field /entry/instrument/manipulator/pos_y has no documentation.",
+                # "Field /entry/instrument/manipulator/pos_z1 has no documentation.",
+                # "Field /entry/instrument/manipulator/pos_z2 has no documentation.",
+                # "Field /entry/instrument/manipulator/pos_z3 has no documentation.",
+                # "Field /entry/instrument/manipulator/sample_bias has no documentation.",
+                # "Field /entry/instrument/manipulator/sample_temperature has no documentation.",
+                # "Field /entry/instrument/manipulator/type has no documentation.",
+                # "Field /entry/instrument/monochromator/slit has no documentation.",
+                # "Field /entry/instrument/monochromator/slit/y_gap has no documentation.",
+                # "Field /entry/instrument/source/burst_distance has no documentation.",
+                # "Field /entry/instrument/source/burst_length has no documentation.",
+                # "Field /entry/instrument/source/burst_number_end has no documentation.",
+                "Reserved suffix '_end' was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.",
+                # "Field /entry/instrument/source/burst_number_start has no documentation.",
+                "The value at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch'].",
+                # "Field /entry/instrument/source/number_of_bursts has no documentation.",
+                "The value at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar'].",
+                # "Field /entry/instrument/source_pump/burst_distance has no documentation.",
+                # "Field /entry/instrument/source_pump/burst_length has no documentation.",
+                "The value at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch'].",
+                # "Field /entry/instrument/source_pump/number_of_bursts has no documentation.",
+                "The value at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].",
+                # "Field /entry/instrument/source_pump/rms_jitter has no documentation.",
+                "The value at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar'].",
+                # "Field /entry/instrument/spatial_resolution has no documentation.",
+                # "Field /entry/instrument/temporal_resolution has no documentation.",
+                # "Field /entry/sample/chem_id_cas has no documentation.",
+                # "Field /entry/sample/chemical_name has no documentation.",
+                # "Field /entry/sample/growth_method has no documentation.",
+                # "Field /entry/sample/layer has no documentation.",
+                # "Field /entry/sample/preparation_method has no documentation.",
+                # "Field /entry/sample/purity has no documentation.",
+                # "Field /entry/sample/state has no documentation.",
+                # "Field /entry/sample/surface_orientation has no documentation.",
+                # "Field /entry/sample/vendor has no documentation.",
+                "The required field /entry/instrument/SOURCE/name hasn't been supplied.",
+                "The required field /entry/instrument/SOURCE/probe hasn't been supplied.",
+                "The required field /entry/instrument/SOURCE/type hasn't been supplied.",
+                "The required field /entry/instrument/analyser/angles hasn't been supplied.",
+                "The required field /entry/instrument/analyser/data hasn't been supplied.",
+                "The required field /entry/instrument/analyser/energies hasn't been supplied.",
+                "The required field /entry/sample/temperature hasn't been supplied.",
+                "Invalid: The entry `entry` in file `src/pynxtools/data/201805_WSe2_arpes.nxs` is NOT a valid file according to the `NXarpes` application definition.",
+            ],
+            id="nxarpes-file",
+        ),
+    ],
+)
+def test_validate_cli(caplog, cli_inputs, error_messages):
+    """A test for the convert CLI."""
+    runner = CliRunner()
+
+    if not error_messages:
+        with caplog.at_level(logging.INFO):
+            result = runner.invoke(validate_cli, cli_inputs)
+        assert result.exit_code == 0
+        assert caplog.text == ""
+    else:
+        with caplog.at_level(logging.INFO):
+            result = runner.invoke(validate_cli, cli_inputs)
+        assert len(caplog.records) == len(error_messages)
+        for expected_message, rec in zip(error_messages, caplog.records):
+            assert expected_message == format_error_message(rec.message)
