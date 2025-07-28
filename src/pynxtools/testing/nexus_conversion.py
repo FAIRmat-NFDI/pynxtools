@@ -37,7 +37,7 @@ from pynxtools.dataconverter.helpers import (
     add_default_root_attributes,
     get_nxdl_root_and_path,
 )
-from pynxtools.dataconverter.verify import verify
+from pynxtools.dataconverter.validate_file import validate
 from pynxtools.nexus.nexus import HandleNexus
 
 
@@ -168,7 +168,7 @@ class ReaderTest:
         assert test_output == []
 
         # Validate created file using the verify_nexus functionality
-        verify(self.created_nexus, ignore_undocumented=ignore_undocumented)
+        validate(self.created_nexus, ignore_undocumented=ignore_undocumented)
 
         if NOMAD_AVAILABLE:
             kwargs = dict(
