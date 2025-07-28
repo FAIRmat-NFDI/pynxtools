@@ -6,7 +6,7 @@ on:
       - master  # Triggers deployment on push to the master branch
   
 env:
-  python-version: 3.11
+  python-version: 3.12
 
 permissions:
    contents: write
