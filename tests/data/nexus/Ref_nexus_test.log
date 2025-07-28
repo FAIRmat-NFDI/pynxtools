@@ -563,7 +563,7 @@ NXentry.nxdl.xml:/entry_identifier
 DEBUG - <<OPTIONAL>>
 DEBUG - DEPRECATED - Use the field :ref:`identifier_entry </NXentry/identifier_entry-field>` instead.
 DEBUG - documentation (NXentry.nxdl.xml:/entry_identifier):
-DEBUG - unique identifier for the measurement, defined by the facility.
+DEBUG - Unique identifier for the measurement, defined by the facility.
 DEBUG - ===== FIELD (//entry/experiment_identifier): <HDF5 dataset "experiment_identifier": shape (), type "|O">
 DEBUG - value: F-20170538 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
