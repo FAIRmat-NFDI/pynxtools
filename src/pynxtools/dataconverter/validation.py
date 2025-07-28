@@ -306,11 +306,12 @@ def validate_hdf_group_against(
         prefix = f"{path}/" if path else ""
 
         required_subgroups = [
-            f"{prefix}{grp.lstrip('/')}" for grp in node.required_groups()
+            f"{prefix}{grp.lstrip('/')}"
+            for grp in node.required_groups(traverse_children=False)
         ]
         required_subentities = [
             f"{prefix}{ent.lstrip('/')}"
-            for ent in node.required_fields_and_attrs_names()
+            for ent in node.required_fields_and_attrs_names(traverse_children=False)
         ]
 
         required_groups.update(required_subgroups)
@@ -725,6 +726,11 @@ def validate_hdf_group_against(
             )
 
     def validate(path: str, h5_obj: Union[h5py.Group, h5py.Dataset]):
+        if obj_id := h5_obj.id.__hash__() not in seen_ids:
+            seen_ids.add(obj_id)
+        else:
+            return
+
         if isinstance(h5_obj, h5py.Group):
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
@@ -787,16 +793,21 @@ def validate_hdf_group_against(
                     validate(full_path, resolved_obj)
 
             elif isinstance(link, h5py.HardLink):
-                # Skip hard links (normal objects), recurse into subgroups
-                obj = group.get(name)
-                if isinstance(obj, h5py.Group):
-                    visit_links(obj, full_path, filename)
+                # Validate hard links (normal objects)
+                resolved_obj = group.get(name)
+                validate(full_path, resolved_obj)
+                if isinstance(resolved_obj, h5py.Group):
+                    # recurse into subgroups
+                    visit_links(resolved_obj, full_path, filename)
 
     collector.clear()
 
     appdef_node = generate_tree_from(appdef)
     tree = appdef_node.search_add_child_for("ENTRY")
     entry_name = data.name
+
+    # We store all HDf5 IDs to avoid repetitive checking when resolving links
+    seen_ids = set()
 
     required_groups: set[str] = set()
     required_entities: set[str] = set()
@@ -806,12 +817,12 @@ def validate_hdf_group_against(
     data.visititems(validate)
     visit_links(data, filename=filename)
 
-    for req_concept in required_groups:
+    for req_concept in sorted(required_groups):
         collector.collect_and_log(
             f"{entry_name}/{req_concept}", ValidationProblem.MissingRequiredGroup, None
         )
 
-    for req_concept in required_entities:
+    for req_concept in sorted(required_entities):
         # Skip if the entire group is missing
         if any(req_concept.startswith(group) for group in required_groups):
             continue
