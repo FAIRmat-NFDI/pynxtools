@@ -26,8 +26,8 @@ from click.testing import CliRunner
 
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.validate_file import validate
 from pynxtools.dataconverter.validation import validate_dict_against
-from pynxtools.dataconverter.verify import verify
 from pynxtools.dataconverter.writer import Writer
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
@@ -2827,7 +2827,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
-            _ = verify(str(hdf_file_path))
+            _ = validate(str(hdf_file_path))
         assert caplog.text == ""
     else:
         if request.node.callspec.id in (
@@ -2837,11 +2837,11 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             "baseclass-open-enum-with-new-item",
         ):
             with caplog.at_level(logging.INFO):
-                _ = verify(str(hdf_file_path))
+                _ = validate(str(hdf_file_path))
                 assert error_messages[0] in caplog.text
         else:
             with caplog.at_level(logging.WARNING):
-                _ = verify(str(hdf_file_path))
+                _ = validate(str(hdf_file_path))
             assert len(caplog.records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)

@@ -49,9 +49,9 @@ def _get_def_map(file: str) -> dict[str, str]:
     return def_map
 
 
-def verify(file: str, ignore_undocumented: bool = False):
+def validate(file: str, ignore_undocumented: bool = False):
     """
-    Verifies a NeXus HDF5 file.
+    Validates a NeXus HDF5 file.
 
     FILE: The path to the NeXus file to validate.
     """
@@ -89,7 +89,6 @@ def verify(file: str, ignore_undocumented: bool = False):
 
 
 @click.command()
-# @click.argument("file")
 @click.argument(
     "file",
     type=click.Path(exists=True),
@@ -100,5 +99,5 @@ def verify(file: str, ignore_undocumented: bool = False):
     default=False,
     help="Ignore all undocumented concepts during validation.",
 )
-def verify_cli(file: str, ignore_undocumented: bool = False):
-    verify(file, ignore_undocumented)
+def validate_cli(file: str, ignore_undocumented: bool = False):
+    validate(file, ignore_undocumented)
