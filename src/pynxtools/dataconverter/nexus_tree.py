@@ -492,15 +492,9 @@ class NexusNode(NodeMixin):
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
 
-            req_children.extend(
-                child.required_fields_and_attrs_names(
-                    prev_path=f"{prev_path}/{child.name}", level=level
-                )
-            )
-
             if traverse_children:
                 req_children.extend(
-                    child.required_groups(
+                    child.required_fields_and_attrs_names(
                         prev_path=f"{prev_path}/{child.name}", level=level
                     )
                 )
