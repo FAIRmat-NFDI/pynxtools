@@ -299,16 +299,6 @@ class NexusNode(NodeMixin):
             return existing_child
         return None
 
-        # if isinstance(names, str):
-        #         names = (names,)
-        #     for name in names:
-        #         direct_child = next((x for x in self.children if x.name == name), None)
-        #         if direct_child is not None:
-        #             return direct_child
-        #         if name in self.get_all_direct_children_names():
-        #             return self.add_inherited_node(name)
-        #     return None
-
     def get_child_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
         """
         Get the child of the current node, which matches xml_elem.

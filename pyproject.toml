@@ -37,7 +37,6 @@ dependencies = [
     "anytree",
     "pint",
     "cachetools",
-    "pint>=0.17",
 ]
 
 [project.urls]

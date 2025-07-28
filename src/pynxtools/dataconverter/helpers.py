@@ -32,12 +32,6 @@ import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
 
-if np.lib.NumpyVersion(np.__version__) < "2.0.0":
-    from numpy import chararray
-else:
-    from numpy.char import chararray
-from pint import UndefinedUnitError
-
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_enums,
