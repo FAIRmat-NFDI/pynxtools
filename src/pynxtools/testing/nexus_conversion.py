@@ -41,18 +41,18 @@ from pynxtools.nexus.nexus import HandleNexus
 
 def get_log_file(nxs_file, log_file, tmp_path):
     """Get log file for the nexus file with read_nexus tools."""
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger("pynxtools.reproducibility")
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
-    log_file = os.path.join(tmp_path, log_file)
-    handler = logging.FileHandler(log_file, "w")
+    log_path = os.path.join(tmp_path, log_file)
+    handler = logging.FileHandler(log_path, "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     nexus_helper = HandleNexus(logger, nxs_file, None, None)
     nexus_helper.process_nexus_master_file(None)
-    return log_file
+    return log_path
 
 
 class ReaderTest:
