@@ -208,6 +208,7 @@ def validate_hdf_group_against(
     def best_namefit_of(
         name: str,
         nodes: Iterable[NexusNode],
+        hint: Optional[Literal["axis", "signal"]] = None,
     ) -> Optional[NexusNode]:
         """
         Get the best namefit of `name` in `nodes`.
@@ -226,6 +227,8 @@ def validate_hdf_group_against(
         best_match = None
         best_score = -1
 
+        hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
+
         for node in nodes:
             if not node.variadic:
                 if name == node.name:
@@ -235,8 +238,13 @@ def validate_hdf_group_against(
                 name_partial = node.name_type == "partial"
                 score = get_nx_namefit(name, node.name, name_any, name_partial)
                 if score > best_score:
+                    if hint and hint_map.get(node.name) != hint:
+                        continue
                     best_match = node
                     best_score = score
+
+        # if hint:
+        #     print(hint, node, name)
 
         return best_match
 
@@ -245,12 +253,13 @@ def validate_hdf_group_against(
     # Allow for 10000 cache entries. This should be enough for most cases
     @cached(
         cache=LRUCache(maxsize=10000),
-        key=lambda path, node_type=None, nx_class=None: hashkey(path),
+        key=lambda path, node_type=None, nx_class=None, hint=None: hashkey(path),
     )
     def find_node_for(
         path: str,
         node_type: Optional[Literal["group", "field", "attribute"]] = None,
         nx_class: Optional[str] = None,
+        hint: Optional[Literal["axis", "signal"]] = None,
     ) -> Optional[NexusNode]:
         """
         Find the NexusNode for a given HDF5 path, optionally constrained by node type and NX_class.
@@ -272,7 +281,7 @@ def validate_hdf_group_against(
 
         *prev_path, last_elem = path.rsplit("/", 1)
 
-        node = find_node_for(prev_path[0]) if prev_path else tree
+        node = find_node_for(prev_path[0], hint=hint) if prev_path else tree
         current = copy.copy(node)
 
         if node is None:
@@ -284,7 +293,7 @@ def validate_hdf_group_against(
                 nx_class=nx_class, node_type=node_type
             )
         ]
-        node = best_namefit_of(last_elem, children_to_check)
+        node = best_namefit_of(last_elem, children_to_check, hint)
 
         if node is None:
             # Check that there is no other node with the same name, but a different type
@@ -571,21 +580,25 @@ def validate_hdf_group_against(
 
         return
 
-    def handle_group(path: str, data: h5py.Group):
+    def handle_group(path: str, group: h5py.Group):
         """
         Handle validation logic for HDF5 groups.
 
         Args:
             path (str): Relative HDF5 path to the group.
-            data (h5py.Group): The group object.
+            group (h5py.Group): The group object.
         """
         full_path = f"{entry_name}/{path}"
 
         check_reserved_prefix(full_path, appdef_node.name, "group")
 
+        if not group.attrs.get("NX_class"):
+            # We ignore additional groups that don't have an NX_class
+            return
+
         try:
             node = find_node_for(
-                path, node_type="group", nx_class=data.attrs.get("NX_class")
+                path, node_type="group", nx_class=group.attrs.get("NX_class")
             )
         except TypeError:
             return
@@ -604,22 +617,22 @@ def validate_hdf_group_against(
             return
 
         if node.nx_class == "NXdata":
-            handle_nxdata(path, data)
+            handle_nxdata(path, group)
         if node.nx_class == "NXcollection":
             return
 
-    def handle_nxdata(path: str, data: h5py.Group):
+    def handle_nxdata(path: str, group: h5py.Group):
         """
         Handle validation of NXdata groups, including signal, axes, and auxiliary signals.
 
         Args:
             path (str): HDF5 path to the NXdata group.
-            data (h5py.Group): The NXdata group object.
+            group (h5py.Group): The NXdata group object.
         """
         full_path = f"{entry_name}/{path}"
 
         def check_nxdata():
-            data_field = data.get(signal)
+            data_field = group.get(signal)
 
             if data_field is None:
                 collector.collect_and_log(
@@ -628,23 +641,20 @@ def validate_hdf_group_against(
                     None,
                 )
             else:
-                handle_field(
-                    f"{path}/{signal}",
-                    data_field,
-                )
+                handle_field(f"{path}/{signal}", data_field, hint="signal")
 
             # check NXdata attributes
             attrs = ("signal", "auxiliary_signals", "axes")
-            data_attrs = {k: data.attrs[k] for k in attrs if k in data.attrs}
+            data_attrs = {k: group.attrs[k] for k in attrs if k in group.attrs}
 
             handle_attributes(path, data_attrs)
 
             for i, axis in enumerate(axes):
                 if axis == ".":
                     continue
-                index = data.get(f"{axis}_indices", i)
+                index = group.get(f"{axis}_indices", i)
 
-                axis_field = data.get(axis)
+                axis_field = group.get(axis)
 
                 if axis_field is None:
                     collector.collect_and_log(
@@ -654,10 +664,7 @@ def validate_hdf_group_against(
                     )
                     break
                 else:
-                    handle_field(
-                        f"{path}/{axis}",
-                        data_field,
-                    )
+                    handle_field(f"{path}/{axis}", axis_field, hint="axis")
                 if np.shape(data_field)[index] != len(axis_field):
                     collector.collect_and_log(
                         f"{path}/{axis}",
@@ -666,45 +673,57 @@ def validate_hdf_group_against(
                         index,
                     )
 
-        signal = data.attrs.get("signal")
-        aux_signals = data.attrs.get("auxiliary_signals", [])
-        axes = data.attrs.get("axes", [])
+        signal = group.attrs.get("signal")
+        aux_signals = group.attrs.get("auxiliary_signals", [])
+        axes = group.attrs.get("axes", [])
 
         if isinstance(axes, str):
             axes = [axes]
 
-        if signal is not None:
-            check_nxdata()
-
         indices = map(lambda x: f"{x}_indices", axes)
         errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
 
-    def handle_field(path: str, data: h5py.Dataset):
+        # TODO: check that the indices match
+        # TODO: check that the errors have the same dim as the fields
+
+        if signal is not None:
+            check_nxdata()
+
+    def handle_field(
+        path: str,
+        dataset: h5py.Dataset,
+        hint: Optional[Literal["axis", "signal"]] = None,
+    ):
         """
         Validate a NeXus field (dataset) within the HDF5 structure.
 
         Args:
             path (str): Path to the dataset.
             data (h5py.Dataset): Dataset object.
+            hint (str):
+                If the field is in an NXdata group, this is used to figure out
+                if it is an AXISNAME or a DATA.
         """
+
         full_path = f"{entry_name}/{path}"
         check_reserved_prefix(full_path, appdef_node.name, "field")
         try:
-            node = find_node_for(path, node_type="field")
+            node = find_node_for(path, node_type="field", hint=hint)
         except TypeError:
             return
+
         if node is None:
             key_path = path.replace("@", "")
+            parent_node = None
             while "/" in key_path:
                 key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
-                parent_node = find_node_for(path, node_type="field")
-                if parent_node is None:
-                    parent_node = find_node_for(key_path, node_type="group")
-                if (
-                    parent_node
-                    and parent_node.type == "group"
-                    and parent_node.nx_class == "NXcollection"
-                ):
+                parent_data = data.get(key_path)
+                nx_class = (
+                    parent_data.attrs.get("NX_class")
+                    if parent_data is not None
+                    else None
+                )
+                if nx_class == "NXcollection":
                     # Collection found for parents, mark as documented
                     return
 
@@ -722,10 +741,14 @@ def validate_hdf_group_against(
             return
 
         is_valid_data_field(
-            clean_str_attr(data[()]), node.dtype, node.items, node.open_enum, full_path
+            clean_str_attr(dataset[()]),
+            node.dtype,
+            node.items,
+            node.open_enum,
+            full_path,
         )
 
-        units = data.attrs.get("units")
+        units = dataset.attrs.get("units")
         units_path = f"{full_path}/@units"
         if node.unit is not None:
             remove_from_req_entities(f"{path}/@units")
@@ -738,7 +761,7 @@ def validate_hdf_group_against(
                     return
             # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
             if (
-                transformation_type := data.attrs.get("transformation_type")
+                transformation_type := dataset.attrs.get("transformation_type")
             ) is not None:
                 hints = {"transformation_type": transformation_type}
             else:
@@ -774,26 +797,26 @@ def validate_hdf_group_against(
                 node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
             except TypeError:
                 return
+
+            key_path = f"{path}/{attr_name}"
+            parent_node = None
+            found_collection = False
+            while "/" in key_path:
+                key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
+                parent_data = data.get(key_path)
+                nx_class = (
+                    parent_data.attrs.get("NX_class")
+                    if parent_data is not None
+                    else None
+                )
+                if nx_class == "NXcollection":
+                    # Collection found for parents, mark as documented
+                    found_collection = True
+                    break
+            if found_collection:
+                continue  # This continues the outer attr_name loop
+
             if node is None:
-                key_path = full_path.replace("@", "")
-                found_collection = False
-                while "/" in key_path:
-                    key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
-                    parent_node = find_node_for(path, node_type="field")
-                    if parent_node is None:
-                        parent_node = find_node_for(key_path, node_type="group")
-
-                    if (
-                        parent_node
-                        and parent_node.type == "group"
-                        and parent_node.nx_class == "NXcollection"
-                    ):
-                        # Collection found for parents, mark as documented
-                        found_collection = True
-                        break
-
-                if found_collection:
-                    continue  # This continues the outer attr_name loop
                 if not ignore_undocumented:
                     collector.collect_and_log(
                         full_path,
