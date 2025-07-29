@@ -95,12 +95,12 @@ def validate(file: str, ignore_undocumented: bool = False):
 
             if is_valid:
                 logger.info(
-                    f"The entry `{entry}` in file `{file}` is a valid file"
+                    f"The entry `{entry}` in file `{file}` is valid"
                     f" according to the `{nxdl}` application definition.",
                 )
             else:
                 logger.info(
-                    f"Invalid: The entry `{entry}` in file `{file}` is NOT a valid file"
+                    f"Invalid: The entry `{entry}` in file `{file}` is NOT valid"
                     f" according to the `{nxdl}` application definition.",
                 )
 
