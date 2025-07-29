@@ -1693,6 +1693,15 @@ TEMPLATE["required"][
             ],
             id="reserved-prefix",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0), "strength": 1},
+            ),
+            [],
+            id="expected-field-found-group-compressed-payload",
+        ),
     ],
 )
 def test_validate_data_dict(caplog, data_dict, error_messages, request):

@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+DEBUG_VALIDATION = False
 import copy
 import re
 from collections import defaultdict
@@ -24,6 +25,8 @@ from functools import reduce
 from operator import getitem
 from typing import Any, Literal, Optional, Union
 
+if DEBUG_VALIDATION:
+    import debugpy  # will connect to debugger if in debug mode
 import h5py
 import lxml.etree as ET
 import numpy as np
@@ -43,6 +46,11 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
+
+if DEBUG_VALIDATION:
+    debugpy.debug_this_thread()
+    # set break points like this
+    # debugpy.breakpoint()
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
@@ -599,8 +607,10 @@ def validate_dict_against(
         for variant in variants:
             variant_path = f"{prev_path}/{variant}"
 
-            if isinstance(keys[variant], Mapping) and not all(
-                k.startswith("@") for k in keys[variant]
+            if (
+                isinstance(keys[variant], Mapping)
+                and not all(k.startswith("@") for k in keys[variant])
+                and not list(keys[variant].keys()) == ["compress", "strength"]
             ):
                 # A field should not have a dict of keys that are _not_ all attributes,
                 # i.e. no sub-fields or sub-groups.
