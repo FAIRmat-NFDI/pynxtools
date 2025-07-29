@@ -168,7 +168,8 @@ class ReaderTest:
         assert test_output == []
 
         # Validate created file using the validate_nexus functionality
-        validate(self.created_nexus, ignore_undocumented=ignore_undocumented)
+        with self.caplog.at_level(caplog_level):
+            validate(self.created_nexus, ignore_undocumented=ignore_undocumented)
 
         if NOMAD_AVAILABLE:
             kwargs = dict(
