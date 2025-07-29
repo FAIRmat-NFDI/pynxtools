@@ -14,25 +14,25 @@
       
       
       
-        <link rel="prev" href="converting-data-to-nexus.html">
+        <link rel="prev" href="nexus-primer.html">
       
       
-        <link rel="next" href="contributing.html">
+        <link rel="next" href="../pynxtools/dataconverter-and-readers.html">
       
       
-      <link rel="icon" href="../assets/favicon.png">
+      <link rel="icon" href="../../assets/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
-        <title>Uploading NeXus data to NOMAD - Documentation</title>
+        <title>Rules for storing data in NeXus - Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#uploading-nexus-data-to-nomad" class="md-skip">
+        <a href="#rules-for-storing-data-in-nexus" class="md-skip">
           Skip to content
         </a>
       
@@ -91,9 +91,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="header.title">
-    <a href="../index.html" title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
+    <a href="../../index.html" title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
       
-  <img src="../assets/nomad-plugin-logo.png" alt="logo">
+  <img src="../../assets/nomad-plugin-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Uploading NeXus data to NOMAD
+              Rules for storing data in NeXus
             
           </span>
         </div>
@@ -156,9 +156,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
+    <a href="../../index.html" title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
       
-  <img src="../assets/nomad-plugin-logo.png" alt="logo">
+  <img src="../../assets/nomad-plugin-logo.png" alt="logo">
 
     </a>
     Documentation
@@ -185,7 +185,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.html" class="md-nav__link">
+      <a href="../../index.html" class="md-nav__link">
         
   
   
@@ -207,7 +207,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started.html" class="md-nav__link">
+      <a href="../../getting-started.html" class="md-nav__link">
         
   
   
@@ -226,20 +226,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -255,7 +253,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Tutorials
@@ -269,7 +267,7 @@
   
   
     <li class="md-nav__item">
-      <a href="installation.html" class="md-nav__link">
+      <a href="../../tutorial/installation.html" class="md-nav__link">
         
   
   
@@ -292,7 +290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="converting-data-to-nexus.html" class="md-nav__link">
+      <a href="../../tutorial/converting-data-to-nexus.html" class="md-nav__link">
         
   
   
@@ -312,32 +310,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Uploading NeXus data to NOMAD
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="nexus-to-nomad.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../tutorial/nexus-to-nomad.html" class="md-nav__link">
         
   
   
@@ -348,71 +324,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#create-an-account" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create an account
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#create-an-upload" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create an Upload
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upload-your-nexus-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Upload your NeXus file
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#browsing-your-nexus-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      Browsing your NeXus data
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learn-more" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learn more
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -425,7 +336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="contributing.html" class="md-nav__link">
+      <a href="../../tutorial/contributing.html" class="md-nav__link">
         
   
   
@@ -531,7 +442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/nexus/writing-an-appdef.html" class="md-nav__link">
+      <a href="../../how-tos/nexus/writing-an-appdef.html" class="md-nav__link">
         
   
   
@@ -600,7 +511,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/pynxtools/build-a-plugin.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/build-a-plugin.html" class="md-nav__link">
         
   
   
@@ -623,7 +534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/pynxtools/use-multi-format-reader.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/use-multi-format-reader.html" class="md-nav__link">
         
   
   
@@ -646,7 +557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/pynxtools/using-pynxtools-test-framework.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/using-pynxtools-test-framework.html" class="md-nav__link">
         
   
   
@@ -669,7 +580,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/pynxtools/run-tests-in-parallel.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/run-tests-in-parallel.html" class="md-nav__link">
         
   
   
@@ -692,7 +603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/pynxtools/create-nexus-files-by-python.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/create-nexus-files-by-python.html" class="md-nav__link">
         
   
   
@@ -715,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-tos/pynxtools/validate-nexus-file.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/validate-nexus-file.html" class="md-nav__link">
         
   
   
@@ -750,18 +661,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -777,7 +690,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Learn
@@ -788,18 +701,20 @@
                 
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
         
           
           <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
@@ -815,7 +730,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_1">
             <span class="md-nav__icon md-icon"></span>
             NeXus
@@ -829,7 +744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/nexus/nexus-primer.html" class="md-nav__link">
+      <a href="nexus-primer.html" class="md-nav__link">
         
   
   
@@ -849,10 +764,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../learn/nexus/nexus-rules.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Rules for storing data in NeXus
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="nexus-rules.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -863,6 +800,53 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#name-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Name resolution
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-rules-for-names-and-namefitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special rules for names and namefitting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concept-name-inheritance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concept name inheritance
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -921,7 +905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/pynxtools/dataconverter-and-readers.html" class="md-nav__link">
+      <a href="../pynxtools/dataconverter-and-readers.html" class="md-nav__link">
         
   
   
@@ -944,7 +928,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/pynxtools/nexus-validation.html" class="md-nav__link">
+      <a href="../pynxtools/nexus-validation.html" class="md-nav__link">
         
   
   
@@ -967,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/pynxtools/multi-format-reader.html" class="md-nav__link">
+      <a href="../pynxtools/multi-format-reader.html" class="md-nav__link">
         
   
   
@@ -1043,7 +1027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/definitions.html" class="md-nav__link">
+      <a href="../../reference/definitions.html" class="md-nav__link">
         
   
   
@@ -1066,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/cli-api.html" class="md-nav__link">
+      <a href="../../reference/cli-api.html" class="md-nav__link">
         
   
   
@@ -1089,7 +1073,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/built-in-readers.html" class="md-nav__link">
+      <a href="../../reference/built-in-readers.html" class="md-nav__link">
         
   
   
@@ -1112,7 +1096,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/plugins.html" class="md-nav__link">
+      <a href="../../reference/plugins.html" class="md-nav__link">
         
   
   
@@ -1162,45 +1146,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#create-an-account" class="md-nav__link">
+  <a href="#name-resolution" class="md-nav__link">
     <span class="md-ellipsis">
-      Create an account
+      Name resolution
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-an-upload" class="md-nav__link">
+  <a href="#special-rules-for-names-and-namefitting" class="md-nav__link">
     <span class="md-ellipsis">
-      Create an Upload
+      Special rules for names and namefitting
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#upload-your-nexus-file" class="md-nav__link">
+  <a href="#concept-name-inheritance" class="md-nav__link">
     <span class="md-ellipsis">
-      Upload your NeXus file
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#browsing-your-nexus-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      Browsing your NeXus data
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learn-more" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learn more
+      Concept name inheritance
     </span>
   </a>
   
@@ -1222,46 +1188,74 @@
 
 
 
-<h1 id="uploading-nexus-data-to-nomad">Uploading NeXus data to NOMAD<a class="headerlink" href="#uploading-nexus-data-to-nomad" title="Permanent link">&para;</a></h1>
-<p>Great choice! <a href="https://nomad-lab.eu/nomad-lab/tutorials.html">NOMAD</a> makes it easier than ever to work with your research data. At this point you probably have an idea of what <a href="https://www.nature.com/articles/sdata201618">FAIR data</a> is. Even if you don't, it doesn't matter. NOMAD provides a simple graphical interface that let's you collect and have your data ready for publication.</p>
-<p>In this tutorial, we will go through how one can upload their NeXus files to NOMAD.</p>
-<p>NOMAD, as a FAIR data platform, supports NeXus and allows users to upload their NeXus (<code>.nxs</code>) files directly. These files get interpreted and added to your NOMAD account with complete control on how you would like to present and publish them alongside your research.</p>
-<h2 id="create-an-account">Create an account<a class="headerlink" href="#create-an-account" title="Permanent link">&para;</a></h2>
-<p>The very first thing you need to do is get a NOMAD account.
-If you don't have one you can register <a href="https://nomad-lab.eu/fairdi/keycloak/auth/realms/fairdi_nomad_prod/login-actions/registration?client_id=nomad_public&amp;tab_id=eWM6kat9MPc">here</a>.</p>
-<ol>
-<li>Navigate to <a href="https://nomad-lab.eu/prod/v1/gui/about/information">nomad-lab.eu</a></li>
-<li>Click on <code>Login / Register</code> on the top right corner.</li>
-</ol>
-<p><img src="media/login-register.gif" /></p>
-<h2 id="create-an-upload">Create an Upload<a class="headerlink" href="#create-an-upload" title="Permanent link">&para;</a></h2>
-<p>NOMAD allows you to have a draft working space called an <strong>upload</strong>. This allows you to test and prepare how your data will look in NOMAD before you publish it.</p>
-<p>Go to <code>Publish -&gt; Uploads</code></p>
-<p><img src="media/uploads.gif" /></p>
-<p><br /></p>
-<p>Click <code>Create a new upload</code></p>
-<p><img src="media/create-new-upload.gif" /></p>
-<h2 id="upload-your-nexus-file">Upload your NeXus file<a class="headerlink" href="#upload-your-nexus-file" title="Permanent link">&para;</a></h2>
-<p>Now we can upload your FAIR NeXus file and let NOMAD interpret it for us.</p>
-<p>Click the <code>Drop files here...</code> button and choose your NeXus file from your device.
-<img src="media/upload-file.gif" /></p>
-<p>Once NOMAD has interpreted your data, this is what your screen will look like.</p>
-<p><img src="media/nexus-file-processed.png" /></p>
-<h2 id="browsing-your-nexus-data">Browsing your NeXus data<a class="headerlink" href="#browsing-your-nexus-data" title="Permanent link">&para;</a></h2>
-<p>You can find the NOMAD interpretation of your data under entries. If you click on this arrow, you will be able to see an Overview of your NeXus file.</p>
-<p><img src="media/go-to-entry-page.gif" /></p>
-<p><br/></p>
-<p>On the Overview page you will be presented with <code>H5Web</code> that let's you browse the data in your <code>NeXus</code> file directly.</p>
-<p><img src="media/overview.png" width="1000"/></p>
-<p><br/></p>
-<p>NOMAD also interprets and <strong>normalizes</strong> this data to make it interoperable with other corners of materials research. To browse this normalized data you can browse the <code>DATA</code> tab. Here you see all the information NOMAD has picked up and made available for search and comparison with synthesis, experimental, and computational materials data.</p>
-<p><img src="media/data-tab.gif" /></p>
-<p>Feel free to explore more!</p>
-<h2 id="learn-more">Learn more<a class="headerlink" href="#learn-more" title="Permanent link">&para;</a></h2>
-<p>Learn more about uploading and publishing experimental data in NOMAD:</p>
+<h1 id="rules-for-storing-data-in-nexus">Rules for storing data in NeXus<a class="headerlink" href="#rules-for-storing-data-in-nexus" title="Permanent link">&para;</a></h1>
+<p>There are several rules which apply for storing single data items in NeXus. There exists a <a href="https://manual.nexusformat.org/datarules.html">summary</a> in the NeXus documentation outlining most of these rules. However, to guide data providers even further, we have compiled here additional information and explanations.</p>
+<h2 id="name-resolution">Name resolution<a class="headerlink" href="#name-resolution" title="Permanent link">&para;</a></h2>
+<p>In general, the names of NeXus group and field items are validated according to the boundaries outlined in the <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "NXDL group and field names":</p>
 <ul>
-<li><a href="https://nomad-lab.eu/prod/v1/staging/docs/tutorial/upload_publish.html#uploading-experimental-data">NOMAD tutorial on uploading NeXus data</a></li>
+<li>
+<p>Recommended names</p>
+<ul>
+<li>lower case words separated by underscores and, if needed, with a trailing number</li>
 </ul>
+</li>
+<li>
+<p>Allowed names</p>
+<ul>
+<li>any combination of upper and lower case letter, numbers, underscores and periods, except that periods cannot be at the start or end of the string</li>
+<li>This statement is equivalent to matching  this regular expression (named <code>validItemName</code> in the <a href="https://github.com/nexusformat/definitions/blob/main/nxdl.xsd">nxdl.xsd</a> XML Schema file):</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>^[a-zA-Z0-9_]([a-zA-Z0-9_.]*[a-zA-Z0-9_])?$
+</code></pre></div>
+</li>
+<li>
+<p>Invalid names:</p>
+<ul>
+<li>any name not matching this <code>validItemName</code> regular expression</li>
+</ul>
+</li>
+</ul>
+<p>Note that this explicitly also means that it is not allowed to have whitespace (including " ") in NeXus names.</p>
+<p>A speciality of NeXus is the possibility to define concept names that are different to the names
+of the actual data instances. In NeXus base classes and application definitions, there are three options for defining how instances must be named to match to the name of a given concept.
+This matching is based on a combination of the <code>name</code> and the <code>nameType</code> attributes
+of the concept.</p>
+<div class="admonition info">
+<p class="admonition-title">Concept and instance names</p>
+<p>In NeXus, we must distinguish carefully between names of concepts and the names given to the actual instance of that concept.</p>
+<ul>
+<li><strong>Concept Name:</strong> This is the name given to a NeXus concept, i.e., on the data modelling level in the NeXus definitions.</li>
+<li><strong>Instance Name:</strong> This is the actual name for a NeXus data instance of the concept (e.g., in an HDF5 file).</li>
+</ul>
+</div>
+<p>There are three different options for the <code>nameType</code> XML attribute:</p>
+<ul>
+<li><code>specified</code></li>
+<li><code>any</code></li>
+<li><code>partial</code></li>
+</ul>
+<p>If <code>nameType=specified</code>, that means that any instance must have the exact same (<strong>fixed</strong>) name as the concept. As an example, if there is a field called <code>my_field</code> with <code>nameType=specified</code> in an application definition, the only allowed name in a file would be <code>my_field</code>. Note that this is also true for concept names containing uppercase letters. "specified" is the default <code>nameType</code>, i.e., if no <code>nameType</code> is given, it is assumed that any instance name must match the
+concept name directly</p>
+<p>In addition, there is also the option to allow for <strong>selectable</strong> names. This is achieved by <code>nameType=any</code> or <code>nameType=partial</code>.</p>
+<p>If the <code>nameType</code> is any, that means that the concept name can be matched by <em>any</em> instance name, as long as it matches the regular expression above. As an example. As an example, if a field in an application definition is called <code>FIELD</code> and has <code>nameType=any</code>, <code>field</code>, <code>field0</code>, <code>any_other_name</code> would be allowed names, while <code>any other name</code> would not be allowed.</p>
+<p>There is also the possibility to fix a <em>subpart</em> of the name using <code>nameType=partial</code>. In this case, it important which characters in the concept name are lowercase and which are uppercase. Those characters that are uppercase may be replaced by any other string, as long as the final instance name is still valid according to the regex above. For example, there might be a <code>userID</code> group. In this case, allowed names include any name that start with <code>user</code>, e.g., <code>user0</code>, <code>user_abcde</code>,  Note that here it is also allowed to write <code>user</code>, i.e., replacing the uppercase part of the name with an empty string.</p>
+<p>The validation of names is performed by <strong>namefitting</strong>, i.e., fitting the name that is used by the data provider to the name given in the base class / application definitions.</p>
+<p>A python implementation of this process can be found in <a href="https://github.com/FAIRmat-NFDI/nexus_definitions/blob/34aed4a74b8d2a682eb0b9292055dc00e5e0220e/dev_tools/utils/nxdl_utils.py#L112">this function</a>. This function returns twice the length for an exact match, otherwise the number of matching characters (case insensitive) or zero, if <code>name_any</code> is set to True, is returned. This is also the function that is used in the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/validation.py">validation</a> implemented in <code>pynxtools</code>.</p>
+<h2 id="special-rules-for-names-and-namefitting">Special rules for names and namefitting<a class="headerlink" href="#special-rules-for-names-and-namefitting" title="Permanent link">&para;</a></h2>
+<p>Aside from these general rules, there are a number of special rules for NeXus names that need to be considered:</p>
+<ul>
+<li>
+<p>There is a set of UPPERCASE reserved words (like <code>BLUESKY_</code>, <code>DECTRIS_</code>, <code>IDF_</code>, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved prefixes".</p>
+</li>
+<li>
+<p>There is also a set of reserved suffixes that are used to give additional information for a group or field. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved suffixes".</p>
+</li>
+<li>
+<p>Additionally to namefitting, data annotation can use further information. For example, in case of NXdata, the axes listed among the <code>@axes</code> shall fit to any instances of <code>AXISNAME</code> and data objects listed in <code>@signal</code> or <code>@auxiliary_signals</code> shall fit to instances of <code>DATA</code>. Such rules are typically given in the base classes (e.g., see <a href="https://manual.nexusformat.org/classes/base_classes/NXdata.html#index-0">here</a> for NXdata). Any tool that makes use of the base classes should implement these special rules in its validation procedure. As an example, pynxtools has a special <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/474fe823112b8ee1e7b42ac80bb7408fdde22bd5/src/pynxtools/dataconverter/validation.py#L220">function for handling NXdata</a>.</p>
+</li>
+</ul>
+<h2 id="concept-name-inheritance">Concept name inheritance<a class="headerlink" href="#concept-name-inheritance" title="Permanent link">&para;</a></h2>
+<p>Note that NeXus also supports inheritance of concepts. The same rules as for instance names on the data level apply here for the inherited concept names. That is, the name of a concept must match in concept name and <code>nameType</code> to inherit from another concept. As an example, if we define a field with name <code>userID</code> and <code>nameType="partial"</code> in a base class and then use this base class in an application definition, the concept <code>user</code> and <code>nameType="specified"</code> would inherit its property. Contrarily, the concept <code>my_user</code> would not inherit from <code>userID</code>.</p>
 
 
 
@@ -1291,7 +1285,7 @@ If you don't have one you can register <a href="https://nomad-lab.eu/fairdi/keyc
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="converting-data-to-nexus.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Converting your research data to NeXus">
+          <a href="nexus-primer.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: A primer on NeXus">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1301,20 +1295,20 @@ If you don't have one you can register <a href="https://nomad-lab.eu/fairdi/keyc
                 Previous
               </span>
               <div class="md-ellipsis">
-                Converting your research data to NeXus
+                A primer on NeXus
               </div>
             </div>
           </a>
         
         
           
-          <a href="contributing.html" class="md-footer__link md-footer__link--next" aria-label="Next: Development guide">
+          <a href="../pynxtools/dataconverter-and-readers.html" class="md-footer__link md-footer__link--next" aria-label="Next: Data conversion in pynxtools">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Development guide
+                Data conversion in pynxtools
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1345,12 +1339,12 @@ If you don't have one you can register <a href="https://nomad-lab.eu/fairdi/keyc
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
       
-        <script src="../javascript.js"></script>
+        <script src="../../javascript.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
