@@ -42,6 +42,8 @@ Within FAIRmat, we develop **NOMAD**: an open source research data management sy
 
 `pynxtools` is our main software tool for end-to-end handling of data from experiments using NeXus. It contains a parser for combining various instrument output formats and electronic lab notebook (ELN) formats into an [HDF5](https://support.hdfgroup.org/HDF5/) file according to NeXus application definitions. It provides validation against these NeXus definitions and can be used to annotate existing NeXus files with semantic meaning.
 
+`pynxtools` acts as a Python framework with a built-in API for writing [reader plugins](reference/plugins.md) that provide specialized reading and conversion functionality for different domains of materials science.
+
 `pynxtools` can be used for standalone NeXus conversion, but it can also be used as a _plugin_ to NOMAD, extending NOMAD schemas and parsing capabilities with NeXus-specific capabilities.
 
 ## How can I install pynxtools? How can I contribute?
