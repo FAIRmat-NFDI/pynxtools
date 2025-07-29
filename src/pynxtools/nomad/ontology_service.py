@@ -2,9 +2,10 @@
 ######################## import libraries ############################
 ######################################################################
 from fastapi import FastAPI, HTTPException
+import os
+os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING" 
 from owlready2 import get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
-import os
 import subprocess
 from fastapi.responses import RedirectResponse
 from ..NeXusOntology.script.generate_ontology import main as generate_ontology
@@ -51,7 +52,10 @@ def ensure_ontology_file():
 def load_ontology() -> Ontology:
     try:
         ensure_ontology_file()
-        return get_ontology(OWL_FILE_PATH).load()
+        base_name = os.path.basename(OWL_FILE_PATH).replace(".owl", "")
+        inferred_owl_path = f"/tmp/{base_name}_inferred.owl"
+        ontology = get_ontology(inferred_owl_path).load()
+        return ontology
     except Exception as e:
         print(f"Error loading ontology: {e}")
         raise
@@ -82,7 +86,13 @@ def startup_event():
     """
     try:
         ensure_ontology_file()
-    except RuntimeError as e:
+        base_name = os.path.basename(OWL_FILE_PATH).replace(".owl", "")
+        inferred_owl_path = f"/tmp/{base_name}_inferred.owl"
+        if not os.path.exists(inferred_owl_path):
+            ontology = get_ontology(OWL_FILE_PATH).load()
+            sync_reasoner(ontology)
+            ontology.save(file=inferred_owl_path, format="rdfxml")
+    except Exception as e:
         print(f"Error during startup: {e}")
 
 @app.get("/")
