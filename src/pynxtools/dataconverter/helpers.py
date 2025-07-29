@@ -92,7 +92,11 @@ class Collector:
     """A class to collect data and return it in a dictionary format."""
 
     def __init__(self):
-        self.data = set()
+        self.data: dict[str, set] = {
+            "warning_and_error": set(),
+            "info": set(),
+        }
+
         self.logging = True
 
     def _log(self, path: str, log_type: ValidationProblem, value: Optional[Any], *args):
@@ -241,27 +245,37 @@ class Collector:
             "NX_ANY",
         ):
             return
-        if self.logging and path + str(log_type) + str(value) not in self.data:
-            self._log(path, log_type, value, *args, **kwargs)
+
+        message: str = path + str(log_type) + str(value)
+
         # info messages should not fail validation
-        if log_type not in (
+        if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
             ValidationProblem.CompressionStrengthZero,
         ):
-            self.data.add(path + str(log_type) + str(value))
+            if self.logging and message not in self.data["info"]:
+                self._log(path, log_type, value, *args, **kwargs)
+            self.data["info"].add(message)
+        else:
+            if self.logging and message not in self.data["warning_and_error"]:
+                self._log(path, log_type, value, *args, **kwargs)
+            self.data["warning_and_error"].add(message)
 
     def has_validation_problems(self) -> bool:
         """Returns True if there were any validation problems."""
-        return len(self.data) > 0
+        return len(self.data["warning_and_error"]) > 0
 
     def get(self):
         """Returns the set of problematic paths."""
-        return self.data
+        return self.data["warning_and_error"]
 
     def clear(self):
         """Clears the collected data."""
-        self.data = set()
+        self.data: dict[str, set] = {
+            "warning_and_error": set(),
+            "info": set(),
+        }
 
 
 collector = Collector()
