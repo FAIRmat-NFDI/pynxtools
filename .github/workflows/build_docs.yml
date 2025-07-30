@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the master branch
+      - restructure-docs
   
 env:
   python-version: 3.12
@@ -27,6 +28,13 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
+      - name: Check spelling
+        uses: streetsidesoftware/cspell-action@v7
+        with:
+          files: "docs/**/*.md README.md"
+          strict: true
+          incremental_files_only: false
+
       - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
@@ -42,7 +50,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          uv pip install --no-cache-dir ".[docs]"
+          uv pip install ".[docs]"
 
       - name: Build and Deploy
         run: |

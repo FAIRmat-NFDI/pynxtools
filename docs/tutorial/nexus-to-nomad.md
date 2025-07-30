@@ -1,10 +1,10 @@
-# Uploading NeXus files to NOMAD
+# Uploading NeXus data to NOMAD
 
 Great choice! [NOMAD](https://nomad-lab.eu/nomad-lab/tutorials.html) makes it easier than ever to work with your research data. At this point you probably have an idea of what [FAIR data](https://www.nature.com/articles/sdata201618) is. Even if you don't, it doesn't matter. NOMAD provides a simple graphical interface that let's you collect and have your data ready for publication.
 
 In this tutorial, we will go through how one can upload their NeXus files to NOMAD.
 
-NOMAD, as a FAIR data platform, supports NeXus and allows users to upload their NeXus (.nxs) files directly. These files get interpreted and added to your NOMAD account with complete control on how you would like to present and publish them alongside your research.
+NOMAD, as a FAIR data platform, supports NeXus and allows users to upload their NeXus (`.nxs`) files directly. These files get interpreted and added to your NOMAD account with complete control on how you would like to present and publish them alongside your research.
 
 ## Create an account
 
@@ -55,8 +55,14 @@ On the Overview page you will be presented with ```H5Web``` that let's you brows
 
 <br/>
 
-NOMAD also interprets and ```normalizes``` this data to make it interoperable with other corners of Material's research. To browse this ```normalized``` data you can browse the ```DATA``` tab. Here you see all the information NOMAD has picked up and made available for search and comparison with synthesis, experimental, and computational materials data.
+NOMAD also interprets and **normalizes** this data to make it interoperable with other corners of materials research. To browse this normalized data you can browse the ```DATA``` tab. Here you see all the information NOMAD has picked up and made available for search and comparison with synthesis, experimental, and computational materials data.
 
 <img src="media/data-tab.gif" />
 
 Feel free to explore more!
+
+## Learn more
+
+Learn more about uploading and publishing experimental data in NOMAD:
+
+- [NOMAD tutorial on uploading NeXus data](https://nomad-lab.eu/prod/v1/staging/docs/tutorial/upload_publish.html#uploading-experimental-data)

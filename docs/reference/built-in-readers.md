@@ -1,12 +1,17 @@
-# Built-in readers
-There exists a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) directly in pynxtools. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
+# Built-in `pynxtools` readers
+
+There exists a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) directly in `pynxtools`. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
 
 ## The [BaseReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py)
-This is the most simple reader, which is an abstract base class, on top of which a new reader implementation can build. It has an essentially empty read function and is thus only helpful for implementing the correct input/ouput design of the ```read``` function of any reader that is inheriting from this base reader.
+
+This is the most simple reader, which is an abstract base class, on top of which a new reader implementation can build. It has an essentially empty read function and is thus only helpful for implementing the correct input/output design of the ```read``` function of any reader that is inheriting from this base reader.
+
 ## The [MultiFormatReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py)
-Another reader that can act as the basis for any reader implementation is the `MultiFormatReader`, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described [here](../learn/multi-format-reader.md). There is also a [how-to guide](../how-tos/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example.
+
+Another reader that can act as the basis for any reader implementation is the `MultiFormatReader`, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described [here](../learn/pynxtools/multi-format-reader.md). There is also a [how-to guide](../how-tos/pynxtools/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example.
 
 ## The [JsonMapReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_map/reader.py)
+
 This reader is designed to allow users of `pynxtools` to convert their existing data with the help of a map file. The map file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:
 
 * HDF5
@@ -35,6 +40,7 @@ Example:
   "/ENTRY[entry]/DATA[data]/current_295C": "/entry/data/current_295C",
   "/ENTRY[entry]/NXODD_name/posint_value": "/a_level_down/another_level_down/posint_value",
 ```
+
 Here, `"/entry/data/current_295C"` is the path in the original HDF5 file, while the key shown here is the template path (see above).
 
 * Write the values directly in the mapping file for missing data from your data file.
@@ -68,22 +74,21 @@ user@box:~$ dataconverter --nxdl NXtest data.json --mapping data.mapping.json
 ```
 
 #### Example with HDF5 files
+
 You can find example data files for using the mapping with HDF5 files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/examples/json_map/).
 
 The example can be run by calling
-
 
 ```console
 user@box:~$ dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 ```
 
-
 ## The [YamlJsonReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_yml/reader.py)
-!!! info "Work in progress"
+
+!!! danger "Work in progress"
 
 ## Installation
 
-Each of the built-in readers are shipped/installed with the main `pynxtools` package. Hence, these readers are available after pip installation:
-```console
-user@box:~$ pip install pynxtools
-```
+Each of the built-in readers are shipped/installed with the main `pynxtools` package. Hence, these readers are available after installation:
+
+- [Installation](../tutorial/installation.md)

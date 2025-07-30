@@ -1,45 +1,81 @@
-# Plugins
-There are a number of plugins available for pynxtools that are maintained within FAIRmat. These are extensions of pynxtools used for reading data of specific experimental techniques and/or file formats.
+# FAIRmat-supported `pynxtools` plugins
 
-### Photoemission spectroscopy
-- [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy (MPES) data.
-- [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data from various vendors. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-xps/).
-<!-- - [**pynxtools-focus**](https://github.com/FAIRmat-NFDI/pynxtools-focus): A reader for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument.-->
+There are a number of plugins available for `pynxtools` that are maintained within FAIRmat. These are extensions of `pynxtools` used for reading data of specific experimental techniques and/or file formats.
 
-### Electron microscopy
-- [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data from various vendors. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-em/).
-
-### Atom probe tomography
-- [**pynxtools-apm**](https://github.com/FAIRmat-NFDI/pynxtools-apm): A reader for atom probe as well as related field ion microscopy data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-apm/).
-
-### Optical spectroscopy
-- [**pynxtools-ellips**](https://github.com/FAIRmat-NFDI/pynxtools-ellips): A reader for ellipsometry data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-ellips/).
-- [**pynxtools-raman**](https://github.com/FAIRmat-NFDI/pynxtools-raman): A reader for Raman data.
-
-### Scanning probe microscopy
-- [**pynxtools-spm**](https://github.com/FAIRmat-NFDI/pynxtools-spm): A reader for scanning tunneling microscopy (SPM) domain data (STM, STS and AFM).
-
-### X-ray diffraction
-- [**pynxtools-xrd**](https://github.com/FAIRmat-NFDI/pynxtools-xrd): A reader for X-ray diffraction data.
-
-### Others
-- [**pynxtools-igor**](https://github.com/FAIRmat-NFDI/pynxtools-igor): A general reader for [Igor Pro](https://www.wavemetrics.com/) Binary Wave data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-igor/).
+## Photoemission spectroscopy
 
 
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-mpes](https://github.com/FAIRmat-NFDI/pynxtools-mpes/) | Reader plugin for multi-dimensional photoelectron spectroscopy (MPES) data. | | [📦](https://pypi.org/project/pynxtools-mpes/) |
+| [pynxtools-xps](https://github.com/FAIRmat-NFDI/pynxtools-xps/) | Reader plugin for X-ray photoelectron spectroscopy (XPS) data from various vendors/sources. | [📚](https://fairmat-nfdi.github.io/pynxtools-xps/) | [📦](https://pypi.org/project/pynxtools-xps/) |
+<!-- | [pynxtools-focus](https://github.com/FAIRmat-NFDI/pynxtools-focus/) | A reader plugin for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument. | [📚]() | [📦]() | -->
 
+## Electron microscopy
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-em](https://github.com/FAIRmat-NFDI/pynxtools-em/) | Reader plugin for electron microscopy (EM) data from various vendors/sources. | [📚](https://fairmat-nfdi.github.io/pynxtools-em/) | [📦](https://pypi.org/project/pynxtools-em/) |
+
+## Atom probe microscopy/tomography
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-apm](https://github.com/FAIRmat-NFDI/pynxtools-apm/) | Reader plugin for atom probe microscopy (APM) as well as related field ion microscopy (FIM) data. | [📚](https://fairmat-nfdi.github.io/pynxtools-apm/) | [📦](https://pypi.org/project/pynxtools-apm/) |
+
+## Optical spectroscopy
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|---------------------------------|:----:|:----:|
+| [pynxtools-ellips](https://github.com/FAIRmat-NFDI/pynxtools-ellips/) | Reader plugin for ellipsometry data. | [📚](https://fairmat-nfdi.github.io/pynxtools-ellips/) | [📦](https://pypi.org/project/pynxtools-ellips/) |
+| [pynxtools-raman](https://github.com/FAIRmat-NFDI/pynxtools-raman/) | Reader plugin for Raman data. | | [📦](https://pypi.org/project/pynxtools-raman/) |
+
+## Scanning probe microscopy
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-spm](https://github.com/FAIRmat-NFDI/pynxtools-spm/) | Reader plugin for scanning probe microscopy (SPM). | [📚](https://fairmat-nfdi.github.io/pynxtools-spm/) | [📦](https://pypi.org/project/pynxtools-spm/) |
+
+## X-ray diffraction
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-xrd](https://github.com/FAIRmat-NFDI/pynxtools-xrd/) | pynxtools reader plugin for X-ray diffraction data. | | [📦](https://pypi.org/project/pynxtools-xrd/) 
+
+## Others
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-igor](https://github.com/FAIRmat-NFDI/pynxtools-igor/) | A general reader plugin for [Igor Pro](https://www.wavemetrics.com/) Binary Wave data. | [📚](https://fairmat-nfdi.github.io/pynxtools-igor/) | [📦](https://pypi.org/project/pynxtools-igor/) |
 
 ## Installation
 
-You can install each of the plugins together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
+You can install each of the plugins together with `pynxtools` by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
 
-```console
-pip install pynxtools[mpes]
-```
+=== "uv"
+
+    ```bash
+    uv pip install pynxtools[mpes]
+    ```
+
+=== "pip"
+
+    ```bash
+    pip install pynxtools[mpes]
+    ```
 
 In addition, you can also install all of the pynxtools reader plugins which are maintained by FAIRmat by passing the `[convert]` extra to the pip install call:
 
-```console
-pip install pynxtools[convert]
-```
+=== "uv"
+
+    ```bash
+    uv pip install pynxtools[convert]
+    ```
+
+=== "pip"
+
+    ```bash
+    pip install pynxtools[convert]
+    ```
 
 <!-- There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.-->
