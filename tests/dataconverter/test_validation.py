@@ -1715,7 +1715,7 @@ def format_error_message(msg: str) -> str:
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-                {"compress": np.int64(2.0), "strength": 1},
+                {"compress": np.bool_(True), "strength": 1},
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
