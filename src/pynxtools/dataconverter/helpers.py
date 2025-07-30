@@ -717,6 +717,8 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
+    if isinstance(value, tuple) and len(value) == 1:
+        value = value[0]
     if not isinstance(value, np.ndarray):
         value = np.array(value)
     # Handle 'object' dtype separately (for lists from HDF5 files)

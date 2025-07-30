@@ -243,9 +243,6 @@ def validate_hdf_group_against(
                     best_match = node
                     best_score = score
 
-        # if hint:
-        #     print(hint, node, name)
-
         return best_match
 
     # Only cache based on path. That way we retain the nx_class information
