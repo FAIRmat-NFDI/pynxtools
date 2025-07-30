@@ -21,7 +21,8 @@ import ast
 import logging
 import os
 import re
-from typing import Any, Callable, Optional, Union
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import (
@@ -97,11 +98,11 @@ class ParseJsonCallbacks:
 
     def __init__(
         self,
-        attrs_callback: Optional[Callable[[str, str], Any]] = None,
-        data_callback: Optional[Callable[[str, str], Any]] = None,
-        link_callback: Optional[Callable[[str, str], Any]] = None,
-        eln_callback: Optional[Callable[[str, str], Any]] = None,
-        dims: Optional[Callable[[str, str], list[str]]] = None,
+        attrs_callback: Callable[[str, str], Any] | None = None,
+        data_callback: Callable[[str, str], Any] | None = None,
+        link_callback: Callable[[str, str], Any] | None = None,
+        eln_callback: Callable[[str, str], Any] | None = None,
+        dims: Callable[[str, str], list[str]] | None = None,
         entry_name: str = "entry",
     ):
         self.special_key_map = {
@@ -150,7 +151,7 @@ def resolve_special_keys(
     if a required sub-element cannot be filled.
     """
 
-    def try_convert(value: str) -> Union[str, float, int, bool]:
+    def try_convert(value: str) -> str | float | int | bool:
         """
         Try to convert the value to float, int or bool.
         If not convertible returns the str itself.
@@ -239,7 +240,7 @@ def resolve_special_keys(
 def fill_from_config(
     config_dict: dict[str, Any],
     entry_names: list[str],
-    callbacks: Optional[ParseJsonCallbacks] = None,
+    callbacks: ParseJsonCallbacks | None = None,
     suppress_warning: bool = False,
 ) -> dict:
     """
@@ -321,13 +322,13 @@ class MultiFormatReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: list[str] = []
     extensions: dict[str, Callable[[Any], dict]] = {}
-    kwargs: Optional[dict[str, Any]] = None
+    kwargs: dict[str, Any] | None = None
     overwrite_keys: bool = True
-    processing_order: Optional[list[str]] = None
-    config_file: Optional[str] = None
+    processing_order: list[str] | None = None
+    config_file: str | None = None
     config_dict: dict[str, Any]
 
-    def __init__(self, config_file: Optional[str] = None):
+    def __init__(self, config_file: str | None = None):
         self.callbacks = ParseJsonCallbacks(
             attrs_callback=self.get_attr,
             data_callback=self.get_data,
@@ -394,7 +395,7 @@ class MultiFormatReader(BaseReader):
         self,
         template: dict = None,
         file_paths: tuple[str] = None,
-        objects: Optional[tuple[Any]] = None,
+        objects: tuple[Any] | None = None,
         **kwargs,
     ) -> dict:
         """
@@ -407,7 +408,7 @@ class MultiFormatReader(BaseReader):
 
         template = Template(overwrite_keys=self.overwrite_keys)
 
-        def get_processing_order(path: str) -> tuple[int, Union[str, int]]:
+        def get_processing_order(path: str) -> tuple[int, str | int]:
             """
             Returns the processing order of the file.
             """

@@ -21,11 +21,11 @@ import json
 import logging
 import os
 import re
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
 from functools import cache, lru_cache
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Optional, Union, cast
 
 import h5py
 import lxml.etree as ET
@@ -85,7 +85,7 @@ class Collector:
         self.data = set()
         self.logging = True
 
-    def _log(self, path: str, log_type: ValidationProblem, value: Optional[Any], *args):
+    def _log(self, path: str, log_type: ValidationProblem, value: Any | None, *args):
         if value is None:
             value = "<unknown>"
 
@@ -205,7 +205,7 @@ class Collector:
         self,
         path: str,
         log_type: ValidationProblem,
-        value: Optional[Any],
+        value: Any | None,
         *args,
         **kwargs,
     ):
@@ -264,7 +264,7 @@ def get_nxdl_name_from_elem(xml_element) -> str:
     return name_to_add
 
 
-def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
+def get_nxdl_name_for(xml_elem: ET._Element) -> str | None:
     """
     Get the name of the element from the NXDL element.
     For an entity having a name this is just the name.
@@ -540,7 +540,7 @@ def convert_nexus_to_caps(nexus_name):
     return nexus_name[2:].upper()
 
 
-def contains_uppercase(field_name: Optional[str]) -> bool:
+def contains_uppercase(field_name: str | None) -> bool:
     """Helper function to check if a field name contains uppercase characters."""
     if field_name is None:
         return False
@@ -563,7 +563,7 @@ def convert_nexus_to_suggested_name(nexus_name):
     return nexus_name[2:]
 
 
-def convert_data_converter_entry_to_nxdl_path_entry(entry) -> Union[str, None]:
+def convert_data_converter_entry_to_nxdl_path_entry(entry) -> str | None:
     """
     Helper function to convert data converter style entry to NXDL style entry:
     ENTRY[entry] -> ENTRY
@@ -691,7 +691,7 @@ def is_positive_int(value: Any) -> bool:
     return bool(np.all(value > 0))
 
 
-def convert_str_to_bool_safe(value: str) -> Optional[bool]:
+def convert_str_to_bool_safe(value: str) -> bool | None:
     """Only returns True or False if someone mistakenly adds quotation marks but mean a bool.
 
     For everything else it raises a ValueError.
@@ -915,7 +915,7 @@ def get_first_group(root):
     return root
 
 
-def check_for_valid_atom_types(atoms: Union[str, list]):
+def check_for_valid_atom_types(atoms: str | list):
     """Check for whether atom exists in periodic table."""
 
     if isinstance(atoms, list):
@@ -1047,7 +1047,7 @@ def extract_atom_types(formula, mode="hill"):
 
 
 # pylint: disable=too-many-branches
-def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
+def transform_to_intended_dt(str_value: Any) -> Any | None:
     """Transform string to the intended data type, if not then return str_value.
 
     E.g '2.5E-2' will be transfor into 2.5E-2
@@ -1097,7 +1097,7 @@ def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
                 modified_parts: list = []
                 for part in parts:
                     part = transform_to_intended_dt(part)
-                    if isinstance(part, (int, float)):
+                    if isinstance(part, int | float):
                         modified_parts.append(part)
                     else:
                         return str_value

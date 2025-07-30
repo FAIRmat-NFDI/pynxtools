@@ -14,11 +14,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+# 3
 
+import os
 from typing import Optional
 
 import numpy as np
+
+from pynxtools import get_nexus_version
 
 try:
     from nomad.metainfo.data_type import (
@@ -86,7 +89,7 @@ def _rename_nx_for_nomad(
     is_group: bool = False,
     is_field: bool = False,
     is_attribute: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """
     Rename NXDL names for compatibility with NOMAD, applying specific rules
     based on the type of the NeXus concept. (group, field, or attribute).
@@ -128,3 +131,10 @@ def get_quantity_base_name(quantity_name):
         if quantity_name.endswith("__field") and quantity_name[-8] != "_"
         else quantity_name
     )
+
+
+def get_package_filepath():
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
+
+    return os.path.join(local_dir, filename)

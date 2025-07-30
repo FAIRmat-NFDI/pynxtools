@@ -14,7 +14,7 @@ except ImportError:
     pass
 
 
-def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
+def get_vcs_version(tag_match="*[0-9]*") -> str | None:
     """
     The version of the Nexus standard and the NeXus Definition language
     based on git tags and commits
