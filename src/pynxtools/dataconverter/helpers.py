@@ -742,7 +742,11 @@ def is_valid_data_field(
     """
 
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-    # Do not count the dict as it represents a link value
+
+    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+        value = value["compress"]
+
+    # Do not count other dicts as they represent a link value
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
         # try to convert string to bool
         if accepted_types[0] is bool and isinstance(value, str):

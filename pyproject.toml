@@ -63,6 +63,7 @@ dev = [
     "types-pytz",
     "types-requests",
     "pre-commit",
+    "debugpy",
 ]
 convert = [
     "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xps,xrd]",
@@ -136,7 +137,7 @@ select = [
     "PL", # pylint
     "UP", # pyupgrade
     # "F401", # remove unused import
-    "I001", # sort imports   
+    "I001", # sort imports
     # "NPY201", # reactivate when np>2.0 is used
 ]
 ignore = [
