@@ -1700,7 +1700,16 @@ TEMPLATE["required"][
                 {"compress": np.float32(2.0), "strength": 1},
             ),
             [],
-            id="expected-field-found-group-compressed-payload",
+            id="appdef-compressed-payload",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": np.float32(2.0), "strength": 1},
+            ),
+            [],
+            id="baseclass-compressed-payload",
         ),
     ],
 )
