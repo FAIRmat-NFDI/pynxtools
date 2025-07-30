@@ -821,7 +821,7 @@ def validate_dict_against(
             # Collection found, mark as documented
             return True
 
-        if isinstance(mapping[key], dict) and "link" in mapping[key]:
+        if isinstance(mapping[key], Mapping) and "link" in mapping[key]:
             resolved_link = _follow_link({key: mapping[key]}, "")
 
             if key not in resolved_link:

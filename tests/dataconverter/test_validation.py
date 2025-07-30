@@ -1705,11 +1705,39 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.int64(2.0), "strength": 1},
+            ),
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
+                "should be one of the following Python types: "
+                "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
+                "NXDL as NX_FLOAT."
+            ],
+            id="appdef-compressed-payload-wrong-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
-                {"compress": np.float32(2.0), "strength": 1},
+                {"compress": np.int64(2), "strength": 1},
             ),
             [],
             id="baseclass-compressed-payload",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": np.float32(2.0), "strength": 3},
+            ),
+            [
+                "The value at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position "
+                "should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "NXDL as NX_INT."
+            ],
+            id="baseclass-compressed-payload-wrong-type",
         ),
     ],
 )
