@@ -2853,6 +2853,52 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ],
             id="reserved-prefix",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0), "strength": 4},
+            ),
+            [],
+            id="appdef-compressed-payload",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.bool_(True), "strength": 3},
+            ),
+            [
+                "The value at /my_entry/nxodd_name/float_value "
+                "should be one of the following Python types: "
+                "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
+                "NXDL as NX_FLOAT."
+            ],
+            id="appdef-compressed-payload-wrong-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": np.int64(2), "strength": 2},
+            ),
+            [],
+            id="baseclass-compressed-payload",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": np.float32(2.0), "strength": 3},
+            ),
+            [
+                "The value at /my_entry/sample1/changer_position "
+                "should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "NXDL as NX_INT."
+            ],
+            id="baseclass-compressed-payload-wrong-type",
+        ),
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
@@ -2991,6 +3037,6 @@ def test_validate_cli(caplog, cli_inputs, error_messages):
     else:
         with caplog.at_level(logging.INFO):
             result = runner.invoke(validate_cli, cli_inputs)
-        # assert len(caplog.records) == len(error_messages)
-        # for expected_message, rec in zip(error_messages, caplog.records):
-        #     assert expected_message == format_error_message(rec.message)
+        assert len(caplog.records) == len(error_messages)
+        for expected_message, rec in zip(error_messages, caplog.records):
+            assert expected_message == format_error_message(rec.message)
