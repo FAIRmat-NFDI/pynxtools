@@ -278,6 +278,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                             logger.warning(
                                 f"Failed to fetch superclasses: {response.status_code} - {response.text}"
                             )
+                            archive.results.ln.methods.append(class_name)
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
                 except Exception as e:
@@ -307,10 +308,6 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
 
         if archive.results.eln.methods is None:
             archive.results.eln.methods = []
-        if self.method:
-            archive.results.eln.methods.append(self.method)
-        else:
-            archive.results.eln.methods.append(self.m_def.name)
         if archive.workflow2 is None:
             archive.workflow2 = Workflow(name=self.name)
         # steps to tasks
