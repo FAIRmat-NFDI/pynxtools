@@ -13,22 +13,22 @@ Please use the --generate-template function of the dataconverter to create a .ma
 ```console
 user@box:~$ dataconverter --nxdl NXmynxdl --generate-template > mynxdl.mapping.json
 ```
+
 ##### Details on the [mapping.json](../../src/pynxtools/dataconverter/readers/json_map/README.md#the-mappingjson-file) file.
 
 ## How to run these examples?
 
-### Automatically merge partial NeXus files
-```console
-user@box:~$ dataconverter --nxdl NXiv_temp voltage_and_temperature.nxs current.nxs --output auto_merged.nxs
-```
-
 ### Map and copy over data to new NeXus file
+
 ```console
+
 user@box:~$ dataconverter --nxdl NXiv_temp --mapping merge_copied.mapping.json voltage_and_temperature.nxs current.nxs --output merged_copied.nxs
 ```
 
 ### Map and link over data to new NeXus file
+
 ```console
+
 user@box:~$ dataconverter --nxdl NXiv_temp --mapping merge_linked.mapping.json voltage_and_temperature.nxs current.nxs --output merged_linked.nxs
 ```
 
