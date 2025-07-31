@@ -39,6 +39,9 @@ dependencies = [
     "cachetools",
     "structlog",
     "orjson",
+    "owlready2",
+    "fastapi",
+    "pygit2"
 ]
 
 [project.urls]
