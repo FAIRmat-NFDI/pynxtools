@@ -593,7 +593,7 @@ def validate_dict_against(
                     resolved_keys[key] = current_keys
         return resolved_keys
 
-    def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
+    def handle_field(node: NexusEntity, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
         variants = get_variations_of(node, keys)
         if (
@@ -651,13 +651,18 @@ def validate_dict_against(
             mapping[variant_path] = is_valid_data_field(
                 mapping[variant_path],
                 node.dtype,
+                variant_path,
+            )
+            is_valid_enum(
+                mapping[variant_path],
                 node.items,
                 node.open_enum,
                 variant_path,
+                mapping,
             )
 
-            _ = check_reserved_suffix(variant_path, mapping)
-            _ = check_reserved_prefix(variant_path, mapping, "field")
+            check_reserved_suffix(variant_path, mapping)
+            check_reserved_prefix(variant_path, mapping, "field")
 
             # Check unit category
             if node.unit is not None:
@@ -695,7 +700,7 @@ def validate_dict_against(
                 prev_path=variant_path,
             )
 
-    def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
+    def handle_attribute(node: NexusEntity, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
         variants = get_variations_of(node, keys)
 
@@ -716,11 +721,16 @@ def validate_dict_against(
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
                 node.dtype,
+                variant_path,
+            )
+            is_valid_enum(
+                mapping[variant_path],
                 node.items,
                 node.open_enum,
                 variant_path,
+                mapping,
             )
-            _ = check_reserved_prefix(variant_path, mapping, "attribute")
+            check_reserved_prefix(variant_path, mapping, "attribute")
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -866,7 +876,16 @@ def validate_dict_against(
                     # keys_to_remove.append(key)
                     # return False
                 resolved_link[key] = is_valid_data_field(
-                    resolved_link[key], node.dtype, node.items, node.open_enum, key
+                    resolved_link[key],
+                    node.dtype,
+                    key,
+                )
+                is_valid_enum(
+                    resolved_link[key],
+                    node.items,
+                    node.open_enum,
+                    key,
+                    mapping,
                 )
 
             return True
@@ -881,7 +900,16 @@ def validate_dict_against(
 
         # Check general validity
         mapping[key] = is_valid_data_field(
-            mapping[key], node.dtype, node.items, node.open_enum, key
+            mapping[key],
+            node.dtype,
+            key,
+        )
+        is_valid_enum(
+            mapping[key],
+            node.items,
+            node.open_enum,
+            key,
+            mapping,
         )
 
         # Check main field exists for units
@@ -1205,6 +1233,47 @@ def validate_dict_against(
             return (a, b + extra_length_this_step)
         # default
         return (False, 0)
+
+    def is_valid_enum(
+        value: Any,
+        nxdl_enum: list,
+        nxdl_enum_open: bool,
+        path: str,
+        mapping: MutableMapping,
+    ):
+        # Check enumeration
+        if nxdl_enum is not None and value not in nxdl_enum:
+            if nxdl_enum_open:
+                if path.split("/")[-1].startswith("@"):
+                    attr_name = path.split("/")[-1][1:]  # remove "@"
+                    custom_path = f"{path}_custom"
+                else:
+                    custom_path = f"{path}/@custom"
+
+                custom_attr = mapping.get(custom_path)
+                remove_from_not_visited(custom_path)
+
+                if custom_attr is True:
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCorrectNewItem,
+                        nxdl_enum,
+                        value,
+                    )
+                else:
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithIncorrectNewItem,
+                        nxdl_enum,
+                        value,
+                        "custom_false" if custom_attr is False else "custom_missing",
+                    )
+            else:
+                collector.collect_and_log(
+                    path,
+                    ValidationProblem.InvalidEnum,
+                    nxdl_enum,
+                )
 
     def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]) -> bool:
         """
