@@ -36,6 +36,9 @@ dependencies = [
     "toposort>=1.10.0",
     "anytree",
     "pint",
+    "owlready2",
+    "fastapi",
+    "pygit2"
 ]
 
 [project.urls]
