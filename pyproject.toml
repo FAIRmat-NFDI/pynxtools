@@ -68,6 +68,9 @@ dependencies = [
     "cachetools",
     "structlog",
     "Jinja2",
+    "owlready2",
+    "fastapi",
+    "pygit2"
 ]
 
 [project.urls]
