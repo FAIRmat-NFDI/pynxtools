@@ -8,8 +8,10 @@ from owlready2 import get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
 import subprocess
 from fastapi.responses import RedirectResponse
-from ..NeXusOntology.script.generate_ontology import main as generate_ontology
+from pynxtools.NeXusOntology.script.generate_ontology import main as generate_ontology
 import pygit2
+import logging
+logger = logging.getLogger("pynxtools")
 
 #######################################################################
 ########################## define app and functions ###################
@@ -18,8 +20,7 @@ app = FastAPI()
 
 # Define paths
 local_dir = os.path.dirname(os.path.abspath(__file__))
-nexusontology_dir = os.path.abspath(os.path.join(local_dir, "..", "NeXusOntology"))
-ontology_dir = os.path.join(nexusontology_dir, "ontology")
+ontology_dir = os.path.abspath(os.path.join(local_dir, "..", "NeXusOntology", "ontology")) 
 OWL_FILE_PATH = None
 
 def ensure_ontology_file():
@@ -57,7 +58,7 @@ def load_ontology() -> Ontology:
         ontology = get_ontology(inferred_owl_path).load()
         return ontology
     except Exception as e:
-        print(f"Error loading ontology: {e}")
+        logger.error(f"Error loading ontology: {e}")
         raise
 
 def fetch_superclasses(ontology, class_name):
@@ -73,7 +74,7 @@ def fetch_superclasses(ontology, class_name):
         filtered_superclasses = [sc for sc in all_superclasses if str(sc) not in unwanted_superclasses]
         return [str(sc).split('.')[-1] for sc in filtered_superclasses]
     except Exception as e:
-        print(f"Error in fetch_superclasses: {e}")
+        logger.error(f"Error in fetch_superclasses: {e}")
         raise
 
 #######################################################################
@@ -93,7 +94,7 @@ def startup_event():
             sync_reasoner(ontology)
             ontology.save(file=inferred_owl_path, format="rdfxml")
     except Exception as e:
-        print(f"Error during startup: {e}")
+        logger.error(f"Error during startup: {e}")
 
 @app.get("/")
 def root():
