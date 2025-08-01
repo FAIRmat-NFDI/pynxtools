@@ -70,7 +70,8 @@ dependencies = [
     "Jinja2",
     "owlready2",
     "fastapi",
-    "pygit2"
+    "pygit2",
+    "uvicorn",
 ]
 
 [project.urls]
