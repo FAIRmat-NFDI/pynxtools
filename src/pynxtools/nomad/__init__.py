@@ -1,14 +1,18 @@
-import multiprocessing
-import uvicorn
 import atexit
+import multiprocessing
 import os
-import sys
+
+import uvicorn
 
 server_process = None
 
+
 def start_ontology_service():
     """Start the ontology FastAPI server."""
-    uvicorn.run("pynxtools.nomad.ontology_service:app", host="0.0.0.0", port=8089, reload=False)
+    uvicorn.run(
+        "pynxtools.nomad.ontology_service:app", host="0.0.0.0", port=8089, reload=False
+    )
+
 
 def stop_ontology_service():
     """Stop the ontology FastAPI server."""
@@ -16,9 +20,9 @@ def stop_ontology_service():
     if server_process is not None and server_process.is_alive():
         print("ontology service shutdown requested.")
         server_process.terminate()  # Terminate the process
-        server_process.join()       # Wait for the process to finish
+        server_process.join()  # Wait for the process to finish
     server_process = None
-        
+
 
 def run_ontology_service():
     """Run the ontology FastAPI server in a separate process."""
@@ -26,8 +30,9 @@ def run_ontology_service():
     if server_process is None or not server_process.is_alive():
         server_process = multiprocessing.Process(target=start_ontology_service)
         server_process.start()
-        atexit.register(stop_ontology_service) 
-         
+        atexit.register(stop_ontology_service)
+
+
 # Ensure the server stops when the main program exits
 if os.getenv("LAUNCH_CONTEXT") == "app":
     run_ontology_service()
