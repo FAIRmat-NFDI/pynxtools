@@ -70,7 +70,8 @@ dependencies = [
     "pillow>=9", # TIFF tags in FileProbe; also comes in through ase -> matplotlib
     "owlready2",
     "fastapi",
-    "pygit2"
+    "pygit2",
+    "uvicorn",
 ]
 
 [project.urls]
