@@ -41,7 +41,8 @@ dependencies = [
     "orjson",
     "owlready2",
     "fastapi",
-    "pygit2"
+    "pygit2",
+    "uvicorn",
 ]
 
 [project.urls]
