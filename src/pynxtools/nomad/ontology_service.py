@@ -1,16 +1,21 @@
 ######################################################################
 ######################## import libraries ############################
 ######################################################################
-from fastapi import FastAPI, HTTPException
 import os
-os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING" 
+
+from fastapi import FastAPI, HTTPException
+
+os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING"
+import logging
+import subprocess
+
+import pygit2
+from fastapi.responses import RedirectResponse
 from owlready2 import get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
-import subprocess
-from fastapi.responses import RedirectResponse
+
 from pynxtools.NeXusOntology.script.generate_ontology import main as generate_ontology
-import pygit2
-import logging
+
 logger = logging.getLogger("pynxtools")
 
 #######################################################################
@@ -20,8 +25,11 @@ app = FastAPI()
 
 # Define paths
 local_dir = os.path.dirname(os.path.abspath(__file__))
-ontology_dir = os.path.abspath(os.path.join(local_dir, "..", "NeXusOntology", "ontology")) 
+ontology_dir = os.path.abspath(
+    os.path.join(local_dir, "..", "NeXusOntology", "ontology")
+)
 OWL_FILE_PATH = None
+
 
 def ensure_ontology_file():
     """
@@ -39,9 +47,13 @@ def ensure_ontology_file():
         owl_file_path = os.path.join(ontology_dir, owl_file_name)
         # Check if the ontology file exists
         if not os.path.exists(owl_file_path):
-            generate_ontology(full=True, nexus_def_path=nexus_def_path, def_commit=latest_commit_hash)
+            generate_ontology(
+                full=True, nexus_def_path=nexus_def_path, def_commit=latest_commit_hash
+            )
             # Rename the generated file to include the commit hash
-            generated_file_path = os.path.join(ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl")	
+            generated_file_path = os.path.join(
+                ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl"
+            )
             os.rename(generated_file_path, owl_file_path)
 
         # Update the OWL_FILE_PATH to point to the correct file
@@ -49,6 +61,7 @@ def ensure_ontology_file():
 
     except Exception as e:
         raise RuntimeError(f"Failed to ensure ontology file: {e}")
+
 
 def load_ontology() -> Ontology:
     try:
@@ -61,6 +74,7 @@ def load_ontology() -> Ontology:
         logger.error(f"Error loading ontology: {e}")
         raise
 
+
 def fetch_superclasses(ontology, class_name):
     try:
         cls = ontology.search_one(iri="*" + class_name)
@@ -71,11 +85,14 @@ def fetch_superclasses(ontology, class_name):
         if nexus_application_class is None:
             raise ValueError("Class 'NeXusApplicationClass' not found in the ontology.")
         unwanted_superclasses = {str(sc) for sc in nexus_application_class.ancestors()}
-        filtered_superclasses = [sc for sc in all_superclasses if str(sc) not in unwanted_superclasses]
-        return [str(sc).split('.')[-1] for sc in filtered_superclasses]
+        filtered_superclasses = [
+            sc for sc in all_superclasses if str(sc) not in unwanted_superclasses
+        ]
+        return [str(sc).split(".")[-1] for sc in filtered_superclasses]
     except Exception as e:
         logger.error(f"Error in fetch_superclasses: {e}")
         raise
+
 
 #######################################################################
 ########################## application routes #########################
@@ -95,6 +112,7 @@ def startup_event():
             ontology.save(file=inferred_owl_path, format="rdfxml")
     except Exception as e:
         logger.error(f"Error during startup: {e}")
+
 
 @app.get("/")
 def root():
