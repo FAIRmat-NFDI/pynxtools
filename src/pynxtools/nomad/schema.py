@@ -31,8 +31,10 @@ from typing import Any, Optional, Union
 import h5py
 import numpy as np
 import pandas as pd
+import requests
 from ase import Atoms
 from ase.data import atomic_numbers
+from owlready2 import get_ontology, sync_reasoner
 from scipy.spatial import cKDTree
 from toposort import toposort_flatten
 
@@ -254,6 +256,34 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         if isinstance(sec, cls):
                             collection.append(ref_cls(name=sec.name, reference=sec))
                             break
+                # ------------------ ontology service  ------------------
+                try:
+                    if hasattr(entry, "definition__field") and entry.definition__field:
+                        # Directly use entry.definition__field as class_name
+                        class_name = entry.definition__field.strip()
+                        # Fetch superclasses from the server
+                        response = requests.get(
+                            f"http://localhost:8089/superclasses/{class_name}"
+                        )
+                        if response.status_code == 200:
+                            superclasses = response.json().get("superclasses", [])
+                            if archive.results.eln.methods is None:
+                                archive.results.eln.methods = []
+                            for superclass in superclasses:
+                                if superclass not in archive.results.eln.methods:
+                                    archive.results.eln.methods.append(superclass)
+                        else:
+                            logger.warning(
+                                f"Failed to fetch superclasses: {response.status_code} - {response.text}"
+                            )
+                            archive.results.ln.methods.append(class_name)
+                    else:
+                        logger.warning("entry.definition__field is missing or empty.")
+                        archive.results.eln.methods.append("Generic Experiment")
+                except Exception as e:
+                    logger.warning(f"Failed to extract superclasses: {e}")
+                    archive.results.eln.methods.append("Generic Experiment")
+                # ------------------ ontology service  ------------------
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
@@ -264,10 +294,6 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
 
         if archive.results.eln.methods is None:
             archive.results.eln.methods = []
-        if self.method:
-            archive.results.eln.methods.append(self.method)
-        else:
-            archive.results.eln.methods.append(self.m_def.name)
         if archive.workflow2 is None:
             archive.workflow2 = Workflow(name=self.name)
         # steps to tasks
