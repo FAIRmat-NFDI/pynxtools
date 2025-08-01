@@ -9,9 +9,6 @@ import json
 import os
 import re
 import sys
-import types
-from owlready2 import get_ontology, sync_reasoner
-import requests
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -21,8 +18,10 @@ import h5py
 import numpy as np
 import orjson
 import pandas as pd
+import requests
 from ase import Atoms
 from ase.data import atomic_numbers
+from owlready2 import get_ontology, sync_reasoner
 from scipy.spatial import cKDTree
 from toposort import toposort_flatten
 
@@ -253,7 +252,9 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         # Directly use entry.definition__field as class_name
                         class_name = entry.definition__field.strip()
                         # Fetch superclasses from the server
-                        response = requests.get(f"http://localhost:8089/superclasses/{class_name}")
+                        response = requests.get(
+                            f"http://localhost:8089/superclasses/{class_name}"
+                        )
                         if response.status_code == 200:
                             superclasses = response.json().get("superclasses", [])
                             if archive.results.eln.methods is None:
