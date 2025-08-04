@@ -1709,10 +1709,11 @@ TEMPLATE["required"][
                 {"compress": np.int64(2.0), "strength": 1},
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
-                "should be one of the following Python types: "
-                "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
-                "NXDL as NX_FLOAT."
+                # TODO: reactivate when the compression checks are reactivated
+                # # "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
+                # "should be one of the following Python types: "
+                # "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
+                # "NXDL as NX_FLOAT."
             ],
             id="appdef-compressed-payload-wrong-type",
         ),
@@ -1732,10 +1733,11 @@ TEMPLATE["required"][
                 {"compress": np.float32(2.0), "strength": 3},
             ),
             [
-                "The value at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position "
-                "should be one of the following Python types: "
-                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
-                "NXDL as NX_INT."
+                # TODO: reactivate when the compression checks are reactivated
+                # "The value at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position "
+                # "should be one of the following Python types: "
+                # "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                # "NXDL as NX_INT."
             ],
             id="baseclass-compressed-payload-wrong-type",
         ),

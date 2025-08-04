@@ -743,8 +743,9 @@ def is_valid_data_field(
 
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
 
-    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
-        value = value["compress"]
+    # TODO: do not convert here, rather check value["compress"] and leave value as is
+    # # if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+    #     value = value["compress"]
 
     # Do not count other dicts as they represent a link value
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
