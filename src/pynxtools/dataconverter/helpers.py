@@ -46,6 +46,12 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 logger = logging.getLogger("pynxtools")
 
 
+ISO8601 = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
+    r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
+)
+
+
 class ValidationProblem(Enum):
     DifferentVariadicNodesWithTheSameName = auto()
     UnitWithoutDocumentation = auto()
@@ -76,6 +82,9 @@ class ValidationProblem(Enum):
     ReservedPrefixInWrongContext = auto()
     InvalidNexusTypeForNamedConcept = auto()
     KeysWithAndWithoutConcept = auto()
+    InvalidCompressionStrength = auto()
+    DoNotCompressEnum = auto()
+    DoNotCompressStringsBoolean = auto()
 
 
 class Collector:
@@ -199,6 +208,25 @@ class Collector:
             value = cast(Any, value)
             logger.warning(
                 f"The key '{path}' uses the valid concept name '{args[0]}', but there is another valid key {value} that uses the non-variadic name of the node.'"
+            )
+        elif log_type == ValidationProblem.InvalidCompressionStrength:
+            logger.warning(
+                f"Compression strength for {path} = {value} should be between 0 and 9."
+            )
+        elif log_type == ValidationProblem.DoNotCompressEnum:
+            logger.warning(
+                f"Compression for {path} = {value} should not be used for enumerated concepts."
+            )
+        elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
+            dtype = type(value["compress"]).__name__
+            dtype_map = {
+                "str": "string",
+                "bool": "boolean",
+            }
+            dtype_str = dtype_map.get(dtype, "")
+
+            logger.warning(
+                f"Compression for {path} = {value} should not be used for {dtype_str} values."
             )
 
     def collect_and_log(
@@ -723,6 +751,8 @@ def convert_int_to_float(value):
         return {convert_int_to_float(v) for v in value}
     elif isinstance(value, np.ndarray) and np.issubdtype(value.dtype, np.integer):
         return value.astype(float)
+    elif isinstance(value, np.generic) and np.issubdtype(type(value), np.integer):
+        return float(value)
     else:
         return value
 
@@ -730,71 +760,82 @@ def convert_int_to_float(value):
 def is_valid_data_field(
     value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
 ) -> Any:
-    # todo: Check this function and write test for it. It seems the function is not
-    # working as expected.
-    """Checks whether a given value is valid according to the type defined in the NXDL.
+    """Checks whether a given value is valid according to the type defined in the NXDL."""
 
-    This function only tries to convert boolean value in str format (e.g. "true" ) to
-    python Boolean (True). In case, it fails to convert, it raises an Exception.
+    def validate_data_value(
+        value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
+    ) -> Any:
+        """Validate and possibly convert a primitive value according to NXDL type/enum rules."""
+        accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+        original_value = value
 
-    Return:
-        value: the possibly converted data value
-    """
+        # Do not count other dicts as they represent a link value
+        if not isinstance(value, dict):
+            # Attempt type conversion
+            if accepted_types[0] is bool and isinstance(value, str):
+                try:
+                    value = convert_str_to_bool_safe(value)
+                except (ValueError, TypeError):
+                    value = original_value
+            elif accepted_types[0] is float:
+                value = convert_int_to_float(value)
 
-    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-
-    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
-        value = value["compress"]
-
-    # Do not count other dicts as they represent a link value
-    if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
-        # try to convert string to bool
-        if accepted_types[0] is bool and isinstance(value, str):
-            try:
-                value = convert_str_to_bool_safe(value)
-            except (ValueError, TypeError):
-                collector.collect_and_log(
-                    path, ValidationProblem.InvalidType, accepted_types, nxdl_type
-                )
-        elif accepted_types[0] is float:
-            value = convert_int_to_float(value)
             if not is_valid_data_type(value, accepted_types):
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidType, accepted_types, nxdl_type
                 )
-        else:
+
+        # Type-specific validation
+        if nxdl_type == "NX_POSINT" and not is_positive_int(value):
+            collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
+
+        if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
+            results = ISO8601.search(value)
+            if results is None:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidDatetime, value
+                )
+
+        if nxdl_enum is not None and value not in nxdl_enum:
+            if nxdl_enum_open:
+                collector.collect_and_log(
+                    path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
+                )
+            else:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidEnum, nxdl_enum
+                )
+
+        return value
+
+    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+        compressed_value = value["compress"]
+
+        if not (0 <= value["strength"] <= value["strength"] <= 9):
             collector.collect_and_log(
-                path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+                path, ValidationProblem.InvalidCompressionStrength, value
+            )
+            # In this case, we remove the compression.
+            return validate_data_value(
+                value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
             )
 
-    if nxdl_type == "NX_POSINT" and not is_positive_int(value):
-        collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
+        if nxdl_enum is not None:
+            collector.collect_and_log(path, ValidationProblem.DoNotCompressEnum, value)
 
-    if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-        iso8601 = re.compile(
-            r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
-            r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
+        elif isinstance(compressed_value, (str, bool)):
+            collector.collect_and_log(
+                path, ValidationProblem.DoNotCompressStringsBoolean, value
+            )
+
+        # Apply standard validation to compressed value
+        value["compress"] = validate_data_value(
+            compressed_value, nxdl_type, nxdl_enum, nxdl_enum_open, path
         )
-        results = iso8601.search(value)
-        if results is None:
-            collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
 
-    # Check enumeration
-    if nxdl_enum is not None and value not in nxdl_enum:
-        if nxdl_enum_open:
-            collector.collect_and_log(
-                path,
-                ValidationProblem.OpenEnumWithNewItem,
-                nxdl_enum,
-            )
-        else:
-            collector.collect_and_log(
-                path,
-                ValidationProblem.InvalidEnum,
-                nxdl_enum,
-            )
+        return value
 
-    return value
+    return validate_data_value(value, nxdl_type, nxdl_enum, nxdl_enum_open, path)
 
 
 @cache

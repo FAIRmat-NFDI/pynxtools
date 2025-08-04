@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 import logging
+import random
 from typing import Optional
 
 import numpy as np
@@ -50,6 +51,33 @@ def set_whole_group_to_none(
         if path.startswith(key):
             internal_dict[optionality][path] = None
     return internal_dict
+
+
+def compress_paths_in_dict(data_dict: Template, paths=list[str]):
+    types = {
+        "int": np.int64,
+        "float": np.float32,
+    }
+    if data_dict is not None:
+        internal_dict = Template(data_dict)
+        for path in paths:
+            if (value := internal_dict.get(path)) is not None:
+                if np_type := types.get(type(value).__name__):
+                    value = np_type(value)
+                internal_dict[path] = {"compress": value, "strength": 3}
+        return internal_dict
+
+    return None
+
+
+def alter_dict(data_dict: Template, key: str, value: object):
+    """Helper function to alter a single entry in dict for parametrize."""
+    if data_dict is not None:
+        internal_dict = Template(data_dict)
+        internal_dict[key] = value
+        return internal_dict
+
+    return None
 
 
 def remove_from_dict(data_dict: Template, key: str, optionality: str = "optional"):
@@ -1694,27 +1722,64 @@ TEMPLATE["required"][
             id="reserved-prefix",
         ),
         pytest.param(
-            alter_dict(
+            compress_paths_in_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                [
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type",
+                ],
+            ),
+            [
+                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value = {'compress': True, 'strength': 3} "
+                "should not be used for boolean values.",
+                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value = {'compress': 'just chars', 'strength': 3} "
+                "should not be used for string values.",
+                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value = {'compress': '2022-01-22T12:14:12.05018+00:00', 'strength': 3} "
+                "should not be used for string values.",
+                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/type = {'compress': '2nd type', 'strength': 3} "
+                "should not be used for enumerated concepts.",
+            ],
+            id="appdef-compressed",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                    {"compress": np.int64(2.0), "strength": 1},
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 {"compress": np.float32(2.0), "strength": 1},
             ),
-            [],
-            id="appdef-compressed-payload",
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
+                "should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "NXDL as NX_INT."
+            ],
+            id="appdef-compressed-wrong-type",
         ),
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-                {"compress": np.int64(2.0), "strength": 1},
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"compress": np.float32(2.0), "strength": 11},
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
+                "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
+                "{'compress': 2.0, 'strength': 11} should be between 0 and 9.",
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
                 "should be one of the following Python types: "
-                "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
-                "NXDL as NX_FLOAT."
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "NXDL as NX_INT.",
             ],
-            id="appdef-compressed-payload-wrong-type",
+            id="appdef-compressed-invalid-strength",
         ),
         pytest.param(
             alter_dict(
@@ -1723,7 +1788,7 @@ TEMPLATE["required"][
                 {"compress": np.int64(2), "strength": 1},
             ),
             [],
-            id="baseclass-compressed-payload",
+            id="baseclass-compressed",
         ),
         pytest.param(
             alter_dict(
@@ -1737,7 +1802,7 @@ TEMPLATE["required"][
                 "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
                 "NXDL as NX_INT."
             ],
-            id="baseclass-compressed-payload-wrong-type",
+            id="baseclass-compressed-wrong-type",
         ),
     ],
 )
