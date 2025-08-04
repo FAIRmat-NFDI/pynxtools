@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 import logging
-import random
 from typing import Optional
 
 import numpy as np
@@ -65,16 +64,6 @@ def compress_paths_in_dict(data_dict: Template, paths=list[str]):
                 if np_type := types.get(type(value).__name__):
                     value = np_type(value)
                 internal_dict[path] = {"compress": value, "strength": 3}
-        return internal_dict
-
-    return None
-
-
-def alter_dict(data_dict: Template, key: str, value: object):
-    """Helper function to alter a single entry in dict for parametrize."""
-    if data_dict is not None:
-        internal_dict = Template(data_dict)
-        internal_dict[key] = value
         return internal_dict
 
     return None
