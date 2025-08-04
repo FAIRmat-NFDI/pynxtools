@@ -223,7 +223,7 @@ class Collector:
                 "str": "string",
                 "bool": "boolean",
             }
-            dtype_str = dtype_map.get(dtype, "")
+            dtype_str = dtype_map.get(dtype, dtype)
 
             logger.warning(
                 f"Compression for {path} = {value} should not be used for {dtype_str} values."
