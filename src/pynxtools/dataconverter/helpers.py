@@ -218,6 +218,7 @@ class Collector:
                 f"Compression for {path} = {value} should not be used for enumerated concepts."
             )
         elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
+            value = cast(dict, value)
             dtype = type(value["compress"]).__name__
             dtype_map = {
                 "str": "string",
