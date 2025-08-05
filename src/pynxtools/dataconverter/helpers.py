@@ -210,6 +210,7 @@ class Collector:
                 f"The key '{path}' uses the valid concept name '{args[0]}', but there is another valid key {value} that uses the non-variadic name of the node.'"
             )
         elif log_type == ValidationProblem.CompressionStrengthZero:
+            value = cast(dict, value)
             logger.info(
                 f"Compression strength for {path} is 0. The value '{value['compress']}' will be written uncompressed."
             )
