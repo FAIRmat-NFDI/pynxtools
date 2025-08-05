@@ -1758,17 +1758,25 @@ TEMPLATE["required"][
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
-                {"compress": np.float32(2.0), "strength": 11},
+                {"compress": np.int64(2), "strength": 11},
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
-                "{'compress': 2.0, 'strength': 11} should be between 0 and 9.",
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
-                "should be one of the following Python types: "
-                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
-                "NXDL as NX_INT.",
+                "{'compress': 2, 'strength': 11} should be between 0 and 9.",
             ],
             id="appdef-compressed-invalid-strength",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0), "strength": 0},
+            ),
+            [
+                "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
+                "is 0. The value '2.0' will be written uncompressed.",
+            ],
+            id="appdef-compressed-strength-0",
         ),
         pytest.param(
             alter_dict(
@@ -1814,6 +1822,7 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
+            "appdef-compressed-strength-0",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)

@@ -83,6 +83,7 @@ class ValidationProblem(Enum):
     InvalidNexusTypeForNamedConcept = auto()
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
+    CompressionStrengthZero = auto()
     DoNotCompressEnum = auto()
     DoNotCompressStringsBoolean = auto()
 
@@ -209,7 +210,12 @@ class Collector:
             logger.warning(
                 f"The key '{path}' uses the valid concept name '{args[0]}', but there is another valid key {value} that uses the non-variadic name of the node.'"
             )
+        elif log_type == ValidationProblem.CompressionStrengthZero:
+            logger.info(
+                f"Compression strength for {path} is 0. The value '{value['compress']}' will be written uncompressed."
+            )
         elif log_type == ValidationProblem.InvalidCompressionStrength:
+            value = cast(dict, value)
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
@@ -251,6 +257,7 @@ class Collector:
         if log_type not in (
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
+            ValidationProblem.CompressionStrengthZero,
         ):
             self.data.add(path + str(log_type) + str(value))
 
@@ -812,10 +819,15 @@ def is_valid_data_field(
     if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
         compressed_value = value["compress"]
 
-        if not (0 <= value["strength"] <= value["strength"] <= 9):
-            collector.collect_and_log(
-                path, ValidationProblem.InvalidCompressionStrength, value
-            )
+        if not (1 <= value["strength"] <= 9):
+            if value["strength"] == 0:
+                collector.collect_and_log(
+                    path, ValidationProblem.CompressionStrengthZero, value
+                )
+            else:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidCompressionStrength, value
+                )
             # In this case, we remove the compression.
             return validate_data_value(
                 value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
