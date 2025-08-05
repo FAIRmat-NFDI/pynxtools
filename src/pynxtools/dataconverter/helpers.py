@@ -84,8 +84,7 @@ class ValidationProblem(Enum):
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
-    DoNotCompressEnum = auto()
-    DoNotCompressStringsBoolean = auto()
+    # DoNotCompressStringsBoolean = auto()
 
 
 class Collector:
@@ -219,22 +218,18 @@ class Collector:
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
-        elif log_type == ValidationProblem.DoNotCompressEnum:
-            logger.warning(
-                f"Compression for {path} = {value} should not be used for enumerated concepts."
-            )
-        elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
-            value = cast(dict, value)
-            dtype = type(value["compress"]).__name__
-            dtype_map = {
-                "str": "string",
-                "bool": "boolean",
-            }
-            dtype_str = dtype_map.get(dtype, dtype)
+        # elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
+        #     value = cast(dict, value)
+        #     dtype = type(value["compress"]).__name__
+        #     dtype_map = {
+        #         "str": "string",
+        #         "bool": "boolean",
+        #     }
+        #     dtype_str = dtype_map.get(dtype, dtype)
 
-            logger.warning(
-                f"Compression for {path} = {value} should not be used for {dtype_str} values."
-            )
+        #     logger.info(
+        #         f"Compression for {path} = {value} should not be used for {dtype_str} values."
+        #     )
 
     def collect_and_log(
         self,
@@ -833,13 +828,11 @@ def is_valid_data_field(
                 value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
             )
 
-        if nxdl_enum is not None:
-            collector.collect_and_log(path, ValidationProblem.DoNotCompressEnum, value)
-
-        elif isinstance(compressed_value, (str, bool)):
-            collector.collect_and_log(
-                path, ValidationProblem.DoNotCompressStringsBoolean, value
-            )
+        # TODO: Do we need to issue a warning if string/bool compression is used
+        # # elif isinstance(compressed_value, (str, bool)):
+        #     collector.collect_and_log(
+        #         path, ValidationProblem.DoNotCompressStringsBoolean, value
+        #     )
 
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(

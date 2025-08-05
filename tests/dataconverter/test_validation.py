@@ -1724,16 +1724,7 @@ TEMPLATE["required"][
                     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type",
                 ],
             ),
-            [
-                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value = {'compress': True, 'strength': 3} "
-                "should not be used for boolean values.",
-                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value = {'compress': 'just chars', 'strength': 3} "
-                "should not be used for string values.",
-                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value = {'compress': '2022-01-22T12:14:12.05018+00:00', 'strength': 3} "
-                "should not be used for string values.",
-                "Compression for /ENTRY[my_entry]/NXODD_name[nxodd_name]/type = {'compress': '2nd type', 'strength': 3} "
-                "should not be used for enumerated concepts.",
-            ],
+            [],
             id="appdef-compressed",
         ),
         pytest.param(
