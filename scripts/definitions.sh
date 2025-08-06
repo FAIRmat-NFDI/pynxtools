@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-# This script updates or resets the definitions.
+# This script manages the definitions submodule.
 # Usage:
-#   ./scripts/definitions.sh update   # Updates the definitions submodule
-#   ./scripts/definitions.sh reset    # Resets the definitions submodule
+#   ./scripts/definitions.sh update
+#   ./scripts/definitions.sh reset
+#   ./scripts/definitions.sh commit <COMMIT>
+#   ./scripts/definitions.sh branch <BRANCH>   # Use "default" to auto-detect the submodule's default branch
 
-set -e
+set -euo pipefail
 
 DEFINITIONS_FOLDER="src/pynxtools/definitions"
 
@@ -15,32 +17,110 @@ update_nexus_version() {
   cd ../../../
 }
 
+get_default_branch() {
+  # Detect the default branch of the submodule's remote
+  git -C "$DEFINITIONS_FOLDER" remote show origin | awk '/HEAD branch/ {print $NF}'
+}
+
 update_definitions_submodule() {
   echo "updating definitions submodule"
-  git submodule sync $DEFINITIONS_FOLDER
-  git submodule update --init --remote --jobs=4 $DEFINITIONS_FOLDER
-  git -C src/pynxtools/definitions fetch --tags
+  git submodule sync "$DEFINITIONS_FOLDER"
+  git submodule update --init --remote --jobs=4 "$DEFINITIONS_FOLDER"
+  git -C "$DEFINITIONS_FOLDER" fetch --tags
 }
 
 reset_definitions_submodule() {
   echo "resetting definitions submodule"
-  git submodule deinit -f $DEFINITIONS_FOLDER
-  git submodule update --init $DEFINITIONS_FOLDER
+  git submodule deinit -f "$DEFINITIONS_FOLDER"
+  git submodule update --init "$DEFINITIONS_FOLDER"
 }
 
-if [[ "$1" != "update" && "$1" != "reset" ]]; then
-  echo "Error: Please specify either 'update' or 'reset'"
-  echo "Usage: $0 [update|reset]"
+checkout_definitions_commit() {
+  local commit="$1"
+  echo "checking out definitions submodule at commit: $commit"
+  git submodule update --init "$DEFINITIONS_FOLDER"
+  git -C "$DEFINITIONS_FOLDER" fetch
+  git -C "$DEFINITIONS_FOLDER" checkout "$commit"
+}
+
+track_definitions_branch() {
+  local input_branch="$1"
+  local resolved_branch="$input_branch"
+
+  if [[ "$input_branch" == "default" ]]; then
+    resolved_branch="$(get_default_branch)"
+    echo "resolved default branch to: $resolved_branch"
+  fi
+
+  echo "tracking definitions submodule on branch: $resolved_branch"
+
+  git submodule update --init "$DEFINITIONS_FOLDER"
+  git -C "$DEFINITIONS_FOLDER" fetch
+  git -C "$DEFINITIONS_FOLDER" checkout "$resolved_branch"
+  git -C "$DEFINITIONS_FOLDER" pull origin "$resolved_branch"
+
+  local default_branch
+  default_branch="$(get_default_branch)"
+
+  if [[ "$resolved_branch" == "$default_branch" ]]; then
+    if git config -f .gitmodules --get submodule.$DEFINITIONS_FOLDER.branch &>/dev/null; then
+      echo "removing submodule branch setting from .gitmodules (back to default)"
+      git config -f .gitmodules --unset submodule.$DEFINITIONS_FOLDER.branch
+      git submodule sync "$DEFINITIONS_FOLDER"
+
+      # Remove any resulting empty line left by the unset command
+      # Works by collapsing multiple newlines into one
+      sed -i '/^\s*$/N;/^\n$/D' .gitmodules
+    else
+      echo "no custom branch setting found in .gitmodules; nothing to remove"
+    fi
+  else
+    echo "setting submodule to track branch: $resolved_branch in .gitmodules"
+    git config -f .gitmodules submodule.$DEFINITIONS_FOLDER.branch "$resolved_branch"
+    git submodule sync "$DEFINITIONS_FOLDER"
+  fi
+}
+
+
+print_usage() {
+  echo "Usage:"
+  echo "  $0 update"
+  echo "  $0 reset"
+  echo "  $0 commit <COMMIT>"
+  echo "  $0 branch <BRANCH>     # Use 'default' to track the submodule's default branch temporarily (no .gitmodules change)"
   exit 1
-fi
+}
 
-project_dir=$(dirname $(dirname $(realpath "$0")))
-cd "$project_dir"
+main() {
+  if [[ $# -lt 1 ]]; then
+    print_usage
+  fi
 
-if [[ "$1" == "update" ]]; then
-  update_definitions_submodule
-elif [[ "$1" == "reset" ]]; then
-  reset_definitions_submodule
-fi
+  project_dir=$(dirname "$(dirname "$(realpath "$0")")")
+  cd "$project_dir"
 
-update_nexus_version
+  case "$1" in
+    update)
+      update_definitions_submodule
+      ;;
+    reset)
+      reset_definitions_submodule
+      ;;
+    commit)
+      [[ $# -eq 2 ]] || print_usage
+      checkout_definitions_commit "$2"
+      ;;
+    branch)
+      [[ $# -eq 2 ]] || print_usage
+      track_definitions_branch "$2"
+      ;;
+    *)
+      echo "Error: Unknown command '$1'"
+      print_usage
+      ;;
+  esac
+
+  update_nexus_version
+}
+
+main "$@"
