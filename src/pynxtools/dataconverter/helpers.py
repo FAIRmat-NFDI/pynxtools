@@ -794,10 +794,12 @@ def is_valid_data_field(
             collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
         if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-
-            if ISO8601.search(
-                value.decode("utf-8") if isinstance(value, bytes) else value
-            ) is None:
+            if (
+                ISO8601.search(
+                    value.decode("utf-8") if isinstance(value, bytes) else value
+                )
+                is None
+            ):
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidDatetime, value
                 )

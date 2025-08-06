@@ -7,7 +7,6 @@ from pathlib import Path
 
 import h5py
 import yaml
-from numpy import str_
 
 TYPE = "_type_"
 
@@ -45,7 +44,8 @@ def unpack_dataset(item):
 
     """
     value = item[()]
-    type_id = item.attrs.get(TYPE, str_()).astype(str)
+    type_id = item.attrs.get(TYPE, "")
+
     if type_id == "datetime":
         if hasattr(value, "__iter__"):
             value = [datetime.fromtimestamp(ts) for ts in value]
@@ -62,7 +62,7 @@ def unpack_dataset(item):
         value = tuple(value)
 
     elif type_id == "str":
-        value = str_(value).astype(str)
+        value = value.decode("utf-8") if isinstance(value, bytes) else value
 
     return value
 
@@ -181,15 +181,16 @@ def pack_dataset(hdfobject, key, value):
             attr_data = None
 
         if attr_data:
-            ds.attrs.create(name=TYPE, data=str_(attr_data))
+            ds.attrs.create(name=TYPE, data=attr_data.encode("utf-8"))
 
     except (TypeError, ValueError):
         # Obviously the data was not serializable. To give it
         # a last try; serialize it to yaml
         # and save it to the hdf file:
-        ds = hdfobject.create_dataset(name=key, data=str_(yaml.safe_dump(value)))
-
-        ds.attrs.create(name=TYPE, data=str_("yaml"))
+        ds = hdfobject.create_dataset(
+            name=key, data=yaml.safe_dump(value).encode("utf-8")
+        )
+        ds.attrs.create(name=TYPE, data=b"yaml")
         # if this fails again, restructure your data!
 
 
