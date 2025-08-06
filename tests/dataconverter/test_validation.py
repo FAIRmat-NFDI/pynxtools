@@ -53,6 +53,7 @@ def set_whole_group_to_none(
 
 
 def compress_paths_in_dict(data_dict: Template, paths=list[str]):
+    """For each path, compress the value in data_dict using a strength of 3."""
     types = {
         "int": np.int64,
         "float": np.float32,
