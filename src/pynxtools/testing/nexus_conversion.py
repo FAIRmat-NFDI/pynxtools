@@ -88,9 +88,9 @@ class ReaderTest:
             Pytest fixture variable, used to capture the log messages during the test.
         ref_log_path : str
             Full path string to the reference log file generated from the same
-            set of input files in files_or_dir. This can also be parsed automatically if files_or_dir
-            is the full path string to the example data directory and there is only one reference
-            log file.
+            set of input files in files_or_dir. This can also be parsed automatically if
+            files_or_dir is the full path string to the example data directory and there
+            is only one reference log file.
         kwargs : dict[str, Any]
             Any additional keyword arguments to be passed to the readers' read function.
         """
@@ -131,7 +131,9 @@ class ReaderTest:
         assert self.ref_log_path, "Reference nexus .log file not found"
 
         input_files = [
-            file for file in example_files if not file.endswith((".nxs", ".log"))
+            file
+            for file in example_files
+            if not file.endswith((".nxs", "ref_output.txt", ".log"))
         ]
 
         assert (
