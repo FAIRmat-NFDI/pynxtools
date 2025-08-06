@@ -775,7 +775,9 @@ def is_valid_data_field(
             r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
             r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
         )
-        results = iso8601.search(value)
+        results = iso8601.search(
+            value.decode("utf-8") if isinstance(value, bytes) else value
+        )
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
 
