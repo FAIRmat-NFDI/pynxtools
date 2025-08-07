@@ -1509,13 +1509,13 @@ Note that these methods should also implement any logic depending on the provide
   that allows filling multiple fields of the same type from a list of dimensions. This can be particularly helpful for writing <code>DATA</code> and <code>AXISNAME</code> fields that are all stored under similar paths in the read-in data.
   For this, the <code>get_data_dims</code> method needs to be implemented. For a given path, it should return a list of all data axes available to replace the wildcard.</p>
 <p>The same wildcard notation can also be used within a name to repeat entries with different names (e.g., field_*{my, name, etc} is converted into three keys with * replaced by my, name, etc, respectively). As an example, for multiple lenses and their voltage readouts, one could write:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nt">&quot;LENS_EM[lens_*{A,B,Foc}]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nt">&quot;ELECTROMAGNETIC_LENS[lens_*{A,B,Foc}]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
 <a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span><span class="nt">&quot;voltage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@attrs:metadata/file/Lens:*:V&quot;</span><span class="p">,</span>
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">  </span><span class="nt">&quot;voltage/@units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;V&quot;</span>
 <a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="p">},</span>
 </code></pre></div>
-  which would write <code>NXlens_em</code> instances named <code>lens_A</code>, <code>lens_B</code>, and <code>lens_Foc</code>.</p>
+  which would write <code>NXelectromagnetic_lens</code> instances named <code>lens_A</code>, <code>lens_B</code>, and <code>lens_Foc</code>.</p>
 </li>
 <li>
 <p><strong>Required fields in optional groups</strong>: There will sometimes be the situation that there is an optional NeXus group in an application definition, that (if implemented) requires some sub-element. As an example, for the instrument's energy resolution, the only value expected to come from a data source is the <code>resolution</code>, whereas other fields are hardcoded.
