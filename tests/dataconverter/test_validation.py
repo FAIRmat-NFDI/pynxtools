@@ -468,7 +468,8 @@ def format_error_message(msg: str) -> str:
                 "NOT_TRUE_OR_FALSE",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: "
+                "(<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
@@ -1911,7 +1912,8 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "NOT_TRUE_OR_FALSE",
             ),
             [
-                "The value at /my_entry/nxodd_name/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                "The value at /my_entry/nxodd_name/bool_value should be one of the following Python types: "
+                "(<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
