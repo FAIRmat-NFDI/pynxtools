@@ -266,13 +266,13 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
     
     The same wildcard notation can also be used within a name to repeat entries with different names (e.g., field_*{my, name, etc} is converted into three keys with * replaced by my, name, etc, respectively). As an example, for multiple lenses and their voltage readouts, one could write:
   ```json
-  "LENS_EM[lens_*{A,B,Foc}]": {
+  "ELECTROMAGNETIC_LENS[lens_*{A,B,Foc}]": {
     "name": "*",
     "voltage": "@attrs:metadata/file/Lens:*:V",
     "voltage/@units": "V"
   },
   ```
-  which would write `NXlens_em` instances named `lens_A`, `lens_B`, and `lens_Foc`.
+  which would write `NXelectromagnetic_lens` instances named `lens_A`, `lens_B`, and `lens_Foc`.
 
 - **Required fields in optional groups**: There will sometimes be the situation that there is an optional NeXus group in an application definition, that (if implemented) requires some sub-element. As an example, for the instrument's energy resolution, the only value expected to come from a data source is the `resolution`, whereas other fields are hardcoded.
   ```json
