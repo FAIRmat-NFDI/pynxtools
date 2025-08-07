@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the master branch
-      - restructure-docs
   
 env:
   python-version: 3.12
