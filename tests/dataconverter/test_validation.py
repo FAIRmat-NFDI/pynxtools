@@ -123,7 +123,7 @@ TEMPLATE["required"][
 TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/@specified_attr"] = "attr"
 
 
-TEMPLATE["required"][
+TEMPLATE["optional"][
     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]"
 ] = 1.0
 TEMPLATE["required"][
@@ -391,7 +391,7 @@ TEMPLATE["required"][
                                 remove_from_dict(
                                     TEMPLATE,
                                     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
-                                    "required",
+                                    "optional",
                                 ),
                                 "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]",
                                 "required",
@@ -735,6 +735,41 @@ TEMPLATE["required"][
             ],
             id="empty-required-field",
         ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                "optional",
+            ),
+            [
+                "There were attributes set for the field /ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD], "
+                "but the field does not exist.",
+                "The attribute /ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field] "
+                "will not be written.",
+            ],
+            id="removed-optional-value-with-attribute-remaining",
+        ),
+        # pytest.param(
+        #     alter_dict(
+        #         remove_from_dict(
+        #             remove_from_dict(
+        #                 TEMPLATE,
+        #                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+        #                 "optional",
+        #             ),
+        #             "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units",
+        #             "optional",
+        #         ),
+        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@axis",
+        #         1
+        #     ),
+        #     [
+        #         "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, "
+        #         "but the field does not exist.",
+        #         "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@axis will not be written."
+        #     ],
+        #     id="removed-optional-value-with-attribute-remaining",
+        # ),
         pytest.param(
             remove_from_dict(
                 TEMPLATE,
