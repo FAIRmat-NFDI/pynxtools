@@ -332,11 +332,11 @@ def validate_hdf_group_against(
 
         required_subgroups = [
             f"{prefix}{grp.lstrip('/')}"
-            for grp in node.required_groups(traverse_children=False)
+            for grp in node.required_groups(recurse_children=False)
         ]
         required_subentities = [
             f"{prefix}{ent.lstrip('/')}"
-            for ent in node.required_fields_and_attrs_names(traverse_children=False)
+            for ent in node.required_fields_and_attrs_names(recurse_children=False)
         ]
 
         required_groups.update(required_subgroups)

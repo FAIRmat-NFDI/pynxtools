@@ -387,7 +387,7 @@ class NexusNode(NodeMixin):
         self,
         prev_path: str = "",
         level: Literal["required", "recommended", "optional"] = "required",
-        traverse_children: bool = True,
+        recurse_children: bool = True,
     ) -> list[str]:
         """
         Gets all required groups names of the current node and its children.
@@ -404,8 +404,8 @@ class NexusNode(NodeMixin):
                 directly present in the application definition but no fields
                 inherited from the base classes.
                 Defaults to "required".
-            traverse_children (bool):
-                Denotes if the children shall also be searched.
+            recurse_children (bool):
+                Denotes if the children shall also be searched (recursively).
                 Default to True.
 
         Returns:
@@ -425,7 +425,7 @@ class NexusNode(NodeMixin):
             if child.type == "group":
                 req_children.append(f"{prev_path}/{child.name}")
 
-            if traverse_children:
+            if recurse_children:
                 req_children.extend(
                     child.required_groups(
                         prev_path=f"{prev_path}/{child.name}", level=level
@@ -438,7 +438,7 @@ class NexusNode(NodeMixin):
         self,
         prev_path: str = "",
         level: Literal["required", "recommended", "optional"] = "required",
-        traverse_children: bool = True,
+        recurse_children: bool = True,
     ) -> list[str]:
         """
         Gets all required fields and attributes names of the current node and its children.
@@ -455,8 +455,8 @@ class NexusNode(NodeMixin):
                 directly present in the application definition but no fields
                 inherited from the base classes.
                 Defaults to "required".
-            traverse_children (bool):
-                Denotes if the children shall also be searched.
+            recurse_children (bool):
+                Denotes if the children shall also be searched (recursively).
                 Default to True.
 
         Returns:
@@ -482,7 +482,7 @@ class NexusNode(NodeMixin):
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
 
-            if traverse_children:
+            if recurse_children:
                 req_children.extend(
                     child.required_fields_and_attrs_names(
                         prev_path=f"{prev_path}/{child.name}", level=level
