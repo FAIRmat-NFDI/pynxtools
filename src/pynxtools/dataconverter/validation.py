@@ -872,7 +872,7 @@ def validate_hdf_group_against(
 
                 if "target" not in group[name].attrs:
                     collector.collect_and_log(
-                        full_path, ValidationProblem.MissingTargetAttribute, ""
+                        full_path, ValidationProblem.MissingTargetAttribute, None
                     )
                 else:
                     attr_target = group[name].attrs["target"]
@@ -1229,7 +1229,7 @@ def validate_dict_against(
         return path
 
     def _follow_link(
-        keys: Optional[Mapping[str, Any]], prev_path: str, p=False
+        keys: Optional[Mapping[str, Any]], prev_path: str
     ) -> Optional[Any]:
         """
         Resolves internal dictionary "links" by replacing any keys containing a
@@ -1284,9 +1284,30 @@ def validate_dict_against(
                         "key",
                     )
                     keys_to_remove.append(key_path)
+                    keys_to_remove.append(f"{key_path}/@target")
                     del resolved_keys[key]
                 else:
                     resolved_keys[key] = current_keys
+
+                    if f"{key_path}/@target" not in mapping:
+                        collector.collect_and_log(
+                            key_path,
+                            ValidationProblem.MissingTargetAttribute,
+                            value["link"],
+                        )
+                        mapping[f"{key_path}/@target"] = value["link"]
+                    else:
+                        attr_target = mapping[f"{key_path}/@target"]
+                        remove_from_not_visited(f"{key_path}/@target")
+                        target_path = value["link"]
+                        if attr_target != target_path:
+                            collector.collect_and_log(
+                                key_path,
+                                ValidationProblem.TargetAttributeMismatch,
+                                attr_target,
+                                target_path,
+                            )
+
         return resolved_keys
 
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
@@ -1970,11 +1991,6 @@ def validate_dict_against(
             # This value is not really set. Skip checking its validity.
             continue
 
-        # TODO: remove again if "@target"/"@reference" is sorted out by NIAC
-        always_allowed_attributes = ("@target", "@reference")
-        if not_visited_key.endswith(always_allowed_attributes):
-            # If we want to support this in the future, we could check that the targetted field exists.
-            continue
         if not_visited_key.endswith("/@units"):
             # check that parent exists
             if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
@@ -2089,7 +2105,8 @@ def validate_dict_against(
 
     # remove keys that are incorrect
     for key in set(keys_to_remove):
-        del mapping[key]
+        if key in mapping:
+            del mapping[key]
 
     return not collector.has_validation_problems()
 

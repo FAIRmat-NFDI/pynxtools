@@ -1024,16 +1024,24 @@ def format_error_message(msg: str) -> str:
         pytest.param(
             alter_dict(
                 alter_dict(
-                    remove_from_dict(
-                        TEMPLATE,
-                        "/ENTRY[my_entry]/required_group/description",
-                        "optional",
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
                     ),
-                    "/ENTRY[my_entry]/required_group",
-                    {"link": "/my_entry/required_group2"},
+                    "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                    {"link": "/my_entry/specified_group/specified_field"},
                 ),
-                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
-                {"link": "/my_entry/specified_group/specified_field"},
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target",
+                "/my_entry/specified_group/specified_field",
             ),
             [],
             id="appdef-links-with-matching-nexus-types",
@@ -1058,9 +1066,13 @@ def format_error_message(msg: str) -> str:
         pytest.param(
             alter_dict(
                 alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
-                    {"link": "/my_entry/some_group"},
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                        {"link": "/my_entry/some_group"},
+                    ),
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]/@target",
+                    "/my_entry/some_group",
                 ),
                 "/ENTRY[my_entry]/SAMPLE[my_sample2]/name",
                 {"link": "/my_entry/specified_group/some_field223"},

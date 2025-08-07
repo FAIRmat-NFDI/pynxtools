@@ -171,9 +171,12 @@ class Collector:
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
         elif log_type == ValidationProblem.MissingTargetAttribute:
-            logger.info(
+            log_text = (
                 f"A link was used for {path}, but no '@target' attribute was found."
             )
+            if value is not None:
+                log_text += f" The link target was automatically set to {value}."
+            logger.info(log_text)
         elif log_type == ValidationProblem.TargetAttributeMismatch:
             logger.info(
                 f"A link was used for {path}, but its @target attribute '{value}' "
@@ -252,6 +255,8 @@ class Collector:
         if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
+            ValidationProblem.MissingTargetAttribute,
+            ValidationProblem.TargetAttributeMismatch,
             ValidationProblem.CompressionStrengthZero,
         ):
             if self.logging and message not in self.data["info"]:
