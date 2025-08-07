@@ -816,15 +816,25 @@ def is_valid_data_field(
                     path, ValidationProblem.InvalidDatetime, value
                 )
 
-        if nxdl_enum is not None and value not in nxdl_enum:
-            if nxdl_enum_open:
-                collector.collect_and_log(
-                    path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
-                )
+        if nxdl_enum is not None:
+            if (
+                isinstance(value, np.ndarray)
+                and isinstance(nxdl_enum, list)
+                and isinstance(nxdl_enum[0], list)
+            ):
+                enum_value = list(value)
             else:
-                collector.collect_and_log(
-                    path, ValidationProblem.InvalidEnum, nxdl_enum
-                )
+                enum_value = value
+
+            if enum_value not in nxdl_enum:
+                if nxdl_enum_open:
+                    collector.collect_and_log(
+                        path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
+                    )
+                else:
+                    collector.collect_and_log(
+                        path, ValidationProblem.InvalidEnum, nxdl_enum
+                    )
 
         return value
 
