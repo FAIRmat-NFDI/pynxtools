@@ -867,9 +867,9 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
-                "be one of the following"
-                ": ['1st type', '2nd type', '3rd type', '4th type']."
+                "The value Wrong option at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type "
+                "should be one of the following: "
+                "['1st type', '2nd type', '3rd type', '4th type']."
             ],
             id="wrong-enum-choice",
         ),
@@ -966,10 +966,12 @@ def format_error_message(msg: str) -> str:
             [
                 "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
                 "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
-                "When a different value is used, a boolean 'custom' attribute must be added.",
+                "When a different value is used, a boolean 'custom=True' attribute must be added. "
+                "It was added here automatically.",
                 "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
                 "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
-                "When a different value is used, a boolean 'custom' attribute must be added.",
+                "When a different value is used, a boolean 'custom=True' attribute must be added. "
+                "It was added here automatically.",
             ],
             id="open-enum-with-new-item-custom-missing",
         ),
@@ -1374,7 +1376,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
+                "The value ['0', 1, 2] at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
             ],
             id="wrong-type-array-in-attribute",
         ),
@@ -1383,7 +1385,7 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
+                "The value [1, 2] at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
             ],
             id="wrong-value-array-in-attribute",
         ),
@@ -1727,7 +1729,7 @@ def format_error_message(msg: str) -> str:
                 "Cu",
             ),
             [
-                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
+                "The value Cu at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
                 "should be one of the following: ['Ta', 'W', 'depleted_U', 'enriched_U', 'Hg', 'Pb', 'C']."
             ],
             id="baseclass-wrong-enum",
@@ -2061,6 +2063,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "open-enum-with-new-item-compressed",
+            "open-enum-with-new-item-custom-missing",
             "baseclass-open-enum-with-new-item",
             "appdef-compressed-strength-0",
         ):

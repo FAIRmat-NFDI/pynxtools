@@ -154,7 +154,7 @@ class Collector:
 
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value '{args[0]}' at {path} should be one of the following: {value}."
+                f"The value {args[0]} at {path} should be one of the following: {value}."
             )
         elif log_type == ValidationProblem.OpenEnumWithCustom:
             logger.info(
@@ -162,7 +162,7 @@ class Collector:
             )
         elif log_type == ValidationProblem.OpenEnumWithCustomFalse:
             logger.warning(
-                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}."
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}. "
                 "When a different value is used, the boolean 'custom' attribute cannot be False."
             )
         elif log_type == ValidationProblem.OpenEnumWithMissingCustom:
