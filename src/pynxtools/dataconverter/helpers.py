@@ -72,6 +72,8 @@ class ValidationProblem(Enum):
     UnitWithoutField = auto()
     AttributeForNonExistingField = auto()
     BrokenLink = auto()
+    MissingTargetAttribute = auto()
+    TargetAttributeMismatch = auto()
     FailedNamefitting = auto()
     NXdataMissingSignalData = auto()
     NXdataMissingAxisData = auto()
@@ -84,14 +86,17 @@ class ValidationProblem(Enum):
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
-    # DoNotCompressStringsBoolean = auto()
 
 
 class Collector:
     """A class to collect data and return it in a dictionary format."""
 
     def __init__(self):
-        self.data = set()
+        self.data: dict[str, set] = {
+            "warning_and_error": set(),
+            "info": set(),
+        }
+
         self.logging = True
 
     def _log(self, path: str, log_type: ValidationProblem, value: Optional[Any], *args):
@@ -106,9 +111,7 @@ class Collector:
                 f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
             )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.info(
-                f"The unit, {path} = {value}, is being written but has no documentation."
-            )
+            logger.info(f"The unit {path} = {value} has no documentation.")
         if log_type == ValidationProblem.InvalidUnit:
             value = cast(Any, value)
             log_text = f"The unit '{args[0]}' at {path} does not match with the unit category {value.unit} of '{value.name}'."
@@ -125,12 +128,11 @@ class Collector:
                 f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
-            logger.warning(f"The required group, {path}, hasn't been supplied.")
+            logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(
-                f"The data entry corresponding to {path} is required "
-                "and hasn't been supplied by the reader.",
-            )
+            logger.warning(f"The required field {path} hasn't been supplied.")
+        elif log_type == ValidationProblem.MissingRequiredAttribute:
+            logger.warning(f"The required attribute {path} hasn't been supplied.")
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
                 f"The value at {path} should be one of the following Python types: {value}"
@@ -147,20 +149,18 @@ class Collector:
                 f"The value at {path} should be a positive int, but is {value}."
             )
         elif log_type == ValidationProblem.ExpectedGroup:
-            logger.error(f"Expected a group at {path} but found a field or attribute.")
+            logger.error(f"Expected a group at {path}, but found a field or attribute.")
         elif log_type == ValidationProblem.ExpectedField:
-            logger.error(f"Expected a field at {path} but found a group.")
+            logger.error(f"Expected a field at {path}, but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
             if "@" in path.rsplit("/")[-1]:
-                logger.warning(f"Attribute {path} written without documentation.")
+                logger.warning(f"Attribute {path} has no documentation.")
             else:
-                logger.warning(f"Field {path} written without documentation.")
+                logger.warning(f"Field {path} has no documentation.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
             )
-        elif log_type == ValidationProblem.MissingRequiredAttribute:
-            logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
             logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingField:
@@ -170,6 +170,18 @@ class Collector:
             )
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
+        elif log_type == ValidationProblem.MissingTargetAttribute:
+            log_text = (
+                f"A link was used for {path}, but no '@target' attribute was found."
+            )
+            if value is not None:
+                log_text += f" The link target was automatically set to {value}."
+            logger.info(log_text)
+        elif log_type == ValidationProblem.TargetAttributeMismatch:
+            logger.info(
+                f"A link was used for {path}, but its @target attribute '{value}' "
+                f"does not match with the link's target '{args[0]}'."
+            )
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
         elif log_type == ValidationProblem.NXdataMissingSignalData:
@@ -193,7 +205,7 @@ class Collector:
                 f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
             )
         elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
-            log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."
+            log_text = f"Reserved prefix {path} was used in {args[0] if args else '<unknown>'}, but is not valid here."
             # Note that value=None" gets converted to "<unknown>"
             if value != "<unknown>":
                 log_text += f" It is only valid in the context of {value}."
@@ -202,7 +214,8 @@ class Collector:
             value = cast(Any, value)
             logger.error(
                 f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
-                f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
+                f"conflicts with another existing concept {value.get_path()} of the same name, which "
+                f"is of type '{value.type}'."
             )
         elif log_type == ValidationProblem.KeysWithAndWithoutConcept:
             value = cast(Any, value)
@@ -219,18 +232,6 @@ class Collector:
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
-        # elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
-        #     value = cast(dict, value)
-        #     dtype = type(value["compress"]).__name__
-        #     dtype_map = {
-        #         "str": "string",
-        #         "bool": "boolean",
-        #     }
-        #     dtype_str = dtype_map.get(dtype, dtype)
-
-        #     logger.info(
-        #         f"Compression for {path} = {value} should not be used for {dtype_str} values."
-        #     )
 
     def collect_and_log(
         self,
@@ -247,27 +248,39 @@ class Collector:
             "NX_ANY",
         ):
             return
-        if self.logging and path + str(log_type) + str(value) not in self.data:
-            self._log(path, log_type, value, *args, **kwargs)
+
+        message: str = path + str(log_type) + str(value)
+
         # info messages should not fail validation
-        if log_type not in (
+        if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
+            ValidationProblem.MissingTargetAttribute,
+            ValidationProblem.TargetAttributeMismatch,
             ValidationProblem.CompressionStrengthZero,
         ):
-            self.data.add(path + str(log_type) + str(value))
+            if self.logging and message not in self.data["info"]:
+                self._log(path, log_type, value, *args, **kwargs)
+            self.data["info"].add(message)
+        else:
+            if self.logging and message not in self.data["warning_and_error"]:
+                self._log(path, log_type, value, *args, **kwargs)
+            self.data["warning_and_error"].add(message)
 
-    def has_validation_problems(self):
+    def has_validation_problems(self) -> bool:
         """Returns True if there were any validation problems."""
-        return len(self.data) > 0
+        return len(self.data["warning_and_error"]) > 0
 
     def get(self):
         """Returns the set of problematic paths."""
-        return self.data
+        return self.data["warning_and_error"]
 
     def clear(self):
         """Clears the collected data."""
-        self.data = set()
+        self.data: dict[str, set] = {
+            "warning_and_error": set(),
+            "info": set(),
+        }
 
 
 collector = Collector()
@@ -396,21 +409,20 @@ def get_nxdl_root_and_path(nxdl: str):
         "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
     }
 
+    probable_file_paths = [
+        os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"),
+        os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml"),
+        os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml"),
+        os.path.join(
+            definitions_path, "dev_tools/tests/test_nxdls", f"{nxdl}.nxdl.xml"
+        ),
+    ]
     if nxdl in special_names:
         nxdl_f_path = special_names[nxdl]
     else:
-        nxdl_f_path = os.path.join(
-            definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
-        )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "applications", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
+        nxdl_f_path = next((x for x in probable_file_paths if os.path.exists(x)), None)
+
+        if nxdl_f_path is None:
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
@@ -710,8 +722,17 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
+    if isinstance(value, tuple) and len(value) == 1:
+        value = value[0]
     if not isinstance(value, np.ndarray):
         value = np.array(value)
+    # Handle 'object' dtype separately (for lists from HDF5 files)
+    if value.dtype == np.dtype("O"):
+        return all(
+            isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
+            for v in value.flat
+        )
+
     return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
@@ -794,21 +815,31 @@ def is_valid_data_field(
             collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
         if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-            results = ISO8601.search(value)
+            results = ISO8601.search(clean_str_attr(value))
             if results is None:
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidDatetime, value
                 )
 
-        if nxdl_enum is not None and value not in nxdl_enum:
-            if nxdl_enum_open:
-                collector.collect_and_log(
-                    path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
-                )
+        if nxdl_enum is not None:
+            if (
+                isinstance(value, np.ndarray)
+                and isinstance(nxdl_enum, list)
+                and isinstance(nxdl_enum[0], list)
+            ):
+                enum_value = list(value)
             else:
-                collector.collect_and_log(
-                    path, ValidationProblem.InvalidEnum, nxdl_enum
-                )
+                enum_value = value
+
+            if enum_value not in nxdl_enum:
+                if nxdl_enum_open:
+                    collector.collect_and_log(
+                        path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
+                    )
+                else:
+                    collector.collect_and_log(
+                        path, ValidationProblem.InvalidEnum, nxdl_enum
+                    )
 
         return value
 
@@ -828,12 +859,6 @@ def is_valid_data_field(
             return validate_data_value(
                 value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
             )
-
-        # TODO: Do we need to issue a warning if string/bool compression is used
-        # # elif isinstance(compressed_value, (str, bool)):
-        #     collector.collect_and_log(
-        #         path, ValidationProblem.DoNotCompressStringsBoolean, value
-        #     )
 
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(
@@ -1166,3 +1191,20 @@ def nested_dict_to_slash_separated_path(
             nested_dict_to_slash_separated_path(val, flattened_dict, path)
         else:
             flattened_dict[path] = val
+
+
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    return attr

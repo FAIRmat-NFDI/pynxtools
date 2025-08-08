@@ -154,6 +154,7 @@ class NexusNode(NodeMixin):
             Base of the NXDL file where the XML element for this node is  defined
     """
 
+    # TODO rename type to nx_type in every place
     name: str
     type: Literal["group", "field", "attribute", "choice"]
     name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
@@ -163,10 +164,15 @@ class NexusNode(NodeMixin):
     is_a: list["NexusNode"]
     parent_of: list["NexusNode"]
     nxdl_base: str
+    occurrence_limits: tuple[
+        # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
+        Optional[int],
+        Optional[int],
+    ] = (None, None)
 
     def _set_optionality(self):
         """
-        Sets the optionality of the current node
+        Sets the optionality of the current node based on the inheritance chain.
         if `recommended`, `required` or `optional` is set.
         Also sets the field to optional if `maxOccurs == 0` or to required
         if `maxOccurs > 0`.
@@ -181,8 +187,10 @@ class NexusNode(NodeMixin):
             and self.occurrence_limits[0] > 0
         ):
             self.optionality = "required"
-        elif self.inheritance[0].attrib.get("optional") or (
-            isinstance(self, NexusGroup) and self.occurrence_limits[0] == 0
+        elif (
+            self.inheritance[0].attrib.get("optional")
+            or self.inheritance[0].attrib.get("minOccurs") == "0"
+            or (isinstance(self, NexusGroup) and self.occurrence_limits[0] == 0)
         ):
             self.optionality = "optional"
 
@@ -226,6 +234,9 @@ class NexusNode(NodeMixin):
         while current_node.parent is not None:
             names.insert(0, current_node.name)
             current_node = current_node.parent
+
+        if self.type == "attribute" and names:
+            names[-1] = f"@{names[-1]}"
         return "/" + "/".join(names)
 
     def search_add_child_for_multiple(
@@ -352,11 +363,11 @@ class NexusNode(NodeMixin):
             tag_type = f"[@type='{nx_class}']"
 
         if node_type is not None:
-            search_tags = f"nx:{node_type}{tag_type}"
+            search_tags = f"*[self::nx:{node_type}{tag_type}]"
         else:
             search_tags = (
-                "*[self::nx:field or self::nx:group "
-                "or self::nx:attribute or self::nx:choice]"
+                r"*[self::nx:field or self::nx:group "
+                r"or self::nx:attribute or self::nx:choice]"
             )
 
         names = set()
@@ -372,10 +383,62 @@ class NexusNode(NodeMixin):
 
         return names
 
+    def required_groups(
+        self,
+        prev_path: str = "",
+        level: Literal["required", "recommended", "optional"] = "required",
+        recurse_children: bool = True,
+    ) -> list[str]:
+        """
+        Gets all required groups names of the current node and its children.
+
+        Args:
+            prev_path (str, optional):
+                The path prefix to attach to the names found at this node. Defaults to "".
+            level (Literal["required", "recommended", "optional"], optional):
+                Denotes which level of requiredness should be returned.
+                Setting this to `required` will return only required fields and attributes.
+                Setting this to `recommended` will return
+                both required and recommended fields and attributes.
+                Setting this to "optional" will return all fields and attributes
+                directly present in the application definition but no fields
+                inherited from the base classes.
+                Defaults to "required".
+            recurse_children (bool):
+                Denotes if the children shall also be searched (recursively).
+                Default to True.
+
+        Returns:
+            list[str]: A list of required fields and attributes names.
+        """
+        lvl_map = {
+            "required": ("required",),
+            "recommended": ("recommended", "required"),
+            "optional": ("optional", "recommended", "required"),
+        }
+
+        req_children = []
+        optionalities = lvl_map.get(level, ("required",))
+        for child in self.children:
+            if child.optionality not in optionalities:
+                continue
+            if child.type == "group":
+                req_children.append(f"{prev_path}/{child.name}")
+
+            if recurse_children:
+                req_children.extend(
+                    child.required_groups(
+                        prev_path=f"{prev_path}/{child.name}", level=level
+                    )
+                )
+
+        return req_children
+
     def required_fields_and_attrs_names(
         self,
         prev_path: str = "",
         level: Literal["required", "recommended", "optional"] = "required",
+        recurse_children: bool = True,
     ) -> list[str]:
         """
         Gets all required fields and attributes names of the current node and its children.
@@ -392,6 +455,9 @@ class NexusNode(NodeMixin):
                 directly present in the application definition but no fields
                 inherited from the base classes.
                 Defaults to "required".
+            recurse_children (bool):
+                Denotes if the children shall also be searched (recursively).
+                Default to True.
 
         Returns:
             list[str]: A list of required fields and attributes names.
@@ -407,7 +473,6 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
-
             if child.type == "attribute":
                 req_children.append(f"{prev_path}/@{child.name}")
                 continue
@@ -417,11 +482,12 @@ class NexusNode(NodeMixin):
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
 
-            req_children.extend(
-                child.required_fields_and_attrs_names(
-                    prev_path=f"{prev_path}/{child.name}", level=level
+            if recurse_children:
+                req_children.extend(
+                    child.required_fields_and_attrs_names(
+                        prev_path=f"{prev_path}/{child.name}", level=level
+                    )
                 )
-            )
 
         return req_children
 
@@ -1178,6 +1244,7 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         inheritance=appdef_inheritance_chain,
         nxdl_base=appdef_xml_root.base,
     )
+
     # Set root attributes
     if set_root_attr:
         nx_root, _ = get_nxdl_root_and_path("NXroot")
@@ -1191,4 +1258,5 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     # Add all fields and attributes from the parent appdefs
     if len(appdef_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
+
     return tree
