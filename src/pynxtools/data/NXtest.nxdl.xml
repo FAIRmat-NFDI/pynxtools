@@ -99,6 +99,12 @@
                     <item value="1st type open"/>
                     <item value="2nd type open"/>
                 </enumeration>
+                <attribute name="attribute_with_open_enum" optional="true">
+                    <enumeration open="true">
+                        <item value="1st option"/>
+                        <item value="2nd option"/>
+                    </enumeration>
+            </attribute>
             </field>
             <attribute name="group_attribute">
             </attribute>
