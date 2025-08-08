@@ -1273,7 +1273,7 @@ def validate_dict_against(
                     )
 
                 elif custom_attr is None:
-                    mapping[path] = True
+                    mapping[custom_path] = True
                     collector.collect_and_log(
                         path,
                         ValidationProblem.OpenEnumWithMissingCustom,
