@@ -2,14 +2,17 @@
 
 !!! info "This page is intended to give more information about the validation tools that are part of `pynxtools`. Please also have a look at our comprehensive [how-to guide](../../how-tos/pynxtools/validate-nexus-file.md) on NeXus validation."
 
-One of the main advantages of using pynxtools is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.
+One of the main advantages of using `pynxtools` is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.
 
 ## As part of the dataconverter
 
-During [data conversion](./dataconverter-and-readers.md), before writing the HDF5 file, the data is first checked against the provided application definition.
+During [data conversion](./dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, the data is first checked against the provided application definition.
 
-<!--## verify-nexus: Testing existing NeXus/HDF5 files
-This CLI tool can be used to validate _existing_ HDF5 files that claim to be NeXus-compliant. See [here](reference/cli-api.md#verify-nexus) for the API documentation.-->
+## validate_nexus: Testing existing NeXus/HDF5 files
+
+While we encourage NeXus users to convert their data using the `pynxtools` data converter, 
+
+This CLI tool can be used to validate _existing_ HDF5 files that claim to be NeXus-compliant. Read more in the [API documentation](reference/cli-api.md#validate_nexus).
 
 ## read_nexus: NeXus file reader and debugger
 
