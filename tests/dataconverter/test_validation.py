@@ -863,6 +863,32 @@ TEMPLATE["required"][
                         alter_dict(
                             TEMPLATE,
                             "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            {"compress": "a very different type", "strength": 2},
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        True,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    {"compress": "3rd option", "strength": 4},
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                True,
+            ),
+            [
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option'].",
+            ],
+            id="open-enum-with-new-item-compressed",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
                             "a very different type",
                         ),
                         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
@@ -1879,12 +1905,14 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             "field-with-illegal-unit",
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
+            "open-enum-with-new-item-compressed",
             "baseclass-open-enum-with-new-item",
             "appdef-compressed-strength-0",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)
-                assert error_messages[0] in caplog.text
+                for expected_message, rec in zip(error_messages, caplog.records):
+                    assert expected_message == format_error_message(rec.message)
         else:
             with caplog.at_level(logging.WARNING):
                 assert not validate_dict_against("NXtest", data_dict)

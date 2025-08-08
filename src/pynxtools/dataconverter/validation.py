@@ -1241,7 +1241,11 @@ def validate_dict_against(
         path: str,
         mapping: MutableMapping,
     ):
-        # Check enumeration
+        """Check enumeration."""
+
+        if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+            value = value["compress"]
+
         if nxdl_enum is not None and value not in nxdl_enum:
             if nxdl_enum_open:
                 if path.split("/")[-1].startswith("@"):
@@ -1256,23 +1260,29 @@ def validate_dict_against(
                 if custom_attr is True:
                     collector.collect_and_log(
                         path,
-                        ValidationProblem.OpenEnumWithCorrectNewItem,
+                        ValidationProblem.OpenEnumWithCustom,
                         nxdl_enum,
                         value,
                     )
-                else:
+                elif custom_attr is False:
                     collector.collect_and_log(
                         path,
-                        ValidationProblem.OpenEnumWithIncorrectNewItem,
+                        ValidationProblem.OpenEnumWithCustomFalse,
                         nxdl_enum,
                         value,
-                        "custom_false" if custom_attr is False else "custom_missing",
+                    )
+
+                elif custom_attr is None:
+                    mapping[path] = True
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithMissingCustom,
+                        nxdl_enum,
+                        value,
                     )
             else:
                 collector.collect_and_log(
-                    path,
-                    ValidationProblem.InvalidEnum,
-                    nxdl_enum,
+                    path, ValidationProblem.InvalidEnum, nxdl_enum, value
                 )
 
     def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]) -> bool:
