@@ -1024,24 +1024,59 @@ def format_error_message(msg: str) -> str:
         pytest.param(
             alter_dict(
                 alter_dict(
-                    alter_dict(
-                        alter_dict(
-                            remove_from_dict(
-                                TEMPLATE,
-                                "/ENTRY[my_entry]/required_group/description",
-                                "optional",
-                            ),
-                            "/ENTRY[my_entry]/required_group",
-                            {"link": "/my_entry/required_group2"},
-                        ),
-                        "/ENTRY[my_entry]/required_group/@target",
-                        "/my_entry/required_group2",
-                    ),
-                    "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
-                    {"link": "/my_entry/specified_group/specified_field"},
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/required_group2/description"},
                 ),
-                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target",
-                "/my_entry/specified_group/specified_field",
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/my_entry/required_group2/description",
+            ),
+            [],
+            id="internal-link-with-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/required_group2/description"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/another_entry/required_group2/description",
+            ),
+            [
+                "A link was used for /ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1, "
+                "but its @target attribute '/another_entry/required_group2/description' does not match "
+                "with the link's target '/my_entry/required_group2/description'."
+            ],
+            id="internal-link-with-wrong-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [],
+            id="internal-link-with-target-and-warning",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                {"link": "/my_entry/specified_group/specified_field"},
             ),
             [],
             id="appdef-links-with-matching-nexus-types",
@@ -1066,13 +1101,9 @@ def format_error_message(msg: str) -> str:
         pytest.param(
             alter_dict(
                 alter_dict(
-                    alter_dict(
-                        TEMPLATE,
-                        "/ENTRY[my_entry]/SAMPLE[my_sample]",
-                        {"link": "/my_entry/some_group"},
-                    ),
-                    "/ENTRY[my_entry]/SAMPLE[my_sample]/@target",
-                    "/my_entry/some_group",
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                    {"link": "/my_entry/some_group"},
                 ),
                 "/ENTRY[my_entry]/SAMPLE[my_sample2]/name",
                 {"link": "/my_entry/specified_group/some_field223"},
@@ -1876,10 +1907,12 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
             "appdef-compressed-strength-0",
+            "internal-link-with-wrong-target",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)
-                assert error_messages[0] in caplog.text
+                for expected_message, rec in zip(error_messages, caplog.records):
+                    assert expected_message == format_error_message(rec.message)
         else:
             with caplog.at_level(logging.WARNING):
                 assert not validate_dict_against("NXtest", data_dict)
@@ -2284,21 +2317,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
-                    {"link": "/my_entry/nxodd_name/char_value"},
-                ),
-                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
-                "/my_entry/nxodd_name/char_value",
-            ),
-            [
-                "The unit /my_entry/identified_calibration/identifier_1/@units =  has no documentation."
-            ],
-            id="internal-link-with-target-and-warning",
-        ),
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                     {"link": "/my_entry/required_group2/description"},
                 ),
                 "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
@@ -2310,6 +2328,22 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "target '/my_entry/required_group2/description'."
             ],
             id="internal-link-with-wrong-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [
+                # TODO: this should not create an info message (linked attr. not to be followed)
+                "The unit /my_entry/identified_calibration/identifier_1/@units =  has no documentation."
+            ],
+            id="internal-link-with-target-and-warning",
         ),
         pytest.param(
             alter_dict(
@@ -2937,12 +2971,12 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
-            "internal-link-with-target-and-warning",
             "internal-link-with-wrong-target",
         ):
             with caplog.at_level(logging.INFO):
                 _ = validate(str(hdf_file_path))
-                assert error_messages[0] in caplog.text
+                for expected_message, rec in zip(error_messages, caplog.records):
+                    assert expected_message == format_error_message(rec.message)
         else:
             with caplog.at_level(logging.WARNING):
                 _ = validate(str(hdf_file_path))

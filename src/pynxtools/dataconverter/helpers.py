@@ -174,11 +174,9 @@ class Collector:
             log_text = (
                 f"A link was used for {path}, but no '@target' attribute was found."
             )
-            if value is not None:
-                log_text += f" The link target was automatically set to {value}."
             logger.info(log_text)
         elif log_type == ValidationProblem.TargetAttributeMismatch:
-            logger.info(
+            logger.warning(
                 f"A link was used for {path}, but its @target attribute '{value}' "
                 f"does not match with the link's target '{args[0]}'."
             )

@@ -1290,11 +1290,7 @@ def validate_dict_against(
                     resolved_keys[key] = current_keys
 
                     if f"{key_path}/@target" not in mapping:
-                        collector.collect_and_log(
-                            key_path,
-                            ValidationProblem.MissingTargetAttribute,
-                            value["link"],
-                        )
+                        # Target attribute added automatically
                         mapping[f"{key_path}/@target"] = value["link"]
                     else:
                         attr_target = mapping[f"{key_path}/@target"]
