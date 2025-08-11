@@ -1199,20 +1199,17 @@ def clean_str_attr(
     - If `attr` is `bytes`, decode it using the given encoding.
     - If `attr` is already a string, return it unchanged.
     - If `attr` is `None`, return `None`.
-    - Otherwise, raise TypeError.
+    - Otherwise, return it unchanged.
 
     Args:
-        attr: A string, bytes, or None.
+        attr: A string, bytes, or any other type.
         encoding: The character encoding to use when decoding bytes.
 
     Returns:
         The attribute as a string, or None if input was None.
-
-    Raises:
-        TypeError: If `attr` is not str, bytes, or None.
     """
     if attr is None or isinstance(attr, str):
         return attr
     if isinstance(attr, bytes):
         return attr.decode(encoding)
-    raise TypeError(f"Expected str, bytes, or None; got {type(attr).__name__}")
+    return attr

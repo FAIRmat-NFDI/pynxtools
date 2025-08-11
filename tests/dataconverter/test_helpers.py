@@ -229,28 +229,20 @@ def test_warning_on_definition_changed_by_reader(caplog):
         ("café".encode(), "utf-8", "café"),  # UTF-8 with Unicode
         ("", "utf-8", ""),  # empty string
         (b"", "utf-8", ""),  # empty bytes
+        (123, "utf-8", 123),  # unexpected type int
+        ([b"test"], "utf-8", [b"test"]),  # unexpected type list
+        ({"a": 1}, "utf-8", {"a": 1}),  # unexpected type dict
     ],
 )
-def test_clean_str_attr_valid(attr, encoding, expected):
-    assert helpers.clean_str_attr(attr, encoding) == expected
-
-
-@pytest.mark.parametrize(
-    "attr,expected_type",
-    [
-        (123, "int"),
-        ([b"test"], "list"),
-        ({}, "dict"),
-    ],
-)
-def test_clean_str_attr_invalid_type(attr, expected_type):
-    with pytest.raises(
-        TypeError, match=f"Expected str, bytes, or None; got {expected_type}"
-    ):
-        helpers.clean_str_attr(attr)
+def test_clean_str_attr(attr, encoding, expected):
+    if isinstance(attr, bytes) and encoding == "utf-8" and attr == b"\xff":
+        # handled separately for UnicodeDecodeError
+        with pytest.raises(UnicodeDecodeError):
+            helpers.clean_str_attr(attr, encoding)
+    else:
+        assert helpers.clean_str_attr(attr, encoding) == expected
 
 
 def test_clean_str_attr_invalid_encoding():
     with pytest.raises(UnicodeDecodeError):
-        # invalid in UTF-8
         helpers.clean_str_attr(b"\xff", encoding="utf-8")
