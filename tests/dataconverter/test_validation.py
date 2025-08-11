@@ -749,27 +749,6 @@ TEMPLATE["required"][
             ],
             id="removed-optional-value-with-attribute-remaining",
         ),
-        # pytest.param(
-        #     alter_dict(
-        #         remove_from_dict(
-        #             remove_from_dict(
-        #                 TEMPLATE,
-        #                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-        #                 "optional",
-        #             ),
-        #             "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units",
-        #             "optional",
-        #         ),
-        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@axis",
-        #         1
-        #     ),
-        #     [
-        #         "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, "
-        #         "but the field does not exist.",
-        #         "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@axis will not be written."
-        #     ],
-        #     id="removed-optional-value-with-attribute-remaining",
-        # ),
         pytest.param(
             remove_from_dict(
                 TEMPLATE,
