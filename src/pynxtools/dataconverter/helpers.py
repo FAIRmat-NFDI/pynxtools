@@ -413,9 +413,6 @@ def get_nxdl_root_and_path(nxdl: str):
         os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"),
         os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml"),
         os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml"),
-        os.path.join(
-            definitions_path, "dev_tools/tests/test_nxdls", f"{nxdl}.nxdl.xml"
-        ),
     ]
     if nxdl in special_names:
         nxdl_f_path = special_names[nxdl]
