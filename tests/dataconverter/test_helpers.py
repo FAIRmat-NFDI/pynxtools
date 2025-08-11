@@ -217,3 +217,40 @@ def test_warning_on_definition_changed_by_reader(caplog):
 
     assert "/ENTRY[entry]/definition" in template.keys()
     assert template["/ENTRY[entry]/definition"] == "NXtest"
+
+
+@pytest.mark.parametrize(
+    "attr,encoding,expected",
+    [
+        (None, "utf-8", None),  # None stays None
+        ("hello", "utf-8", "hello"),  # string unchanged
+        (b"hello", "utf-8", "hello"),  # UTF-8 bytes
+        ("café".encode("latin-1"), "latin-1", "café"),  # custom encoding
+        ("café".encode(), "utf-8", "café"),  # UTF-8 with Unicode
+        ("", "utf-8", ""),  # empty string
+        (b"", "utf-8", ""),  # empty bytes
+    ],
+)
+def test_clean_str_attr_valid(attr, encoding, expected):
+    assert helpers.clean_str_attr(attr, encoding) == expected
+
+
+@pytest.mark.parametrize(
+    "attr,expected_type",
+    [
+        (123, "int"),
+        ([b"test"], "list"),
+        ({}, "dict"),
+    ],
+)
+def test_clean_str_attr_invalid_type(attr, expected_type):
+    with pytest.raises(
+        TypeError, match=f"Expected str, bytes, or None; got {expected_type}"
+    ):
+        helpers.clean_str_attr(attr)
+
+
+def test_clean_str_attr_invalid_encoding():
+    with pytest.raises(UnicodeDecodeError):
+        # invalid in UTF-8
+        helpers.clean_str_attr(b"\xff", encoding="utf-8")

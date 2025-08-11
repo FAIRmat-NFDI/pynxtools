@@ -1191,17 +1191,28 @@ def nested_dict_to_slash_separated_path(
 
 
 def clean_str_attr(
-    attr: Optional[Union[str, bytes]], encoding="utf-8"
+    attr: Optional[Union[str, bytes]], encoding: str = "utf-8"
 ) -> Optional[str]:
     """
-    Cleans the string attribute which means it will decode bytes to str if necessary.
-    If `attr` is not str, bytes or None it raises a TypeError.
+    Return the attribute as a string.
+
+    - If `attr` is `bytes`, decode it using the given encoding.
+    - If `attr` is already a string, return it unchanged.
+    - If `attr` is `None`, return `None`.
+    - Otherwise, raise TypeError.
+
+    Args:
+        attr: A string, bytes, or None.
+        encoding: The character encoding to use when decoding bytes.
+
+    Returns:
+        The attribute as a string, or None if input was None.
+
+    Raises:
+        TypeError: If `attr` is not str, bytes, or None.
     """
-    if attr is None:
+    if attr is None or isinstance(attr, str):
         return attr
     if isinstance(attr, bytes):
         return attr.decode(encoding)
-    if isinstance(attr, str):
-        return attr
-
-    return attr
+    raise TypeError(f"Expected str, bytes, or None; got {type(attr).__name__}")
