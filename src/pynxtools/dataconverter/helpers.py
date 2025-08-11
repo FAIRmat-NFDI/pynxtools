@@ -174,7 +174,7 @@ class Collector:
             log_text = (
                 f"A link was used for {path}, but no '@target' attribute was found."
             )
-            logger.info(log_text)
+            logger.warning(log_text)
         elif log_type == ValidationProblem.TargetAttributeMismatch:
             logger.warning(
                 f"A link was used for {path}, but its @target attribute '{value}' "
@@ -253,8 +253,6 @@ class Collector:
         if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
-            ValidationProblem.MissingTargetAttribute,
-            ValidationProblem.TargetAttributeMismatch,
             ValidationProblem.CompressionStrengthZero,
         ):
             if self.logging and message not in self.data["info"]:

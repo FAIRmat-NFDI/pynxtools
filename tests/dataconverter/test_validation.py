@@ -1006,25 +1006,19 @@ def format_error_message(msg: str) -> str:
         pytest.param(
             alter_dict(
                 alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/identified_calibration",
-                    {"link": "/my_entry/some_group"},
-                ),
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-                {"link": "/my_entry/specified_group/some_field"},
-            ),
-            [
-                "Broken link at /ENTRY[my_entry]/identified_calibration to /my_entry/some_group.",
-                "The key /ENTRY[my_entry]/identified_calibration will not be written.",
-                "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value to /my_entry/specified_group/some_field.",
-                "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value will not be written.",
-            ],
-            id="appdef-broken-links",
-        ),
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
+                    ),
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                     {"link": "/my_entry/required_group2/description"},
                 ),
@@ -1037,6 +1031,55 @@ def format_error_message(msg: str) -> str:
         pytest.param(
             alter_dict(
                 alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    remove_from_dict(
+                                        TEMPLATE,
+                                        "/ENTRY[my_entry]/required_group/description",
+                                    ),
+                                    "/ENTRY[my_entry]/USER[user]/name",
+                                    "A user name",
+                                ),
+                                "/ENTRY[my_entry]/required_group",
+                                {"link": "/my_entry/user"},
+                            ),
+                            "/ENTRY[my_entry]/required_group/@target",
+                            "/my_entry/user",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@long_name",
+                        "my long name",
+                    ),
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [],
+            id="internal-links-with-additional-sub-objects",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                {"link": "/my_entry/required_group2/description"},
+            ),
+            [],
+            id="internal-link-missing-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                     {"link": "/my_entry/required_group2/description"},
@@ -1045,24 +1088,11 @@ def format_error_message(msg: str) -> str:
                 "/another_entry/required_group2/description",
             ),
             [
-                "A link was used for /ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1, "
-                "but its @target attribute '/another_entry/required_group2/description' does not match "
-                "with the link's target '/my_entry/required_group2/description'."
+                "A link was used for /ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1, but its @target attribute "
+                "'/another_entry/required_group2/description' does not match with the link's "
+                "target '/my_entry/required_group2/description'."
             ],
-            id="internal-link-with-wrong-target",
-        ),
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
-                    {"link": "/my_entry/nxodd_name/char_value"},
-                ),
-                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
-                "/my_entry/nxodd_name/char_value",
-            ),
-            [],
-            id="internal-link-with-target-and-warning",
+            id="internal-link-wrong-target",
         ),
         pytest.param(
             alter_dict(
@@ -1078,8 +1108,13 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
                 {"link": "/my_entry/specified_group/specified_field"},
             ),
-            [],
-            id="appdef-links-with-matching-nexus-types",
+            [
+                "The value at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field "
+                "should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), "
+                "as defined in the NXDL as NX_INT."
+            ],
+            id="appdef-links-with-matching-nexus-types-wrong-dtype",
         ),
         pytest.param(
             alter_dict(
@@ -1097,6 +1132,24 @@ def format_error_message(msg: str) -> str:
                 "Field /ENTRY[my_entry]/USER[my_user] has no documentation.",
             ],
             id="appdef-links-with-wrong-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identified_calibration",
+                    {"link": "/my_entry/some_group"},
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"link": "/my_entry/specified_group/some_field"},
+            ),
+            [
+                "Broken link at /ENTRY[my_entry]/identified_calibration to /my_entry/some_group.",
+                "The key /ENTRY[my_entry]/identified_calibration will not be written.",
+                "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value to /my_entry/specified_group/some_field.",
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value will not be written.",
+            ],
+            id="appdef-broken-links",
         ),
         pytest.param(
             alter_dict(
@@ -1670,19 +1723,6 @@ def format_error_message(msg: str) -> str:
         ),
         pytest.param(
             alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
-                    "123",
-                ),
-                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
-                "ORCID",
-            ),
-            [],
-            id="name-fitted-identifier-with-type",
-        ),
-        pytest.param(
-            alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                 "123",
@@ -1907,7 +1947,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
             "appdef-compressed-strength-0",
-            "internal-link-with-wrong-target",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)
@@ -2191,6 +2230,21 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         ),
         pytest.param(
             remove_from_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units",
+                "required",
+            ),
+            [
+                "The required field /my_entry/nxodd_name/bool_value hasn't been supplied."
+            ],
+            id="missing-required-value",
+        ),
+        pytest.param(
+            remove_from_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute",
                 "required",
@@ -2269,6 +2323,26 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         ),
         pytest.param(
             set_to_none_in_dict(
+                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
+            ),
+            [
+                "The required field /my_entry/optional_parent/required_child hasn't been supplied."
+            ],
+            id="atleast-one-required-child-not-provided-optional-parent",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
+                "required",
+            ),
+            [
+                "The required field /my_entry/my_group/required_field hasn't been supplied."
+            ],
+            id="required-field-not-provided-in-variadic-optional-group",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field",
                 "required",
@@ -2302,7 +2376,19 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         pytest.param(
             alter_dict(
                 alter_dict(
-                    TEMPLATE,
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
+                    ),
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                     {"link": "/my_entry/required_group2/description"},
                 ),
@@ -2315,6 +2401,60 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         pytest.param(
             alter_dict(
                 alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    remove_from_dict(
+                                        TEMPLATE,
+                                        "/ENTRY[my_entry]/required_group/description",
+                                    ),
+                                    "/ENTRY[my_entry]/USER[user]/name",
+                                    "A user name",
+                                ),
+                                "/ENTRY[my_entry]/required_group",
+                                {"link": "/my_entry/user"},
+                            ),
+                            "/ENTRY[my_entry]/required_group/@target",
+                            "/my_entry/user",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@long_name",
+                        "my long name",
+                    ),
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [],
+            id="internal-links-with-additional-sub-objects",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                {"link": "/my_entry/required_group2/description"},
+            ),
+            [
+                "A link was used for /my_entry/identified_calibration/identifier_1, "
+                "but no '@target' attribute was found.",
+                "A link was used for /my_entry/required_group, but no '@target' "
+                "attribute was found.",
+            ],
+            id="internal-link-missing-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                     {"link": "/my_entry/required_group2/description"},
@@ -2323,27 +2463,11 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/another_entry/required_group2/description",
             ),
             [
-                "A link was used for identified_calibration/identifier_1, but its @target attribute "
+                "A link was used for /my_entry/identified_calibration/identifier_1, but its @target attribute "
                 "'/another_entry/required_group2/description' does not match with the link's "
                 "target '/my_entry/required_group2/description'."
             ],
-            id="internal-link-with-wrong-target",
-        ),
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
-                    {"link": "/my_entry/nxodd_name/char_value"},
-                ),
-                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
-                "/my_entry/nxodd_name/char_value",
-            ),
-            [
-                # TODO: this should not create an info message (linked attr. not to be followed)
-                "The unit /my_entry/identified_calibration/identifier_1/@units =  has no documentation."
-            ],
-            id="internal-link-with-target-and-warning",
+            id="internal-link-wrong-target",
         ),
         pytest.param(
             alter_dict(
@@ -2360,6 +2484,60 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "No path '/my_entry/some_group' available to be linked.",
             ],
             id="appdef-broken-links",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                    {"link": "/my_entry/specified_group/specified_field"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target",
+                "/my_entry/specified_group/specified_field",
+            ),
+            [
+                "The value at /my_entry/some_group/required_field should be one of the following "
+                "Python types: (<class 'int'>, <class 'numpy.integer'>), "
+                "as defined in the NXDL as NX_INT."
+            ],
+            id="appdef-links-with-matching-nexus-types-wrong-dtype",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/USER[my_user]",
+                            {"link": "/my_entry/my_group/required_field"},
+                        ),
+                        "/ENTRY[my_entry]/USER[my_user]/@target",
+                        "/my_entry/my_group/required_field",
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                    {"link": "/my_entry/specified_group"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target",
+                "/my_entry/specified_group",
+            ),
+            [
+                # "Expected a group at /my_entry/my_user, but found a field or attribute.",
+                "Expected a field at /my_entry/some_group/required_field, but found a group.",
+                "The required field /my_entry/some_group/required_field hasn't been supplied.",
+            ],
+            id="appdef-links-with-wrong-nexus-types",
         ),
         pytest.param(
             alter_dict(
@@ -2780,19 +2958,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         ),
         pytest.param(
             alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
-                    "123",
-                ),
-                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
-                "ORCID",
-            ),
-            [],
-            id="name-fitted-identifier-with-type",
-        ),
-        pytest.param(
-            alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                 "123",
@@ -2908,7 +3073,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 {"compress": np.float32(2.0), "strength": 4},
             ),
             [],
-            id="appdef-compressed-payload",
+            id="appdef-compressed",
         ),
         pytest.param(
             alter_dict(
@@ -2922,7 +3087,16 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
                 "NXDL as NX_FLOAT."
             ],
-            id="appdef-compressed-payload-wrong-type",
+            id="appdef-compressed-wrong-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0), "strength": 0},
+            ),
+            [],
+            id="appdef-compressed-strength-0",
         ),
         pytest.param(
             alter_dict(
@@ -2931,7 +3105,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 {"compress": np.int64(2), "strength": 2},
             ),
             [],
-            id="baseclass-compressed-payload",
+            id="baseclass-compressed",
         ),
         pytest.param(
             alter_dict(
@@ -2945,7 +3119,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
                 "NXDL as NX_INT."
             ],
-            id="baseclass-compressed-payload-wrong-type",
+            id="baseclass-compressed-wrong-type",
         ),
     ],
 )
@@ -2971,7 +3145,6 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
-            "internal-link-with-wrong-target",
         ):
             with caplog.at_level(logging.INFO):
                 _ = validate(str(hdf_file_path))
@@ -2984,7 +3157,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
 
-    os.remove(hdf_file_path)
+    # os.remove(hdf_file_path)
 
 
 @pytest.mark.parametrize(

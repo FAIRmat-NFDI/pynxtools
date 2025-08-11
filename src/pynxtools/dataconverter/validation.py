@@ -300,21 +300,40 @@ def validate_hdf_group_against(
                 children_to_check = [
                     current.search_add_child_for(child)
                     for child in current.get_all_direct_children_names(
-                        nx_class=nx_class, node_type=other_node_type
+                        node_type=other_node_type,
+                        # nx_class=nx_class,
                     )
                 ]
                 other_node = best_namefit_of(last_elem, children_to_check)
-                if other_node is not None and not other_node.variadic:
-                    collector.collect_and_log(
-                        path,
-                        ValidationProblem.InvalidNexusTypeForNamedConcept,
-                        other_node,
-                        node_type,
-                    )
-                    raise TypeError(
-                        f"The type ('{node_type}') of {path} conflicts with another existing concept "
-                        f"{other_node.get_path()} (which is of type '{other_node.type}'."
-                    )
+                if other_node is not None:
+                    if not other_node.variadic:
+                        collector.collect_and_log(
+                            path,
+                            ValidationProblem.InvalidNexusTypeForNamedConcept,
+                            other_node,
+                            node_type,
+                        )
+                        raise TypeError(
+                            f"The type ('{node_type}') of {path} conflicts with another existing concept "
+                            f"{other_node.get_path()} (which is of type '{other_node.type}'."
+                        )
+                    # TODO: This does not work yet, we need a better way to check that a linked object matches
+                    # the expected type.
+                    # elif node_type == "group" and other_node_type == "field":
+                    #     collector.collect_and_log(
+                    #         f"{entry_name}/{path}",
+                    #         ValidationProblem.ExpectedField,
+                    #         None,
+                    #     )
+                    #     raise TypeError("Expected field for {path}")
+                    # elif node_type == "field" and other_node_type == "group":
+                    #     print(other_node)
+                    #     collector.collect_and_log(
+                    #         f"{entry_name}/{path}",
+                    #         ValidationProblem.ExpectedGroup,
+                    #         None,
+                    #     )
+                    #     raise TypeError("Expected group for {path}")
 
             return None
 
@@ -600,10 +619,19 @@ def validate_hdf_group_against(
         except TypeError:
             return
         if node is None:
-            if not ignore_undocumented:
+            if not ignore_undocumented and full_path == group.name:
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingDocumentation, None
                 )
+            return
+
+        if node.type != "group":
+            # In case a field was accidentally linked to a group.
+            collector.collect_and_log(
+                full_path,
+                ValidationProblem.ExpectedField,
+                None,
+            )
             return
 
         update_required_concepts(path, node)
@@ -644,7 +672,7 @@ def validate_hdf_group_against(
             attrs = ("signal", "auxiliary_signals", "axes")
             data_attrs = {k: group.attrs[k] for k in attrs if k in group.attrs}
 
-            handle_attributes(path, data_attrs)
+            handle_attributes(path, data_attrs, group)
 
             for i, axis in enumerate(axes):
                 if axis == ".":
@@ -701,7 +729,6 @@ def validate_hdf_group_against(
                 If the field is in an NXdata group, this is used to figure out
                 if it is an AXISNAME or a DATA.
         """
-
         full_path = f"{entry_name}/{path}"
         check_reserved_prefix(full_path, appdef_node.name, "field")
         try:
@@ -724,11 +751,21 @@ def validate_hdf_group_against(
                     # Collection found for parents, mark as documented
                     return
 
-            if not ignore_undocumented:
+            # Only report undocumented if the group is not linked
+            if not ignore_undocumented and full_path == dataset.name:
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingDocumentation, None
                 )
             return
+
+        # if node.type != "field":
+        #     # In case a group was accidentally linked to a field.
+        #     collector.collect_and_log(
+        #         full_path,
+        #         ValidationProblem.ExpectedGroup,
+        #         None,
+        #     )
+        #     return
 
         update_required_concepts(path, node)
         remove_from_req_entities(path)
@@ -767,20 +804,26 @@ def validate_hdf_group_against(
             is_valid_unit_for_node(node, units, units_path, hints)
 
         elif units is not None:
-            if not ignore_undocumented:
+            # Only report undocumented if the field is not linked
+            if not ignore_undocumented and full_path == dataset.name:
                 collector.collect_and_log(
                     units_path,
                     ValidationProblem.UnitWithoutDocumentation,
                     units,
                 )
 
-    def handle_attributes(path: str, attrs: h5py.AttributeManager):
+    def handle_attributes(
+        path: str,
+        attrs: h5py.AttributeManager,
+        parent_obj: Union[h5py.Group, h5py.Dataset],
+    ):
         """
         Validate attributes on a given HDF5 object.
 
         Args:
             path (str): Path to the object the attributes belong to.
             attrs (h5py.AttributeManager): The attributes collection.
+            parent_obj (Union[h5py.Group, h5py.Dataset])): Parent object of these attributes.
         """
         for attr_name in attrs:
             full_path = f"{entry_name}/{path}/@{attr_name}"
@@ -814,7 +857,9 @@ def validate_hdf_group_against(
                 continue  # This continues the outer attr_name loop
 
             if node is None:
-                if not ignore_undocumented:
+                # Only report undocumented if the parent object is not linked
+                if not ignore_undocumented and full_path.startswith(parent_obj.name):
+                    parent_path = path.strip("/").rsplit("/", 1)[0]
                     collector.collect_and_log(
                         full_path,
                         ValidationProblem.MissingDocumentation,
@@ -852,7 +897,7 @@ def validate_hdf_group_against(
             handle_field(path, h5_obj)
             parent_path = path.strip("/").rsplit("/", 1)[0]
             check_reserved_suffix(f"{entry_name}/{path}", data[parent_path])
-        handle_attributes(path, h5_obj.attrs)
+        handle_attributes(path, h5_obj.attrs, h5_obj)
 
     def visititems(group: h5py.Group, path: str = "", filename: str = ""):
         """
@@ -866,19 +911,20 @@ def validate_hdf_group_against(
         for name in group:
             full_path = f"{path}/{name}".lstrip("/")
             link = group.get(name, getlink=True)
-
             if isinstance(link, h5py.SoftLink):
                 target_path = link.path
 
                 if "target" not in group[name].attrs:
                     collector.collect_and_log(
-                        full_path, ValidationProblem.MissingTargetAttribute, None
+                        f"{entry_name}/{full_path}",
+                        ValidationProblem.MissingTargetAttribute,
+                        None,
                     )
                 else:
                     attr_target = group[name].attrs["target"]
                     if attr_target != target_path:
                         collector.collect_and_log(
-                            full_path,
+                            f"{entry_name}/{full_path}",
                             ValidationProblem.TargetAttributeMismatch,
                             attr_target,
                             target_path,
@@ -893,6 +939,9 @@ def validate_hdf_group_against(
                         continue
                     resolved_obj = data[target_path]
                     validate(full_path, resolved_obj)
+                    if isinstance(resolved_obj, h5py.Group):
+                        # recurse into subgroups
+                        visititems(resolved_obj, full_path, filename)
                 else:
                     with h5py.File(filename, "r") as h5file:
                         if target_path not in h5file:
@@ -902,6 +951,9 @@ def validate_hdf_group_against(
                             continue
                         resolved_obj = h5file[target_path]
                         validate(full_path, resolved_obj)
+                        if isinstance(resolved_obj, h5py.Group):
+                            # recurse into subgroups
+                            visititems(resolved_obj, full_path, filename)
 
             elif isinstance(link, h5py.ExternalLink):
                 filename = link.filename
@@ -914,6 +966,9 @@ def validate_hdf_group_against(
                         )
                     resolved_obj = ext_file[target_path]
                     validate(full_path, resolved_obj)
+                    if isinstance(resolved_obj, h5py.Group):
+                        # recurse into subgroups
+                        visititems(resolved_obj, full_path, filename)
 
             elif isinstance(link, h5py.HardLink):
                 # Validate hard links (normal objects)
@@ -1362,7 +1417,7 @@ def validate_dict_against(
 
             # Check general validity
             mapping[variant_path] = is_valid_data_field(
-                mapping[variant_path],
+                keys[variant],
                 node.dtype,
                 node.items,
                 node.open_enum,
