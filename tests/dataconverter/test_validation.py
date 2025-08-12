@@ -1943,7 +1943,7 @@ def format_error_message(msg: str) -> str:
             [
                 "The value at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position "
                 "should be one of the following Python types: "
-                "int, class 'numpy.integer, as defined in the "
+                "int, numpy.integer, as defined in the "
                 "NXDL as NX_INT."
             ],
             id="baseclass-compressed-wrong-type",
