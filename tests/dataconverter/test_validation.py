@@ -419,7 +419,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
-                " should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
+                " should be one of the following Python types: int, numpy.integer, as defined in "
                 "the NXDL as NX_INT."
             ],
             id="variadic-field-str-instead-of-int",
@@ -432,7 +432,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
+                "t_value should be one of the following Python types: int, numpy.integer, as defined in "
                 "the NXDL as NX_INT."
             ],
             id="string-instead-of-int",
@@ -444,7 +444,7 @@ TEMPLATE["required"][
                 "NOT_TRUE_OR_FALSE",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: bool, numpy.bool, as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
@@ -456,7 +456,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
-                " be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+                " be one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT."
             ],
             id="list-of-int-str-instead-of-int",
         ),
@@ -468,7 +468,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
-                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+                " one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT."
             ],
             id="array-of-float-instead-of-int",
         ),
@@ -520,7 +520,7 @@ TEMPLATE["required"][
                 np.complex128(0),
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: float, numpy.floating, as defined in the NXDL as NX_FLOAT."
             ],
             id="complex-instead-of-float",
         ),
@@ -531,7 +531,7 @@ TEMPLATE["required"][
                 "0",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>, <class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: int, numpy.integer, float, numpy.floating, as defined in the NXDL as NX_NUMBER."
             ],
             id="str-instead-of-number",
         ),
@@ -543,7 +543,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
-                " of the following Python types: (<class 'str'>, <class 'numpy.character'>), as"
+                " of the following Python types: str, numpy.character, as"
                 " defined in the NXDL as NX_CHAR."
             ],
             id="wrong-type-ndarray-instead-of-char",
@@ -627,9 +627,9 @@ TEMPLATE["required"][
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
-                " (<class 'str'>, <class 'numpy.character'>),"
-                " as defined in the NXDL as NX_CHAR."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be "
+                "one of the following Python types: str, numpy.character, "
+                "as defined in the NXDL as NX_CHAR."
             ],
             id="int-instead-of-chars",
         ),
@@ -684,7 +684,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
-                "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
+                "one of the following Python types: float, numpy.floating, as defined in the NXDL "
                 "as NX_FLOAT."
             ],
             id="array-of-str-instead-of-float",
@@ -1076,7 +1076,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
-                "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
+                "one of the following Python types: int, numpy.integer, as "
                 "defined in the NXDL as NX_INT."
             ],
             id="concept-name-given-for-nonvariadic-field-wrong-type",
@@ -1130,7 +1130,7 @@ TEMPLATE["required"][
                 ["0", 1, 2],
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT.",
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
             ],
             id="wrong-type-array-in-attribute",
@@ -1438,7 +1438,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/duration should be"
-                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+                " one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT."
             ],
             id="baseclass-wrong-dtype",
         ),
@@ -1741,7 +1741,7 @@ TEMPLATE["required"][
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
                 "should be one of the following Python types: "
-                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "int, numpy.integer, as defined in the "
                 "NXDL as NX_INT."
             ],
             id="appdef-compressed-wrong-type",
@@ -1750,7 +1750,7 @@ TEMPLATE["required"][
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
-                {"compress": np.int64(2), "strength": 11},
+                {"compress": 2, "strength": 11},
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
@@ -1788,7 +1788,7 @@ TEMPLATE["required"][
             [
                 "The value at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position "
                 "should be one of the following Python types: "
-                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "int, class 'numpy.integer, as defined in the "
                 "NXDL as NX_INT."
             ],
             id="baseclass-compressed-wrong-type",

@@ -132,9 +132,16 @@ class Collector:
                 "and hasn't been supplied by the reader.",
             )
         elif log_type == ValidationProblem.InvalidType:
+            type_names = [
+                f"{t.__module__}.{t.__name__}"
+                if t.__module__ != "builtins"
+                else t.__name__
+                for t in value
+            ]
             logger.warning(
-                f"The value at {path} should be one of the following Python types: {value}"
-                f", as defined in the NXDL as {args[0] if args else '<unknown>'}."
+                f"The value at {path} should be one of the following Python types: "
+                f"{', '.join(type_names)}, "
+                f"as defined in the NXDL as {args[0] if args else '<unknown>'}."
             )
         elif log_type == ValidationProblem.InvalidDatetime:
             logger.warning(
