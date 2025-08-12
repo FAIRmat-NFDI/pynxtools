@@ -32,6 +32,12 @@ from pynxtools.dataconverter.writer import Writer
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
 
+# Workaround for different str representation of np.bool
+if np.lib.NumpyVersion(np.__version__) >= "2.0.0":
+    np_bool = "numpy.bool"
+else:
+    np_bool = "numpy.bool_"
+
 
 def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):
     """Helper function to forcefully set path to 'None'"""
@@ -443,7 +449,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
-                " should be one of the following Python types: int, numpy.integer, as defined in "
+                " should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
                 "the NXDL as NX_INT."
             ],
             id="variadic-field-str-instead-of-int",
@@ -456,7 +462,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be one of the following Python types: int, numpy.integer, as defined in "
+                "t_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
                 "the NXDL as NX_INT."
             ],
             id="string-instead-of-int",
@@ -468,7 +474,7 @@ def format_error_message(msg: str) -> str:
                 "NOT_TRUE_OR_FALSE",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: bool, numpy.bool, as defined in the NXDL as NX_BOOLEAN."
+                f"The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class '{np_bool}'>), as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
@@ -480,7 +486,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
-                " be one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT."
+                " be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
             ],
             id="list-of-int-str-instead-of-int",
         ),
@@ -492,7 +498,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
-                " one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT."
+                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
             ],
             id="array-of-float-instead-of-int",
         ),
@@ -544,7 +550,7 @@ def format_error_message(msg: str) -> str:
                 np.complex128(0),
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: float, numpy.floating, as defined in the NXDL as NX_FLOAT."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
             ],
             id="complex-instead-of-float",
         ),
@@ -555,7 +561,7 @@ def format_error_message(msg: str) -> str:
                 "0",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: int, numpy.integer, float, numpy.floating, as defined in the NXDL as NX_NUMBER."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>, <class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
             ],
             id="str-instead-of-number",
         ),
@@ -567,7 +573,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
-                " of the following Python types: str, numpy.character, as"
+                " of the following Python types: (<class 'str'>, <class 'numpy.character'>), as"
                 " defined in the NXDL as NX_CHAR."
             ],
             id="wrong-type-ndarray-instead-of-char",
@@ -651,9 +657,9 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be "
-                "one of the following Python types: str, numpy.character, "
-                "as defined in the NXDL as NX_CHAR."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
+                " (<class 'str'>, <class 'numpy.character'>),"
+                " as defined in the NXDL as NX_CHAR."
             ],
             id="int-instead-of-chars",
         ),
@@ -708,7 +714,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
-                "one of the following Python types: float, numpy.floating, as defined in the NXDL "
+                "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
                 "as NX_FLOAT."
             ],
             id="array-of-str-instead-of-float",
@@ -1228,7 +1234,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
-                "one of the following Python types: int, numpy.integer, as "
+                "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
                 "defined in the NXDL as NX_INT."
             ],
             id="concept-name-given-for-nonvariadic-field-wrong-type",
@@ -1279,7 +1285,7 @@ def format_error_message(msg: str) -> str:
                 ["0", 1, 2],
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT.",
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
             ],
             id="wrong-type-array-in-attribute",
@@ -1587,7 +1593,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/duration should be"
-                " one of the following Python types: int, numpy.integer, as defined in the NXDL as NX_INT."
+                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
             ],
             id="baseclass-wrong-dtype",
         ),
@@ -1896,7 +1902,7 @@ def format_error_message(msg: str) -> str:
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
                 "should be one of the following Python types: "
-                "int, numpy.integer, as defined in the "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
                 "NXDL as NX_INT."
             ],
             id="appdef-compressed-wrong-type",
@@ -1943,7 +1949,7 @@ def format_error_message(msg: str) -> str:
             [
                 "The value at /ENTRY[my_entry]/SAMPLE[sample1]]/changer_position "
                 "should be one of the following Python types: "
-                "int, numpy.integer, as defined in the "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
                 "NXDL as NX_INT."
             ],
             id="baseclass-compressed-wrong-type",
