@@ -167,6 +167,6 @@ class NXUnitSet:
         if ureg.Unit(unit) == ureg.Unit("pixel") and str(expected_dim) == "[length]":
             return True
 
-        actual_dim = (1 * ureg(unit)).dimensionality
+        actual_dim = ureg.Quantity(1, unit).to_base_units().dimensionality
 
         return actual_dim == expected_dim
