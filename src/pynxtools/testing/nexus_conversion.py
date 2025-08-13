@@ -215,17 +215,36 @@ class ReaderTest:
 
         def compare_logs(gen_lines: list[str], ref_lines: list[str]) -> None:
             """Compare log lines, ignoring specific differences."""
+
+            diffs = []
+
+            # Case 1: line counts differ
             if len(gen_lines) != len(ref_lines):
-                raise AssertionError(
+                # Lines unique to generated file
+                for ind, line in enumerate(gen_lines):
+                    if line not in ref_lines:
+                        diffs.append(
+                            f"Extra line in generated file at line {ind}: {line}"
+                        )
+
+                # Lines unique to reference file
+                for ind, line in enumerate(ref_lines):
+                    if line not in gen_lines:
+                        diffs.append(
+                            f"Extra line in reference file at line {ind}: {line}"
+                        )
+
+                error_msg = (
                     f"Log files are different: mismatched line counts. "
                     f"Generated file has {len(gen_lines)} lines, "
                     f"while reference file has {len(ref_lines)} lines."
                 )
+                if diffs:
+                    error_msg += "\n" + "\n" + "\n".join(diffs)
 
-            section_ignore_lines = []
-            section = None
+                raise AssertionError(error_msg)
 
-            diffs = []
+            # Case 2: same line counts, check for diffs
             for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
                 if gen_l.startswith(SECTION_SEPARATOR) and ref_l.startswith(
                     SECTION_SEPARATOR
@@ -233,17 +252,15 @@ class ReaderTest:
                     section = gen_l.rsplit(SECTION_SEPARATOR)[-1].strip()
                     section_ignore_lines = IGNORE_SECTIONS.get(section, [])
 
-                # Compare lines if not in ignore list
                 if gen_l != ref_l and not should_skip_line(
                     gen_l, ref_l, IGNORE_LINES + section_ignore_lines
                 ):
-                    diffs += [
-                        f"Log files are different at line {ind}\ngenerated: {gen_l}\nreferenced: {ref_l}"
-                    ]
+                    diffs.append(
+                        f"Log files are different at line {ind}:\n  generated: {gen_l}\n  reference: {ref_l}"
+                    )
 
             if diffs:
-                diff_report = "\n".join(diffs)
-                raise AssertionError(diff_report)
+                raise AssertionError("\n".join(diffs))
 
         # Load log paths
         ref_log_path = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)
