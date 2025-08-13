@@ -110,6 +110,9 @@ TEMPLATE["required"][
     "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type"
 ] = 1.0
 TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type/@units"
+] = "eV"
+TEMPLATE["required"][
     "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type/@specified_attr_in_field_with_no_name_type"
 ] = "data"
 TEMPLATE["required"][
@@ -117,6 +120,7 @@ TEMPLATE["required"][
 ] = "attr"
 
 TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/specified_field"] = 1.0
+TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/specified_field/@units"] = "cm"
 TEMPLATE["required"][
     "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field"
 ] = "attr"
@@ -126,6 +130,9 @@ TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/@specified_attr"] = "attr
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]"
 ] = 1.0
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@units"
+] = "pixel"
 TEMPLATE["required"][
     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]"
 ] = "attr"
@@ -389,8 +396,12 @@ TEMPLATE["required"][
                         remove_from_dict(
                             remove_from_dict(
                                 remove_from_dict(
-                                    TEMPLATE,
-                                    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                                    remove_from_dict(
+                                        TEMPLATE,
+                                        "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                                        "optional",
+                                    ),
+                                    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@units",
                                     "optional",
                                 ),
                                 "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]",
@@ -714,9 +725,8 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
-                "/bool_value is"
-                " required and hasn't been supplied by the reader.",
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value "
+                "is required and hasn't been supplied by the reader.",
                 "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value, but the field does not exist.",
             ],
             id="empty-required-field",
@@ -737,8 +747,12 @@ TEMPLATE["required"][
         ),
         pytest.param(
             remove_from_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                    "optional",
+                ),
+                "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@units",
                 "optional",
             ),
             [
@@ -904,8 +918,12 @@ TEMPLATE["required"][
                 remove_from_dict(
                     remove_from_dict(
                         remove_from_dict(
-                            TEMPLATE,
-                            "/ENTRY[my_entry]/specified_group/specified_field",
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/specified_group/specified_field",
+                                "required",
+                            ),
+                            "/ENTRY[my_entry]/specified_group/specified_field/@units",
                             "required",
                         ),
                         "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field",
