@@ -594,7 +594,7 @@ def validate_dict_against(
         return resolved_keys
 
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
-        full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
+        full_path = f"{prev_path}/{node.name}"
         variants = get_variations_of(node, keys)
         if (
             not variants
@@ -605,7 +605,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            variant_path = f"{prev_path}/{variant}"
+            variant_path = remove_from_not_visited(f"{prev_path}/{variant}")
 
             if (
                 isinstance(keys[variant], Mapping)
@@ -613,7 +613,7 @@ def validate_dict_against(
                 and not list(keys[variant].keys()) == ["compress", "strength"]
             ):
                 # A field should not have a dict of keys that are _not_ all attributes,
-                # i.e. no sub-fields or sub-groups.
+                # i.e. there should be no sub-fields or sub-groups.
                 collector.collect_and_log(
                     variant_path,
                     ValidationProblem.ExpectedField,
@@ -661,30 +661,31 @@ def validate_dict_against(
 
             # Check unit category
             if node.unit is not None:
-                unit_path = f"{variant_path}/@units"
-                if node.unit != "NX_UNITLESS":
-                    remove_from_not_visited(unit_path)
-                    if f"{variant}@units" not in keys and (
-                        node.unit != "NX_TRANSFORMATION"
-                        or mapping.get(f"{variant_path}/@transformation_type")
-                        in ("translation", "rotation")
-                    ):
+                unit_path = remove_from_not_visited(f"{variant_path}/@units")
+                if f"{variant}@units" not in keys and (
+                    node.unit != "NX_TRANSFORMATION"
+                    or mapping.get(f"{variant_path}/@transformation_type")
+                    in ("translation", "rotation")
+                ):
+                    if node.unit != "NX_UNITLESS":
                         collector.collect_and_log(
                             variant_path,
                             ValidationProblem.MissingUnit,
                             node.unit,
                         )
-                        break
 
-                unit = keys.get(f"{variant}@units")
-                # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
-                if (
-                    transformation_type := keys.get(f"{variant}@transformation_type")
-                ) is not None:
-                    hints = {"transformation_type": transformation_type}
                 else:
-                    hints = {}
-                is_valid_unit_for_node(node, unit, unit_path, hints)
+                    unit = keys.get(f"{variant}@units")
+                    # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                    if (
+                        transformation_type := keys.get(
+                            f"{variant}@transformation_type"
+                        )
+                    ) is not None:
+                        hints = {"transformation_type": transformation_type}
+                    else:
+                        hints = {}
+                    is_valid_unit_for_node(node, unit, unit_path, hints)
 
             field_attributes = get_field_attributes(variant, keys)
             field_attributes = _follow_link(field_attributes, variant_path)
@@ -696,7 +697,7 @@ def validate_dict_against(
             )
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
-        full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
+        full_path = f"{prev_path}/@{node.name}"
         variants = get_variations_of(node, keys)
 
         if (
@@ -708,7 +709,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            variant_path = (
+            variant_path = remove_from_not_visited(
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
             )
             mapping[variant_path] = is_valid_data_field(
