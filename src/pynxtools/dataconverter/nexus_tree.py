@@ -363,7 +363,7 @@ class NexusNode(NodeMixin):
             tag_type = f"[@type='{nx_class}']"
 
         if node_type is not None:
-            search_tags = f"*[self::nx:{node_type}{tag_type}]"
+            search_tags = rf"*[self::nx:{node_type}{tag_type}]"
         else:
             search_tags = (
                 r"*[self::nx:field or self::nx:group "

@@ -1193,8 +1193,6 @@ def clean_str_attr(
     Return the attribute as a string.
 
     - If `attr` is `bytes`, decode it using the given encoding.
-    - If `attr` is already a string, return it unchanged.
-    - If `attr` is `None`, return `None`.
     - Otherwise, return it unchanged.
 
     Args:
@@ -1204,8 +1202,6 @@ def clean_str_attr(
     Returns:
         The attribute as a string, or None if input was None.
     """
-    if attr is None or isinstance(attr, str):
-        return attr
     if isinstance(attr, bytes):
         return attr.decode(encoding)
     return attr
