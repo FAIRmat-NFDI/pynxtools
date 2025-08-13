@@ -43,6 +43,7 @@ def get_log_file(nxs_file, log_file, tmp_path):
     logger = logging.getLogger("pynxtools")
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
+    logger.propagate = False
     log_file = os.path.join(tmp_path, log_file)
     handler = logging.FileHandler(log_file, "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
