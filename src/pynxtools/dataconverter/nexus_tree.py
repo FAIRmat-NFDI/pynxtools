@@ -169,6 +169,11 @@ class NexusNode(NodeMixin):
         Optional[int],
         Optional[int],
     ] = (None, None)
+    lvl_map = {
+        "required": ("required",),
+        "recommended": ("recommended", "required"),
+        "optional": ("optional", "recommended", "required"),
+    }
 
     def _set_optionality(self):
         """
@@ -411,14 +416,9 @@ class NexusNode(NodeMixin):
         Returns:
             list[str]: A list of required fields and attributes names.
         """
-        lvl_map = {
-            "required": ("required",),
-            "recommended": ("recommended", "required"),
-            "optional": ("optional", "recommended", "required"),
-        }
 
         req_children = []
-        optionalities = lvl_map.get(level, ("required",))
+        optionalities = self.lvl_map.get(level, ("required",))
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
@@ -462,14 +462,9 @@ class NexusNode(NodeMixin):
         Returns:
             list[str]: A list of required fields and attributes names.
         """
-        lvl_map = {
-            "required": ("required",),
-            "recommended": ("recommended", "required"),
-            "optional": ("optional", "recommended", "required"),
-        }
 
         req_children = []
-        optionalities = lvl_map.get(level, ("required",))
+        optionalities = self.lvl_map.get(level, ("required",))
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
