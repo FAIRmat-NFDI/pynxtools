@@ -34,6 +34,7 @@ from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    find_definition_file,
     get_enums,
     get_inherited_nodes,
     get_nexus_definitions_path,
@@ -405,16 +406,10 @@ def get_nxdl_root_and_path(nxdl: str):
         "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
     }
 
-    probable_file_paths = [
-        os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"),
-        os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml"),
-        os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml"),
-    ]
     if nxdl in special_names:
         nxdl_f_path = special_names[nxdl]
     else:
-        nxdl_f_path = next((x for x in probable_file_paths if os.path.exists(x)), None)
-
+        nxdl_f_path = find_definition_file(nxdl)
         if nxdl_f_path is None:
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
