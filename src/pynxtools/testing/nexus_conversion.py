@@ -22,6 +22,8 @@ import os
 from glob import glob
 from typing import Literal, Optional
 
+import structlog
+
 try:
     from nomad.client import parse
 
@@ -173,6 +175,10 @@ class ReaderTest:
                 password=None,
             )
 
+            # Set level of all structlog loggers to "INFO"
+            structlog.configure(
+                wrapper_class=structlog.make_filtering_bound_logger(logging.INFO)
+            )
             parse(self.created_nexus, **kwargs)
 
     def check_reproducibility_of_nexus(self, **kwargs):
