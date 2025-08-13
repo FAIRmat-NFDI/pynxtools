@@ -196,10 +196,24 @@ class ReaderTest:
 
         SECTION_SEPARATOR = "DEBUG - ===== "
 
-        def should_skip_line(gen_l: str, ref_l: str, ignore_lines: list[str]) -> bool:
-            """Check if both lines start with any ignored prefix."""
+        def should_skip_line(*lines: str, ignore_lines: list[str]) -> bool:
+            """
+            Check if all given lines start with any ignored prefix.
+
+            Parameters
+            ----------
+            *lines : str
+                One or more lines to check.
+            ignore_lines : list[str]
+                List of prefixes to ignore.
+
+            Returns
+            -------
+            bool
+                True if all lines start with any of the ignored prefixes.
+            """
             return any(
-                gen_l.startswith(ignore) and ref_l.startswith(ignore)
+                all(line.startswith(ignore) for line in lines)
                 for ignore in ignore_lines
             )
 
@@ -216,49 +230,60 @@ class ReaderTest:
         def compare_logs(gen_lines: list[str], ref_lines: list[str]) -> None:
             """Compare log lines, ignoring specific differences."""
 
-            diffs = []
+            def extra_lines(
+                lines1: list[str], lines2: list[str]
+            ) -> list[Optional[str]]:
+                """Return lines in lines1 but not in lines2, with line numbers and ignoring specified lines."""
+                diffs: list[Optional[str]] = []
+                section_ignore_lines = []
+                section = None
+                for ind, line in enumerate(lines1):
+                    if line.startswith(SECTION_SEPARATOR):
+                        section = line.rsplit(SECTION_SEPARATOR)[-1].strip()
+                        section_ignore_lines = IGNORE_SECTIONS.get(section, [])
+                    if line not in lines2 and not should_skip_line(
+                        line, ignore_lines=IGNORE_LINES + section_ignore_lines
+                    ):
+                        diffs.append(f"{line.strip()} (line: {ind})")
+                return diffs
 
             # Case 1: line counts differ
             if len(gen_lines) != len(ref_lines):
-                # Lines unique to generated file
-                for ind, line in enumerate(gen_lines):
-                    if line not in ref_lines:
-                        diffs.append(
-                            f"Extra line in generated file at line {ind}: {line}"
-                        )
-
-                # Lines unique to reference file
-                for ind, line in enumerate(ref_lines):
-                    if line not in gen_lines:
-                        diffs.append(
-                            f"Extra line in reference file at line {ind}: {line}"
-                        )
+                diffs_gen = extra_lines(gen_lines, ref_lines)
+                diffs_ref = extra_lines(ref_lines, gen_lines)
 
                 error_msg = (
                     f"Log files are different: mismatched line counts. "
                     f"Generated file has {len(gen_lines)} lines, "
                     f"while reference file has {len(ref_lines)} lines."
                 )
-                if diffs:
-                    error_msg += "\n" + "\n" + "\n".join(diffs)
+                if diffs_gen:
+                    error_msg += "\n\nExtra lines in generated:\n" + "\n".join(
+                        diffs_gen
+                    )
+                if diffs_ref:
+                    error_msg += "\n\nExtra lines in reference:\n" + "\n".join(
+                        diffs_ref
+                    )
 
                 raise AssertionError(error_msg)
 
             # Case 2: same line counts, check for diffs
+            diffs = []
+            section_ignore_lines = []
+            section = None
             for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
                 if gen_l.startswith(SECTION_SEPARATOR) and ref_l.startswith(
                     SECTION_SEPARATOR
                 ):
                     section = gen_l.rsplit(SECTION_SEPARATOR)[-1].strip()
                     section_ignore_lines = IGNORE_SECTIONS.get(section, [])
-
                 if gen_l != ref_l and not should_skip_line(
-                    gen_l, ref_l, IGNORE_LINES + section_ignore_lines
+                    gen_l, ref_l, ignore_lines=IGNORE_LINES + section_ignore_lines
                 ):
                     diffs.append(
                         f"Log files are different at line {ind}:\n  generated: {gen_l}\n  reference: {ref_l}"
                     )
-
             if diffs:
                 raise AssertionError("\n".join(diffs))
 
