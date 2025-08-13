@@ -640,8 +640,8 @@ def validate_dict_against(
                     )
                     collector.collect_and_log(
                         variant_path,
-                        ValidationProblem.AttributeForNonExistingField,
-                        None,
+                        ValidationProblem.AttributeForNonExistingConcept,
+                        "field",
                     )
                     return
             if variant not in keys or mapping.get(variant_path) is None:
@@ -1269,15 +1269,29 @@ def validate_dict_against(
 
         if "@" in not_visited_key.rsplit("/")[-1]:
             # check that parent exists
-            if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
+            parent_key = not_visited_key.rsplit("/", 1)[0]
+            if (parent_key := not_visited_key.rsplit("/", 1)[0]) not in mapping.keys():
                 # check that parent is not a group
                 node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
-                if node is None or node.type != "group":
+
+                remove_attr = False
+
+                if node is None:
                     collector.collect_and_log(
-                        not_visited_key.rsplit("/", 1)[0],
-                        ValidationProblem.AttributeForNonExistingField,
-                        None,
+                        parent_key,
+                        ValidationProblem.AttributeForNonExistingConcept,
+                        "group or field",
                     )
+                    remove_attr = True
+                elif node.type != "group":
+                    collector.collect_and_log(
+                        parent_key,
+                        ValidationProblem.AttributeForNonExistingConcept,
+                        "field",
+                    )
+                    remove_attr = True
+
+                if remove_attr:
                     collector.collect_and_log(
                         not_visited_key,
                         ValidationProblem.KeyToBeRemoved,

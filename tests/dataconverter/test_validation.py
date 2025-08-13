@@ -1488,6 +1488,18 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEA[my_beam]/@illegal",
+                "unknown",
+            ),
+            [
+                "There were attributes set for the group or field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEA[my_beam], but the group or field does not exist.",
+                "The attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEA[my_beam]/@illegal will not be written.",
+            ],
+            id="baseclass-attribute-missing-group",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/collection_time/@illegal",
                 "s",
             ),
