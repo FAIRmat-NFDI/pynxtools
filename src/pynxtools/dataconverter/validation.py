@@ -594,7 +594,7 @@ def validate_dict_against(
         return resolved_keys
 
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
-        full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
+        full_path = f"{prev_path}/{node.name}"
         variants = get_variations_of(node, keys)
         if (
             not variants
@@ -605,7 +605,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            variant_path = f"{prev_path}/{variant}"
+            variant_path = remove_from_not_visited(f"{prev_path}/{variant}")
 
             if (
                 isinstance(keys[variant], Mapping)
@@ -613,7 +613,7 @@ def validate_dict_against(
                 and not list(keys[variant].keys()) == ["compress", "strength"]
             ):
                 # A field should not have a dict of keys that are _not_ all attributes,
-                # i.e. no sub-fields or sub-groups.
+                # i.e. there should be no sub-fields or sub-groups.
                 collector.collect_and_log(
                     variant_path,
                     ValidationProblem.ExpectedField,
@@ -640,8 +640,8 @@ def validate_dict_against(
                     )
                     collector.collect_and_log(
                         variant_path,
-                        ValidationProblem.AttributeForNonExistingField,
-                        None,
+                        ValidationProblem.AttributeForNonExistingConcept,
+                        "field",
                     )
                     return
             if variant not in keys or mapping.get(variant_path) is None:
@@ -661,30 +661,31 @@ def validate_dict_against(
 
             # Check unit category
             if node.unit is not None:
-                unit_path = f"{variant_path}/@units"
-                if node.unit != "NX_UNITLESS":
-                    remove_from_not_visited(unit_path)
-                    if f"{variant}@units" not in keys and (
-                        node.unit != "NX_TRANSFORMATION"
-                        or mapping.get(f"{variant_path}/@transformation_type")
-                        in ("translation", "rotation")
-                    ):
+                unit_path = remove_from_not_visited(f"{variant_path}/@units")
+                if f"{variant}@units" not in keys and (
+                    node.unit != "NX_TRANSFORMATION"
+                    or mapping.get(f"{variant_path}/@transformation_type")
+                    in ("translation", "rotation")
+                ):
+                    if node.unit != "NX_UNITLESS":
                         collector.collect_and_log(
                             variant_path,
                             ValidationProblem.MissingUnit,
                             node.unit,
                         )
-                        break
 
-                unit = keys.get(f"{variant}@units")
-                # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
-                if (
-                    transformation_type := keys.get(f"{variant}@transformation_type")
-                ) is not None:
-                    hints = {"transformation_type": transformation_type}
                 else:
-                    hints = {}
-                is_valid_unit_for_node(node, unit, unit_path, hints)
+                    unit = keys.get(f"{variant}@units")
+                    # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                    if (
+                        transformation_type := keys.get(
+                            f"{variant}@transformation_type"
+                        )
+                    ) is not None:
+                        hints = {"transformation_type": transformation_type}
+                    else:
+                        hints = {}
+                    is_valid_unit_for_node(node, unit, unit_path, hints)
 
             field_attributes = get_field_attributes(variant, keys)
             field_attributes = _follow_link(field_attributes, variant_path)
@@ -696,7 +697,7 @@ def validate_dict_against(
             )
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
-        full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
+        full_path = f"{prev_path}/@{node.name}"
         variants = get_variations_of(node, keys)
 
         if (
@@ -708,7 +709,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            variant_path = (
+            variant_path = remove_from_not_visited(
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
             )
             mapping[variant_path] = is_valid_data_field(
@@ -1035,177 +1036,6 @@ def validate_dict_against(
                             )
                             keys_to_remove.append(valid_key)
 
-    def check_attributes_of_nonexisting_field(
-        node: NexusNode,
-    ):
-        """
-            This method runs through the mapping dictionary and checks if there are any
-            attributes assigned to the fields (not groups!) which are not explicitly
-            present in the mapping.
-            If there are any found, a warning is logged and the corresponding items are
-            added to the list that stores all keys that shall be removed.
-
-        Args:
-            node (NexusNode): the tree generated from application definition.
-
-        """
-
-        for key in mapping:
-            last_index = key.rfind("/")
-            if key[last_index + 1] == "@" and key[last_index + 1 :] != "@units":
-                # key is an attribute. Find a corresponding parent, check all the other
-                # children of this parent
-                # ignore units here, they are checked separately
-                attribute_parent_checked = False
-                for key_iterating in mapping:
-                    # check if key_iterating starts with parent of the key OR any
-                    # allowed variation of the parent of the key
-                    flag, extra_length = startswith_with_variations(
-                        key_iterating, key[0:last_index]
-                    )
-                    # the variation of the path to the parent might have different length
-                    # than the key itself, extra_length is adjusting for that
-                    if flag:
-                        if len(key_iterating) == last_index + extra_length:
-                            # the parent is a field
-                            attribute_parent_checked = True
-                            break
-                        elif (key_iterating[last_index + extra_length] == "/") and (
-                            key_iterating[last_index + extra_length + 1] != "@"
-                        ):
-                            # the parent is a group
-                            attribute_parent_checked = True
-                            break
-                if not attribute_parent_checked:
-                    type_of_parent_from_tree = check_type_with_tree(
-                        node, key[0:last_index]
-                    )
-                    # The parent can be a group with only attributes as children; check
-                    # in the tree built from app. def. Alternatively, parent can be not
-                    # in the tree and then group with only attributes is indistinguishable
-                    # from missing field. Continue without warnings or changes.
-                    if not (
-                        type_of_parent_from_tree == "group"
-                        or type_of_parent_from_tree is None
-                    ):
-                        collector.collect_and_log(
-                            key[0:last_index],
-                            ValidationProblem.AttributeForNonExistingField,
-                            "attribute",
-                        )
-                        collector.collect_and_log(
-                            key,
-                            ValidationProblem.KeyToBeRemoved,
-                            "attribute",
-                        )
-                        keys_to_remove.append(key)
-                        remove_from_not_visited(key)
-
-    def check_type_with_tree(
-        node: NexusNode,
-        path: str,
-    ) -> Optional[str]:
-        """
-            Recursively search for the type of the object from Template
-            (described by path) using subtree hanging below the node.
-            The path should be relative to the current node.
-
-        Args:
-            node (NexusNode): the subtree to search in.
-            path (str): the string addressing the object from Mapping (the Template)
-            to search the type of.
-
-        Returns:
-            Optional str: type of the object as a string, if the object was found
-            in the tree, None otherwise.
-        """
-
-        # already arrived to the object
-        if path == "":
-            return node.type
-        # searching for object among the children of the node
-        next_child_name_index = path[1:].find("/")
-        if (
-            next_child_name_index == -1
-        ):  # the whole path from element #1 is the child name
-            next_child_name_index = (
-                len(path) - 1
-            )  # -1 because we count from element #1, not #0
-        next_child_class, next_child_name = split_class_and_name_of(
-            path[1 : next_child_name_index + 1]
-        )
-        if (next_child_class is not None) or (next_child_name is not None):
-            output = None
-            for child in node.children:
-                # regexs to separate the class and the name from full name of the child
-                child_class_from_node = re.sub(
-                    r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
-                    "",
-                    child.__str__(),
-                )
-                child_name_from_node = re.sub(
-                    r"(\@.*)*(\(.*?\))*(.*\[)*(\].*)*\s*",
-                    "",
-                    child.__str__(),
-                )
-                if (child_class_from_node == next_child_class) or (
-                    child_name_from_node == next_child_name
-                ):
-                    output_new = check_type_with_tree(
-                        child, path[next_child_name_index + 1 :]
-                    )
-                    if output_new is not None:
-                        output = output_new
-            return output
-        else:
-            return None
-
-    def startswith_with_variations(
-        large_str: str, baseline_str: str
-    ) -> tuple[bool, int]:
-        """
-            Recursively check if the large_str starts with baseline_str or an allowed
-            equivalent (i.e. .../AXISNAME[energy]/... matches .../energy/...).
-
-        Args:
-            large_str (str): the string to be checked.
-            baseline_str (str): the string used as a baseline for comparison.
-
-        Returns:
-            bool: True if large_str starts with baseline_str or equivalent, else False.
-            int: The combined length difference between baseline_str and the equivalent
-            part of the large_str.
-        """
-        if len(baseline_str.split("/")) == 1:
-            # if baseline_str has no separators left, match already found
-            return (True, 0)
-        first_token_large_str = large_str.split("/")[1]
-        first_token_baseline_str = baseline_str.split("/")[1]
-
-        remaining_large_str = large_str[len(first_token_large_str) + 1 :]
-        remaining_baseline_str = baseline_str[len(first_token_baseline_str) + 1 :]
-        if first_token_large_str == first_token_baseline_str:
-            # exact match of n-th token
-            return startswith_with_variations(
-                remaining_large_str, remaining_baseline_str
-            )
-        match_check = re.search(r"\[.*?\]", first_token_large_str)
-        if match_check is None:
-            # tokens are different and do not contain []
-            return (False, 0)
-        variation_first_token_large = match_check.group(0)[1:-1]
-        if variation_first_token_large == first_token_baseline_str:
-            # equivalents match
-            extra_length_this_step = len(first_token_large_str) - len(
-                first_token_baseline_str
-            )
-            a, b = startswith_with_variations(
-                remaining_large_str, remaining_baseline_str
-            )
-            return (a, b + extra_length_this_step)
-        # default
-        return (False, 0)
-
     def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]) -> bool:
         """
         Check if an associated field exists for a key with a reserved suffix.
@@ -1369,8 +1199,6 @@ def validate_dict_against(
     keys = _follow_link(nested_keys, "")
     recurse_tree(tree, nested_keys)
 
-    check_attributes_of_nonexisting_field(tree)
-
     for not_visited_key in not_visited:
         if mapping.get(not_visited_key) is None:
             # This value is not really set. Skip checking its validity.
@@ -1441,15 +1269,29 @@ def validate_dict_against(
 
         if "@" in not_visited_key.rsplit("/")[-1]:
             # check that parent exists
-            if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
+            parent_key = not_visited_key.rsplit("/", 1)[0]
+            if (parent_key := not_visited_key.rsplit("/", 1)[0]) not in mapping.keys():
                 # check that parent is not a group
                 node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
-                if node is None or node.type != "group":
+
+                remove_attr = False
+
+                if node is None:
                     collector.collect_and_log(
-                        not_visited_key.rsplit("/", 1)[0],
-                        ValidationProblem.AttributeForNonExistingField,
-                        None,
+                        parent_key,
+                        ValidationProblem.AttributeForNonExistingConcept,
+                        "group or field",
                     )
+                    remove_attr = True
+                elif node.type != "group":
+                    collector.collect_and_log(
+                        parent_key,
+                        ValidationProblem.AttributeForNonExistingConcept,
+                        "field",
+                    )
+                    remove_attr = True
+
+                if remove_attr:
                     collector.collect_and_log(
                         not_visited_key,
                         ValidationProblem.KeyToBeRemoved,

@@ -70,7 +70,7 @@ class ValidationProblem(Enum):
     MissingUnit = auto()
     ChoiceValidationError = auto()
     UnitWithoutField = auto()
-    AttributeForNonExistingField = auto()
+    AttributeForNonExistingConcept = auto()
     BrokenLink = auto()
     FailedNamefitting = auto()
     NXdataMissingSignalData = auto()
@@ -163,10 +163,10 @@ class Collector:
             logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
             logger.warning(f"Unit {path} in dataset without its field {value}.")
-        elif log_type == ValidationProblem.AttributeForNonExistingField:
+        elif log_type == ValidationProblem.AttributeForNonExistingConcept:
             logger.warning(
-                f"There were attributes set for the field {path}, "
-                "but the field does not exist."
+                f"There were attributes set for the {value} {path}, "
+                f"but the {value} does not exist."
             )
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
