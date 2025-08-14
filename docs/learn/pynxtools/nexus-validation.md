@@ -1,4 +1,4 @@
-# Validation of NeXus file
+# Validation of NeXus files
 
 !!! info "This page is intended to give more information about the validation tools that are part of `pynxtools`. Please also have a look at our comprehensive [how-to guide](../../how-tos/pynxtools/validate-nexus-file.md) on NeXus validation."
 
@@ -8,19 +8,36 @@ One of the main advantages of using `pynxtools` is that it comes with its own va
 
 During [data conversion](./dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, the data is first checked against the provided application definition.
 
-## validate_nexus: Testing existing NeXus/HDF5 files
+## validate_nexus: Validate existing NeXus/HDF5 files
 
-While we encourage NeXus users to convert their data using the `pynxtools` data converter, 
+While we encourage NeXus users to convert their data using the `pynxtools` data converter, we also realize that a lot of NeXus files are created using other applications. For such use cases,
+`pynxtools` provides a standalone validator (called `validate_nexus`). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be comply with. Read more in the [API documentation](../../reference/cli-api.md#validate_nexus).
 
-This CLI tool can be used to validate _existing_ HDF5 files that claim to be NeXus-compliant. Read more in the [API documentation](reference/cli-api.md#validate_nexus).
+The following example dataset can be used to test the `validate_nexus` module:
+
+[201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
+
+This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the [`NXarpes` application definition](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
+
+If you have `pynxtools` installed, you can call the validator on this file using the command
+
+```bash
+validate_nexus 201805_WSe2_arpes.nxs
+```
+
+You will see some warning messages that will give you an impression of the kind of messages the validator tool provides.
 
 ## read_nexus: NeXus file reader and debugger
 
 This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See [here](../../reference/cli-api.md#nexus-file-validation) for the API documentation.
 
-The following example dataset can be used to test the `read_nexus` module: [src/pynxtools/data/201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs). This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the [NXarpes application definition of NeXus](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
+If you have `pynxtools` installed, you can call the tool on the file mentioned above using the command
 
-!!! info "Using a different set of NeXus definitions"
+```bash
+read_nexus 201805_WSe2_arpes.nxs
+```
+
+??? info "Using a different set of NeXus definitions"
 
     The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
 
@@ -29,7 +46,7 @@ The following example dataset can be used to test the `read_nexus` module: [src/
     export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
     ```
 
-!!! info "A note to Windows users"
+??? info "A note to Windows users"
 
     If you run `read_nexus` from `git bash`, you need to set the environmental variable
     `MSYS_NO_PATHCONV` to avoid the [path translation in Windows Git MSys](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471).
@@ -43,10 +60,10 @@ The following example dataset can be used to test the `read_nexus` module: [src/
 
 ## Other approaches (not part of pynxtools)
 
-Aside from the tools we developed within FAIRmat, the [official NeXus website](https://manual.nexusformat.org/validation.html) lists additional programs for the validation of NeXus files:
+Aside from the tools we develop within FAIRmat, the [official NeXus website](https://manual.nexusformat.org/validation.html) lists additional programs for the validation of NeXus files:
 
 1. [cnxvalidate: NeXus validation tool written in C](https://github.com/nexusformat/cnxvalidate)
 2. [punx: Python Utilities for NeXus HDF5 files](https://github.com/prjemian/punx)
 3. [nexpy/nxvalidate: A python API for validating NeXus file](https://github.com/nexpy/nxvalidate)
 
-We will not discuss the details of these programs here, but you can find some information about the in the how-to guide linked above.
+We will not discuss the details of these programs here, but you can find some information about them when following these links.
