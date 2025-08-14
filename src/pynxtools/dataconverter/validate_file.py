@@ -21,7 +21,6 @@ import logging
 import os
 import sys
 import xml.etree.ElementTree as ET
-from os import path
 from typing import Union
 
 import click
@@ -70,10 +69,10 @@ def validate(file: str, ignore_undocumented: bool = False):
     Raises:
         click.FileError: If the file does not exist, is not a file, or is not a valid HDF5 file.
     """
-    if not path.exists(file):
+    if not os.path.exists(file):
         raise click.FileError(file, hint=f'File "{file}" does not exist.')
 
-    if not path.isfile(file):
+    if not os.path.isfile(file):
         raise click.FileError(file, hint=f'"{file}" is not a file.')
 
     if not is_hdf5(file):
