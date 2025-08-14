@@ -1897,7 +1897,7 @@ def validate_dict_against(
                             )
                             keys_to_remove.append(valid_key)
 
-    def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]) -> bool:
+    def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]):
         """
         Check if an associated field exists for a key with a reserved suffix.
 
@@ -1946,8 +1946,6 @@ def validate_dict_against(
                     )
                     return
                 break  # We found the suffix and it passed
-
-        return
 
     def check_reserved_prefix(
         key: str,
