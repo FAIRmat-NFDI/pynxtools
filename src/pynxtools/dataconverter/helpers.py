@@ -57,7 +57,9 @@ class ValidationProblem(Enum):
     UnitWithoutDocumentation = auto()
     InvalidUnit = auto()
     InvalidEnum = auto()
-    OpenEnumWithNewItem = auto()
+    OpenEnumWithCustom = auto()
+    OpenEnumWithCustomFalse = auto()
+    OpenEnumWithMissingCustom = auto()
     MissingRequiredGroup = auto()
     MissingRequiredField = auto()
     MissingRequiredAttribute = auto()
@@ -84,7 +86,6 @@ class ValidationProblem(Enum):
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
-    # DoNotCompressStringsBoolean = auto()
 
 
 class Collector:
@@ -118,12 +119,23 @@ class Collector:
 
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be one of the following: {value}."
+                f"The value {args[0]} at {path} should be one of the following: {value}."
             )
-        elif log_type == ValidationProblem.OpenEnumWithNewItem:
+        elif log_type == ValidationProblem.OpenEnumWithCustom:
             logger.info(
-                f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
+        elif log_type == ValidationProblem.OpenEnumWithCustomFalse:
+            logger.warning(
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False."
+            )
+        elif log_type == ValidationProblem.OpenEnumWithMissingCustom:
+            logger.info(
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added. It was added here automatically."
+            )
+
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
@@ -219,18 +231,6 @@ class Collector:
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
-        # elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
-        #     value = cast(dict, value)
-        #     dtype = type(value["compress"]).__name__
-        #     dtype_map = {
-        #         "str": "string",
-        #         "bool": "boolean",
-        #     }
-        #     dtype_str = dtype_map.get(dtype, dtype)
-
-        #     logger.info(
-        #         f"Compression for {path} = {value} should not be used for {dtype_str} values."
-        #     )
 
     def collect_and_log(
         self,
@@ -252,8 +252,9 @@ class Collector:
         # info messages should not fail validation
         if log_type not in (
             ValidationProblem.UnitWithoutDocumentation,
-            ValidationProblem.OpenEnumWithNewItem,
             ValidationProblem.CompressionStrengthZero,
+            ValidationProblem.OpenEnumWithCustom,
+            ValidationProblem.OpenEnumWithMissingCustom,
         ):
             self.data.add(path + str(log_type) + str(value))
 
@@ -761,15 +762,11 @@ def convert_int_to_float(value):
         return value
 
 
-def is_valid_data_field(
-    value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
-) -> Any:
+def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     """Checks whether a given value is valid according to the type defined in the NXDL."""
 
-    def validate_data_value(
-        value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
-    ) -> Any:
-        """Validate and possibly convert a primitive value according to NXDL type/enum rules."""
+    def validate_data_value(value: Any, nxdl_type: str, path: str) -> Any:
+        """Validate and possibly convert a primitive value according to NXDL type rules."""
         accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
         original_value = value
 
@@ -800,16 +797,6 @@ def is_valid_data_field(
                     path, ValidationProblem.InvalidDatetime, value
                 )
 
-        if nxdl_enum is not None and value not in nxdl_enum:
-            if nxdl_enum_open:
-                collector.collect_and_log(
-                    path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
-                )
-            else:
-                collector.collect_and_log(
-                    path, ValidationProblem.InvalidEnum, nxdl_enum
-                )
-
         return value
 
     if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
@@ -825,24 +812,14 @@ def is_valid_data_field(
                     path, ValidationProblem.InvalidCompressionStrength, value
                 )
             # In this case, we remove the compression.
-            return validate_data_value(
-                value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
-            )
-
-        # TODO: Do we need to issue a warning if string/bool compression is used
-        # # elif isinstance(compressed_value, (str, bool)):
-        #     collector.collect_and_log(
-        #         path, ValidationProblem.DoNotCompressStringsBoolean, value
-        #     )
+            return validate_data_value(value["compress"], nxdl_type, path)
 
         # Apply standard validation to compressed value
-        value["compress"] = validate_data_value(
-            compressed_value, nxdl_type, nxdl_enum, nxdl_enum_open, path
-        )
+        value["compress"] = validate_data_value(compressed_value, nxdl_type, path)
 
         return value
 
-    return validate_data_value(value, nxdl_type, nxdl_enum, nxdl_enum_open, path)
+    return validate_data_value(value, nxdl_type, path)
 
 
 @cache

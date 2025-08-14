@@ -824,23 +824,113 @@ TEMPLATE["required"][
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
-                "be one of the following"
-                ": ['1st type', '2nd type', '3rd type', '4th type']."
+                "The value Wrong option at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type "
+                "should be one of the following: "
+                "['1st type', '2nd type', '3rd type', '4th type']."
             ],
             id="wrong-enum-choice",
         ),
         pytest.param(
             alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
-                "a very different type",
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            "a very different type",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        True,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    "3rd option",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                True,
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the "
-                "enumerated items from the open enumeration: ['1st type open', '2nd type open']."
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option'].",
             ],
             id="open-enum-with-new-item",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            {"compress": "a very different type", "strength": 2},
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        True,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    {"compress": "3rd option", "strength": 4},
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                True,
+            ),
+            [
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option'].",
+            ],
+            id="open-enum-with-new-item-compressed",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            "a very different type",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        False,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    "3rd option",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                False,
+            ),
+            [
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False.",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False.",
+            ],
+            id="open-enum-with-new-item-custom-false",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                    "a very different type",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                "3rd option",
+            ),
+            [
+                "The value 'a very different type' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added. "
+                "It was added here automatically.",
+                "The value '3rd option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added. "
+                "It was added here automatically.",
+            ],
+            id="open-enum-with-new-item-custom-missing",
         ),
         pytest.param(
             set_to_none_in_dict(
@@ -1131,7 +1221,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
+                "The value ['0', 1, 2] at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
             ],
             id="wrong-type-array-in-attribute",
         ),
@@ -1140,7 +1230,7 @@ TEMPLATE["required"][
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
+                "The value [1, 2] at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
             ],
             id="wrong-value-array-in-attribute",
         ),
@@ -1472,19 +1562,23 @@ TEMPLATE["required"][
                 "Cu",
             ),
             [
-                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
+                "The value Cu at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
                 "should be one of the following: ['Ta', 'W', 'depleted_U', 'enriched_U', 'Hg', 'Pb', 'C']."
             ],
             id="baseclass-wrong-enum",
         ),
         pytest.param(
             alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
-                "Wrong source type",
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
+                    "Wrong source type",
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@custom",
+                True,
             ),
             [
-                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type does not match with the enumerated "
+                "The value 'Wrong source type' at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type does not match with the enumerated "
                 "items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', "
                 "'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', "
                 "'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', "
@@ -1813,12 +1907,15 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             "field-with-illegal-unit",
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
+            "open-enum-with-new-item-compressed",
+            "open-enum-with-new-item-custom-missing",
             "baseclass-open-enum-with-new-item",
             "appdef-compressed-strength-0",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)
-                assert error_messages[0] in caplog.text
+                for expected_message, rec in zip(error_messages, caplog.records):
+                    assert expected_message == format_error_message(rec.message)
         else:
             with caplog.at_level(logging.WARNING):
                 assert not validate_dict_against("NXtest", data_dict)
