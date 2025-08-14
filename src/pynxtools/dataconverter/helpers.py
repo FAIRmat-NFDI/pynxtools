@@ -87,6 +87,7 @@ class ValidationProblem(Enum):
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
+    MissingNXclass = auto()
 
 
 class Collector:
@@ -231,6 +232,10 @@ class Collector:
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
+        elif log_type == ValidationProblem.MissingNXclass:
+            logger.info(
+                f"Group '{path}' does not have an NX_class attribute and will therefore not be validated."
+            )
 
     def collect_and_log(
         self,
@@ -255,6 +260,7 @@ class Collector:
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
             ValidationProblem.CompressionStrengthZero,
+            ValidationProblem.MissingNXclass,
         ):
             if self.logging and message not in self.data["info"]:
                 self._log(path, log_type, value, *args, **kwargs)
@@ -710,8 +716,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
-    if isinstance(value, tuple) and len(value) == 1:
-        value = value[0]
+
     if not isinstance(value, np.ndarray):
         value = np.array(value)
     # Handle 'object' dtype separately (for lists from HDF5 files)

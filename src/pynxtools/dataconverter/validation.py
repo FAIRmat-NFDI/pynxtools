@@ -301,7 +301,7 @@ def validate_hdf_group_against(
                     current.search_add_child_for(child)
                     for child in current.get_all_direct_children_names(
                         node_type=other_node_type,
-                        # nx_class=nx_class,
+                        nx_class=nx_class,
                     )
                 ]
                 other_node = best_namefit_of(last_elem, children_to_check)
@@ -327,7 +327,6 @@ def validate_hdf_group_against(
                     #     )
                     #     raise TypeError("Expected field for {path}")
                     # elif node_type == "field" and other_node_type == "group":
-                    #     print(other_node)
                     #     collector.collect_and_log(
                     #         f"{entry_name}/{path}",
                     #         ValidationProblem.ExpectedGroup,
@@ -596,6 +595,32 @@ def validate_hdf_group_against(
 
         return
 
+    def has_breakpoint(key_path: str) -> bool:
+        """
+        Walk up the path hierarchy and check if a parent is an NXcollection
+        or has no NX_class, indicating we should stop.
+
+        For attributes of datasets, skip the dataset itself and continue with
+        its parent group.
+
+        Args:
+            path (str): HDF5 path to start from (no @attr suffix).
+
+        Returns:
+            bool: True if a breakpoint was found, False otherwise.
+        """
+        while "/" in key_path:
+            key_path = key_path.rsplit("/", 1)[0]
+            parent_data = data.get(key_path)
+            if isinstance(parent_data, h5py.Dataset):
+                continue
+            nx_class = (
+                parent_data.attrs.get("NX_class") if parent_data is not None else None
+            )
+            if nx_class == "NXcollection" or nx_class is None:
+                return True
+        return False
+
     def handle_group(path: str, group: h5py.Group):
         """
         Handle validation logic for HDF5 groups.
@@ -610,6 +635,10 @@ def validate_hdf_group_against(
 
         if not group.attrs.get("NX_class"):
             # We ignore additional groups that don't have an NX_class
+            if not ignore_undocumented and full_path == group.name:
+                collector.collect_and_log(
+                    full_path, ValidationProblem.MissingNXclass, None
+                )
             return
 
         try:
@@ -730,27 +759,21 @@ def validate_hdf_group_against(
                 if it is an AXISNAME or a DATA.
         """
         full_path = f"{entry_name}/{path}"
+        key_path = path.replace("@", "")
+        parent_node = None
+
+        if has_breakpoint(key_path):
+            # We are inside an NXcollection or a group without NX_class.
+            return
+
         check_reserved_prefix(full_path, appdef_node.name, "field")
+
         try:
             node = find_node_for(path, node_type="field", hint=hint)
         except TypeError:
             return
 
         if node is None:
-            key_path = path.replace("@", "")
-            parent_node = None
-            while "/" in key_path:
-                key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
-                parent_data = data.get(key_path)
-                nx_class = (
-                    parent_data.attrs.get("NX_class")
-                    if parent_data is not None
-                    else None
-                )
-                if nx_class == "NXcollection":
-                    # Collection found for parents, mark as documented
-                    return
-
             # Only report undocumented if the group is not linked
             if not ignore_undocumented and full_path == dataset.name:
                 collector.collect_and_log(
@@ -831,30 +854,19 @@ def validate_hdf_group_against(
                 # Ignore special attrs
                 continue
 
+            key_path = f"{path}/{attr_name}"
+            parent_node = None
+
+            if has_breakpoint(key_path):
+                # We are inside an NXcollection or a group without NX_class.
+                continue  # This continues the outer attr_name loop
+
             check_reserved_prefix(attr_name, appdef_node.name, "attribute")
 
             try:
                 node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
             except TypeError:
                 return
-
-            key_path = f"{path}/{attr_name}"
-            parent_node = None
-            found_collection = False
-            while "/" in key_path:
-                key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
-                parent_data = data.get(key_path)
-                nx_class = (
-                    parent_data.attrs.get("NX_class")
-                    if parent_data is not None
-                    else None
-                )
-                if nx_class == "NXcollection":
-                    # Collection found for parents, mark as documented
-                    found_collection = True
-                    break
-            if found_collection:
-                continue  # This continues the outer attr_name loop
 
             if node is None:
                 # Only report undocumented if the parent object is not linked
