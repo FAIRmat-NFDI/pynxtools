@@ -27,6 +27,12 @@ from pynxtools.dataconverter.validation import validate_dict_against
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
 
+# Workaround for different str representation of np.bool
+if np.lib.NumpyVersion(np.__version__) >= "2.0.0":
+    np_bool = "numpy.bool"
+else:
+    np_bool = "numpy.bool_"
+
 
 def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):
     """Helper function to forcefully set path to 'None'"""
@@ -455,7 +461,7 @@ TEMPLATE["required"][
                 "NOT_TRUE_OR_FALSE",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                f"The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class '{np_bool}'>), as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
@@ -1794,7 +1800,7 @@ TEMPLATE["required"][
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
-                {"compress": np.int64(2), "strength": 11},
+                {"compress": 2, "strength": 11},
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
