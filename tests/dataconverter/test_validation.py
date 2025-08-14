@@ -2583,11 +2583,11 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                     alter_dict(
                         alter_dict(
                             TEMPLATE,
-                            "/ENTRY[my_entry]/DATA[my_data]",
-                            {"link": "/my_entry/my_group"},
+                            "/ENTRY[my_entry]/MONITOR[my_monitor]",
+                            {"link": "/my_entry/required_group"},
                         ),
-                        "/ENTRY[my_entry]/DATA[my_data]/@target",
-                        "/my_entry/my_group",
+                        "/ENTRY[my_entry]/MONITOR[my_monitor]/@target",
+                        "/my_entry/required_group",
                     ),
                     "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
                     {"link": "/my_entry/nxodd_name/char_value"},
