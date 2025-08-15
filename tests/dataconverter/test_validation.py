@@ -1837,12 +1837,12 @@ def format_error_message(msg: str) -> str:
                 1.0,
             ),
             [
-                "Reserved prefix @BLUESKY_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid here.",
+                "Reserved prefix @BLUESKY_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid in NXtest.",
                 "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr has no documentation.",
-                "Reserved prefix @DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid here. "
+                "Reserved prefix @DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid in NXtest. "
                 "It is only valid in the context of NXmx.",
                 "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr has no documentation.",
-                "Reserved prefix DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid here. "
+                "Reserved prefix DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid in NXtest. "
                 "It is only valid in the context of NXmx.",
                 "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field has no documentation.",
                 "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr has no documentation.",
@@ -3210,12 +3210,14 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 1.0,
             ),
             [
-                "Reserved prefix @BLUESKY_ was used in NXtest, but is not valid here.",
+                "Reserved prefix @BLUESKY_ was used in /my_entry/my_group/@BLUESKY_attr, but is not valid in NXtest.",
                 "Attribute /my_entry/my_group/@BLUESKY_attr has no documentation.",
-                "Reserved prefix @DECTRIS_ was used in NXtest, but is not valid here. It is only valid in the context of NXmx.",
+                "Reserved prefix @DECTRIS_ was used in /my_entry/my_group/@DECTRIS_attr, but is not valid in NXtest. "
+                "It is only valid in the context of NXmx.",
                 "Attribute /my_entry/my_group/@DECTRIS_attr has no documentation.",
                 "Attribute /my_entry/my_group/@NX_attr has no documentation.",
-                "Reserved prefix DECTRIS_ was used in NXtest, but is not valid here. It is only valid in the context of NXmx.",
+                "Reserved prefix DECTRIS_ was used in /my_entry/my_group/DECTRIS_field, but is not valid in NXtest. "
+                "It is only valid in the context of NXmx.",
             ],
             id="reserved-prefix",
         ),

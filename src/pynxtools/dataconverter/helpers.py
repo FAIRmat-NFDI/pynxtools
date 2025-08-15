@@ -25,7 +25,7 @@ from collections.abc import Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
 from functools import cache, lru_cache
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Literal, Optional, Union, cast
 
 import h5py
 import lxml.etree as ET
@@ -51,6 +51,35 @@ ISO8601 = re.compile(
     r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
     r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
 )
+
+RESERVED_SUFFIXES = (
+    "_end",
+    "_increment_set",
+    "_errors",
+    "_indices",
+    "_mask",
+    "_set",
+    "_weights",
+    "_scaling_factor",
+    "_offset",
+)
+
+RESERVED_PREFIXES = {
+    "attribute": {
+        "@BLUESKY_": None,  # do not use anywhere
+        "@DECTRIS_": "NXmx",
+        "@IDF_": None,  # do not use anywhere
+        "@NDAttr": None,
+        "@NX_": "all",
+        "@PDBX_": None,  # do not use anywhere
+        "@SAS_": "NXcanSAS",
+        "@SILX_": None,  # do not use anywhere
+        "identifier": "all",
+    },
+    "field": {
+        "DECTRIS_": "NXmx",
+    },
+}
 
 
 class ValidationProblem(Enum):
@@ -205,10 +234,10 @@ class Collector:
                 f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
             )
         elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
-            log_text = f"Reserved prefix {path} was used in {args[0] if args else '<unknown>'}, but is not valid here."
+            log_text = f"Reserved prefix {path} was used in {args[0] if args else '<unknown>'}, but is not valid in {value}."
             # Note that value=None" gets converted to "<unknown>"
-            if value != "<unknown>":
-                log_text += f" It is only valid in the context of {value}."
+            if args[1]:
+                log_text += f" It is only valid in the context of {args[1] if args else '<unknown>'}."
             logger.error(log_text)
         elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
             value = cast(Any, value)
@@ -861,6 +890,61 @@ def is_valid_data_field(
         return value
 
     return validate_data_value(value, nxdl_type, nxdl_enum, nxdl_enum_open, path)
+
+
+def check_reserved_prefix(
+    path: str,
+    appdef_name: str,
+    nx_type: Literal["group", "field", "attribute"],
+):
+    """
+    Check if a reserved prefix was used in the correct context.
+
+    Args:
+        path (str):
+            The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
+        appdef_name (str):
+            Name of the application definition (e.g. NXmx, NXmpes, etc.)
+        nx_type (Literal["group", "field", "attribute"]):
+            The NeXus type the key represents. Determines which reserved prefixes are relevant.
+
+    """
+    prefixes = RESERVED_PREFIXES.get(nx_type)
+    if not prefixes or not appdef_name:
+        return
+
+    name = path.rsplit("/", 1)[-1]
+
+    if not name.startswith(tuple(prefixes)):
+        return  # Irrelevant prefix, no check needed
+
+    for prefix, allowed_context in prefixes.items():
+        if not name.startswith(prefix):
+            continue
+
+        if allowed_context is None:
+            # This prefix is disallowed entirely
+            collector.collect_and_log(
+                prefix,
+                ValidationProblem.ReservedPrefixInWrongContext,
+                appdef_name,
+                path,
+                None,
+            )
+            return
+        if allowed_context == "all":
+            # We can freely use this prefix everywhere.
+            return
+
+        if allowed_context != appdef_name:
+            collector.collect_and_log(
+                prefix,
+                ValidationProblem.ReservedPrefixInWrongContext,
+                appdef_name,
+                path,
+                allowed_context,
+            )
+            return
 
 
 @cache

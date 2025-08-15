@@ -34,8 +34,10 @@ from cachetools import LRUCache, cached
 from cachetools.keys import hashkey
 
 from pynxtools.dataconverter.helpers import (
+    RESERVED_SUFFIXES,
     Collector,
     ValidationProblem,
+    check_reserved_prefix,
     clean_str_attr,
     collector,
     convert_nexus_to_caps,
@@ -54,35 +56,6 @@ if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
     # set break points like this
     # debugpy.breakpoint()
-
-RESERVED_SUFFIXES = (
-    "_end",
-    "_increment_set",
-    "_errors",
-    "_indices",
-    "_mask",
-    "_set",
-    "_weights",
-    "_scaling_factor",
-    "_offset",
-)
-
-RESERVED_PREFIXES = {
-    "attribute": {
-        "@BLUESKY_": None,  # do not use anywhere
-        "@DECTRIS_": "NXmx",
-        "@IDF_": None,  # do not use anywhere
-        "@NDAttr": None,
-        "@NX_": "all",
-        "@PDBX_": None,  # do not use anywhere
-        "@SAS_": "NXcanSAS",
-        "@SILX_": None,  # do not use anywhere
-        "identifier": "all",
-    },
-    "field": {
-        "DECTRIS_": "NXmx",
-    },
-}
 
 
 def build_nested_dict_from(
@@ -538,63 +511,6 @@ def validate_hdf_group_against(
                 break  # We found the suffix and it passed
         return
 
-    def check_reserved_prefix(
-        path: str,
-        appdef_name: str,
-        nx_type: Literal["group", "field", "attribute"],
-    ):
-        """
-        Check if a reserved prefix was used in the correct context.
-
-        Args:
-            path (str):
-                The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
-            appdef_name (str):
-                Name of the application definition (e.g. NXmx, NXmpes, etc.)
-            nx_type (Literal["group", "field", "attribute"]):
-                The NeXus type the key represents. Determines which reserved prefixes are relevant.
-
-        """
-        prefixes = RESERVED_PREFIXES.get(nx_type)
-        if not prefixes:
-            return
-
-        name = path.rsplit("/")[-1]
-
-        if nx_type == "attribute":
-            name = f"@{name}"
-
-        if not name.startswith(tuple(prefixes)):
-            return  # Irrelevant prefix, no check needed
-
-        for prefix, allowed_context in prefixes.items():
-            if not name.startswith(prefix):
-                continue
-
-            if allowed_context is None:
-                # This prefix is disallowed entirely
-                collector.collect_and_log(
-                    prefix,
-                    ValidationProblem.ReservedPrefixInWrongContext,
-                    None,
-                    appdef_name,
-                )
-                return
-            if allowed_context == "all":
-                # We can freely use this prefix everywhere.
-                return
-
-            if allowed_context != appdef_name:
-                collector.collect_and_log(
-                    prefix,
-                    ValidationProblem.ReservedPrefixInWrongContext,
-                    allowed_context,
-                    appdef_name,
-                )
-                return
-
-        return
-
     def has_breakpoint(key_path: str) -> bool:
         """
         Walk up the path hierarchy and check if a parent is an NXcollection
@@ -859,7 +775,7 @@ def validate_hdf_group_against(
                 # We are inside an NXcollection or a group without NX_class.
                 continue  # This continues the outer attr_name loop
 
-            check_reserved_prefix(attr_name, appdef_node.name, "attribute")
+            check_reserved_prefix(full_path, appdef_node.name, "attribute")
 
             try:
                 node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
@@ -1437,7 +1353,7 @@ def validate_dict_against(
             )
 
             check_reserved_suffix(variant_path, mapping)
-            check_reserved_prefix(variant_path, mapping, "field")
+            check_reserved_prefix(variant_path, get_definition(variant_path), "field")
 
             # Check unit category
             if node.unit is not None:
@@ -1503,7 +1419,9 @@ def validate_dict_against(
                 node.open_enum,
                 variant_path,
             )
-            check_reserved_prefix(variant_path, mapping, "attribute")
+            check_reserved_prefix(
+                variant_path, get_definition(variant_path), "attribute"
+            )
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -1938,64 +1856,22 @@ def validate_dict_against(
                     return
                 break  # We found the suffix and it passed
 
-    def check_reserved_prefix(
+    def get_definition(
         key: str,
-        mapping: MutableMapping[str, Any],
-        nx_type: Literal["group", "field", "attribute"],
-    ):
+    ) -> Optional[str]:
         """
-        Check if a reserved prefix was used in the correct context.
+        Get the definition value (application definition) for a given key.
 
         Args:
             key (str): The full key path (e.g., "/ENTRY[entry1]/instrument/detector/@DECTRIS_config").
-            mapping (MutableMapping[str, Any]):
-                The mapping containing the data to validate.
-                This should be a dict of `/` separated paths.
-                Attributes are denoted with `@` in front of the last element.
-            nx_type (Literal["group", "field", "attribute"]):
-                The NeXus type the key represents. Determines which reserved prefixes are relevant.
         """
-        prefixes = RESERVED_PREFIXES.get(nx_type)
-        if not prefixes:
-            return
+        match = re.match(r"(/ENTRY\[[^]]+])", key)
+        definition = None
+        if match:
+            definition_key = f"{match.group(1)}/definition"
+            definition = mapping.get(definition_key)
 
-        name = key.rsplit("/", 1)[-1]
-
-        if not name.startswith(tuple(prefixes)):
-            return  # Irrelevant prefix, no check needed
-
-        for prefix, allowed_context in prefixes.items():
-            if not name.startswith(prefix):
-                continue
-
-            if allowed_context is None:
-                # This prefix is disallowed entirely
-                collector.collect_and_log(
-                    prefix,
-                    ValidationProblem.ReservedPrefixInWrongContext,
-                    None,
-                    key,
-                )
-                return
-            if allowed_context == "all":
-                # We can freely use this prefix everywhere.
-                return
-
-            # Check that the prefix is used in the correct context.
-            match = re.match(r"(/ENTRY\[[^]]+])", key)
-            definition_value = None
-            if match:
-                definition_key = f"{match.group(1)}/definition"
-                definition_value = mapping.get(definition_key)
-
-            if definition_value != allowed_context:
-                collector.collect_and_log(
-                    prefix,
-                    ValidationProblem.ReservedPrefixInWrongContext,
-                    allowed_context,
-                    key,
-                )
-                return
+        return definition
 
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,
@@ -2118,13 +1994,19 @@ def validate_dict_against(
 
         if "@" not in not_visited_key.rsplit("/", 1)[-1]:
             check_reserved_suffix(not_visited_key, mapping)
-            check_reserved_prefix(not_visited_key, mapping, "field")
+            check_reserved_prefix(
+                not_visited_key, get_definition(not_visited_key), "field"
+            )
 
         else:
             associated_field = not_visited_key.rsplit("/", 1)[-2]
             # Check the prefix both for this attribute and the field it belongs to
-            check_reserved_prefix(not_visited_key, mapping, "attribute")
-            check_reserved_prefix(associated_field, mapping, "field")
+            check_reserved_prefix(
+                not_visited_key, get_definition(not_visited_key), "attribute"
+            )
+            check_reserved_prefix(
+                associated_field, get_definition(associated_field), "field"
+            )
 
         if is_documented(not_visited_key, tree):
             continue
