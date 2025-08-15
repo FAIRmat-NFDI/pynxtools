@@ -18,7 +18,6 @@
 #
 DEBUG_VALIDATION = False
 import copy
-import os
 import re
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, MutableMapping
@@ -55,6 +54,35 @@ if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
     # set break points like this
     # debugpy.breakpoint()
+
+RESERVED_SUFFIXES = (
+    "_end",
+    "_increment_set",
+    "_errors",
+    "_indices",
+    "_mask",
+    "_set",
+    "_weights",
+    "_scaling_factor",
+    "_offset",
+)
+
+RESERVED_PREFIXES = {
+    "attribute": {
+        "@BLUESKY_": None,  # do not use anywhere
+        "@DECTRIS_": "NXmx",
+        "@IDF_": None,  # do not use anywhere
+        "@NDAttr": None,
+        "@NX_": "all",
+        "@PDBX_": None,  # do not use anywhere
+        "@SAS_": "NXcanSAS",
+        "@SILX_": None,  # do not use anywhere
+        "identifier": "all",
+    },
+    "field": {
+        "DECTRIS_": "NXmx",
+    },
+}
 
 
 def build_nested_dict_from(
@@ -493,21 +521,9 @@ def validate_hdf_group_against(
                 The parent group of the field/attribute path to check.
         """
 
-        reserved_suffixes = (
-            "_end",
-            "_increment_set",
-            "_errors",
-            "_indices",
-            "_mask",
-            "_set",
-            "_weights",
-            "_scaling_factor",
-            "_offset",
-        )
-
         name = path.strip("/").split("/")[-1]
 
-        for suffix in reserved_suffixes:
+        for suffix in RESERVED_SUFFIXES:
             if name.endswith(suffix):
                 associated_field = name.rsplit(suffix, 1)[0]
 
@@ -539,23 +555,7 @@ def validate_hdf_group_against(
                 The NeXus type the key represents. Determines which reserved prefixes are relevant.
 
         """
-        reserved_prefixes = {
-            "attribute": {
-                "@BLUESKY_": None,  # do not use anywhere
-                "@DECTRIS_": "NXmx",
-                "@IDF_": None,  # do not use anywhere
-                "@NDAttr": None,
-                "@NX_": "all",
-                "@PDBX_": None,  # do not use anywhere
-                "@SAS_": "NXcanSAS",
-                "@SILX_": None,  # do not use anywhere
-            },
-            "field": {
-                "DECTRIS_": "NXmx",
-            },
-        }
-
-        prefixes = reserved_prefixes.get(nx_type)
+        prefixes = RESERVED_PREFIXES.get(nx_type)
         if not prefixes:
             return
 
@@ -760,7 +760,6 @@ def validate_hdf_group_against(
         """
         full_path = f"{entry_name}/{path}"
         key_path = path.replace("@", "")
-        parent_node = None
 
         if has_breakpoint(key_path):
             # We are inside an NXcollection or a group without NX_class.
@@ -781,14 +780,14 @@ def validate_hdf_group_against(
                 )
             return
 
-        # if node.type != "field":
-        #     # In case a group was accidentally linked to a field.
-        #     collector.collect_and_log(
-        #         full_path,
-        #         ValidationProblem.ExpectedGroup,
-        #         None,
-        #     )
-        #     return
+        if node.type != "field":
+            # In case a group was accidentally linked to a field.
+            collector.collect_and_log(
+                full_path,
+                ValidationProblem.ExpectedGroup,
+                None,
+            )
+            return
 
         update_required_concepts(path, node)
         remove_from_req_entities(path)
@@ -855,7 +854,6 @@ def validate_hdf_group_against(
                 continue
 
             key_path = f"{path}/{attr_name}"
-            parent_node = None
 
             if has_breakpoint(key_path):
                 # We are inside an NXcollection or a group without NX_class.
@@ -1911,22 +1909,11 @@ def validate_dict_against(
                 The mapping containing the data to validate.
                 This should be a dict of `/` separated paths.
         """
-        reserved_suffixes = (
-            "_end",
-            "_increment_set",
-            "_errors",
-            "_indices",
-            "_mask",
-            "_set",
-            "_weights",
-            "_scaling_factor",
-            "_offset",
-        )
 
         parent_path, name = key.rsplit("/", 1)
         concept_name, instance_name = split_class_and_name_of(name)
 
-        for suffix in reserved_suffixes:
+        for suffix in RESERVED_SUFFIXES:
             if instance_name.endswith(suffix):
                 associated_field = instance_name.rsplit(suffix, 1)[0]
 
@@ -1964,23 +1951,7 @@ def validate_dict_against(
             nx_type (Literal["group", "field", "attribute"]):
                 The NeXus type the key represents. Determines which reserved prefixes are relevant.
         """
-        reserved_prefixes = {
-            "attribute": {
-                "@BLUESKY_": None,  # do not use anywhere
-                "@DECTRIS_": "NXmx",
-                "@IDF_": None,  # do not use anywhere
-                "@NDAttr": None,
-                "@NX_": "all",
-                "@PDBX_": None,  # do not use anywhere
-                "@SAS_": "NXcanSAS",
-                "@SILX_": None,  # do not use anywhere
-            },
-            "field": {
-                "DECTRIS_": "NXmx",
-            },
-        }
-
-        prefixes = reserved_prefixes.get(nx_type)
+        prefixes = RESERVED_PREFIXES.get(nx_type)
         if not prefixes:
             return
 
@@ -2021,8 +1992,6 @@ def validate_dict_against(
                     key,
                 )
                 return
-
-        return
 
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,

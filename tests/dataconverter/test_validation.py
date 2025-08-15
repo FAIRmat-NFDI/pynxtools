@@ -3327,7 +3327,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
 
-    # os.remove(hdf_file_path)
+    os.remove(hdf_file_path)
 
 
 @pytest.mark.parametrize(
