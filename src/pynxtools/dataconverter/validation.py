@@ -318,22 +318,6 @@ def validate_hdf_group_against(
                             f"The type ('{node_type}') of {path} conflicts with another existing concept "
                             f"{other_node.get_path()} (which is of type '{other_node.nx_type}'."
                         )
-                    # TODO: This does not work yet, we need a better way to check that a linked object matches
-                    # the expected type.
-                    # elif node_type == "group" and other_node_type == "field":
-                    #     collector.collect_and_log(
-                    #         f"{entry_name}/{path}",
-                    #         ValidationProblem.ExpectedField,
-                    #         None,
-                    #     )
-                    #     raise TypeError("Expected field for {path}")
-                    # elif node_type == "field" and other_node_type == "group":
-                    #     collector.collect_and_log(
-                    #         f"{entry_name}/{path}",
-                    #         ValidationProblem.ExpectedGroup,
-                    #         None,
-                    #     )
-                    #     raise TypeError("Expected group for {path}")
 
             return None
 
