@@ -3323,8 +3323,17 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
         else:
             with caplog.at_level(logging.WARNING):
                 _ = validate(str(hdf_file_path))
-            assert len(caplog.records) == len(error_messages)
-            for expected_message, rec in zip(error_messages, caplog.records):
+
+            # We ignore the message that the entry is invalid
+            caplog_records = [
+                rec
+                for rec in caplog.records
+                if not rec.message.startswith(
+                    "WARNING: Invalid: The entry `my_entry` in file"
+                )
+            ]
+            assert len(caplog_records) == len(error_messages)
+            for expected_message, rec in zip(error_messages, caplog_records):
                 assert expected_message == format_error_message(rec.message)
 
     os.remove(hdf_file_path)

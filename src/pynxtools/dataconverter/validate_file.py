@@ -98,7 +98,7 @@ def validate(file: str, ignore_undocumented: bool = False):
                     f" according to the `{nxdl}` application definition.",
                 )
             else:
-                logger.info(
+                logger.warning(
                     f"Invalid: The entry `{entry}` in file `{file}` is NOT valid"
                     f" according to the `{nxdl}` application definition.",
                 )
