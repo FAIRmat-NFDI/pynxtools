@@ -228,7 +228,7 @@ typing-extensions==4.14.1
     #   flexparser
     #   mypy
     #   pint
-tzdata==2024.1
+tzdata==2025.2
     # via pandas
 urllib3==2.5.0
     # via
