@@ -133,7 +133,7 @@ class ReaderElnGenerator(ElnGenerator):
 
         entity_name = node.name.lower()
 
-        if node.type == "attribute":
+        if node.nx_type == "attribute":
             entity_name = f"/@{entity_name}"
 
         if not node.children and not node.unit:

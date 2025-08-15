@@ -45,14 +45,14 @@
         </group>
         <group type="NXdata" name="specified_group" nameType="specified">
             <doc>A group with a name and nameType="specified".</doc>
-            <field name="specified_field" nameType="specified" type="NX_FLOAT" units="NX_ANY">
+            <field name="specified_field" nameType="specified" optional="true" type="NX_FLOAT" units="NX_ANY">
                 <attribute name="specified_attr_in_field" nameType="specified"/>
             </field>
             <attribute name="specified_attr"/>
         </group>
         <group type="NXdata" name="any_groupGROUP" nameType="any">
             <doc>A group with a name and nameType="any".</doc>
-            <field name="any_fieldFIELD" nameType="any" optional="true" type="NX_FLOAT" units="NX_ANY">
+            <field name="any_fieldFIELD" nameType="any" type="NX_FLOAT" units="NX_ANY">
                 <attribute name="any_attrATTR_in_field" nameType="any"/>
             </field>
             <attribute name="any_attrATTR" nameType="any"/>

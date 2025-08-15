@@ -15,13 +15,16 @@ Note that simply calling `dataconverter` defaults to `dataconverter convert`.
     :list_subcommands: True
 
 ## NeXus file validation
-<!-- ::: mkdocs-click
-    :module: "pynxtools.dataconverter.verify
-    :command: verify_nexus
-    :prog_name: verify_nexus
-    :depth: 1
+
+::: mkdocs-click
+    :module: pynxtools.dataconverter.validate_file
+    :command: validate_cli
+    :prog_name: validate_nexus
+    :depth: 2
     :style: table
-    :list_subcommands: True -->
+    :list_subcommands: True
+
+## NeXus annotator
 
 ::: mkdocs-click
     :module: pynxtools.nexus.nexus
