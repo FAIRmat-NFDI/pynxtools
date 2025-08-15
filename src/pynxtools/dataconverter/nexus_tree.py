@@ -115,7 +115,7 @@ class NexusNode(NodeMixin):
     Args:
         name (str):
             The name of the node.
-        type (Literal["group", "field", "attribute", "choice"]):
+        nx_type (Literal["group", "field", "attribute", "choice"]):
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
             The nameType of the node.
@@ -127,7 +127,7 @@ class NexusNode(NodeMixin):
             Defaults to "required".
         variadic (bool):
             True if the node name is variadic and can be matched against multiple names.
-            This is set automatically on init and will be True if the `nameTYPE` is "any"
+            This is set automatically on init and will be True if the `nameType` is "any"
             or "partial" and False otherwise.
             Defaults to False.
         inheritance (list[InstanceOf[ET._Element]]):
@@ -154,9 +154,8 @@ class NexusNode(NodeMixin):
             Base of the NXDL file where the XML element for this node is  defined
     """
 
-    # TODO rename type to nx_type in every place
     name: str
-    type: Literal["group", "field", "attribute", "choice"]
+    nx_type: Literal["group", "field", "attribute", "choice"]
     name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
@@ -202,7 +201,7 @@ class NexusNode(NodeMixin):
     def __init__(
         self,
         name: str,
-        type: Literal["group", "field", "attribute", "choice"],
+        nx_type: Literal["group", "field", "attribute", "choice"],
         name_type: Optional[Literal["specified", "any", "partial"]] = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
@@ -212,7 +211,7 @@ class NexusNode(NodeMixin):
     ) -> None:
         super().__init__()
         self.name = name
-        self.type = type
+        self.nx_type = nx_type
         self.name_type = name_type
         self.optionality = optionality
         self.nxdl_base = nxdl_base
@@ -240,7 +239,7 @@ class NexusNode(NodeMixin):
             names.insert(0, current_node.name)
             current_node = current_node.parent
 
-        if self.type == "attribute" and names:
+        if self.nx_type == "attribute" and names:
             names[-1] = f"@{names[-1]}"
         return "/" + "/".join(names)
 
@@ -422,7 +421,7 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
-            if child.type == "group":
+            if child.nx_type == "group":
                 req_children.append(f"{prev_path}/{child.name}")
 
             if recurse_children:
@@ -468,11 +467,11 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
-            if child.type == "attribute":
+            if child.nx_type == "attribute":
                 req_children.append(f"{prev_path}/@{child.name}")
                 continue
 
-            if child.type == "field":
+            if child.nx_type == "field":
                 req_children.append(f"{prev_path}/{child.name}")
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
@@ -522,7 +521,7 @@ class NexusNode(NodeMixin):
         Get documentation url
         """
 
-        anchor_segments = [self.type]
+        anchor_segments = [self.nx_type]
         current_node = self
 
         while True:
@@ -647,7 +646,7 @@ class NexusNode(NodeMixin):
                 parent=self,
                 name=name,
                 name_type=name_type,
-                type=tag,
+                nx_type=tag,
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
                 inheritance=[xml_elem],
@@ -661,7 +660,7 @@ class NexusNode(NodeMixin):
             inheritance_chain = self._build_inheritance_chain(xml_elem)
             current_elem = NexusGroup(
                 parent=self,
-                type=tag,
+                nx_type=tag,
                 name=name,
                 name_type=name_type,
                 nx_class=xml_elem.attrib["type"],
@@ -721,16 +720,16 @@ class NexusChoice(NexusNode):
     It just collects children of the choice from which to choose one.
 
     Args:
-        type (Literal["choice"]):
+        nx_type (Literal["choice"]):
             Just ties this node to the choice tag in the nxdl file.
             Should and cannot be manually altered.
             Defaults to "choice".
     """
 
-    type: Literal["choice"] = "choice"
+    nx_type: Literal["choice"] = "choice"
 
     def __init__(self, **data) -> None:
-        super().__init__(type=self.type, **data)
+        super().__init__(nx_type=self.nx_type, **data)
         self._construct_inheritance_chain_from_parent()
         self._set_optionality()
 
@@ -742,7 +741,7 @@ class NexusChoice(NexusNode):
             return
         for xml_elem in self.parent.inheritance:
             elem = xml_elem.find(
-                f"nx:{self.type}/[@name='{self.name}']", namespaces=namespaces
+                f"nx:{self.nx_type}/[@name='{self.name}']", namespaces=namespaces
             )
             if elem is not None:
                 self.inheritance.append(elem)
@@ -875,7 +874,7 @@ class NexusGroup(NexusNode):
         self._check_sibling_namefit()
 
     def __repr__(self) -> str:
-        if self.type == "attribute":
+        if self.nx_type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
 
@@ -885,7 +884,7 @@ class NexusEntity(NexusNode):
     A NexusEntity represents a field or an attribute in the NeXus tree.
 
     Args:
-        type (Literal["field", "attribute"]):
+        nx_type (Literal["field", "attribute"]):
             The type of the entity is restricted to either a `field` or an `attribute`.
         unit (Optional[NexusUnitCategory]):
             The unit of the entity.
@@ -920,7 +919,7 @@ class NexusEntity(NexusNode):
             Defaults to None.
     """
 
-    type: Literal["field", "attribute"]
+    nx_type: Literal["field", "attribute"]
     unit: Optional[NexusUnitCategory] = None
     dtype: NexusType = "NX_CHAR"
     items: Optional[list[str]] = None
@@ -1060,7 +1059,7 @@ class NexusEntity(NexusNode):
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
-            subelems = xml_elem.findall(f"nx:{self.type}", namespaces=namespaces)
+            subelems = xml_elem.findall(f"nx:{self.nx_type}", namespaces=namespaces)
             if subelems is not None:
                 for elem in subelems:
                     if self._check_compatibility_with(elem):
@@ -1166,7 +1165,7 @@ class NexusEntity(NexusNode):
         self._set_shape()
 
     def __repr__(self) -> str:
-        if self.type == "attribute":
+        if self.nx_type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
 
@@ -1231,7 +1230,7 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     tree = NexusGroup(
         name=appdef_xml_root.attrib["name"],
         nx_class="NXroot",
-        type="group",
+        nx_type="group",
         name_type="specified",
         optionality="required",
         variadic=False,

@@ -196,8 +196,8 @@ class Collector:
             logger.warning(f"The {value} {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
             value = cast(Any, value)
-            log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"
-            if value.type == "group":
+            log_text = f"Given {value.nx_type} name '{path}' conflicts with the non-variadic name '{value}'"
+            if value.nx_type == "group":
                 log_text += f", which should be of type {value.nx_class}."
             logger.warning(log_text)
         elif log_type == ValidationProblem.ReservedSuffixWithoutField:
@@ -215,7 +215,7 @@ class Collector:
             logger.error(
                 f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
                 f"conflicts with another existing concept {value.get_path()} of the same name, which "
-                f"is of type '{value.type}'."
+                f"is of type '{value.nx_type}'."
             )
         elif log_type == ValidationProblem.KeysWithAndWithoutConcept:
             value = cast(Any, value)

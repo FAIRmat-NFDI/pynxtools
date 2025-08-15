@@ -343,7 +343,7 @@ def validate_hdf_group_against(
                         )
                         raise TypeError(
                             f"The type ('{node_type}') of {path} conflicts with another existing concept "
-                            f"{other_node.get_path()} (which is of type '{other_node.type}'."
+                            f"{other_node.get_path()} (which is of type '{other_node.nx_type}'."
                         )
                     # TODO: This does not work yet, we need a better way to check that a linked object matches
                     # the expected type.
@@ -500,7 +500,7 @@ def validate_hdf_group_against(
         """
         parent = node.parent
         while parent:
-            if parent.type == "group" and parent.nx_class == "NXcollection":
+            if parent.nx_type == "group" and parent.nx_class == "NXcollection":
                 # Found a parent collection group
                 return True
             parent = parent.parent
@@ -654,7 +654,7 @@ def validate_hdf_group_against(
                 )
             return
 
-        if node.type != "group":
+        if node.nx_type != "group":
             # In case a field was accidentally linked to a group.
             collector.collect_and_log(
                 full_path,
@@ -780,7 +780,7 @@ def validate_hdf_group_against(
                 )
             return
 
-        if node.type != "field":
+        if node.nx_type != "field":
             # In case a group was accidentally linked to a field.
             collector.collect_and_log(
                 full_path,
@@ -1053,7 +1053,7 @@ def validate_dict_against(
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> list[str]:
         variations = []
 
-        prefix = f"{'@' if node.type == 'attribute' else ''}"
+        prefix = f"{'@' if node.nx_type == 'attribute' else ''}"
         if not node.variadic:
             if f"{prefix}{node.name}" in keys:
                 variations += [node.name]
@@ -1081,7 +1081,7 @@ def validate_dict_against(
         for key in keys:
             concept_name, instance_name = split_class_and_name_of(key)
 
-            if node.type == "attribute":
+            if node.nx_type == "attribute":
                 # Remove the starting @ from attributes
                 if concept_name:
                     concept_name = (
@@ -1249,11 +1249,11 @@ def validate_dict_against(
         if (
             not variants
             and node.optionality == "required"
-            and node.type in missing_type_err
+            and node.nx_type in missing_type_err
         ):
             collector.collect_and_log(
                 f"{prev_path}/{node.name}",
-                missing_type_err.get(node.type),
+                missing_type_err.get(node.nx_type),
                 None,
             )
             return
@@ -1276,7 +1276,7 @@ def validate_dict_against(
                     # collector.collect_and_log(
                     #     variant_path,
                     #     ValidationProblem.KeyToBeRemoved,
-                    #     node.type,
+                    #     node.nx_type,
                     # )
                     # keys_to_remove.append(not_visited_key)
                 continue
@@ -1377,9 +1377,11 @@ def validate_dict_against(
         if (
             not variants
             and node.optionality == "required"
-            and node.type in missing_type_err
+            and node.nx_type in missing_type_err
         ):
-            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
+            collector.collect_and_log(
+                full_path, missing_type_err.get(node.nx_type), None
+            )
             return
 
         for variant in variants:
@@ -1401,7 +1403,7 @@ def validate_dict_against(
                 # collector.collect_and_log(
                 #     variant_path,
                 #     ValidationProblem.KeyToBeRemoved,
-                #     node.type,
+                #     node.nx_type,
                 # )
                 # keys_to_remove.append(variant_path)
                 continue
@@ -1414,7 +1416,7 @@ def validate_dict_against(
                         break
                 if all_attrs:
                     collector.collect_and_log(
-                        variant_path, missing_type_err.get(node.type), None
+                        variant_path, missing_type_err.get(node.nx_type), None
                     )
                     collector.collect_and_log(
                         variant_path,
@@ -1481,9 +1483,11 @@ def validate_dict_against(
         if (
             not variants
             and node.optionality == "required"
-            and node.type in missing_type_err
+            and node.nx_type in missing_type_err
         ):
-            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
+            collector.collect_and_log(
+                full_path, missing_type_err.get(node.nx_type), None
+            )
             return
 
         for variant in variants:
@@ -1555,7 +1559,7 @@ def validate_dict_against(
         for node in nodes:
             if not node.variadic:
                 if instance_name == node.name:
-                    if node.type not in expected_types and check_types:
+                    if node.nx_type not in expected_types and check_types:
                         expected_types_str = " or ".join(expected_types)
                         collector.collect_and_log(
                             name,
@@ -1566,7 +1570,7 @@ def validate_dict_against(
                         raise TypeError(
                             f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
                             f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
-                            f"type '{node.type}')."
+                            f"type '{node.nx_type}')."
                         )
                     if concept_name and concept_name != node.name:
                         inherited_names = [
@@ -1579,7 +1583,7 @@ def validate_dict_against(
                             and len(type_attr) > 2
                         ]
                         if concept_name not in inherited_names:
-                            if node.type == "group":
+                            if node.nx_type == "group":
                                 if concept_name != node.nx_class[2:].upper():
                                     collector.collect_and_log(
                                         concept_name,
@@ -1669,7 +1673,7 @@ def validate_dict_against(
                 parent_node = add_best_matches_for(key_path, tree)
                 if (
                     parent_node
-                    and parent_node.type == "group"
+                    and parent_node.nx_type == "group"
                     and parent_node.nx_class == "NXcollection"
                 ):
                     # Collection found for parents, mark as documented
@@ -1677,7 +1681,7 @@ def validate_dict_against(
 
             return False
 
-        if node.type == "group" and node.nx_class == "NXcollection":
+        if node.nx_type == "group" and node.nx_class == "NXcollection":
             # Collection found, mark as documented
             return True
 
@@ -1690,7 +1694,7 @@ def validate_dict_against(
 
             is_mapping = isinstance(resolved_link[key], Mapping)
 
-            if node.type == "group" and not is_mapping:
+            if node.nx_type == "group" and not is_mapping:
                 # Groups must have subelements
                 collector.collect_and_log(
                     key,
@@ -1706,7 +1710,7 @@ def validate_dict_against(
                 # keys_to_remove.append(key)
                 return False
 
-            elif node.type == "field":
+            elif node.nx_type == "field":
                 # A field should not have a dict of keys that are _not_ all attributes,
                 # i.e. no sub-fields or sub-groups.
                 if is_mapping and not all(
@@ -1731,9 +1735,9 @@ def validate_dict_against(
 
             return True
 
-        if "@" not in key and node.type != "field":
+        if "@" not in key and node.nx_type != "field":
             return False
-        if "@" in key and node.type != "attribute":
+        if "@" in key and node.nx_type != "attribute":
             return False
 
         # if we arrive here, the key is supposed to be documented.
@@ -1772,7 +1776,7 @@ def validate_dict_against(
             if keys is None:
                 return
 
-            handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
+            handling_map.get(child.nx_type, handle_unknown_type)(child, keys, prev_path)
 
     def find_instance_name_conflicts(mapping: MutableMapping[str, str]) -> None:
         """
@@ -2047,14 +2051,14 @@ def validate_dict_against(
                         parent_node = add_best_matches_for(key_path, tree)
                         if (
                             parent_node
-                            and parent_node.type == "group"
+                            and parent_node.nx_type == "group"
                             and parent_node.nx_class == "NXcollection"
                         ):
                             # NXcollection found → break while, continue outer loop
                             break
                     continue
 
-                if node is None or node.type != "field" or node.unit is None:
+                if node is None or node.nx_type != "field" or node.unit is None:
                     if not ignore_undocumented:
                         collector.collect_and_log(
                             not_visited_key,
@@ -2095,7 +2099,7 @@ def validate_dict_against(
                         "group or field",
                     )
                     remove_attr = True
-                elif node.type != "group":
+                elif node.nx_type != "group":
                     collector.collect_and_log(
                         parent_key,
                         ValidationProblem.AttributeForNonExistingConcept,
