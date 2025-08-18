@@ -34,14 +34,15 @@ from cachetools import LRUCache, cached
 from cachetools.keys import hashkey
 
 from pynxtools.dataconverter.helpers import (
-    RESERVED_SUFFIXES,
     Collector,
     ValidationProblem,
     check_reserved_prefix,
+    check_reserved_suffix,
     clean_str_attr,
     collector,
     convert_nexus_to_caps,
     is_valid_data_field,
+    split_class_and_name_of,
 )
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
@@ -108,31 +109,6 @@ def build_nested_dict_from(
             data[final_key] = v
 
     return default_to_regular_dict(data_tree)
-
-
-def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
-    """
-    Return the class and the name of a data dict entry of the form
-    `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
-    If this is a simple string it will just return this string, i.e.
-    `split_class_and_name_of("entry")` will return `None, "entry"`.
-
-    Args:
-        name (str): The data dict entry
-
-    Returns:
-        tuple[Optional[str], str]:
-            First element is the class name of the entry, second element is the name.
-            The class name will be None if it is not present.
-    """
-    name_match = re.search(r"([^\[]+)\[([^\]]+)\](\@.*)?", name)
-    if name_match is None:
-        return None, name
-
-    prefix = name_match.group(3)
-    return name_match.group(
-        1
-    ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
 def is_valid_unit_for_node(
@@ -464,37 +440,6 @@ def validate_hdf_group_against(
 
         return False
 
-    def check_reserved_suffix(path: str, parent_data: h5py.Group):
-        """
-        Check if an associated field exists for a key with a reserved suffix.
-
-        Reserved suffixes imply the presence of an associated base field (e.g.,
-        "temperature_errors" implies "temperature" must exist in the mapping).
-
-        Args:
-            path (str):
-                The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
-            parent_data (h5py.Group):
-                The parent group of the field/attribute path to check.
-        """
-
-        name = path.strip("/").split("/")[-1]
-
-        for suffix in RESERVED_SUFFIXES:
-            if name.endswith(suffix):
-                associated_field = name.rsplit(suffix, 1)[0]
-
-                if associated_field not in parent_data:
-                    collector.collect_and_log(
-                        path,
-                        ValidationProblem.ReservedSuffixWithoutField,
-                        associated_field,
-                        suffix,
-                    )
-                    return
-                break  # We found the suffix and it passed
-        return
-
     def has_breakpoint(key_path: str) -> bool:
         """
         Walk up the path hierarchy and check if a parent is an NXcollection
@@ -805,8 +750,7 @@ def validate_hdf_group_against(
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
             handle_field(path, h5_obj)
-            parent_path = path.strip("/").rsplit("/", 1)[0]
-            check_reserved_suffix(f"{entry_name}/{path}", data[parent_path])
+            check_reserved_suffix(f"{entry_name}/{path}", h5_obj.parent)
         handle_attributes(path, h5_obj.attrs, h5_obj)
 
     def visititems(group: h5py.Group, path: str = "", filename: str = ""):
@@ -1336,7 +1280,7 @@ def validate_dict_against(
                 variant_path,
             )
 
-            check_reserved_suffix(variant_path, mapping)
+            check_reserved_suffix(variant_path, keys)
             check_reserved_prefix(variant_path, get_definition(variant_path), "field")
 
             # Check unit category
@@ -1800,45 +1744,6 @@ def validate_dict_against(
                                 valid_key, ValidationProblem.KeyToBeRemoved, "key"
                             )
                             keys_to_remove.append(valid_key)
-
-    def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]):
-        """
-        Check if an associated field exists for a key with a reserved suffix.
-
-        Reserved suffixes imply the presence of an associated base field (e.g.,
-        "temperature_errors" implies "temperature" must exist in the mapping).
-
-        Args:
-            key (str):
-                The full key path (e.g., "/ENTRY[entry1]/sample/temperature_errors").
-            mapping (MutableMapping[str, Any]):
-                The mapping containing the data to validate.
-                This should be a dict of `/` separated paths.
-        """
-
-        parent_path, name = key.rsplit("/", 1)
-        concept_name, instance_name = split_class_and_name_of(name)
-
-        for suffix in RESERVED_SUFFIXES:
-            if instance_name.endswith(suffix):
-                associated_field = instance_name.rsplit(suffix, 1)[0]
-
-                if not any(
-                    k.startswith(parent_path + "/")
-                    and (
-                        k.endswith(associated_field)
-                        or k.endswith(f"[{associated_field}]")
-                    )
-                    for k in mapping
-                ):
-                    collector.collect_and_log(
-                        key,
-                        ValidationProblem.ReservedSuffixWithoutField,
-                        associated_field,
-                        suffix,
-                    )
-                    return
-                break  # We found the suffix and it passed
 
     def get_definition(
         key: str,

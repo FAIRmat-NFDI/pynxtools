@@ -21,7 +21,7 @@ import json
 import logging
 import os
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
 from functools import cache, lru_cache
@@ -890,6 +890,70 @@ def is_valid_data_field(
         return value
 
     return validate_data_value(value, nxdl_type, nxdl_enum, nxdl_enum_open, path)
+
+
+def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
+    """
+    Return the class and the name of a data dict entry of the form
+    `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
+    If this is a simple string it will just return this string, i.e.
+    `split_class_and_name_of("entry")` will return `None, "entry"`.
+
+    Args:
+        name (str): The data dict entry
+
+    Returns:
+        tuple[Optional[str], str]:
+            First element is the class name of the entry, second element is the name.
+            The class name will be None if it is not present.
+    """
+    name_match = re.search(r"([^\[]+)\[([^\]]+)\](\@.*)?", name)
+    if name_match is None:
+        return None, name
+
+    prefix = name_match.group(3)
+    return name_match.group(
+        1
+    ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
+
+
+def check_reserved_suffix(
+    path: str,
+    mapping: Mapping[str, Any],
+) -> None:
+    """
+    Check if an associated field exists for a key with a reserved suffix.
+
+    Reserved suffixes imply the presence of an associated base field (e.g.,
+    "temperature_errors" implies "temperature" must exist in the mapping).
+
+    Parameters
+    ----------
+    path : str
+        The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
+    mapping : Mapping[str, Any]
+        A mapping of sibling names (keys) to values/datasets.
+    """
+    parent_path, name = path.rsplit("/", 1)
+    concept_name, instance_name = split_class_and_name_of(name)
+
+    for suffix in RESERVED_SUFFIXES:
+        if instance_name.endswith(suffix):
+            associated_field = instance_name.rsplit(suffix, 1)[0]
+            if associated_field not in mapping:
+                if not any(
+                    k.startswith(parent_path)
+                    and (k.endswith((associated_field, f"[{associated_field}]")))
+                    for k in mapping
+                ):
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.ReservedSuffixWithoutField,
+                        associated_field,
+                        suffix,
+                    )
+                    return
+            break  # Found suffix, and it passed
 
 
 def check_reserved_prefix(
