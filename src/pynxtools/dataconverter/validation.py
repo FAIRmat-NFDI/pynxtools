@@ -694,6 +694,7 @@ def validate_hdf_group_against(
         """
         for attr_name in attrs:
             full_path = f"{entry_name}/{path}/@{attr_name}"
+
             if attr_name in ("NX_class", "units", "target"):
                 # Ignore special attrs
                 continue
@@ -1108,21 +1109,36 @@ def validate_dict_against(
                 # Don't process if this is actually a sub-variant of this group
                 continue
             nx_class, _ = split_class_and_name_of(variant)
+            if variant.endswith("target"):
+                # We need to do this for cases where the target was added automatically,
+                # but the group was incorrectly linked to a field.
+                continue
             if not isinstance(keys[variant], Mapping):
                 # Groups should have subelements
+
                 if nx_class is not None:
                     collector.collect_and_log(
                         variant_path,
                         ValidationProblem.ExpectedGroup,
                         None,
                     )
-                    # TODO: decide if we want to remove such keys
-                    # collector.collect_and_log(
-                    #     variant_path,
-                    #     ValidationProblem.KeyToBeRemoved,
-                    #     node.nx_type,
-                    # )
-                    # keys_to_remove.append(not_visited_key)
+                    collector.collect_and_log(
+                        variant_path,
+                        ValidationProblem.KeyToBeRemoved,
+                        node.nx_type,
+                    )
+                    keys_to_remove.append(variant_path)
+                    for subkey in keys.keys():
+                        if subkey.startswith(variant) and subkey != variant:
+                            name = subkey.split(variant)[-1]
+                            subkey_path = f"{variant_path}/{name}"
+                            collector.collect_and_log(
+                                subkey_path,
+                                ValidationProblem.KeyToBeRemoved,
+                                "attribute" if name.startswith("@") else "field",
+                            )
+                            keys_to_remove.append(subkey_path)
+
                 continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=variant_path)
@@ -1201,6 +1217,7 @@ def validate_dict_against(
                     if f"{key_path}/@target" not in mapping:
                         # Target attribute added automatically
                         mapping[f"{key_path}/@target"] = value["link"]
+                        resolved_keys[f"{key}@target"] = value["link"]
                     else:
                         attr_target = mapping[f"{key_path}/@target"]
                         remove_from_not_visited(f"{key_path}/@target")
@@ -1243,14 +1260,18 @@ def validate_dict_against(
                     ValidationProblem.ExpectedField,
                     None,
                 )
-                # TODO: decide if we want to remove such keys
-                # collector.collect_and_log(
-                #     variant_path,
-                #     ValidationProblem.KeyToBeRemoved,
-                #     node.nx_type,
-                # )
-                # keys_to_remove.append(variant_path)
+                collector.collect_and_log(
+                    variant_path,
+                    ValidationProblem.KeyToBeRemoved,
+                    node.nx_type,
+                )
+                keys_to_remove.append(variant_path)
+                for subkey in keys.keys():
+                    if subkey.startswith(variant) and subkey != variant:
+                        subkey_path = f"{prev_path}/{subkey.replace('@', '/@')}"
+                        keys_to_remove.append(subkey_path)
                 continue
+
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
                 # Check if all fields in the dict are actual attributes (startswith @)
                 all_attrs = True

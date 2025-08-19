@@ -984,6 +984,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Expected a field at /ENTRY[my_entry]/identified_calibration/identifier_1, but found a group.",
+                "The field /ENTRY[my_entry]/identified_calibration/identifier_1 will not be written.",
                 "The type ('group') of the given concept 'identifier_1' conflicts with another "
                 "existing concept /ENTRY/identified_calibration/identifier_1 of the same name, which is of type 'field'.",
                 "The field /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
@@ -1128,8 +1129,10 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field, but found a group.",
+                "The field /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field will not be written.",
                 "Expected a group at /ENTRY[my_entry]/USER[my_user], but found a field or attribute.",
-                "Field /ENTRY[my_entry]/USER[my_user] has no documentation.",
+                "The group /ENTRY[my_entry]/USER[my_user] will not be written.",
+                "The attribute /ENTRY[my_entry]/USER[my_user]/@target will not be written.",
             ],
             id="appdef-links-with-wrong-nexus-types",
         ),
@@ -1176,7 +1179,8 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Expected a group at /ENTRY[my_entry]/DATA[my_data], but found a field or attribute.",
-                "Field /ENTRY[my_entry]/DATA[my_data] has no documentation.",
+                "The group /ENTRY[my_entry]/DATA[my_data] will not be written.",
+                "The attribute /ENTRY[my_entry]/DATA[my_data]/@target will not be written.",
                 "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name, but found a group.",
             ],
             id="baseclass-links-with-wrong-nexus-types",
