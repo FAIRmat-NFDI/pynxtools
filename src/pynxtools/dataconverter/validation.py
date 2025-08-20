@@ -1145,7 +1145,9 @@ def validate_dict_against(
                     and node.nx_type in missing_type_err
                 ):
                     collector.collect_and_log(
-                        full_path, missing_type_err.get(node.nx_type), None
+                        f"{prev_path}/{node.name}",
+                        missing_type_err.get(node.nx_type),
+                        None,
                     )
                 continue
 

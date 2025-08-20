@@ -985,6 +985,7 @@ def format_error_message(msg: str) -> str:
             [
                 "Expected a field at /ENTRY[my_entry]/identified_calibration/identifier_1, but found a group.",
                 "The field /ENTRY[my_entry]/identified_calibration/identifier_1 will not be written.",
+                "The required field /ENTRY[my_entry]/identified_calibration/identifier_1 hasn't been supplied.",
                 "The type ('group') of the given concept 'identifier_1' conflicts with another "
                 "existing concept /ENTRY/identified_calibration/identifier_1 of the same name, which is of type 'field'.",
                 "The field /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
