@@ -242,8 +242,8 @@ class Collector:
         elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
             value = cast(Any, value)
             logger.error(
-                f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
-                f"conflicts with another existing concept {value.get_path()} of the same name, which "
+                f"The type ('{args[0] if args else '<unknown>'}') of '{path}' "
+                f"conflicts with the concept {value.get_path()}, which "
                 f"is of type '{value.nx_type}'."
             )
         elif log_type == ValidationProblem.KeysWithAndWithoutConcept:

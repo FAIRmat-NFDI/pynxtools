@@ -1104,7 +1104,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            variant_path = f"{prev_path}/{variant}"
+            variant_path = remove_from_not_visited(f"{prev_path}/{variant}")
             if variant in [node.name for node in node.parent_of]:
                 # Don't process if this is actually a sub-variant of this group
                 continue
@@ -1116,28 +1116,24 @@ def validate_dict_against(
             if not isinstance(keys[variant], Mapping):
                 # Groups should have subelements
 
-                if nx_class is not None:
-                    collector.collect_and_log(
-                        variant_path,
-                        ValidationProblem.ExpectedGroup,
-                        None,
-                    )
-                    collector.collect_and_log(
-                        variant_path,
-                        ValidationProblem.KeyToBeRemoved,
-                        node.nx_type,
-                    )
-                    keys_to_remove.append(variant_path)
-                    for subkey in keys.keys():
-                        if subkey.startswith(variant) and subkey != variant:
-                            name = subkey.split(variant)[-1]
-                            subkey_path = f"{variant_path}/{name}"
-                            collector.collect_and_log(
-                                subkey_path,
-                                ValidationProblem.KeyToBeRemoved,
-                                "attribute" if name.startswith("@") else "field",
-                            )
-                            keys_to_remove.append(subkey_path)
+                collector.collect_and_log(
+                    variant_path,
+                    ValidationProblem.InvalidNexusTypeForNamedConcept,
+                    node,
+                    "field",
+                )
+                collector.collect_and_log(
+                    variant_path,
+                    ValidationProblem.ExpectedGroup,
+                    None,
+                )
+                collector.collect_and_log(
+                    variant_path,
+                    ValidationProblem.KeyToBeRemoved,
+                    "field",
+                )
+                keys_to_remove.append(variant_path)
+
                 # If this is the only variant of a required group, that group is not supplied.
                 if (
                     len(variants) == 1
@@ -1149,9 +1145,21 @@ def validate_dict_against(
                         missing_type_err.get(node.nx_type),
                         None,
                     )
-                continue
+
+                # Additionally remove all associated sub-keys.
+                for subkey in mapping.keys():
+                    if subkey.startswith(f"{variant_path}/"):
+                        name = subkey.split(f"{variant_path}/")[-1]
+                        collector.collect_and_log(
+                            subkey,
+                            ValidationProblem.KeyToBeRemoved,
+                            "attribute" if name.startswith("@") else "group",
+                        )
+                        keys_to_remove.append(subkey)
+                        remove_from_not_visited(subkey)
 
                 continue
+
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=variant_path)
             if node.nx_class == "NXcollection":
@@ -1269,24 +1277,23 @@ def validate_dict_against(
                 # i.e. there should be no sub-fields or sub-groups.
                 collector.collect_and_log(
                     variant_path,
+                    ValidationProblem.InvalidNexusTypeForNamedConcept,
+                    node,
+                    "group",
+                )
+
+                collector.collect_and_log(
+                    variant_path,
                     ValidationProblem.ExpectedField,
                     None,
                 )
                 collector.collect_and_log(
                     variant_path,
                     ValidationProblem.KeyToBeRemoved,
-                    node.nx_type,
+                    "group",
                 )
                 keys_to_remove.append(variant_path)
-                for subkey in keys.keys():
-                    if subkey.startswith(variant) and subkey != variant:
-                        subkey_path = f"{prev_path}/{subkey.replace('@', '/@')}"
-                        collector.collect_and_log(
-                            subkey_path,
-                            ValidationProblem.KeyToBeRemoved,
-                            "attribute",
-                        )
-                        keys_to_remove.append(subkey_path)
+
                 # If this is the only variant of a required field, that field is not supplied.
                 if (
                     len(variants) == 1
@@ -1296,6 +1303,19 @@ def validate_dict_against(
                     collector.collect_and_log(
                         full_path, missing_type_err.get(node.nx_type), None
                     )
+
+                # Additionally remove all associated sub-keys.
+                for subkey in mapping.keys():
+                    if subkey.startswith(f"{variant_path}/"):
+                        name = subkey.split(f"{variant_path}/")[-1]
+                        collector.collect_and_log(
+                            subkey,
+                            ValidationProblem.KeyToBeRemoved,
+                            "attribute" if name.startswith("@") else "field",
+                        )
+                        keys_to_remove.append(subkey)
+                        remove_from_not_visited(subkey)
+
                 continue
 
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
@@ -1594,13 +1614,12 @@ def validate_dict_against(
                     ValidationProblem.ExpectedGroup,
                     None,
                 )
-                # TODO: decide if we want to remove such keys
-                # collector.collect_and_log(
-                #     key,
-                #     ValidationProblem.KeyToBeRemoved,
-                #     "group",
-                # )
-                # keys_to_remove.append(key)
+                collector.collect_and_log(
+                    key,
+                    ValidationProblem.KeyToBeRemoved,
+                    "group",
+                )
+                keys_to_remove.append(key)
                 return False
 
             elif node.nx_type == "field":
@@ -1614,14 +1633,13 @@ def validate_dict_against(
                         ValidationProblem.ExpectedField,
                         None,
                     )
-                    # TODO: decide if we want to remove such keys
-                    # collector.collect_and_log(
-                    #     key,
-                    #     ValidationProblem.KeyToBeRemoved,
-                    #     "field",
-                    # )
-                    # keys_to_remove.append(key)
-                    # return False
+                    collector.collect_and_log(
+                        key,
+                        ValidationProblem.KeyToBeRemoved,
+                        "field",
+                    )
+                    keys_to_remove.append(key)
+                    return False
                 resolved_link[key] = is_valid_data_field(
                     resolved_link[key], node.dtype, node.items, node.open_enum, key
                 )

@@ -983,25 +983,29 @@ def format_error_message(msg: str) -> str:
                 "123",
             ),
             [
+                "The type ('group') of '/ENTRY[my_entry]/identified_calibration/identifier_1' conflicts with the "
+                "concept /ENTRY/identified_calibration/identifier_1, which is of type 'field'.",
                 "Expected a field at /ENTRY[my_entry]/identified_calibration/identifier_1, but found a group.",
-                "The field /ENTRY[my_entry]/identified_calibration/identifier_1 will not be written.",
+                "The group /ENTRY[my_entry]/identified_calibration/identifier_1 will not be written.",
                 "The required field /ENTRY[my_entry]/identified_calibration/identifier_1 hasn't been supplied.",
-                "The type ('group') of the given concept 'identifier_1' conflicts with another "
-                "existing concept /ENTRY/identified_calibration/identifier_1 of the same name, which is of type 'field'.",
                 "The field /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
             ],
             id="group-instead-of-named-field",
         ),
         pytest.param(
             alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/identified_calibration",
+                remove_from_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/required_group/description", "optional"
+                ),
+                "/ENTRY[my_entry]/required_group",
                 "123",
             ),
             [
-                "The type ('field') of the given concept 'identified_calibration' conflicts with another "
-                "existing concept /ENTRY/identified_calibration of the same name, which is of type 'group'.",
-                "The field /ENTRY[my_entry]/identified_calibration will not be written.",
+                "The type ('field') of '/ENTRY[my_entry]/required_group' conflicts with the "
+                "concept /ENTRY/required_group, which is of type 'group'.",
+                "Expected a group at /ENTRY[my_entry]/required_group, but found a field or attribute.",
+                "The field /ENTRY[my_entry]/required_group will not be written.",
+                "The required group /ENTRY[my_entry]/required_group hasn't been supplied.",
             ],
             id="field-instead-of-named-group",
         ),
@@ -1129,12 +1133,16 @@ def format_error_message(msg: str) -> str:
                 {"link": "/my_entry/specified_group"},
             ),
             [
+                "The type ('group') of '/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field' "
+                "conflicts with the concept /ENTRY/OPTIONAL_group/required_field, which is of type 'field'.",
                 "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field, but found a group.",
-                "The field /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field will not be written.",
-                "The attribute /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target will not be written.",
+                "The group /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field will not be written.",
                 "The required field /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field hasn't been supplied.",
+                "The attribute /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target will not be written.",
+                "The type ('field') of '/ENTRY[my_entry]/USER[my_user]' conflicts with the concept "
+                "/ENTRY/USER, which is of type 'group'.",
                 "Expected a group at /ENTRY[my_entry]/USER[my_user], but found a field or attribute.",
-                "The group /ENTRY[my_entry]/USER[my_user] will not be written.",
+                "The field /ENTRY[my_entry]/USER[my_user] will not be written.",
                 "The attribute /ENTRY[my_entry]/USER[my_user]/@target will not be written.",
             ],
             id="appdef-links-with-wrong-nexus-types",
@@ -1181,10 +1189,13 @@ def format_error_message(msg: str) -> str:
                 {"link": "/my_entry/my_group"},
             ),
             [
+                "The type ('field') of '/ENTRY[my_entry]/DATA[my_data]' conflicts with the concept "
+                "/ENTRY/DATA, which is of type 'group'.",
                 "Expected a group at /ENTRY[my_entry]/DATA[my_data], but found a field or attribute.",
-                "The group /ENTRY[my_entry]/DATA[my_data] will not be written.",
+                "The field /ENTRY[my_entry]/DATA[my_data] will not be written.",
                 "The attribute /ENTRY[my_entry]/DATA[my_data]/@target will not be written.",
                 "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name, but found a group.",
+                "The field /ENTRY[my_entry]/SAMPLE[my_sample]/name will not be written.",
             ],
             id="baseclass-links-with-wrong-nexus-types",
         ),
@@ -2413,8 +2424,8 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "123",
             ),
             [
-                "The type ('field') of the given concept 'identified_calibration' conflicts with another "
-                "existing concept /ENTRY/identified_calibration of the same name, which is of type 'group'."
+                "The type ('field') of 'identified_calibration' conflicts with the "
+                "concept /ENTRY/identified_calibration, which is of type 'group'."
             ],
             id="field-instead-of-named-group",
         ),
