@@ -1130,6 +1130,8 @@ def format_error_message(msg: str) -> str:
             [
                 "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field, but found a group.",
                 "The field /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field will not be written.",
+                "The attribute /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target will not be written.",
+                "The required field /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field hasn't been supplied.",
                 "Expected a group at /ENTRY[my_entry]/USER[my_user], but found a field or attribute.",
                 "The group /ENTRY[my_entry]/USER[my_user] will not be written.",
                 "The attribute /ENTRY[my_entry]/USER[my_user]/@target will not be written.",

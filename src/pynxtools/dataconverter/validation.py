@@ -1138,6 +1138,16 @@ def validate_dict_against(
                                 "attribute" if name.startswith("@") else "field",
                             )
                             keys_to_remove.append(subkey_path)
+                # If this is the only variant of a required group, that group is not supplied.
+                if (
+                    len(variants) == 1
+                    and node.optionality == "required"
+                    and node.nx_type in missing_type_err
+                ):
+                    collector.collect_and_log(
+                        full_path, missing_type_err.get(node.nx_type), None
+                    )
+                continue
 
                 continue
             if node.nx_class == "NXdata":
@@ -1269,7 +1279,21 @@ def validate_dict_against(
                 for subkey in keys.keys():
                     if subkey.startswith(variant) and subkey != variant:
                         subkey_path = f"{prev_path}/{subkey.replace('@', '/@')}"
+                        collector.collect_and_log(
+                            subkey_path,
+                            ValidationProblem.KeyToBeRemoved,
+                            "attribute",
+                        )
                         keys_to_remove.append(subkey_path)
+                # If this is the only variant of a required field, that field is not supplied.
+                if (
+                    len(variants) == 1
+                    and node.optionality == "required"
+                    and node.nx_type in missing_type_err
+                ):
+                    collector.collect_and_log(
+                        full_path, missing_type_err.get(node.nx_type), None
+                    )
                 continue
 
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
