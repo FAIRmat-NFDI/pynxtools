@@ -212,5 +212,5 @@ Note that you can also add instances for recommended or optional concepts to the
 
 ## What's next?
 
-- Once you have a finished NeXus file, you may continue [by validating the NeXus file](validate-nexus-file.md).
+- Once you have a finished NeXus file, you may continue [by validating the NeXus file](../pynxtools/validate-nexus-files.md).
 - If you find yourself in the situation that you need to run such Python code routinely to convert your data, we strongly recommend creating your own reader or plugin in the `pynxtools` ecosystem. You can find a how-to guide to get you started [here](build-a-plugin.md).
