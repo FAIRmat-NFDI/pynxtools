@@ -21,11 +21,11 @@ import json
 import logging
 import os
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
 from functools import cache, lru_cache
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Literal, Optional, Union, cast
 
 import h5py
 import lxml.etree as ET
@@ -34,6 +34,7 @@ from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    find_definition_file,
     get_enums,
     get_inherited_nodes,
     get_nexus_definitions_path,
@@ -50,6 +51,35 @@ ISO8601 = re.compile(
     r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
     r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
 )
+
+RESERVED_SUFFIXES = (
+    "_end",
+    "_increment_set",
+    "_errors",
+    "_indices",
+    "_mask",
+    "_set",
+    "_weights",
+    "_scaling_factor",
+    "_offset",
+)
+
+RESERVED_PREFIXES = {
+    "attribute": {
+        "@BLUESKY_": None,  # do not use anywhere
+        "@DECTRIS_": "NXmx",
+        "@IDF_": None,  # do not use anywhere
+        "@NDAttr": None,
+        "@NX_": "all",
+        "@PDBX_": None,  # do not use anywhere
+        "@SAS_": "NXcanSAS",
+        "@SILX_": None,  # do not use anywhere
+        "identifier": "all",
+    },
+    "field": {
+        "DECTRIS_": "NXmx",
+    },
+}
 
 
 class ValidationProblem(Enum):
@@ -72,6 +102,8 @@ class ValidationProblem(Enum):
     UnitWithoutField = auto()
     AttributeForNonExistingConcept = auto()
     BrokenLink = auto()
+    MissingTargetAttribute = auto()
+    TargetAttributeMismatch = auto()
     FailedNamefitting = auto()
     NXdataMissingSignalData = auto()
     NXdataMissingAxisData = auto()
@@ -84,14 +116,18 @@ class ValidationProblem(Enum):
     KeysWithAndWithoutConcept = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
-    # DoNotCompressStringsBoolean = auto()
+    MissingNXclass = auto()
 
 
 class Collector:
     """A class to collect data and return it in a dictionary format."""
 
     def __init__(self):
-        self.data = set()
+        self.data: dict[str, set] = {
+            "warning_and_error": set(),
+            "info": set(),
+        }
+
         self.logging = True
 
     def _log(self, path: str, log_type: ValidationProblem, value: Optional[Any], *args):
@@ -106,9 +142,7 @@ class Collector:
                 f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
             )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.info(
-                f"The unit, {path} = {value}, is being written but has no documentation."
-            )
+            logger.info(f"The unit {path} = {value} has no documentation.")
         if log_type == ValidationProblem.InvalidUnit:
             value = cast(Any, value)
             log_text = f"The unit '{args[0]}' at {path} does not match with the unit category {value.unit} of '{value.name}'."
@@ -125,12 +159,11 @@ class Collector:
                 f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
-            logger.warning(f"The required group, {path}, hasn't been supplied.")
+            logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(
-                f"The data entry corresponding to {path} is required "
-                "and hasn't been supplied by the reader.",
-            )
+            logger.warning(f"The required field {path} hasn't been supplied.")
+        elif log_type == ValidationProblem.MissingRequiredAttribute:
+            logger.warning(f"The required attribute {path} hasn't been supplied.")
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
                 f"The value at {path} should be one of the following Python types: {value}"
@@ -147,20 +180,18 @@ class Collector:
                 f"The value at {path} should be a positive int, but is {value}."
             )
         elif log_type == ValidationProblem.ExpectedGroup:
-            logger.error(f"Expected a group at {path} but found a field or attribute.")
+            logger.error(f"Expected a group at {path}, but found a field or attribute.")
         elif log_type == ValidationProblem.ExpectedField:
-            logger.error(f"Expected a field at {path} but found a group.")
+            logger.error(f"Expected a field at {path}, but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
             if "@" in path.rsplit("/")[-1]:
-                logger.warning(f"Attribute {path} written without documentation.")
+                logger.warning(f"Attribute {path} has no documentation.")
             else:
-                logger.warning(f"Field {path} written without documentation.")
+                logger.warning(f"Field {path} has no documentation.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
             )
-        elif log_type == ValidationProblem.MissingRequiredAttribute:
-            logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
             logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingConcept:
@@ -170,6 +201,16 @@ class Collector:
             )
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
+        elif log_type == ValidationProblem.MissingTargetAttribute:
+            log_text = (
+                f"A link was used for {path}, but no '@target' attribute was found."
+            )
+            logger.warning(log_text)
+        elif log_type == ValidationProblem.TargetAttributeMismatch:
+            logger.warning(
+                f"A link was used for {path}, but its @target attribute '{value}' "
+                f"does not match with the link's target '{args[0]}'."
+            )
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
         elif log_type == ValidationProblem.NXdataMissingSignalData:
@@ -184,8 +225,8 @@ class Collector:
             logger.warning(f"The {value} {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
             value = cast(Any, value)
-            log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"
-            if value.type == "group":
+            log_text = f"Given {value.nx_type} name '{path}' conflicts with the non-variadic name '{value}'"
+            if value.nx_type == "group":
                 log_text += f", which should be of type {value.nx_class}."
             logger.warning(log_text)
         elif log_type == ValidationProblem.ReservedSuffixWithoutField:
@@ -193,16 +234,17 @@ class Collector:
                 f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
             )
         elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
-            log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."
+            log_text = f"Reserved prefix {path} was used in {args[0] if args else '<unknown>'}, but is not valid in {value}."
             # Note that value=None" gets converted to "<unknown>"
-            if value != "<unknown>":
-                log_text += f" It is only valid in the context of {value}."
+            if args[1]:
+                log_text += f" It is only valid in the context of {args[1] if args else '<unknown>'}."
             logger.error(log_text)
         elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
             value = cast(Any, value)
             logger.error(
-                f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
-                f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
+                f"The type ('{args[0] if args else '<unknown>'}') of '{path}' "
+                f"conflicts with the concept {value.get_path()}, which "
+                f"is of type '{value.nx_type}'."
             )
         elif log_type == ValidationProblem.KeysWithAndWithoutConcept:
             value = cast(Any, value)
@@ -219,18 +261,10 @@ class Collector:
             logger.warning(
                 f"Compression strength for {path} = {value} should be between 0 and 9."
             )
-        # elif log_type == ValidationProblem.DoNotCompressStringsBoolean:
-        #     value = cast(dict, value)
-        #     dtype = type(value["compress"]).__name__
-        #     dtype_map = {
-        #         "str": "string",
-        #         "bool": "boolean",
-        #     }
-        #     dtype_str = dtype_map.get(dtype, dtype)
-
-        #     logger.info(
-        #         f"Compression for {path} = {value} should not be used for {dtype_str} values."
-        #     )
+        elif log_type == ValidationProblem.MissingNXclass:
+            logger.info(
+                f"Group '{path}' does not have an NX_class attribute and will therefore not be validated."
+            )
 
     def collect_and_log(
         self,
@@ -247,27 +281,38 @@ class Collector:
             "NX_ANY",
         ):
             return
-        if self.logging and path + str(log_type) + str(value) not in self.data:
-            self._log(path, log_type, value, *args, **kwargs)
+
+        message: str = path + str(log_type) + str(value)
+
         # info messages should not fail validation
-        if log_type not in (
+        if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
             ValidationProblem.OpenEnumWithNewItem,
             ValidationProblem.CompressionStrengthZero,
+            ValidationProblem.MissingNXclass,
         ):
-            self.data.add(path + str(log_type) + str(value))
+            if self.logging and message not in self.data["info"]:
+                self._log(path, log_type, value, *args, **kwargs)
+            self.data["info"].add(message)
+        else:
+            if self.logging and message not in self.data["warning_and_error"]:
+                self._log(path, log_type, value, *args, **kwargs)
+            self.data["warning_and_error"].add(message)
 
-    def has_validation_problems(self):
+    def has_validation_problems(self) -> bool:
         """Returns True if there were any validation problems."""
-        return len(self.data) > 0
+        return len(self.data["warning_and_error"]) > 0
 
     def get(self):
         """Returns the set of problematic paths."""
-        return self.data
+        return self.data["warning_and_error"]
 
     def clear(self):
         """Clears the collected data."""
-        self.data = set()
+        self.data: dict[str, set] = {
+            "warning_and_error": set(),
+            "info": set(),
+        }
 
 
 collector = Collector()
@@ -399,18 +444,8 @@ def get_nxdl_root_and_path(nxdl: str):
     if nxdl in special_names:
         nxdl_f_path = special_names[nxdl]
     else:
-        nxdl_f_path = os.path.join(
-            definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
-        )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "applications", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
+        nxdl_f_path = find_definition_file(nxdl)
+        if nxdl_f_path is None:
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
@@ -710,8 +745,16 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
+
     if not isinstance(value, np.ndarray):
         value = np.array(value)
+    # Handle 'object' dtype separately (for lists from HDF5 files)
+    if value.dtype == np.dtype("O"):
+        return all(
+            isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
+            for v in value.flat
+        )
+
     return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
@@ -794,21 +837,31 @@ def is_valid_data_field(
             collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
         if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-            results = ISO8601.search(value)
+            results = ISO8601.search(clean_str_attr(value))
             if results is None:
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidDatetime, value
                 )
 
-        if nxdl_enum is not None and value not in nxdl_enum:
-            if nxdl_enum_open:
-                collector.collect_and_log(
-                    path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
-                )
+        if nxdl_enum is not None:
+            if (
+                isinstance(value, np.ndarray)
+                and isinstance(nxdl_enum, list)
+                and isinstance(nxdl_enum[0], list)
+            ):
+                enum_value = list(value)
             else:
-                collector.collect_and_log(
-                    path, ValidationProblem.InvalidEnum, nxdl_enum
-                )
+                enum_value = value
+
+            if enum_value not in nxdl_enum:
+                if nxdl_enum_open:
+                    collector.collect_and_log(
+                        path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
+                    )
+                else:
+                    collector.collect_and_log(
+                        path, ValidationProblem.InvalidEnum, nxdl_enum
+                    )
 
         return value
 
@@ -829,12 +882,6 @@ def is_valid_data_field(
                 value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
             )
 
-        # TODO: Do we need to issue a warning if string/bool compression is used
-        # # elif isinstance(compressed_value, (str, bool)):
-        #     collector.collect_and_log(
-        #         path, ValidationProblem.DoNotCompressStringsBoolean, value
-        #     )
-
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(
             compressed_value, nxdl_type, nxdl_enum, nxdl_enum_open, path
@@ -843,6 +890,125 @@ def is_valid_data_field(
         return value
 
     return validate_data_value(value, nxdl_type, nxdl_enum, nxdl_enum_open, path)
+
+
+def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
+    """
+    Return the class and the name of a data dict entry of the form
+    `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
+    If this is a simple string it will just return this string, i.e.
+    `split_class_and_name_of("entry")` will return `None, "entry"`.
+
+    Args:
+        name (str): The data dict entry
+
+    Returns:
+        tuple[Optional[str], str]:
+            First element is the class name of the entry, second element is the name.
+            The class name will be None if it is not present.
+    """
+    name_match = re.search(r"([^\[]+)\[([^\]]+)\](\@.*)?", name)
+    if name_match is None:
+        return None, name
+
+    prefix = name_match.group(3)
+    return name_match.group(
+        1
+    ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
+
+
+def check_reserved_suffix(
+    path: str,
+    mapping: Mapping[str, Any],
+) -> None:
+    """
+    Check if an associated field exists for a key with a reserved suffix.
+
+    Reserved suffixes imply the presence of an associated base field (e.g.,
+    "temperature_errors" implies "temperature" must exist in the mapping).
+
+    Parameters
+    ----------
+    path : str
+        The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
+    mapping : Mapping[str, Any]
+        A mapping of sibling names (keys) to values/datasets.
+    """
+    parent_path, name = path.rsplit("/", 1)
+    concept_name, instance_name = split_class_and_name_of(name)
+
+    for suffix in RESERVED_SUFFIXES:
+        if instance_name.endswith(suffix):
+            associated_field = instance_name.rsplit(suffix, 1)[0]
+            if associated_field not in mapping:
+                if not any(
+                    k.startswith(parent_path)
+                    and (k.endswith((associated_field, f"[{associated_field}]")))
+                    for k in mapping
+                ):
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.ReservedSuffixWithoutField,
+                        associated_field,
+                        suffix,
+                    )
+                    return
+            break  # Found suffix, and it passed
+
+
+def check_reserved_prefix(
+    path: str,
+    appdef_name: str,
+    nx_type: Literal["group", "field", "attribute"],
+):
+    """
+    Check if a reserved prefix was used in the correct context.
+
+    Args:
+        path (str):
+            The full path in the HDF5 file (e.g., "/entry1/sample/temperature_errors").
+        appdef_name (str):
+            Name of the application definition (e.g. NXmx, NXmpes, etc.)
+        nx_type (Literal["group", "field", "attribute"]):
+            The NeXus type the key represents. Determines which reserved prefixes are relevant.
+
+    """
+    prefixes = RESERVED_PREFIXES.get(nx_type)
+    if not prefixes or not appdef_name:
+        return
+
+    name = path.rsplit("/", 1)[-1]
+
+    if not name.startswith(tuple(prefixes)):
+        return  # Irrelevant prefix, no check needed
+
+    for prefix, allowed_context in prefixes.items():
+        if not name.startswith(prefix):
+            continue
+
+        if allowed_context is None:
+            # This prefix is disallowed entirely
+            collector.collect_and_log(
+                prefix,
+                ValidationProblem.ReservedPrefixInWrongContext,
+                appdef_name,
+                path,
+                None,
+            )
+            return
+        if allowed_context == "all":
+            # We can freely use this prefix everywhere.
+            return
+
+        if allowed_context != appdef_name:
+            collector.collect_and_log(
+                prefix,
+                ValidationProblem.ReservedPrefixInWrongContext,
+                appdef_name,
+                path,
+                allowed_context,
+            )
+            return
 
 
 @cache
@@ -1166,3 +1332,24 @@ def nested_dict_to_slash_separated_path(
             nested_dict_to_slash_separated_path(val, flattened_dict, path)
         else:
             flattened_dict[path] = val
+
+
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding: str = "utf-8"
+) -> Optional[str]:
+    """
+    Return the attribute as a string.
+
+    - If `attr` is `bytes`, decode it using the given encoding.
+    - Otherwise, return it unchanged.
+
+    Args:
+        attr: A string, bytes, or any other type.
+        encoding: The character encoding to use when decoding bytes.
+
+    Returns:
+        The attribute as a string, or None if input was None.
+    """
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    return attr

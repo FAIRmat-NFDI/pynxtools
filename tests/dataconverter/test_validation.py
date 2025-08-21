@@ -17,13 +17,18 @@
 # limitations under the License.
 #
 import logging
+import os
 from typing import Optional
 
 import numpy as np
 import pytest
+from click.testing import CliRunner
 
+from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.validate_file import validate, validate_cli
 from pynxtools.dataconverter.validation import validate_dict_against
+from pynxtools.dataconverter.writer import Writer
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
 
@@ -119,18 +124,18 @@ TEMPLATE["required"][
     "/ENTRY[my_entry]/specified_group_with_no_name_type/@specified_attr_with_no_name_type"
 ] = "attr"
 
-TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/specified_field"] = 1.0
-TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/specified_field/@units"] = "cm"
+TEMPLATE["optional"]["/ENTRY[my_entry]/specified_group/specified_field"] = 1.0
+TEMPLATE["optional"]["/ENTRY[my_entry]/specified_group/specified_field/@units"] = "cm"
 TEMPLATE["required"][
     "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field"
 ] = "attr"
 TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/@specified_attr"] = "attr"
 
 
-TEMPLATE["optional"][
+TEMPLATE["required"][
     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]"
 ] = 1.0
-TEMPLATE["optional"][
+TEMPLATE["required"][
     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@units"
 ] = "pixel"
 TEMPLATE["required"][
@@ -252,10 +257,18 @@ TEMPLATE["required"][
 ] = "Ion Source"  # pylint: disable=E1126
 
 
-# pylint: disable=too-many-arguments
+def format_error_message(msg: str) -> str:
+    for prefix in ("ERROR:", "WARNING:"):
+        if msg.startswith(prefix):
+            return msg[len(prefix) :].lstrip()
+    return msg
+
+
 @pytest.mark.parametrize(
     "data_dict,error_messages",
     [
+        pytest.param(TEMPLATE, "", id="valid-data-dict"),
+        pytest.param(listify_template(TEMPLATE), "", id="lists"),
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -399,10 +412,10 @@ TEMPLATE["required"][
                                     remove_from_dict(
                                         TEMPLATE,
                                         "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
-                                        "optional",
+                                        "required",
                                     ),
                                     "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@units",
-                                    "optional",
+                                    "required",
                                 ),
                                 "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]",
                                 "required",
@@ -455,7 +468,8 @@ TEMPLATE["required"][
                 "NOT_TRUE_OR_FALSE",
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: "
+                "(<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
@@ -577,7 +591,7 @@ TEMPLATE["required"][
             [
                 "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value to /a-link.",
                 "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value will not be written.",
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value is required and hasn't been supplied by the reader.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value hasn't been supplied.",
             ],
             id="link-dict-instead-of-int",
         ),
@@ -725,11 +739,10 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value "
-                "is required and hasn't been supplied by the reader.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value hasn't been supplied.",
                 "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value, but the field does not exist.",
             ],
-            id="empty-required-field",
+            id="empty-required-field0",
         ),
         pytest.param(
             set_to_none_in_dict(
@@ -738,27 +751,25 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/"
-                "NXODD_name[nxodd_two_name]/bool_value is"
-                " required and hasn't been supplied by the reader.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value hasn't been supplied.",
                 "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value, but the field does not exist.",
             ],
-            id="empty-required-field",
+            id="empty-required-field1",
         ),
         pytest.param(
             remove_from_dict(
                 remove_from_dict(
                     TEMPLATE,
-                    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                    "/ENTRY[my_entry]/specified_group/specified_field",
                     "optional",
                 ),
-                "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@units",
+                "/ENTRY[my_entry]/specified_group/specified_field/@units",
                 "optional",
             ),
             [
-                "There were attributes set for the field /ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD], "
+                "There were attributes set for the field /ENTRY[my_entry]/specified_group/specified_field, "
                 "but the field does not exist.",
-                "The attribute /ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field] "
+                "The attribute /ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field "
                 "will not be written.",
             ],
             id="removed-optional-value-with-attribute-remaining",
@@ -786,7 +797,7 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value hasn't been supplied."
             ],
             id="missing-required-value",
         ),
@@ -797,7 +808,7 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                'Missing attribute: "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute"'
+                "The required attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute hasn't been supplied."
             ],
             id="missing-required-group-attribute",
         ),
@@ -811,7 +822,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name",
                 "optional",
             ),
-            ["The required group, /ENTRY[my_entry]/NXODD_name, hasn't been supplied."],
+            ["The required group /ENTRY[my_entry]/NXODD_name hasn't been supplied."],
             id="all-required-fields-set-to-none",
         ),
         pytest.param(
@@ -846,7 +857,6 @@ TEMPLATE["required"][
             ],
             id="UTC-with--00:00",
         ),
-        pytest.param(listify_template(TEMPLATE), "", id="lists"),
         pytest.param(
             alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
@@ -875,8 +885,7 @@ TEMPLATE["required"][
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
-                "required_child is required and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/optional_parent/required_child hasn't been supplied."
             ],
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
@@ -887,9 +896,7 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/"
-                "OPTIONAL_group[my_group]/required_field "
-                "is required and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field hasn't been supplied."
             ],
             id="required-field-not-provided-in-variadic-optional-group",
         ),
@@ -921,10 +928,10 @@ TEMPLATE["required"][
                             remove_from_dict(
                                 TEMPLATE,
                                 "/ENTRY[my_entry]/specified_group/specified_field",
-                                "required",
+                                "optional",
                             ),
                             "/ENTRY[my_entry]/specified_group/specified_field/@units",
-                            "required",
+                            "optional",
                         ),
                         "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field",
                         "required",
@@ -936,10 +943,10 @@ TEMPLATE["required"][
                 1.0,
             ),
             [
-                "The required group, /ENTRY[my_entry]/specified_group, hasn't been supplied.",
+                "The required group /ENTRY[my_entry]/specified_group hasn't been supplied.",
                 "Given group name 'SAMPLE' conflicts with the non-variadic name 'specified_group (req)', "
                 "which should be of type NXdata.",
-                "Field /ENTRY[my_entry]/SAMPLE[specified_group]/specified_field written without documentation.",
+                "Field /ENTRY[my_entry]/SAMPLE[specified_group]/specified_field has no documentation.",
             ],
             id="illegal-concept-name-for-nonvariadic-group",
         ),
@@ -976,25 +983,169 @@ TEMPLATE["required"][
                 "123",
             ),
             [
-                "Expected a field at /ENTRY[my_entry]/identified_calibration/identifier_1 but found a group.",
-                "The type ('group') of the given concept 'identifier_1' conflicts with another "
-                "existing concept of the same name, which is of type 'field'.",
+                "The type ('group') of '/ENTRY[my_entry]/identified_calibration/identifier_1' conflicts with the "
+                "concept /ENTRY/identified_calibration/identifier_1, which is of type 'field'.",
+                "Expected a field at /ENTRY[my_entry]/identified_calibration/identifier_1, but found a group.",
+                "The group /ENTRY[my_entry]/identified_calibration/identifier_1 will not be written.",
+                "The required field /ENTRY[my_entry]/identified_calibration/identifier_1 hasn't been supplied.",
                 "The field /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
             ],
             id="group-instead-of-named-field",
         ),
         pytest.param(
             alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/identified_calibration",
+                remove_from_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/required_group/description", "optional"
+                ),
+                "/ENTRY[my_entry]/required_group",
                 "123",
             ),
             [
-                "The type ('field') of the given concept 'identified_calibration' conflicts with another "
-                "existing concept of the same name, which is of type 'group'.",
-                "The field /ENTRY[my_entry]/identified_calibration will not be written.",
+                "The type ('field') of '/ENTRY[my_entry]/required_group' conflicts with the "
+                "concept /ENTRY/required_group, which is of type 'group'.",
+                "Expected a group at /ENTRY[my_entry]/required_group, but found a field or attribute.",
+                "The field /ENTRY[my_entry]/required_group will not be written.",
+                "The required group /ENTRY[my_entry]/required_group hasn't been supplied.",
             ],
             id="field-instead-of-named-group",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
+                    ),
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/required_group2/description"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/my_entry/required_group2/description",
+            ),
+            [],
+            id="internal-link-with-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    remove_from_dict(
+                                        TEMPLATE,
+                                        "/ENTRY[my_entry]/required_group/description",
+                                    ),
+                                    "/ENTRY[my_entry]/USER[user]/name",
+                                    "A user name",
+                                ),
+                                "/ENTRY[my_entry]/required_group",
+                                {"link": "/my_entry/user"},
+                            ),
+                            "/ENTRY[my_entry]/required_group/@target",
+                            "/my_entry/user",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@long_name",
+                        "my long name",
+                    ),
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [],
+            id="internal-links-with-additional-sub-objects",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                {"link": "/my_entry/required_group2/description"},
+            ),
+            [],
+            id="internal-link-missing-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/required_group2/description"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/another_entry/required_group2/description",
+            ),
+            [
+                "A link was used for /ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1, but its @target attribute "
+                "'/another_entry/required_group2/description' does not match with the link's "
+                "target '/my_entry/required_group2/description'."
+            ],
+            id="internal-link-wrong-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                {"link": "/my_entry/specified_group/specified_field"},
+            ),
+            [
+                "The value at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field "
+                "should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), "
+                "as defined in the NXDL as NX_INT."
+            ],
+            id="appdef-links-with-matching-nexus-types-wrong-dtype",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/USER[my_user]",
+                    {"link": "/my_entry/my_group/required_field"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                {"link": "/my_entry/specified_group"},
+            ),
+            [
+                "The type ('group') of '/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field' "
+                "conflicts with the concept /ENTRY/OPTIONAL_group/required_field, which is of type 'field'.",
+                "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field, but found a group.",
+                "The group /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field will not be written.",
+                "The required field /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field hasn't been supplied.",
+                "The attribute /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target will not be written.",
+                "The type ('field') of '/ENTRY[my_entry]/USER[my_user]' conflicts with the concept "
+                "/ENTRY/USER, which is of type 'group'.",
+                "Expected a group at /ENTRY[my_entry]/USER[my_user], but found a field or attribute.",
+                "The field /ENTRY[my_entry]/USER[my_user] will not be written.",
+                "The attribute /ENTRY[my_entry]/USER[my_user]/@target will not be written.",
+            ],
+            id="appdef-links-with-wrong-nexus-types",
         ),
         pytest.param(
             alter_dict(
@@ -1017,36 +1168,36 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 alter_dict(
-                    remove_from_dict(
-                        TEMPLATE,
-                        "/ENTRY[my_entry]/required_group/description",
-                        "optional",
-                    ),
-                    "/ENTRY[my_entry]/required_group",
-                    {"link": "/my_entry/required_group2"},
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/DATA[my_data]",
+                    {"link": "/my_entry/my_group"},
                 ),
-                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
-                {"link": "/my_entry/specified_group/specified_field"},
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                {"link": "/my_entry/nxodd_name/char_value"},
             ),
             [],
-            id="appdef-links-with-matching-nexus-types",
+            id="baseclass-links-with-matching-nexus-types",
         ),
         pytest.param(
             alter_dict(
                 alter_dict(
                     TEMPLATE,
-                    "/ENTRY[my_entry]/USER[my_user]",
+                    "/ENTRY[my_entry]/DATA[my_data]",
                     {"link": "/my_entry/my_group/required_field"},
                 ),
-                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
-                {"link": "/my_entry/specified_group"},
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                {"link": "/my_entry/my_group"},
             ),
             [
-                "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field but found a group.",
-                "Expected a group at /ENTRY[my_entry]/USER[my_user] but found a field or attribute.",
-                "Field /ENTRY[my_entry]/USER[my_user] written without documentation.",
+                "The type ('field') of '/ENTRY[my_entry]/DATA[my_data]' conflicts with the concept "
+                "/ENTRY/DATA, which is of type 'group'.",
+                "Expected a group at /ENTRY[my_entry]/DATA[my_data], but found a field or attribute.",
+                "The field /ENTRY[my_entry]/DATA[my_data] will not be written.",
+                "The attribute /ENTRY[my_entry]/DATA[my_data]/@target will not be written.",
+                "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name, but found a group.",
+                "The field /ENTRY[my_entry]/SAMPLE[my_sample]/name will not be written.",
             ],
-            id="appdef-links-with-wrong-nexus-types",
+            id="baseclass-links-with-wrong-nexus-types",
         ),
         pytest.param(
             alter_dict(
@@ -1068,36 +1219,6 @@ TEMPLATE["required"][
         ),
         pytest.param(
             alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
-                    {"link": "/my_entry/my_group"},
-                ),
-                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
-                {"link": "/my_entry/nxodd_name/char_value"},
-            ),
-            [],
-            id="baseclass-links-with-matching-nexus-types",
-        ),
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
-                    {"link": "/my_entry/my_group/required_field"},
-                ),
-                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
-                {"link": "/my_entry/my_group"},
-            ),
-            [
-                "Expected a group at /ENTRY[my_entry]/SAMPLE[my_sample] but found a field or attribute.",
-                "Field /ENTRY[my_entry]/SAMPLE[my_sample] written without documentation.",
-                "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name but found a group.",
-            ],
-            id="baseclass-links-with-wrong-nexus-types",
-        ),
-        pytest.param(
-            alter_dict(
                 remove_from_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/optional_parent/optional_child",
@@ -1113,18 +1234,17 @@ TEMPLATE["required"][
             ],
             id="concept-name-given-for-nonvariadic-field-wrong-type",
         ),
-        pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
             [
-                "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied."
+                "The required group /ENTRY[my_entry]/required_group hasn't been supplied."
             ],
-            id="missing-empty-yet-required-group",
+            id="missing-empty-yet-required-group1",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
             [
-                "The required group, /ENTRY[my_entry]/required_group2, hasn't been supplied."
+                "The required group /ENTRY[my_entry]/required_group2 hasn't been supplied."
             ],
             id="missing-empty-yet-required-group2",
         ),
@@ -1137,7 +1257,7 @@ TEMPLATE["required"][
                 None,
             ),
             [
-                "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied."
+                "The required group /ENTRY[my_entry]/required_group hasn't been supplied."
             ],
             id="allow-required-and-empty-group",
         ),
@@ -1148,13 +1268,11 @@ TEMPLATE["required"][
                 "required",
             ),
             [
-                "The required group, /ENTRY[my_entry]/"
-                "optional_parent/req_group_in_opt_group, "
+                "The required group /ENTRY[my_entry]/optional_parent/req_group_in_opt_group "
                 "hasn't been supplied."
             ],
             id="req-group-in-opt-parent-removed",
         ),
-        pytest.param((TEMPLATE), (""), id="opt-group-completely-removed"),
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -1374,7 +1492,7 @@ TEMPLATE["required"][
                 1,
             ),
             [
-                "Field /ENTRY[my_entry]/required_group/illegal_name written without documentation."
+                "Field /ENTRY[my_entry]/required_group/illegal_name has no documentation."
             ],
             id="add-undocumented-field",
         ),
@@ -1389,7 +1507,7 @@ TEMPLATE["required"][
                 "illegal_attribute",
             ),
             [
-                "Attribute /ENTRY[my_entry]/required_group/author/@illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/required_group/author/@illegal has no documentation."
             ],
             id="add-undocumented-attribute",
         ),
@@ -1409,7 +1527,7 @@ TEMPLATE["required"][
                 "unknown",
             ),
             [
-                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal has no documentation."
             ],
             id="group-with-illegal-attributes",
         ),
@@ -1420,7 +1538,7 @@ TEMPLATE["required"][
                 "s",
             ),
             [
-                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s, is being written but has no documentation."
+                "The unit /ENTRY[my_entry]/optional_parent/required_child/@units = s has no documentation."
             ],
             id="field-with-illegal-unit",
         ),
@@ -1428,10 +1546,10 @@ TEMPLATE["required"][
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type",
-                1,
+                "some type",
             ),
             [
-                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type written without documentation."
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type has no documentation."
             ],
             id="bad-namefitting",
         ),
@@ -1441,7 +1559,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/data/test",
                 1,
             ),
-            ["Field /ENTRY[my_entry]/data/test written without documentation."],
+            ["Field /ENTRY[my_entry]/data/test has no documentation."],
             id="namefitting-of-illegal-named-group",
         ),
         pytest.param(
@@ -1450,7 +1568,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/USE[user]/name",
                 "Some name",
             ),
-            ["Field /ENTRY[my_entry]/USE[user]/name written without documentation."],
+            ["Field /ENTRY[my_entry]/USE[user]/name has no documentation."],
             id="namefitting-of-group-with-typo",
         ),
         pytest.param(
@@ -1459,7 +1577,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/USE[user]/test",
                 "Some name",
             ),
-            ["Field /ENTRY[my_entry]/USE[user]/test written without documentation."],
+            ["Field /ENTRY[my_entry]/USE[user]/test has no documentation."],
             id="namefitting-of-group-with-typo-and-new-field",
         ),
         pytest.param(
@@ -1543,7 +1661,7 @@ TEMPLATE["required"][
                 1,
             ),
             [
-                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name written without documentation."
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name has no documentation."
             ],
             id="baseclass-add-undocumented-field",
         ),
@@ -1554,7 +1672,7 @@ TEMPLATE["required"][
                 "illegal_attribute",
             ),
             [
-                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal has no documentation."
             ],
             id="baseclass-add-undocumented-attribute",
         ),
@@ -1582,7 +1700,7 @@ TEMPLATE["required"][
                 "s",
             ),
             [
-                "The unit, /ENTRY[my_entry]/required_group/author/@units = s, is being written but has no documentation."
+                "The unit /ENTRY[my_entry]/required_group/author/@units = s has no documentation."
             ],
             id="baseclass-field-with-illegal-unit",
         ),
@@ -1623,19 +1741,6 @@ TEMPLATE["required"][
         ),
         pytest.param(
             alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
-                    "123",
-                ),
-                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
-                "ORCID",
-            ),
-            [],
-            id="name-fitted-identifier-with-type",
-        ),
-        pytest.param(
-            alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
                 "123",
@@ -1654,8 +1759,7 @@ TEMPLATE["required"][
                 "456",
             ),
             [
-                "The data entry corresponding to /ENTRY[my_entry]/identified_calibration/identifier_1 is required "
-                "and hasn't been supplied by the reader."
+                "The required field /ENTRY[my_entry]/identified_calibration/identifier_1 hasn't been supplied."
             ],
             id="group-with-correct-concept-and-non-concept-sibling",
         ),
@@ -1663,15 +1767,19 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     alter_dict(
-                        TEMPLATE,
-                        "/ENTRY[my_entry]/COLLECTION[collection]/some_field",
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/COLLECTION[collection]/some_field",
+                            0.5,
+                        ),
+                        "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
                         0.5,
                     ),
-                    "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
-                    0.5,
+                    "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field/@units",
+                    "mm",
                 ),
-                "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field/@units",
-                "mm",
+                "/ENTRY[my_entry]/COLLECTION[collection]/@some_attr",
+                0.5,
             ),
             [],
             id="variadic-nxcollection",
@@ -1680,15 +1788,19 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     alter_dict(
-                        TEMPLATE,
-                        "/ENTRY[my_entry]/named_collection/some_field",
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/named_collection/some_field",
+                            0.5,
+                        ),
+                        "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
                         0.5,
                     ),
-                    "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
-                    0.5,
+                    "/ENTRY[my_entry]/named_collection/DATA[data]/some_field/@units",
+                    "mm",
                 ),
-                "/ENTRY[my_entry]/named_collection/DATA[data]/some_field/@units",
-                "mm",
+                "/ENTRY[my_entry]/named_collection/@some_attr",
+                0.5,
             ),
             [],
             id="nonvariadic-nxcollection",
@@ -1731,27 +1843,27 @@ TEMPLATE["required"][
                         alter_dict(
                             TEMPLATE,
                             "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
-                            "some text",
+                            1.0,
                         ),
                         "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
-                        "some text",
+                        1.0,
                     ),
                     "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
-                    "some text",
+                    1,
                 ),
                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
-                "some text",
+                1.0,
             ),
             [
-                "Reserved prefix @BLUESKY_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid here.",
-                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr written without documentation.",
-                "Reserved prefix @DECTRIS_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid here. "
+                "Reserved prefix @BLUESKY_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid in NXtest.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr has no documentation.",
+                "Reserved prefix @DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid in NXtest. "
                 "It is only valid in the context of NXmx.",
-                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr written without documentation.",
-                "Reserved prefix DECTRIS_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid here. "
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr has no documentation.",
+                "Reserved prefix DECTRIS_ was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid in NXtest. "
                 "It is only valid in the context of NXmx.",
-                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field written without documentation.",
-                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr written without documentation.",
+                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field has no documentation.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr has no documentation.",
             ],
             id="reserved-prefix",
         ),
@@ -1839,14 +1951,8 @@ TEMPLATE["required"][
         ),
     ],
 )
-def test_validate_data_dict(caplog, data_dict, error_messages, request):
-    """Unit test for the data validation routine."""
-
-    def format_error_message(msg: str) -> str:
-        for prefix in ("ERROR:", "WARNING:"):
-            if msg.startswith(prefix):
-                return msg[len(prefix) :].lstrip()
-        return msg
+def test_validate_data_dict(data_dict, error_messages, caplog, request):
+    """Unit test for the data validation routine on the template."""
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
@@ -1862,10 +1968,1495 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)
-                assert error_messages[0] in caplog.text
+                for expected_message, rec in zip(error_messages, caplog.records):
+                    assert expected_message == format_error_message(rec.message)
         else:
             with caplog.at_level(logging.WARNING):
                 assert not validate_dict_against("NXtest", data_dict)
             assert len(caplog.records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
+
+
+@pytest.mark.parametrize(
+    "data_dict,error_messages",
+    [
+        pytest.param(TEMPLATE, "", id="valid-data-dict"),
+        pytest.param(listify_template(TEMPLATE), "", id="lists"),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]",
+                "not_a_num",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/anamethatichangetothis should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ],
+            id="variadic-field-str-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                "not_a_num",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/int_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
+                "the NXDL as NX_INT."
+            ],
+            id="string-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                "NOT_TRUE_OR_FALSE",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/bool_value should be one of the following Python types: "
+                "(<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+            ],
+            id="string-instead-of-bool",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                ["1", "2", "3"],
+            ),
+            [
+                "The value at /my_entry/nxodd_name/int_value should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ],
+            id="list-of-int-str-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            [
+                "The value at /my_entry/nxodd_name/int_value should be"
+                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ],
+            id="array-of-float-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                [2, 3, 4],
+            ),
+            [],
+            id="list-of-int-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                np.array([2, 3, 4], dtype=np.int32),
+            ),
+            [],
+            id="array-of-int32-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                "2022-01-22T12:14:12.05018-00:00",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/date_value"
+                " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
+                " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
+                "T12:14:12.05018+00:00."
+            ],
+            id="int-instead-of-date",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                0,
+            ),
+            [],
+            id="int-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.complex128(0),
+            ),
+            [
+                "The value at /my_entry/nxodd_name/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
+            ],
+            id="complex-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
+                "0",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/number_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>, <class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
+            ],
+            id="str-instead-of-number",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array([0.0, 2]),
+            ),
+            [
+                "The value at /my_entry/nxodd_name/char_value should be one"
+                " of the following Python types: (<class 'str'>, <class 'numpy.character'>), as"
+                " defined in the NXDL as NX_CHAR."
+            ],
+            id="wrong-type-ndarray-instead-of-char",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"link": "/a-link"},
+            ),
+            [
+                "No path '/a-link' available to be linked.",
+                "The required field /my_entry/nxodd_name/int_value hasn't been supplied.",
+            ],
+            id="link-dict-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value", -1
+            ),
+            [
+                "The value at /my_entry/nxodd_name/posint_value "
+                "should be a positive int, but is -1."
+            ],
+            id="negative-posint",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                [-1, 2],
+            ),
+            [
+                "The value at /my_entry/nxodd_name/posint_value "
+                "should be a positive int, but is [-1  2]."
+            ],
+            id="negative-posint-list",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                np.array([-1, 2], dtype=np.int8),
+            ),
+            [
+                "The value at /my_entry/nxodd_name/posint_value "
+                "should be a positive int, but is [-1  2]."
+            ],
+            id="negative-posint-array",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                [1, 2],
+            ),
+            [],
+            id="positive-posint-list",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                np.array([1, 2], dtype=np.int8),
+            ),
+            [],
+            id="positive-posint-array",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
+            ),
+            [
+                "The value at /my_entry/nxodd_name/char_value should be one of the following "
+                "Python types: (<class 'str'>, <class 'numpy.character'>), "
+                "as defined in the NXDL as NX_CHAR."
+            ],
+            id="int-instead-of-chars",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array(["1", "2", "3"], dtype=np.bytes_),
+            ),
+            [],
+            id="array-of-bytes-chars",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                ["list", "of", "chars"],
+            ),
+            [],
+            id="list-of-string-instead-of-chars",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value", None
+            ),
+            [],
+            id="empty-optional-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            [],
+            id="array-of-float-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                [2],  # pylint: disable=E1126
+            ),
+            [],
+            id="list-of-int-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.array([2]),  # pylint: disable=E1126
+            ),
+            [],
+            id="array-of-int-instead-of-float",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                "required",
+            ),
+            [
+                "The required field /my_entry/nxodd_name/bool_value hasn't been supplied.",
+            ],
+            id="empty-required-field0",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
+                "required",
+            ),
+            [
+                "The required field /my_entry/nxodd_two_name/bool_value hasn't been supplied.",
+            ],
+            id="empty-required-field1",
+        ),
+        pytest.param(
+            remove_from_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units",
+                "required",
+            ),
+            [
+                "The required field /my_entry/nxodd_name/bool_value hasn't been supplied."
+            ],
+            id="missing-required-value",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute",
+                "required",
+            ),
+            [
+                "The required attribute /my_entry/nxodd_name/@group_attribute hasn't been supplied."
+            ],
+            id="missing-required-group-attribute",
+        ),
+        pytest.param(
+            set_whole_group_to_none(
+                set_whole_group_to_none(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/NXODD_name",
+                "optional",
+            ),
+            ["The required group /my_entry/NXODD_name hasn't been supplied."],
+            id="all-required-fields-set-to-none",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                "2022-01-22T12:14:12.05018+00:00",
+            ),
+            [],
+            id="UTC-with-+00:00",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                "2022-01-22T12:14:12.05018Z",
+            ),
+            [],
+            id="UTC-with-Z",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                "2022-01-22T12:14:12.05018-00:00",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/date_value = 2022-01-22T12:14:12.05018-00:00 "
+                "should be a timezone aware ISO8601 formatted str. For example, "
+                "2022-01-22T12:14:12.05018Z or 2022-01-22T12:14:12.05018+00:00."
+            ],
+            id="UTC-with--00:00",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
+            ),
+            [
+                "The value at /my_entry/nxodd_name/type should "
+                "be one of the following: "
+                "['1st type', '2nd type', '3rd type', '4th type']."
+            ],
+            id="wrong-enum-choice",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                "a very different type",
+            ),
+            [
+                "The value at /my_entry/nxodd_name/type2 does not match with the "
+                "enumerated items from the open enumeration: ['1st type open', '2nd type open']."
+            ],
+            id="open-enum-with-new-item",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
+            ),
+            [
+                "The required field /my_entry/optional_parent/required_child hasn't been supplied."
+            ],
+            id="atleast-one-required-child-not-provided-optional-parent",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
+                "required",
+            ),
+            [
+                "The required field /my_entry/my_group/required_field hasn't been supplied."
+            ],
+            id="required-field-not-provided-in-variadic-optional-group",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field",
+                "required",
+            ),
+            [],
+            id="required-field-provided-in-variadic-optional-group",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", None
+                ),
+                "/ENTRY[my_entry]/optional_parent/optional_child",
+                None,
+            ),
+            [],
+            id="no-child-provided-optional-parent",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/some_field",
+                "123",
+            ),
+            [
+                "No attribute 'NX_class' could be written for "
+                "/ENTRY[my_entry]/identified_calibration/identifier_1.",
+                # Does not get checked because of the caplog
+                # "Group '/my_entry/identified_calibration/identifier_1' does not have an NX_class "
+                # "attribute and will therefore not be validated.",
+                "The required field /my_entry/identified_calibration/identifier_1 hasn't been supplied.",
+            ],
+            id="group-instead-of-named-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identified_calibration",
+                "123",
+            ),
+            [
+                "The type ('field') of 'identified_calibration' conflicts with the "
+                "concept /ENTRY/identified_calibration, which is of type 'group'."
+            ],
+            id="field-instead-of-named-group",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
+                    ),
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/required_group2/description"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/my_entry/required_group2/description",
+            ),
+            [],
+            id="internal-link-with-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    remove_from_dict(
+                                        TEMPLATE,
+                                        "/ENTRY[my_entry]/required_group/description",
+                                    ),
+                                    "/ENTRY[my_entry]/USER[user]/name",
+                                    "A user name",
+                                ),
+                                "/ENTRY[my_entry]/required_group",
+                                {"link": "/my_entry/user"},
+                            ),
+                            "/ENTRY[my_entry]/required_group/@target",
+                            "/my_entry/user",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@long_name",
+                        "my long name",
+                    ),
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [],
+            id="internal-links-with-additional-sub-objects",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                {"link": "/my_entry/required_group2/description"},
+            ),
+            [
+                "A link was used for /my_entry/identified_calibration/identifier_1, "
+                "but no '@target' attribute was found.",
+                "A link was used for /my_entry/required_group, but no '@target' "
+                "attribute was found.",
+            ],
+            id="internal-link-missing-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    {"link": "/my_entry/required_group2/description"},
+                ),
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1/@target",
+                "/another_entry/required_group2/description",
+            ),
+            [
+                "A link was used for /my_entry/identified_calibration/identifier_1, but its @target attribute "
+                "'/another_entry/required_group2/description' does not match with the link's "
+                "target '/my_entry/required_group2/description'."
+            ],
+            id="internal-link-wrong-target",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            remove_from_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/required_group/description",
+                                "optional",
+                            ),
+                            "/ENTRY[my_entry]/required_group",
+                            {"link": "/my_entry/required_group2"},
+                        ),
+                        "/ENTRY[my_entry]/required_group/@target",
+                        "/my_entry/required_group2",
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                    {"link": "/my_entry/specified_group/specified_field"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target",
+                "/my_entry/specified_group/specified_field",
+            ),
+            [
+                "The value at /my_entry/some_group/required_field should be one of the following "
+                "Python types: (<class 'int'>, <class 'numpy.integer'>), "
+                "as defined in the NXDL as NX_INT."
+            ],
+            id="appdef-links-with-matching-nexus-types-wrong-dtype",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/USER[my_user]",
+                            {"link": "/my_entry/my_group/required_field"},
+                        ),
+                        "/ENTRY[my_entry]/USER[my_user]/@target",
+                        "/my_entry/my_group/required_field",
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                    {"link": "/my_entry/specified_group"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field/@target",
+                "/my_entry/specified_group",
+            ),
+            [
+                # "Expected a group at /my_entry/my_user, but found a field or attribute.",
+                "Expected a field at /my_entry/some_group/required_field, but found a group.",
+                "The required field /my_entry/some_group/required_field hasn't been supplied.",
+            ],
+            id="appdef-links-with-wrong-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identified_calibration",
+                    {"link": "/my_entry/some_group"},
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"link": "/my_entry/specified_group/some_field"},
+            ),
+            [
+                "No path '/my_entry/specified_group/some_field' available to be linked.",
+                "No path '/my_entry/some_group' available to be linked.",
+            ],
+            id="appdef-broken-links",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/MONITOR[my_monitor]",
+                            {"link": "/my_entry/required_group"},
+                        ),
+                        "/ENTRY[my_entry]/MONITOR[my_monitor]/@target",
+                        "/my_entry/required_group",
+                    ),
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                    {"link": "/my_entry/nxodd_name/char_value"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name/@target",
+                "/my_entry/nxodd_name/char_value",
+            ),
+            [],
+            id="baseclass-links-with-matching-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/MONITOR[my_monitor]",
+                            {"link": "/my_entry/my_group/required_field"},
+                        ),
+                        "/ENTRY[my_entry]/MONITOR[my_monitor]/@target",
+                        "/my_entry/my_group/required_field",
+                    ),
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                    {"link": "/my_entry/required_group"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name/@target",
+                "/my_entry/required_group",
+            ),
+            [
+                # This produces valid groups/fields, we can't guard against this.
+            ],
+            id="baseclass-links-with-wrong-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                    {"link": "/my_entry/some_group"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample2]/name",
+                {"link": "/my_entry/specified_group/some_field223"},
+            ),
+            [
+                "No path '/my_entry/specified_group/some_field223' available to be linked.",
+                "No path '/my_entry/some_group' available to be linked.",
+            ],
+            id="baseclass-broken-links",
+        ),
+        pytest.param(
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
+            ["The required group /my_entry/required_group hasn't been supplied."],
+            id="missing-empty-yet-required-group1",
+        ),
+        pytest.param(
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
+            ["The required group /my_entry/required_group2 hasn't been supplied."],
+            id="missing-empty-yet-required-group2",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/required_group/description"
+                ),
+                "/ENTRY[entry]/required_group",
+                None,
+            ),
+            ["The required group /my_entry/required_group hasn't been supplied."],
+            id="allow-required-and-empty-group",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]",
+                "required",
+            ),
+            [
+                "The required group /my_entry/optional_parent/req_group_in_opt_group "
+                "hasn't been supplied."
+            ],
+            id="req-group-in-opt-parent-removed",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
+            ),
+            [
+                "The value at /my_entry/nxodd_name/type/@array should be one of the following: "
+                "[[0, 1, 2], [2, 3, 4]]."
+            ],
+            id="wrong-value-array-in-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units",
+                "m",
+            ),
+            [
+                "The unit 'm' at /my_entry/nxodd_name/float_value/@units does not match with the unit category NX_ENERGY of 'float_value'."
+            ],
+            id="appdef-invalid-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/duration",
+                    2,
+                ),
+                "/ENTRY[my_entry]/duration/@units",
+                "kg",
+            ),
+            [
+                "The unit 'kg' at /my_entry/duration/@units does not match with the unit category NX_TIME of 'duration'."
+            ],
+            id="baseclass-invalid-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
+                "J/mm",
+            ),
+            [],
+            id="baseclass-valid-unit-example",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                        1,
+                    ),
+                    "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position/@units",
+                    "mm",
+                ),
+                "/ENTRY[my_entry]/SAMPLE[sample2]]/changer_position",
+                1,
+            ),
+            [
+                "The unit 'mm' at /my_entry/sample1/changer_position/@units does not match with the unit category NX_UNITLESS of 'changer_position'."
+            ],
+            id="baseclass-unitless-field",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    alter_dict(
+                                        alter_dict(
+                                            TEMPLATE,
+                                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]",
+                                            1.0,
+                                        ),
+                                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@transformation_type",
+                                        "translation",
+                                    ),
+                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@units",
+                                    "m",
+                                ),
+                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]",
+                                1.0,
+                            ),
+                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@transformation_type",
+                            "rotation",
+                        ),
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@units",
+                        "m",
+                    ),
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation_no_units]",
+                    1.0,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation_no_units]/@transformation_type",
+                "translation",
+            ),
+            [
+                "Field /my_entry/my_instrument/source/transformations/translation_no_units requires a unit in the unit category NX_TRANSFORMATION.",
+                "The unit 'm' at /my_entry/my_instrument/source/transformations/wrong_translation/@units does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. "
+                "Based on the 'transformation_type' of the field /my_entry/my_instrument/source/transformations/wrong_translation, it should match with 'NX_ANGLE'.",
+            ],
+            id="nxtransformations-translation-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    alter_dict(
+                                        alter_dict(
+                                            TEMPLATE,
+                                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]",
+                                            1.0,
+                                        ),
+                                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@transformation_type",
+                                        "rotation",
+                                    ),
+                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@units",
+                                    "degree",
+                                ),
+                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]",
+                                1.0,
+                            ),
+                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@transformation_type",
+                            "translation",
+                        ),
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_rotation]/@units",
+                        "degree",
+                    ),
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation_no_units]",
+                    1.0,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation_no_units]/@transformation_type",
+                "rotation",
+            ),
+            [
+                "Field /my_entry/my_instrument/source/transformations/rotation_no_units requires a unit in the unit category NX_TRANSFORMATION.",
+                "The unit 'degree' at /my_entry/my_instrument/source/transformations/wrong_rotation/@units does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. "
+                "Based on the 'transformation_type' of the field /my_entry/my_instrument/source/transformations/wrong_rotation, it should match with 'NX_LENGTH'.",
+            ],
+            id="nxtransformations-rotation-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[direction]",
+                        1.0,
+                    ),
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[direction_with_unit]",
+                    1.0,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[direction_with_unit]/@units",
+                "m",
+            ),
+            [
+                "Field /my_entry/my_instrument/source/transformations/direction requires a unit in the unit category NX_TRANSFORMATION.",
+                "The unit 'm' at /my_entry/my_instrument/source/transformations/direction_with_unit/@units does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. "
+                "Based on the 'transformation_type' of the field /my_entry/my_instrument/source/transformations/direction_with_unit, it should match with 'NX_UNITLESS'.",
+            ],
+            id="nxtransformations-direction-units",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units",
+                "required",
+            ),
+            [
+                "Field /my_entry/nxodd_name/number_value requires a unit in the unit category NX_ENERGY."
+            ],
+            id="missing-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/required_group/illegal_name",
+                1,
+            ),
+            ["Field /my_entry/required_group/illegal_name has no documentation."],
+            id="add-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/required_group/author",
+                    "author",
+                ),
+                "/ENTRY[my_entry]/required_group/author/@illegal",
+                "illegal_attribute",
+            ),
+            [
+                "Attribute /my_entry/required_group/author/@illegal has no documentation."
+            ],
+            id="add-undocumented-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@default",
+                "unknown",
+            ),
+            [],
+            id="group-with-only-attributes",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal",
+                "unknown",
+            ),
+            [
+                "Attribute /my_entry/my_instrument/my_beam/@illegal has no documentation."
+            ],
+            id="group-with-illegal-attributes",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/optional_parent/required_child/@units",
+                "s",
+            ),
+            [
+                "The unit /my_entry/optional_parent/required_child/@units = s has no documentation."
+            ],
+            id="field-with-illegal-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type",
+                "some type",
+            ),
+            [
+                "Group '/my_entry/my_instrument/my_source2' does not have an NX_class "
+                "attribute and will therefore not be validated."
+            ],
+            id="bad-namefitting",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/data/test",
+                1,
+            ),
+            [
+                "Group '/my_entry/data' does not have an NX_class "
+                "attribute and will therefore not be validated."
+            ],
+            id="namefitting-of-illegal-named-group",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/USE[user]/name",
+                "Some name",
+            ),
+            [
+                "Group '/my_entry/user' does not have an NX_class "
+                "attribute and will therefore not be validated."
+            ],
+            id="namefitting-of-group-with-typo",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/USE[user]/test",
+                "Some name",
+            ),
+            [
+                "Group '/my_entry/user' does not have an NX_class "
+                "attribute and will therefore not be validated.",
+            ],
+            id="namefitting-of-group-with-typo-and-new-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            [
+                "The value at /my_entry/duration should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ],
+            id="baseclass-wrong-dtype",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration/@units",
+                "required",
+            ),
+            ["Field /my_entry/duration requires a unit in the unit category NX_TIME."],
+            id="baseclass-missing-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEA[test]/@illegal",
+                "unknown",
+            ),
+            [
+                "Group '/my_entry/my_instrument/test' does not have an NX_class "
+                "attribute and will therefore not be validated."
+            ],
+            id="baseclass-attribute-missing-group",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material",
+                "Cu",
+            ),
+            [
+                "The value at /my_entry/my_instrument/my_source/target_material should be one of the following: "
+                "['Ta', 'W', 'depleted_U', 'enriched_U', 'Hg', 'Pb', 'C']."
+            ],
+            id="baseclass-wrong-enum",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
+                "Wrong source type",
+            ),
+            [
+                "The value at /my_entry/my_instrument/my_source/type does not match with the enumerated "
+                "items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', "
+                "'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', "
+                "'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', "
+                "'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']."
+            ],
+            id="baseclass-open-enum-with-new-item",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name",
+                1,
+            ),
+            [
+                "Field /my_entry/my_instrument/my_source/illegal_name has no documentation."
+            ],
+            id="baseclass-add-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal",
+                "illegal_attribute",
+            ),
+            [
+                "Attribute /my_entry/my_instrument/my_source/type/@illegal has no documentation."
+            ],
+            id="baseclass-add-undocumented-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units",
+                "illegal_attribute",
+            ),
+            [],
+            id="baseclass-add-unit-of-missing-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/required_group/author",
+                    "author",
+                ),
+                "/ENTRY[my_entry]/required_group/author/@units",
+                "s",
+            ),
+            [
+                "The unit /my_entry/required_group/author/@units = s has no documentation."
+            ],
+            id="baseclass-field-with-illegal-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                "123",
+            ),
+            [],
+            id="specified-identifier-without-type",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
+                "ORCID",
+            ),
+            [],
+            id="specified-identifier-with-type",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
+                "ORCID",
+            ),
+            [],
+            id="name-fitted-identifier-with-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                "123",
+            ),
+            [],
+            id="group-with-correct-concept",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_2",
+                "456",
+            ),
+            [],
+            id="group-with-correct-concept-and-non-concept-sibling",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/COLLECTION[collection]/@some_field",
+                            0.5,
+                        ),
+                        "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
+                        0.5,
+                    ),
+                    "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field/@units",
+                    "mm",
+                ),
+                "/ENTRY[my_entry]/COLLECTION[collection]/@some_attr",
+                0.5,
+            ),
+            [],
+            id="variadic-nxcollection",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/named_collection/some_field",
+                            0.5,
+                        ),
+                        "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
+                        0.5,
+                    ),
+                    "/ENTRY[my_entry]/named_collection/DATA[data]/some_field/@units",
+                    "mm",
+                ),
+                "/ENTRY[my_entry]/named_collection/@some_attr",
+                0.5,
+            ),
+            [],
+            id="nonvariadic-nxcollection",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field_set",
+                    1,
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/some_field_set",
+                1,
+            ),
+            [
+                "Reserved suffix '_set' was used in /my_entry/my_group/some_field_set, "
+                "but there is no associated field some_field."
+            ],
+            id="reserved-suffix-from-appdef",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[required_field_weights]",
+                    0.1,
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[some_random_field_weights]",
+                0.1,
+            ),
+            [
+                "Reserved suffix '_weights' was used in /my_entry/my_group/some_random_field_weights, but there is no associated field some_random_field.",
+            ],
+            id="reserved-suffix-from-baseclass",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
+                            1.0,
+                        ),
+                        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
+                        1.0,
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
+                    1,
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
+                1.0,
+            ),
+            [
+                "Reserved prefix @BLUESKY_ was used in /my_entry/my_group/@BLUESKY_attr, but is not valid in NXtest.",
+                "Attribute /my_entry/my_group/@BLUESKY_attr has no documentation.",
+                "Reserved prefix @DECTRIS_ was used in /my_entry/my_group/@DECTRIS_attr, but is not valid in NXtest. "
+                "It is only valid in the context of NXmx.",
+                "Attribute /my_entry/my_group/@DECTRIS_attr has no documentation.",
+                "Attribute /my_entry/my_group/@NX_attr has no documentation.",
+                "Reserved prefix DECTRIS_ was used in /my_entry/my_group/DECTRIS_field, but is not valid in NXtest. "
+                "It is only valid in the context of NXmx.",
+            ],
+            id="reserved-prefix",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0), "strength": 4},
+            ),
+            [],
+            id="appdef-compressed",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.bool_(True), "strength": 3},
+            ),
+            [
+                "The value at /my_entry/nxodd_name/float_value "
+                "should be one of the following Python types: "
+                "(<class 'float'>, <class 'numpy.floating'>), as defined in the "
+                "NXDL as NX_FLOAT."
+            ],
+            id="appdef-compressed-wrong-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"compress": np.int64(2), "strength": 11},
+            ),
+            [
+                # This does not produce a warning since we use the maximum
+                # compression strength of 9 in such cases in the writer.
+            ],
+            id="appdef-compressed-invalid-strength",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0), "strength": 0},
+            ),
+            [],
+            id="appdef-compressed-strength-0",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": np.int64(2), "strength": 2},
+            ),
+            [],
+            id="baseclass-compressed",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": np.float32(2.0), "strength": 3},
+            ),
+            [
+                "The value at /my_entry/sample1/changer_position "
+                "should be one of the following Python types: "
+                "(<class 'int'>, <class 'numpy.integer'>), as defined in the "
+                "NXDL as NX_INT."
+            ],
+            id="baseclass-compressed-wrong-type",
+        ),
+    ],
+)
+def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
+    """Unit test for the data validation routine for a NeXus HDf5 file."""
+    template = Template()
+
+    for key, val in data_dict.items():
+        template[key] = val
+
+    nxdl_name = "NXtest"
+    _, nxdl_path = get_nxdl_root_and_path(nxdl=nxdl_name)
+    hdf_file_path = tmp_path / f"hdf5_validator_test_{request.node.callspec.id}.nxs"
+    Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
+
+    if not error_messages:
+        with caplog.at_level(logging.WARNING):
+            _ = validate(str(hdf_file_path))
+        assert caplog.text == ""
+    else:
+        if request.node.callspec.id in (
+            "field-with-illegal-unit",
+            "baseclass-field-with-illegal-unit",
+            "open-enum-with-new-item",
+            "baseclass-open-enum-with-new-item",
+            "namefitting-of-group-with-typo-and-new-field",
+            "bad-namefitting",
+            "namefitting-of-illegal-named-group",
+            "namefitting-of-group-with-typo",
+            "baseclass-attribute-missing-group",
+        ):
+            with caplog.at_level(logging.INFO):
+                _ = validate(str(hdf_file_path))
+                for expected_message, rec in zip(error_messages, caplog.records):
+                    assert expected_message == format_error_message(rec.message)
+        else:
+            with caplog.at_level(logging.WARNING):
+                _ = validate(str(hdf_file_path))
+
+            # We ignore the message that the entry is invalid
+            caplog_records = [
+                rec
+                for rec in caplog.records
+                if not rec.message.startswith(
+                    "WARNING: Invalid: The entry `my_entry` in file"
+                )
+            ]
+            assert len(caplog_records) == len(error_messages)
+            for expected_message, rec in zip(error_messages, caplog_records):
+                assert expected_message == format_error_message(rec.message)
+
+    os.remove(hdf_file_path)
+
+
+@pytest.mark.parametrize(
+    "cli_inputs,error_messages",
+    [
+        pytest.param(
+            ["tests/data/validation/NXtest_file.nxs"],
+            [
+                "The entry `my_entry` in file `tests/data/validation/NXtest_file.nxs` is valid according to the `NXtest` application definition."
+            ],
+            id="nxtest-compliant-file",
+        ),
+        pytest.param(
+            ["src/pynxtools/data/201805_WSe2_arpes.nxs"],
+            [
+                "The unit /entry/data/data/@units = counts has no documentation.",
+                "The unit /entry/data/angles/@units = 1/Å has no documentation.",
+                "The unit /entry/data/energies/@units = eV has no documentation.",
+                "The unit /entry/data/delays/@units = fs has no documentation.",
+                "Field /entry/instrument/analyser/amplifier_type has no documentation.",
+                "The unit '1/Å' at /entry/instrument/analyser/angles/@units does not match with the unit category NX_ANGLE of 'angles'.",
+                "Field /entry/instrument/analyser/contrast_aperture has no documentation.",
+                "Field /entry/instrument/analyser/delays has no documentation.",
+                "Field /entry/instrument/analyser/detector_type has no documentation.",
+                "Field /entry/instrument/analyser/dispersion_scheme has no documentation.",
+                "Field /entry/instrument/analyser/extractor_voltage has no documentation.",
+                "Field /entry/instrument/analyser/field_aperture_x has no documentation.",
+                "Field /entry/instrument/analyser/field_aperture_y has no documentation.",
+                "Field /entry/instrument/analyser/magnification has no documentation.",
+                "Field /entry/instrument/analyser/projection has no documentation.",
+                "Field /entry/instrument/analyser/sensor_count has no documentation.",
+                "Field /entry/instrument/analyser/working_distance has no documentation.",
+                "Field /entry/instrument/beam_probe_0/photon_energy has no documentation.",
+                "Field /entry/instrument/beam_probe_0/polarization_angle has no documentation.",
+                "Field /entry/instrument/beam_probe_0/polarization_ellipticity has no documentation.",
+                "Field /entry/instrument/beam_probe_0/size_x has no documentation.",
+                "Field /entry/instrument/beam_probe_0/size_y has no documentation.",
+                "Field /entry/instrument/beam_pump_0/center_wavelength has no documentation.",
+                "Field /entry/instrument/beam_pump_0/photon_energy has no documentation.",
+                "Field /entry/instrument/beam_pump_0/polarization_angle has no documentation.",
+                "Field /entry/instrument/beam_pump_0/polarization_ellipticity has no documentation.",
+                "Field /entry/instrument/beam_pump_0/size_x has no documentation.",
+                "Field /entry/instrument/beam_pump_0/size_y has no documentation.",
+                "Field /entry/instrument/energy_resolution has no documentation.",
+                "Field /entry/instrument/manipulator/pos_x1 has no documentation.",
+                "Field /entry/instrument/manipulator/pos_x2 has no documentation.",
+                "Field /entry/instrument/manipulator/pos_y has no documentation.",
+                "Field /entry/instrument/manipulator/pos_z1 has no documentation.",
+                "Field /entry/instrument/manipulator/pos_z2 has no documentation.",
+                "Field /entry/instrument/manipulator/pos_z3 has no documentation.",
+                "Field /entry/instrument/manipulator/sample_bias has no documentation.",
+                "Field /entry/instrument/manipulator/sample_temperature has no documentation.",
+                "Field /entry/instrument/manipulator/type has no documentation.",
+                "Field /entry/instrument/monochromator/slit has no documentation.",
+                "Field /entry/instrument/monochromator/slit/y_gap has no documentation.",
+                "Field /entry/instrument/source/burst_distance has no documentation.",
+                "Field /entry/instrument/source/burst_length has no documentation.",
+                "Field /entry/instrument/source/burst_number_end has no documentation.",
+                "Reserved suffix '_end' was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.",
+                "Field /entry/instrument/source/burst_number_start has no documentation.",
+                "The value at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch'].",
+                "Field /entry/instrument/source/number_of_bursts has no documentation.",
+                "The value at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar'].",
+                "Field /entry/instrument/source_pump/burst_distance has no documentation.",
+                "Field /entry/instrument/source_pump/burst_length has no documentation.",
+                "The value at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch'].",
+                "Field /entry/instrument/source_pump/number_of_bursts has no documentation.",
+                "The value at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].",
+                "Field /entry/instrument/source_pump/rms_jitter has no documentation.",
+                "The value at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar'].",
+                "Field /entry/instrument/spatial_resolution has no documentation.",
+                "Field /entry/instrument/temporal_resolution has no documentation.",
+                "Field /entry/sample/bias has no documentation.",
+                "Field /entry/sample/chem_id_cas has no documentation.",
+                "Field /entry/sample/chemical_name has no documentation.",
+                "Field /entry/sample/growth_method has no documentation.",
+                "Field /entry/sample/layer has no documentation.",
+                "Field /entry/sample/preparation_method has no documentation.",
+                "Field /entry/sample/purity has no documentation.",
+                "Field /entry/sample/state has no documentation.",
+                "Field /entry/sample/surface_orientation has no documentation.",
+                "Field /entry/sample/vendor has no documentation.",
+                "Invalid: The entry `entry` in file `src/pynxtools/data/201805_WSe2_arpes.nxs` is NOT valid according to the `NXarpes` application definition.",
+            ],
+            id="nxarpes-file",
+        ),
+    ],
+)
+def test_validate_cli(caplog, cli_inputs, error_messages):
+    """Unit test for the HDF5 validation CLI."""
+    runner = CliRunner()
+
+    if not error_messages:
+        with caplog.at_level(logging.INFO):
+            result = runner.invoke(validate_cli, cli_inputs)
+        assert result.exit_code == 0
+        assert caplog.text == ""
+    else:
+        with caplog.at_level(logging.INFO):
+            result = runner.invoke(validate_cli, cli_inputs)
+        assert len(caplog.records) == len(error_messages)
+        for expected_message, rec in zip(error_messages, caplog.records):
+            assert expected_message == format_error_message(rec.message)

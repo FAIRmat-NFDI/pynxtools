@@ -216,8 +216,8 @@ def convert(
     fair : bool, default False
         If True, a warning is given that there are undocumented paths
         in the template.
-    undocumented : bool, default False
-        If True, an undocumented warning is given.
+    ignore_undocumented : bool, default False
+        If True, all undocumented items are ignored in the validation.
     skip_verify: bool, default False
         Skips verification routine if set to True
 
@@ -324,7 +324,7 @@ def main_cli():
     "--ignore-undocumented",
     is_flag=True,
     default=False,
-    help="Ignore all undocumented fields during validation.",
+    help="Ignore all undocumented concepts during validation.",
 )
 @click.option(
     "--fail",

@@ -36,6 +36,7 @@ dependencies = [
     "toposort>=1.10.0",
     "anytree",
     "pint",
+    "cachetools",
 ]
 
 [project.urls]
@@ -108,6 +109,7 @@ simple_nexus_example = "pynxtools.nomad.entrypoints:simple_nexus_example"
 read_nexus = "pynxtools.nexus.nexus:main"
 dataconverter = "pynxtools.dataconverter.convert:main_cli"
 generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
+validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]

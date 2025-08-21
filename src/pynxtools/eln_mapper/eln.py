@@ -133,7 +133,7 @@ class ElnGenerator(ABC):
             _should_skip_iteration(child, self.filter) for child in node.children
         ):
             if not node.children or not all(
-                [child.type == "group" for child in node.children]
+                [child.nx_type == "group" for child in node.children]
             ):
                 self._recurse_tree(node, recursive_dict, recursion_level)
                 return False  # early exit
@@ -202,7 +202,7 @@ class ElnGenerator(ABC):
             if child.optionality not in lvl_map[self.optionality]:
                 continue
 
-            handling_map.get(child.type, _handle_unknown_type)(
+            handling_map.get(child.nx_type, _handle_unknown_type)(
                 child, recursive_dict, recursion_level
             )
 
