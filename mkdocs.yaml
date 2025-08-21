@@ -24,7 +24,7 @@ nav:
       - how-tos/pynxtools/using-pynxtools-test-framework.md
       - how-tos/pynxtools/run-tests-in-parallel.md
       - how-tos/pynxtools/create-nexus-files-by-python.md
-      - how-tos/pynxtools/validate-nexus-file.md
+      - how-tos/pynxtools/validate-nexus-files.md
   - Learn:
     - NeXus:
       - learn/nexus/nexus-primer.md
@@ -42,6 +42,7 @@ nav:
 
 plugins:
   - search
+  - markdown-exec
   - macros:
       module_name: src/pynxtools/mkdocs
 
