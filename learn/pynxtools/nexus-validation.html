@@ -21,11 +21,11 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
     
     
       
-        <title>Validation of NeXus file - Documentation</title>
+        <title>Validation of NeXus files - Documentation</title>
       
     
     
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#validation-of-nexus-file" class="md-skip">
+        <a href="#validation-of-nexus-files" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Validation of NeXus file
+              Validation of NeXus files
             
           </span>
         </div>
@@ -873,7 +873,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus file
+    Validation of NeXus files
     
   </span>
   
@@ -886,7 +886,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus file
+    Validation of NeXus files
     
   </span>
   
@@ -912,6 +912,15 @@
   <a href="#as-part-of-the-dataconverter" class="md-nav__link">
     <span class="md-ellipsis">
       As part of the dataconverter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validate_nexus-validate-existing-nexushdf5-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate_nexus: Validate existing NeXus/HDF5 files
     </span>
   </a>
   
@@ -1155,6 +1164,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#validate_nexus-validate-existing-nexushdf5-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate_nexus: Validate existing NeXus/HDF5 files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#read_nexus-nexus-file-reader-and-debugger" class="md-nav__link">
     <span class="md-ellipsis">
       read_nexus: NeXus file reader and debugger
@@ -1188,43 +1206,52 @@
 
 
 
-<h1 id="validation-of-nexus-file">Validation of NeXus file<a class="headerlink" href="#validation-of-nexus-file" title="Permanent link">&para;</a></h1>
+<h1 id="validation-of-nexus-files">Validation of NeXus files<a class="headerlink" href="#validation-of-nexus-files" title="Permanent link">&para;</a></h1>
 <div class="admonition info">
 <p class="admonition-title">This page is intended to give more information about the validation tools that are part of <code>pynxtools</code>. Please also have a look at our comprehensive <a href="../../how-tos/pynxtools/validate-nexus-file.html">how-to guide</a> on NeXus validation.</p>
 </div>
-<p>One of the main advantages of using pynxtools is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.</p>
+<p>One of the main advantages of using <code>pynxtools</code> is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.</p>
 <h2 id="as-part-of-the-dataconverter">As part of the dataconverter<a class="headerlink" href="#as-part-of-the-dataconverter" title="Permanent link">&para;</a></h2>
-<p>During <a href="dataconverter-and-readers.html">data conversion</a>, before writing the HDF5 file, the data is first checked against the provided application definition.</p>
-<!--## verify-nexus: Testing existing NeXus/HDF5 files
-This CLI tool can be used to validate _existing_ HDF5 files that claim to be NeXus-compliant. See [here](reference/cli-api.md#verify-nexus) for the API documentation.-->
-
+<p>During <a href="dataconverter-and-readers.html">data conversion</a> within <code>pynxtools</code>, before writing the HDF5 file, the data is first checked against the provided application definition.</p>
+<h2 id="validate_nexus-validate-existing-nexushdf5-files">validate_nexus: Validate existing NeXus/HDF5 files<a class="headerlink" href="#validate_nexus-validate-existing-nexushdf5-files" title="Permanent link">&para;</a></h2>
+<p>While we encourage NeXus users to convert their data using the <code>pynxtools</code> data converter, we also realize that a lot of NeXus files are created using other applications. For such use cases,
+<code>pynxtools</code> provides a standalone validator (called <code>validate_nexus</code>). This CLI tool can be used to validate <em>existing</em> HDF5 files against the NeXus application definition they claim to be comply with. Read more in the <a href="../../reference/cli-api.html#validate_nexus">API documentation</a>.</p>
+<p>The following example dataset can be used to test the <code>validate_nexus</code> module:</p>
+<p><a class="md-button" href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs" target="_blank">201805_WSe2_arpes.nxs</a></p>
+<p>This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the <a href="https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes"><code>NXarpes</code> application definition</a>.</p>
+<p>If you have <code>pynxtools</code> installed, you can call the validator on this file using the command</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>validate_nexus<span class="w"> </span>201805_WSe2_arpes.nxs
+</code></pre></div>
+<p>You will see some warning messages that will give you an impression of the kind of messages the validator tool provides.</p>
 <h2 id="read_nexus-nexus-file-reader-and-debugger">read_nexus: NeXus file reader and debugger<a class="headerlink" href="#read_nexus-nexus-file-reader-and-debugger" title="Permanent link">&para;</a></h2>
 <p>This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See <a href="../../reference/cli-api.html#nexus-file-validation">here</a> for the API documentation.</p>
-<p>The following example dataset can be used to test the <code>read_nexus</code> module: <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs">src/pynxtools/data/201805_WSe2_arpes.nxs</a>. This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the <a href="https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes">NXarpes application definition of NeXus</a>.</p>
-<div class="admonition info">
-<p class="admonition-title">Using a different set of NeXus definitions</p>
+<p>If you have <code>pynxtools</code> installed, you can call the tool on the file mentioned above using the command</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>read_nexus<span class="w"> </span>201805_WSe2_arpes.nxs
+</code></pre></div>
+<details class="info">
+<summary>Using a different set of NeXus definitions</summary>
 <p>The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see <code>src/pynxtools/definitions</code>)._</p>
 <p>The environment variable can be set as follows:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>export &#39;NEXUS_DEF_PATH&#39;=&lt;folder_path_that_contains_nexus_defs&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>export &#39;NEXUS_DEF_PATH&#39;=&lt;folder_path_that_contains_nexus_defs&gt;
 </code></pre></div></p>
-</div>
-<div class="admonition info">
-<p class="admonition-title">A note to Windows users</p>
+</details>
+<details class="info">
+<summary>A note to Windows users</summary>
 <p>If you run <code>read_nexus</code> from <code>git bash</code>, you need to set the environmental variable
 <code>MSYS_NO_PATHCONV</code> to avoid the <a href="https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471">path translation in Windows Git MSys</a>.
 The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO_PATHCONV=1</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyzer
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyzer
 </code></pre></div>
 <p>This workaround was tested with Windows 11, but should very likely also work with Windows 10 and lower.</p>
-</div>
+</details>
 <h2 id="other-approaches-not-part-of-pynxtools">Other approaches (not part of pynxtools)<a class="headerlink" href="#other-approaches-not-part-of-pynxtools" title="Permanent link">&para;</a></h2>
-<p>Aside from the tools we developed within FAIRmat, the <a href="https://manual.nexusformat.org/validation.html">official NeXus website</a> lists additional programs for the validation of NeXus files:</p>
+<p>Aside from the tools we develop within FAIRmat, the <a href="https://manual.nexusformat.org/validation.html">official NeXus website</a> lists additional programs for the validation of NeXus files:</p>
 <ol>
 <li><a href="https://github.com/nexusformat/cnxvalidate">cnxvalidate: NeXus validation tool written in C</a></li>
 <li><a href="https://github.com/prjemian/punx">punx: Python Utilities for NeXus HDF5 files</a></li>
 <li><a href="https://github.com/nexpy/nxvalidate">nexpy/nxvalidate: A python API for validating NeXus file</a></li>
 </ol>
-<p>We will not discuss the details of these programs here, but you can find some information about the in the how-to guide linked above.</p>
+<p>We will not discuss the details of these programs here, but you can find some information about them when following these links.</p>
 
 
 
@@ -1308,10 +1335,10 @@ The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
       
         <script src="../../javascript.js"></script>
       

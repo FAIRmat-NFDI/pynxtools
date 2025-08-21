@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
     
     
       
@@ -860,7 +860,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus file
+    Validation of NeXus files
     
   </span>
   
@@ -1096,6 +1096,30 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#validate_nexus" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate_nexus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexus-annotator" class="md-nav__link">
+    <span class="md-ellipsis">
+      NeXus annotator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NeXus annotator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#read_nexus" class="md-nav__link">
     <span class="md-ellipsis">
       read_nexus
@@ -1289,6 +1313,30 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#validate_nexus" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate_nexus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexus-annotator" class="md-nav__link">
+    <span class="md-ellipsis">
+      NeXus annotator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NeXus annotator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#read_nexus" class="md-nav__link">
     <span class="md-ellipsis">
       read_nexus
@@ -1424,7 +1472,7 @@
 <tr>
 <td><code>--ignore-undocumented</code></td>
 <td>boolean</td>
-<td>Ignore all undocumented fields during validation.</td>
+<td>Ignore all undocumented concepts during validation.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
@@ -1532,19 +1580,43 @@
 </tbody>
 </table>
 <h2 id="nexus-file-validation">NeXus file validation<a class="headerlink" href="#nexus-file-validation" title="Permanent link">&para;</a></h2>
-<!-- ::: mkdocs-click
-    :module: "pynxtools.dataconverter.verify
-    :command: verify_nexus
-    :prog_name: verify_nexus
-    :depth: 1
-    :style: table
-    :list_subcommands: True -->
-
+<h3 id="validate_nexus">validate_nexus<a class="headerlink" href="#validate_nexus" title="Permanent link">&para;</a></h3>
+<p>Validates a NeXus HDF5 file.</p>
+<p>FILE: The path to the NeXus file to validate.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>validate_nexus [OPTIONS] FILE
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--ignore-undocumented</code></td>
+<td>boolean</td>
+<td>Ignore all undocumented concepts during validation.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="nexus-annotator">NeXus annotator<a class="headerlink" href="#nexus-annotator" title="Permanent link">&para;</a></h2>
 <h3 id="read_nexus">read_nexus<a class="headerlink" href="#read_nexus" title="Permanent link">&para;</a></h3>
 <p>Functionality to extract documentation and concept definition
 information about the individual parts of a NeXus/HDF5 file.</p>
 <p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>read_nexus [OPTIONS]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>read_nexus [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
 <table>
@@ -1588,7 +1660,7 @@ information about the individual parts of a NeXus/HDF5 file.</p>
 <h3 id="generate_eln">generate_eln<a class="headerlink" href="#generate_eln" title="Permanent link">&para;</a></h3>
 <p>Helper tool for generating ELN files in YAML format.</p>
 <p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>generate_eln [OPTIONS]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>generate_eln [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
 <table>
@@ -1728,10 +1800,10 @@ information about the individual parts of a NeXus/HDF5 file.</p>
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
       
         <script src="../javascript.js"></script>
       
