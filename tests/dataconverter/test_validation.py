@@ -2020,7 +2020,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "The value at /my_entry/nxodd_name/bool_value should be one of the following Python types: "
-                "(<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                f"(<class 'bool'>, <class '{np_bool}'>), as defined in the NXDL as NX_BOOLEAN."
             ],
             id="string-instead-of-bool",
         ),
