@@ -8,7 +8,7 @@ files from experimental data.
 
 In order to validate NeXus data, `pynxtools` comes with its own set of validation tools:
 
-- **As part of the dataconverter**: During [data conversion](./dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, the data is first checked against the provided application definition.
+- **As part of the dataconverter**: During [data conversion](../../learn/pynxtools/dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, the data is first checked against the provided application definition.
 
 - **`read_nexus`**: CLI tool to validate existing NeXus/HDF5 files
 

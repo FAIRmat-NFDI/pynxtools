@@ -56,7 +56,7 @@ A python implementation of this process can be found in [this function](https://
 
 Aside from these general rules, there are a number of special rules for NeXus names that need to be considered:
 
-- There is a set of UPPERCASE reserved words (like `BLUESKY_`, `DECTRIS_`, `IDF_`, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved prefixes".
+- There is a set of reserved words (like `BLUESKY_`, `DECTRIS_`, `IDF_`, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved prefixes".
 
 - There is also a set of reserved suffixes that are used to give additional information for a group or field. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved suffixes".
 
