@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
     
     
       
@@ -50,6 +50,10 @@
         <style>:root{--md-text-font:"Titillium Web";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
     
       <link rel="stylesheet" href="../../stylesheets/extra.css">
     
@@ -626,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../how-tos/pynxtools/validate-nexus-file.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/validate-nexus-files.html" class="md-nav__link">
         
   
   
@@ -933,7 +937,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus files
+    Validation of NeXus files in pynxtools
     
   </span>
   
@@ -1245,7 +1249,7 @@ concept name directly</p>
 <p>Aside from these general rules, there are a number of special rules for NeXus names that need to be considered:</p>
 <ul>
 <li>
-<p>There is a set of UPPERCASE reserved words (like <code>BLUESKY_</code>, <code>DECTRIS_</code>, <code>IDF_</code>, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved prefixes".</p>
+<p>There is a set of reserved words (like <code>BLUESKY_</code>, <code>DECTRIS_</code>, <code>IDF_</code>, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved prefixes".</p>
 </li>
 <li>
 <p>There is also a set of reserved suffixes that are used to give additional information for a group or field. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved suffixes".</p>
@@ -1343,6 +1347,8 @@ concept name directly</p>
     
     
       <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
       
         <script src="../../javascript.js"></script>
       

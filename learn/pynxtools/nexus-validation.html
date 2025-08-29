@@ -21,11 +21,11 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
     
     
       
-        <title>Validation of NeXus files - Documentation</title>
+        <title>Validation of NeXus files in pynxtools - Documentation</title>
       
     
     
@@ -50,6 +50,10 @@
         <style>:root{--md-text-font:"Titillium Web";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
     
       <link rel="stylesheet" href="../../stylesheets/extra.css">
     
@@ -77,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#validation-of-nexus-files" class="md-skip">
+        <a href="#validation-of-nexus-files-in-pynxtools" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Validation of NeXus files
+              Validation of NeXus files in pynxtools
             
           </span>
         </div>
@@ -626,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../how-tos/pynxtools/validate-nexus-file.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/validate-nexus-files.html" class="md-nav__link">
         
   
   
@@ -873,7 +877,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus files
+    Validation of NeXus files in pynxtools
     
   </span>
   
@@ -886,7 +890,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus files
+    Validation of NeXus files in pynxtools
     
   </span>
   
@@ -909,11 +913,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      Approach
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-use-cases-and-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation use cases and tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation use cases and tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#as-part-of-the-dataconverter" class="md-nav__link">
     <span class="md-ellipsis">
       As part of the dataconverter
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -936,9 +964,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-approaches-not-part-of-pynxtools" class="md-nav__link">
+  <a href="#limitations" class="md-nav__link">
     <span class="md-ellipsis">
-      Other approaches (not part of pynxtools)
+      Limitations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-validation-software" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Validation software
     </span>
   </a>
   
@@ -1155,11 +1192,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      Approach
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-use-cases-and-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation use cases and tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation use cases and tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#as-part-of-the-dataconverter" class="md-nav__link">
     <span class="md-ellipsis">
       As part of the dataconverter
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1182,9 +1243,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-approaches-not-part-of-pynxtools" class="md-nav__link">
+  <a href="#limitations" class="md-nav__link">
     <span class="md-ellipsis">
-      Other approaches (not part of pynxtools)
+      Limitations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-validation-software" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Validation software
     </span>
   </a>
   
@@ -1206,52 +1276,73 @@
 
 
 
-<h1 id="validation-of-nexus-files">Validation of NeXus files<a class="headerlink" href="#validation-of-nexus-files" title="Permanent link">&para;</a></h1>
+<h1 id="validation-of-nexus-files-in-pynxtools">Validation of NeXus files in <code>pynxtools</code><a class="headerlink" href="#validation-of-nexus-files-in-pynxtools" title="Permanent link">&para;</a></h1>
 <div class="admonition info">
-<p class="admonition-title">This page is intended to give more information about the validation tools that are part of <code>pynxtools</code>. Please also have a look at our comprehensive <a href="../../how-tos/pynxtools/validate-nexus-file.html">how-to guide</a> on NeXus validation.</p>
+<p class="admonition-title">This page is intended to give more information about the validation tools that are part of <code>pynxtools</code>. Please also have a look at our comprehensive <a href="../../how-tos/pynxtools/validate-nexus-files.html">how-to guide</a> on NeXus validation.</p>
 </div>
+<p>The validity of NeXus files is fundamental to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented in a table? What is the unit of a value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?</p>
+<p>The NeXus application definitions define the minimum set of terms that must be reported for a given experiment (i.e., the required terms that you must add to the NeXus file in order to be compliant with that application definition). Application definitions may also define terms that are optional in the NeXus data file. NeXus files are considered valid if they comply with the respective NeXus application definition.</p>
+<p>Oftentimes, there will be errors in generated NeXus files: Typos, missing required concepts, using the incorrect datatype or format (e.g., array instead of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share is FAIR.</p>
+<h2 id="approach">Approach<a class="headerlink" href="#approach" title="Permanent link">&para;</a></h2>
 <p>One of the main advantages of using <code>pynxtools</code> is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.</p>
-<h2 id="as-part-of-the-dataconverter">As part of the dataconverter<a class="headerlink" href="#as-part-of-the-dataconverter" title="Permanent link">&para;</a></h2>
-<p>During <a href="dataconverter-and-readers.html">data conversion</a> within <code>pynxtools</code>, before writing the HDF5 file, the data is first checked against the provided application definition.</p>
+<p>The following use cases are covered by the validation in <code>pynxtools</code>:</p>
+<ul>
+<li><strong>Requiredness</strong>: Warnings are logged if a required group/field/attribute is missing. This is also the case for required concepts within recommended/optional groups.</li>
+<li><strong>Namefitting</strong>: NeXus allows for variable instance names for a given concept through the combination of uppercase notation and the <code>nameType</code> attribute (for more information see the <a href="../nexus/nexus-rules.html#name-resolution">section on NeXus naming rules</a>.) In the validation process, the name of any instance data is compared to the defined NeXus concepts. Errors are raised if a group/field uses a name defined for a concept of a different NeXus type (i.e., if a group in the instance data has the same name as a defined field). If a given instance data point cannnot be fit to any concept, a warning is logged as well.</li>
+<li>
+<p><strong>NeXus fields/attributes</strong>:</p>
+<ul>
+<li>For concepts where an <a href="https://manual.nexusformat.org/nxdl_desc.html#enumeration"><strong>enumeration</strong></a> is used, it is checked if the provided value is contained in the enumeration. For <em>closed</em> enumerations, a warning is logged if the provided value does not match any of the enumeration choices. For <em>open</em> enumerations, an info level message is logged in such cases.</li>
+<li>Values of fields and attributes are checked against the <a href="https://manual.nexusformat.org/nxdl-types.html#index-0"><strong>NeXus data type</strong></a> and warnings are logged if a mismatch is detected.</li>
+<li>Units for fields are validated using the Python units package <a href="https://pint.readthedocs.io/en/stable/"><code>pint</code></a> by confirming that the dimensionality of a given unit matches its <a href="https://manual.nexusformat.org/nxdl-types.html#unit-categories-allowed-in-nxdl-specifications"><strong>NeXus Unit Category</strong></a>. Missing units and units for which no associated field is given also produce warning messages.</li>
+<li>For NeXus attributes, a warning is logged if there is no associated group or field for the attribute.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>NXdata</code></strong>: The <a href="https://manual.nexusformat.org/classes/base_classes/NXdata.html#nxdata"><strong><code>NXdata</code></strong></a> group plays a special rule in NeXus as it is used to define <a href="https://manual.nexusformat.org/examples/python/plotting/index.html">the plottable data</a> for an experiment. Therefore, it comes with a specific set of rules (especially the presence of the <code>@signal</code> and <code>@data</code>) attributes. The validator checks for the presence of these attributes and also ensures that the dimensionality of the signals and axes match.</p>
+</li>
+<li><strong>Links</strong>: When writing NeXus files in HDF5, any group or field can be replace by an <a href="https://manual.nexusformat.org/design.html#links">HDF5 link</a> to another group/field. In the validation, these links are resolved and the validity of the resolved object against the NeXus definition is checked. In addition, the presence of the <code>@target</code> attribute (which is supposed to be set when using links) is checked.</li>
+<li><strong>Undocumented concepts</strong>: In NeXus, it is allowed to add additional data that is not defined in the NeXus definitions (e.g., additional fields). In order to prevent unintended use of this feature (arising, for example, from misspelling of instance names), warnings are logged for any such additional data.</li>
+<li><strong>Reserved suffixes and prefixes</strong>: NeXus defines a number of <a href="https://manual.nexusformat.org/datarules.html#index-6">reserved suffixes</a>. These are suffixes for the name of fields that can only be used if the actual field exists as well (e.g., the suffix <code>_set</code> in the field <code>temperature_set</code> would be used to report the setpoint for the field <code>temperature</code>). If the associated field does not exist, a warning is logged. In addition, NeXus also has a number of <a href="https://manual.nexusformat.org/datarules.html#index-4">reserved prefixes</a>, which can only be used in certain contexts (e.g., in a specific application definition). If such a prefix is used anywhere else, the validation tool produces a warning message.</li>
+</ul>
+<h2 id="validation-use-cases-and-tools">Validation use cases and tools<a class="headerlink" href="#validation-use-cases-and-tools" title="Permanent link">&para;</a></h2>
+<h3 id="as-part-of-the-dataconverter">As part of the dataconverter<a class="headerlink" href="#as-part-of-the-dataconverter" title="Permanent link">&para;</a></h3>
+<p>During <a href="dataconverter-and-readers.html">data conversion</a> within <code>pynxtools</code>, before writing the HDF5 file, the data is first checked against the provided application definition. In the conversion, we are using a <a href="../nexus/nexus-primer.html#what-is-nexus">special combined notation</a> to indicate that instance paths shall match to NeXus concepts. As an example, the path <code>ENTRY[entry]/INSTRUMENT[instrument]/DETECTOR[detector]</code> indicates that we would like to create an HDf5 group at <code>/entry/instrument/detector</code> and that it shall match to the <code>NXdetector</code> group within <code>NXentry/NXinstrument</code>. While this notation makes it possible to connect instances to concepts in a succinct way, it also requires more rigorous check to validate that the names for instances and data actually match. Therefore, additional validation checks are implemented and warnings are logged if the two names have a mismatch.</p>
+<p>It is also possible to define in the data conversion process whether the data shall be <a href="https://docs.hdfgroup.org/archive/support/HDF5/faq/compression.html">compressed in the HDF5 file</a>. Warnings are logged if the given compression strength (which must be between 0 and 9) is incorrect.</p>
+<p>Since the validation is performed during the conversion, it is possible to automatically correct the data: as a convenience feature, any instance data that produces invalid files (e.g., when an HDF5 field would be named the same as a group in the NeXus defintions) are removed before writing the files. In addition, if a mismatch between the data type of the instance and the concept is detected, for we convert these values silently if possible (e.g., from int to float or from the string representation of bools (<code>"true"</code>/<code>"false"</code>) to actual booleans).</p>
 <h2 id="validate_nexus-validate-existing-nexushdf5-files">validate_nexus: Validate existing NeXus/HDF5 files<a class="headerlink" href="#validate_nexus-validate-existing-nexushdf5-files" title="Permanent link">&para;</a></h2>
-<p>While we encourage NeXus users to convert their data using the <code>pynxtools</code> data converter, we also realize that a lot of NeXus files are created using other applications. For such use cases,
-<code>pynxtools</code> provides a standalone validator (called <code>validate_nexus</code>). This CLI tool can be used to validate <em>existing</em> HDF5 files against the NeXus application definition they claim to be comply with. Read more in the <a href="../../reference/cli-api.html#validate_nexus">API documentation</a>.</p>
-<p>The following example dataset can be used to test the <code>validate_nexus</code> module:</p>
-<p><a class="md-button" href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs" target="_blank">201805_WSe2_arpes.nxs</a></p>
-<p>This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the <a href="https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes"><code>NXarpes</code> application definition</a>.</p>
-<p>If you have <code>pynxtools</code> installed, you can call the validator on this file using the command</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>validate_nexus<span class="w"> </span>201805_WSe2_arpes.nxs
-</code></pre></div>
-<p>You will see some warning messages that will give you an impression of the kind of messages the validator tool provides.</p>
+<p>While we encourage NeXus users to convert their data using the <code>pynxtools</code> data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, <code>pynxtools</code> provides a <strong>standalone validator</strong> (called <strong><code>validate_nexus</code></strong>). This CLI tool can be used to validate <em>existing</em> HDF5 files against the NeXus application definition they claim to be comply with. Read more in the <a href="../../reference/cli-api.html#validate_nexus">API documentation</a>.</p>
+<p>Validation of existing files is generally more straightforward than validating the <code>pynxtools</code> template as the NeXus type (i.e., group/fields/attribtues) of instance data is easily detected from the file structure. Therefore, no additional special rules are applied in <code>validate_nexus</code> other than those given above.</p>
 <h2 id="read_nexus-nexus-file-reader-and-debugger">read_nexus: NeXus file reader and debugger<a class="headerlink" href="#read_nexus-nexus-file-reader-and-debugger" title="Permanent link">&para;</a></h2>
-<p>This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See <a href="../../reference/cli-api.html#nexus-file-validation">here</a> for the API documentation.</p>
-<p>If you have <code>pynxtools</code> installed, you can call the tool on the file mentioned above using the command</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>read_nexus<span class="w"> </span>201805_WSe2_arpes.nxs
-</code></pre></div>
-<details class="info">
-<summary>Using a different set of NeXus definitions</summary>
-<p>The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see <code>src/pynxtools/definitions</code>)._</p>
-<p>The environment variable can be set as follows:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>export &#39;NEXUS_DEF_PATH&#39;=&lt;folder_path_that_contains_nexus_defs&gt;
-</code></pre></div></p>
-</details>
-<details class="info">
-<summary>A note to Windows users</summary>
-<p>If you run <code>read_nexus</code> from <code>git bash</code>, you need to set the environmental variable
-<code>MSYS_NO_PATHCONV</code> to avoid the <a href="https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471">path translation in Windows Git MSys</a>.
-The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO_PATHCONV=1</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyzer
-</code></pre></div>
-<p>This workaround was tested with Windows 11, but should very likely also work with Windows 10 and lower.</p>
-</details>
-<h2 id="other-approaches-not-part-of-pynxtools">Other approaches (not part of pynxtools)<a class="headerlink" href="#other-approaches-not-part-of-pynxtools" title="Permanent link">&para;</a></h2>
-<p>Aside from the tools we develop within FAIRmat, the <a href="https://manual.nexusformat.org/validation.html">official NeXus website</a> lists additional programs for the validation of NeXus files:</p>
+<p>In addition to the validation tools mentioned above, there is another utility in <code>pynxtools</code> called <strong><code>read_nexus</code></strong> (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in the <a href="../../reference/cli-api.html#nexus-file-validation">API documentation</a>.</p>
+<!-- ??? info "Using a different set of NeXus definitions"
+
+    The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
+
+    The environment variable can be set as follows:
+    ```
+    export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
+    ``` -->
+
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<p>While we try to cover must NeXus use cases in the validation, there are some checks that we don't apply consistently yet. These limitations are mostly due to inconsistencies in the standard (like for the use of <a href="https://manual.nexusformat.org/nxdl_desc.html#symbolstype">symbols</a> and dimensionalities) or because an idea in NeXus is seldomly used (like <a href="https://manual.nexusformat.org/nxdl_desc.html#choicetype">NeXus choices</a>). We are looking forward to resolving such ambiguities with the NeXus community going forward, after which a more rigorous implementation in the validation software is possible.</p>
+<h2 id="other-validation-software">Other Validation software<a class="headerlink" href="#other-validation-software" title="Permanent link">&para;</a></h2>
+<p>There are several tools which can be used for validation of NeXus files.</p>
 <ol>
-<li><a href="https://github.com/nexusformat/cnxvalidate">cnxvalidate: NeXus validation tool written in C</a></li>
-<li><a href="https://github.com/prjemian/punx">punx: Python Utilities for NeXus HDF5 files</a></li>
-<li><a href="https://github.com/nexpy/nxvalidate">nexpy/nxvalidate: A python API for validating NeXus file</a></li>
+<li>
+<p><a href="https://github.com/FAIRmat-NFDI/pynxtools">pynxtools</a> - our own software tool</p>
+</li>
+<li>
+<p><a href="https://github.com/nexusformat/cnxvalidate">cnxvalidate: NeXus validation tool written in C</a></p>
+</li>
+<li>
+<p><a href="https://github.com/prjemian/punx">punx: Python Utilities for NeXus HDF5 files</a></p>
+</li>
+<li>
+<p><a href="https://github.com/nexpy/nxvalidate">nexpy/nxvalidate: A python API for validating NeXus file</a></p>
+</li>
 </ol>
-<p>We will not discuss the details of these programs here, but you can find some information about them when following these links.</p>
+<p>All are different and have individual advantages or disadvantages. We encourage users to have a look at the <a href="../../how-tos/pynxtools/validate-nexus-files-other-tools.html">how-to guide for these tools</a> to learn more.</p>
 
 
 
@@ -1339,6 +1430,8 @@ The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO
     
     
       <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
       
         <script src="../../javascript.js"></script>
       
