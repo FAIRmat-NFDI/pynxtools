@@ -36,7 +36,7 @@ Note that you will need to have `pynxtools` installed in a Python environment. L
 
 ## **`validate_nexus`**
 
-After installation, you can envoke the help call of the `validate_nexus` tool from the command line:
+After installation, you can invoke the help call of the `validate_nexus` tool from the command line:
 
 ```bash exec="on" source="material-block" result="ini"
 validate_nexus --help
@@ -67,7 +67,7 @@ Note that here we are passing the `--ignore-undocumented` flag to the validation
 
 While `validate_nexus` is used as a tool for _validating_ a NeXus file, `read_nexus` is an _annotator_ tools. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
 
-You can envoke the help call of the `read_nexus` tool from the command line:
+You can invoke the help call of the `read_nexus` tool from the command line:
 
 ```bash exec="on" source="material-block" result="ini"
 read_nexus --help
@@ -100,7 +100,7 @@ In the output, several concepts are reported as "NOT IN SCHEMA". These are exact
 
 ### The `-c` option
 
-Aside from producing the full anotator log for the NeXus file, `read_nexus` can also be used with the `-c` (or `--concept` option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
+Aside from producing the full annotator log for the NeXus file, `read_nexus` can also be used with the `-c` (or `--concept` option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
 
 ```bash
 read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyser
