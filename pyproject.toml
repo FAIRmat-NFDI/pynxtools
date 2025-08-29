@@ -46,6 +46,7 @@ dependencies = [
 [project.optional-dependencies]
 docs = [
     "mkdocs",
+    "markdown-exec[ansi]",
     "mkdocs-material",
     "mkdocs-material-extensions",
     "mkdocs-macros-plugin",

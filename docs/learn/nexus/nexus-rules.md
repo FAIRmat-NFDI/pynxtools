@@ -22,7 +22,7 @@ In general, the names of NeXus group and field items are validated according to 
 
 Note that this explicitly also means that it is not allowed to have whitespace (including " ") in NeXus names.
 
-A speciality of NeXus is the possibility to define concept names that are different to the names
+A specialty of NeXus is the possibility to define concept names that are different to the names
 of the actual data instances. In NeXus base classes and application definitions, there are three options for defining how instances must be named to match to the name of a given concept.
 This matching is based on a combination of the `name` and the `nameType` attributes
 of the concept.
@@ -56,7 +56,7 @@ A python implementation of this process can be found in [this function](https://
 
 Aside from these general rules, there are a number of special rules for NeXus names that need to be considered:
 
-- There is a set of UPPERCASE reserved words (like `BLUESKY_`, `DECTRIS_`, `IDF_`, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved prefixes".
+- There is a set of reserved words (like `BLUESKY_`, `DECTRIS_`, `IDF_`, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved prefixes".
 
 - There is also a set of reserved suffixes that are used to give additional information for a group or field. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved suffixes".
 
