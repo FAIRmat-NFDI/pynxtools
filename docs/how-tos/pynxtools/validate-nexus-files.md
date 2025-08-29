@@ -10,9 +10,9 @@ In order to validate NeXus data, `pynxtools` comes with its own set of validatio
 
 - **As part of the dataconverter**: During [data conversion](../../learn/pynxtools/dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, the data is first checked against the provided application definition.
 
-- **`read_nexus`**: CLI tool to validate existing NeXus/HDF5 files
+- **`read_nexus`**: CLI tool to validate existing NeXus/HDF5 files.
 
-- **`validate_nexus`**: Annotator and debugger tool for NeXus/HDF5 files
+- **`validate_nexus`**: Annotator and debugger CLI tool for NeXus/HDF5 files.
 
 In this how-to, we will learn how to use the `validate_nexus` and `read_nexus` command line tools.
 
@@ -28,7 +28,7 @@ In this how-to, we will learn how to use the `validate_nexus` and `read_nexus` c
 !!! info "Dataset"
     You can download the dataset for following this how-to here:
 
-    [201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
+    [201805_WSe2_arpes.nxs](https://raw.githubusercontent.com/FAIRmat-NFDI/pynxtools/master/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
 
     This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the [`NXarpes`](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes) application definition.
 
@@ -100,7 +100,7 @@ In the output, several concepts are reported as "NOT IN SCHEMA". These are exact
 
 ### The `-c` option
 
-Aside from producing the full anotator log for the NeXus file, `read_nexus` can also be used with the `-c` (or `--concept` option). This helps you to find out all instances in the file that correspond to the a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
+Aside from producing the full anotator log for the NeXus file, `read_nexus` can also be used with the `-c` (or `--concept` option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
 
 ```bash
 read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyser
@@ -115,7 +115,7 @@ read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUM
 
 Additionally, `read_nexus` can also be used with the `-d` (or `--documentation` option). Here, the input is the path in the HDF file.
 
-This helps you to find out all instances in the file that correspond to the a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
+This helps you to find the NeXus definition for a given path in the HDF5 file. If you want to understand which NeXus concept the HDF5 group `/entry/instrument/analyser` corresponds to and how it is documented, you can run:
 
 ```bash
 read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
@@ -123,7 +123,7 @@ read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/anal
 
 ??? example "Show output"
     ```bash exec="on" source="material-block" result="text"
-    read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser 
+    read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
     ```
 
 If you run this call, you get a smaller subset of the full annotation log that helps you to understand which NeXus concept a given HDF5 object corresponds to.
