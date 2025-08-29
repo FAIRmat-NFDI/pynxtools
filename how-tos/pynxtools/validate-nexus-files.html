@@ -1277,7 +1277,7 @@ files from experimental data.</p>
 </div>
 <p>Note that you will need to have <code>pynxtools</code> installed in a Python environment. Learn more about the installation procedure in the <a href="../../tutorial/installation.html">installation tutorial</a>.</p>
 <h2 id="validate_nexus"><strong><code>validate_nexus</code></strong><a class="headerlink" href="#validate_nexus" title="Permanent link">&para;</a></h2>
-<p>After installation, you can envoke the help call of the <code>validate_nexus</code> tool from the command line:</p>
+<p>After installation, you can invoke the help call of the <code>validate_nexus</code> tool from the command line:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>validate_nexus<span class="w"> </span>--help
 </code></pre></div>
 <div class="result">
@@ -1392,7 +1392,7 @@ files from experimental data.</p>
 </details>
 <h2 id="read_nexus"><strong><code>read_nexus</code></strong><a class="headerlink" href="#read_nexus" title="Permanent link">&para;</a></h2>
 <p>While <code>validate_nexus</code> is used as a tool for <em>validating</em> a NeXus file, <code>read_nexus</code> is an <em>annotator</em> tools. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.</p>
-<p>You can envoke the help call of the <code>read_nexus</code> tool from the command line:</p>
+<p>You can invoke the help call of the <code>read_nexus</code> tool from the command line:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>read_nexus<span class="w"> </span>--help
 </code></pre></div>
 <div class="result">
@@ -5896,7 +5896,7 @@ The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO
 </details>
 <p>In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the <code>ignore-undocumented</code> flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the <code>validate_nexus</code>/<code>read_nexus</code> tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).</p>
 <h3 id="the-c-option">The <code>-c</code> option<a class="headerlink" href="#the-c-option" title="Permanent link">&para;</a></h3>
-<p>Aside from producing the full anotator log for the NeXus file, <code>read_nexus</code> can also be used with the <code>-c</code> (or <code>--concept</code> option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the <code>analyser</code> group within <code>/NXarpes/ENTRY/INSTRUMENT</code>, you can run:</p>
+<p>Aside from producing the full annotator log for the NeXus file, <code>read_nexus</code> can also be used with the <code>-c</code> (or <code>--concept</code> option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the <code>analyser</code> group within <code>/NXarpes/ENTRY/INSTRUMENT</code>, you can run:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-c<span class="w"> </span>/NXarpes/ENTRY/INSTRUMENT/analyser
 </code></pre></div>
 <details class="example">
