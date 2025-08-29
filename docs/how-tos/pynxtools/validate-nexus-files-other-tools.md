@@ -1,8 +1,8 @@
 # Validation of NeXus files using external software
 
-!!! info "This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation](../../learn/pynxtools/nexus-validation.md) or [how-to](../../learn/pynxtools/nexus-validation.md) pages"
+!!! info "This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation](../../learn/pynxtools/nexus-validation.md) or [how-to](../../learn/pynxtools/nexus-validation.md) pages."
 
-??? danger "This part of the documentation is talking about external tools that are subject to change. If these tools do change, you may find outdated information here. We also assume no responsibility for these software tools and for any issues arising from installation/usage."
+??? danger "This part of the documentation is talking about external tools that are subject to change. If these tools do change, you may find outdated information here. We do not take any responsibility for these software tools and for any issues arising from installation/usage."
 
 In this how-to guide, we will learn how to use different software tools to validate existing NeXus files. Specifically, we want to use tools to validate NeXus files against a given set of NeXus definitions. This can be the official version of the NeXus definitions or a different version used for local development. Here, we will work with two different versions of the definitions.
 
@@ -11,9 +11,9 @@ In this how-to guide, we will learn how to use different software tools to valid
   2. [FAIRmat NeXus proposal](https://fairmat-nfdi.github.io/nexus_definitions/index.html#)
 
 !!! info "Dataset"
-    You can download the dataset for following this how-to here:
+    You can download the dataset used in this how-to guide here:
 
-    [201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
+    [201805_WSe2_arpes.nxs](https://raw.githubusercontent.com/FAIRmat-NFDI/pynxtools/master/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
 
     This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the [`NXarpes`](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes) application definition.
 
@@ -90,7 +90,7 @@ cd build
 make
 ```
 
-Now the above mentioned commands should be available. The program/executable is located at:
+Now, the executable is located at:
 
 ```console
 /.../cnxvalidate/build/nxvalidate
@@ -102,19 +102,19 @@ You will also need to have a local copy of the NeXus definitions that you can po
 !!! info "Getting the NeXus definitions"
     Download a set of NeXus definitions (choose only one).
 
-    For FAIRmat NeXus definitions, clone the repository:
-
-    ```console
-    git clone https://github.com/FAIRmat-NFDI/nexus_definitions.git definitions/
-    ```
-
     For the NIAC NeXus definitions:
 
     ```console
     git clone https://github.com/nexusformat/definitions.git
     ```
 
-    Now you have a folder called "definitions". The path to this definitions folder is used in the `-l` option of `cnxvalidate`, to tell the program which NeXus definitions shall be used.
+    For the FAIRmat NeXus definitions, clone the repository:
+
+    ```console
+    git clone https://github.com/FAIRmat-NFDI/nexus_definitions.git definitions/
+    ```
+
+    Now you have a folder called "definitions". The path to this definitions folder is used in the `-l` option of `cnxvalidate` to tell the program which NeXus definitions shall be used.
 
 ### Usage
 
@@ -160,7 +160,7 @@ You can now envoke the validation on the test file:
     1 errors and 57 warnings found when validating 201805_WSe2_arpes.nxs
     ```
 
-The output messages tell you now which groups/fields/attributes (message: "Required group/field/attribute missing"), if units are missing (message: "Required units attribute missing), and so on.
+The output messages tell you now which groups/fields/attributes (message: "Required group/field/attribute missing") or units are missing (message: "Required units attribute missing), and so on.
 
 ## `punx` - Python Utilities for NeXus HDF5 files
 
@@ -626,7 +626,7 @@ You can get a demonstration of `punx` by running:
             @units = "degrees"
     ```
 
-!!! info ""NeXus definitions in `punx`"
+!!! info "NeXus definitions in `punx`"
     The program selects the NeXus definitions (set of nxdl.xml files) by itself. As of July 2025, only the official definitions from the NIAC repository are available.
 
     You may update the repository for the latest version via:
@@ -1569,7 +1569,7 @@ You can start the `punx` validation by running
 
 The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file. As you can see, while the output is verbose and comprehensive, `punx` does not actually pick up on the issues that the [`pynxtools` validator finds](validate-nexus-files.md#validate_nexus).
 
-You can just select one of the finding levels to select for a subset of the report
+You can just pass one of the logging levels to the `--report` flag to select for a subset of the report:
 
 === "Source"
     ```console
@@ -1671,7 +1671,7 @@ After installation, you can evoke the help call from the command line:
       -v, --version         show program's version number and exit
     ```
 
-??? info "NeXus definitions in `nxvalidate`"
+!!! info "NeXus definitions in `nxvalidate`"
     The `nxvalidate` package comes with a pre-defined set of NeXus definitions by itself. As of July 2025, only the official definitions from the NIAC repository are available (from release [v2024.02](https://github.com/nexusformat/definitions/releases/tag/v2024.02)).
 
     If you want to run the validation against a different set of NeXus definitions, you can specify their path using the `-d` flag in the validation.
@@ -1895,7 +1895,7 @@ You can start the validation by running
     Total number of errors: 7
     ```
   
-Again, the output log is rather verbose, but `nxvalidate` picks up both on undocumented concepts ("his field is not defined in ...") as well as values not matching enumerated items. Additionally, the wrong use of dimensions is documented.
+Again, the output log is rather verbose. `nxvalidate` correctly picks up on undocumented concepts ("this field is not defined in ...") as well as values not matching enumerated items. Additionally, the wrong use of dimensions is documented.
 
 `nxvalidate` also comes with a selection between a validator for application definitions and one for base classes. By default, the validator checks against concepts defined in the given application definitions and also against those in the used base classes. By using the `-a` flag, the file is _only_ validated against concepts defined directly in the application definition.
 
@@ -2046,4 +2046,4 @@ If you want to see the contents of a given base class, the `-b` option can be us
 
 ## Recommendations
 
-We strongly recommend to use the `validate_nexus` tool that is shipped with our `pynxtools` software, as it is likely to be the most complete and up-to-date solution around. However, if you want to use another tool to cross-check, the `nxvalidate` tool seems to be a good solution, as it picks up on all the issues that `validate_nexus` detects as well.
+We strongly recommend to use the [`validate_nexus`](./validate-nexus-files.md#validate_nexus) tool that is shipped with our `pynxtools` software, as it is likely to be the most complete and up-to-date solution around. However, if you want to use another tool to cross-check, the `nxvalidate` tool seems to be a good solution, as it picks up on all the issues that `validate_nexus` detects as well.
