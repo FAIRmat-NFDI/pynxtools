@@ -11,6 +11,7 @@ NXDL
 # Words related to experimental techniques
 
 # Software
+BASECLASS
 caplog
 cnxvalidate
 dataconverter
@@ -18,14 +19,18 @@ DECTRIS
 electronanalyzer
 ELECTRONANALYZER
 ellipsometry
+GROUPNAME
 infty
 libiconv
 loadgroup
 mainfile
+Metainfo
 MSYS
 nexpy
+nexusformat
 nxdls
 PATHCONV
+pathtovalidate
 posint
 punx
 pynxtools
@@ -34,6 +39,7 @@ xdist
 Zenodo
 
 # examples
+alphabetagamma
 appdefdir
 CSET
 ellips
@@ -61,30 +67,53 @@ xfbaa
 arpes
 ARPES
 Bluesky
+emittance
+flatfield
+fluence
 mbar
+monochromator
+monoclinic
 MPES
 Raman
+setpoint
+xraylens
 
 # Names
+Brockhauser
+Brückner
+Dobener
+Draxl
+Fekete
 Forschungsgemeinschaft
+Ginzburg
+Haraszti
 José
 Kühbach
 Lukas
 lukaspie
+Maier
 Markus
+Márquez
 mkuehbach
 Mozumder
 NFDI
 Pielsticker
+Rettig
+Scheidgen
 Shabih
 Sherjeel
 sherjeelshabih
+tommaso
 
 # other languages
 
-# en-UK which requires to many changes
+# en-UK
+analyser
+oxidising
 
 # misc
+appdef
 appdefs
 hypothes
-speciality
+plottable
+underload

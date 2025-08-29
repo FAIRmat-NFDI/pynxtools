@@ -29,7 +29,7 @@ In case you are interested in testing these tools, we encourage you to follow th
 
 ## `cnxvalidate`
 
-`cnxvalidate` is the validation tool that the NeXus International Advisory Committee (NIAC) has been devepoling and recommending to external users.
+`cnxvalidate` is the validation tool that the NeXus International Advisory Committee (NIAC) has been developing and recommending to external users.
 
 - [Github Repository](<https://github.com/nexusformat/cnxvalidate>)
 
@@ -147,7 +147,7 @@ Now you can use `cnxvalidate` with the executable called `nxvalidate` to validat
 nxvalidate -l DEFINITIONS FILE
 ```
 
-You can now envoke the validation on the test file:
+You can now invoke the validation on the test file:
 
 === "Source"
     ```console
@@ -514,7 +514,7 @@ After installation, you can evoke the help call from the command line:
     ```
 
 
-You can also envoke the help call for the validation API:
+You can also invoke the help call for the validation API:
 
 === "Source"
     ```console
