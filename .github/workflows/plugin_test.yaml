@@ -31,7 +31,7 @@ jobs:
             tests_to_run: tests/.
           - plugin: pynxtools-igor
             branch: main
-            tests_to_run: tests/.    
+            tests_to_run: tests/.
           - plugin: pynxtools-mpes
             branch: main
             tests_to_run: tests/.
@@ -39,7 +39,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: main
+            branch: IntegrateOmicron
             tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: main
