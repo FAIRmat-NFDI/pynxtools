@@ -37,6 +37,8 @@ dependencies = [
     "anytree",
     "pint",
     "cachetools",
+    "structlog",
+
 ]
 
 [project.urls]
@@ -59,7 +61,6 @@ dev = [
     "pytest-timeout",
     "pytest-cov",
     "pytest-xdist",
-    "structlog",
     "types-pyyaml",
     "types-pytz",
     "types-requests",
