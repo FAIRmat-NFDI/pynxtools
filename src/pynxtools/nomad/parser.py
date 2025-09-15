@@ -143,7 +143,7 @@ def _get_value(hdf_node):
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
     if len(hdf_value.shape) > 0:
-        return str([decode_or_not(i) for i in hdf_value.astype(str)])
+        return str([str(decode_or_not(i)) for i in hdf_value])
     return hdf_node[()].decode()
 
 
