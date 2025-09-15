@@ -41,6 +41,7 @@ except ImportError as exc:
     ) from exc
 
 import pynxtools.nomad.schema as nexus_schema
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import decode_or_not
 from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad.utils import (
     FIELD_STATISTICS,
@@ -142,7 +143,7 @@ def _get_value(hdf_node):
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
     if len(hdf_value.shape) > 0:
-        return str([i for i in hdf_value.astype(str)])
+        return str([decode_or_not(i) for i in hdf_value.astype(str)])
     return hdf_node[()].decode()
 
 
