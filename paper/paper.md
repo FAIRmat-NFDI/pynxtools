@@ -84,14 +84,6 @@ authors:
     surname: Márquez Prieto
     orcid: https://orcid.org/0000-0002-8173-2566
     affiliation: 1
-  - given-names: Christoph
-    surname: Koch
-    orcid: https://orcid.org/0000-0002-3984-1523
-    affiliation: 1
-  - given-names: Heiko B.
-    surname: Weber
-    orcid: https://orcid.org/0000-0002-6403-9022
-    affiliation: 7
   - given-names: Claudia
     surname: Draxl
     orcid: https://orcid.org/0000-0003-3523-6657
@@ -100,6 +92,14 @@ authors:
     surname: Brockhauser
     orcid: https://orcid.org/0000-0002-9700-4803
     affiliation: 1
+  - given-names: Christoph
+    surname: Koch
+    orcid: https://orcid.org/0000-0002-3984-1523
+    affiliation: 1
+  - given-names: Heiko B.
+    surname: Weber
+    orcid: https://orcid.org/0000-0002-6403-9022
+    affiliation: 7
 
 affiliations:
   - name: Physics Department and CSMB, Humboldt-Universität zu Berlin, Zum Großen Windkanal 2, D-12489 Berlin, Germany
@@ -141,27 +141,27 @@ Achieving FAIR (Findable, Accessible, Interoperable, and Reproducible) data prin
 
 The `dataconverter`, core module of pynxtools, combines instrument output files and data from electronic lab notebooks into NeXus-compliant HDF5 files. The converter performs three key operations: extracting experimental data through specialized readers, validating against NeXus application definitions to ensure compliance with existence and format constraints, and writing valid NeXus/HDF5 output files.
 
-The `dataconverter` provides a CLI to produce NeXus files where users can use one of the built-in readers for generic functionality or technique-specific reader plugins, which are distributed as separate Python packages.
+The `dataconverter` provides a command-line interface (CLI) for generating NeXus files, supporting both built-in readers for general-purpose functionality and technique-specific reader plugins, which are distributed as separate Python packages.
 
 For developers, the `dataconverter` provides an abstract `reader` class for building plugins that process experiment-specific formats and populate the NeXus specification. It passes a `Template`, a subclass of Python’s dictionary, to the `reader` as a form to fill. The `Template` ensures structural compliance with the chosen NeXus application definition and organizes data by NeXus's required, recommended, and optional levels.
 
-The `dataconverter` validates `reader` output against the selected NeXus application definition, checking for instances of required concepts, complex dependencies (like inheritance and nested group rules), and data integrity (type, shape, constraints). It reports errors for invalid required concepts and emits CLI warnings for unmatched or invalid data, aiding practical NeXus file creation.
+The `dataconverter` validates `reader` output against the selected NeXus application definition, checking for instances of required concepts, complex dependencies (like inheritance and nested group rules), and data integrity (type, shape, constraints). It validates required concepts, reporting errors for any violations, and issues warnings for invalid data, facilitating reliable and practical NeXus file generation.
 
-All reader plugins are tested using the pynxtools.testing suite, which runs automatically via GitHub CI to ensure compatibility with the dataconverter, the NeXus specification, and integration across plugins.
+All reader plugins are tested using the `pynxtools.testing` suite, which runs automatically via GitHub CI to ensure compatibility with the dataconverter, the NeXus specification, and integration across plugins.
 
-The dataconverter includes an ELN generator that creates either a fillable `YAML` file or a `NOMAD` [@Scheidgen:2023] ELN schema based on a selected NeXus application definition.
+The dataconverter includes `eln_mapper` that creates either a fillable `YAML` file or a `NOMAD` [@Scheidgen:2023] ELN schema based on a selected NeXus application definition.
 
 # NeXus reader and annotator
 
-`read_nexus` enables semantic access to NeXus files by linking data items to NeXus concepts, allowing applications to locate relevant data without hardcoding file paths. It supports concept-based queries that return all data items associated with a specific NeXus Vocabulary term. Each data item is annotated by traversing its group path and resolving its corresponding NeXus concept, included inherited definitions.
+`read_nexus` enables semantic access to NeXus files by linking data items to NeXus concepts, allowing applications to locate relevant data without hardcoding file paths. It supports concept-based queries that return all data items associated with a specific NeXus vocabulary term. Each data item is annotated by traversing its group path and resolving its corresponding NeXus concept, included inherited definitions.
 
-Items not part of the NeXus schema are explicitly marked as such, aiding in validation and debugging. Targeted documentation of individual data items is supported through path-specific annotation. The tool also identifies and summarizes the file’s default plottable data based on the NXdata definition.
+Items not part of the NeXus schema are explicitly marked as such, aiding in validation and debugging. Targeted documentation of individual data items is supported through path-specific annotation. The tool also identifies and summarizes the file’s default plottable data based on the `NXdata` definition.
 
 # `NOMAD` integration
 
-While `pynxtools` works independently, it can also be integrated directly into Research Data Management Systems (RDMS). Out of the box, the package functions as a plugin within the `NOMAD` platform [@Scheidgen:2023; @Draxl:2019]. This enables data in the NeXus format to be integrated into `NOMAD`'s metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
+While `pynxtools` works independently, it can also be integrated directly into any Research Data Management Systems (RDMS). The package works as a plugin within the `NOMAD` platform [@Scheidgen:2023; @Draxl:2019] out of the box. This enables data in the NeXus format to be integrated into `NOMAD`'s metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
 
-`pynxtools` extends `NOMAD`'s data schema (called `Metainfo` [@Ghiringhelli:2017]) by integrating NeXus definitions as a `NOMAD` `Schema Package`, adding NeXus-specific quantities and enabling interoperability through links to other standardized data representations in `NOMAD`. The `dataconverter` is integrated into `NOMAD`, making the conversion of data to NeXus accessible via the `NOMAD` GUI. The `dataconverter` also processes manually entered `NOMAD` ELN data in the conversion.
+`pynxtools` extends `NOMAD`’s data schema, known as `Metainfo` [@Ghiringhelli:2017], by integrating NeXus definitions as a `NOMAD` `Schema Package`. This integration introduces NeXus-specific quantities and enables interoperability by linking to other standardized data representations within `NOMAD`. The `dataconverter` is integrated into `NOMAD`, making the conversion of data to NeXus accessible via the `NOMAD` GUI. The `dataconverter` also processes manually entered `NOMAD` ELN data in the conversion.
 
 The `NOMAD` Parser module in `pynxtools` (`NexusParser`) extracts structured data from NeXus HDF5 files to populate `NOMAD` with `Metainfo` object instances as defined by the `pynxtools` schema package. This enables ingestion of NeXus data directly into `NOMAD`. Parsed data is post-processed using `NOMAD`'s `Normalization` pipeline. This includes automatic handling of units, linking references (including sample and instrument identifiers defined elsewhere in `NOMAD`), and populating derived quantities needed for advanced search and visualization.
 
