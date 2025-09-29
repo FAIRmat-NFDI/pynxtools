@@ -14,14 +14,14 @@
       
       
       
-        <link rel="prev" href="../../how-tos/pynxtools/validate-nexus-files.html">
+        <link rel="prev" href="../../how-tos/pynxtools/validate-nexus-file.html">
       
       
         <link rel="next" href="nexus-rules.html">
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
@@ -50,10 +50,6 @@
         <style>:root{--md-text-font:"Titillium Web";--md-code-font:"Roboto Mono"}</style>
       
     
-    
-      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
-    
-      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
     
       <link rel="stylesheet" href="../../stylesheets/extra.css">
     
@@ -630,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../how-tos/pynxtools/validate-nexus-files.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/validate-nexus-file.html" class="md-nav__link">
         
   
   
@@ -928,7 +924,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus files in pynxtools
+    Validation of NeXus files
     
   </span>
   
@@ -1190,7 +1186,7 @@
 <p><strong>Instance Path Notation:</strong> It represents the actual location of a field or group in a NeXus data instance (e.g., an HDF5 file). An example is <code>my_file.nxs:/entry/instrument/detector</code>.</p>
 </li>
 <li>
-<p><strong>Combined Notation:</strong> In <code>pynxtools</code>, we use templates and configuration files to match data instances from other sources to the terms defined in NeXus application definitions and base classes. We represent these NeXus concepts using a mixed notation, where uppercase indicates a selectable (part of the) name and lowercase a fixed name. Examples include <code>NXexperiment:ENTRY[my_experiment.nxs:entry]/INSTRUMENT[instrument]/DETECTOR[detector]</code> and <code>NXexperiment:ENTRY[my_experiment.nxs:entry]/my_INSTRUMENT[my_instrument]/DETECTOR[detector]</code>. In this notation, we combine concept (outside the square brackets) and instance paths (inside the square brackets). The leftmost entries may include the NeXus class or file reference.</p>
+<p><strong>Combined Notation:</strong> In pynxtools, we sometimes use templates and configuration files to match data instances from other sources to the terms defined in NeXus application definitions and base classes. We represent these NeXus concepts using a mixed notation, where uppercase indicates a selectable (part of the) name and lowercase a fixed name. Examples include <code>NXexperiment:ENTRY[my_experiment.nxs:entry]/INSTRUMENT[instrument]/DETECTOR[detector]</code> and <code>NXexperiment:ENTRY[my_experiment.nxs:entry]/my_INSTRUMENT[my_instrument]/DETECTOR[detector]</code>. In this notation, we combine concept (outside the square brackets) and instance paths (inside the square brackets). The leftmost entries may include the NeXus class or file reference.</p>
 </li>
 </ul>
 </div>
@@ -1226,7 +1222,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../how-tos/pynxtools/validate-nexus-files.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Validation of NeXus files">
+          <a href="../../how-tos/pynxtools/validate-nexus-file.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Validation of NeXus files">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1280,12 +1276,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
-      
-        <script src="../../assets/_markdown_exec_pyodide.js"></script>
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
       
         <script src="../../javascript.js"></script>
       
