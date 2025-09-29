@@ -31,9 +31,8 @@ def create_eln_dict(archive):
             Q_ = ureg.Quantity
             val_unit = Q_(value, quantity_def.unit)
 
-            default_display_unit = quantity_def.m_annotations.get(
-                "eln", {"defaultDisplayUnit": None}
-            ).defaultDisplayUnit
+            annotations = quantity_def.m_get_annotations("eln", [None], as_list=True)
+            default_display_unit = getattr(annotations[0], "defaultDisplayUnit", None)
             if default_display_unit:
                 val_unit = val_unit.to(default_display_unit)
 
