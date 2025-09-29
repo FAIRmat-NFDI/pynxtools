@@ -127,6 +127,7 @@ grade = π / 200 * radian = grad = gon
 mil = π / 32000 * radian
 
 # Solid angle
+[solid_angle] = [angle] ** 2
 steradian = radian ** 2 = sr
 square_degree = (π / 180) ** 2 * sr = sq_deg = sqdeg
 
