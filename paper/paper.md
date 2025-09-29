@@ -159,7 +159,7 @@ Items not part of the NeXus schema are explicitly marked as such, aiding in vali
 
 # `NOMAD` integration
 
-While `pynxtools` works independently, it can also be integrated directly into any Research Data Management Systems (RDMS). The package works as a plugin within the `NOMAD` platform [@Scheidgen:2023; @Draxl:2019] out of the box. This enables data in the NeXus format to be integrated into `NOMAD`'s metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
+While `pynxtools` works independently, it can also be integrated directly into any Research Data Management System (RDMS). The package works as a plugin within the `NOMAD` platform [@Scheidgen:2023; @Draxl:2019] out of the box. This enables data in the NeXus format to be integrated into `NOMAD`'s metadata model, making it searchable and interoperable with other data from theory and experiment. The plugin consists of several key components (so called entry points):
 
 `pynxtools` extends `NOMAD`’s data schema, known as `Metainfo` [@Ghiringhelli:2017], by integrating NeXus definitions as a `NOMAD` `Schema Package`. This integration introduces NeXus-specific quantities and enables interoperability by linking to other standardized data representations within `NOMAD`. The `dataconverter` is integrated into `NOMAD`, making the conversion of data to NeXus accessible via the `NOMAD` GUI. The `dataconverter` also processes manually entered `NOMAD` ELN data in the conversion.
 
