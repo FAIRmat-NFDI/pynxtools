@@ -19,7 +19,12 @@
 #
 
 import os
+import shutil
+from collections.abc import Mapping
+from pathlib import Path
+from typing import Any
 
+import h5py
 import pytest
 
 try:
@@ -31,6 +36,51 @@ except ImportError:
 
 
 from pynxtools.nomad.parser import NexusParser
+
+
+def extend_nexus_file(key_to_data: Mapping[str, Any], filename: str):
+    with h5py.File(filename, "a") as f:
+        for key, data in key_to_data.items():
+            current_leaf = f["/"]
+            if key in f:
+                raise RuntimeError(f"Key {key} already in file {filename}")
+            paths = key.split("/")[1:]
+            field = None
+            attr = None
+            if data not in (None, ""):
+                if paths[-1].startswith("@"):
+                    attr = paths[-1][1:]
+                    paths = paths[:-1]
+                else:
+                    field = paths[-1]
+                    paths = paths[:-1]
+            elif data in (None, ""):  # group only
+                continue
+
+            for grp in paths:
+                nx_grp_name = None
+
+                instance_name = grp
+                if "[" in grp:
+                    instance_name = grp[grp.index("[") + 1 : grp.index("]")]
+                    nx_grp_name = "NX" + grp[: grp.index("[")].lower()
+
+                if instance_name not in current_leaf:
+                    current_leaf = current_leaf.create_group(instance_name)
+                    if nx_grp_name:
+                        current_leaf.attrs["NX_class"] = nx_grp_name
+                else:
+                    current_leaf = current_leaf[instance_name]
+
+            if field and isinstance(current_leaf, h5py.Group):
+                if field not in current_leaf:
+                    current_leaf = current_leaf.create_dataset(field, data=data)
+                else:
+                    raise RuntimeError(
+                        f"Field {field} already in group {current_leaf.name} of file {filename}"
+                    )
+            if attr:
+                current_leaf.attrs[attr] = data
 
 
 def test_nexus_example():
@@ -106,3 +156,23 @@ def test_nexus_example_with_renamed_groups():
         "1.0*second"
     )
     assert lauetof_obj.ENTRY[0].sample.name__field == "SAMPLE-CHAR-DATA"
+
+
+def test_nexus_string_decode_to_utf8(tmp_path):
+    """Test that Nexus string fields are decoded to UTF-8 correctly."""
+    archive = EntryArchive()
+
+    example_data = Path.cwd() / Path("src/pynxtools/data/201805_WSe2_arpes.nxs")
+    modified_file = Path(tmp_path) / ("nexus_string__to_utf8_.nxs")
+    shutil.copy(example_data, modified_file)
+
+    data_to_add = {
+        "/ENTRY[entry]/USER[user]/name": ["Any name", "name González (HU)", "straße"]
+    }
+    extend_nexus_file(data_to_add, modified_file)
+    NexusParser().parse(str(modified_file), archive, get_logger(__name__))
+    obj = archive.data
+    assert (
+        "['Any name', 'name González (HU)', 'straße']"
+        == obj.ENTRY[0].USER[0].name__field
+    )
