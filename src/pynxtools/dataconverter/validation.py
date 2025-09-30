@@ -41,7 +41,9 @@ from pynxtools.dataconverter.helpers import (
     clean_str_attr,
     collector,
     convert_nexus_to_caps,
+    get_custom_attr_path,
     is_valid_data_field,
+    is_valid_enum,
     split_class_and_name_of,
 )
 from pynxtools.dataconverter.nexus_tree import (
@@ -644,9 +646,14 @@ def validate_hdf_group_against(
         is_valid_data_field(
             clean_str_attr(dataset[()]),
             node.dtype,
+            full_path,
+        )
+        is_valid_enum(
+            clean_str_attr(dataset[()]),
             node.items,
             node.open_enum,
             full_path,
+            data,
         )
 
         units = dataset.attrs.get("units")
@@ -695,7 +702,12 @@ def validate_hdf_group_against(
         for attr_name in attrs:
             full_path = f"{entry_name}/{path}/@{attr_name}"
 
-            if attr_name in ("NX_class", "units", "target"):
+            if attr_name in (
+                "NX_class",
+                "units",
+                "target",
+                "custom",
+            ) or attr_name.endswith("_custom"):
                 # Ignore special attrs
                 continue
 
@@ -734,9 +746,15 @@ def validate_hdf_group_against(
             is_valid_data_field(
                 attr_data,
                 node.dtype,
+                full_path,
+            )
+
+            is_valid_enum(
+                attr_data,
                 node.items,
                 node.open_enum,
                 full_path,
+                data,
             )
 
     def validate(path: str, h5_obj: Union[h5py.Group, h5py.Dataset]):
@@ -1351,6 +1369,7 @@ def validate_dict_against(
                 variant_path,
                 mapping,
             )
+            remove_from_not_visited(get_custom_attr_path(variant_path))
 
             check_reserved_suffix(variant_path, keys)
             check_reserved_prefix(variant_path, get_definition(variant_path), "field")
@@ -1424,6 +1443,7 @@ def validate_dict_against(
                 variant_path,
                 mapping,
             )
+            remove_from_not_visited(get_custom_attr_path(variant_path))
             check_reserved_prefix(
                 variant_path, get_definition(variant_path), "attribute"
             )
@@ -1662,6 +1682,7 @@ def validate_dict_against(
                     key,
                     mapping,
                 )
+                remove_from_not_visited(get_custom_attr_path(key))
 
             return True
 
@@ -1686,6 +1707,7 @@ def validate_dict_against(
             key,
             mapping,
         )
+        remove_from_not_visited(get_custom_attr_path(key))
 
         # Check main field exists for units
         if (

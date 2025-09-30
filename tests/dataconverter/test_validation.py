@@ -867,7 +867,7 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
             [
-                "The value Wrong option at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type "
+                "The value 'Wrong option' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type "
                 "should be one of the following: "
                 "['1st type', '2nd type', '3rd type', '4th type']."
             ],
@@ -1376,7 +1376,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
-                "The value ['0', 1, 2] at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
+                "The value '['0', 1, 2]' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
             ],
             id="wrong-type-array-in-attribute",
         ),
@@ -1385,7 +1385,7 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
             ),
             [
-                "The value [1, 2] at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
+                "The value '[1, 2]' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
             ],
             id="wrong-value-array-in-attribute",
         ),
@@ -1729,7 +1729,7 @@ def format_error_message(msg: str) -> str:
                 "Cu",
             ),
             [
-                "The value Cu at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
+                "The value 'Cu' at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
                 "should be one of the following: ['Ta', 'W', 'depleted_U', 'enriched_U', 'Hg', 'Pb', 'C']."
             ],
             id="baseclass-wrong-enum",
@@ -2444,7 +2444,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
             [
-                "The value at /my_entry/nxodd_name/type should "
+                "The value 'Wrong option' at /my_entry/nxodd_name/type should "
                 "be one of the following: "
                 "['1st type', '2nd type', '3rd type', '4th type']."
             ],
@@ -2457,10 +2457,59 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "a very different type",
             ),
             [
-                "The value at /my_entry/nxodd_name/type2 does not match with the "
-                "enumerated items from the open enumeration: ['1st type open', '2nd type open']."
+                "The value 'a very different type' at /my_entry/nxodd_name/type2 does not match with the "
+                "enumerated items from the open enumeration: ['1st type open', '2nd type open']. When a "
+                "different value is used, a boolean 'custom=True' attribute must be added."
             ],
             id="open-enum-with-new-item",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                            "a very different type",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@custom",
+                        False,
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                    "3rd option",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum_custom",
+                False,
+            ),
+            [
+                "The value 'a very different type' at /my_entry/nxodd_name/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False.",
+                "The value '3rd option' at /my_entry/nxodd_name/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False.",
+            ],
+            id="open-enum-with-new-item-custom-false",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                    "a very different type",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2/@attribute_with_open_enum",
+                "3rd option",
+            ),
+            [
+                "The value 'a very different type' at /my_entry/nxodd_name/type2 does not match "
+                "with the enumerated items from the open enumeration: ['1st type open', '2nd type open']. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added.",
+                "The value '3rd option' at /my_entry/nxodd_name/type2/@attribute_with_open_enum "
+                "does not match with the enumerated items from the open enumeration: ['1st option', '2nd option']. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added.",
+            ],
+            id="open-enum-with-new-item-custom-missing",
         ),
         pytest.param(
             set_to_none_in_dict(
@@ -2794,7 +2843,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
             ),
             [
-                "The value at /my_entry/nxodd_name/type/@array should be one of the following: "
+                "The value '[1 2]' at /my_entry/nxodd_name/type/@array should be one of the following: "
                 "[[0, 1, 2], [2, 3, 4]]."
             ],
             id="wrong-value-array-in-attribute",
@@ -3114,7 +3163,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "Cu",
             ),
             [
-                "The value at /my_entry/my_instrument/my_source/target_material should be one of the following: "
+                "The value 'Cu' at /my_entry/my_instrument/my_source/target_material should be one of the following: "
                 "['Ta', 'W', 'depleted_U', 'enriched_U', 'Hg', 'Pb', 'C']."
             ],
             id="baseclass-wrong-enum",
@@ -3126,11 +3175,12 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "Wrong source type",
             ),
             [
-                "The value at /my_entry/my_instrument/my_source/type does not match with the enumerated "
+                "The value 'Wrong source type' at /my_entry/my_instrument/my_source/type does not match with the enumerated "
                 "items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', "
                 "'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', "
                 "'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', "
-                "'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']."
+                "'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added."
             ],
             id="baseclass-open-enum-with-new-item",
         ),
@@ -3430,6 +3480,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
             "field-with-illegal-unit",
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
+            "open-enum-with-new-item-custom-missing",
             "baseclass-open-enum-with-new-item",
             "namefitting-of-group-with-typo-and-new-field",
             "bad-namefitting",
@@ -3518,16 +3569,16 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
                 "Field /entry/instrument/source/burst_number_end has no documentation.",
                 "Reserved suffix '_end' was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.",
                 "Field /entry/instrument/source/burst_number_start has no documentation.",
-                "The value at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch'].",
+                "The value 'Burst' at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.",
                 "Field /entry/instrument/source/number_of_bursts has no documentation.",
-                "The value at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar'].",
+                "The value 'Free Electron Laser' at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.",
                 "Field /entry/instrument/source_pump/burst_distance has no documentation.",
                 "Field /entry/instrument/source_pump/burst_length has no documentation.",
-                "The value at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch'].",
+                "The value 'Burst' at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.",
                 "Field /entry/instrument/source_pump/number_of_bursts has no documentation.",
-                "The value at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].",
+                "The value 'NIR' at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].",
                 "Field /entry/instrument/source_pump/rms_jitter has no documentation.",
-                "The value at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar'].",
+                "The value 'OPCPA' at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.",
                 "Field /entry/instrument/spatial_resolution has no documentation.",
                 "Field /entry/instrument/temporal_resolution has no documentation.",
                 "Field /entry/sample/bias has no documentation.",
