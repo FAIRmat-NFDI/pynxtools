@@ -883,6 +883,24 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
 
 
 def get_custom_attr_path(path: str) -> str:
+    """
+    Generate the path for the 'custom' attribute for open enumerations for a
+    given path.
+
+    If a NeXus concept has an open enumeration and a different value than the suggested ones are used,
+
+    - for fields, an attribute @custom=True.
+    - for attributes, an additional attribute @my_attribute_custom=True (where my_attribute is the name
+      of the attribute with the open enumeration)
+
+    shall be added to the file. This function creates the path for this custom attribute.
+
+    Args:
+        path (str): The original path string.
+
+    Returns:
+        str: The modified path string representing the custom attribute path.
+    """
     if path.split("/")[-1].startswith("@"):
         attr_name = path.split("/")[-1][1:]  # remove "@"
         return f"{path}_custom"
@@ -896,7 +914,20 @@ def is_valid_enum(
     path: str,
     mapping: MutableMapping,
 ):
-    """Check enumeration."""
+    """Validate a value against an NXDL enumeration and handle custom attributes.
+
+    This function checks whether a given value conforms to the specified NXDL
+    enumeration. If the enumeration is open (`nxdl_enum_open`), it may create or
+    check a corresponding custom attribute in the `mapping`.
+
+    Args:
+        value (Any): The value to validate.
+        nxdl_enum (list): The NXDL enumeration to validate against.
+        nxdl_enum_open (bool): Whether the enumeration is open to custom values.
+        path (str): The path of the value in the dataset.
+        mapping (MutableMapping): The object (dict or HDF5 group) holding custom attributes.
+
+    """
 
     if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
         value = value["compress"]

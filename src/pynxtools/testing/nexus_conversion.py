@@ -253,7 +253,8 @@ class ReaderTest:
             def extra_lines(
                 lines1: list[str], lines2: list[str]
             ) -> list[Optional[str]]:
-                """Return lines in lines1 but not in lines2 with line numbers."""
+                """Return lines in lines1 but not in lines2, with line numbers, and ignoring
+                specified lines."""
                 diffs = []
                 section_ignore_lines = []
                 for ind, line in enumerate(lines1):
