@@ -241,17 +241,24 @@ class ReaderTest:
         def compare_logs(gen_lines: list[str], ref_lines: list[str]) -> None:
             """Compare log lines, ignoring specific differences."""
 
+            def get_section_ignore_lines(line: str) -> list[str]:
+                """Return ignore lines for a section if the line starts with the section."""
+                section = line.rsplit(SECTION_SEPARATOR, 1)[-1].strip()
+                for key, ignore_lines in IGNORE_SECTIONS.items():
+                    if section.startswith(key):
+                        return ignore_lines
+
+                return []
+
             def extra_lines(
                 lines1: list[str], lines2: list[str]
             ) -> list[Optional[str]]:
-                """Return lines in lines1 but not in lines2, with line numbers and ignoring specified lines."""
-                diffs: list[Optional[str]] = []
+                """Return lines in lines1 but not in lines2 with line numbers."""
+                diffs = []
                 section_ignore_lines = []
-                section = None
                 for ind, line in enumerate(lines1):
                     if line.startswith(SECTION_SEPARATOR):
-                        section = line.rsplit(SECTION_SEPARATOR)[-1].strip()
-                        section_ignore_lines = IGNORE_SECTIONS.get(section, [])
+                        section_ignore_lines = get_section_ignore_lines(line)
                     if line not in lines2 and not should_skip_line(
                         line, ignore_lines=IGNORE_LINES + section_ignore_lines
                     ):
@@ -282,13 +289,12 @@ class ReaderTest:
             # Case 2: same line counts, check for diffs
             diffs = []
             section_ignore_lines = []
-            section = None
+
             for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
                 if gen_l.startswith(SECTION_SEPARATOR) and ref_l.startswith(
                     SECTION_SEPARATOR
                 ):
-                    section = gen_l.rsplit(SECTION_SEPARATOR)[-1].strip()
-                    section_ignore_lines = IGNORE_SECTIONS.get(section, [])
+                    section_ignore_lines = get_section_ignore_lines(gen_l)
                 if gen_l != ref_l and not should_skip_line(
                     gen_l, ref_l, ignore_lines=IGNORE_LINES + section_ignore_lines
                 ):
