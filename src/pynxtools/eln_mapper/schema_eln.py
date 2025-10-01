@@ -37,7 +37,7 @@ NEXUS_TO_NOMAD_QUANTITY: dict[str, tuple[str, str]] = {
     "NX_UINT": ("int", "NumberEditQuantity"),
 }
 
-DEFAULT_UNITS: dict[str, Union[str, None]] = {
+DEFAULT_UNITS: dict[str, str | None] = {
     "NX_ANGLE": "degree",
     "NX_ANY": None,
     "NX_AREA": "m**2",
@@ -278,7 +278,7 @@ class NomadElnGenerator(ElnGenerator):
 
         entity_dict["type"] = entity_type
 
-        display_dict: dict[str, Union[bool, str]] = {"visible": True}
+        display_dict: dict[str, bool | str] = {"visible": True}
         if unit:
             entity_dict["unit"] = unit
             display_dict["unit"] = unit

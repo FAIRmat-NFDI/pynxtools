@@ -64,9 +64,9 @@ def _to_group_name(nx_node: ET.Element):
 
 # noinspection SpellCheckingInspection
 def _to_section(
-    hdf_name: Optional[str],
+    hdf_name: str | None,
     nx_def: str,
-    nx_node: Optional[ET.Element],
+    nx_node: ET.Element | None,
     current: MSection,
     nx_root,
 ) -> MSection:
@@ -170,7 +170,7 @@ class NexusParser(MatchingParser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.archive: Optional[EntryArchive] = None
+        self.archive: EntryArchive | None = None
         self.nx_root = None
         self._logger = None
         self.nxs_fname: str = ""
@@ -330,7 +330,7 @@ class NexusParser(MatchingParser):
             # check if unit is given
             unit = hdf_node.attrs.get("units", None)
 
-            pint_unit: Optional[ureg.Unit] = None
+            pint_unit: ureg.Unit | None = None
             if unit:
                 try:
                     if unit != "counts":
@@ -437,7 +437,7 @@ class NexusParser(MatchingParser):
             if subelem is None:
                 continue
             if type_filter:
-                if not (isinstance(subelem, (MSection, MSubSectionList))):
+                if not (isinstance(subelem, MSection | MSubSectionList)):
                     continue
                 if isinstance(subelem, list):
                     if len(subelem) > 0:

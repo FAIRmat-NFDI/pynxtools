@@ -70,7 +70,7 @@ def populate_nexus_subsection(
     app_def: str,
     archive,
     logger,
-    output_file_path: Optional[str] = None,
+    output_file_path: str | None = None,
     on_temp_file=False,
     nxs_as_entry=True,
 ):
