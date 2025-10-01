@@ -172,7 +172,9 @@ class Collector:
             )
             if args[1] is True:
                 log_text += " It was added here automatically."
-            logger.info(log_text)
+                logger.info(log_text)
+            else:
+                logger.warning(log_text)
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
