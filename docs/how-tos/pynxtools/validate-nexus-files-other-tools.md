@@ -2,7 +2,7 @@
 
 !!! info "This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation](../../learn/pynxtools/nexus-validation.md) or [how-to](../../learn/pynxtools/nexus-validation.md) pages."
 
-??? danger "This part of the documentation is talking about external tools that are subject to change. If these tools do change, you may find outdated information here. We do not take any responsibility for these software tools and for any issues arising from installation/usage."
+??? danger "This part of the documentation is talking about external tools (i.e., not tools not maintained by FAIRmat) that are subject to change. If these tools do change, you may find outdated information here. We do not take any responsibility for these software tools and for any issues arising from installation/usage."
 
 In this how-to guide, we will learn how to use different software tools to validate existing NeXus files. Specifically, we want to use tools to validate NeXus files against a given set of NeXus definitions. This can be the official version of the NeXus definitions or a different version used for local development. Here, we will work with two different versions of the definitions.
 
@@ -36,13 +36,13 @@ In case you are interested in testing these tools, we encourage you to follow th
 ### Installation
 
 ??? info "A note on operating systems"
-    Note that installation on Windows can be tricky because cmake can sometimes not find the libxml2 library. Though, if you solve this, this maybe work on windows. Therefore, we recommend to use Linux.
+    Note that installation on Windows can be tricky because cmake can sometimes not find the libxml2 library. Though, if you solve this, this may work on Windows. Therefore, we recommend to use Linux.
 
-This software is written in C and has to be built from source (e.g., by using `cmake`).
+The tool `cnxvalidate` is written in C and has to be built from source (e.g., by using `cmake`).
 
 #### Install `cmake`, `HDF5` & `xml2` libraries
 
-Install all parts required to install `cnxvalidate` via `cmake`:
+Install all dependencies required to install `cnxvalidate` via `cmake`:
 
 ```console
 sudo apt-get update
@@ -64,7 +64,7 @@ Clone the GitHub repository:
 git clone https://github.com/nexusformat/cnxvalidate.git
 ```
 
-Enter the cloned repository _via_ the command
+Enter the cloned repository via the command
 
 ```console
 cd cnxvalidate
@@ -73,11 +73,10 @@ cd cnxvalidate
 Create a new directory called `build` and enter it:
 
 ```console
-mkdir build
-cd build
+mkdir -p build && cd build
 ```
 
-Use `cmake` to compile/build the software - this puts together all pieces of software, especially external parts such as the `xml2` and `hdf5` libraries.
+Use `cmake` to configure and compile all functionalities of the software, especially external libraries such as the `xml2` and `hdf5` libraries.
 
 ```console
 cmake ../
@@ -118,7 +117,7 @@ You will also need to have a local copy of the NeXus definitions that you can po
 
 ### Usage
 
-After installation, you can evoke the help call from the command line:
+After installation, you can invoke the help call from the command line:
 
 === "Source"
     ```console
@@ -151,7 +150,7 @@ You can now invoke the validation on the test file:
 
 === "Source"
     ```console
-    ./nxvalidate -l DEFINITIONS 201805_WSe2_arpes.nxs
+    ./nxvalidate -l definitions 201805_WSe2_arpes.nxs
     ```
 
 === "Result"
@@ -192,8 +191,8 @@ You then need to setup the software. This requires installing the NeXus definiti
     ```console
     !!! WARNING: this program is not ready for distribution.
 
-    [INFO 2025-08-21 14:03:52.011 punx.main:253] cache_manager.download_file_set('main', '/home/lukaspie/.config/punx', force=False)
-    Downloading file set: main to /home/lukaspie/.config/punx/main ...
+    [INFO 2025-08-21 14:03:52.011 punx.main:253] cache_manager.download_file_set('main', '/home/user/.config/punx', force=False)
+    Downloading file set: main to /home/user/.config/punx/main ...
     Requesting download from https://github.com/nexusformat/definitions/archive/main.zip
     1 Extracted: definitions-main/applications/NXapm.nxdl.xml
     2 Extracted: definitions-main/applications/NXarchive.nxdl.xml
@@ -469,21 +468,21 @@ You then need to setup the software. This requires installing the NeXus definiti
     272 Extracted: definitions-main/contributed_definitions/nxdlformat.xsl
     273 Extracted: definitions-main/nxdl.xsd
     274 Extracted: definitions-main/nxdlTypes.xsd
-    Created: /home/lukaspie/.config/punx/definitions-main/__github_info__.json
-    Installed in directory: /home/lukaspie/.config/punx/main
+    Created: /home/user/.config/punx/definitions-main/__github_info__.json
+    Installed in directory: /home/user/.config/punx/main
     ============= ====== =================== ======= =============================================================================================
     NXDL file set cache  date & time         commit  path                                                 
     ============= ====== =================== ======= =============================================================================================
-    a4fd52d       source 2016-11-19 01:07:45 a4fd52d /home/lukaspie/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/punx/cache/a4fd52d
-    v3.3          source 2017-07-12 10:41:12 9285af9 /home/lukaspie/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/punx/cache/v3.3
-    v2018.5       source 2018-05-15 16:34:19 a3045fd /home/lukaspie/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/punx/cache/v2018.5
-    main          user   2025-08-14 04:24:42 7ac3f9c /home/lukaspie/.config/punx/main                     
+    a4fd52d       source 2016-11-19 01:07:45 a4fd52d /home/user/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/punx/cache/a4fd52d
+    v3.3          source 2017-07-12 10:41:12 9285af9 /home/user/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/punx/cache/v3.3
+    v2018.5       source 2018-05-15 16:34:19 a3045fd /home/user/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/punx/cache/v2018.5
+    main          user   2025-08-14 04:24:42 7ac3f9c /home/user/.config/punx/main                     
     ============= ====== =================== ======= =============================================================================================
     ```
 
 ### Usage
 
-After installation, you can evoke the help call from the command line:
+After installation, you can invoke the help call from the command line:
 
 === "Source"
     ```console
@@ -511,119 +510,6 @@ After installation, you can evoke the help call from the command line:
       validate       validate a NeXus file
 
     Note: It is only necessary to use the first two (or more) characters of any subcommand, enough that the abbreviation is unique. Such as: demonstrate can be abbreviated to demo or even de.
-    ```
-
-
-You can also invoke the help call for the validation API:
-
-=== "Source"
-    ```console
-    punx validate --help
-    ```
-
-=== "Result"
-    ```console
-    !!! WARNING: this program is not ready for distribution.
-
-    usage: punx validate [-h] [-f FILE_SET_NAME] [--report REPORT] infile
-
-    positional arguments:
-      infile                HDF5 or NXDL file name
-
-    options:
-      -h, --help            show this help message and exit
-      -f FILE_SET_NAME, --file_set_name FILE_SET_NAME
-                            NeXus NXDL file set (definitions) name for validation -- default=main
-      --report REPORT       select which validation findings to report, choices:
-                            COMMENT,ERROR,NOTE,OK,OPTIONAL,TODO,UNUSED,WARN (separate with comma if more
-                            than one, do not use white space)
-    ```
-
-You can get a demonstration of `punx` by running:
-
-=== "Source"
-    ```console
-    punx demo
-    ```
-
-=== "Result"
-    ```
-    console> punx validate C:\Users\USER\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5
-    data file: C:\Users\USER\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5
-    NeXus definitions: main, dated 2024-01-02 03:04:05, sha=xxxx21fxcef02xfbaa6x04e182e3d67dace7ef1b
-
-    findings
-    ============================ ======== ==================================== ==========================================================
-    address                      status   test                                 comments
-    ============================ ======== ==================================== ==========================================================
-    /                            TODO     NeXus base class                     NXroot: more validations needed
-    /                            OK       known NXDL                           NXroot: recognized NXDL specification
-    /                            OK       NeXus base class                     NXroot: known NeXus base class
-    /                            OK       NeXus default plot                   found by v3: /Scan/data/counts
-    /                            OPTIONAL NXDL group in data file              not found:  in //entry
-    /Scan                        TODO     NeXus base class                     NXentry: more validations needed
-    /Scan                        OK       group in base class                  not defined: NXroot/Scan
-    /Scan                        OK       known NXDL                           NXentry: recognized NXDL specification
-    /Scan                        OK       NeXus base class                     NXentry: known NeXus base class
-    /Scan                        OK       NXDL group in data file              found:  in /Scan/data
-    /Scan                        NOTE     validItemName                        relaxed pattern: [a-zA-Z0-9_]([a-zA-Z0-9_.]*[a-zA-Z0-9_])?
-    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/collection_description
-    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/collection_identifier
-    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/collection_time
-    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/definition
-    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/definition_local
-    ...
-    ...
-    ...
-    /Scan/data@signal            OK       known attribute                      known: NXdata@signal
-    /Scan/data@signal            OK       value of @signal                     found: /Scan/data/counts
-    /Scan/data@signal            OK       NeXus default plot v3, NXdata@signal correct default plot setup in /NXentry/NXdata
-    /Scan/data@two_theta_indices TODO     attribute value                      implement
-    /Scan/data@two_theta_indices OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
-    /Scan/data@two_theta_indices OK       known attribute                      unknown: NXdata@two_theta_indices
-    /Scan/data/counts            OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
-    /Scan/data/counts            OK       field in base class                  not defined: NXdata/counts
-    /Scan/data/counts@units      TODO     attribute value                      implement
-    /Scan/data/counts@units      OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
-    /Scan/data/two_theta         OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
-    /Scan/data/two_theta         OK       field in base class                  not defined: NXdata/two_theta
-    /Scan/data/two_theta@units   TODO     attribute value                      implement
-    /Scan/data/two_theta@units   OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
-    ============================ ======== ==================================== ==========================================================
-
-
-    summary statistics
-    ======== ===== =========================================================== =========
-    status   count description                                                 (value)
-    ======== ===== =========================================================== =========
-    OK       35    meets NeXus specification                                   100
-    NOTE     1     does not meet NeXus specification, but acceptable           75
-    WARN     0     does not meet NeXus specification, not generally acceptable 25
-    ERROR    0     violates NeXus specification                                -10000000
-    TODO     7     validation not implemented yet                              0
-    UNUSED   0     optional NeXus item not used in data file                   0
-    COMMENT  0     comment from the punx source code                           0
-    OPTIONAL 40    allowed by NeXus specification, not identified              99
-            --
-    TOTAL    83
-    ======== ===== =========================================================== =========
-
-    <finding>=99.144737 of 76 items reviewed
-    NeXus definitions version: main
-
-    console> punx tree C:\Users\rh83hixu\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5
-    C:\Users\rh83hixu\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5 : NeXus data file
-      Scan:NXentry
-        @NX_class = "NXentry"
-        data:NXdata
-          @NX_class = "NXdata"
-          @axes = "two_theta"
-          @signal = "counts"
-          @two_theta_indices = [0]
-          counts:NX_INT32[31] = [1037, 1318, 1704, '...', 1321]
-            @units = "counts"
-          two_theta:NX_FLOAT64[31] = [17.92608, 17.92591, 17.92575, '...', 17.92108]
-            @units = "degrees"
     ```
 
 !!! info "NeXus definitions in `punx`"
@@ -1610,6 +1496,120 @@ You can just pass one of the logging levels to the `--report` flag to select for
     <finding>=99.591479 of 798 items reviewed
     ```
 
+### Demo of `punx`
+
+You can also invoke the help call for the validation API:
+
+=== "Source"
+    ```console
+    punx validate --help
+    ```
+
+=== "Result"
+    ```console
+    !!! WARNING: this program is not ready for distribution.
+
+    usage: punx validate [-h] [-f FILE_SET_NAME] [--report REPORT] infile
+
+    positional arguments:
+      infile                HDF5 or NXDL file name
+
+    options:
+      -h, --help            show this help message and exit
+      -f FILE_SET_NAME, --file_set_name FILE_SET_NAME
+                            NeXus NXDL file set (definitions) name for validation -- default=main
+      --report REPORT       select which validation findings to report, choices:
+                            COMMENT,ERROR,NOTE,OK,OPTIONAL,TODO,UNUSED,WARN (separate with comma if more
+                            than one, do not use white space)
+    ```
+
+You can get a demonstration of `punx` by running:
+
+=== "Source"
+    ```console
+    punx demo
+    ```
+
+=== "Result"
+    ```
+    console> punx validate C:\Users\USER\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5
+    data file: C:\Users\USER\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5
+    NeXus definitions: main, dated 2024-01-02 03:04:05, sha=xxxx21fxcef02xfbaa6x04e182e3d67dace7ef1b
+
+    findings
+    ============================ ======== ==================================== ==========================================================
+    address                      status   test                                 comments
+    ============================ ======== ==================================== ==========================================================
+    /                            TODO     NeXus base class                     NXroot: more validations needed
+    /                            OK       known NXDL                           NXroot: recognized NXDL specification
+    /                            OK       NeXus base class                     NXroot: known NeXus base class
+    /                            OK       NeXus default plot                   found by v3: /Scan/data/counts
+    /                            OPTIONAL NXDL group in data file              not found:  in //entry
+    /Scan                        TODO     NeXus base class                     NXentry: more validations needed
+    /Scan                        OK       group in base class                  not defined: NXroot/Scan
+    /Scan                        OK       known NXDL                           NXentry: recognized NXDL specification
+    /Scan                        OK       NeXus base class                     NXentry: known NeXus base class
+    /Scan                        OK       NXDL group in data file              found:  in /Scan/data
+    /Scan                        NOTE     validItemName                        relaxed pattern: [a-zA-Z0-9_]([a-zA-Z0-9_.]*[a-zA-Z0-9_])?
+    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/collection_description
+    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/collection_identifier
+    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/collection_time
+    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/definition
+    /Scan                        OPTIONAL NXDL field in data file              not found: /Scan/definition_local
+    ...
+    ...
+    ...
+    /Scan/data@signal            OK       known attribute                      known: NXdata@signal
+    /Scan/data@signal            OK       value of @signal                     found: /Scan/data/counts
+    /Scan/data@signal            OK       NeXus default plot v3, NXdata@signal correct default plot setup in /NXentry/NXdata
+    /Scan/data@two_theta_indices TODO     attribute value                      implement
+    /Scan/data@two_theta_indices OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
+    /Scan/data@two_theta_indices OK       known attribute                      unknown: NXdata@two_theta_indices
+    /Scan/data/counts            OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
+    /Scan/data/counts            OK       field in base class                  not defined: NXdata/counts
+    /Scan/data/counts@units      TODO     attribute value                      implement
+    /Scan/data/counts@units      OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
+    /Scan/data/two_theta         OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
+    /Scan/data/two_theta         OK       field in base class                  not defined: NXdata/two_theta
+    /Scan/data/two_theta@units   TODO     attribute value                      implement
+    /Scan/data/two_theta@units   OK       validItemName                        strict pattern: [a-z_][a-z0-9_]*
+    ============================ ======== ==================================== ==========================================================
+
+
+    summary statistics
+    ======== ===== =========================================================== =========
+    status   count description                                                 (value)
+    ======== ===== =========================================================== =========
+    OK       35    meets NeXus specification                                   100
+    NOTE     1     does not meet NeXus specification, but acceptable           75
+    WARN     0     does not meet NeXus specification, not generally acceptable 25
+    ERROR    0     violates NeXus specification                                -10000000
+    TODO     7     validation not implemented yet                              0
+    UNUSED   0     optional NeXus item not used in data file                   0
+    COMMENT  0     comment from the punx source code                           0
+    OPTIONAL 40    allowed by NeXus specification, not identified              99
+            --
+    TOTAL    83
+    ======== ===== =========================================================== =========
+
+    <finding>=99.144737 of 76 items reviewed
+    NeXus definitions version: main
+
+    console> punx tree C:\Users\rh83hixu\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5
+    C:\Users\rh83hixu\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\punx\data\writer_1_3.hdf5 : NeXus data file
+      Scan:NXentry
+        @NX_class = "NXentry"
+        data:NXdata
+          @NX_class = "NXdata"
+          @axes = "two_theta"
+          @signal = "counts"
+          @two_theta_indices = [0]
+          counts:NX_INT32[31] = [1037, 1318, 1704, '...', 1321]
+            @units = "counts"
+          two_theta:NX_FLOAT64[31] = [17.92608, 17.92591, 17.92575, '...', 17.92108]
+            @units = "degrees"
+    ```
+
 ### Further notes
 
 1. [More installation details](<https://punx.readthedocs.io/en/latest/install.html>)
@@ -1639,7 +1639,7 @@ The package can be installed via any Python package manager:
 
 ### Usage
 
-After installation, you can evoke the help call from the command line:
+After installation, you can invoke the help call from the command line:
 
 === "Source"
     ```console
@@ -1690,9 +1690,9 @@ You can start the validation by running
     ```console
     NXValidate
     ----------
-    Filename: /home/lukaspie/fairmat/nomad-distro-dev/packages/pynxtools/src/pynxtools/data/201805_
+    Filename: /home/user/fairmat/nomad-distro-dev/packages/pynxtools/src/pynxtools/data/201805_
     Path: /
-    Definitions: /home/lukaspie/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/nxvalid
+    Definitions: /home/user/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/nxvalid
     NXroot: /
         "@nexusformat_version" is not defined as an attribute in NXroot
         NXentry: /entry
@@ -1911,10 +1911,10 @@ Again, the output log is rather verbose. `nxvalidate` correctly picks up on undo
 
     NXValidate
     ----------
-    Filename: /home/lukaspie/fairmat/nomad-distro-dev/packages/pynxtools/src/pynxtools/data/201805_
+    Filename: /home/user/fairmat/nomad-distro-dev/packages/pynxtools/src/pynxtools/data/201805_
     Entry: /entry
     Application Definition: NXarpes
-    NXDL File: /home/lukaspie/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/nxvalidat
+    NXDL File: /home/user/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/nxvalidat
             Group: NXsource
             Field: /entry/instrument/source_pump/probe
                 The field value is not a member of the enumerated list
@@ -1945,7 +1945,7 @@ If you want to see the contents of a given base class, the `-b` option can be us
     NXValidate
     ----------
     Valid components of the NXsample base class
-    NXDL File: /home/lukaspie/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/nxvalidat
+    NXDL File: /home/user/fairmat/nomad-distro-dev/.venv/lib/python3.12/site-packages/nxvalidat
     Allowed Attributes
         @default
     Allowed Groups
