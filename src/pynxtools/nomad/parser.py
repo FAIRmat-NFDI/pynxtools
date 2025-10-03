@@ -143,14 +143,22 @@ def _get_value(hdf_node):
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
     if len(hdf_value.shape) > 0:
+        # Variable-length UTF-8 / object arrays
+        if hdf_value.dtype.kind == "O":
+            # Recursively decode nested lists if needed
+            def decode_array(arr):
+                result = []
+                for x in arr:
+                    if isinstance(x, (np.ndarray, list)):
+                        result.append(decode_array(x))
+                    else:
+                        result.append(str(decode_or_not(x)))
+                return result
 
-        def recurse(x):
-            if hasattr(x, "shape") and len(x.shape) > 0:
-                return [recurse(i) for i in x]
-            else:
-                return str(decode_or_not(x))
+            return decode_array(hdf_value)
 
-        return str(recurse(hdf_value))
+        # Fallback for other arrays
+        return str([i for i in hdf_value.astype(str)])
 
     return hdf_node[()].decode()
 
