@@ -21,7 +21,7 @@ import json
 import logging
 import os
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableMapping, Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
 from functools import cache, lru_cache
@@ -87,7 +87,9 @@ class ValidationProblem(Enum):
     UnitWithoutDocumentation = auto()
     InvalidUnit = auto()
     InvalidEnum = auto()
-    OpenEnumWithNewItem = auto()
+    OpenEnumWithCustom = auto()
+    OpenEnumWithCustomFalse = auto()
+    OpenEnumWithMissingCustom = auto()
     MissingRequiredGroup = auto()
     MissingRequiredField = auto()
     MissingRequiredAttribute = auto()
@@ -152,12 +154,27 @@ class Collector:
 
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be one of the following: {value}."
+                f"The value '{args[0]}' at {path} should be one of the following: {value}."
             )
-        elif log_type == ValidationProblem.OpenEnumWithNewItem:
+        elif log_type == ValidationProblem.OpenEnumWithCustom:
             logger.info(
-                f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
+        elif log_type == ValidationProblem.OpenEnumWithCustomFalse:
+            logger.warning(
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}. "
+                "When a different value is used, the boolean 'custom' attribute cannot be False."
+            )
+        elif log_type == ValidationProblem.OpenEnumWithMissingCustom:
+            log_text = (
+                f"The value '{args[0]}' at {path} does not match with the enumerated items from the open enumeration: {value}. "
+                "When a different value is used, a boolean 'custom=True' attribute must be added."
+            )
+            if args[1] is True:
+                log_text += " It was added here automatically."
+                logger.info(log_text)
+            else:
+                logger.warning(log_text)
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group {path} hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
@@ -287,9 +304,10 @@ class Collector:
         # info messages should not fail validation
         if log_type in (
             ValidationProblem.UnitWithoutDocumentation,
-            ValidationProblem.OpenEnumWithNewItem,
             ValidationProblem.CompressionStrengthZero,
             ValidationProblem.MissingNXclass,
+            ValidationProblem.OpenEnumWithCustom,
+            ValidationProblem.OpenEnumWithMissingCustom,
         ):
             if self.logging and message not in self.data["info"]:
                 self._log(path, log_type, value, *args, **kwargs)
@@ -804,15 +822,11 @@ def convert_int_to_float(value):
         return value
 
 
-def is_valid_data_field(
-    value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
-) -> Any:
+def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     """Checks whether a given value is valid according to the type defined in the NXDL."""
 
-    def validate_data_value(
-        value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
-    ) -> Any:
-        """Validate and possibly convert a primitive value according to NXDL type/enum rules."""
+    def validate_data_value(value: Any, nxdl_type: str, path: str) -> Any:
+        """Validate and possibly convert a primitive value according to NXDL type rules."""
         accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
         original_value = value
 
@@ -843,26 +857,6 @@ def is_valid_data_field(
                     path, ValidationProblem.InvalidDatetime, value
                 )
 
-        if nxdl_enum is not None:
-            if (
-                isinstance(value, np.ndarray)
-                and isinstance(nxdl_enum, list)
-                and isinstance(nxdl_enum[0], list)
-            ):
-                enum_value = list(value)
-            else:
-                enum_value = value
-
-            if enum_value not in nxdl_enum:
-                if nxdl_enum_open:
-                    collector.collect_and_log(
-                        path, ValidationProblem.OpenEnumWithNewItem, nxdl_enum
-                    )
-                else:
-                    collector.collect_and_log(
-                        path, ValidationProblem.InvalidEnum, nxdl_enum
-                    )
-
         return value
 
     if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
@@ -878,18 +872,120 @@ def is_valid_data_field(
                     path, ValidationProblem.InvalidCompressionStrength, value
                 )
             # In this case, we remove the compression.
-            return validate_data_value(
-                value["compress"], nxdl_type, nxdl_enum, nxdl_enum_open, path
-            )
+            return validate_data_value(value["compress"], nxdl_type, path)
 
         # Apply standard validation to compressed value
-        value["compress"] = validate_data_value(
-            compressed_value, nxdl_type, nxdl_enum, nxdl_enum_open, path
-        )
+        value["compress"] = validate_data_value(compressed_value, nxdl_type, path)
 
         return value
 
-    return validate_data_value(value, nxdl_type, nxdl_enum, nxdl_enum_open, path)
+    return validate_data_value(value, nxdl_type, path)
+
+
+def get_custom_attr_path(path: str) -> str:
+    """
+    Generate the path for the 'custom' attribute for open enumerations for a
+    given path.
+
+    If a NeXus concept has an open enumeration and a different value than the suggested ones are used,
+
+    - for fields, an attribute @custom=True.
+    - for attributes, an additional attribute @my_attribute_custom=True (where my_attribute is the name
+      of the attribute with the open enumeration)
+
+    shall be added to the file. This function creates the path for this custom attribute.
+
+    Args:
+        path (str): The original path string.
+
+    Returns:
+        str: The modified path string representing the custom attribute path.
+    """
+    if path.split("/")[-1].startswith("@"):
+        attr_name = path.split("/")[-1][1:]  # remove "@"
+        return f"{path}_custom"
+    return f"{path}/@custom"
+
+
+def is_valid_enum(
+    value: Any,
+    nxdl_enum: list,
+    nxdl_enum_open: bool,
+    path: str,
+    mapping: MutableMapping,
+):
+    """Validate a value against an NXDL enumeration and handle custom attributes.
+
+    This function checks whether a given value conforms to the specified NXDL
+    enumeration. If the enumeration is open (`nxdl_enum_open`), it may create or
+    check a corresponding custom attribute in the `mapping`.
+
+    Args:
+        value (Any): The value to validate.
+        nxdl_enum (list): The NXDL enumeration to validate against.
+        nxdl_enum_open (bool): Whether the enumeration is open to custom values.
+        path (str): The path of the value in the dataset.
+        mapping (MutableMapping): The object (dict or HDF5 group) holding custom attributes.
+
+    """
+
+    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+        value = value["compress"]
+
+    if nxdl_enum is not None:
+        if (
+            isinstance(value, np.ndarray)
+            and isinstance(nxdl_enum, list)
+            and isinstance(nxdl_enum[0], list)
+        ):
+            enum_value = list(value)
+        else:
+            enum_value = value
+
+        if enum_value not in nxdl_enum:
+            if nxdl_enum_open:
+                custom_path = get_custom_attr_path(path)
+
+                if isinstance(mapping, h5py.Group):
+                    parent_path, attr_name = custom_path.rsplit("@", 1)
+                    custom_attr = mapping.get(parent_path).attrs.get(attr_name)
+                    custom_added_auto = False
+                else:
+                    custom_attr = mapping.get(custom_path)
+                    custom_added_auto = True
+
+                if custom_attr == True:  # noqa: E712
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCustom,
+                        nxdl_enum,
+                        value,
+                    )
+                elif custom_attr == False:  # noqa: E712
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCustomFalse,
+                        nxdl_enum,
+                        value,
+                    )
+
+                elif custom_attr is None:
+                    try:
+                        mapping[custom_path] = True
+                    except ValueError:
+                        # we are in the HDF5 validation, cannot set custom attribute.
+                        pass
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithMissingCustom,
+                        nxdl_enum,
+                        value,
+                        custom_added_auto,
+                    )
+            else:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidEnum, nxdl_enum, value
+                )
 
 
 def split_class_and_name_of(name: str) -> tuple[Optional[str], str]:
