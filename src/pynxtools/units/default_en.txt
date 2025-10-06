@@ -105,7 +105,6 @@ kelvin = [temperature]; offset: 0 = K = degK = °K = degree_Kelvin = degreeK  # 
 radian = [angle] = rad
 bit = [information]
 pixel = [digital_image_resolution] = px = pel
-count = []
 
 
 #### CONSTANTS ####
@@ -132,8 +131,15 @@ steradian = radian ** 2 = sr
 square_degree = (π / 180) ** 2 * sr = sq_deg = sqdeg
 
 # Information
-byte = 8 * bit = B = octet
 baud = bit / second = Bd = bps
+
+byte = 8 * bit = B = octet
+
+# Dimensionless units
+count = 1
+percent = 0.01 = %
+permille = 0.001 = ‰   # NOTE: ‰ = U+2030 (PER MILLE SIGN)
+ppm = 1e-6
 
 # Length
 angstrom = 1e-10 * meter = Å = ångström = Å
@@ -167,8 +173,10 @@ planck_temperature = (h_bar * c ** 5 / gravitational_constant / k ** 2) ** 0.5
 
 # Area
 [area] = [length] ** 2
+are = 100 * meter ** 2
 barn = 1e-28 * meter ** 2 = b
 darcy = centipoise * centimeter ** 2 / (second * atmosphere)
+hectare = 100 * are = ha
 
 # Volume
 [volume] = [length] ** 3
@@ -333,6 +341,7 @@ coulomb = ampere * second = C
 abcoulomb = 10 * C = abC
 faraday = e * N_A * mole
 conventional_coulomb_90 = K_J90 * R_K90 / (K_J * R_K) * coulomb = C_90
+ampere_hour = ampere * hour = Ah
 
 # Electric potential
 [electric_potential] = [energy] / [charge]
