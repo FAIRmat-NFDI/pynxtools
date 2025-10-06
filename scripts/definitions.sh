@@ -12,7 +12,7 @@ set -euo pipefail
 DEFINITIONS_FOLDER="src/pynxtools/definitions"
 
 update_nexus_version() {
-  cd src/pynxtools/definitions && echo "updating nexus-version.txt"
+  cd $DEFINITIONS_FOLDE && echo "updating nexus-version.txt"
   printf "$(git describe --dirty --tags --long --abbrev=8 --match '*[0-9]*')" > ../nexus-version.txt
   cd ../../../
 }

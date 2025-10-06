@@ -46,7 +46,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
-nomad = ["nomad-lab >= 1.3.16.dev186"]
+nomad = ["nomad-lab >= 1.3.17"]
 docs = [
     "mkdocs",
     "markdown-exec[ansi]",
