@@ -39,7 +39,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: IntegrateOmicron
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: main
