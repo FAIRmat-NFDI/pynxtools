@@ -12,21 +12,16 @@ set -euo pipefail
 DEFINITIONS_FOLDER="src/pynxtools/definitions"
 
 update_nexus_version() {
-  cd $DEFINITIONS_FOLDER && echo "updating nexus-version.txt"
+  cd $DEFINITIONS_FOLDE && echo "updating nexus-version.txt"
   printf "$(git describe --dirty --tags --long --abbrev=8 --match '*[0-9]*')" > ../nexus-version.txt
   cd ../../../
 }
 
-get_default_branch() {
-  # Detect the default branch of the submodule's remote
-  git -C "$DEFINITIONS_FOLDER" remote show origin | awk '/HEAD branch/ {print $NF}'
-}
-
 update_definitions_submodule() {
   echo "updating definitions submodule"
-  git submodule sync "$DEFINITIONS_FOLDER"
-  git submodule update --init --remote --jobs=4 "$DEFINITIONS_FOLDER"
-  git -C "$DEFINITIONS_FOLDER" fetch --tags
+  git submodule sync --recursive
+  git submodule update --init --recursive --remote --jobs=4
+  git submodule foreach --recursive 'git fetch --tags'
 }
 
 reset_definitions_submodule() {
@@ -124,3 +119,4 @@ main() {
 }
 
 main "$@"
+python ./scripts/generate_package.py
