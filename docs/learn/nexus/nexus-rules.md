@@ -56,11 +56,13 @@ A python implementation of this process can be found in [this function](https://
 
 Aside from these general rules, there are a number of special rules for NeXus names that need to be considered:
 
-- There is a set of reserved words (like `BLUESKY_`, `DECTRIS_`, `IDF_`, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved prefixes".
+- There is a set of prefixes (like `BLUESKY_`, `DECTRIS_`, `IDF_`, etc.) that are reserved for certain projects and communities. These prefixes (typically written as uppercase + underscore cannot be overwritten by namefitting.
 
-- There is also a set of reserved suffixes that are used to give additional information for a group or field. For the full list, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html), section "Reserved suffixes".
+- There is also a set of reserved suffixes that are used to give additional information for a group or field. These can only be used if the original field is present as well. As an example, the field `temperature_set` - which uses the suffix `_set`, reserved for setpoint of field values - can only be present if the field `temperature` is present as well.
 
 - Additionally to namefitting, data annotation can use further information. For example, in case of NXdata, the axes listed among the `@axes` shall fit to any instances of `AXISNAME` and data objects listed in `@signal` or `@auxiliary_signals` shall fit to instances of `DATA`. Such rules are typically given in the base classes (e.g., see [here](https://manual.nexusformat.org/classes/base_classes/NXdata.html#index-0) for NXdata). Any tool that makes use of the base classes should implement these special rules in its validation procedure. As an example, pynxtools has a special [function for handling NXdata](https://github.com/FAIRmat-NFDI/pynxtools/blob/474fe823112b8ee1e7b42ac80bb7408fdde22bd5/src/pynxtools/dataconverter/validation.py#L220).
+
+For the full list of these respective rules, see [Rules for Storing Data Items in NeXus Files](https://manual.nexusformat.org/datarules.html).
 
 ## Concept name inheritance
 

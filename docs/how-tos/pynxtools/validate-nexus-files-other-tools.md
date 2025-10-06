@@ -38,86 +38,11 @@ In case you are interested in testing these tools, we encourage you to follow th
 ??? info "A note on operating systems"
     Note that installation on Windows can be tricky because cmake can sometimes not find the libxml2 library. Though, if you solve this, this may work on Windows. Therefore, we recommend to use Linux.
 
-The tool `cnxvalidate` is written in C and has to be built from source (e.g., by using `cmake`).
-
-#### Install `cmake`, `HDF5` & `xml2` libraries
-
-Install all dependencies required to install `cnxvalidate` via `cmake`:
-
-```console
-sudo apt-get update
-sudo apt-get install git
-sudo apt-get install build-essential
-sudo add-apt-repository universe
-sudo apt-get install libhdf5-serial-dev
-sudo apt-get -y install pkg-config     
-sudo apt upgrade -y
-sudo apt-get -y install cmake
-sudo apt-get install libxml2-dev
-```
-
-#### Clone the Github repository
-
-Clone the GitHub repository:
-
-```console
-git clone https://github.com/nexusformat/cnxvalidate.git
-```
-
-Enter the cloned repository via the command
-
-```console
-cd cnxvalidate
-```
-
-Create a new directory called `build` and enter it:
-
-```console
-mkdir -p build && cd build
-```
-
-Use `cmake` to configure and compile all functionalities of the software, especially external libraries such as the `xml2` and `hdf5` libraries.
-
-```console
-cmake ../
-```
-
-Install `cnxvalidate` after it was successfully build
-
-```console
-cd build
-make
-```
-
-Now, the executable is located at:
-
-```console
-/.../cnxvalidate/build/nxvalidate
-```
-
-You will also need to have a local copy of the NeXus definitions that you can point `cnxvalidate` to with the `-l` option.
-
-
-!!! info "Getting the NeXus definitions"
-    Download a set of NeXus definitions (choose only one).
-
-    For the NIAC NeXus definitions:
-
-    ```console
-    git clone https://github.com/nexusformat/definitions.git
-    ```
-
-    For the FAIRmat NeXus definitions, clone the repository:
-
-    ```console
-    git clone https://github.com/FAIRmat-NFDI/nexus_definitions.git definitions/
-    ```
-
-    Now you have a folder called "definitions". The path to this definitions folder is used in the `-l` option of `cnxvalidate` to tell the program which NeXus definitions shall be used.
+The tool `cnxvalidate` is written in C and has to be built from source (e.g., by using `cmake`). You can find instructions in the [README](https://github.com/nexusformat/cnxvalidate#building-nxvalidate) of the GitHub repository.
 
 ### Usage
 
-After installation, you can invoke the help call from the command line:
+After installation, you can invoke the help call for the executable (called `nxvalidate`) from the command line:
 
 === "Source"
     ```console
