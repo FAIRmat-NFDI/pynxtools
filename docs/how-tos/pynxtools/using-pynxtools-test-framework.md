@@ -78,7 +78,7 @@ Afterwards, the `ReaderTest.convert_to_nexus` method uses the NeXus annotator to
 This test can also be configured:
 
 - You can pass a keyword argument `ignore_lines` to `check_reproducibility_of_nexus`. `ignore_lines` is expected to be a list of lines for which the comparison shall be skipped. Specifically, any line that starts with any of the strings in `ignore_lines` is ignored.
-- In adddition, you can disable the comparison for a given line for a NeXus concept in the `read_nexus` output using the `ignore_sections` keyword. As an example, a typical section for a NeXus field in the output looks like this:
+- In addition, you can disable the comparison for a given line for a NeXus concept in the `read_nexus` output using the `ignore_sections` keyword. As an example, a typical section for a NeXus field in the output looks like this:
 
     ```
     DEBUG: 
@@ -104,7 +104,7 @@ This test can also be configured:
 
 ## How to write an integration test for a NOMAD example in a reader plugin
 
-It is also possible to ship NOMAD Example Uploads directly with the reader plugin. As an example, `pynxtools-mpes` comes with its own [NOMAD examplehere](https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad) using the [`ExampleUploadEntryPoint`](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html) of NOMAD.
+It is also possible to ship NOMAD Example Uploads directly with the reader plugin. As an example, `pynxtools-mpes` comes with its own [NOMAD example](https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad) using the [`ExampleUploadEntryPoint`](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html) of NOMAD.
 
 The `testing` sub-package of `pynxtools` provides two functionalities for testing the `ExampleUploadEntryPoint` defined in a `pynxtools` plugin:
 
