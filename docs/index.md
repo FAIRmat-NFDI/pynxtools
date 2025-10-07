@@ -49,7 +49,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Test functionality for `pynxtools` plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
 - [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
 - [Using Python to create NeXus files](how-tos/pynxtools/create-nexus-files-by-python.md)
-- [Validation of NeXus files](how-tos/pynxtools/validate-nexus-file.md)
+- [Validation of NeXus files](how-tos/pynxtools/validate-nexus-files.md)
 
 </div>
 
