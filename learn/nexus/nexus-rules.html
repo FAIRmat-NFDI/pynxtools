@@ -51,6 +51,10 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
+    
       <link rel="stylesheet" href="../../stylesheets/extra.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -626,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../how-tos/pynxtools/validate-nexus-file.html" class="md-nav__link">
+      <a href="../../how-tos/pynxtools/validate-nexus-files.html" class="md-nav__link">
         
   
   
@@ -933,7 +937,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus files
+    Validation of NeXus files in pynxtools
     
   </span>
   
@@ -1216,7 +1220,7 @@
 </li>
 </ul>
 <p>Note that this explicitly also means that it is not allowed to have whitespace (including " ") in NeXus names.</p>
-<p>A speciality of NeXus is the possibility to define concept names that are different to the names
+<p>A specialty of NeXus is the possibility to define concept names that are different to the names
 of the actual data instances. In NeXus base classes and application definitions, there are three options for defining how instances must be named to match to the name of a given concept.
 This matching is based on a combination of the <code>name</code> and the <code>nameType</code> attributes
 of the concept.</p>
@@ -1245,15 +1249,16 @@ concept name directly</p>
 <p>Aside from these general rules, there are a number of special rules for NeXus names that need to be considered:</p>
 <ul>
 <li>
-<p>There is a set of UPPERCASE reserved words (like <code>BLUESKY_</code>, <code>DECTRIS_</code>, <code>IDF_</code>, etc.) that are reserved for certain projects and communities. These are prefixes (typically written as uppercase + underscore) that cannot be overwritten by namefitting. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved prefixes".</p>
+<p>There is a set of prefixes (like <code>BLUESKY_</code>, <code>DECTRIS_</code>, <code>IDF_</code>, etc.) that are reserved for certain projects and communities. These prefixes (typically written as uppercase + underscore cannot be overwritten by namefitting.</p>
 </li>
 <li>
-<p>There is also a set of reserved suffixes that are used to give additional information for a group or field. For the full list, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>, section "Reserved suffixes".</p>
+<p>There is also a set of reserved suffixes that are used to give additional information for a group or field. These can only be used if the original field is present as well. As an example, the field <code>temperature_set</code> - which uses the suffix <code>_set</code>, reserved for setpoint of field values - can only be present if the field <code>temperature</code> is present as well.</p>
 </li>
 <li>
 <p>Additionally to namefitting, data annotation can use further information. For example, in case of NXdata, the axes listed among the <code>@axes</code> shall fit to any instances of <code>AXISNAME</code> and data objects listed in <code>@signal</code> or <code>@auxiliary_signals</code> shall fit to instances of <code>DATA</code>. Such rules are typically given in the base classes (e.g., see <a href="https://manual.nexusformat.org/classes/base_classes/NXdata.html#index-0">here</a> for NXdata). Any tool that makes use of the base classes should implement these special rules in its validation procedure. As an example, pynxtools has a special <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/474fe823112b8ee1e7b42ac80bb7408fdde22bd5/src/pynxtools/dataconverter/validation.py#L220">function for handling NXdata</a>.</p>
 </li>
 </ul>
+<p>For the full list of these respective rules, see <a href="https://manual.nexusformat.org/datarules.html">Rules for Storing Data Items in NeXus Files</a>.</p>
 <h2 id="concept-name-inheritance">Concept name inheritance<a class="headerlink" href="#concept-name-inheritance" title="Permanent link">&para;</a></h2>
 <p>Note that NeXus also supports inheritance of concepts. The same rules as for instance names on the data level apply here for the inherited concept names. That is, the name of a concept must match in concept name and <code>nameType</code> to inherit from another concept. As an example, if we define a field with name <code>userID</code> and <code>nameType="partial"</code> in a base class and then use this base class in an application definition, the concept <code>user</code> and <code>nameType="specified"</code> would inherit its property. Contrarily, the concept <code>my_user</code> would not inherit from <code>userID</code>.</p>
 
@@ -1343,6 +1348,8 @@ concept name directly</p>
     
     
       <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
       
         <script src="../../javascript.js"></script>
       

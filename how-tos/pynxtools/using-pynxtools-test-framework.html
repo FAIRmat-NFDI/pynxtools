@@ -51,6 +51,10 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
+    
       <link rel="stylesheet" href="../../stylesheets/extra.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -699,7 +703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="validate-nexus-file.html" class="md-nav__link">
+      <a href="validate-nexus-files.html" class="md-nav__link">
         
   
   
@@ -933,7 +937,7 @@
   
   
   <span class="md-ellipsis">
-    Validation of NeXus files
+    Validation of NeXus files in pynxtools
     
   </span>
   
@@ -1264,7 +1268,7 @@
 <ul>
 <li>You can pass a keyword argument <code>ignore_lines</code> to <code>check_reproducibility_of_nexus</code>. <code>ignore_lines</code> is expected to be a list of lines for which the comparison shall be skipped. Specifically, any line that starts with any of the strings in <code>ignore_lines</code> is ignored.</li>
 <li>
-<p>In adddition, you can disable the comparison for a given line for a NeXus concept in the <code>read_nexus</code> output using the <code>ignore_sections</code> keyword. As an example, a typical section for a NeXus field in the output looks like this:</p>
+<p>In addition, you can disable the comparison for a given line for a NeXus concept in the <code>read_nexus</code> output using the <code>ignore_sections</code> keyword. As an example, a typical section for a NeXus field in the output looks like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DEBUG: 
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>===== FIELD (//entry/start_time): &lt;HDF5 dataset &quot;start_time&quot;: shape (), type &quot;|O&quot;&gt;
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DEBUG: ===== FIELD (//entry/start_time): &lt;HDF5 dataset &quot;start_time&quot;: shape (), type &quot;|O&quot;&gt;
@@ -1287,7 +1291,7 @@
 </li>
 </ul>
 <h2 id="how-to-write-an-integration-test-for-a-nomad-example-in-a-reader-plugin">How to write an integration test for a NOMAD example in a reader plugin<a class="headerlink" href="#how-to-write-an-integration-test-for-a-nomad-example-in-a-reader-plugin" title="Permanent link">&para;</a></h2>
-<p>It is also possible to ship NOMAD Example Uploads directly with the reader plugin. As an example, <code>pynxtools-mpes</code> comes with its own <a href="https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad">NOMAD examplehere</a> using the <a href="https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html"><code>ExampleUploadEntryPoint</code></a> of NOMAD.</p>
+<p>It is also possible to ship NOMAD Example Uploads directly with the reader plugin. As an example, <code>pynxtools-mpes</code> comes with its own <a href="https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad">NOMAD example</a> using the <a href="https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html"><code>ExampleUploadEntryPoint</code></a> of NOMAD.</p>
 <p>The <code>testing</code> sub-package of <code>pynxtools</code> provides two functionalities for testing the <code>ExampleUploadEntryPoint</code> defined in a <code>pynxtools</code> plugin:</p>
 <ol>
 <li>Test that the <code>ExampleUploadEntryPoint</code> instance can be properly loaded.</li>
@@ -1440,6 +1444,8 @@
     
     
       <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
       
         <script src="../../javascript.js"></script>
       
