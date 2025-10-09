@@ -3,27 +3,27 @@ DEBUG - classpath: None
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//@HDF5_Version)
-DEBUG - value: 1.10.5 
+DEBUG - value: 1.10.5
 DEBUG - classpath: None
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//@file_name)
-DEBUG - value: /home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs 
+DEBUG - value: /home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs
 DEBUG - classpath: None
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//@file_time)
-DEBUG - value: 2020-06-04T19:19:48.464472 
+DEBUG - value: 2020-06-04T19:19:48.464472
 DEBUG - classpath: None
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//@h5py_version)
-DEBUG - value: 2.10.0 
+DEBUG - value: 2.10.0
 DEBUG - classpath: None
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//@nexusformat_version)
-DEBUG - value: 0.5.2 
+DEBUG - value: 0.5.2
 DEBUG - classpath: None
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -54,7 +54,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry@NX_class)
-DEBUG - value: NXentry 
+DEBUG - value: NXentry
 DEBUG - classpath: ['NXentry']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY
@@ -63,7 +63,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/collection_time): <HDF5 dataset "collection_time": shape (), type "<i8">
-DEBUG - value: 7200 
+DEBUG - value: 7200
 DEBUG - classpath: ['NXentry', 'NX_FLOAT']
 DEBUG - classes:
 NXentry.nxdl.xml:/collection_time
@@ -74,7 +74,7 @@ DEBUG -
 			suspended due to e.g. temperature out of range
 		
 DEBUG - ===== ATTRS (//entry/collection_time@units)
-DEBUG - value: s 
+DEBUG - value: s
 DEBUG - classpath: ['NXentry', 'NX_FLOAT']
 DEBUG - classes:
 NXentry.nxdl.xml:/collection_time
@@ -295,7 +295,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/data@NX_class)
-DEBUG - value: NXdata 
+DEBUG - value: NXdata
 DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
@@ -306,7 +306,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data@axes)
-DEBUG - value: ['angles' 'energies' 'delays'] 
+DEBUG - value: ['angles', 'energies', 'delays']
 DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
@@ -329,7 +329,7 @@ DEBUG -
 				of strings and not a single comma separated string.
 		
 DEBUG - ===== ATTRS (//entry/data@signal)
-DEBUG - value: data 
+DEBUG - value: data
 DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
@@ -355,7 +355,7 @@ DEBUG -
 			for a summary of the discussion.
 		
 DEBUG - ===== FIELD (//entry/data/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
-DEBUG - value: [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031 ...
+DEBUG - value: [-1.96735314, -1.91500657, -1.86266001, -1.81031344, -1.75796688, ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -376,14 +376,14 @@ DEBUG -
 			an array of NX_CHAR can be provided.
 		
 DEBUG - ===== ATTRS (//entry/data/angles@target)
-DEBUG - value: /entry/instrument/analyser/angles 
+DEBUG - value: /entry/instrument/analyser/angles
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/angles@units)
-DEBUG - value: 1/Å 
+DEBUG - value: 1/Å
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -395,7 +395,7 @@ DEBUG -
 				See the section :ref:`Design-Units` for more information.
 			
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
+DEBUG - value: [[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0], ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/DATA
@@ -413,20 +413,20 @@ DEBUG -
 			The maximum rank is ``32`` for compatibility with backend file formats.
 		
 DEBUG - ===== ATTRS (//entry/data/data@target)
-DEBUG - value: /entry/instrument/analyser/data 
+DEBUG - value: /entry/instrument/analyser/data
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/DATA
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/data@units)
-DEBUG - value: counts 
+DEBUG - value: counts
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/DATA
 DEBUG - NXdata.nxdl.xml:/DATA@units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/delays): <HDF5 dataset "delays": shape (195,), type "<f8">
-DEBUG - value: [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186 ...
+DEBUG - value: [-1.1, -1.08041237, -1.06082474, -1.04123711, -1.02164948, -1.00206186, ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -447,14 +447,14 @@ DEBUG -
 			an array of NX_CHAR can be provided.
 		
 DEBUG - ===== ATTRS (//entry/data/delays@target)
-DEBUG - value: /entry/instrument/analyser/delays 
+DEBUG - value: /entry/instrument/analyser/delays
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/delays@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -466,7 +466,7 @@ DEBUG -
 				See the section :ref:`Design-Units` for more information.
 			
 DEBUG - ===== FIELD (//entry/data/energies): <HDF5 dataset "energies": shape (146,), type "<f8">
-DEBUG - value: [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041 ...
+DEBUG - value: [2.5, 2.46917808, 2.43835616, 2.40753425, 2.37671233, 2.34589041, ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -487,14 +487,14 @@ DEBUG -
 			an array of NX_CHAR can be provided.
 		
 DEBUG - ===== ATTRS (//entry/data/energies@target)
-DEBUG - value: /entry/instrument/analyser/energies 
+DEBUG - value: /entry/instrument/analyser/energies
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/energies@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -506,7 +506,7 @@ DEBUG -
 				See the section :ref:`Design-Units` for more information.
 			
 DEBUG - ===== FIELD (//entry/definition): <HDF5 dataset "definition": shape (), type "|O">
-DEBUG - value: NXarpes 
+DEBUG - value: NXarpes
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/definition
@@ -534,7 +534,7 @@ DEBUG -
 			*It is advised* to use :ref:`NXsubentry`, instead, as the overlay position.
 		
 DEBUG - ===== FIELD (//entry/duration): <HDF5 dataset "duration": shape (), type "<i8">
-DEBUG - value: 7200 
+DEBUG - value: 7200
 DEBUG - classpath: ['NXentry', 'NX_INT']
 DEBUG - classes:
 NXentry.nxdl.xml:/duration
@@ -542,13 +542,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/duration):
 DEBUG - Duration of measurement
 DEBUG - ===== ATTRS (//entry/duration@units)
-DEBUG - value: s 
+DEBUG - value: s
 DEBUG - classpath: ['NXentry', 'NX_INT']
 DEBUG - classes:
 NXentry.nxdl.xml:/duration
 DEBUG - NXentry.nxdl.xml:/duration@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/end_time): <HDF5 dataset "end_time": shape (), type "|O">
-DEBUG - value: 2018-05-01T09:22:00+02:00 
+DEBUG - value: 2018-05-01T09:22:00+02:00
 DEBUG - classpath: ['NXentry', 'NX_DATE_TIME']
 DEBUG - classes:
 NXentry.nxdl.xml:/end_time
@@ -556,7 +556,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/end_time):
 DEBUG - Ending time of measurement
 DEBUG - ===== FIELD (//entry/entry_identifier): <HDF5 dataset "entry_identifier": shape (), type "|O">
-DEBUG - value: Run 22118 
+DEBUG - value: Run 22118
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXentry.nxdl.xml:/entry_identifier
@@ -565,7 +565,7 @@ DEBUG - DEPRECATED - Use the field :ref:`identifier_entry </NXentry/identifier_e
 DEBUG - documentation (NXentry.nxdl.xml:/entry_identifier):
 DEBUG - Unique identifier for the measurement, defined by the facility.
 DEBUG - ===== FIELD (//entry/experiment_identifier): <HDF5 dataset "experiment_identifier": shape (), type "|O">
-DEBUG - value: F-20170538 
+DEBUG - value: F-20170538
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXentry.nxdl.xml:/experiment_identifier
@@ -610,7 +610,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument@NX_class)
-DEBUG - value: NXinstrument 
+DEBUG - value: NXinstrument
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT
@@ -650,7 +650,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/analyser@NX_class)
-DEBUG - value: NXdetector 
+DEBUG - value: NXdetector
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser
@@ -661,7 +661,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/acquisition_mode): <HDF5 dataset "acquisition_mode": shape (), type "|O">
-DEBUG - value: fixed 
+DEBUG - value: fixed
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/acquisition_mode
@@ -683,12 +683,12 @@ DEBUG -
 DEBUG - documentation (NXdetector.nxdl.xml:/acquisition_mode):
 DEBUG - The acquisition mode of the detector.
 DEBUG - ===== FIELD (//entry/instrument/analyser/amplifier_type): <HDF5 dataset "amplifier_type": shape (), type "|O">
-DEBUG - value: MCP 
+DEBUG - value: MCP
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
-DEBUG - value: [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031 ...
+DEBUG - value: [-1.96735314, -1.91500657, -1.86266001, -1.81031344, -1.75796688, ...
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
@@ -700,25 +700,25 @@ DEBUG -
             using the normal NXdata methods.
           
 DEBUG - ===== ATTRS (//entry/instrument/analyser/angles@target)
-DEBUG - value: /entry/instrument/analyser/angles 
+DEBUG - value: /entry/instrument/analyser/angles
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/angles@units)
-DEBUG - value: 1/Å 
+DEBUG - value: 1/Å
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles@units [NX_ANGLE]
 DEBUG - ===== FIELD (//entry/instrument/analyser/contrast_aperture): <HDF5 dataset "contrast_aperture": shape (), type "|O">
-DEBUG - value: Out 
+DEBUG - value: Out
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
+DEBUG - value: [[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0], ...
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
@@ -752,7 +752,7 @@ DEBUG -
       shown here are merely illustrative of coordination between related datasets.
     
 DEBUG - ===== ATTRS (//entry/instrument/analyser/data@target)
-DEBUG - value: /entry/instrument/analyser/data 
+DEBUG - value: /entry/instrument/analyser/data
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
@@ -760,7 +760,7 @@ NXdetector.nxdl.xml:/data
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/data@units)
-DEBUG - value: counts 
+DEBUG - value: counts
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
@@ -768,32 +768,32 @@ NXdetector.nxdl.xml:/data
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data@units - REQUIRED, but undefined unit category
 DEBUG - NXdetector.nxdl.xml:/data@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/analyser/delays): <HDF5 dataset "delays": shape (195,), type "<f8">
-DEBUG - value: [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186 ...
+DEBUG - value: [-1.1, -1.08041237, -1.06082474, -1.04123711, -1.02164948, -1.00206186, ...
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/delays@target)
-DEBUG - value: /entry/instrument/analyser/delays 
+DEBUG - value: /entry/instrument/analyser/delays
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/delays@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/detector_type): <HDF5 dataset "detector_type": shape (), type "|O">
-DEBUG - value: DLD 
+DEBUG - value: DLD
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/dispersion_scheme): <HDF5 dataset "dispersion_scheme": shape (), type "|O">
-DEBUG - value: Time of flight 
+DEBUG - value: Time of flight
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/energies): <HDF5 dataset "energies": shape (146,), type "<f8">
-DEBUG - value: [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041 ...
+DEBUG - value: [2.5, 2.46917808, 2.43835616, 2.40753425, 2.37671233, 2.34589041, ...
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
@@ -805,20 +805,20 @@ DEBUG -
             using the normal NXdata methods.
           
 DEBUG - ===== ATTRS (//entry/instrument/analyser/energies@target)
-DEBUG - value: /entry/instrument/analyser/energies 
+DEBUG - value: /entry/instrument/analyser/energies
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/energies@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/analyser/entrance_slit_setting): <HDF5 dataset "entrance_slit_setting": shape (), type "<i8">
-DEBUG - value: 0 
+DEBUG - value: 0
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_setting
@@ -826,7 +826,7 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_setting):
 DEBUG - dial setting of the entrance slit
 DEBUG - ===== FIELD (//entry/instrument/analyser/entrance_slit_shape): <HDF5 dataset "entrance_slit_shape": shape (), type "|O">
-DEBUG - value: straight 
+DEBUG - value: straight
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_shape
@@ -837,7 +837,7 @@ DEBUG - -> straight
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_shape):
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/entrance_slit_size): <HDF5 dataset "entrance_slit_size": shape (), type "<i8">
-DEBUG - value: 750 
+DEBUG - value: 750
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_size
@@ -845,43 +845,43 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_size):
 DEBUG - size of the entrance slit
 DEBUG - ===== ATTRS (//entry/instrument/analyser/entrance_slit_size@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_size
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_size@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/analyser/extractor_voltage): <HDF5 dataset "extractor_voltage": shape (), type "<i8">
-DEBUG - value: 6030 
+DEBUG - value: 6030
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/extractor_voltage@units)
-DEBUG - value: V 
+DEBUG - value: V
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/field_aperture_x): <HDF5 dataset "field_aperture_x": shape (), type "<f8">
-DEBUG - value: -0.2 
+DEBUG - value: -0.2
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/field_aperture_x@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/field_aperture_y): <HDF5 dataset "field_aperture_y": shape (), type "<f8">
-DEBUG - value: 5.35 
+DEBUG - value: 5.35
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/field_aperture_y@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/lens_mode): <HDF5 dataset "lens_mode": shape (), type "|O">
-DEBUG - value: 20180430_KPEEM_M_-2.5_FoV6.2_rezAA_20ToF_focused.sav 
+DEBUG - value: 20180430_KPEEM_M_-2.5_FoV6.2_rezAA_20ToF_focused.sav
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/lens_mode
@@ -889,12 +889,12 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/lens_mode):
 DEBUG - setting for the electron analyser lens
 DEBUG - ===== FIELD (//entry/instrument/analyser/magnification): <HDF5 dataset "magnification": shape (), type "<f8">
-DEBUG - value: -1.5 
+DEBUG - value: -1.5
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/pass_energy): <HDF5 dataset "pass_energy": shape (), type "<i8">
-DEBUG - value: 20 
+DEBUG - value: 20
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy
@@ -902,18 +902,18 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy):
 DEBUG - energy of the electrons on the mean path of the analyser
 DEBUG - ===== ATTRS (//entry/instrument/analyser/pass_energy@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/analyser/projection): <HDF5 dataset "projection": shape (), type "|O">
-DEBUG - value: reciprocal 
+DEBUG - value: reciprocal
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/region_origin): <HDF5 dataset "region_origin": shape (2,), type "<i8">
-DEBUG - value: [0 0] 
+DEBUG - value: [0.0, 0.0]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_origin
@@ -921,7 +921,7 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_origin):
 DEBUG - origin of rectangular region selected for readout
 DEBUG - ===== FIELD (//entry/instrument/analyser/region_size): <HDF5 dataset "region_size": shape (2,), type "<i8">
-DEBUG - value: [ 80 146] 
+DEBUG - value: [80, 146]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_size
@@ -929,12 +929,12 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_size):
 DEBUG - size of rectangular region selected for readout
 DEBUG - ===== FIELD (//entry/instrument/analyser/sensor_count): <HDF5 dataset "sensor_count": shape (), type "<i8">
-DEBUG - value: 4 
+DEBUG - value: 4
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/sensor_size): <HDF5 dataset "sensor_size": shape (2,), type "<i8">
-DEBUG - value: [ 80 146] 
+DEBUG - value: [80, 146]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/sensor_size
@@ -942,7 +942,7 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/sensor_size):
 DEBUG - number of raw active elements in each dimension
 DEBUG - ===== FIELD (//entry/instrument/analyser/time_per_channel): <HDF5 dataset "time_per_channel": shape (), type "<i8">
-DEBUG - value: 7200 
+DEBUG - value: 7200
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel
@@ -950,18 +950,18 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel):
 DEBUG - todo: define more clearly
 DEBUG - ===== ATTRS (//entry/instrument/analyser/time_per_channel@units)
-DEBUG - value: s 
+DEBUG - value: s
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/analyser/working_distance): <HDF5 dataset "working_distance": shape (), type "<i8">
-DEBUG - value: 4 
+DEBUG - value: 4
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/analyser/working_distance@units)
-DEBUG - value: mm 
+DEBUG - value: mm
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1002,7 +1002,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0@NX_class)
-DEBUG - value: NXbeam 
+DEBUG - value: NXbeam
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/BEAM
@@ -1011,7 +1011,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/distance): <HDF5 dataset "distance": shape (), type "<i8">
-DEBUG - value: 0 
+DEBUG - value: 0
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/distance
@@ -1019,38 +1019,38 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXbeam.nxdl.xml:/distance):
 DEBUG - Distance from sample. Note, it is recommended to use NXtransformations instead.
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/distance@units)
-DEBUG - value: cm 
+DEBUG - value: cm
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/distance
 DEBUG - NXbeam.nxdl.xml:/distance@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/photon_energy): <HDF5 dataset "photon_energy": shape (), type "<f8">
-DEBUG - value: 36.49699020385742 
+DEBUG - value: 36.4969902
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/photon_energy@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/polarization_angle): <HDF5 dataset "polarization_angle": shape (), type "<f8">
-DEBUG - value: 0.0 
+DEBUG - value: 0.0
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/polarization_angle@units)
-DEBUG - value: deg 
+DEBUG - value: deg
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/polarization_ellipticity): <HDF5 dataset "polarization_ellipticity": shape (), type "<f8">
-DEBUG - value: 0.0 
+DEBUG - value: 0.0
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/pulse_duration): <HDF5 dataset "pulse_duration": shape (), type "<i8">
-DEBUG - value: 70 
+DEBUG - value: 70
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_duration
@@ -1060,28 +1060,28 @@ DEBUG -
              FWHM duration of the pulses at the given location.
         
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/pulse_duration@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_duration
 DEBUG - NXbeam.nxdl.xml:/pulse_duration@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/size_x): <HDF5 dataset "size_x": shape (), type "<i8">
-DEBUG - value: 500 
+DEBUG - value: 500
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/size_x@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/size_y): <HDF5 dataset "size_y": shape (), type "<i8">
-DEBUG - value: 200 
+DEBUG - value: 200
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/size_y@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1122,7 +1122,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0@NX_class)
-DEBUG - value: NXbeam 
+DEBUG - value: NXbeam
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/BEAM
@@ -1131,7 +1131,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/average_power): <HDF5 dataset "average_power": shape (), type "<f8">
-DEBUG - value: 6.21289 
+DEBUG - value: 6.21289
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/average_power
@@ -1141,23 +1141,23 @@ DEBUG -
              Average power at the at the given location.
         
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/average_power@units)
-DEBUG - value: uW 
+DEBUG - value: uW
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/average_power
 DEBUG - NXbeam.nxdl.xml:/average_power@units [NX_POWER]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/center_wavelength): <HDF5 dataset "center_wavelength": shape (), type "<i8">
-DEBUG - value: 800 
+DEBUG - value: 800
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/center_wavelength@units)
-DEBUG - value: nm 
+DEBUG - value: nm
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/distance): <HDF5 dataset "distance": shape (), type "<i8">
-DEBUG - value: 0 
+DEBUG - value: 0
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/distance
@@ -1165,13 +1165,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXbeam.nxdl.xml:/distance):
 DEBUG - Distance from sample. Note, it is recommended to use NXtransformations instead.
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/distance@units)
-DEBUG - value: cm 
+DEBUG - value: cm
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/distance
 DEBUG - NXbeam.nxdl.xml:/distance@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/fluence): <HDF5 dataset "fluence": shape (), type "<i8">
-DEBUG - value: 5 
+DEBUG - value: 5
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/fluence
@@ -1181,38 +1181,38 @@ DEBUG -
              Incident energy fluence at the given location.
         
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/fluence@units)
-DEBUG - value: mJ/cm^2 
+DEBUG - value: mJ/cm^2
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/fluence
 DEBUG - NXbeam.nxdl.xml:/fluence@units [mJ/cm^2]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/photon_energy): <HDF5 dataset "photon_energy": shape (), type "<f8">
-DEBUG - value: 1.55 
+DEBUG - value: 1.55
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/photon_energy@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/polarization_angle): <HDF5 dataset "polarization_angle": shape (), type "<f8">
-DEBUG - value: nan 
+DEBUG - value: nan
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/polarization_angle@units)
-DEBUG - value: deg 
+DEBUG - value: deg
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/polarization_ellipticity): <HDF5 dataset "polarization_ellipticity": shape (), type "<f8">
-DEBUG - value: -1.0 
+DEBUG - value: -1
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/pulse_duration): <HDF5 dataset "pulse_duration": shape (), type "<i8">
-DEBUG - value: 50 
+DEBUG - value: 50
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_duration
@@ -1222,13 +1222,13 @@ DEBUG -
              FWHM duration of the pulses at the given location.
         
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/pulse_duration@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_duration
 DEBUG - NXbeam.nxdl.xml:/pulse_duration@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/pulse_energy): <HDF5 dataset "pulse_energy": shape (), type "<f8">
-DEBUG - value: 1.24258 
+DEBUG - value: 1.24258
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_energy
@@ -1238,38 +1238,38 @@ DEBUG -
              Energy of a single pulse at the given location.
         
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/pulse_energy@units)
-DEBUG - value: nJ 
+DEBUG - value: nJ
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_energy
 DEBUG - NXbeam.nxdl.xml:/pulse_energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/size_x): <HDF5 dataset "size_x": shape (), type "<i8">
-DEBUG - value: 500 
+DEBUG - value: 500
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/size_x@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/size_y): <HDF5 dataset "size_y": shape (), type "<i8">
-DEBUG - value: 200 
+DEBUG - value: 200
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/size_y@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<i8">
-DEBUG - value: 100 
+DEBUG - value: 100
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/energy_resolution@units)
-DEBUG - value: meV 
+DEBUG - value: meV
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1301,7 +1301,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/manipulator@NX_class)
-DEBUG - value: NXpositioner 
+DEBUG - value: NXpositioner
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/POSITIONER
@@ -1311,97 +1311,97 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_x1): <HDF5 dataset "pos_x1": shape (), type "<f8">
-DEBUG - value: 11.3 
+DEBUG - value: 11.3
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/pos_x1@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_x2): <HDF5 dataset "pos_x2": shape (), type "<f8">
-DEBUG - value: 11.3 
+DEBUG - value: 11.3
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/pos_x2@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_y): <HDF5 dataset "pos_y": shape (), type "<f8">
-DEBUG - value: 7.2 
+DEBUG - value: 7.2
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/pos_y@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_z1): <HDF5 dataset "pos_z1": shape (), type "<f8">
-DEBUG - value: 20.77 
+DEBUG - value: 20.77
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/pos_z1@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_z2): <HDF5 dataset "pos_z2": shape (), type "<f8">
-DEBUG - value: 21.2 
+DEBUG - value: 21.2
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/pos_z2@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_z3): <HDF5 dataset "pos_z3": shape (), type "<f8">
-DEBUG - value: 20.22 
+DEBUG - value: 20.22
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/pos_z3@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/sample_bias): <HDF5 dataset "sample_bias": shape (), type "<i8">
-DEBUG - value: 29 
+DEBUG - value: 29
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_bias@target)
-DEBUG - value: /entry/instrument/manipulator/sample_bias 
+DEBUG - value: /entry/instrument/manipulator/sample_bias
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_bias@units)
-DEBUG - value: V 
+DEBUG - value: V
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/sample_temperature): <HDF5 dataset "sample_temperature": shape (), type "<i8">
-DEBUG - value: 300 
+DEBUG - value: 300
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_temperature@target)
-DEBUG - value: /entry/instrument/manipulator/sample_temperature 
+DEBUG - value: /entry/instrument/manipulator/sample_temperature
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_temperature@units)
-DEBUG - value: K 
+DEBUG - value: K
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/type): <HDF5 dataset "type": shape (), type "|O">
-DEBUG - value: Hexapod 
+DEBUG - value: Hexapod
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1447,7 +1447,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/monochromator@NX_class)
-DEBUG - value: NXmonochromator 
+DEBUG - value: NXmonochromator
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator
@@ -1458,7 +1458,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/monochromator/energy): <HDF5 dataset "energy": shape (), type "<f8">
-DEBUG - value: 36.49699020385742 
+DEBUG - value: 36.4969902
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator/energy
@@ -1466,13 +1466,13 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator/energy):
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/monochromator/energy@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator/energy
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator/energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/monochromator/energy_error): <HDF5 dataset "energy_error": shape (), type "<f8">
-DEBUG - value: 0.21867309510707855 
+DEBUG - value: 0.2186731
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator', 'NX_FLOAT']
 DEBUG - classes:
 NXmonochromator.nxdl.xml:/energy_error
@@ -1481,7 +1481,7 @@ DEBUG - DEPRECATED - see https://github.com/nexusformat/definitions/issues/820
 DEBUG - documentation (NXmonochromator.nxdl.xml:/energy_error):
 DEBUG - energy standard deviation
 DEBUG - ===== ATTRS (//entry/instrument/monochromator/energy_error@units)
-DEBUG - value: eV 
+DEBUG - value: eV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator', 'NX_FLOAT']
 DEBUG - classes:
 NXmonochromator.nxdl.xml:/energy_error
@@ -1491,22 +1491,22 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/monochromator/slit@NX_class)
-DEBUG - value: NXslit 
+DEBUG - value: NXslit
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/monochromator/slit/y_gap): <HDF5 dataset "y_gap": shape (), type "<f8">
-DEBUG - value: 2000.04833984375 
+DEBUG - value: 2000.04833984
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/monochromator/slit/y_gap@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: HEXTOF @ PG-2, Flash 
+DEBUG - value: HEXTOF @ PG-2, Flash
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_CHAR']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/name
@@ -1547,7 +1547,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/source@NX_class)
-DEBUG - value: NXsource 
+DEBUG - value: NXsource
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE
@@ -1558,7 +1558,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/bunch_distance): <HDF5 dataset "bunch_distance": shape (), type "<i8">
-DEBUG - value: 1 
+DEBUG - value: 1
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_distance
@@ -1566,13 +1566,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_distance):
 DEBUG - For storage rings, time between bunches
 DEBUG - ===== ATTRS (//entry/instrument/source/bunch_distance@units)
-DEBUG - value: us 
+DEBUG - value: us
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_distance
 DEBUG - NXsource.nxdl.xml:/bunch_distance@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source/bunch_length): <HDF5 dataset "bunch_length": shape (), type "<i8">
-DEBUG - value: 100 
+DEBUG - value: 100
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_length
@@ -1580,43 +1580,43 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_length):
 DEBUG - For storage rings, temporal length of the bunch
 DEBUG - ===== ATTRS (//entry/instrument/source/bunch_length@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_length
 DEBUG - NXsource.nxdl.xml:/bunch_length@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source/burst_distance): <HDF5 dataset "burst_distance": shape (), type "<f8">
-DEBUG - value: 199.5 
+DEBUG - value: 199.5
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/source/burst_distance@units)
-DEBUG - value: ms 
+DEBUG - value: ms
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/burst_length): <HDF5 dataset "burst_length": shape (), type "<i8">
-DEBUG - value: 500 
+DEBUG - value: 500
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/source/burst_length@units)
-DEBUG - value: us 
+DEBUG - value: us
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/burst_number_end): <HDF5 dataset "burst_number_end": shape (), type "<i8">
-DEBUG - value: 102680129 
+DEBUG - value: 102680129
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/burst_number_start): <HDF5 dataset "burst_number_start": shape (), type "<i8">
-DEBUG - value: 102644001 
+DEBUG - value: 102644001
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/current): <HDF5 dataset "current": shape (), type "<i8">
-DEBUG - value: 1 
+DEBUG - value: 1
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/current
@@ -1624,13 +1624,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/current):
 DEBUG - Accelerator, X-ray tube, or storage ring current
 DEBUG - ===== ATTRS (//entry/instrument/source/current@units)
-DEBUG - value: uA 
+DEBUG - value: uA
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/current
 DEBUG - NXsource.nxdl.xml:/current@units [NX_CURRENT]
 DEBUG - ===== FIELD (//entry/instrument/source/energy): <HDF5 dataset "energy": shape (), type "<i8">
-DEBUG - value: 427 
+DEBUG - value: 427
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/energy
@@ -1642,13 +1642,13 @@ DEBUG -
 			the particle beam energy.
 		
 DEBUG - ===== ATTRS (//entry/instrument/source/energy@units)
-DEBUG - value: MeV 
+DEBUG - value: MeV
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/energy
 DEBUG - NXsource.nxdl.xml:/energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/source/frequency): <HDF5 dataset "frequency": shape (), type "<i8">
-DEBUG - value: 10 
+DEBUG - value: 10
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/frequency
@@ -1656,13 +1656,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/frequency):
 DEBUG - Frequency of pulsed source
 DEBUG - ===== ATTRS (//entry/instrument/source/frequency@units)
-DEBUG - value: Hz 
+DEBUG - value: Hz
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/frequency
 DEBUG - NXsource.nxdl.xml:/frequency@units [NX_FREQUENCY]
 DEBUG - ===== FIELD (//entry/instrument/source/mode): <HDF5 dataset "mode": shape (), type "|O">
-DEBUG - value: Burst 
+DEBUG - value: Burst
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXsource.nxdl.xml:/mode
@@ -1673,7 +1673,7 @@ DEBUG - -> Multi Bunch
 DEBUG - documentation (NXsource.nxdl.xml:/mode):
 DEBUG - source operating mode
 DEBUG - ===== FIELD (//entry/instrument/source/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: FLASH 
+DEBUG - value: FLASH
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/name
@@ -1689,7 +1689,7 @@ DEBUG -
             Name of the component.
         
 DEBUG - ===== FIELD (//entry/instrument/source/number_of_bunches): <HDF5 dataset "number_of_bunches": shape (), type "<i8">
-DEBUG - value: 500 
+DEBUG - value: 500
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_INT']
 DEBUG - classes:
 NXsource.nxdl.xml:/number_of_bunches
@@ -1697,12 +1697,12 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/number_of_bunches):
 DEBUG - For storage rings, the number of bunches in use.
 DEBUG - ===== FIELD (//entry/instrument/source/number_of_bursts): <HDF5 dataset "number_of_bursts": shape (), type "<i8">
-DEBUG - value: 1 
+DEBUG - value: 1
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/probe): <HDF5 dataset "probe": shape (), type "|O">
-DEBUG - value: x-ray 
+DEBUG - value: x-ray
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe
@@ -1725,7 +1725,7 @@ DEBUG -
 DEBUG - documentation (NXsource.nxdl.xml:/probe):
 DEBUG - type of radiation probe (pick one from the enumerated list and spell exactly)
 DEBUG - ===== FIELD (//entry/instrument/source/top_up): <HDF5 dataset "top_up": shape (), type "|b1">
-DEBUG - value: True 
+DEBUG - value: True
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_BOOLEAN']
 DEBUG - classes:
 NXsource.nxdl.xml:/top_up
@@ -1733,7 +1733,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/top_up):
 DEBUG - Is the synchrotron operating in top_up mode?
 DEBUG - ===== FIELD (//entry/instrument/source/type): <HDF5 dataset "type": shape (), type "|O">
-DEBUG - value: Free Electron Laser 
+DEBUG - value: Free Electron Laser
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type
@@ -1800,7 +1800,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/instrument/source_pump@NX_class)
-DEBUG - value: NXsource 
+DEBUG - value: NXsource
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE
@@ -1811,7 +1811,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/bunch_distance): <HDF5 dataset "bunch_distance": shape (), type "<i8">
-DEBUG - value: 1 
+DEBUG - value: 1
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_distance
@@ -1819,13 +1819,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_distance):
 DEBUG - For storage rings, time between bunches
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/bunch_distance@units)
-DEBUG - value: us 
+DEBUG - value: us
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_distance
 DEBUG - NXsource.nxdl.xml:/bunch_distance@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/bunch_length): <HDF5 dataset "bunch_length": shape (), type "<i8">
-DEBUG - value: 50 
+DEBUG - value: 50
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_length
@@ -1833,33 +1833,33 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_length):
 DEBUG - For storage rings, temporal length of the bunch
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/bunch_length@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/bunch_length
 DEBUG - NXsource.nxdl.xml:/bunch_length@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/burst_distance): <HDF5 dataset "burst_distance": shape (), type "<f8">
-DEBUG - value: 199.6 
+DEBUG - value: 199.6
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/burst_distance@units)
-DEBUG - value: ms 
+DEBUG - value: ms
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/burst_length): <HDF5 dataset "burst_length": shape (), type "<i8">
-DEBUG - value: 400 
+DEBUG - value: 400
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/burst_length@units)
-DEBUG - value: us 
+DEBUG - value: us
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/frequency): <HDF5 dataset "frequency": shape (), type "<i8">
-DEBUG - value: 10 
+DEBUG - value: 10
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/frequency
@@ -1867,13 +1867,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/frequency):
 DEBUG - Frequency of pulsed source
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/frequency@units)
-DEBUG - value: Hz 
+DEBUG - value: Hz
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
 NXsource.nxdl.xml:/frequency
 DEBUG - NXsource.nxdl.xml:/frequency@units [NX_FREQUENCY]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/mode): <HDF5 dataset "mode": shape (), type "|O">
-DEBUG - value: Burst 
+DEBUG - value: Burst
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXsource.nxdl.xml:/mode
@@ -1884,7 +1884,7 @@ DEBUG - -> Multi Bunch
 DEBUG - documentation (NXsource.nxdl.xml:/mode):
 DEBUG - source operating mode
 DEBUG - ===== FIELD (//entry/instrument/source_pump/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: User Laser @ FLASH 
+DEBUG - value: User Laser @ FLASH
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/name
@@ -1900,7 +1900,7 @@ DEBUG -
             Name of the component.
         
 DEBUG - ===== FIELD (//entry/instrument/source_pump/number_of_bunches): <HDF5 dataset "number_of_bunches": shape (), type "<i8">
-DEBUG - value: 400 
+DEBUG - value: 400
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_INT']
 DEBUG - classes:
 NXsource.nxdl.xml:/number_of_bunches
@@ -1908,12 +1908,12 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/number_of_bunches):
 DEBUG - For storage rings, the number of bunches in use.
 DEBUG - ===== FIELD (//entry/instrument/source_pump/number_of_bursts): <HDF5 dataset "number_of_bursts": shape (), type "<i8">
-DEBUG - value: 1 
+DEBUG - value: 1
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/probe): <HDF5 dataset "probe": shape (), type "|O">
-DEBUG - value: NIR 
+DEBUG - value: NIR
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe
@@ -1936,17 +1936,17 @@ DEBUG -
 DEBUG - documentation (NXsource.nxdl.xml:/probe):
 DEBUG - type of radiation probe (pick one from the enumerated list and spell exactly)
 DEBUG - ===== FIELD (//entry/instrument/source_pump/rms_jitter): <HDF5 dataset "rms_jitter": shape (), type "<f8">
-DEBUG - value: 204.68816194453154 
+DEBUG - value: 204.68816194
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/rms_jitter@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/type): <HDF5 dataset "type": shape (), type "|O">
-DEBUG - value: OPCPA 
+DEBUG - value: OPCPA
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type
@@ -1980,27 +1980,27 @@ DEBUG -
 DEBUG - documentation (NXsource.nxdl.xml:/type):
 DEBUG - type of radiation source (pick one from the enumerated list and spell exactly)
 DEBUG - ===== FIELD (//entry/instrument/spatial_resolution): <HDF5 dataset "spatial_resolution": shape (), type "<i8">
-DEBUG - value: 500 
+DEBUG - value: 500
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/spatial_resolution@units)
-DEBUG - value: um 
+DEBUG - value: um
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/temporal_resolution): <HDF5 dataset "temporal_resolution": shape (), type "<i8">
-DEBUG - value: 100 
+DEBUG - value: 100
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/instrument/temporal_resolution@units)
-DEBUG - value: fs 
+DEBUG - value: fs
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/run_cycle): <HDF5 dataset "run_cycle": shape (), type "|O">
-DEBUG - value: 2018 User Run Block 2 
+DEBUG - value: 2018 User Run Block 2
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXentry.nxdl.xml:/run_cycle
@@ -2042,7 +2042,7 @@ DEBUG -
         respectively) that exists within the same group.
 	
 DEBUG - ===== ATTRS (//entry/sample@NX_class)
-DEBUG - value: NXsample 
+DEBUG - value: NXsample
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE
@@ -2053,42 +2053,42 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/bias): <HDF5 dataset "bias": shape (), type "<i8">
-DEBUG - value: 29 
+DEBUG - value: 29
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/sample/bias@target)
-DEBUG - value: /entry/instrument/manipulator/sample_bias 
+DEBUG - value: /entry/instrument/manipulator/sample_bias
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/sample/bias@units)
-DEBUG - value: V 
+DEBUG - value: V
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/chem_id_cas): <HDF5 dataset "chem_id_cas": shape (), type "|O">
-DEBUG - value: 12067-46-8 
+DEBUG - value: 12067-46-8
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/chemical_name): <HDF5 dataset "chemical_name": shape (), type "|O">
-DEBUG - value: Tungsten diselenide 
+DEBUG - value: Tungsten diselenide
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/growth_method): <HDF5 dataset "growth_method": shape (), type "|O">
-DEBUG - value: Chemical Vapor Deposition 
+DEBUG - value: Chemical Vapor Deposition
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/layer): <HDF5 dataset "layer": shape (), type "|O">
-DEBUG - value: bulk 
+DEBUG - value: bulk
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: WSe2 
+DEBUG - value: WSe2
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE/name
@@ -2104,12 +2104,12 @@ DEBUG -
             Name of the component.
         
 DEBUG - ===== FIELD (//entry/sample/preparation_method): <HDF5 dataset "preparation_method": shape (), type "|O">
-DEBUG - value: in-vacuum cleave 
+DEBUG - value: in-vacuum cleave
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/pressure): <HDF5 dataset "pressure": shape (), type "<f8">
-DEBUG - value: 3.27e-10 
+DEBUG - value: 0
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXsample.nxdl.xml:/pressure
@@ -2117,28 +2117,28 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/pressure):
 DEBUG - Applied pressure
 DEBUG - ===== ATTRS (//entry/sample/pressure@units)
-DEBUG - value: mbar 
+DEBUG - value: mbar
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXsample.nxdl.xml:/pressure
 DEBUG - NXsample.nxdl.xml:/pressure@units [NX_PRESSURE]
 DEBUG - ===== FIELD (//entry/sample/purity): <HDF5 dataset "purity": shape (), type "<f8">
-DEBUG - value: 0.999 
+DEBUG - value: 0.999
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/state): <HDF5 dataset "state": shape (), type "|O">
-DEBUG - value: monocrystalline solid 
+DEBUG - value: monocrystalline solid
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/surface_orientation): <HDF5 dataset "surface_orientation": shape (), type "|O">
-DEBUG - value: 0001 
+DEBUG - value: 0001
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/temperature): <HDF5 dataset "temperature": shape (), type "<i8">
-DEBUG - value: 300 
+DEBUG - value: 300
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature
@@ -2146,20 +2146,20 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature):
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/sample/temperature@target)
-DEBUG - value: /entry/instrument/manipulator/sample_temperature 
+DEBUG - value: /entry/instrument/manipulator/sample_temperature
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/sample/temperature@units)
-DEBUG - value: K 
+DEBUG - value: K
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature
 DEBUG - NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature@units [NX_TEMPERATURE]
 DEBUG - ===== FIELD (//entry/sample/thickness): <HDF5 dataset "thickness": shape (), type "<f8">
-DEBUG - value: 0.5 
+DEBUG - value: 0.5
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXsample.nxdl.xml:/thickness
@@ -2167,18 +2167,18 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/thickness):
 DEBUG - sample thickness
 DEBUG - ===== ATTRS (//entry/sample/thickness@units)
-DEBUG - value: mm 
+DEBUG - value: mm
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXsample.nxdl.xml:/thickness
 DEBUG - NXsample.nxdl.xml:/thickness@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/sample/vendor): <HDF5 dataset "vendor": shape (), type "|O">
-DEBUG - value: HQ Graphene 
+DEBUG - value: HQ Graphene
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/start_time): <HDF5 dataset "start_time": shape (), type "|O">
-DEBUG - value: 2018-05-01T07:22:00+02:00 
+DEBUG - value: 2018-05-01T07:22:00+02:00
 DEBUG - classpath: ['NXentry', 'NX_DATE_TIME']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/start_time
@@ -2189,7 +2189,7 @@ DEBUG -
 DEBUG - documentation (NXentry.nxdl.xml:/start_time):
 DEBUG - Starting time of measurement
 DEBUG - ===== FIELD (//entry/title): <HDF5 dataset "title": shape (), type "|O">
-DEBUG - value: Excited-state dynamics of WSe2 in the Valence Band and Core-Levels 
+DEBUG - value: Excited-state dynamics of WSe2 in the Valence Band and Core-Levels
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/title
@@ -2208,20 +2208,20 @@ DEBUG -
 DEBUG - NXdata group has been identified: /entry/data
 DEBUG - ===== GROUP (//entry/data [NXarpes::/NXentry/NXdata]): <HDF5 group "/entry/data" (4 members)>
 DEBUG - ===== ATTRS (//entry/data@NX_class)
-DEBUG - value: NXdata 
+DEBUG - value: NXdata
 DEBUG - ===== ATTRS (//entry/data@axes)
-DEBUG - value: ['angles' 'energies' 'delays'] 
+DEBUG - value: ['angles', 'energies', 'delays']
 DEBUG - ===== ATTRS (//entry/data@signal)
-DEBUG - value: data 
+DEBUG - value: data
 DEBUG - 
 DEBUG - Signal has been identified: /entry/data/data
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
+DEBUG - value: [[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0], ...
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - ===== ATTRS (//entry/data/data@target)
-DEBUG - value: /entry/instrument/analyser/data 
+DEBUG - value: /entry/instrument/analyser/data
 DEBUG - ===== ATTRS (//entry/data/data@units)
-DEBUG - value: counts 
+DEBUG - value: counts
 DEBUG - 
 DEBUG - For Axis #0, 1 axes have been identified: [<HDF5 dataset "angles": shape (80,), type "<f8">]
 DEBUG - 
