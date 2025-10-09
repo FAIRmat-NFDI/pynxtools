@@ -125,9 +125,9 @@ class ReaderTest:
             example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
 
         if not self.ref_log_path:
-            self.ref_log_path = [
-                file for file in example_files if file.endswith(".log")
-            ][0]
+            self.ref_log_path = next(
+                (file for file in example_files if file.endswith(".log")), None
+            )
         assert self.ref_log_path, "Reference nexus .log file not found"
 
         input_files = [
