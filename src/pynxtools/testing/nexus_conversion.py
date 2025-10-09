@@ -179,10 +179,17 @@ class ReaderTest:
 
         assert test_output == []
 
-        # Validate created file using the validate_nexus functionality
+    def validate_nexus_file(
+        self,
+        caplog_level: Literal["ERROR", "WARNING"] = "ERROR",
+        ignore_undocumented: bool = False,
+    ):
+        """Validate the created NeXus using the validate_nexus functionality."""
         with self.caplog.at_level(caplog_level):
             validate(self.created_nexus, ignore_undocumented=ignore_undocumented)
 
+    def parse_nomad(self):
+        """Test if the created NeXus file can be parsed by NOMAD."""
         if NOMAD_AVAILABLE:
             kwargs = dict(
                 strict=True,
