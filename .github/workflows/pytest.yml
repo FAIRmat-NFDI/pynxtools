@@ -30,7 +30,6 @@ jobs:
         run: |
           uv pip install coverage coveralls
       - name: Install nomad
-        if: "${{ matrix.python-version != '3.13' }}"
         run: |
           uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install pynx
