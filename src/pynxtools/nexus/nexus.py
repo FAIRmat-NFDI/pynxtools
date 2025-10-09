@@ -469,7 +469,7 @@ def safe_str(value, precision: int = 8) -> str:
         return np.array2string(
             reshaped,
             separator=", ",
-            formatter={"all": lambda x: x},
+            formatter={"all": lambda x: str(x)},
         )
 
     elif isinstance(value, list | tuple):
