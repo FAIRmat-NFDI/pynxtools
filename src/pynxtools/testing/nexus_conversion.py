@@ -110,7 +110,7 @@ class ReaderTest:
         )
         assert callable(self.reader.read), f"Reader{self.reader} must have read method"
 
-        if isinstance(self.files_or_dir, (list, tuple)):
+        if isinstance(self.files_or_dir, list | tuple):
             example_files = self.files_or_dir
         else:
             example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
@@ -250,12 +250,10 @@ class ReaderTest:
 
                 return []
 
-            def extra_lines(
-                lines1: list[str], lines2: list[str]
-            ) -> list[Optional[str]]:
+            def extra_lines(lines1: list[str], lines2: list[str]) -> list[str | None]:
                 """Return lines in lines1 but not in lines2, with line numbers, and ignoring
                 specified lines."""
-                diffs = []
+                diffs: list[str | None] = []
                 section_ignore_lines = []
                 for ind, line in enumerate(lines1):
                     if line.startswith(SECTION_SEPARATOR):

@@ -317,7 +317,7 @@ XML_PARENT_MAP: dict[ET.Element, ET.Element]
 PACKAGE_NAME = "pynxtools.nomad.schema"
 
 
-def get_nx_type(nx_type: str) -> Optional[Datatype]:
+def get_nx_type(nx_type: str) -> Datatype | None:
     """
     Get the nexus type by name
     """
@@ -368,13 +368,11 @@ def _if_repeats(name: str, max_occurs: str) -> bool:
     return repeats
 
 
-def _if_template(name: Optional[str]) -> bool:
+def _if_template(name: str | None) -> bool:
     return name is None or name.lower() != name
 
 
-def _get_documentation_url(
-    xml_node: ET.Element, nx_type: Optional[str]
-) -> Optional[str]:
+def _get_documentation_url(xml_node: ET.Element, nx_type: str | None) -> str | None:
     """
     Get documentation url
     """
@@ -465,7 +463,7 @@ def to_section(name: str, **kwargs) -> Section:
     return section
 
 
-def _get_enumeration(xml_node: ET.Element) -> tuple[Optional[MEnum], Optional[bool]]:
+def _get_enumeration(xml_node: ET.Element) -> tuple[MEnum | None, bool | None]:
     """
     Get the enumeration field from xml node
     """
@@ -525,7 +523,7 @@ def _add_common_properties(xml_node: ET.Element, definition: Definition):
 
 
 def _create_attributes(
-    xml_node: ET.Element, definition: Union[Section, Quantity], field: Quantity = None
+    xml_node: ET.Element, definition: Section | Quantity, field: Quantity = None
 ):
     """
     Add all attributes in the given nexus XML node to the given
@@ -951,7 +949,7 @@ def _sort_nxdl_files(paths):
     return validated_names
 
 
-def add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
+def add_section_from_nxdl(xml_node: ET.Element) -> Section | None:
     """
     Creates a metainfo section from a nxdl file.
     """
@@ -1016,7 +1014,7 @@ def create_package_from_nxdl_directories() -> Package:
     return package
 
 
-nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
+nexus_metainfo_package: Package | None = None  # pylint: disable=C0103
 
 
 def save_nexus_schema(suf):

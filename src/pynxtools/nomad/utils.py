@@ -86,7 +86,7 @@ def _rename_nx_for_nomad(
     is_group: bool = False,
     is_field: bool = False,
     is_attribute: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """
     Rename NXDL names for compatibility with NOMAD, applying specific rules
     based on the type of the NeXus concept. (group, field, or attribute).
