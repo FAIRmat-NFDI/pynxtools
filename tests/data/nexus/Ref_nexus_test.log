@@ -306,7 +306,7 @@ NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data@axes)
-DEBUG - value: ['angles', 'energies', 'delays']
+DEBUG - value: [angles, energies, delays]
 DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
@@ -913,7 +913,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/region_origin): <HDF5 dataset "region_origin": shape (2,), type "<i8">
-DEBUG - value: [0.0, 0.0]
+DEBUG - value: [0, 0]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_origin
@@ -2210,7 +2210,7 @@ DEBUG - ===== GROUP (//entry/data [NXarpes::/NXentry/NXdata]): <HDF5 group "/ent
 DEBUG - ===== ATTRS (//entry/data@NX_class)
 DEBUG - value: NXdata
 DEBUG - ===== ATTRS (//entry/data@axes)
-DEBUG - value: ['angles', 'energies', 'delays']
+DEBUG - value: [angles, energies, delays]
 DEBUG - ===== ATTRS (//entry/data@signal)
 DEBUG - value: data
 DEBUG - 

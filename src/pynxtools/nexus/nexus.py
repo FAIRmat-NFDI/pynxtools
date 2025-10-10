@@ -447,6 +447,11 @@ def safe_str(value, precision: int = 8) -> str:
     Returns:
         str: Deterministic string representation of the input.
     """
+    # --- Normalize NumPy scalar and 0D array types ---
+    if isinstance(value, np.generic):
+        value = value.item()
+    elif isinstance(value, np.ndarray) and value.shape == ():
+        value = value.item()
 
     def format_float(v: float) -> str:
         if v == 0.0:
@@ -456,15 +461,23 @@ def safe_str(value, precision: int = 8) -> str:
         s = f"{v:.{precision}f}".rstrip("0").rstrip(".")
         return s
 
+    # --- Arrays ---
     if isinstance(value, np.ndarray):
-        if value.dtype.kind in {"f", "i"}:
-            flat = value.flatten()
-            formatted = [format_float(float(v)) for v in flat]
-        else:
-            flat = value.flatten()
-            formatted = [
-                repr(v) if isinstance(v, str) else safe_str(v, precision) for v in flat
-            ]
+        flat = value.flatten()
+        formatted = []
+        for v in flat:
+            if isinstance(v, np.generic | np.ndarray):
+                v = v.item()
+            if isinstance(v, float):
+                formatted.append(format_float(v))
+            elif isinstance(v, int | bool):
+                formatted.append(str(v))
+            elif isinstance(v, str):
+                formatted.append(v)
+            elif isinstance(v, bytes):
+                formatted.append(v.decode(errors="replace"))
+            else:
+                formatted.append(str(v))
         reshaped = np.array(formatted, dtype=object).reshape(value.shape)
         return np.array2string(
             reshaped,
@@ -472,23 +485,33 @@ def safe_str(value, precision: int = 8) -> str:
             formatter={"all": lambda x: str(x)},
         )
 
+    # --- Lists / tuples ---
     elif isinstance(value, list | tuple):
-        formatted = [
-            repr(v) if isinstance(v, str) else safe_str(v, precision) for v in value
-        ]
+        formatted = []
+        for v in value:
+            if isinstance(v, np.generic | np.ndarray):
+                v = v.item()
+            if isinstance(v, str):
+                formatted.append(v)
+            else:
+                formatted.append(safe_str(v, precision))
         return "[" + ", ".join(formatted) + "]"
 
+    # --- Floats ---
     elif isinstance(value, float | np.floating):
         return format_float(float(value))
 
-    elif isinstance(value, int | np.integer):
+    # --- Integers / booleans ---
+    elif isinstance(value, int | np.integer | bool | np.bool_):
         return str(value)
 
+    # --- Strings / bytes ---
     elif isinstance(value, bytes | str):
         return value if isinstance(value, str) else value.decode(errors="replace")
 
+    # --- Fallback ---
     else:
-        return repr(value)
+        return str(value)
 
 
 def process_node(hdf_node, hdf_path, parser, logger, doc=True):
