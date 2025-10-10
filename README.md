@@ -23,4 +23,4 @@ Read more in the [official documentation page](https://fairmat-nfdi.github.io/py
 
 # How to cite this work
 
-Shabih, S., Pielsticker, L., Dobener, F., Albino, A., Chang, T., Emminger, C., Ginzburg, L., Hildebrandt, R., Kühbach, M., Mozumder, R., Pincelli, T., Aeschlimann, M., Grundmann, M., Hetaba, W., Palma, C.-A., Rettig, L., Scheidgen, M., Márquez, J. A., Draxl, C., Brockhauser, S., Koch, C. T. & Weber, H. B. (2025). Pynxtools: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform (v0.10.6). Zenodo. https://doi.org/10.5281/zenodo.15341365
+Shabih, S., Pielsticker, L., Dobener, F., Albino, A., Chang, T., Emminger, C., Ginzburg, L., Hildebrandt, R., Kühbach, M., Mozumder, R., Pincelli, T., Aeschlimann, M., Grundmann, M., Hetaba, W., Palma, C.-A., Rettig, L., Scheidgen, M., Márquez, J. A., Draxl, C., Brockhauser, S., Koch, C. T. & Weber, H. B. (2025). Pynxtools: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform. Zenodo. https://doi.org/10.5281/zenodo.15341365
