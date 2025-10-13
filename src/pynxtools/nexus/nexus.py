@@ -454,6 +454,7 @@ def safe_str(value, precision: int = 8) -> str:
         value = value.item()
 
     def format_float(value: float) -> str:
+        """Format a float deterministically."""
         if value == 0.0:
             return "0.0"
         if value.is_integer():
@@ -464,14 +465,29 @@ def safe_str(value, precision: int = 8) -> str:
 
     # --- Arrays ---
     if isinstance(value, np.ndarray):
-        if value.shape != () and value.size > 1:
-            # Multi-element array: format recursively as list of lists
-            formatted_rows = []
-            for row in value:
-                formatted_rows.append(safe_str(row, precision))
-            return "[" + ", ".join(formatted_rows) + "]"
-        # Scalar array
-        value = value.item()
+        flat = value.flatten()
+        formatted = []
+        for v in flat:
+            if isinstance(v, (np.generic, np.ndarray)):
+                v = v.item()
+            if isinstance(v, float):
+                formatted.append(format_float(v))
+            elif isinstance(v, (int, bool)):
+                formatted.append(str(v))
+            elif isinstance(v, str):
+                formatted.append(v)
+            elif isinstance(v, bytes):
+                formatted.append(v.decode(errors="replace"))
+            else:
+                formatted.append(str(v))
+        reshaped = np.array(formatted, dtype=object).reshape(value.shape)
+        return np.array2string(
+            reshaped,
+            separator=", ",
+            formatter={"all": lambda x: str(x)},
+            max_line_width=1000000,
+            threshold=6,
+        )
 
     # --- Lists / tuples ---
     if isinstance(value, list | tuple):
@@ -483,11 +499,11 @@ def safe_str(value, precision: int = 8) -> str:
         return format_float(float(value))
 
     # --- Integers / booleans ---
-    if isinstance(value, (int, np.integer, bool, np.bool_)):
+    elif isinstance(value, (int, np.integer, bool, np.bool_)):
         return str(value)
 
     # --- Strings / bytes ---
-    if isinstance(value, (str, bytes)):
+    elif isinstance(value, (bytes, str)):
         return value if isinstance(value, str) else value.decode(errors="replace")
 
     # --- Fallback ---

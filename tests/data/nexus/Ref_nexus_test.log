@@ -355,7 +355,7 @@ DEBUG -
 			for a summary of the discussion.
 		
 DEBUG - ===== FIELD (//entry/data/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
-DEBUG - value: [-1.96735314, -1.91500657, -1.86266001, -1.81031344, -1.75796688, ...
+DEBUG - value: [-1.96735314, -1.91500657, -1.86266001, ..., 2.06333233, 2.1156789, 2.16802546]
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -426,7 +426,7 @@ DEBUG - classes:
 NXdata.nxdl.xml:/DATA
 DEBUG - NXdata.nxdl.xml:/DATA@units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/delays): <HDF5 dataset "delays": shape (195,), type "<f8">
-DEBUG - value: [-1.1, -1.08041237, -1.06082474, -1.04123711, -1.02164948, -1.00206186, ...
+DEBUG - value: [-1.1, -1.08041237, -1.06082474, ..., 2.66082474, 2.68041237, 2.7]
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -466,7 +466,7 @@ DEBUG -
 				See the section :ref:`Design-Units` for more information.
 			
 DEBUG - ===== FIELD (//entry/data/energies): <HDF5 dataset "energies": shape (146,), type "<f8">
-DEBUG - value: [2.5, 2.46917808, 2.43835616, 2.40753425, 2.37671233, 2.34589041, ...
+DEBUG - value: [2.5, 2.46917808, 2.43835616, ..., -1.90753425, -1.93835616, -1.96917808]
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_CHAR_OR_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
@@ -688,7 +688,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
-DEBUG - value: [-1.96735314, -1.91500657, -1.86266001, -1.81031344, -1.75796688, ...
+DEBUG - value: [-1.96735314, -1.91500657, -1.86266001, ..., 2.06333233, 2.1156789, 2.16802546]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
@@ -768,7 +768,7 @@ NXdetector.nxdl.xml:/data
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data@units - REQUIRED, but undefined unit category
 DEBUG - NXdetector.nxdl.xml:/data@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/analyser/delays): <HDF5 dataset "delays": shape (195,), type "<f8">
-DEBUG - value: [-1.1, -1.08041237, -1.06082474, -1.04123711, -1.02164948, -1.00206186, ...
+DEBUG - value: [-1.1, -1.08041237, -1.06082474, ..., 2.66082474, 2.68041237, 2.7]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -793,7 +793,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/energies): <HDF5 dataset "energies": shape (146,), type "<f8">
-DEBUG - value: [2.5, 2.46917808, 2.43835616, 2.40753425, 2.37671233, 2.34589041, ...
+DEBUG - value: [2.5, 2.46917808, 2.43835616, ..., -1.90753425, -1.93835616, -1.96917808]
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
@@ -2109,7 +2109,7 @@ DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/pressure): <HDF5 dataset "pressure": shape (), type "<f8">
-DEBUG - value: 0
+DEBUG - value: 3.27000000e-10
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXsample.nxdl.xml:/pressure
