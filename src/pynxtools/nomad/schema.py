@@ -410,7 +410,7 @@ def nxdata_ensure_definition(
     self,
     def_or_name: Property | str,
     *,
-    hint: Optional[str] = None,
+    hint: str | None = None,
 ) -> Property:
     current_cls = section_definitions[f"{_rename_nx_for_nomad('NXdata')}"].section_cls
     if isinstance(def_or_name, str):
