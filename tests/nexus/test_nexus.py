@@ -32,7 +32,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_classes,
     get_nx_units,
 )
-from pynxtools.nexus.nexus import HandleNexus, decode_if_string
+from pynxtools.nexus.nexus import HandleNexus, decode_if_string, safe_str
 
 logger = logging.getLogger(__name__)
 
@@ -137,6 +137,73 @@ def test_decode_if_string(string_obj, decode, expected):
     # Handle all other cases
     else:
         assert result == expected, f"Failed for {string_obj} with decode={decode}"
+
+
+@pytest.mark.parametrize(
+    "value,precision,expected_contains",
+    [
+        # --- Floats ---
+        (0.0, 8, "0.0"),
+        (1.0, 8, "1"),
+        (1.5, 8, "1.5"),
+        (1.23456789, 8, "1.23456789"),
+        (1.234567891, 8, "1.23456789"),
+        (123456789.0, 8, "123456789"),
+        (1e-9, 8, "1.00000000e-09"),
+        # # --- Integers / booleans ---
+        (0, 8, "0"),
+        (42, 8, "42"),
+        (-3, 8, "-3"),
+        (True, 8, "True"),
+        (False, 8, "False"),
+        # # --- Strings / bytes ---
+        ("hello", 8, "hello"),
+        (b"hello", 8, "hello"),
+        (b"\xff", 8, "�"),  # invalid UTF-8 safely replaced
+        # # --- NumPy scalars and 0D arrays ---
+        (np.array(1.5), 8, "1.5"),
+        (np.array(1), 8, "1"),
+        (np.array(True), 8, "True"),
+        (np.float64(2.0), 8, "2"),
+        (np.int32(10), 8, "10"),
+        # # --- NumPy arrays ---
+        (np.array([0.0, 1.0, 1.25]), 8, "[0.0, 1, 1.25]"),
+        (np.array([[1.0, 2.0], [3.0, 4.5]]), 8, "[[1, 2], [3, 4.5]]"),
+        # # --- Lists / tuples ---
+        ([1.0, 2.5, [3.0, 4.0]], 8, "[1, 2.5, [3, 4]]"),
+        ((1.0, 2.0), 8, "[1, 2]"),
+        # # --- Mixed-type NumPy array ---
+        (np.array(["a", b"b", 3, 4.5], dtype=object), 8, "[a, b, 3, 4.5]"),
+        # # --- Nested structures ---
+        ([[np.array([1.0, 2.0]), [3.0, 4.5]]], 8, "[[[1, 2], [3, 4.5]]]"),
+        # # --- Custom objects (fallback) ---
+        (type("Dummy", (), {"__str__": lambda self: "dummy"})(), 8, "dummy"),
+        # # --- Precision behavior ---
+        (1.234567891, 4, "1.2346"),
+        # # --- Extreme float values ---
+        (1e9, 8, "1000000000"),
+        (1e-9, 8, "1.00000000e-09"),
+    ],
+)
+def test_safe_str(value, precision, expected_contains):
+    """Test  the `safe_str` function.
+
+    This test covers:
+    - Scalars (float, int, bool, str, bytes)
+    - NumPy scalars and arrays
+    - Lists, tuples, and nested structures
+    - Precision and scientific notation
+    - Deterministic output across calls
+    """
+    result = safe_str(value, precision)
+    assert isinstance(result, str), f"Expected string, got {type(result)}"
+    assert (
+        expected_contains == result
+    )  # , f"{result!r} did not contain {expected_contains!r}"
+
+    # Determinism check
+    result2 = safe_str(value, precision)
+    assert result == result2, "safe_str must produce deterministic output"
 
 
 def test_get_nexus_classes_units_attributes():
