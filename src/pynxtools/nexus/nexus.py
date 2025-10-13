@@ -447,71 +447,51 @@ def safe_str(value, precision: int = 8) -> str:
     Returns:
         str: Deterministic string representation of the input.
     """
-    # --- Normalize NumPy scalar and 0D array types ---
+    # Normalize NumPy scalar and 0D array types
     if isinstance(value, np.generic):
         value = value.item()
     elif isinstance(value, np.ndarray) and value.shape == ():
         value = value.item()
 
-    def format_float(v: float) -> str:
-        if v == 0.0:
+    def format_float(value: float) -> str:
+        if value == 0.0:
             return "0.0"
-        if v.is_integer():
-            return str(int(v))
-        s = f"{v:.{precision}f}".rstrip("0").rstrip(".")
-        return s
+        if value.is_integer():
+            return str(int(value))
+        if abs(value) < 10**-precision or abs(value) >= 10 ** (precision + 1):
+            return f"{value:.{precision}e}"
+        return f"{value:.{precision}f}".rstrip("0").rstrip(".")
 
     # --- Arrays ---
     if isinstance(value, np.ndarray):
-        flat = value.flatten()
-        formatted = []
-        for v in flat:
-            if isinstance(v, np.generic | np.ndarray):
-                v = v.item()
-            if isinstance(v, float):
-                formatted.append(format_float(v))
-            elif isinstance(v, int | bool):
-                formatted.append(str(v))
-            elif isinstance(v, str):
-                formatted.append(v)
-            elif isinstance(v, bytes):
-                formatted.append(v.decode(errors="replace"))
-            else:
-                formatted.append(str(v))
-        reshaped = np.array(formatted, dtype=object).reshape(value.shape)
-        return np.array2string(
-            reshaped,
-            separator=", ",
-            formatter={"all": lambda x: str(x)},
-        )
+        if value.shape != () and value.size > 1:
+            # Multi-element array: format recursively as list of lists
+            formatted_rows = []
+            for row in value:
+                formatted_rows.append(safe_str(row, precision))
+            return "[" + ", ".join(formatted_rows) + "]"
+        # Scalar array
+        value = value.item()
 
     # --- Lists / tuples ---
-    elif isinstance(value, list | tuple):
-        formatted = []
-        for v in value:
-            if isinstance(v, np.generic | np.ndarray):
-                v = v.item()
-            if isinstance(v, str):
-                formatted.append(v)
-            else:
-                formatted.append(safe_str(v, precision))
+    if isinstance(value, list | tuple):
+        formatted = [safe_str(v, precision) for v in value]
         return "[" + ", ".join(formatted) + "]"
 
     # --- Floats ---
-    elif isinstance(value, float | np.floating):
+    if isinstance(value, float | np.floating):
         return format_float(float(value))
 
     # --- Integers / booleans ---
-    elif isinstance(value, int | np.integer | bool | np.bool_):
+    if isinstance(value, (int, np.integer, bool, np.bool_)):
         return str(value)
 
     # --- Strings / bytes ---
-    elif isinstance(value, bytes | str):
+    if isinstance(value, (str, bytes)):
         return value if isinstance(value, str) else value.decode(errors="replace")
 
     # --- Fallback ---
-    else:
-        return str(value)
+    return str(value)
 
 
 def process_node(hdf_node, hdf_path, parser, logger, doc=True):
