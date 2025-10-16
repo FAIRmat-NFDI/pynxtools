@@ -23,7 +23,7 @@ authors:
     orcid: 'https://orcid.org/0000-0002-4911-0230'
   - given-names: Carola
     family-names: Emminger
-    orcid: 'https://orcid.org/0000-0003-4793-18090'
+    orcid: 'https://orcid.org/0000-0003-4793-1809'
   - given-names: Lev
     family-names: Ginzburg
     orcid: 'https://orcid.org/0000-0001-8929-1040'
@@ -38,19 +38,19 @@ authors:
     orcid: 'https://orcid.org/0009-0007-5926-6646'
   - given-names: Tommaso
     family-names: Pincelli
-    orcid: https://orcid.org/0000-0003-2692-2540
+    orcid: 'https://orcid.org/0000-0003-2692-2540'
   - given-names: Martin
     family-names: Aeschlimann
-    orcid: https://orcid.org/0000-0003-3413-5029
+    orcid: 'https://orcid.org/0000-0003-3413-5029'
   - given-names: Marius
     family-names: Grundmann
-    orcid: https://orcid.org/0000-0001-7554-182X
+    orcid: 'https://orcid.org/0000-0001-7554-182X'
   - given-names: Walid
     family-names: Hetaba
-    orcid: https://orcid.org/0000-0003-4728-0786
+    orcid: 'https://orcid.org/0000-0003-4728-0786'
   - given-names: Carlos-Andres
     family-names: Palma
-    orcid: https://orcid.org/0000-0001-5576-8496
+    orcid: 'https://orcid.org/0000-0001-5576-8496'
   - given-names: Laurenz
     family-names: Rettig
     orcid: 'https://orcid.org/0000-0002-0725-6696'
@@ -62,7 +62,7 @@ authors:
     orcid: 'https://orcid.org/0000-0002-9700-4803'
   - given-names: José A.
     family-names: Márquez Prieto
-    orcid: 'https://orcid.org/0000-0002-8173-2566'    
+    orcid: 'https://orcid.org/0000-0002-8173-2566'  
   - given-names: Claudia
     family-names: Draxl
     orcid: 'https://orcid.org/0000-0003-3523-6657'
