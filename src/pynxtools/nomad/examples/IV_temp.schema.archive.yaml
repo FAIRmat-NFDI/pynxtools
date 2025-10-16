@@ -1,5 +1,7 @@
 definitions:
-  name: "IV Temp ELN Example"
+  name: "IV_Temp_ELN_Example"
+  eln:
+    label: "IV Temp ELN Example"
   sections:
     ELN_for_iv_temp:
       base_sections:
