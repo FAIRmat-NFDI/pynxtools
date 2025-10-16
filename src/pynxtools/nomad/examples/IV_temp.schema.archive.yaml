@@ -1,7 +1,9 @@
 definitions:
-  name: "IV Temp ELN Example"
+  name: "IV_Temp_ELN_Example"
+  eln:
+    label: "IV Temp ELN Example"
   sections:
-    ELN for iv_temp:
+    ELN_for_iv_temp:
       base_sections:
         - "pynxtools.nomad.dataconverter.NexusDataConverter"
         - "nomad.datamodel.data.EntryData"
@@ -17,6 +19,7 @@ definitions:
           nexus_view: "../upload/archive/mainfile/IV_temp.nxs#/data"
         eln:
           hide: []
+          label: 'ELN for iv_temp'
       sub_sections:
         notes:
           section:

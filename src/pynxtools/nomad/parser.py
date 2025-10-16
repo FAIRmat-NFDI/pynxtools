@@ -66,7 +66,7 @@ def _to_group_name(nx_node: ET.Element):
 def _to_section(
     hdf_name: str | None,
     nx_def: str,
-    nx_node: ET.Element | None,
+    nx_node: Optional[ET.Element],  # noqa: UP045
     current: MSection,
     nx_root,
 ) -> MSection:
