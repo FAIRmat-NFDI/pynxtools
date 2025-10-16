@@ -57,7 +57,7 @@ docs = [
 ]
 dev = [
     "mypy",
-    "ruff>=0.12.0",
+    "ruff>=0.14.0",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
