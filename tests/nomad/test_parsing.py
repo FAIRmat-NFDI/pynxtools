@@ -264,7 +264,7 @@ def test_sample_normalizer(
     structlog.configure(
         wrapper_class=structlog.make_filtering_bound_logger(logging.INFO)
     )
-    _ = NexusParser().parse(str(nxs_file), archive, get_logger(__name__))
+    NexusParser().parse(str(nxs_file), archive, get_logger(__name__))
 
     # Dynamically evaluate each expected path and compare
     for path_str, expected_value in results.items():
