@@ -149,7 +149,7 @@ def _get_value(hdf_node):
             def decode_array(arr):
                 result = []
                 for x in arr:
-                    if isinstance(x, (np.ndarray, list)):
+                    if isinstance(x, np.ndarray | list):
                         result.append(decode_array(x))
                     else:
                         result.append(str(decode_or_not(x)))
