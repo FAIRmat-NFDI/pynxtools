@@ -412,6 +412,7 @@ class NexusParser(MatchingParser):
         current.m_set_section_attribute("m_nx_data_file", self.nxs_fname)
         depth: int = 1
         current_hdf_path = ""
+
         for name in hdf_path.split("/")[1:]:
             nx_node = nx_path[depth] if depth < len(nx_path) else name
             current = _to_section(name, nx_def, nx_node, current, self.nx_root)
@@ -461,8 +462,7 @@ class NexusParser(MatchingParser):
         chemical_formulas: set[str] = set()
 
         for sample in self._sample_class_refs["NXsample"]:
-            if sample.get("atom_types__field") is not None:
-                atom_types = sample.atom_types__field
+            if (atom_types := sample.get("atom_types__field")) is not None:
                 if isinstance(atom_types, list):
                     for symbol in atom_types:
                         if symbol in chemical_symbols[1:]:
@@ -506,16 +506,17 @@ class NexusParser(MatchingParser):
         if len(chemical_formulas) == 1:
             material.chemical_formula_descriptive = chemical_formulas.pop()
         elif not chemical_formulas:
-            self._logger.warn("no chemical formula found")
+            self._logger.warn("No chemical formula found")
+            return
         else:
             self._logger.warn(
-                f"multiple chemical formulas found: {chemical_formulas}.\n"
+                f"Multiple chemical formulas found: {chemical_formulas}.\n"
                 "Cannot build a comprehensive chemical formula for the entry, "
                 "but will try to extract atomic elements."
             )
             for chem_formula in chemical_formulas:
                 formula = Formula(chem_formula)
-                material.elements = list(
+                material.elements = sorted(
                     set(material.elements) | set(formula.elements())
                 )
 
@@ -524,7 +525,9 @@ class NexusParser(MatchingParser):
                 formula = Formula(material.chemical_formula_descriptive)
                 formula.populate(material, overwrite=True)
         except Exception as e:
-            self._logger.warn("could not normalize material", exc_info=e)
+            self._logger.warn(
+                "Could not normalize chemical formula(s) in Material", exc_info=e
+            )
 
     def parse(
         self,
@@ -589,13 +592,13 @@ class NexusParser(MatchingParser):
         results = archive.results
 
         chemical_formulas, element_set = self._get_chemical_formulas()
+
         if element_set:
             if results.material is None:
                 results.material = Material()
-            results.material.elements = list(
+            results.material.elements = sorted(
                 set(results.material.elements) | element_set
             )
-            raise ValueError(chemical_formulas, element_set, results, results.material)
 
         if chemical_formulas and results.material is None:
             if results.material is None:
