@@ -18,6 +18,7 @@
 # limitations under the License.
 #
 
+import logging
 import os
 import shutil
 from collections.abc import Mapping
@@ -26,6 +27,7 @@ from typing import Any
 
 import h5py
 import pytest
+import structlog
 
 try:
     from nomad.datamodel import EntryArchive
@@ -38,7 +40,7 @@ except ImportError:
 from pynxtools.nomad.parser import NexusParser
 
 
-def extend_nexus_file(key_to_data: Mapping[str, Any], filename: str):
+def extend_nexus_file(key_to_data: Mapping[str, Any], filename: Path):
     with h5py.File(filename, "a") as f:
         for key, data in key_to_data.items():
             current_leaf = f["/"]
@@ -176,3 +178,97 @@ def test_nexus_string_decode_to_utf8(tmp_path):
         "['Any name', 'name González (HU)', 'straße']"
         == obj.ENTRY[0].USER[0].name__field
     )
+
+
+@pytest.mark.parametrize(
+    "data_to_add, results",
+    [
+        # Simple valid single formula
+        pytest.param(
+            {"/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "BrBaHCoCIH"},
+            {
+                "data.ENTRY[0].SAMPLE[0].chemical_formula__field": "BrBaHCoCIH",
+                "results.material.chemical_formula_anonymous": "A2BCDEF",
+                "results.material.chemical_formula_descriptive": "BrBaHCoCIH",
+                "results.material.chemical_formula_hill": "CH2BaBrCoI",
+                "results.material.chemical_formula_iupac": "BaCoCH2IBr",
+                "results.material.chemical_formula_reduced": "BaBrCCoH2I",
+                "results.material.elements": ["Ba", "Br", "C", "Co", "H", "I"],
+            },
+            id="single-valid-formula",
+        ),
+        # No chemical formula → should log warning and leave material empty
+        pytest.param(
+            {},  # no formula field
+            {
+                "results.material": None,
+            },
+            id="no-formula-warning",
+        ),
+        # Multiple chemical formulas → should merge elements
+        pytest.param(
+            {
+                "/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "NaCl",
+                "/ENTRY[entry]/SAMPLE[sample]/atom_types": ["Na", "Cl", "O"],
+                "/ENTRY[entry]/SAMPLE[sample]/SAMPLE_COMPONENT[component]/chemical_formula": "H2O",
+            },
+            {
+                "data.ENTRY[0].SAMPLE[0].chemical_formula__field": "NaCl",
+                "results.material.elements": ["Cl", "H", "Na", "O"],
+            },
+            id="multiple-formulas-merge-elements",
+        ),
+        # Invalid atom types ignored.
+        # TODO: Reactivate when atom_types is part of NXsample.
+        # Works for NXapm (which has ENTRY/SAMPLE/atom_types) though.
+        # pytest.param(
+        #     {
+        #         "/ENTRY[entry]/SAMPLE[sample]/atom_types": ["Na", "NotAnElement", "Fe"],
+        #     },
+        #     {
+        #         "results.material.elements": ["Na", "Fe"],
+        #     },
+        #     id="invalid-atom-types-ignored",
+        # ),
+        # Chemical formula from NXsubstance
+        # TODO: Reactivate when NXsubstance is actively used (i.e., added to NXsample)
+        # Works if you add NXsubstance inside NXsample
+        # pytest.param(
+        #     {
+        #         "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/molecular_formula_hill": "H2O",
+        #     },
+        #     {
+        #         "results.material.chemical_formula_descriptive": "H2O",
+        #         "results.material.elements": ["H", "O"],
+        #     },
+        #     id="nxsubstance-formula",
+        # ),
+    ],
+)
+def test_sample_normalizer(
+    data_to_add: dict[str, Any], results: dict[str, Any], tmp_path, caplog, request
+):
+    """Test chemical formula normalization and UTF-8 decoding."""
+    archive = EntryArchive()
+
+    example_data = Path.cwd() / Path("src/pynxtools/data/201805_WSe2_arpes.nxs")
+
+    nxs_file = tmp_path / f"{request.node.callspec.id}.nxs"
+    extend_nexus_file(data_to_add, nxs_file)
+
+    nxs_file = tmp_path / f"{request.node.callspec.id}.nxs"
+    shutil.copy(example_data, nxs_file)
+    extend_nexus_file(data_to_add, nxs_file)
+
+    # Set level of all structlog loggers to "INFO"
+    structlog.configure(
+        wrapper_class=structlog.make_filtering_bound_logger(logging.INFO)
+    )
+    NexusParser().parse(str(nxs_file), archive, get_logger(__name__))
+
+    # Dynamically evaluate each expected path and compare
+    for path_str, expected_value in results.items():
+        actual_value = eval(f"archive.{path_str}")
+        assert actual_value == expected_value, (
+            f"Mismatch for {path_str}! Expected: {expected_value}, Got: {actual_value}"
+        )
