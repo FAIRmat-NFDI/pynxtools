@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
+requires = ["setuptools>=78.1.1", "setuptools-scm[toml]>=6.2"]
 backend-path = ["src/pynxtools"]
 build-backend = "_build_wrapper"
 
@@ -38,7 +38,6 @@ dependencies = [
     "pint",
     "cachetools",
     "structlog",
-
 ]
 
 [project.urls]
