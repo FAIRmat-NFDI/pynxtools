@@ -9,63 +9,70 @@ authors:
   - given-names: Sherjeel
     family-names: Shabih
     orcid: 'https://orcid.org/0009-0008-6635-4465'
+  - given-names: Lukas
+    family-names: Pielsticker
+    orcid: 'https://orcid.org/0000-0001-9361-8333'
   - given-names: Florian
     family-names: Dobener
     orcid: 'https://orcid.org/0000-0003-1987-6224'
   - given-names: Andrea
     family-names: Albino
     orcid: 'https://orcid.org/0000-0001-9280-7431'
-  - given-names: Sandor
-    family-names: Brockhauser
-    orcid: 'https://orcid.org/0000-0002-9700-4803'
-  - given-names: Sebastian
-    family-names: Brückner
-    orcid: 'https://orcid.org/0000-0002-5969-847X'
   - given-names: Theodore
     family-names: Chang
     orcid: 'https://orcid.org/0000-0002-4911-0230'
-  - given-names: Ádám
-    family-names: Fekete
-    orcid: 'https://orcid.org/0000-0002-6263-897X'
+  - given-names: Carola
+    family-names: Emminger
+    orcid: 'https://orcid.org/0000-0003-4793-1809'
   - given-names: Lev
     family-names: Ginzburg
     orcid: 'https://orcid.org/0000-0001-8929-1040'
-  - given-names: Tamás
-    family-names: Haraszti
-    orcid: 'https://orcid.org/0000-0002-7095-4358'
   - given-names: Ron
     family-names: Hildebrandt
     orcid: 'https://orcid.org/0000-0001-6932-604X'
   - given-names: Markus
     family-names: Kühbach
     orcid: 'https://orcid.org/0000-0002-7117-5196'
-  - given-names: Sabine
-    family-names: Maier
-    orcid: 'https://orcid.org/0000-0001-9589-6855'
-  - given-names: José A.
-    family-names: Márquez
-    orcid: 'https://orcid.org/0000-0002-8173-2566'
   - given-names: Rubel
     family-names: Mozumder
     orcid: 'https://orcid.org/0009-0007-5926-6646'
-  - given-names: Lukas
-    family-names: Pielsticker
-    orcid: 'https://orcid.org/0000-0001-9361-8333'
+  - given-names: Tommaso
+    family-names: Pincelli
+    orcid: 'https://orcid.org/0000-0003-2692-2540'
+  - given-names: Martin
+    family-names: Aeschlimann
+    orcid: 'https://orcid.org/0000-0003-3413-5029'
+  - given-names: Marius
+    family-names: Grundmann
+    orcid: 'https://orcid.org/0000-0001-7554-182X'
+  - given-names: Walid
+    family-names: Hetaba
+    orcid: 'https://orcid.org/0000-0003-4728-0786'
+  - given-names: Carlos-Andres
+    family-names: Palma
+    orcid: 'https://orcid.org/0000-0001-5576-8496'
   - given-names: Laurenz
     family-names: Rettig
     orcid: 'https://orcid.org/0000-0002-0725-6696'
   - given-names: Markus
     family-names: Scheidgen
     orcid: 'https://orcid.org/0000-0002-8038-2277'
-  - given-names: Heiko B.
-    family-names: Weber
-    orcid: 'https://orcid.org/0000-0002-6403-9022'
-  - given-names: Christoph T.
-    family-names: Koch
-    orcid: 'https://orcid.org/0000-0002-3984-1523'
+  - given-names: Sandor
+    family-names: Brockhauser
+    orcid: 'https://orcid.org/0000-0002-9700-4803'
+  - given-names: José A.
+    family-names: Márquez Prieto
+    orcid: 'https://orcid.org/0000-0002-8173-2566'  
   - given-names: Claudia
     family-names: Draxl
     orcid: 'https://orcid.org/0000-0003-3523-6657'
+  - given-names: Christoph T.
+    family-names: Koch
+    orcid: 'https://orcid.org/0000-0002-3984-1523'
+  - given-names: Heiko B.
+    family-names: Weber
+    orcid: 'https://orcid.org/0000-0002-6403-9022'
+
 doi: 10.5281/zenodo.13862041
 repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools'
 url: https://doi.org/10.5281/zenodo.13862042
