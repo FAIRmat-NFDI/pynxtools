@@ -3,6 +3,7 @@
     "ignorePaths": [
         "./tests/data/*",
         "*.toml",
+        "Makefile",
         "*.bat",
         "*.egg-info"
     ],
@@ -13,8 +14,10 @@
             "addWords": true
         }
     ],
+    "import": ["@cspell/dict-scientific-terms-us/cspell-ext.json"],
     "dictionaries": [
         "custom-dictionary",
+        "scientific_terms_US",
         "python"
     ],
     "words": [],
