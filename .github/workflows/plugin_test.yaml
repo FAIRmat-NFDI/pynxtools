@@ -39,7 +39,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: main
+            branch: RepalceNexusFile
             tests_to_run: tests/.
           - plugin: pynxtools-xas
             branch: main
@@ -48,7 +48,7 @@ jobs:
             branch: adapt-testing
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
-            branch: main
+            branch: RepalceNexusFile
             tests_to_run: tests/.
 
     steps:
