@@ -2,6 +2,7 @@
 """Read files from different format and print it in a standard NeXus format"""
 
 import logging
+import math
 import os
 import sys
 from functools import cache, lru_cache
@@ -456,7 +457,14 @@ def safe_str(value, precision: int = 8) -> str:
     def format_float(value: float) -> str:
         """Format a float deterministically."""
         if value == 0.0:
+            # Preserve sign of zero
+            if math.copysign(1.0, value) < 0:
+                return "-0.0"
             return "0.0"
+        if math.isnan(value):
+            return "nan"
+        if math.isinf(value):
+            return "inf" if value > 0 else "-inf"
         if value.is_integer():
             return str(int(value))
         if abs(value) < 10**-precision or abs(value) >= 10 ** (precision + 1):
@@ -472,8 +480,6 @@ def safe_str(value, precision: int = 8) -> str:
                 v = v.item()
             if isinstance(v, float):
                 formatted.append(format_float(v))
-            elif isinstance(v, (int, bool)):
-                formatted.append(str(v))
             elif isinstance(v, str):
                 formatted.append(v)
             elif isinstance(v, bytes):
@@ -492,7 +498,7 @@ def safe_str(value, precision: int = 8) -> str:
     # --- Lists / tuples ---
     if isinstance(value, list | tuple):
         formatted = [safe_str(v, precision) for v in value]
-        return "[" + ", ".join(formatted) + "]"
+        return f"[{', '.join(formatted)}]"
 
     # --- Floats ---
     if isinstance(value, float | np.floating):
