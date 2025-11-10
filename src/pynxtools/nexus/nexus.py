@@ -15,7 +15,6 @@ import numpy as np
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
     check_attr_name_nxdl,
-    decode_or_not,
     get_best_child,
     get_hdf_info_parent,
     get_local_name_from_xml,
@@ -30,56 +29,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     walk_elist,
     write_doc_string,
 )
-
-
-def decode_if_string(
-    elem: Any, encoding: str = "utf-8", decode: bool = True
-) -> Any | None:
-    """
-    Decodes a numpy ndarray or list of byte objects or byte strings to strings.
-    If `decode` is False, returns the input value unchanged. Non-byte/str types
-    are returned without modification.
-
-    Args:
-        elem: A numpy ndarray, list, bytes, or any other object.
-        encoding: The encoding scheme to use. Default is "utf-8".
-        decode: A boolean flag indicating whether to perform decoding.
-
-    Returns:
-        A decoded string, a numpy array of decoded strings, a list of decoded strings,
-        or the input value if not decodable.
-        Returns None if the input is empty or invalid.
-
-    Raises:
-        ValueError: If decoding fails on bytes or numpy array elements.
-    """
-    # Early return if decoding is disabled
-    if not decode:
-        return elem
-
-    # Handle numpy arrays of bytes or strings
-    if isinstance(elem, np.ndarray):
-        if elem.size == 0:
-            return elem  # Return the empty array unchanged
-
-        # This only checks for null-terminated strings,
-        # may need to be updated in the future: https://api.h5py.org/h5t.html
-        if elem.dtype.kind == "S":  # Check if it's a bytes array (fixed-length strings)
-            decoded_array = np.vectorize(
-                lambda x: x.decode(encoding).rstrip("\x00")
-                if isinstance(x, bytes)
-                else x
-            )(elem)
-            return decoded_array.astype(str)  # Ensure the dtype is str
-
-        # Handle mixed-type arrays
-        if elem.dtype == object:
-            decoded_array = np.vectorize(
-                lambda x: x.decode(encoding) if isinstance(x, bytes) else x
-            )(elem)
-            return decoded_array.astype(str)  # Ensure all elements are strings
-
-    return decode_or_not(elem, encoding, decode)
+from pynxtools.utils import decode_if_string
 
 
 def get_nxdl_entry(hdf_info):

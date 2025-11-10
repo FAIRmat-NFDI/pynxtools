@@ -46,13 +46,13 @@ from pynxtools.dataconverter.helpers import (
     is_valid_enum,
     split_class_and_name_of,
 )
-from pynxtools.dataconverter.nexus_tree import (
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.nexus.nexus_tree import (
     NexusEntity,
     NexusGroup,
     NexusNode,
     generate_tree_from,
 )
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
 
 if DEBUG_VALIDATION:

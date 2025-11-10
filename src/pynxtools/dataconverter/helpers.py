@@ -47,41 +47,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 logger = logging.getLogger("pynxtools")
 
 
-ISO8601 = re.compile(
-    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
-    r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
-)
-
-RESERVED_SUFFIXES = (
-    "_end",
-    "_increment_set",
-    "_errors",
-    "_indices",
-    "_mask",
-    "_set",
-    "_weights",
-    "_scaling_factor",
-    "_offset",
-)
-
-RESERVED_PREFIXES = {
-    "attribute": {
-        "@BLUESKY_": None,  # do not use anywhere
-        "@DECTRIS_": "NXmx",
-        "@IDF_": None,  # do not use anywhere
-        "@NDAttr": None,
-        "@NX_": "all",
-        "@PDBX_": None,  # do not use anywhere
-        "@SAS_": "NXcanSAS",
-        "@SILX_": None,  # do not use anywhere
-        "identifier": "all",
-    },
-    "field": {
-        "DECTRIS_": "NXmx",
-    },
-}
-
-
 class ValidationProblem(Enum):
     DifferentVariadicNodesWithTheSameName = auto()
     UnitWithoutDocumentation = auto()
