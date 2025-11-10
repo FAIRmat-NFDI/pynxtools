@@ -12,93 +12,93 @@ tags:
 authors:
   - given-names: Sherjeel
     surname: Shabih
-    orcid: https://orcid.org/0009-0008-6635-4465
+    orcid: 0009-0008-6635-4465
     affiliation: 1
     equal-contrib: true
   - given-names: Lukas
     surname: Pielsticker
-    orcid: https://orcid.org/0000-0001-9361-8333
+    orcid: 0000-0001-9361-8333
     affiliation: "1,2"
     equal-contrib: true
   - given-names: Florian
     surname: Dobener
-    orcid: https://orcid.org/0000-0003-1987-6224
+    orcid: 0000-0003-1987-6224
     affiliation: "1,3"
   - given-names: Andrea
     surname: Albino
-    orcid: https://orcid.org/0000-0001-9280-7431
+    orcid: 0000-0001-9280-7431
     affiliation: 1
   - given-names: Theodore
     surname: Chang
-    orcid: https://orcid.org/0000-0002-4911-0230
+    orcid: 0000-0002-4911-0230
     affiliation: 1
   - given-names: Carola
     surname: Emminger
-    orcid: https://orcid.org/0000-0003-4793-1809
+    orcid: 0000-0003-4793-1809
     affiliation: "1, 4"
   - given-names: Lev
     surname: Ginzburg
-    orcid: https://orcid.org/0000-0001-8929-1040
+    orcid: 0000-0001-8929-1040
     affiliation: 1
   - given-names: Ron
     surname: Hildebrandt
-    orcid: https://orcid.org/0000-0001-6932-604X
+    orcid: 0000-0001-6932-604X
     affiliation: "1, 4"
   - given-names: Markus
     surname: Kühbach
-    orcid: https://orcid.org/0000-0002-7117-5196
+    orcid: 0000-0002-7117-5196
     affiliation: 1
   - given-names: Rubel
     surname: Mozumder
-    orcid: https://orcid.org/0009-0007-5926-6646
+    orcid: 0009-0007-5926-6646
     affiliation: 1
   - given-names: Tommaso
     surname: Pincelli
-    orcid: https://orcid.org/0000-0003-2692-2540
+    orcid: 0000-0003-2692-2540
     affiliation: 5
   - given-names: Martin
     surname: Aeschlimann
-    orcid: https://orcid.org/0000-0003-3413-5029
+    orcid: 0000-0003-3413-5029
     affiliation: 3
   - given-names: Marius
     surname: Grundmann
-    orcid: https://orcid.org/0000-0001-7554-182X
+    orcid: 0000-0001-7554-182X
     affiliation: 4
   - given-names: Walid
     surname: Hetaba
-    orcid: https://orcid.org/0000-0003-4728-0786
+    orcid: 0000-0003-4728-0786
     affiliation: 2
   - given-names: Carlos-Andres
     surname: Palma
-    orcid: https://orcid.org/0000-0001-5576-8496
+    orcid: 0000-0001-5576-8496
     affiliation: "1, 6"
   - given-names: Laurenz
     surname: Rettig
-    orcid: https://orcid.org/0000-0002-0725-6696
+    orcid: 0000-0002-0725-6696
     affiliation: 5
   - given-names: Markus
     surname: Scheidgen
-    orcid: https://orcid.org/0000-0002-8038-2277
+    orcid: 0000-0002-8038-2277
     affiliation: 1
   - given-names: José Antonio
     surname: Márquez Prieto
-    orcid: https://orcid.org/0000-0002-8173-2566
+    orcid: 0000-0002-8173-2566
     affiliation: 1
   - given-names: Claudia
     surname: Draxl
-    orcid: https://orcid.org/0000-0003-3523-6657
+    orcid: 0000-0003-3523-6657
     affiliation: 1
   - given-names: Sandor
     surname: Brockhauser
-    orcid: https://orcid.org/0000-0002-9700-4803
+    orcid: 0000-0002-9700-4803
     affiliation: 1
   - given-names: Christoph
     surname: Koch
-    orcid: https://orcid.org/0000-0002-3984-1523
+    orcid: 0000-0002-3984-1523
     affiliation: 1
   - given-names: Heiko B.
     surname: Weber
-    orcid: https://orcid.org/0000-0002-6403-9022
+    orcid: 0000-0002-6403-9022
     affiliation: 7
 
 affiliations:
