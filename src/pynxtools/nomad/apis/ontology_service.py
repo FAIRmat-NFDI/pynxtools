@@ -2,14 +2,14 @@
 ######################## import libraries ############################
 ######################################################################
 import os
-
-from fastapi import FastAPI, HTTPException
-
-os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING"
 import logging
 import subprocess
-
 import pygit2
+os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING"
+
+from nomad.config import config
+from fastapi import FastAPI, HTTPException
+
 from fastapi.responses import RedirectResponse
 from owlready2 import ThingClass, get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
@@ -18,10 +18,13 @@ from pynxtools.NeXusOntology.script.generate_ontology import main as generate_on
 
 logger = logging.getLogger("pynxtools")
 
+ontology_service_entry_point = config.get_plugin_entry_point('pynxtools.nomad.apis:ontology_service')
+
 #######################################################################
 ########################## define app and functions ###################
 #######################################################################
 app = FastAPI(
+    root_path = f'{config.services.api_base_path}/ontology_service',
     title="Ontology Service",
     description="A service to provide ontological information for a given NeXus class.",
 )
@@ -29,10 +32,13 @@ app = FastAPI(
 # Define paths
 local_dir = os.path.dirname(os.path.abspath(__file__))
 ontology_dir = os.path.abspath(
-    os.path.join(local_dir, "..", "NeXusOntology", "ontology")
+    os.path.join(local_dir, "..", "..", "NeXusOntology", "ontology")
 )
 OWL_FILE_PATH = None
 
+INFERRED_ONTOLOGY: Ontology | None = None
+from threading import Lock
+ONTOLOGY_CACHE_LOCK = Lock()
 
 def ensure_ontology_file():
     """
@@ -41,7 +47,7 @@ def ensure_ontology_file():
     global OWL_FILE_PATH
     try:
         # Get the latest commit hash from the definitions submodule
-        nexus_def_path = os.path.join(local_dir, "..", "definitions")
+        nexus_def_path = os.path.join(local_dir, "..", "..", "definitions")
         repo = pygit2.Repository(nexus_def_path)
         latest_commit_hash = str(repo.head.target)[:7]
 
@@ -67,12 +73,28 @@ def ensure_ontology_file():
 
 
 def load_ontology() -> Ontology:
+    """
+    Return a reasoned ontology from the in-memory cache if present.
+    Otherwise load the base OWL, run the reasoner and cache the result.
+    """
+    global INFERRED_ONTOLOGY
     try:
         ensure_ontology_file()
-        base_name = os.path.basename(OWL_FILE_PATH).replace(".owl", "")
-        inferred_owl_path = f"/tmp/{base_name}_inferred.owl"
-        ontology = get_ontology(inferred_owl_path).load()
-        return ontology
+        if OWL_FILE_PATH is None:
+            raise RuntimeError("OWL_FILE_PATH not set")
+
+        with ONTOLOGY_CACHE_LOCK:
+            if INFERRED_ONTOLOGY is not None:
+                return INFERRED_ONTOLOGY
+
+            # load base ontology from disk and run reasoner in-memory
+            base_iri = f"file://{OWL_FILE_PATH}"
+            logger.info(f"Loading ontology from {base_iri} and running reasoner")
+            ontology = get_ontology(base_iri).load()
+            sync_reasoner(ontology)  # must have Java/reasoner available
+            INFERRED_ONTOLOGY = ontology
+            logger.info("Ontology loaded and cached in memory")
+            return INFERRED_ONTOLOGY
     except Exception as e:
         logger.error(f"Error loading ontology: {e}")
         raise
@@ -191,16 +213,16 @@ def fetch_subclasses(ontology, class_name):
 @app.on_event("startup")
 def startup_event():
     """
-    Ensure the ontology file is present during application startup.
+    Ensure the ontology file is present during application startup and optionally
+    pre-warm the in-memory cache (do not write any inferred file to disk).
     """
     try:
         ensure_ontology_file()
-        base_name = os.path.basename(OWL_FILE_PATH).replace(".owl", "")
-        inferred_owl_path = f"/tmp/{base_name}_inferred.owl"
-        if not os.path.exists(inferred_owl_path):
-            ontology = get_ontology(OWL_FILE_PATH).load()
-            sync_reasoner(ontology)
-            ontology.save(file=inferred_owl_path, format="rdfxml")
+        # optionally pre-warm cache so first request is fast; ignore failures
+        try:
+            load_ontology()
+        except Exception as inner:
+            logger.warning(f"Pre-warm of ontology cache failed: {inner}")
     except Exception as e:
         logger.error(f"Error during startup: {e}")
 
@@ -217,30 +239,6 @@ def get_superclasses_route(class_name: str):
         superclasses = fetch_superclasses(ontology, class_name)
         # return {"superclasses": [str(cls) for cls in superclasses]}
         return {"superclasses": superclasses}
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="An internal error occurred.")
-
-
-@app.get("/hierarchy/{class_name}")
-def get_hierarchy_route(class_name: str):
-    try:
-        ontology = load_ontology()
-        hierarchy = build_hierarchy(ontology, class_name)
-        return hierarchy
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="An internal error occurred.")
-
-
-@app.get("/subclasses/{class_name}")
-def get_subclasses_route(class_name: str):
-    try:
-        ontology = load_ontology()
-        subclasses = fetch_subclasses(ontology, class_name)
-        return {"subclasses": subclasses}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
