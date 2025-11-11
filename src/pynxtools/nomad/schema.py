@@ -25,7 +25,6 @@ import types
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-import zipfile
 from typing import Any, Optional, Union
 
 import h5py
@@ -1288,6 +1287,10 @@ def load_nexus_schema():
     global nexus_metainfo_package  # pylint: disable=global-statement
 
     nxs_filepath = get_package_filepath()
+    if not os.path.exists(nxs_filepath):
+        raise Exception(
+            "NeXus schema could not be loaded because the JSON file does not exist yet."
+        )
 
     with open(nxs_filepath, "rb") as file:
         schema_dict = orjson.loads(file.read())
@@ -1334,24 +1337,16 @@ def init_nexus_metainfo():
 
     if nexus_metainfo_package is not None:
         return
-
-    import time
-
-    start = time.time()
-
     try:
         load_nexus_schema()
-        print(f"Schema loaded after {time.time() - start} s.")
+
     except Exception:
         nexus_metainfo_package = create_metainfo_package()
         save_nexus_schema()
-        print(f"Schema created after {time.time() - start} s.")
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
     nexus_metainfo_package.init_metainfo()
-
-    print(f"Schema initialized after {time.time() - start} s.")
 
     # Handling nomad BaseSection and other inherited Section from BaseSection
     for section in nexus_metainfo_package.section_definitions:
@@ -1365,15 +1360,11 @@ def init_nexus_metainfo():
             else:
                 section.section_cls.normalize = normalize_func
 
-    print(f"Normalizers attached after {time.time() - start} s.")
-
     # We skip the Python code generation for now and offer Python classes as variables
     # TO DO not necessary right now, could also be done case-by-case by the nexus parser
     python_module = sys.modules[__name__]
     for section in nexus_metainfo_package.section_definitions:  # pylint: disable=E1133
         setattr(python_module, section.name, section.section_cls)
-
-    print(f"Python modules available after {time.time() - start} s.")
 
 
 init_nexus_metainfo()
