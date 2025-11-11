@@ -17,11 +17,16 @@ update_nexus_version() {
   cd ../../../
 }
 
+get_default_branch() {
+  # Detect the default branch of the submodule's remote
+  git -C "$DEFINITIONS_FOLDER" remote show origin | awk '/HEAD branch/ {print $NF}'
+}
+
 update_definitions_submodule() {
   echo "updating definitions submodule"
-  git submodule sync --recursive
-  git submodule update --init --recursive --remote --jobs=4
-  git submodule foreach --recursive 'git fetch --tags'
+  git submodule sync "$DEFINITIONS_FOLDER"
+  git submodule update --init --remote --jobs=4 "$DEFINITIONS_FOLDER"
+  git -C "$DEFINITIONS_FOLDER" fetch --tags
 }
 
 reset_definitions_submodule() {
