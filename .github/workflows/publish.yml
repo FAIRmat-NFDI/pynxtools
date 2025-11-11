@@ -129,7 +129,7 @@ jobs:
           echo "Expected filename: $EXPECTED"
 
           if [ "$FOUND_BASENAME" = "$EXPECTED" ]; then
-              echo "✅ Installed NeXus schema package JSON file matches expected definition version."
+              echo "Installed NeXus schema package JSON file matches expected definition version."
           else
               echo "ERROR: Expected '$EXPECTED', but found '$FOUND_BASENAME'."
               exit 1
