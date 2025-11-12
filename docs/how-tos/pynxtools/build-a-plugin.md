@@ -25,7 +25,6 @@ pynxtools-plugin
 │   └── data
 ├── LICENSE
 ├── mkdocs.yaml
-├── dev-requirements.txt
 └── pyproject.toml
 ```
 

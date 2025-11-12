@@ -200,7 +200,6 @@ cython_debug/
 *.txt
 !.cspell/custom-dictionary.txt
 !requirements.txt
-!dev-requirements.txt
 !mkdocs-requirements.txt
 !src/pynxtools/nexus-version.txt
 !src/pynxtools/remote_definitions_url.txt

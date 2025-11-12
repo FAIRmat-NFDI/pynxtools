@@ -7,10 +7,9 @@ on:
   pull_request:
     branches:
       - master
-    # Run workflow only when there are changes in pyproject.toml or dev-requirements.txt
+    # Run workflow only when there are changes in pyproject.toml
     # paths:
     #   - 'pyproject.toml'
-    #   - 'dev-requirements.txt'
 
 env:
   python-version: 3.12

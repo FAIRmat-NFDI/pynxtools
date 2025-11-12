@@ -1,7 +1,7 @@
 prune *
 exclude *
 recursive-include src/pynxtools *.py
-include pyproject.toml LICENSE README.md dev-requirements.txt
+include pyproject.toml LICENSE README.md
 include src/pynxtools/data/*
 
 recursive-include src/pynxtools/definitions/base_classes/ *.xml
