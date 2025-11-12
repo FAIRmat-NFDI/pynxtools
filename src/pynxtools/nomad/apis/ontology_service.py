@@ -39,17 +39,13 @@ ontology_dir = os.path.abspath(
 )
 OWL_FILE_PATH = None
 
-INFERRED_ONTOLOGY: Ontology | None = None
-from threading import Lock
-
-ONTOLOGY_CACHE_LOCK = Lock()
-
 
 def ensure_ontology_file():
     """
-    Ensure the ontology file exists. If not, regenerate it using the Python function.
+    Ensure the ontology file exists. If not, regenerate it.
     """
     global OWL_FILE_PATH
+
     try:
         # Get the latest commit hash from the definitions submodule
         nexus_def_path = os.path.join(local_dir, "..", "..", "definitions")
@@ -57,51 +53,48 @@ def ensure_ontology_file():
         latest_commit_hash = str(repo.head.target)[:7]
 
         # Construct the expected ontology file name
-        owl_file_name = f"NeXusOntology_full_{latest_commit_hash}.owl"
-        owl_file_path = os.path.join(ontology_dir, owl_file_name)
+        inferred_owl_file_name = f"NeXusOntology_full_{latest_commit_hash}_inferred.owl"
+        inferred_owl_file_path = os.path.join(ontology_dir, inferred_owl_file_name)
         # Check if the ontology file exists
-        if not os.path.exists(owl_file_path):
+        if not os.path.exists(inferred_owl_file_path):
             generate_ontology(
-                full=True, nexus_def_path=nexus_def_path, def_commit=latest_commit_hash
+                full=True,
+                nexus_def_path=nexus_def_path,
+                def_commit=latest_commit_hash,
+                store_commit_filename=True,
             )
             # Rename the generated file to include the commit hash
-            generated_file_path = os.path.join(
+            owl_file_path = os.path.join(
                 ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl"
             )
-            os.rename(generated_file_path, owl_file_path)
+            if os.path.exists(owl_file_path):
+                # Run reasoner and save inferred ontology
+                ontology = get_ontology(owl_file_path).load()
+                sync_reasoner(ontology)
+                ontology.save(file=inferred_owl_file_path, format="rdfxml")
+                os.remove(owl_file_path)  # Remove the non-inferred file
 
         # Update the OWL_FILE_PATH to point to the correct file
-        OWL_FILE_PATH = owl_file_path
+        OWL_FILE_PATH = inferred_owl_file_path
 
     except Exception as e:
         raise RuntimeError(f"Failed to ensure ontology file: {e}")
 
 
 def load_ontology() -> Ontology:
-    """
-    Return a reasoned ontology from the in-memory cache if present.
-    Otherwise load the base OWL, run the reasoner and cache the result.
-    """
-    global INFERRED_ONTOLOGY
     try:
         ensure_ontology_file()
-        if OWL_FILE_PATH is None:
-            raise RuntimeError("OWL_FILE_PATH not set")
+        if not OWL_FILE_PATH:
+            raise RuntimeError("OWL_FILE_PATH is not set")
 
-        with ONTOLOGY_CACHE_LOCK:
-            if INFERRED_ONTOLOGY is not None:
-                return INFERRED_ONTOLOGY
-
-            # load base ontology from disk and run reasoner in-memory
-            base_iri = f"file://{OWL_FILE_PATH}"
-            logger.info(f"Loading ontology from {base_iri} and running reasoner")
-            ontology = get_ontology(base_iri).load()
-            sync_reasoner(ontology)  # must have Java/reasoner available
-            INFERRED_ONTOLOGY = ontology
-            logger.info("Ontology loaded and cached in memory")
-            return INFERRED_ONTOLOGY
+        if os.path.exists(OWL_FILE_PATH):
+            # load the preexisitng inferred ontology
+            ontology = get_ontology(OWL_FILE_PATH).load()
+            return ontology
+        else:
+            raise FileNotFoundError(f"Ontology file not found at {OWL_FILE_PATH}")
     except Exception as e:
-        logger.error(f"Error loading ontology: {e}")
+        logger.error(f"Error loading ontology: {e}", exc_info=True)
         raise
 
 
@@ -218,16 +211,10 @@ def fetch_subclasses(ontology, class_name):
 @app.on_event("startup")
 def startup_event():
     """
-    Ensure the ontology file is present during application startup and optionally
-    pre-warm the in-memory cache (do not write any inferred file to disk).
+    Ensure the ontology file is present during application startup.
     """
     try:
         ensure_ontology_file()
-        # optionally pre-warm cache so first request is fast; ignore failures
-        try:
-            load_ontology()
-        except Exception as inner:
-            logger.warning(f"Pre-warm of ontology cache failed: {inner}")
     except Exception as e:
         logger.error(f"Error during startup: {e}")
 
