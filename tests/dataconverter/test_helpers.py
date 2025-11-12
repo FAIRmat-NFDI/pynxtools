@@ -49,7 +49,6 @@ def fixture_template():
     return template
 
 
-@pytest.mark.usefixtures("template")
 @pytest.fixture(name="filled_test_data")
 def fixture_filled_test_data(template, tmp_path):
     """pytest fixture to setup a filled in template."""

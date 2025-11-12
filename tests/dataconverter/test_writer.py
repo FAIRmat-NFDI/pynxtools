@@ -32,7 +32,6 @@ from .test_helpers import (  # pylint: disable=unused-import
 )
 
 
-@pytest.mark.usefixtures("filled_test_data")
 @pytest.fixture(name="writer")
 def fixture_writer(filled_test_data, tmp_path):
     """pytest fixture to setup Writer object to be used by tests with dummy data."""
