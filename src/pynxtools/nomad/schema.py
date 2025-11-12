@@ -23,6 +23,7 @@ import os.path
 import pickle
 import re
 import sys
+import types
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -434,10 +435,7 @@ def nxdata_ensure_definition(
         # run the query
         definition = resolve_variadic_name(new_definitions, def_or_name, hint)
         return definition
-    return super(current_cls, self)._ensure_definition(
-        def_or_name,
-        hint,
-    )
+    return Section._ensure_definition(self, def_or_name, hint=hint)
 
 
 def to_section(name: str, **kwargs) -> Section:
@@ -458,7 +456,7 @@ def to_section(name: str, **kwargs) -> Section:
     section_definitions[name] = section
 
     if name == "Data":
-        section._ensure_definition = nxdata_ensure_definition
+        section._ensure_definition = types.MethodType(nxdata_ensure_definition, section)
 
     return section
 
