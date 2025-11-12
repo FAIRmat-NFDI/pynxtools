@@ -461,7 +461,8 @@ class NexusParser(MatchingParser):
         chemical_formulas: set[str] = set()
 
         for sample in self._sample_class_refs["NXsample"]:
-            if (atom_types := sample.get("atom_types__field")) is not None:
+            if sample.get("atom_types__field") is not None:
+                atom_types = sample.atom_types__field
                 if isinstance(atom_types, list):
                     for symbol in atom_types:
                         if symbol in chemical_symbols[1:]:
@@ -477,6 +478,10 @@ class NexusParser(MatchingParser):
                     for symbol in atom_types.replace(" ", "").split(","):
                         if symbol in chemical_symbols[1:]:
                             element_set.add(symbol)
+                        else:
+                            self._logger.warn(
+                                f"Ignoring {symbol} as it is not for an element from the periodic table"
+                            )
                 # given that the element list will be overwritten
                 # in case a single chemical formula is found we do not add
                 # a chemical formula here as this anyway be correct only
