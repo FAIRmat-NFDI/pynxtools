@@ -478,6 +478,10 @@ class NexusParser(MatchingParser):
                     for symbol in atom_types.replace(" ", "").split(","):
                         if symbol in chemical_symbols[1:]:
                             element_set.add(symbol)
+                        else:
+                            self._logger.warn(
+                                f"Ignoring {symbol} as it is not for an element from the periodic table"
+                            )
                 # given that the element list will be overwritten
                 # in case a single chemical formula is found we do not add
                 # a chemical formula here as this anyway be correct only
