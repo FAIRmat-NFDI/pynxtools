@@ -1,16 +1,17 @@
 ######################################################################
 ######################## import libraries ############################
 ######################################################################
-import os
 import logging
+import os
 import subprocess
+
 import pygit2
+
 os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING"
 
-from nomad.config import config
 from fastapi import FastAPI, HTTPException
-
 from fastapi.responses import RedirectResponse
+from nomad.config import config
 from owlready2 import ThingClass, get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
 
@@ -18,13 +19,15 @@ from pynxtools.NeXusOntology.script.generate_ontology import main as generate_on
 
 logger = logging.getLogger("pynxtools")
 
-ontology_service_entry_point = config.get_plugin_entry_point('pynxtools.nomad.apis:ontology_service')
+ontology_service_entry_point = config.get_plugin_entry_point(
+    "pynxtools.nomad.apis:ontology_service"
+)
 
 #######################################################################
 ########################## define app and functions ###################
 #######################################################################
 app = FastAPI(
-    root_path = f'{config.services.api_base_path}/ontology_service',
+    root_path=f"{config.services.api_base_path}/ontology_service",
     title="Ontology Service",
     description="A service to provide ontological information for a given NeXus class.",
 )
@@ -38,7 +41,9 @@ OWL_FILE_PATH = None
 
 INFERRED_ONTOLOGY: Ontology | None = None
 from threading import Lock
+
 ONTOLOGY_CACHE_LOCK = Lock()
+
 
 def ensure_ontology_file():
     """
