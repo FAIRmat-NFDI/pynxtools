@@ -38,6 +38,7 @@ from scipy.spatial import cKDTree
 from toposort import toposort_flatten
 
 try:
+    from nomad.config import config
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import ArchiveSection, EntryData, Schema
     from nomad.datamodel.metainfo import basesections
@@ -75,7 +76,6 @@ try:
     from nomad.normalizing.common import nomad_atoms_from_ase_atoms
     from nomad.normalizing.topology import add_system, add_system_info
     from nomad.utils import get_logger, hash, strip
-    from nomad.config import config
 
 except ImportError as exc:
     raise ImportError(
@@ -265,7 +265,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                     if hasattr(entry, "definition__field") and entry.definition__field:
                         # Directly use entry.definition__field as class_name
                         class_name = entry.definition__field.strip()
-                        base = config.services.api_base_path.rstrip('/')
+                        base = config.services.api_base_path.rstrip("/")
                         url = f"http://localhost:8000{base}/ontology_service/superclasses/{class_name}"
                         response = requests.get(url, timeout=5)
                         if response.status_code == 200:
