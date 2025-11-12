@@ -39,7 +39,7 @@ from pynxtools.eln_mapper.schema_eln import NomadElnGenerator
     show_default=True,
     help=(
         "To skip the level of parent hierarchy level. For example, by default the part "
-        "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped."
+        "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skipped."
     ),
 )
 @click.option(

@@ -2200,7 +2200,7 @@ DEBUG -
 DEBUG - documentation (NXentry.nxdl.xml:/title):
 DEBUG - Extended title for entry
 DEBUG - ========================
-DEBUG - === Default Plotable ===
+DEBUG - === Default Plottable ===
 DEBUG - ========================
 DEBUG - 
 DEBUG - NXentry has been identified: /entry

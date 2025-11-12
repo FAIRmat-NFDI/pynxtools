@@ -77,22 +77,22 @@ def test_assert_nexus_metainfo(path: str, value: Any):
     for name in path.split("."):
         elements: list = []
         if name.endswith("__field"):
-            subelement_list = getattr(current, "quantities", None)
-            if subelement_list:
-                elements += subelement_list
+            sub_element_list = getattr(current, "quantities", None)
+            if sub_element_list:
+                elements += sub_element_list
         else:
-            subelement_list = getattr(current, "section_definitions", None)
-            if subelement_list:
-                elements += subelement_list
-            subelement_list = getattr(current, "sub_sections", None)
-            if subelement_list:
-                elements += subelement_list
-            subelement_list = getattr(current, "attributes", None)
-            if subelement_list:
-                elements += subelement_list
-            subelement_list = current.m_contents()
-            if subelement_list:
-                elements += subelement_list
+            sub_element_list = getattr(current, "section_definitions", None)
+            if sub_element_list:
+                elements += sub_element_list
+            sub_element_list = getattr(current, "sub_sections", None)
+            if sub_element_list:
+                elements += sub_element_list
+            sub_element_list = getattr(current, "attributes", None)
+            if sub_element_list:
+                elements += sub_element_list
+            sub_element_list = current.m_contents()
+            if sub_element_list:
+                elements += sub_element_list
         for content in elements:
             if getattr(content, "name", None) == name:
                 current = content  # type: ignore

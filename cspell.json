@@ -1,28 +1,31 @@
 {
     "version": "0.2",
     "ignorePaths": [
-        "./tests/data/*",
+        "tests/data/*",
         "*.toml",
         "Makefile",
         "*.bat",
-        "*.egg-info"
+        "*.egg-info",
+        "venv",
+        "__pycache__",
+        "dist",
+        "build",
+        "src/pynxtools/definitions"
     ],
-    "dictionaryDefinitions": [
-        {
-            "name": "custom-dictionary",
-            "path": "./.cspell/custom-dictionary.txt",
-            "addWords": true
-        }
-    ],
-    "import": ["@cspell/dict-scientific-terms-us/cspell-ext.json"],
-    "dictionaries": [
-        "custom-dictionary",
-        "scientific_terms_US",
-        "python"
-    ],
-    "words": [],
-    "ignoreWords": [],
-    "ignoreRegExpList": ["\\bNX\\w*\\b", "https?://[\\S]+"],
-    "import": [],
-    "language": "en-US"
+  "dictionaryDefinitions": [
+    {
+      "name": "custom-dictionary",
+      "path": "./.cspell/custom-dictionary.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": [
+    "custom-dictionary",
+    "en_US",
+    "python"
+  ],
+  "words": [],
+  "ignoreWords": [],
+  "ignoreRegExpList": ["\\bNX\\w*\\b", "https?://[\\S]+"],
+  "language": "en-US"
 }

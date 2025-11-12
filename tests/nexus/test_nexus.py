@@ -193,8 +193,8 @@ def test_nexus(tmp_path):
     with open(
         os.path.join(dirpath, "Ref_nexus_test.log"),
         encoding="utf-8",
-    ) as reffile:
-        ref = reffile.readlines()
+    ) as ref_file:
+        ref = ref_file.readlines()
 
     if log != ref:
         differences = list(

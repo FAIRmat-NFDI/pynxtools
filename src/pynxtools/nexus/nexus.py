@@ -130,7 +130,7 @@ def get_nx_class_path(hdf_info):
     return ""
 
 
-def chk_nxdataaxis_v2(hdf_node, name, logger):
+def chk_nxdata_axis_v2(hdf_node, name, logger):
     """Check if dataset is an axis"""
     own_signal = hdf_node.attrs.get("signal")  # check for being a Signal
     if own_signal is str and own_signal == "1":
@@ -142,11 +142,11 @@ def chk_nxdataaxis_v2(hdf_node, name, logger):
             if axes[i] and name == axes[i]:
                 logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
                 return None
-    ownpaxis = hdf_node.attrs.get("primary")
+    own_primary_axis = hdf_node.attrs.get("primary")
     own_axis = hdf_node.attrs.get("axis")
     if own_axis is int:
         # also convention v1
-        if ownpaxis is int and ownpaxis == 1:
+        if own_primary_axis is int and own_primary_axis == 1:
             logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
         else:
             logger.debug(
@@ -156,7 +156,7 @@ def chk_nxdataaxis_v2(hdf_node, name, logger):
     return None
 
 
-def chk_nxdataaxis(hdf_node, name, logger):
+def chk_nxdata_axis(hdf_node, name, logger):
     """NEXUS Data Plotting Standard v3: new version from 2014"""
     if not isinstance(
         hdf_node, h5py.Dataset
@@ -186,35 +186,35 @@ def chk_nxdataaxis(hdf_node, name, logger):
     indices = parent.attrs.get(name + "_indices")  # check for alternative Axes
     if indices is int:
         logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
-    return chk_nxdataaxis_v2(hdf_node, name, logger)  # check for older conventions
+    return chk_nxdata_axis_v2(hdf_node, name, logger)  # check for older conventions
 
 
 def check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node):
-    """Check for several attributes. - deprecation - enums - nxdataaxis"""
+    """Check for several attributes. - deprecation - enums - nxdata_axis"""
     logger, elem, path = variables
     dep_str = elem.attrib.get("deprecated")  # check for deprecation
     if dep_str:
         if doc:
             logger.debug("DEPRECATED - " + dep_str)
     for base_elem in elist if not attr else [elem]:  # check for enums
-        sdoc = get_nxdl_child(base_elem, "enumeration", go_base=False)
-        if sdoc is not None:
+        s_doc = get_nxdl_child(base_elem, "enumeration", go_base=False)
+        if s_doc is not None:
             if doc:
                 logger.debug("enumeration (" + get_node_concept_path(base_elem) + "):")
-            for item in sdoc:
+            for item in s_doc:
                 if isinstance(item, ET._Comment):
                     continue
                 if get_local_name_from_xml(item) == "item":
                     if doc:
                         logger.debug("-> " + item.attrib["value"])
-    chk_nxdataaxis(
+    chk_nxdata_axis(
         hdf_node, path.split("/")[-1], logger
     )  # look for NXdata reference (axes/signal)
     for base_elem in elist if not attr else [elem]:  # check for doc
-        sdoc = get_nxdl_child(base_elem, "doc", go_base=False)
+        s_doc = get_nxdl_child(base_elem, "doc", go_base=False)
         if doc:
             logger.debug("documentation (" + get_node_concept_path(base_elem) + "):")
-            logger.debug(sdoc.text if sdoc is not None else "")
+            logger.debug(s_doc.text if s_doc is not None else "")
     return logger, elem, path, doc, elist, attr, hdf_node
 
 
@@ -350,15 +350,15 @@ def helper_get_inherited_nodes(hdf_info2, elist, pind, attr):
     else:
         act_nexus_type = "field" if isinstance(hdf_node, h5py.Dataset) else "group"
     # find the best fitting name in all children
-    bestfit = -1
+    best_fit = -1
     html_name = None
     for ind in range(len(elist) - 1, -1, -1):
-        newelem, fit = get_best_child(
+        new_elem, fit = get_best_child(
             elist[ind], hdf_node, hdf_name, hdf_class_name, act_nexus_type
         )
-        if fit >= bestfit and newelem is not None:
-            bestfit = fit
-            html_name = get_node_name(newelem)
+        if fit >= best_fit and new_elem is not None:
+            best_fit = fit
+            html_name = get_node_name(new_elem)
     return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
 
 
@@ -487,21 +487,21 @@ def logger_auxiliary_signal(logger, nxdata):
     if aux is not None:
         if isinstance(aux, str):
             aux = [aux]
-        for asig in aux:
-            logger.debug(f"Further auxiliary signal has been identified: {asig}")
+        for aux_sig in aux:
+            logger.debug(f"Further auxiliary signal has been identified: {aux_sig}")
     return logger
 
 
-def print_default_plotable_header(logger):
+def print_default_plottable_header(logger):
     """Print a three-lines header"""
     logger.debug("========================")
-    logger.debug("=== Default Plotable ===")
+    logger.debug("=== Default Plottable ===")
     logger.debug("========================")
 
 
-def get_default_plotable(root, logger):
-    """Get default plotable"""
-    print_default_plotable_header(logger)
+def get_default_plottable(root, logger):
+    """Get default plottable"""
+    print_default_plottable_header(logger)
     # v3 from 2014
     # nxentry
     nxentry = None
@@ -580,16 +580,16 @@ def entry_helper(root):
 def nxdata_helper(nxentry):
     """Check if nxentry hdf5 object has a NX_class and, if it contains NXdata,
     return its value"""
-    lnxdata = []
+    nxdata_list = []
     for key in nxentry.keys():
         if (
             isinstance(nxentry[key], h5py.Group)
             and nxentry[key].attrs.get("NX_class")
             and decode_if_string(nxentry[key].attrs["NX_class"]) == "NXdata"
         ):
-            lnxdata.append(nxentry[key])
-    if len(lnxdata) >= 1:
-        return lnxdata[0]
+            nxdata_list.append(nxentry[key])
+    if len(nxdata_list) >= 1:
+        return nxdata_list[0]
     return None
 
 
@@ -624,7 +624,7 @@ def find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list):
                 pass
     if len(lax) == 1:
         ax_list.append(lax[0])
-    # if there are more alternatives, prioritise the one with an attribute primary="1"
+    # if there are more alternatives, prioritize the one with an attribute primary="1"
     elif len(lax) > 1:
         for sax in lax:
             if sax.attrs.get("primary") and sax.attrs.get("primary") == 1:
@@ -637,7 +637,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
     """Gets either single or multiple axes from the NXDL"""
     try:
         if isinstance(ax_datasets, str):  # single axis is defined
-            # explicite definition of dimension number
+            # explicit definition of dimension number
             ind = decode_if_string(nxdata.attrs.get(ax_datasets + "_indices"))
             if ind and ind is int:
                 if ind == a_item:
@@ -645,7 +645,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
             elif a_item == 0:  # positional determination of the dimension number
                 ax_list.append(nxdata[ax_datasets])
         elif isinstance(ax_datasets, list | np.ndarray):  # multiple axes are listed
-            # explicite definition of dimension number
+            # explicit definition of dimension number
             for aax in ax_datasets:
                 ind = decode_if_string(nxdata.attrs.get(aax + "_indices"))
                 if ind and isinstance(ind, int):
@@ -716,7 +716,7 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
 
 def hdf_node_to_self_concept_path(hdf_info, logger):
     """Get concept or nxdl path from given hdf_node."""
-    # The bellow logger is for deactivatine unnecessary debug message above
+    # The below logger is for deactivating unnecessary debug message above
     if logger is None:
         logger = logging.getLogger("pynxtools")
         logger.setLevel(logging.INFO)
@@ -813,7 +813,7 @@ class HandleNexus:
         return True
 
     def full_visit(self, root, hdf_node, name, func):
-        """visiting recursivly all children, but avoiding endless cycles"""
+        """visiting recursively all children, but avoiding endless cycles"""
         func(name, hdf_node)
         if isinstance(hdf_node, h5py.Group):
             for ch_name, child in hdf_node.items():
@@ -838,7 +838,7 @@ class HandleNexus:
             self.full_visit(self.in_file, self.in_file, "", self.visit_node)
 
             if self.d_inq_nd is None and self.c_inq_nd is None and parser is None:
-                get_default_plotable(self.in_file, self.logger)
+                get_default_plottable(self.in_file, self.logger)
             # To log the provided concept and concepts founded
             if self.c_inq_nd is not None:
                 for hdf_path in self.hdf_path_list_for_c_inq_nd:

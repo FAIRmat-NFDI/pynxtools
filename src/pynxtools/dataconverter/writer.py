@@ -112,7 +112,7 @@ def handle_shape_entries(data, file, path):
 def handle_dicts_entries(data, grp, entry_name, output_path, path):
     """Handle function for dictionaries found as value of the nexus file.
 
-    Several cases can be encoutered:
+    Several cases can be encountered:
     - Data to slice and place in virtual datasets
     - Concatenate dataset in one virtual dataset
     - Internal links
@@ -172,9 +172,9 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
         raise InvalidDictProvided(
             "A dictionary was provided to the template but it didn't"
             " fall into any of the know cases of handling"
-            " dictionaries. This occured for: " + entry_name
+            " dictionaries. This occurred for: " + entry_name
         )
-    # Check whether link has been stabilished or not
+    # Check whether link has been established or not
     try:
         return grp[entry_name]
     except KeyError:
@@ -301,7 +301,7 @@ class Writer:
                 print(str(exc))
             except Exception as exc:
                 raise OSError(
-                    f"Unknown error occured writing the path: {path} "
+                    f"Unknown error occurred writing the path: {path} "
                     f"with the following message: {str(exc)}"
                 ) from exc
 
@@ -329,14 +329,14 @@ class Writer:
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
-                    # consider changing the name here the lvalue can also be group!
+                    # consider changing the name here the value can also be group!
                     dataset = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
                     dataset.attrs[entry_name[1:]] = data
             except Exception as exc:
                 raise OSError(
-                    f"Unknown error occured writing the path: {path}"
+                    f"Unknown error occurred writing the path: {path}"
                     f", while writing the value: {value} "
                     f"with the following message: {str(exc)}"
                 ) from exc

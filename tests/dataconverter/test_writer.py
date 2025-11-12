@@ -86,5 +86,5 @@ def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
             "pynxtools.dataconverter.exceptions.InvalidDictProvided: "
             "A dictionary was provided to the template but it didn't "
             "fall into any of the know cases of handling dictionaries"
-            ". This occured for: ext_link"
+            ". This occurred for: ext_link"
         )

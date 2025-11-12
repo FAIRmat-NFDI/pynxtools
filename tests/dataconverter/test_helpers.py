@@ -189,9 +189,9 @@ def test_warning_on_root_attribute_overwrite(caplog):
     """
     template = Template()
     template["/@NX_class"] = "NXwrong"
-    filname = "my_nexus_file.nxs"
+    filename = "my_nexus_file.nxs"
     with caplog.at_level(logging.WARNING):
-        helpers.add_default_root_attributes(template, filname)
+        helpers.add_default_root_attributes(template, filename)
     error_text = (
         "The NXroot entry '/@NX_class' (value: NXwrong) should not be changed by the reader. "
         "This is overwritten by the actually used value 'NXroot'"

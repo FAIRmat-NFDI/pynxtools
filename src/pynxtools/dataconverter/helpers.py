@@ -140,8 +140,8 @@ class Collector:
             value = cast(Any, value)
             logger.warning(
                 f"Instance name '{path}' used for multiple different concepts: "
-                f"{', '.join(sorted(set(c for c, _ in value)))}. "
-                f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
+                f"{', '.join(sorted({c for c, _ in value}))}. "
+                f"The following keys are affected: {', '.join(sorted({k for _, k in value}))}."
             )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.info(f"The unit {path} = {value} has no documentation.")
@@ -596,7 +596,7 @@ def generate_template_from_nxdl(
             path_nxdl, nxdl_name
         )
         add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
-    # Handling link: link has a target attibute that store absolute path of concept to be
+    # Handling link: link has a target attribute that store absolute path of concept to be
     # linked. Writer reads link from template in the format {'link': <ABSOLUTE PATH>}
     # {'link': ':/<ABSOLUTE PATH TO EXTERNAL FILE>'}
     elif tag == "link":
@@ -1232,13 +1232,13 @@ def check_for_valid_atom_types(atoms: str | list):
         for elm in atoms:
             if elm not in chemical_symbols[1:]:
                 logger.warning(
-                    f"The element {elm} is not found in periodictable, "
+                    f"The element {elm} is not found in the periodic table, "
                     f"check for correct element name"
                 )
     elif isinstance(atoms, str):
         if atoms not in chemical_symbols[1:]:
             logger.warning(
-                f"The element {atoms} is not found in periodictable, "
+                f"The element {atoms} is not found in the periodic table, "
                 f"check for correct element name"
             )
 
@@ -1360,7 +1360,7 @@ def extract_atom_types(formula, mode="hill"):
 def transform_to_intended_dt(str_value: Any) -> Any | None:
     """Transform string to the intended data type, if not then return str_value.
 
-    E.g '2.5E-2' will be transfor into 2.5E-2
+    E.g '2.5E-2' will be transformed into 2.5E-2
     tested with: '2.4E-23', '28', '45.98', 'test', ['59', '3.00005', '498E-34'],
                  '23 34 444 5000', None
     with result: 2.4e-23, 28, 45.98, test, [5.90000e+01 3.00005e+00 4.98000e-32],
@@ -1378,7 +1378,7 @@ def transform_to_intended_dt(str_value: Any) -> Any | None:
         Converted data type
     """
 
-    symbol_list_for_data_seperation = [";", " "]
+    symbol_list_for_data_separation = [";", " "]
     transformed: Any = None
 
     if isinstance(str_value, list):
@@ -1401,7 +1401,7 @@ def transform_to_intended_dt(str_value: Any) -> Any | None:
                     transformed = json.loads(str_value)
         if transformed is not None:
             return transformed
-        for sym in symbol_list_for_data_seperation:
+        for sym in symbol_list_for_data_separation:
             if sym in str_value:
                 parts = str_value.split(sym)
                 modified_parts: list = []
@@ -1419,7 +1419,7 @@ def transform_to_intended_dt(str_value: Any) -> Any | None:
 def nested_dict_to_slash_separated_path(
     nested_dict: dict, flattened_dict: dict, parent_path=""
 ):
-    """Convert nested dict into slash separeted path upto certain level."""
+    """Convert nested dict into slash separated path upto certain level."""
     sep = "/"
 
     for key, val in nested_dict.items():

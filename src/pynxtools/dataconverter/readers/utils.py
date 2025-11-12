@@ -36,7 +36,7 @@ class FlattenSettings:
 
     Args:
         dic (dict): Dictionary to flatten
-        convert_dict (dict): Dictionary for renaming keys in the flattend dict.
+        convert_dict (dict): Dictionary for renaming keys in the flattened dict.
         replace_nested (dict): Dictionary for renaming nested keys.
         parent_key (str, optional):
             Parent key of the dictionary. Defaults to "/ENTRY[entry]".
@@ -82,7 +82,7 @@ def is_value_unit_pair(val: Any) -> bool:
 
 
 def uniquify_keys(ldic: list) -> list[Any]:
-    """Uniquifys keys in a list of tuple lists containing key value pairs.
+    """Uniquifies keys in a list of tuple lists containing key value pairs.
 
     Args:
         ldic (list): List of lists of length two, containing key value pairs.
@@ -93,16 +93,16 @@ def uniquify_keys(ldic: list) -> list[Any]:
     dic: dict = {}
     for key, val in ldic:
         suffix = 0
-        sstr = "" if suffix == 0 else str(suffix)
-        while f"{key}{sstr}" in dic:
-            sstr = "" if suffix == 0 else str(suffix)
+        suffix_str = "" if suffix == 0 else str(suffix)
+        while f"{key}{suffix_str}" in dic:
+            suffix_str = "" if suffix == 0 else str(suffix)
             suffix += 1
 
         if is_value_unit_pair(val):
-            dic[f"{key}{sstr}"] = val["value"]
-            dic[f"{key}{sstr}/@units"] = val["unit"]
+            dic[f"{key}{suffix_str}"] = val["value"]
+            dic[f"{key}{suffix_str}/@units"] = val["unit"]
             continue
-        dic[f"{key}{sstr}"] = val
+        dic[f"{key}{suffix_str}"] = val
 
     return list(map(list, dic.items()))
 
@@ -222,7 +222,7 @@ def flatten_json(
             A base key to prefix to all keys.
             Defaults to None.
         replacement_key (Optional[str], optional):
-            A replacement key which replaces all occurences of * with this string.
+            A replacement key which replaces all occurrences of * with this string.
             Defaults to None.
         dont_flatten_link_dict (bool):
             If true, the dict will not be flattened if it only contains a link key.
@@ -244,20 +244,20 @@ def flatten_json(
 
     flattened_config = {}
 
-    def update_config(key, value, rkey):
+    def update_config(key, value, replacement_key):
         if isinstance(value, dict):
             flattened_config.update(
                 flatten_json(
                     value,
                     base_key=key,
-                    replacement_key=rkey,
+                    replacement_key=replacement_key,
                     dont_flatten_link_dict=dont_flatten_link_dict,
                     create_link_dict=create_link_dict,
                 )
             )
         else:
-            if rkey is not None and isinstance(value, str):
-                value = value.replace("*", rkey)
+            if replacement_key is not None and isinstance(value, str):
+                value = value.replace("*", replacement_key)
             if (
                 create_link_dict
                 and isinstance(value, str)
@@ -280,8 +280,8 @@ def flatten_json(
         if replacement_key is None and expand_match is not None:
             expand_keys = expand_match.group(1).split(",")
             for ekey in expand_keys:
-                rkey = key.replace(expand_match.group(0), ekey)
-                update_config(rkey, value, ekey)
+                r_key = key.replace(expand_match.group(0), ekey)
+                update_config(r_key, value, ekey)
             continue
 
         update_config(key, value, None)

@@ -131,10 +131,10 @@ class NexusActivityStep(ActivityStep):
 
 class AnchoredReference(EntityReference):
     def normalize(self, archive, logger):
-        def create_Entity(lab_id, archive, f_name, qunt_name):
+        def create_Entity(lab_id, archive, f_name, quant_name):
             entitySec = Entity()
             entitySec.lab_id = lab_id
-            entitySec.name = qunt_name
+            entitySec.name = quant_name
             entity = EntryArchive(
                 data=entitySec,
                 m_context=archive.m_context,
@@ -427,12 +427,12 @@ def nxdata_ensure_definition(
         else:
             filters = ["DATA", "AXISNAME", "FIELDNAME_errors"]
         # get the reduced options
-        newdefinitions = {}
+        new_definitions = {}
         for dname, definition in self.m_def.all_aliases:
             if dname not in filters:
-                newdefinitions[dname] = definition
+                new_definitions[dname] = definition
         # run the query
-        definition = resolve_variadic_name(newdefinitions, def_or_name, hint)
+        definition = resolve_variadic_name(new_definitions, def_or_name, hint)
         return definition
     return super(current_cls, self)._ensure_definition(
         def_or_name,
@@ -458,7 +458,7 @@ def to_section(name: str, **kwargs) -> Section:
     section_definitions[name] = section
 
     if name == "Data":
-        section._ensure_defintion = nxdata_ensure_definition
+        section._ensure_definition = nxdata_ensure_definition
 
     return section
 
@@ -586,16 +586,16 @@ def _add_quantity_stats(container: Section, quantity: Quantity):
     # the statistics are always mapping on float64 even if quantity values are ints
     if not quantity.name.endswith("__field"):
         return
-    isvariadic = quantity.variable
-    notnumber = quantity.type not in [
+    is_variadic = quantity.variable
+    not_number = quantity.type not in [
         np.float64,
         np.int64,
         np.uint64,
     ] and not isinstance(quantity.type, Number)
-    if notnumber and not isvariadic:
+    if not_number and not is_variadic:
         return
     basename = get_quantity_base_name(quantity.name)
-    if isvariadic:
+    if is_variadic:
         container.quantities.append(
             Quantity(
                 name=basename + "__name",
@@ -606,7 +606,7 @@ def _add_quantity_stats(container: Section, quantity: Quantity):
                 "This quantity holds the instance name of a NeXus Field.",
             )
         )
-    if notnumber:
+    if not_number:
         return
     for suffix, dtype in zip(
         FIELD_STATISTICS["suffix"][1:],
@@ -811,15 +811,15 @@ def _attach_base_section(section: Section, container: Section, default: Section)
     a base-section with a suitable base.
     """
     try:
-        newdefinitions = {}
+        new_definitions = {}
         for def_name, act_def in container.all_sub_sections.items():
             if (
                 "nx_type" in act_def.sub_section.more
                 and section.more["nx_type"] == act_def.sub_section.more["nx_type"]
             ):
-                newdefinitions[def_name] = act_def.sub_section
+                new_definitions[def_name] = act_def.sub_section
         base_section = resolve_variadic_name(
-            newdefinitions,
+            new_definitions,
             section.name.split("__")[-1],
             # filter=default,
         )
@@ -1114,7 +1114,7 @@ def normalize_sample_component(self, archive, logger):
         self.name = self.__dict__["nx_name"]
     if self.mass__field:
         self.mass = self.mass__field
-    # we may want to add normalisation for mass_fraction (calculating from components)
+    # we may want to add normalization for mass_fraction (calculating from components)
     super(current_cls, self).normalize(archive, logger)
 
 
@@ -1163,7 +1163,7 @@ def normalize_atom_probe(self, archive, logger):
         f"{_rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe"
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
-    # temporarily disable extra normalisation step
+    # temporarily disable extra normalization step
     return
 
     def plot_3d_plotly(df, palette="Set1"):
@@ -1279,7 +1279,7 @@ def normalize_atom_probe(self, archive, logger):
 
     # plotly figure
     fig = plot_3d_plotly(df_sampled)
-    # find figures hosting subsesction
+    # find figures hosting subsection
     figure_host = archive.data
     # apend the figure to the figures list
     figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]

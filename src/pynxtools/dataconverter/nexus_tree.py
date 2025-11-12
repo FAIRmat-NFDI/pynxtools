@@ -247,7 +247,7 @@ class NexusNode(NodeMixin):
         self, names: tuple[str, ...]
     ) -> Optional["NexusNode"]:
         """
-        Searchs and adds a child with one of the names in `names` to the current node.
+        Searches and adds a child with one of the names in `names` to the current node.
         This calls `search_add_child_for` repeatedly until a child is found.
         The found child is then returned.
 
@@ -313,7 +313,7 @@ class NexusNode(NodeMixin):
         Returns:
             Optional["NexusNode"]:
                 The NexusNode containing the children.
-                None if there is no initialised children for the xml_node.
+                None if there is no initialized children for the xml_node.
         """
         for child in self.children:
             if child.inheritance and child.inheritance[0] == xml_elem:
@@ -353,7 +353,7 @@ class NexusNode(NodeMixin):
                 Defaults to False.
 
         Raises:
-            ValueError: If depth is not int or negativ.
+            ValueError: If depth is not int or negative.
 
         Returns:
             set[str]: A set of children names.
@@ -379,11 +379,11 @@ class NexusNode(NodeMixin):
             if only_appdef and not is_appdef(elem):
                 break
 
-            for subelems in elem.xpath(search_tags, namespaces=namespaces):
-                if "name" in subelems.attrib:
-                    names.add(subelems.attrib["name"])
-                elif "type" in subelems.attrib:
-                    names.add(subelems.attrib["type"][2:].upper())
+            for sub_elems in elem.xpath(search_tags, namespaces=namespaces):
+                if "name" in sub_elems.attrib:
+                    names.add(sub_elems.attrib["name"])
+                elif "type" in sub_elems.attrib:
+                    names.add(sub_elems.attrib["type"][2:].upper())
 
         return names
 
@@ -496,7 +496,7 @@ class NexusNode(NodeMixin):
                 Defaults to None.
 
         Raises:
-            ValueError: If depth is not int or negativ.
+            ValueError: If depth is not int or negative.
 
         Returns:
             list[str]: A list of docstrings one for each parent doc.
@@ -694,7 +694,7 @@ class NexusNode(NodeMixin):
         Returns:
             Optional["NexusNode"]:
                 The NexusNode which was added.
-                None if no matching subelement was found to add.
+                None if no matching sub-element was found to add.
         """
         for elem in self.inheritance:
             xml_elem = elem.xpath(
@@ -754,7 +754,7 @@ class NexusGroup(NexusNode):
 
     Args:
         nx_class (str):
-        occurence_limits (tuple[Optional[int], Optional[int]]):
+        occurrence_limits (tuple[Optional[int], Optional[int]]):
             Denotes the minimum and maximum number of occurrences of the group.
             First element denotes the minimum, second one the maximum.
             If the respective value is None, then there is no limit.
@@ -844,11 +844,11 @@ class NexusGroup(NexusNode):
                 continue
             break
 
-    def _set_occurence_limits(self):
+    def _set_occurrence_limits(self):
         """
-        Sets the occurence limits of the current group.
+        Sets the occurrence limits of the current group.
         Searches the inheritance chain until a value is found.
-        Otherwise, the occurence_limits are set to (None, None).
+        Otherwise, the occurrence_limits are set to (None, None).
         """
         if not self.inheritance:
             return
@@ -869,7 +869,7 @@ class NexusGroup(NexusNode):
     def __init__(self, nx_class: str, **data) -> None:
         super().__init__(**data)
         self.nx_class = nx_class
-        self._set_occurence_limits()
+        self._set_occurrence_limits()
         self._set_optionality()
         self._check_sibling_namefit()
 
@@ -988,7 +988,7 @@ class NexusEntity(NexusNode):
                 def convert_to_hashable(item):
                     """Convert lists to tuples for hashable types, leave non-list items as they are."""
                     if isinstance(item, list):
-                        return tuple(item)  # Convert sublists to tuples
+                        return tuple(item)  # Convert sub-lists to tuples
                     return item  # Non-list items remain as they are
 
                 set_items = {convert_to_hashable(sublist) for sublist in self.items}
@@ -1059,9 +1059,9 @@ class NexusEntity(NexusNode):
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
-            subelems = xml_elem.findall(f"nx:{self.nx_type}", namespaces=namespaces)
-            if subelems is not None:
-                for elem in subelems:
+            sub_elems = xml_elem.findall(f"nx:{self.nx_type}", namespaces=namespaces)
+            if sub_elems is not None:
+                for elem in sub_elems:
                     if self._check_compatibility_with(elem):
                         self.inheritance.append(elem)
 
@@ -1202,7 +1202,7 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         This adds children from the `xml_elem` xml node to the NexusNode `parent` node.
         This only considers `field`, `attribute`, `choice` and `group` xml tags
         as children.
-        The function is recursivly called until no more children are found.
+        The function is recursively called until no more children are found.
 
         Args:
             parent (NexusNode): The NexusNode to attach the children to.

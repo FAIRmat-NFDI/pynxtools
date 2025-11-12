@@ -54,7 +54,7 @@ from pynxtools.units import ureg
 
 def _to_group_name(nx_node: ET.Element):
     """
-    Normalise the given group name
+    Normalize the given group name
     """
     # assuming always upper() is incorrect, e.g. NXem_msr is a specific one not EM_MSR!
     grp_nm = nx_node.attrib.get("name", nx_node.attrib["type"][2:].upper())
@@ -287,7 +287,7 @@ class NexusParser(MatchingParser):
                 metainfo_def = resolve_variadic_name(
                     current.m_def.all_quantities, field_name
                 )
-                isvariadic = metainfo_def.variable
+                is_variadic = metainfo_def.variable
             except Exception as e:
                 self._logger.warning(
                     f"error while setting field {data_instance_name} in {current.m_def} as no proper definition found for {field_name}",
@@ -303,8 +303,8 @@ class NexusParser(MatchingParser):
                     mask = np.isfinite(field)
                     if np.any(mask):
                         field_stats = [
-                            func(field[mask] if ismask else field)
-                            for func, ismask in zip(
+                            func(field[mask] if is_mask else field)
+                            for func, is_mask in zip(
                                 FIELD_STATISTICS["function"],
                                 FIELD_STATISTICS["mask"],
                             )
@@ -357,19 +357,19 @@ class NexusParser(MatchingParser):
                 current.m_set(metainfo_def, field)
                 field.m_set_attribute("m_nx_data_path", hdf_node.name)
                 field.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                if isvariadic:
+                if is_variadic:
                     concept_basename = get_quantity_base_name(field.name)
-                    instancename = get_quantity_base_name(data_instance_name)
+                    instance_name = get_quantity_base_name(data_instance_name)
                     name_metainfo_def = resolve_variadic_name(
                         current.m_def.all_quantities, concept_basename + "__name"
                     )
-                    name_value = MQuantity.wrap(instancename, instancename + "__name")
+                    name_value = MQuantity.wrap(instance_name, instance_name + "__name")
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
                     name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 if field_stats is not None:
                     concept_basename = get_quantity_base_name(field.name)
-                    instancename = get_quantity_base_name(data_instance_name)
+                    instance_name = get_quantity_base_name(data_instance_name)
                     for suffix, stat in zip(
                         FIELD_STATISTICS["suffix"][1:],
                         field_stats[1:],
@@ -377,7 +377,7 @@ class NexusParser(MatchingParser):
                         stat_metainfo_def = resolve_variadic_name(
                             current.m_def.all_quantities, concept_basename + suffix
                         )
-                        stat = MQuantity.wrap(stat, instancename + suffix)
+                        stat = MQuantity.wrap(stat, instance_name + suffix)
                         current.m_set(stat_metainfo_def, stat)
                         stat.m_set_attribute("m_nx_data_path", hdf_node.name)
                         stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
@@ -432,24 +432,24 @@ class NexusParser(MatchingParser):
         e_list = self.get_sub_element_names(elem)
         filtered = []
         for elem_name in e_list:
-            subelem = getattr(elem, elem_name, None)
-            if subelem is None:
+            sub_elem = getattr(elem, elem_name, None)
+            if sub_elem is None:
                 continue
             if type_filter:
-                if not (isinstance(subelem, MSection | MSubSectionList)):
+                if not (isinstance(sub_elem, MSection | MSubSectionList)):
                     continue
-                if isinstance(subelem, list):
-                    if len(subelem) > 0:
-                        nx_type = subelem[0].m_def.nx_type
+                if isinstance(sub_elem, list):
+                    if len(sub_elem) > 0:
+                        nx_type = sub_elem[0].m_def.nx_type
                     else:
                         continue
                 else:
-                    nx_type = subelem.m_def.nx_type
+                    nx_type = sub_elem.m_def.nx_type
                 if nx_type != type_filter:
                     continue
-            if not isinstance(subelem, list):
-                subelem = [subelem]
-            for individual in subelem:
+            if not isinstance(sub_elem, list):
+                sub_elem = [sub_elem]
+            for individual in sub_elem:
                 filtered.append(individual)
         return filtered
 
@@ -555,7 +555,7 @@ class NexusParser(MatchingParser):
         self._clear_class_refs()
 
         # if filename does not follow the pattern
-        # .volumes/fs/<upload type>/<upload 2char>/<upoad>/<raw/arch>/[subdirs?]/<filename>
+        # .volumes/fs/<upload type>/<upload 2char>/<upload>/<raw/arch>/[subdirs?]/<filename>
         self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
         nexus_helper = HandleNexus(logger, mainfile)
         nexus_helper.process_nexus_master_file(self._nexus_populate)
@@ -564,7 +564,7 @@ class NexusParser(MatchingParser):
         if archive.metadata is None:
             archive.metadata = EntryMetadata()
 
-        # Normalise experiment type
+        # Normalize experiment type
         # app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
         app_def_list = set()
         try:
@@ -590,7 +590,7 @@ class NexusParser(MatchingParser):
             archive.metadata.domain = "nexus"
         archive.metadata.readonly = True
 
-        # Normalise element info
+        # Normalize element info
         if archive.results is None:
             archive.results = Results()
         results = archive.results
