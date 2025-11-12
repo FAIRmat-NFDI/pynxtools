@@ -813,7 +813,7 @@ class HandleNexus:
         return True
 
     def full_visit(self, root, hdf_node, name, func):
-        """visiting recursively all children, but avoiding endless cycles"""
+        """Visit recursively all children but avoid endless cycles"""
         func(name, hdf_node)
         if isinstance(hdf_node, h5py.Group):
             for ch_name, child in hdf_node.items():
