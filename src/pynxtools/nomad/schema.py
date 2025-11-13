@@ -1279,7 +1279,7 @@ def normalize_atom_probe(self, archive, logger):
     fig = plot_3d_plotly(df_sampled)
     # find figures hosting subsection
     figure_host = archive.data
-    # apend the figure to the figures list
+    # append the figure to the figures list
     figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]
 
     # normalize to results.material.topology

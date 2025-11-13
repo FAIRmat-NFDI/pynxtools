@@ -514,9 +514,9 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
     if nxdl_name == "NXtest":
         return []
 
-    elist = get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
+    elem_list = get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
     list_of_children_to_add = set()
-    for elem in elist:
+    for elem in elem_list:
         list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
 
     return list_of_children_to_add
@@ -724,9 +724,9 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
-def is_value_valid_element_of_enum(value, elist) -> tuple[bool, list]:
+def is_value_valid_element_of_enum(value, elem_list) -> tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
-    for elem in elist:
+    for elem in elem_list:
         enums = get_enums(elem)
         if enums is not None:
             return value in enums, enums

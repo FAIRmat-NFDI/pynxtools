@@ -117,7 +117,7 @@ def load(hdf, lazy=True, unpacker=unpack_dataset, mode="r", *args, **kwargs):
     hdf : string (path to file) or `h5py.File()` or `h5py.Group()`
     lazy : bool
         If True, the datasets are lazy loaded at the moment an item is requested.
-    upacker : callable
+    unpacker : callable
         Unpack function gets `value` of type h5py.Dataset.
         Must return the data you would like to have it in the returned dict.
     mode : str

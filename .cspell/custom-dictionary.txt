@@ -71,7 +71,6 @@ analyser
 anamethat
 anamethatichangetothis
 anamethatrenames
-apend
 appdef
 appdefdir
 appdefs
@@ -96,8 +95,8 @@ edgeitems
 ekey
 electronanalyzer
 elems
-elist
 ellips
+elist
 ellipsometry
 emittance
 execinfo
@@ -169,7 +168,6 @@ orcid
 otherfile
 oxidising
 pathtovalidate
-pind
 plottable
 posint
 printoptions
@@ -196,7 +194,6 @@ unitless
 unlazy
 unlazying
 unsignedinteger
-upacker
 ureg
 usefixtures
 visititems
