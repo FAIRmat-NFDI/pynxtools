@@ -52,7 +52,7 @@ from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.units import ureg
 
 
-def _to_group_name(nx_node: ET.Element):
+def _to_group_name(nx_node: ET._Element):
     """
     Normalize the given group name
     """

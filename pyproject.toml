@@ -38,6 +38,7 @@ dependencies = [
     "pint",
     "cachetools",
     "structlog",
+    "orjson"
 ]
 
 [project.urls]
@@ -45,6 +46,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
+nomad = ["nomad-lab >= 1.4.0"]
 docs = [
     "mkdocs",
     "markdown-exec[ansi]",
@@ -177,3 +179,8 @@ follow_imports = "silent"
 no_strict_optional = true
 disable_error_code = "import, annotation-unchecked"
 exclude = ["src/pynxtools/definitions/*"]
+
+[tool.uv]
+extra-index-url = [
+"https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
+]

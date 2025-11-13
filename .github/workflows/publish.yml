@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Install uv and set the python version
+      - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
@@ -44,15 +44,13 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: astral-sh/setup-uv@v5
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
-      - name: Install latest nomad release
+      - name: Install pynx and latest compatible nomad release
         run: |
-          uv pip install nomad-lab[infrastructure]
-      - name: Install pynx
-        run: |
-          uv pip install -e ".[dev]"
+          uv pip install -e ".[dev, nomad]"
       - name: Test with pytest
         run: pytest tests/
 
@@ -77,22 +75,68 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: astral-sh/setup-uv@v5
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
-      - run: uv pip install build
-      - run: |
+      - name: Build package
+        run: |
           git reset --hard HEAD
-          python -m build
+          rm -f src/pynxtools/nomad/nxs_metainfo_package_*.json
+          uv run --extra nomad scripts/generate_package.py
+          uv build
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-artifacts
           path: dist/
 
+  test-install:
+    name: Install built package
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifacts
+          path: dist/
+      - name: Install sdist
+        run: |
+          uv pip install dist/*.tar.gz
+      - name: Check that Metainfo package JSON file exists and matches definitions version
+        run: |
+          SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
+
+          # expected filename from definitions module
+          EXPECTED=$(python -c "from pynxtools import get_nexus_version; print(f'nxs_metainfo_package_{get_nexus_version()}.json')")
+
+          # find the JSON file
+          FOUND_FILE=$(find "$SITE_PACKAGES/pynxtools/nomad" -name 'nxs_metainfo_package_*.json' -print -quit)
+
+          if [ -z "$FOUND_FILE" ]; then
+              echo "ERROR: nxs_metainfo_package_*.json not found in installed package."
+              exit 1
+          fi
+
+          FOUND_BASENAME=$(basename "$FOUND_FILE")
+
+          echo "Found NeXus schema package JSON file: $FOUND_BASENAME"
+          echo "Expected filename: $EXPECTED"
+
+          if [ "$FOUND_BASENAME" = "$EXPECTED" ]; then
+              echo "Installed NeXus schema package JSON file matches expected definition version."
+          else
+              echo "ERROR: Expected '$EXPECTED', but found '$FOUND_BASENAME'."
+              exit 1
+          fi
   deploy:
     name: Upload to PyPI
-    needs: build
+    needs: [build, test-install]
     runs-on: ubuntu-latest
     environment:
       name: pypi

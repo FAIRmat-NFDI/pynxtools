@@ -124,3 +124,4 @@ main() {
 }
 
 main "$@"
+python ./scripts/generate_package.py
