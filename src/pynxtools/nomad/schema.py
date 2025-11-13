@@ -230,9 +230,6 @@ class NexusActivityResult(ActivityResult):
         ),
     )
 
-def load_ontology(*args):
-    owl_file = os.path.join(os.path.dirname(__file__), *args)
-    return get_ontology(owl_file).load()
 
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
@@ -282,29 +279,17 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                             archive.results.ln.methods.append(class_name)
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
+                        archive.results.eln.methods.append("Generic Experiment")
                 except Exception as e:
                     logger.warning(f"Failed to extract superclasses: {e}")
+                    archive.results.eln.methods.append("Generic Experiment")
+                # ------------------ ontology service  ------------------
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
                 self.method = self.m_def.name + " Experiment"
         except (AttributeError, TypeError):
             pass
-        super(basesections.Activity, self).normalize(archive, logger)
-        try:
-            if hasattr(self, "definition__field") and self.definition__field:
-                ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
-                with ontology:
-                    sync_reasoner()  # Run the reasoner
-                superclasses = get_superclasses(ontology, self.definition__field)
-                if archive.results.eln.methods is None:
-                    archive.results.eln.methods = []
-                for superclass in superclasses:
-                    if superclass.name not in archive.results.eln.methods:
-                        archive.results.eln.methods.append(superclass.name)
-        except Exception as e:
-            logger.warning(f"Failed to extract superclasses: {e}")
-
         super(basesections.Activity, self).normalize(archive, logger)
 
         if archive.results.eln.methods is None:
