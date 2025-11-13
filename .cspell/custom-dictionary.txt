@@ -22,6 +22,7 @@ Downsampled
 Draxl
 Druskat
 ELECTRONANALYZER
+ESRFET
 Emminger
 Erlangen
 Faradayweg
@@ -71,6 +72,7 @@ Namefits
 Namefitting
 OPCPA
 ORCID
+OWLREADY
 PATHCONV
 PDBX
 PYNX
@@ -249,6 +251,7 @@ nonvariadic
 nslots
 nsmap
 nthreads
+nxclass
 nxcollection
 nxdata
 nxdl
@@ -264,7 +267,9 @@ optionalities
 orcid
 otherfile
 otypes
+owlready
 oxidising
+panet
 parseable
 pathtovalidate
 plottable
@@ -280,6 +285,8 @@ pyupgrade
 qrts
 raman
 rdcc
+rdfs
+rdfxml
 redef
 renamable
 reqs

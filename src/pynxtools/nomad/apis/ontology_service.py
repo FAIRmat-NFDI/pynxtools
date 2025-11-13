@@ -88,7 +88,7 @@ def load_ontology() -> Ontology:
             raise RuntimeError("OWL_FILE_PATH is not set")
 
         if os.path.exists(OWL_FILE_PATH):
-            # load the preexisitng inferred ontology
+            # load the preexisting inferred ontology
             ontology = get_ontology(OWL_FILE_PATH).load()
             return ontology
         else:
