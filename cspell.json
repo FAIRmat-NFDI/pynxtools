@@ -11,7 +11,8 @@
         "dist",
         "build",
         "src/pynxtools/definitions",
-        "src/pynxtools/nomad/metainfo"
+        "src/pynxtools/nomad/metainfo",
+        "src/pynxtools/NeXusOntology"
     ],
   "dictionaryDefinitions": [
     {

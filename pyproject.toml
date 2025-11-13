@@ -70,8 +70,8 @@ dependencies = [
     "Jinja2",
     "owlready2",
     "fastapi",
-    "pygit2",
-    "uvicorn",
+    "pygit2", # transitive from NeXusOntology submodule
+    "uvicorn", # transitive from NeXusOntology submodule
 ]
 
 [project.urls]
