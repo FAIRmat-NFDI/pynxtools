@@ -38,7 +38,7 @@ dependencies = [
     "pint",
     "cachetools",
     "structlog",
-    "orjson"
+    "orjson",
     "owlready2",
     "fastapi",
     "pygit2",
