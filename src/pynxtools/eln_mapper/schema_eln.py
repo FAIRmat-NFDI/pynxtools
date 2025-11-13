@@ -222,7 +222,7 @@ class NomadElnGenerator(ElnGenerator):
         construct_description(node, section)
         section["links"] = [node.get_link()]
 
-        # pass the grp elment for recursive search
+        # pass the grp element for recursive search
         self._recurse_tree(node, section, recursion_level + 1)
 
     def _construct_entity_structure(

@@ -1,6 +1,6 @@
 """
 Build wrapper for setuptools to create a nexus-version.txt file
-containing the nexus definitions verison.
+containing the nexus definitions version.
 """
 
 import os

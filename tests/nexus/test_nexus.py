@@ -193,8 +193,8 @@ def test_nexus(tmp_path):
     with open(
         os.path.join(dirpath, "Ref_nexus_test.log"),
         encoding="utf-8",
-    ) as reffile:
-        ref = reffile.readlines()
+    ) as ref_file:
+        ref = ref_file.readlines()
 
     if log != ref:
         differences = list(
@@ -259,21 +259,21 @@ def test_get_inherited_nodes():
         "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
-    (_, _, elist) = get_inherited_nodes(
+    (_, _, elem_list) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT", elem=elem
     )
-    assert len(elist) == 4
+    assert len(elem_list) == 4
 
-    (_, _, elist) = get_inherited_nodes(
+    (_, _, elem_list) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller", elem=elem
     )
-    assert len(elist) == 6
+    assert len(elem_list) == 6
 
-    (_, _, elist) = get_inherited_nodes(
+    (_, _, elem_list) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
         nx_name="NXiv_temp",
     )
-    assert len(elist) == 6
+    assert len(elem_list) == 6
 
 
 def test_c_option(tmp_path):

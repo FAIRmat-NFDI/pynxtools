@@ -77,20 +77,20 @@ def populate_nexus_subsection(
     """Populate nexus subsection in nomad from nexus template.
 
     There are three ways to populate nexus subsection from nexus template.
-    1. First it writes a nexus file (.nxs), then the nexus subsectoin will be populated from
+    1. First it writes a nexus file (.nxs), then the nexus subsection will be populated from
         that file.
-    2. First it write the data in hdf5 datamodel (in a file in memory), later the nexus
+    2. First it write the data in hdf5 datamodel (in a file in memory), later the data
         subsection will be populated from that in-memory file.
-    3. (This is not yet done.) It directly poulate the nexus subsection from the template.
+    3. (This is not yet done.) It directly populate the data subsection from the template.
 
     Args:
         template: Nexus template.
         app_def: Name of application def NXxrd_pan.
-        archive: AntryArchive section.
+        archive: EntryArchive section.
         output_file_path: Output file should be a relative path not absolute path.
         logger: nomad logger.
         on_temp_file: Whether data will be written in temporary disk, by default False.
-        nxs_as_entry: If the nxs file should be as ann nonmad entry or a general file, by default True.
+        nxs_as_entry: If the nxs file should be as a NOMAD entry or a general file, by default True.
 
     Raises:
         Exception: could not trigger processing from NexusParser
@@ -257,7 +257,7 @@ class NexusDataConverter(EntryData):
                 ]
             except Exception as e:
                 logger.error(
-                    "could not get file list accordonf to the filter provided",
+                    "could not get file list according to the filter provided",
                     mainfile=archive.data.output,
                     exc_info=e,
                 )

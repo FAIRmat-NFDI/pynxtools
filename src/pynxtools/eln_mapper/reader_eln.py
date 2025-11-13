@@ -100,7 +100,7 @@ class ReaderElnGenerator(ElnGenerator):
 
         recursive_dict[group_name] = {}
 
-        # pass the grp elment for recursive search
+        # pass the grp element for recursive search
         self._recurse_tree(node, recursive_dict[group_name], recursion_level + 1)
 
     def _construct_entity_structure(

@@ -2,8 +2,7 @@ name: Spell Check
 
 on:
   pull_request:
-    branches:
-      - master  # Triggers deployment on push to the master branch
+    branches: [master]
 
 jobs:
   spellcheck:
@@ -19,7 +18,11 @@ jobs:
 
     - name: Run cspell
       run: |
-        cspell --config cspell.json "docs/**/*.md" "CITATION.cff" "README.md"
+        cspell --config cspell.json \
+        "README.md" "CITATION.cff" \
+        "docs/**/*" \
+        "src/pynxtools/**/*.py" \
+        "tests/**/*.py"
 
     - name: Fail on errors
       run: |

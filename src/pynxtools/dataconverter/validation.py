@@ -315,13 +315,13 @@ def validate_hdf_group_against(
             f"{prefix}{grp.lstrip('/')}"
             for grp in node.required_groups(recurse_children=False)
         ]
-        required_subentities = [
+        required_sub_entities = [
             f"{prefix}{ent.lstrip('/')}"
             for ent in node.required_fields_and_attrs_names(recurse_children=False)
         ]
 
         required_groups.update(required_subgroups)
-        required_entities.update(required_subentities)
+        required_entities.update(required_sub_entities)
 
     def _variadic_node_exists_for(
         path: str, variadic_name: str, node_type: str | None = None
@@ -1132,7 +1132,7 @@ def validate_dict_against(
                 # but the group was incorrectly linked to a field.
                 continue
             if not isinstance(keys[variant], Mapping):
-                # Groups should have subelements
+                # Groups should have sub-elements
 
                 collector.collect_and_log(
                     variant_path,
@@ -1165,16 +1165,16 @@ def validate_dict_against(
                     )
 
                 # Additionally remove all associated sub-keys.
-                for subkey in mapping.keys():
-                    if subkey.startswith(f"{variant_path}/"):
-                        name = subkey.split(f"{variant_path}/")[-1]
+                for sub_key in mapping.keys():
+                    if sub_key.startswith(f"{variant_path}/"):
+                        name = sub_key.split(f"{variant_path}/")[-1]
                         collector.collect_and_log(
-                            subkey,
+                            sub_key,
                             ValidationProblem.KeyToBeRemoved,
                             "attribute" if name.startswith("@") else "group",
                         )
-                        keys_to_remove.append(subkey)
-                        remove_from_not_visited(subkey)
+                        keys_to_remove.append(sub_key)
+                        remove_from_not_visited(sub_key)
 
                 continue
 
@@ -1197,7 +1197,7 @@ def validate_dict_against(
         {"link": "/path/to/target"} structure with the actual referenced content.
 
         Note that the keys are only replaced in copies of the incoming keys, NOT in
-        the gloval mapping. That is, links are resolved for checking, but we still write
+        the global mapping. That is, links are resolved for checking, but we still write
         links into the HDF5 file.
 
         This function traverses the mapping and recursively resolves any keys that
@@ -1321,16 +1321,16 @@ def validate_dict_against(
                     )
 
                 # Additionally remove all associated sub-keys.
-                for subkey in mapping.keys():
-                    if subkey.startswith(f"{variant_path}/"):
-                        name = subkey.split(f"{variant_path}/")[-1]
+                for sub_key in mapping.keys():
+                    if sub_key.startswith(f"{variant_path}/"):
+                        name = sub_key.split(f"{variant_path}/")[-1]
                         collector.collect_and_log(
-                            subkey,
+                            sub_key,
                             ValidationProblem.KeyToBeRemoved,
                             "attribute" if name.startswith("@") else "field",
                         )
-                        keys_to_remove.append(subkey)
-                        remove_from_not_visited(subkey)
+                        keys_to_remove.append(sub_key)
+                        remove_from_not_visited(sub_key)
 
                 continue
 
@@ -1636,7 +1636,7 @@ def validate_dict_against(
             is_mapping = isinstance(resolved_link[key], Mapping)
 
             if node.nx_type == "group" and not is_mapping:
-                # Groups must have subelements
+                # Groups must have sub-elements
                 collector.collect_and_log(
                     key,
                     ValidationProblem.ExpectedGroup,
