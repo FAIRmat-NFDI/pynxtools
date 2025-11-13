@@ -33,7 +33,6 @@ import pandas as pd
 import requests
 from ase import Atoms
 from ase.data import atomic_numbers
-from owlready2 import get_ontology, sync_reasoner
 from scipy.spatial import cKDTree
 from toposort import toposort_flatten
 
