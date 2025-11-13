@@ -531,8 +531,9 @@ def to_section(name: str, **kwargs) -> Section:
     section = Section(validate=VALIDATE, name=name, **kwargs)
     section_definitions[name] = section
 
-    if name == "Data":
-        section._ensure_definition = types.MethodType(nxdata_ensure_definition, section)
+    # TODO: enable this when it is possible to distinguish DATA/AXISNAME
+    # # if name == "Data":
+    #     section._ensure_definition = types.MethodType(nxdata_ensure_definition, section)
 
     return section
 
