@@ -264,6 +264,18 @@ nexus_app = AppEntryPoint(
                         ),
                     ],
                 ),
+                Menu(
+                    title="PaNET terms",
+                    size=MenuSizeEnum.LG,
+                    items=[
+                        MenuItemTerms(
+                            title="Application Definition",
+                            search_quantity=f"results.eln.methods",
+                            width=12,
+                            options=5,
+                        ),
+                    ],
+                ),
                 MenuItemHistogram(
                     title="Start Time",
                     x=f"data.datetime#{schema}",
@@ -291,23 +303,9 @@ nexus_app = AppEntryPoint(
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 8, "y": 0, "x": 0},
                         "md": {"minH": 3, "minW": 3, "h": 7, "w": 12, "y": 0, "x": 0},
-                        "lg": {"minH": 3, "minW": 3, "h": 10, "w": 14, "y": 0, "x": 0},
+                        "lg": {"minH": 3, "minW": 3, "h": 10, "w": 15, "y": 0, "x": 0},
                         "xl": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0},
                         "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0},
-                    },
-                },
-                {
-                    "type": "terms",
-                    "show_input": True,
-                    "scale": "linear",
-                    "quantity": f"entry_type",
-                    "title": "Entry Type",
-                    "layout": {
-                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 0, "x": 8},
-                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 0, "x": 12},
-                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 0, "x": 14},
-                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10},
-                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10},
                     },
                 },
                 {
@@ -320,7 +318,7 @@ nexus_app = AppEntryPoint(
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 0},
                         "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 0},
                         "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 0, "x": 19},
-                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
+                        "xl": {"minH": 3, "minW": 3, "h": 3, "w": 4, "y": 4, "x": 10},
                         "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
                     },
                 },
@@ -333,8 +331,8 @@ nexus_app = AppEntryPoint(
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 4},
                         "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 6},
-                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 14},
-                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 0, "x": 15},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
                         "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18},
                     },
                 },
@@ -347,9 +345,23 @@ nexus_app = AppEntryPoint(
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 8},
                         "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 12},
-                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 19},
-                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 15},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 23},
                         "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22},
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": True,
+                    "scale": "linear",
+                    "quantity": f"results.eln.methods",
+                    "title": "PaNET terms",
+                    "layout": {
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 12},
+                        "md": {"minH": 3, "minW": 3, "h": 9, "w": 6, "y": 0, "x": 12},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 19},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 5, "y": 0, "x": 18},
+                        "xxl": {"minH": 3, "minW": 3, "h": 9, "w": 6, "y": 0, "x": 26},
                     },
                 },
             ]
