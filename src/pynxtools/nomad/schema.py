@@ -1097,6 +1097,7 @@ def save_nexus_schema():
     schema_dict = nexus_metainfo_package.m_to_dict()
 
     nxs_filepath = get_package_filepath()
+    nxs_filepath.parent.mkdir(parents=True, exist_ok=True)
 
     with open(nxs_filepath, "wb") as file:
         file.write(orjson.dumps(schema_dict, option=orjson.OPT_INDENT_2))
