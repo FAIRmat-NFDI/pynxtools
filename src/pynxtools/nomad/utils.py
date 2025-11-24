@@ -141,26 +141,18 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def get_package_filepath() -> Path:
-    """Return the filesystem path for the NeXus metainfo package JSON file.
+    """Return the path to the NeXus metainfo package JSON file.
 
-    The location is determined in the following order:
+    Resolution order:
 
-    1. **Build-mode override:**
-       If the environment variable ``PYNXTOOLS_BUILD_PACKAGE`` is set to ``"1"``,
-       the path inside the package directory (``PACKAGE_DIR``) is always returned.
-       This ensures the file is included in built distributions.
-
-    2. **Packaged file (installed distribution):**
-       If the file already exists inside ``PACKAGE_DIR``, that path is used.
-
-    3. **Local cache:**
-       If no packaged file exists, the path inside the cache directory
-       (``CACHE_DIR``) is returned. This is used during development or the first
-       time the file is generated.
+    1. If ``PYNXTOOLS_BUILD_PACKAGE`` is ``"1"``, always return the path inside
+       ``PACKAGE_DIR`` (ensures inclusion in built distributions).
+    2. If the file already exists in ``PACKAGE_DIR``, return that path.
+    3. Otherwise, return the corresponding path inside ``CACHE_DIR`` for
+       development or first-time generation.
 
     Returns:
-        Path: The resolved path where the NeXus metainfo package JSON file
-        should be read from or written to.
+        Path: Resolved location for reading or writing the JSON file.
     """
     filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
 
