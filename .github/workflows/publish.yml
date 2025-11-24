@@ -83,6 +83,7 @@ jobs:
         run: |
           git reset --hard HEAD
           rm -f src/pynxtools/nomad/nxs_metainfo_package_*.json
+          export PYNXTOOLS_BUILD_PACKAGE=1
           uv run --extra nomad scripts/generate_package.py
           uv build
       - name: Upload dist artifacts

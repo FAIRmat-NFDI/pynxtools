@@ -17,9 +17,11 @@
 #
 
 import os
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
+from platformdirs import user_cache_dir
 
 from pynxtools import get_nexus_version
 
@@ -133,8 +135,35 @@ def get_quantity_base_name(quantity_name):
     )
 
 
-def get_package_filepath():
-    local_dir = os.path.abspath(os.path.dirname(__file__))
+PACKAGE_DIR = Path(__file__).resolve().parent
+CACHE_DIR = Path(user_cache_dir("pynxtools")) / "metainfo"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def get_package_filepath() -> Path:
+    """Return the path to the NeXus metainfo package JSON file.
+
+    Resolution order:
+
+    1. If ``PYNXTOOLS_BUILD_PACKAGE`` is ``"1"``, always return the path inside
+       ``PACKAGE_DIR`` (ensures inclusion in built distributions).
+    2. If the file already exists in ``PACKAGE_DIR``, return that path.
+    3. Otherwise, return the corresponding path inside ``CACHE_DIR`` for
+       development or first-time generation.
+
+    Returns:
+        Path: Resolved location for reading or writing the JSON file.
+    """
     filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
 
-    return os.path.join(local_dir, filename)
+    # 1. Build-mode override (forces packaging the file)
+    if os.environ.get("PYNXTOOLS_BUILD_PACKAGE") == "1":
+        return PACKAGE_DIR / filename
+
+    # 2. Use packaged file if it exists
+    packaged = PACKAGE_DIR / filename
+    if packaged.exists():
+        return packaged
+
+    # 3. Otherwise store in cache dir
+    return CACHE_DIR / filename
