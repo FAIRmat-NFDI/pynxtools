@@ -21,11 +21,11 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from platformdirs import user_cache_dir
 
 from pynxtools import get_nexus_version
 
 try:
+    from nomad import config
     from nomad.metainfo.data_type import (
         Bytes,
         Datetime,
@@ -136,8 +136,7 @@ def get_quantity_base_name(quantity_name):
 
 
 PACKAGE_DIR = Path(__file__).resolve().parent
-CACHE_DIR = Path(user_cache_dir("pynxtools")) / "metainfo"
-CACHE_DIR.mkdir(parents=True, exist_ok=True)
+CACHE_DIR = Path(config.fs.tmp) / "pynxtools"
 
 
 def get_package_filepath() -> Path:
@@ -166,4 +165,6 @@ def get_package_filepath() -> Path:
         return packaged
 
     # 3. Otherwise store in cache dir
+    # create parent directory only if we need to write
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
     return CACHE_DIR / filename
