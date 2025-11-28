@@ -39,7 +39,6 @@ dependencies = [
     "cachetools",
     "structlog",
     "orjson",
-    "platformdirs"
 ]
 
 [project.urls]
