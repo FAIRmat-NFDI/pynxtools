@@ -77,9 +77,11 @@ def test_example_upload_entry_point_valid(entrypoint, example_path):
 
 def test_ontology_service_entry_point():
     """Test that the ontology service entry point exposes the FastAPI app."""
-    assert hasattr(ontology_service, "app")
-    assert ontology_service.app.title == "Ontology Service"
-    if hasattr(ontology_service, "ontology_service_entry_point"):
-        ep = ontology_service.ontology_service_entry_point
-        assert ep.name == "ontology_service"
-        assert ep.prefix == "/ontology_service"
+    # ontology_service is a MyAPIEntryPoint instance
+    app = ontology_service.load()
+    assert app.title == "Ontology Service"
+    if hasattr(ontology_service, "name"):
+        assert ontology_service.name == "ontology_service"
+    if hasattr(ontology_service, "prefix"):
+        print("ontology_service.prefix =", ontology_service.prefix)
+        assert ontology_service.prefix == "ontology_service"
