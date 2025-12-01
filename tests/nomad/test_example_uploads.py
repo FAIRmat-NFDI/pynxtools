@@ -18,6 +18,7 @@ except ImportError:
         allow_module_level=True,
     )
 
+from pynxtools.nomad.apis import ontology_service
 from pynxtools.nomad.example_uploads import simple_nexus_example
 from pynxtools.testing.nomad_example import (
     example_upload_entry_point_valid,
@@ -62,3 +63,13 @@ def test_example_upload_entry_point_valid(entrypoint, example_path):
         entrypoint=entrypoint,
         example_path=example_path,
     )
+
+
+def test_ontology_service_entry_point():
+    """Test that the ontology service entry point exposes the FastAPI app."""
+    assert hasattr(ontology_service, "app")
+    assert ontology_service.app.title == "Ontology Service"
+    if hasattr(ontology_service, "ontology_service_entry_point"):
+        ep = ontology_service.ontology_service_entry_point
+        assert ep.name == "ontology_service"
+        assert ep.prefix == "/ontology_service"

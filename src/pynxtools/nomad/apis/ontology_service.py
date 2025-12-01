@@ -32,7 +32,7 @@ app = FastAPI(
     description="A service to provide ontological information for a given NeXus class.",
 )
 
-# Define paths
+# Define local directory path and ontology directory path
 local_dir = os.path.dirname(os.path.abspath(__file__))
 ontology_dir = os.path.abspath(
     os.path.join(local_dir, "..", "..", "NeXusOntology", "ontology")
@@ -42,20 +42,21 @@ OWL_FILE_PATH = None
 
 def ensure_ontology_file():
     """
-    Ensure the ontology file exists. If not, regenerate it.
+    Verify that a inferred ontology file matching the latest definitions exists.
+    If it is missing, regenerate the ontology, run the reasoner, and save the inferred ontology.
     """
     global OWL_FILE_PATH
 
     try:
-        # Get the latest commit hash from the definitions submodule
+        # Get the latest commit hash from the definitions submodule in pynxtools
         nexus_def_path = os.path.join(local_dir, "..", "..", "definitions")
         repo = pygit2.Repository(nexus_def_path)
         latest_commit_hash = str(repo.head.target)[:7]
 
-        # Construct the expected ontology file name
+        # Construct the expected inferred ontology file name and path
         inferred_owl_file_name = f"NeXusOntology_full_{latest_commit_hash}_inferred.owl"
         inferred_owl_file_path = os.path.join(ontology_dir, inferred_owl_file_name)
-        # Check if the ontology file exists
+        # Check if the inferred ontology file exists, if not, generate it
         if not os.path.exists(inferred_owl_file_path):
             generate_ontology(
                 full=True,
@@ -63,18 +64,18 @@ def ensure_ontology_file():
                 def_commit=latest_commit_hash,
                 store_commit_filename=True,
             )
-            # Rename the generated file to include the commit hash
+            # construct the path to the ontology file just generated
             owl_file_path = os.path.join(
                 ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl"
             )
             if os.path.exists(owl_file_path):
-                # Run reasoner and save inferred ontology
+                # Run reasoner and replace the ontology file with its inferred version
                 ontology = get_ontology(owl_file_path).load()
                 sync_reasoner(ontology)
                 ontology.save(file=inferred_owl_file_path, format="rdfxml")
                 os.remove(owl_file_path)  # Remove the non-inferred file
 
-        # Update the OWL_FILE_PATH to point to the correct file
+        # Update the OWL_FILE_PATH to point to the inferred ontology file
         OWL_FILE_PATH = inferred_owl_file_path
 
     except Exception as e:
@@ -106,24 +107,6 @@ def get_label(entity):
         return entity.name
     else:
         return str(entity)
-
-
-def build_hierarchy(ontology, class_name):
-    """
-    Returns the hierarchy from the given class up to the root as a nested dict.
-    """
-    cls = ontology.search_one(iri="*" + class_name)
-    if cls is None:
-        raise ValueError(f"Class '{class_name}' not found in the ontology.")
-
-    def build_tree(node):
-        parents = [sc for sc in node.is_a if isinstance(sc, ThingClass)]
-        return {
-            "label": get_label(node),
-            "parent": [build_tree(parent) for parent in parents],
-        }
-
-    return build_tree(cls)
 
 
 def format_nxclass_label(nxclass):
@@ -181,27 +164,6 @@ def fetch_superclasses(ontology, class_name):
         return [format_nxclass_label(sc) for sc in direct_superclasses]
     except Exception as e:
         logger.error(f"Error in fetch_superclasses: {e}")
-        raise
-
-
-def fetch_subclasses(ontology, class_name):
-    try:
-        cls = ontology.search_one(iri="*" + class_name)
-        if cls is None:
-            raise ValueError(f"Class '{class_name}' not found in the ontology.")
-        subclasses = cls.subclasses()
-        filtered_subclasses = [
-            sc
-            for sc in subclasses
-            if hasattr(sc, "iri")
-            and (
-                ("PaNET" in sc.iri) or ("nexusformat" in sc.iri) or ("ESRFET" in sc.iri)
-            )
-            and isinstance(sc, ThingClass)
-        ]
-        return [format_nxclass_label(sc) for sc in filtered_subclasses]
-    except Exception as e:
-        logger.error(f"Error in fetch_subclasses: {e}")
         raise
 
 
