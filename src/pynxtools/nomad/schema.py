@@ -263,7 +263,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         class_name = entry.definition__field.strip()
                         base = config.services.api_base_path.rstrip("/")
                         url = f"http://localhost:8000{base}/ontology_service/superclasses/{class_name}"
-                        response = requests.get(url, timeout=5)
+                        response = requests.get(url)
                         if response.status_code == 200:
                             superclasses = response.json().get("superclasses", [])
                             if archive.results.eln.methods is None:
@@ -275,7 +275,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                             logger.warning(
                                 f"Failed to fetch superclasses: {response.status_code} - {response.text}"
                             )
-                            archive.results.ln.methods.append(class_name)
+                            archive.results.eln.methods.append(class_name)
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
                         archive.results.eln.methods.append("Generic Experiment")

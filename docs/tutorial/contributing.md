@@ -60,6 +60,12 @@ git submodule update --init --recursive --jobs=4
 
 Note that we are using the NeXus definitions as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). The last two lines initiate the submodule and upgrade it to match the first used in pynxtools.
 
+For NeXusOntology submodule [NeXusOntology](../../src/pynxtools/NeXusOntology/) we use the sparse checkout
+```bash
+git sparse-checkout init --no-cone
+git sparse-checkout set "/*" '!ontology/NeXusOntology.owl' '!ontology/NeXusOntology_full.owl'
+```
+
 Next, we install the package in editable mode (together with its dependencies):
 
 === "uv"
