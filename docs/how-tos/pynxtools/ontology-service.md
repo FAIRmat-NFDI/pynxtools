@@ -40,23 +40,8 @@ else:
   print(f"Error: {response.status_code} - {response.text}")
 ```
 
-This endpoint returns a JSON object with the list of superclasses for the given NeXus class name, as used internally in the code (see `fetch_superclasses` in `ontology_service.py`).
-
-### Common Tasks
-
-#### Creating/Loading an Ontology
-
-```python
-ontology = load_ontology()
-```
-
-#### Querying Terms or Concepts
-
-```python
-superclasses = fetch_superclasses(ontology, "NXiv_temp")
-```
+This endpoint returns a JSON object with the list of superclasses for the given NeXus class name, as used internally in [pynxtools](../../../src/pynxtools/nomad/schema.py)
 
 ### Further Reading
 
-- [Learn: Understanding the ontology service in pynxtools](../../learn/pynxtools/ontology-service-learn.md)
-- See other documentation in `docs/` and module docstrings.
+- [Learn: Understanding the ontology service in pynxtools](../../learn/pynxtools/ontology-service.md)
