@@ -60,6 +60,7 @@ def ensure_ontology_file():
         if not os.path.exists(inferred_owl_file_path):
             generate_ontology(
                 full=True,
+                testdata=False,
                 nexus_def_path=nexus_def_path,
                 def_commit=latest_commit_hash,
                 store_commit_filename=True,
