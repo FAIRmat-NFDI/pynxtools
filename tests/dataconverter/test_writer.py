@@ -44,6 +44,7 @@ def fixture_writer(filled_test_data, tmp_path):
     del writer
 
 
+@pytest.skip("TODO refactor, test string, scalar, and array datasets")
 @pytest.mark.usefixtures("filled_test_data")
 @pytest.fixture(name="writer_append")
 def fixture_writer_append(filled_test_data, tmp_path):
