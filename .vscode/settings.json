@@ -2,27 +2,15 @@
   "editor.rulers": [90],
   "editor.renderWhitespace": "all",
   "editor.tabSize": 4,
-  "[javascript]": {
-    "editor.tabSize": 2
-  },
   "files.trimTrailingWhitespace": true,
-  "python.linting.pycodestylePath": "pycodestyle",
-  "python.linting.pycodestyleEnabled": true,
-  "python.linting.pycodestyleArgs": ["--ignore=E501,E701,E731,W503"],
-  "python.linting.mypyEnabled": true,
-  "python.linting.mypyArgs": [
-    "--ignore-missing-imports",
-    "--follow-imports=silent",
-    "--no-strict-optional",
-    "--show-error-codes"
-  ],
-  "python.linting.pylintEnabled": true,
-  "python.linting.enabled": true,
-  "python.linting.pylintArgs": [
-    "--load-plugins=nomad.metainfo.pylint_plugin",
-    "pynxtools",
-    "tests"
-  ],
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
   "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true

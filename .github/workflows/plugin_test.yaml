@@ -1,0 +1,83 @@
+# This workflow will install Python 3.12 and run the tests of all supported plugins.
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: test plugins
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  python-version: 3.12
+
+jobs:
+  pytest:
+    name: pytest (${{ matrix.plugin }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - plugin: pynxtools-apm
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-ellips
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-em
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-igor
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-mpes
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-raman
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-spm
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-xps
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-xrd
+            branch: main
+            tests_to_run: tests/.
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
+      - name: Install dependencies
+        run: |
+          uv pip install coverage coveralls
+      - name: Install package
+        run: |
+          uv pip install ".[dev]"
+      - name: Clone ${{ matrix.plugin }} repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: FAIRmat-NFDI/${{ matrix.plugin }}
+          path: ${{ matrix.plugin }}
+          ref: ${{ matrix.branch }}
+      - name: Install nomad
+        run: |
+          uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
+      - name: Install ${{ matrix.plugin }}
+        run: |
+          cd ${{ matrix.plugin }}
+          uv pip install .
+      - name: Run ${{ matrix.plugin }} tests
+        run: |
+          cd ${{ matrix.plugin }}
+          pytest ${{ matrix.tests_to_run }}

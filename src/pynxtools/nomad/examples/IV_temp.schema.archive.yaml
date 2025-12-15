@@ -1,0 +1,44 @@
+definitions:
+  name: "IV_Temp_ELN_Example"
+  eln:
+    label: "IV Temp ELN Example"
+  sections:
+    ELN_for_iv_temp:
+      base_sections:
+        - "pynxtools.nomad.dataconverter.NexusDataConverter"
+        - "nomad.datamodel.data.EntryData"
+      m_annotations:
+        template:
+          reader: json_map
+          nxdl: NXiv_temp
+          input_files": [
+            "IV_temp.mapping.json",
+            "IV_temp.pickle"
+          ]
+          output: IV_temp.nxs
+          nexus_view: "../upload/archive/mainfile/IV_temp.nxs#/data"
+        eln:
+          hide: []
+          label: 'ELN for iv_temp'
+      sub_sections:
+        notes:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+              template:
+                author: ""
+                note: ""
+            quantities:
+              author:
+                type: str
+                description: Name of person providing a note
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+              note:
+                type: str
+                description: Note for the experiment
+                m_annotations:
+                  eln:
+                    component: RichTextEditQuantity

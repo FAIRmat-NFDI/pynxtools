@@ -17,5 +17,6 @@
     "type": "2nd type",
     "date_value": "2022-01-22T12:14:12.05018+00:00",
     "required_child": 1,
-    "optional_child": 1
+    "optional_child": 1,
+    "random_data": [0, 1]
 }

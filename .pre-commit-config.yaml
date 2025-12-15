@@ -1,0 +1,38 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff-check
+        files: ^(src/pynxtools|tests)/.*\.py$
+      - id: ruff-format
+        files: ^(src/pynxtools|tests)/.*\.py$
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.18.1
+    hooks:
+      - id: mypy  # static type checking
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.1
+    hooks:
+      - id: pyupgrade
+        args: [--py36-plus]  # modernizes syntax for Python 3.6+
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.6.0
+    hooks:
+      - id: nbstripout  # removes notebook outputs before committing
+
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v9.3.0
+    hooks:
+      - id: cspell  # spellchecking
+        pass_filenames: false
+        args:
+          - --config
+          - cspell.json
+          - README.md
+          - CITATION.cff
+          - docs/**/*
+          - src/pynxtools/**/*.py
+          - tests/**/*.py

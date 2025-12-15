@@ -1,14 +1,17 @@
 {
-    "/ENTRY[entry]/NXODD_name/bool_value": "/a_level_down/bool_value",
-    "/ENTRY[entry]/NXODD_name/char_value": "/a_level_down/char_value",
-    "/ENTRY[entry]/NXODD_name/date_value": "/date_value",
-    "/ENTRY[entry]/NXODD_name/float_value": "/a_level_down/float_value",
-    "/ENTRY[entry]/NXODD_name/float_value/@units": "/a_level_down/float_value_units",
-    "/ENTRY[entry]/NXODD_name/int_value": "/a_level_down/int_value",
-    "/ENTRY[entry]/NXODD_name/int_value/@units": "/a_level_down/another_level_down/int_value_units",
-    "/ENTRY[entry]/NXODD_name/posint_value": "/a_level_down/another_level_down/posint_value",
-    "/ENTRY[entry]/NXODD_name/posint_value/@units": "/posint_value_units",
-    "/ENTRY[entry]/NXODD_name/type": "/type",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/bool_value": "/a_level_down/bool_value",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/bool_value/@units": "",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/char_value": "/a_level_down/char_value",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/char_value/@units": "",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/date_value": "/date_value",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/date_value/@units": "",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/float_value": "/a_level_down/float_value",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/float_value/@units": "/a_level_down/float_value_units",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/int_value": "/a_level_down/int_value",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/int_value/@units": "/a_level_down/another_level_down/int_value_units",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/posint_value": "/a_level_down/another_level_down/posint_value",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/posint_value/@units": "/posint_value_units",
+    "/ENTRY[entry]/NXODD_name[nxodd_name]/type": "/type",
     "/ENTRY[entry]/definition": "/definition",
     "/ENTRY[entry]/definition/@version": "/definition_version",
     "/ENTRY[entry]/optional_parent/optional_child": {
@@ -18,5 +21,6 @@
     "/ENTRY[entry]/optional_parent/required_child": "/required_child",
     "/ENTRY[entry]/program_name": "Example for listing exact data in the map file: Nexus Parser",
     "/ENTRY[entry]/required_group/description": "An example description",
-    "/ENTRY[entry]/required_group2/description": "An example description"
+    "/ENTRY[entry]/required_group2/description": "An example description",
+    "/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]": "/random_data"
 }

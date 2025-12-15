@@ -1,6 +1,7 @@
 [build-system]
-requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = ["setuptools>=78.1.1", "setuptools-scm[toml]>=6.2"]
+backend-path = ["src/pynxtools"]
+build-backend = "_build_wrapper"
 
 [project]
 name = "pynxtools"
@@ -8,39 +9,36 @@ dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
-description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
+description = "Extend NeXus for experiments and characterization in Materials Science and Materials Engineering and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
-license = { file = "LICENSE.txt" }
-requires-python = ">=3.8,<3.11"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
     "click>=7.1.2",
+    "click_default_group",
     "h5py>=3.6.0",
     "xarray>=0.20.2",
     "PyYAML>=6.0",
-    "numpy>=1.21.2",
+    'numpy',
     "pandas>=1.3.2",
     "ase>=3.19.0",
-    "flatdict>=4.0.1",
-    "hyperspy>=1.7.4",
-    "ifes_apt_tc_data_modeling>=0.0.9",
-    "gitpython>=3.1.24",
-    "pytz>=2021.1",
-    "kikuchipy>=0.8.2",
-    "pyxem>=0.14.2",
-    "zipfile37==0.1.3",
-    "nionswift==0.16.8",
-    "tzlocal<=4.3",
-    "scipy>=1.7.1",
-    "lark>=1.1.5",
-    "requests",
-    "requests_cache",
+    "mergedeep",
+    "importlib-metadata",
+    "lxml>=4.9.1",
+    "toposort>=1.10.0",
+    "anytree",
+    "pint",
+    "cachetools",
+    "structlog",
+    "orjson",
 ]
 
 [project.urls]
@@ -48,34 +46,141 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
+nomad = ["nomad-lab >= 1.4.0"]
+docs = [
+    "mkdocs",
+    "markdown-exec[ansi]",
+    "mkdocs-material",
+    "mkdocs-material-extensions",
+    "mkdocs-macros-plugin",
+    "mkdocs-click",
+    "markdown-include",
+]
 dev = [
     "mypy",
-    "pylint",
-    "pycodestyle",
+    "ruff>=0.14.0",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
-    "structlog",
+    "pytest-xdist",
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pip-tools",
+    "pre-commit",
+    "debugpy",
 ]
+convert = [
+    "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xps,xrd]",
+]
+
+apm = [
+    "pynxtools-apm>=0.2.3",
+]
+ellips = [
+    "pynxtools-ellips>=0.0.10",
+]
+em = [
+    "pynxtools-em>=0.3.2",
+]
+igor = [
+    "pynxtools-igor>=0.1.2",
+]
+mpes = [
+    "pynxtools-mpes>=0.2.3",
+]
+raman = [
+    "pynxtools-raman>=0.0.11",
+]
+spm = [
+    "pynxtools-spm>=0.1.2",
+]
+xps = [
+    "pynxtools-xps>=0.5.2",
+]
+xrd = [
+    "pynxtools-xrd>=0.0.5",
+]
+
+[project.entry-points.'nomad.plugin']
+nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
+nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
+nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
+nexus_app = "pynxtools.nomad.entrypoints:nexus_app"
+simple_nexus_example = "pynxtools.nomad.entrypoints:simple_nexus_example"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
-dataconverter = "pynxtools.dataconverter.convert:convert_cli"
-nyaml2nxdl = "pynxtools.nyaml2nxdl.nyaml2nxdl:launch_tool"
+dataconverter = "pynxtools.dataconverter.convert:main_cli"
+generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
+validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
-"pynxtools.dataconverter.readers.xps" = ["*.json"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
 [tool.setuptools.packages.find]
-exclude = ["pynxtools/definitions*"]
+where = [
+    "src",
+]
+exclude = ["src/pynxtools/definitions*"]
 
 [tool.setuptools_scm]
-version_scheme = "guess-next-dev"
+version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
+
+[tool.ruff]
+include = ["src/*.py", "tests/*.py"]
+exclude = ["src/pynxtools/definitions"]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle
+    "W", # pycodestyle
+    "PL", # pylint
+    "UP", # pyupgrade
+    # "F401", # remove unused import
+    "I001", # sort imports
+    "NPY201", # upgrade to numpy>2
+]
+ignore = [
+    "E402", # Module level import not at top of file
+    "E501", # Line too long ({width} > {limit} characters)
+    "E701", # Multiple statements on one line (colon)
+    "E731", # Do not assign a lambda expression, use a def
+    "PLC0415", # `import` should be at the top-level of a file
+    "PLR0904", # too-many-public-methods
+    "PLR0911", # Too many return statements
+    "PLR0912", # Too many branches
+    "PLR0913", # Too many arguments in function definition
+    "PLR0915", # Too many statements
+    "PLR0917", # too-many-positional-arguments
+    "PLR1714", # consider-using-in
+    "PLR2004", # Magic value used instead of constant
+    "PLR5501", # else-if-used
+    "PLW0603", # Using the global statement
+    "PLW2901", # redefined-loop-name,
+]
+fixable = ["ALL"]
+isort.split-on-trailing-comma = false
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.mypy]
+strict = false
+ignore_missing_imports = true
+follow_imports = "silent"
+no_strict_optional = true
+disable_error_code = "import, annotation-unchecked"
+exclude = ["src/pynxtools/definitions/*"]
+
+[tool.uv]
+extra-index-url = [
+"https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
+]

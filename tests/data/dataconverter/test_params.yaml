@@ -1,0 +1,5 @@
+dataconverter:
+  nxdl: NXtest
+  reader: example
+  input-file: readers/example/testdata.json
+  output: testdata.nxs

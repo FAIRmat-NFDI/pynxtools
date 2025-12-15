@@ -1,0 +1,106 @@
+site_name: Documentation
+site_description: |
+  The documentation of the FAIRmat-NeXus definitions & pynxtools
+site_author: The NOMAD authors
+repo_url: https://github.com/FAIRmat-NFDI/pynxtools
+edit_uri: ""
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Tutorials:
+    - tutorial/installation.md
+    - tutorial/converting-data-to-nexus.md
+    - tutorial/nexus-to-nomad.md
+    - tutorial/contributing.md
+  - How-tos:
+    - NeXus:
+      - how-tos/nexus/writing-an-appdef.md
+      # - how-tos/nexus/using-multiple-appdefs.md
+      # - how-tos/nexus/transformations.md
+    - pynxtools:
+      - how-tos/pynxtools/build-a-plugin.md
+      - how-tos/pynxtools/use-multi-format-reader.md
+      - how-tos/pynxtools/using-pynxtools-test-framework.md
+      - how-tos/pynxtools/run-tests-in-parallel.md
+      - how-tos/pynxtools/create-nexus-files-by-python.md
+      - how-tos/pynxtools/validate-nexus-files.md
+  - Learn:
+    - NeXus:
+      - learn/nexus/nexus-primer.md
+      - learn/nexus/nexus-rules.md
+      # - learn/nexus/multiple-appdefs.md
+    - pynxtools:
+      - learn/pynxtools/dataconverter-and-readers.md
+      - learn/pynxtools/nexus-validation.md
+      - learn/pynxtools/multi-format-reader.md
+  - Reference:
+    - reference/definitions.md
+    - reference/cli-api.md
+    - reference/built-in-readers.md
+    - reference/plugins.md
+
+plugins:
+  - search
+  - markdown-exec
+  - macros:
+      module_name: src/pynxtools/mkdocs
+
+theme:
+  name: material
+  palette:
+    primary: '#2A4CDF'
+    accent: '#008A67'
+  font:
+    text: 'Titillium Web'
+  logo: assets/nomad-plugin-logo.png
+  favicon: assets/favicon.png
+  features:
+    - navigation.instant
+    - navigation.footer
+    - content.code.copy
+    - content.code.annotate
+    - search.suggest
+  custom_dir: docs/theme
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - markdown_include.include:
+      base_path: docs
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - toc:
+      permalink: True
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji
+  - mkdocs-click
+  - pymdownx.extra
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra:
+  generator: false
+  # homepage: https://fairmat-nfdi.github.io/pynxtools/
+
+use_directory_urls: false
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascript.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

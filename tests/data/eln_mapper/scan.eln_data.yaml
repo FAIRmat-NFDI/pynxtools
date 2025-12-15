@@ -1,0 +1,17 @@
+title: null
+start_time: null
+end_time: null
+instrument:
+  detector:
+    data:
+      value: null
+      unit: null
+sample:
+  rotation_angle:
+    value: null
+    unit: null
+monitor:
+  data:
+    value: null
+    unit: null
+data: null

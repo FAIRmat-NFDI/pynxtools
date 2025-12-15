@@ -1,0 +1,11 @@
+title: My experiment
+user:
+  name: John Doe
+  address: 123 Science Rd, Data City, DC
+sample:
+  name: my_sample
+  physical_form: powder
+  temperature:
+    value: 300
+    unit: K
+      

@@ -1,0 +1,18 @@
+{
+    "data": {
+        "m_def": "../upload/raw/IV_temp.schema.archive.yaml#/definitions/section_definitions/0",
+        "reader": "json_map",
+        "nxdl": "NXiv_temp",
+        "input_files": [
+            "IV_temp.mapping.json",
+            "IV_temp.pickle"
+        ],
+        "output": "IV_temp.nxs",
+        "nexus_view": "../upload/archive/mainfile/IV_temp.nxs#/data",
+        "notes": {
+            "author": "name",
+            "note": "example note"
+        }
+    },
+    "m_ref_archives": {}
+}

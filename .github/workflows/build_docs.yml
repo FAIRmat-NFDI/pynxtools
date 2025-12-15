@@ -1,0 +1,49 @@
+name: build_and_deploy_mkdocs
+
+on:
+  push:
+    branches:
+      - master  # Triggers deployment on push to the master branch
+
+env:
+  python-version: 3.12
+
+permissions:
+   contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
+
+      - name: Cache mkdocs-material environment
+        uses: actions/cache@v3
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+
+      - name: Install Dependencies
+        run: |
+          uv pip install ".[docs]"
+
+      - name: Build and Deploy
+        run: |
+          mkdocs gh-deploy --force --remote-branch gh-pages

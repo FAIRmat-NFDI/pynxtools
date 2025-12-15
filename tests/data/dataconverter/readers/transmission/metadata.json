@@ -1,8 +1,0 @@
-{
-    "/ENTRY[entry]/operator/name": "Test",
-    "/ENTRY[entry]/operator/affiliation": "Testinstitute",
-    "/ENTRY[entry]/operator/address": "My Address 1",
-    "/ENTRY[entry]/operator/email": "test@test.org",
-    "/ENTRY[entry]/SAMPLE[sample]/name": "KTF-9_1_A",
-    "/ENTRY[entry]/experiment_identifier": "Transmission of KTF-9_1_A"
-}

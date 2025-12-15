@@ -1,86 +1,26 @@
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pylint.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/publish.yml/badge.svg)
 ![](https://img.shields.io/pypi/pyversions/pynxtools)
 ![](https://img.shields.io/pypi/l/pynxtools)
 ![](https://img.shields.io/pypi/v/pynxtools)
-![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/FAIRmat-NFDI/pynxtools?branch=master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1323437.svg)](https://doi.org/10.5281/zenodo.13862042)
 
-`pynxtools` is a tool designed for making your experimental data FAIR.
-It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
+<table align="center">
+<tr><td align="center" width="10000">
 
-# Installation
+# <strong> pynxtools: FAIR data handling using NeXus </strong>
+</td></tr></table>
 
-It is recommended to use python 3.8 with a dedicated virtual environment for this package.
-Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
-[virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
-Install this package with
+`pynxtools` is an open-source Python package designed for making your experimental data FAIR. `pynxtools` is a parser for combining various instrument output formats and electronic lab notebook (ELN) formats into an HDF5 file according to NeXus application definitions.
 
-```shell
-pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
-```
+Additionally, the software can be used as a plugin in the research data management system NOMAD for making experimental data searchable and publishable. NOMAD is developed by the FAIRmat consortium which is a consortium of the German National Research Data Infrastructure (NFDI).
 
-for the latest development version.
+Read more in the [official documentation page](https://fairmat-nfdi.github.io/pynxtools/).
 
-# Scope
+# How to cite this work
 
-`pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
-
-Additionally, the software is used in the research data management system NOMAD for
-making experimental data searchable and publishable.
-NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
-(NFDI).
-
-The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools) and they are
-shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
-Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
-It guides you through the process of converting instrument raw
-data into the NeXus standard and visualising the files content.
-
-# Command line tools
-
-- [**nyaml2nxdl**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
-- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
-
-# Contributing
-
-## Development install
-
-Install the package with its dependencies:
-
-```shell
-git clone https://github.com/FAIRmat-NFDI/pynxtools.git \\
-    --branch master \\
-    --recursive pynxtools
-cd pynxtools
-git submodule sync --recursive
-git submodule update --init --recursive --jobs=4
-python -m pip install --upgrade pip
-python -m pip install -e .
-python -m pip install -e ".[dev]"
-```
-
-## Test this software
-
-Especially relevant for developers, there exists a basic test framework written in
-[pytest](https://docs.pytest.org/en/stable/) which can be used as follows:
-
-```shell
-python -m pytest -sv tests
-```
-
-# Questions, suggestions?
-
-To ask further questions, to make suggestions how we can improve these tools, to get advice
-on how to build on this work, or to get your parser included into NOMAD, you can:
-
-- Open an issue on the [pynxtools GitHub](https://github.com/FAIRmat-NFDI/pynxtools/issues)
-- Use our forums at [matsci.org](https://matsci.org/c/nomad/32)
-- Write to [support@nomad-lab.eu](mailto:support@nomad-lab.eu)
-- Contact directly the lead developers of the individual parsers.
-
-### Does this software require NOMAD or NOMAD OASIS ?
-
-No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe.
+Shabih, S., Pielsticker, L., Dobener, F., Albino, A., Chang, T., Emminger, C., Ginzburg, L., Hildebrandt, R., Kühbach, M., Mozumder, R., Pincelli, T., Aeschlimann, M., Grundmann, M., Hetaba, W., Palma, C.-A., Rettig, L., Scheidgen, M., Márquez, J. A., Draxl, C., Brockhauser, S., Koch, C. T. & Weber, H. B. (2025). Pynxtools: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform. Zenodo. https://doi.org/10.5281/zenodo.15341365

@@ -1,4 +1,16 @@
-recursive-include pynxtools/definitions/base_classes/ *.xml
-recursive-include pynxtools/definitions/applications/ *.xml
-recursive-include pynxtools/definitions/contributed_definitions/ *.xml
-include pynxtools/definitions/ *.xsd
+prune *
+exclude *
+recursive-include src/pynxtools *.py
+include pyproject.toml LICENSE README.md
+include src/pynxtools/data/*
+
+recursive-include src/pynxtools/definitions/base_classes/ *.xml
+recursive-include src/pynxtools/definitions/applications/ *.xml
+recursive-include src/pynxtools/definitions/contributed_definitions/ *.xml
+include src/pynxtools/definitions/*.xsd
+include src/pynxtools/nexus-version.txt
+include src/pynxtools/remote_definitions_url.txt
+include src/pynxtools/definitions/NXDL_VERSION
+include src/pynxtools/units/*.txt
+graft src/pynxtools/nomad/examples
+include src/pynxtools/nomad/nxs_metainfo_package_*.json

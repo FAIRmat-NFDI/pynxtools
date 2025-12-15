@@ -1,0 +1,26 @@
+{
+  "/ENTRY/title": "@eln",
+  "/ENTRY/USER[user]": {
+    "name":"@eln",
+    "address":"@eln"
+  },
+  "/ENTRY/INSTRUMENT[instrument]": {
+    "@version":"@attrs:metadata/instrument/version",
+    "DETECTOR[detector]":{
+      "count_time":"@attrs:metadata/instrument/detector/count_time",
+      "count_time/@units":"@attrs:metadata/instrument/detector/count_time_units"
+    }
+  },
+  "/ENTRY/SAMPLE[sample]": {
+    "name":"@eln",
+    "physical_form":"@eln",
+    "temperature":"@eln",
+    "temperature/@units":"@eln"
+  },
+  "/ENTRY/data": {
+    "@axes":["x_values"],
+    "@signal": "data",
+    "data": "@data:y_values",
+    "x_values": "@data:x_values"
+  }
+}

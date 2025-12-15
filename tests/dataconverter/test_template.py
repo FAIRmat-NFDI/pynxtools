@@ -22,7 +22,7 @@ from .test_helpers import fixture_template  # pylint: disable=unused-import
 
 def test_rename_entry(template):
     """Unit test for the rename entry function"""
-    template.rename_entry("entry", "newentry")
+    template.rename_entry("entry", "new_entry")
     assert "/ENTRY[entry]/program_name" not in template.keys()
 
 

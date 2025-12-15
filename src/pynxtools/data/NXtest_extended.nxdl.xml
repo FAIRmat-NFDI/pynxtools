@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl" ?>
+<definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd"
+    xmlns="http://definition.nexusformat.org/nxdl/3.1"
+ name="NXtest_extended"
+ extends="NXtest"
+ type="group"
+ category="application"
+>
+    <doc>This is a dummy NXDL to test an extended application definition.</doc>
+    <group type="NXentry">
+        <field name="definition">
+            <doc>This is a dummy NXDL to test out the dataconverter.</doc>
+            <enumeration>
+                <item value="NXtest_extended"/>
+            </enumeration>
+        </field>
+        <field name="extended_field" type="NX_FLOAT" units="NX_ENERGY">
+            <doc>A dummy entry for an extended field.</doc>
+        </field>
+    </group>
+</definition>

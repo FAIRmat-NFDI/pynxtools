@@ -1,0 +1,62 @@
+name: NOMAD compatibility
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    # Run workflow only when there are changes in pyproject.toml
+    # paths:
+    #   - 'pyproject.toml'
+
+env:
+  python-version: 3.12
+
+jobs:
+  validate_compatibility:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout pynxtools
+      uses: actions/checkout@v4
+
+    - name: Checkout NOMAD from GitLab
+      run: |
+        git clone --depth 1 --branch develop --recurse-submodules https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
+        git submodule update --init --recursive --depth 1
+
+    - name: Compare unit definition files
+      run: |
+        diff --unified=3 nomad/nomad/units/default_en.txt src/pynxtools/units/default_en.txt || {
+          echo "::error file=src/pynxtools/units/default_en.txt::default_en.txt differs from NOMAD";
+          exit 1;
+        }
+
+        diff --unified=3 nomad/nomad/units/constants_en.txt src/pynxtools/units/constants_en.txt || {
+          echo "::error file=src/pynxtools/units/constants.txt::constants.txt differs from NOMAD";
+          exit 1;
+        }
+
+    - name: Add pynxtools dependency in NOMAD test_plugins.txt
+      working-directory: ./nomad
+      run: |
+        echo "" >> test_plugins.txt
+        echo "pynxtools@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }}" >> test_plugins.txt
+    - name: Install uv and set the python version to ${{ env.python-version }}
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ env.python-version }}
+    - name: Generate (dev-)requirements.txt from modified pyproject.toml
+      working-directory: ./nomad
+      run: |
+        uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt pyproject.toml
+        uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
+        uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --output-file=requirements-plugins.txt --unsafe-package nomad-lab -c requirements-dev.txt test_plugins.txt
+    - name: Install NOMAD dependencies with pynxtools from current branch
+      working-directory: ./nomad
+      run: |
+        uv pip install -r requirements-plugins.txt -c requirements-dev.txt --prerelease=allow
+      env:
+        PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test

@@ -1,0 +1,24 @@
+name: nexus version check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  nexus-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate nexus git version
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive --jobs=4
+          git submodule foreach --recursive 'git fetch --tags'
+          cd src/pynxtools/definitions
+          printf "%s" "$(git describe --dirty --tags --long --abbrev=8 --match '*[0-9]*')" > ../nexus-ref.txt
+          cd ../
+      - name: Diff
+        run: |
+          diff src/pynxtools/nexus-version.txt src/pynxtools/nexus-ref.txt

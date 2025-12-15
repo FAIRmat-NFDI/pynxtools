@@ -1,32 +1,13 @@
 ## Getting started
-We offer examples of how you can convert your data (raw data, numerical data, metadata), 
+Here, we provide examples of how you can convert your data (raw data, numerical data, metadata),
 from your acquisition software or electronic lab notebook (ELN), into a NeXus/HDF5 file
-using the [dataconverter](../pynxtools/dataconverter) tool.
-This tool offers parsers/readers/data extractors for various experimental techniques, including
-electron microscopy, photo-emission spectroscopy, optical spectroscopy, atom probe, and other
-techniques. Please refer to the individual README's in each sub-directory for details.
+using the [built-in readers of pynxtools](https://fairmat-nfdi.github.io/pynxtools/reference/built-in-readers.html).
 
-The examples contain code snippets for creating a NeXus/HDF5 file for the experimental technique
-according to a standardized application definition (e.g. NXem, NXmpes, NXellipsometry, NXapm).
-Respective [Jupyter Notebooks](https://jupyter.org/) are used for running these examples.
+There is also [documentation](https://fairmat-nfdi.github.io/pynxtools/learn/dataconverter-and-readers.html) of the [dataconverter](../src/pynxtools/dataconverter/README.md) available. You can write a reader plugin if the data for your experimental technique is not supported yet, see documentation [here](https://fairmat-nfdi.github.io/pynxtools/how-tos/build-a-plugin.html).
 
-There is also a documentation of the [dataconverter](../pynxtools/dataconverter) available.
-You can also write a [reader](../pynxtools/dataconverter/readers) for your experimental technique
-if it is not supported yet. Feel also free to [contact](../README.md#questions-suggestions)
-us if you need help.
+Note that `pynxtools` offers a number of FAIRmat-supported parsers/readers/data extractors for various experimental techniques via
+technique specific plugins. You can find the list [here](https://fairmat-nfdi.github.io/pynxtools/reference/plugins.html). You can find
+examples for using each of them in the individual repositories and in their documentation.
 
-For giving specific feedback to specific parsers/readers/data extractors please contact the
-respective developers directly:
-
-### em_om, em_spctrscpy
-Markus Kühbach
-
-### mpes, xps
-Florian Dobner, Rubel Mozumder, Lukas Pielsticker
-
-### ellipsometry
-Carola Emminger, Florian Dobner
-
-### apm
-Markus Kühbach
-
+For giving feedback to specific parsers/readers/data extractors, please checkout the domain-specific `pynxtools` plugins and their examples
+or contact the respective developers directly.
