@@ -64,7 +64,9 @@ def ensure_ontology_file():
                 nexus_def_path=nexus_def_path,
                 def_commit=latest_commit_hash,
                 store_commit_filename=True,
-                imports=["https://raw.githubusercontent.com/pan-ontologies/esrf-ontologies/refs/heads/oscars-deliverable-2/ontologies/esrfet/ESRFET.owl"]
+                imports=[
+                    "https://raw.githubusercontent.com/pan-ontologies/esrf-ontologies/refs/heads/oscars-deliverable-2/ontologies/esrfet/ESRFET.owl"
+                ],
             )
             # construct the path to the ontology file just generated
             owl_file_path = os.path.join(
@@ -176,6 +178,7 @@ def fetch_superclasses(ontology, class_name):
 def startup_event():
     """
     Ensure the ontology file is present during application startup.
+    if not, generate it.
     """
     try:
         ensure_ontology_file()
