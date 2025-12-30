@@ -19,7 +19,40 @@
 
 from typing import Any
 
-CHUNK_CONFIG_DEFAULT: dict[str, Any] = {}
-CHUNK_CONFIG_NOMAD: dict[str, Any] = {}
-CHUNK_CONFIG_GPFS: dict[str, Any] = {}
-CHUNK_CONFIG_LUSTRE: dict[str, Any] = {}
+# https://docs.h5py.org/en/stable/high/file.html#h5py.File
+# modify rdcc parameters upon hdf5 file creation
+
+CHUNK_CONFIG_HFIVEPY: dict[str, int | float] = {
+    "byte_size": 1 * 1024 * 1024,
+    "rdcc_nbytes": 1 * 1024 * 1024,
+    "rdcc_nslots": 521,
+    "rdcc_w0": 0.75,
+}
+CHUNK_CONFIG_SSD_NVM: dict[str, int | float] = {
+    "byte_size": 1 * 1024 * 1024,
+    "rdcc_nbytes": 256 * 1024 * 1024,
+    "rdcc_nslots": 1000003,
+    "rdcc_w0": 0.75,
+}
+CHUNK_CONFIG_HDD: dict[str, int | float] = {
+    "byte_size": 4 * 1024 * 1024,
+    "rdcc_nbytes": 256 * 1024 * 1024,
+    "rdcc_nslots": 200003,
+    "rdcc_w0": 0.75,
+}
+CHUNK_CONFIG_GPFS: dict[str, int | float] = {
+    "byte_size": 4 * 1024 * 1024,
+    "rdcc_nbytes": 256 * 1024 * 1024,
+    "rdcc_nslots": 500009,
+    "rdcc_w0": 0.75,
+}
+
+CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
+    # set stripe size before creating a file!
+    "byte_size": 8 * 1024 * 1024,
+    "rdcc_nbytes": 64 * 8 * 1024 * 1024,
+    "rdcc_nslots": 1000003,
+    "rdcc_w0": 0.75,
+}
+
+CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_SSD_NVM

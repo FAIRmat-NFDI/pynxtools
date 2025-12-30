@@ -22,6 +22,7 @@ Ginzburg
 Globar
 González
 Grundmann
+HFIVEPY
 Heiko
 Hetaba
 Hildebrandt
@@ -96,8 +97,8 @@ edgeitems
 ekey
 electronanalyzer
 elems
-ellips
 elist
+ellips
 ellipsometry
 emittance
 execinfo
@@ -151,6 +152,7 @@ mydatareader
 mynxdl
 namefit
 namefitting
+nbytes
 ndarray
 ndataconverter
 nexpy
@@ -158,6 +160,7 @@ nexusapp
 nexusformat
 nodemixin
 nonvariadic
+nslots
 nsmap
 nxcollection
 nxdata
@@ -175,6 +178,7 @@ printoptions
 punx
 pynxtools
 raman
+rdcc
 redef
 reqs
 requiredness

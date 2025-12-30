@@ -1449,7 +1449,7 @@ def clean_str_attr(attr: str | bytes | None, encoding: str = "utf-8") -> str | N
     return attr
 
 
-def chunking_strategy(data) -> bool | np.ndarray:
+def chunking_strategy(data) -> bool | tuple[int]:
     """Decide chunking strategy, check validity for explicit overwriting of the auto-chunking. Returns true for auto-chunking, otherwise returns explicit settings for the chunking."""
     if isinstance(data, dict):
         if "compress" in data.keys() and "chunks" in data.keys():
