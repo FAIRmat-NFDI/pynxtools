@@ -2021,7 +2021,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
-                "is 0. The value '2.0' will be written uncompressed.",
+                "is 0. The value '2.0' will be written effectively uncompressed.",
             ],
             id="appdef-compressed-strength-0",
         ),

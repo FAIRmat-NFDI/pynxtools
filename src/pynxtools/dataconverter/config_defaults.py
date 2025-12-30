@@ -15,7 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Configuration defaults of the dataconverter."""
 
-from pynxtools.dataconverter import helpers, validation
+COMPRESSION_FILTER = "gzip"  # deflate
+COMPRESSION_STRENGTH = 9  # strongest compression is space efficient but can take long
 
-helpers.validate_data_dict = validation.validate_data_dict  # type: ignore
+# compressed payload is served as a dict with at least one keyword "compress",
+# optional keywords that can be used to overwrite defaults are "filter", and "strength"
