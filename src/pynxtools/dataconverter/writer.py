@@ -29,6 +29,7 @@ import numpy as np
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
+from pynxtools.dataconverter.helpers import chunking_strategy
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
@@ -163,7 +164,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
                 entry_name,
                 data=data["compress"],
                 compression="gzip",
-                chunks=True,
+                chunks=chunking_strategy(data),
                 compression_opts=strength,
             )
         else:
