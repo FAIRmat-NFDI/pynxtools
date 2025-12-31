@@ -28,7 +28,9 @@ import h5py
 import numpy as np
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.chunk_cache import CHUNK_CONFIG_DEFAULT
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
+from pynxtools.dataconverter.helpers import chunking_strategy
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
@@ -167,8 +169,8 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             grp.create_dataset(
                 entry_name,
                 data=data["compress"],
-                compression=filter,
-                chunks=True,
+                compression="gzip",
+                chunks=chunking_strategy(data),
                 compression_opts=strength,
             )
         else:
@@ -212,7 +214,13 @@ class Writer:
         self.data = data
         self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "w")
+        self.output_nexus = h5py.File(
+            self.output_path,
+            "w",
+            rdcc_nslots=CHUNK_CONFIG_DEFAULT["rdcc_nslots"],
+            rdcc_nbytes=CHUNK_CONFIG_DEFAULT["rdcc_nbytes"],
+            rdcc_w0=CHUNK_CONFIG_DEFAULT["rdcc_w0"],
+        )
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 

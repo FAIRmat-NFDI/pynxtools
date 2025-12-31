@@ -1454,3 +1454,19 @@ def clean_str_attr(attr: str | bytes | None, encoding: str = "utf-8") -> str | N
     if isinstance(attr, bytes):
         return attr.decode(encoding)
     return attr
+
+
+def chunking_strategy(data) -> bool | tuple[int]:
+    """Decide chunking strategy, check validity for explicit overwriting of the auto-chunking. Returns true for auto-chunking, otherwise returns explicit settings for the chunking."""
+    if isinstance(data, dict):
+        if "compress" in data.keys() and "chunks" in data.keys():
+            data_dims = np.shape(data["compress"])
+            chunk_dims = np.shape(data["chunks"])
+            if len(data_dims) != len(chunk_dims):
+                return True
+            if not all(isinstance(value, int) for value in chunk_dims):
+                return True
+            if not all(value > 0 for value in chunk_dims):
+                return True
+            return data["chunks"]
+    return True
