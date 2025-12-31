@@ -200,6 +200,8 @@ def convert(
         Root name of nxdl file, e.g. NXmpes for NXmpes.nxdl.xml
     output : str
         Output file name.
+    skip_verify: bool, default False
+        Skips verification routine if set to True
     generate_template : bool, default False
         True if user wants template in logger info.
     fair : bool, default False
@@ -207,9 +209,8 @@ def convert(
         in the template.
     ignore_undocumented : bool, default False
         If True, all undocumented items are ignored in the validation.
-    skip_verify: bool, default False
-        Skips verification routine if set to True
-
+    append : bool, default False
+        If True, allows adding instances to an existent NXentry instance.
     Returns
     -------
     None.
@@ -226,7 +227,12 @@ def convert(
     )
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
+    Writer(
+        data=data,
+        nxdl_f_path=nxdl_f_path,
+        output_path=output,
+        append=kwargs["append"] if "append" in kwargs else False,
+    ).write()
 
     logger.info(f"The output file generated: {output}.")
 
@@ -310,6 +316,12 @@ def main_cli():
     help="Allows to pass a .yaml file with all the parameters the converter supports.",
 )
 @click.option(
+    "--append",
+    is_flag=True,
+    default=False,
+    help="Appends instance data to the given <output> file if it already exists. Will prevent an overwriting of existent data and adding of new NXentry instances.",
+)
+@click.option(
     "--ignore-undocumented",
     is_flag=True,
     default=False,
@@ -347,6 +359,7 @@ def convert_cli(
     nxdl: str,
     output: str,
     params_file: str,
+    append: bool,
     ignore_undocumented: bool,
     skip_verify: bool,
     mapping: str,
@@ -399,6 +412,7 @@ def convert_cli(
             nxdl,
             output,
             skip_verify,
+            append=append,
             ignore_undocumented=ignore_undocumented,
             fail=fail,
             **kwargs,

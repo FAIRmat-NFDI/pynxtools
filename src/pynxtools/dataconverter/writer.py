@@ -208,7 +208,11 @@ class Writer:
     """
 
     def __init__(
-        self, data: dict = None, nxdl_f_path: str = None, output_path: str = None
+        self,
+        data: dict = None,
+        nxdl_f_path: str = None,
+        output_path: str = None,
+        append: bool = False,
     ):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
@@ -216,7 +220,7 @@ class Writer:
         self.output_path = output_path
         self.output_nexus = h5py.File(
             self.output_path,
-            "w",
+            "a" if append else "w",
             rdcc_nslots=CHUNK_CONFIG_DEFAULT["rdcc_nslots"],
             rdcc_nbytes=CHUNK_CONFIG_DEFAULT["rdcc_nbytes"],
             rdcc_w0=CHUNK_CONFIG_DEFAULT["rdcc_w0"],
