@@ -35,6 +35,10 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
+from pynxtools.dataconverter.config_defaults import (
+    COMPRESSION_FILTER,
+    COMPRESSION_STRENGTH,
+)
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -150,7 +154,8 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            strength = 9  # strongest compression is space efficient but can take long
+            filter = COMPRESSION_FILTER
+            strength = COMPRESSION_STRENGTH
             accept = (
                 ("strength" in data.keys())
                 and (isinstance(data["strength"], int))
@@ -162,7 +167,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             grp.create_dataset(
                 entry_name,
                 data=data["compress"],
-                compression="gzip",
+                compression=filter,
                 chunks=True,
                 compression_opts=strength,
             )
