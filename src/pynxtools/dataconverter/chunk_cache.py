@@ -17,41 +17,39 @@
 #
 """Use-case-specific configurations to optimize performance for chunked storage."""
 
-from typing import Any
-
 # https://docs.h5py.org/en/stable/high/file.html#h5py.File
 # modify rdcc parameters upon hdf5 file creation
 
 CHUNK_CONFIG_HFIVEPY: dict[str, int | float] = {
     "byte_size": 1 * 1024 * 1024,
-    "rdcc_nbytes": 1 * 1024 * 1024,
+    "rdcc_nbytes": 1 * 1024 * 1024,  # 1 MiB before HDF2.0, will be 8 MiB for HDF2.0
     "rdcc_nslots": 521,
     "rdcc_w0": 0.75,
 }
 CHUNK_CONFIG_SSD_NVM: dict[str, int | float] = {
     "byte_size": 1 * 1024 * 1024,
-    "rdcc_nbytes": 256 * 1024 * 1024,
-    "rdcc_nslots": 1000003,
+    "rdcc_nbytes": 128 * 1024 * 1024,
+    "rdcc_nslots": 4093,
     "rdcc_w0": 0.75,
 }
 CHUNK_CONFIG_HDD: dict[str, int | float] = {
     "byte_size": 4 * 1024 * 1024,
     "rdcc_nbytes": 256 * 1024 * 1024,
-    "rdcc_nslots": 200003,
+    "rdcc_nslots": 1021,
     "rdcc_w0": 0.75,
 }
 CHUNK_CONFIG_GPFS: dict[str, int | float] = {
-    "byte_size": 4 * 1024 * 1024,
+    "byte_size": 8 * 1024 * 1024,
     "rdcc_nbytes": 256 * 1024 * 1024,
-    "rdcc_nslots": 500009,
+    "rdcc_nslots": 521,
     "rdcc_w0": 0.75,
 }
 
 CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
     # set stripe size before creating a file!
     "byte_size": 8 * 1024 * 1024,
-    "rdcc_nbytes": 64 * 8 * 1024 * 1024,
-    "rdcc_nslots": 1000003,
+    "rdcc_nbytes": 256 * 1024 * 1024,
+    "rdcc_nslots": 521,
     "rdcc_w0": 0.75,
 }
 
