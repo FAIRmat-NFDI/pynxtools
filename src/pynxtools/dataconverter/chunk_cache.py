@@ -17,8 +17,7 @@
 #
 """Use-case-specific configurations to optimize performance for chunked storage."""
 
-# https://docs.h5py.org/en/stable/high/file.html#h5py.File
-# modify rdcc parameters upon hdf5 file creation
+# https://github.com/h5py/h5py/blob/master/docs/high/file.rst
 
 CHUNK_CONFIG_HFIVEPY: dict[str, int | float] = {
     "byte_size": 1 * 1024 * 1024,
