@@ -23,6 +23,7 @@ Draxl
 Druskat
 ELECTRONANALYZER
 ESRFET
+ESRF
 Emminger
 Erlangen
 Faradayweg
@@ -97,7 +98,9 @@ Sherjeel
 Staudtstr
 Stiftstraße
 TASKCONFIG
+submoduling
 Tommaso
+testdata
 UNALLOWED
 Uniquified
 Uniquifies
