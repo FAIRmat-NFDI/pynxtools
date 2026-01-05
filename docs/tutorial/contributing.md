@@ -60,10 +60,11 @@ git submodule update --init --recursive --jobs=4
 
 Note that we are using the NeXus definitions as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). The last two lines initiate the submodule and upgrade it to match the first used in pynxtools.
 
-For NeXusOntology submodule [NeXusOntology](../../src/pynxtools/NeXusOntology/) we use the sparse checkout
+In addition, for the [ontology service](../learn/pynxtools/ontology-service.md), we are submoduling the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/oscars-project). Here, it is recommended to use the sparse checkout:
+
 ```bash
 git sparse-checkout init --no-cone
-git sparse-checkout set "/*" '!ontology/NeXusOntology.owl' '!ontology/NeXusOntology_full.owl'
+git sparse-checkout set "/*" '!ontology/NeXusOntology.owl' '!ontology/NeXusOntology_full.owl' '!ontology/NeXusOntology_full_testdata.owl'
 ```
 
 Next, we install the package in editable mode (together with its dependencies):

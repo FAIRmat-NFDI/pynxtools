@@ -50,6 +50,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
 - [Using Python to create NeXus files](how-tos/pynxtools/create-nexus-files-by-python.md)
 - [Validation of NeXus files](how-tos/pynxtools/validate-nexus-files.md)
+- [Use ontology service](how-tos/pynxtools/ontology-service.md)
 
 </div>
 
@@ -68,6 +69,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Data conversion in `pynxtools`](learn/pynxtools/dataconverter-and-readers.md)
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
 - [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
+- [Introduction to ontology service](learn/pynxtools/ontology-service.md)
 
 </div>
 <div markdown="block">

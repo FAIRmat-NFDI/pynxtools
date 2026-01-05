@@ -25,6 +25,7 @@ nav:
       - how-tos/pynxtools/run-tests-in-parallel.md
       - how-tos/pynxtools/create-nexus-files-by-python.md
       - how-tos/pynxtools/validate-nexus-files.md
+      - how-tos/pynxtools/ontology-service.md
   - Learn:
     - NeXus:
       - learn/nexus/nexus-primer.md
@@ -34,6 +35,7 @@ nav:
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md
+      - learn/pynxtools/ontology-service.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md
