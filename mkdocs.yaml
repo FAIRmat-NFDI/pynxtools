@@ -31,6 +31,7 @@ nav:
       - how-tos/pynxtools/create-nexus-files-by-python.md
       - how-tos/pynxtools/validate-nexus-files.md
       - how-tos/pynxtools/use-with-nomad.md
+      - how-tos/pynxtools/ontology-service.md
   - Learn:
     - NeXus:
       - learn/nexus/nexus-primer.md
@@ -48,6 +49,7 @@ nav:
       - learn/pynxtools/versioning.md
       - learn/pynxtools/nomad-integration.md
       - learn/pynxtools/numerics.md
+      - learn/pynxtools/ontology-service.md
       # - learn/pynxtools/nexus-metainfo-generation.md
   - Reference:
     - reference/definitions.md

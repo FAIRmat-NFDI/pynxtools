@@ -55,6 +55,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
 - [Using Python to create NeXus files](how-tos/pynxtools/create-nexus-files-by-python.md)
 - [Validation of NeXus files](how-tos/pynxtools/validate-nexus-files.md)
+- [Use ontology service](how-tos/pynxtools/ontology-service.md)
 
 </div>
 
@@ -79,6 +80,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Using and tailoring compression](learn/pynxtools/compression.md)
 - [Chunked storage and numerics](learn/pynxtools/numerics.md)
 - [Note on versioning](learn/pynxtools/versioning.md)
+- [Introduction to ontology service](learn/pynxtools/ontology-service.md)
 <!-- - [NeXus Metainfo Generation](learn/pynxtools/nexus-metainfo-generation.md) -->
 
 </div>
