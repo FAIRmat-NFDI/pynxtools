@@ -1,6 +1,6 @@
 # Understanding the ontology service in pynxtools
 
-!!! info "This is a learn guide for using the ontology service. If you want to learn more about how to use `ontology service` in `pynxtools`, please visit the [explanation](../../how-tos/pynxtools/ontology-service.md) "
+!!! info "This is a learn guide for using the ontology service. If you want to learn more about how to use `ontology service` in `pynxtools`, please visit the [explanation](../../how-tos/pynxtools/ontology-service.md)."
 
 ## Introduction
 
@@ -16,9 +16,9 @@ By using these ontologies, the service maps NeXus application definitions to sta
 
 ## How it fits in pynxtools
 
-This service only operates when `pynxtools` is run within `NOMAD`, exposing ontological data for NeXus Application definitions through a FastAPI interface. It uses NOMAD's configuration to set up the API base path and plugin entry points, then processes NeXus definitions to provide semantic data to users and connected systems.
+The `ontology service` only operates when `pynxtools` is run within `NOMAD`. It is registered as an [`ApiEntryPoint`](https://nomad-lab.eu/prod/v1/docs/reference/config.html#apientrypoint), which allows NOMAD to automatically discover and mount the FastAPI routes at startup. The service exposes [NeXus ontology](https://github.com/nexusformat/NeXusOntology) to users and connected systems.
 
-## Core Concepts
+## Core concepts
 
 - **Ontology**: A formal representation of concepts (classes), relationships, and properties, typically serialized as [OWL](https://www.w3.org/OWL/) files.
 - **Application definition**: A class or term describing an experimental technique in the NeXus (e.g., `NXmpes_arpes`).
@@ -27,24 +27,24 @@ This service only operates when `pynxtools` is run within `NOMAD`, exposing onto
 
 Ontologies are represented as OWL files (e.g., `NeXusOntology_full_<commit>_inferred.owl`) and loaded using `owlready2`.
 
-## Architecture & Design
+## Architecture & design
 
-- **Main Modules**:
-  - `pynxtools.nomad.apis.ontology_service`: FastAPI app, core logic for loading and querying ontologies.
-  - `pynxtools.NeXusOntology.script.generate_ontology`: Generates ontology files from NeXus definitions.
-  - `pynxtools.nomad.schema`: Initializes metainfo and schema integration.
-- **Key Classes/Functions**:
-  - `load_ontology()`: Loads the inferred ontology file.
-  - `fetch_superclasses(ontology, class_name)`: Retrieves superclasses for a given NeXus class.
-  - `ensure_ontology_file()`: Ensures ontology file is present and up-to-date.
-- **Data Flow**:
-  1. On startup, the service verifies whether the inferred ontology file exists; if absent, it runs the reasoner and generates the inferred ontology file.
-  2. Inferred ontology is loaded via `owlready2`.
-  3. API endpoints query this inferred ontology for relationships and metadata.
+- **Main modules**:
+    - `pynxtools.nomad.apis.ontology_service`: FastAPI app, core logic for loading and querying ontologies.
+    - `pynxtools.NeXusOntology.script.generate_ontology`: Generates ontology files from NeXus definitions.
+    - `pynxtools.nomad.schema`: Initializes metainfo and schema integration.
+- **Key classes/functions**:
+    - `load_ontology()`: Loads the inferred ontology file.
+    - `fetch_superclasses(ontology, class_name)`: Retrieves superclasses for a given NeXus class.
+    - `ensure_ontology_file()`: Ensures ontology file is present and up-to-date.
+- **Data flow**:
+    - On startup, the service verifies whether the inferred ontology file exists; if absent, it runs the reasoner and generates the inferred ontology file.
+    - Inferred ontology is loaded via `owlready2`.
+    - API endpoints query this inferred ontology for relationships and metadata.
 
-## Extensibility Points
+## Extensibility points
 
-- Extend FastAPI routes in `ontology_service.py` for new queries.
+- Extend FastAPI routes in [`ontology_service.py`](https://github.com/FAIRmat-NFDI/pynxtools/blob/ontology-service/src/pynxtools/nomad/apis/ontology_service.py) for new queries.
 
 ## Examples
 
