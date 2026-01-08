@@ -115,7 +115,7 @@ generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 
 [tool.setuptools.package-data]
-pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsdi", "_version.py"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
