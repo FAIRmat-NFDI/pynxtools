@@ -33,6 +33,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools._version import version as pynxtools_version
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     find_definition_file,
     get_enums,
@@ -1291,6 +1292,8 @@ def add_default_root_attributes(data, filename):
     update_and_warn("/@NeXus_release", get_nexus_version())
     update_and_warn("/@HDF5_Version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
+    update_and_warn("/@creator", "pynxtools")
+    update_and_warn("/@creator_version", pynxtools_version)
 
 
 def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
