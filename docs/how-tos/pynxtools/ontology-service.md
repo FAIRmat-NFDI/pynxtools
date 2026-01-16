@@ -1,12 +1,12 @@
 # Using the ontology service in pynxtools
 
-!!! info "This is a how-to guide for using the ontology service. If you want to learn more about how `ontology service` works in `pynxtools`, please visit the [explanation](../../learn/pynxtools/ontology-service.md)."
+!!! info "This is a how-to guide for using the ontology service. If you want to learn more about how `ontology service` works in `pynxtools`, please visit the [explanation](../../learn/pynxtools/ontology-service.md) page."
 
 ## Prerequisites
 
-- Python 3.10+
-- You will first need to install pynxtools and its dependencies (see [pyproject.toml](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pyproject.toml)), including owlready2, pygit2, fastapi, uvicorn. For more information about the installation, see [installation guide](../../tutorial/installation.md)
 - If you plan to work on `pynxtools` and the ontology service locally, follow the [development guide](../../tutorial/contributing.md). Ensure the NeXusOntology and definitions submodules [are initialized](../../tutorial/contributing.md#development-installation).
+- Python 3.10+
+- You will first need to install pynxtools and its dependencies (see [pyproject.toml](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pyproject.toml)), including owlready2, pygit2, fastapi. For more information about the installation, see [installation guide](../../tutorial/installation.md)
 
 !!! note "NeXusOntology and definitions submodules"
     === "Using pynxtools (standard installation)"
@@ -43,7 +43,7 @@ else:
   print(f"Error: {response.status_code} - {response.text}")
 ```
 
-This endpoint returns a JSON object with the list of superclasses for the given NeXus class name, as used internally in [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/blob/ontology-service/src/pynxtools/nomad/schema.py)
+This endpoint returns a JSON object with the list of superclasses for the given NeXus class name, as used internally in [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/blob/ontology-service/src/pynxtools/nomad/schema.py).
 
 ## How it works in NOMAD
 
