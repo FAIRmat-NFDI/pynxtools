@@ -72,7 +72,7 @@ git submodule update --init --recursive --jobs=4
 
 Note that we are using the NeXus definitions as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). The last two lines initiate the submodule and upgrade it to match the first used in pynxtools.
 
-In addition, for the [ontology service](../learn/pynxtools/ontology-service.md), we are submoduling the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/oscars-project). Here, it is recommended to use the sparse checkout:
+For the [ontology service](../learn/pynxtools/ontology-service.md), adding the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/oscars-project) as a git submodule is required. Here, it is recommended to use the sparse checkout:
 
 ```bash
 git sparse-checkout init --no-cone
@@ -161,7 +161,7 @@ In the following sections, the `nomad-distro-dev` commands are run from `package
 
 ### Linting and formatting
 
-We are using ruff and mypy for linting, formatting, and type checking. It is recommended to use the [pre-commit hook](https://pre-commit.com/#intro) available for ruff which formats the code and checks the linting before actually making an actual Git commit.
+We are using ruff and mypy for linting, formatting, and type checking. It is recommended to use the [pre-commit hook](https://pre-commit.com/#intro) available for ruff which formats the code and checks the linting before making an actual Git commit.
 
 === "Standalone"
 
