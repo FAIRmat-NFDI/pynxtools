@@ -25,6 +25,27 @@ The main entry point is the FastAPI app defined in [`pynxtools.nomad.apis.ontolo
 from pynxtools.nomad.apis.ontology_service import app, load_ontology, fetch_superclasses
 ```
 
+## Configuring ontology imports
+
+The ontologies used by the ontology service in `pynxtools` are configurable via the [`nomad.yaml`](https://nomad-lab.eu/prod/v1/docs/howto/develop/setup.html#nomadyaml) configuration file. This allows you to control exactly which ontologies are loaded and reasoned over.
+
+To specify which ontologies to import, add their URLs under the `plugins.options.pynxtools.nomad.apis:ontology_service.imports` section in your `nomad.yaml`:
+
+```yaml
+plugins:
+  options:
+    pynxtools.nomad.apis:ontology_service:
+      imports:
+        - "https://raw.githubusercontent.com/pan-ontologies/esrf-ontologies/refs/heads/oscars-deliverable-2/ontologies/esrfet/ESRFET.owl"
+        - "http://purl.org/pan-science/PaNET/PaNET.owl"
+```
+
+**Important:**  
+Even if an ontology (e.g., [ESRFET](https://github.com/pan-ontologies/esrf-ontologies)) references another ontology (e.g., [PaNET](https://bioportal.bioontology.org/ontologies/PANET)) via `owl:imports`, you must still list both URLs explicitly in the imports. The ontology service only loads the ontologies specified in the configuration and does not automatically follow `owl:imports` statements.
+
+For details on using `pynxtools` as a NOMAD plugin, refer to the [development guide](../pynxtools/../../tutorial/contributing.md#developing-pynxtools-as-a-nomad-plugin).
+
+
 ### Minimal working example
 
 You can extract superclasses for a NeXus class using the ontology service's HTTP API endpoint. Here's an example using Python's `requests` library:

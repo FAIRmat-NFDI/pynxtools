@@ -83,9 +83,7 @@ def ensure_ontology_file():
                 nexus_def_path=nexus_def_path,
                 def_commit=latest_commit_hash,
                 store_commit_filename=True,
-                imports=[
-                    "https://raw.githubusercontent.com/pan-ontologies/esrf-ontologies/refs/heads/oscars-deliverable-2/ontologies/esrfet/ESRFET.owl"
-                ],
+                imports=ontology_service_entry_point.imports,
             )
             # construct the path to the ontology file just generated
             owl_file_path = os.path.join(

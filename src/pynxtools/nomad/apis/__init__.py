@@ -16,17 +16,28 @@
 # limitations under the License.
 #
 
+
 from nomad.config.models.plugins import APIEntryPoint
+from pydantic import Field
 
 
-class MyAPIEntryPoint(APIEntryPoint):
+class OntologyServiceEntryPoint(APIEntryPoint):
+    imports: list[str] = Field(
+        default=[],
+        description=(
+            "List of ontology URIs to import along with the NeXus ontology. "
+            "These should be URLs pointing to OWL files (e.g., "
+            "'https://raw.githubusercontent.com/pan-ontologies/esrf-ontologies/refs/heads/oscars-deliverable-2/ontologies/esrfet/ESRFET.owl')."
+        ),
+    )
+
     def load(self):
         from pynxtools.nomad.apis.ontology_service import app
 
         return app
 
 
-ontology_service = MyAPIEntryPoint(
+ontology_service = OntologyServiceEntryPoint(
     name="ontology_service",
     description="A service to provide ontological information for a given NeXus class.",
     prefix="/ontology_service",
