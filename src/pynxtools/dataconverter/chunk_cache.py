@@ -19,12 +19,14 @@
 
 # https://github.com/h5py/h5py/blob/master/docs/high/file.rst
 
+# e.g. for h5py v3.15.1 https://github.com/h5py/h5py/blob/fad034c16f595cb24f4393bbd0dcd23c53bc9a33/h5py/tests/test_file2.py#L111
 CHUNK_CONFIG_HFIVEPY: dict[str, int | float] = {
     "byte_size": 1 * 1024 * 1024,
     "rdcc_nbytes": 1 * 1024 * 1024,  # 1 MiB before HDF2.0, will be 8 MiB for HDF2.0
     "rdcc_nslots": 521,
     "rdcc_w0": 0.75,
 }
+
 CHUNK_CONFIG_SSD_NVM: dict[str, int | float] = {
     "byte_size": 1 * 1024 * 1024,
     "rdcc_nbytes": 128 * 1024 * 1024,
@@ -52,4 +54,4 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
     "rdcc_w0": 0.75,
 }
 
-CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_SSD_NVM
+CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
