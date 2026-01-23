@@ -15,3 +15,5 @@ include src/pynxtools/units/*.txt
 graft src/pynxtools/nomad/examples
 include src/pynxtools/nomad/nxs_metainfo_package_*.json
 include src/pynxtools/NeXusOntology/script/*.py
+include src/pynxtools/NeXusOntology/script/*.py
+src/pynxtools/NeXusOntology/ontology/NeXusOntology_full_*_inferred.owl
