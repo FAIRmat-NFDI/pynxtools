@@ -20,10 +20,15 @@
 from nomad.config.models.plugins import APIEntryPoint
 from pydantic import Field
 
+DEFAULT_IMPORTS: list[str] = [
+    "https://raw.githubusercontent.com/pan-ontologies/esrf-ontologies/refs/heads/oscars-deliverable-2/ontologies/esrfet/ESRFET.owl",
+    "http://purl.org/pan-science/PaNET/PaNET.owl",
+]
+
 
 class OntologyServiceEntryPoint(APIEntryPoint):
     imports: list[str] = Field(
-        default=[],
+        default=DEFAULT_IMPORTS,
         description=(
             "List of ontology URIs to import along with the NeXus ontology. "
             "These should be URLs pointing to OWL files (e.g., "

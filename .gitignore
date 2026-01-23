@@ -195,7 +195,7 @@ cython_debug/
 
 
 # Custom settings
-
+.volumes/
 .mypy_cache/
 .pyenv
 *.pyc
