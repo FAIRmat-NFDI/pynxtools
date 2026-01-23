@@ -40,11 +40,12 @@ plugins:
         - "http://purl.org/pan-science/PaNET/PaNET.owl"
 ```
 
+By default, the [ESRFET](https://github.com/pan-ontologies/esrf-ontologies) and [PaNET](https://bioportal.bioontology.org/ontologies/PANET) ontology are imported, like in the example.
+
 **Important:**  
 Even if an ontology (e.g., [ESRFET](https://github.com/pan-ontologies/esrf-ontologies)) references another ontology (e.g., [PaNET](https://bioportal.bioontology.org/ontologies/PANET)) via `owl:imports`, you must still list both URLs explicitly in the imports. The ontology service only loads the ontologies specified in the configuration and does not automatically follow `owl:imports` statements.
 
 For details on using `pynxtools` as a NOMAD plugin, refer to the [development guide](../pynxtools/../../tutorial/contributing.md#developing-pynxtools-as-a-nomad-plugin).
-
 
 ### Minimal working example
 

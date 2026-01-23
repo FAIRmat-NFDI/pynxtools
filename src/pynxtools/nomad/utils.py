@@ -135,36 +135,43 @@ def get_quantity_base_name(quantity_name):
     )
 
 
-PACKAGE_DIR = Path(__file__).resolve().parent
+NOMAD_PACKAGE_DIR = Path(__file__).resolve().parent
 CACHE_DIR = Path(config.fs.tmp) / "pynxtools"
 
 
-def get_package_filepath() -> Path:
-    """Return the path to the NeXus metainfo package JSON file.
+def resolve_artifact_path(
+    *,
+    filename: str,
+    package_dir: Path,
+    cache_dir: Path,
+    build_env_var: str = "PYNXTOOLS_BUILD_PACKAGE",
+) -> Path:
+    """Resolve the dir for a generated artifact.
 
     Resolution order:
 
-    1. If ``PYNXTOOLS_BUILD_PACKAGE`` is ``"1"``, always return the path inside
-       ``PACKAGE_DIR`` (ensures inclusion in built distributions).
-    2. If the file already exists in ``PACKAGE_DIR``, return that path.
-    3. Otherwise, return the corresponding path inside ``CACHE_DIR`` for
-       development or first-time generation.
+    1. If ``build_env_var`` is ``"1"``, always return ``package_dir / filename``.
+    2. If the file exists in ``package_dir``, return that path.
+    3. Otherwise, return ``cache_dir / filename``.
 
-    Returns:
-        Path: Resolved location for reading or writing the JSON file.
+    This function does not generate the file.
     """
-    filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
+    if os.environ.get(build_env_var) == "1":
+        return package_dir
 
-    # 1. Build-mode override (forces packaging the file)
-    if os.environ.get("PYNXTOOLS_BUILD_PACKAGE") == "1":
-        return PACKAGE_DIR / filename
-
-    # 2. Use packaged file if it exists
-    packaged = PACKAGE_DIR / filename
+    packaged = package_dir / filename
     if packaged.exists():
         return packaged
 
-    # 3. Otherwise store in cache dir
-    # create parent directory only if we need to write
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    return CACHE_DIR / filename
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir / filename
+
+
+def get_package_filepath() -> Path:
+    filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
+
+    return resolve_artifact_path(
+        filename=filename,
+        package_dir=NOMAD_PACKAGE_DIR,
+        cache_dir=CACHE_DIR,
+    )
