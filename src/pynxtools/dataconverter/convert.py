@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 
 import click
 import lxml.etree as ET
@@ -157,6 +157,12 @@ def transfer_data_into_template(
         del kwargs["fail"]
     else:
         fail = False
+
+    if "append" in kwargs:
+        append = kwargs["append"]
+        del kwargs["append"]
+    else:
+        append = False
 
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
