@@ -5,7 +5,7 @@ definitions:
   sections:
     ELN_for_iv_temp:
       base_sections:
-        - "pynxtools.nomad.dataconverter.NexusDataConverter"
+        - "pynxtools.nomad.schema_packages.dataconverter.NexusDataConverter"
         - "nomad.datamodel.data.EntryData"
       m_annotations:
         template:

@@ -40,15 +40,15 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-import pynxtools.nomad.schema as nexus_schema
+import pynxtools.nomad.schema_packages.schema as nexus_schema
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import decode_or_not
 from pynxtools.nexus.nexus import HandleNexus
+from pynxtools.nomad import _rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.nomad.utils import (
     FIELD_STATISTICS,
     REPLACEMENT_FOR_NX,
     get_quantity_base_name,
 )
-from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.units import ureg
 
 
