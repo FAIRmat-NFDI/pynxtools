@@ -29,7 +29,7 @@ except ImportError:
         allow_module_level=True,
     )
 
-from pynxtools.nomad.entrypoints import simple_nexus_example
+from pynxtools.nomad.example_uploads import simple_nexus_example
 from pynxtools.testing.nomad_example import (
     example_upload_entry_point_valid,
     get_file_parameter,
@@ -43,7 +43,8 @@ EXAMPLE_PATH = os.path.join(
     "src",
     "pynxtools",
     "nomad",
-    "examples",
+    "example_uploads",
+    "iv_temp_example",
 )
 
 

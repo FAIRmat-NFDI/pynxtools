@@ -115,7 +115,7 @@ def populate_nexus_subsection(
             data=template, nxdl_f_path=nxdl_f_path, output_path=archive.data.output
         ).write()
         try:
-            from pynxtools.nomad.parser import NexusParser
+            from pynxtools.nomad.parsers.parser import NexusParser
 
             nexus_parser = NexusParser()
             nexus_parser.parse(
@@ -154,7 +154,7 @@ def populate_nexus_subsection(
                 data=template, nxdl_f_path=nxdl_f_path, output_path=output_file
             ).write()
 
-            from pynxtools.nomad.parser import NexusParser
+            from pynxtools.nomad.parsers.parser import NexusParser
 
             nexus_parser = NexusParser()
             nexus_parser.parse(mainfile=output_file, archive=archive, logger=logger)
