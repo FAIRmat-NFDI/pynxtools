@@ -102,11 +102,11 @@ xrd = [
 ]
 
 [project.entry-points.'nomad.plugin']
-nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
-nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
-nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
-nexus_app = "pynxtools.nomad.entrypoints:nexus_app"
-simple_nexus_example = "pynxtools.nomad.entrypoints:simple_nexus_example"
+nexus_parser = "pynxtools.nomad.parsers:nexus_parser"
+nexus_schema = "pynxtools.nomad.schema_packages:nexus_schema"
+nexus_data_converter = "pynxtools.nomad.schema_packages:nexus_data_converter"
+nexus_app = "pynxtools.nomad.apps:nexus_app"
+simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
