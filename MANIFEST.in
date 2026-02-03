@@ -13,4 +13,4 @@ include src/pynxtools/remote_definitions_url.txt
 include src/pynxtools/definitions/NXDL_VERSION
 include src/pynxtools/units/*.txt
 graft src/pynxtools/nomad/example_uploads/iv_temp_example
-include src/pynxtools/nomad/nxs_metainfo_package_*.json
+include src/pynxtools/nomad/schema_packages/nxs_metainfo_package_*.json

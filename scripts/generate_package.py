@@ -2,7 +2,7 @@ import logging
 import os
 
 try:
-    from pynxtools.nomad.utils import get_package_filepath
+    from pynxtools.nomad import get_package_filepath
 except ImportError as e:
     raise ImportError(
         "The 'pynxtools' package is required but not installed. "
@@ -14,6 +14,6 @@ nxs_filepath = get_package_filepath()
 
 if not os.path.exists(nxs_filepath):
     logger.info(f"Generating NeXus package at {nxs_filepath}.")
-    import pynxtools.nomad.schema  # noqa: F401
+    import pynxtools.nomad.schema_packages.schema  # noqa: F401
 else:
     logger.info(f"NeXus package already existed at {nxs_filepath}.")

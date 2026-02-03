@@ -134,7 +134,7 @@ def get_quantity_base_name(quantity_name):
     )
 
 
-PACKAGE_DIR = Path(__file__).resolve().parent
+PACKAGE_DIR = Path(__file__).resolve().parent / "schema_packages"
 CACHE_DIR = Path(config.fs.tmp) / "pynxtools"
 
 
