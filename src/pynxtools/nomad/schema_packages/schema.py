@@ -1158,7 +1158,7 @@ def init_nexus_metainfo():
     if nexus_metainfo_package is not None:
         return
     try:
-        # load_nexus_schema()
+        load_nexus_schema()
         raise Exception("test")
 
     except Exception:
