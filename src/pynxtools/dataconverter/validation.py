@@ -1598,7 +1598,11 @@ def validate_dict_against(
             node = add_best_matches_for(key, tree, check_types=True)
         except TypeError:
             node = None
-            nx_type = "attribute" if key.split("/")[-1].startswith("@") else "field"
+            nx_type = (
+                "attribute"
+                if key.rsplit("/", maxsplit=1)[-1].startswith("@")
+                else "field"
+            )
 
             collector.collect_and_log(
                 key,

@@ -66,9 +66,9 @@ def decode_if_string(
         # may need to be updated in the future: https://api.h5py.org/h5t.html
         if elem.dtype.kind == "S":  # Check if it's a bytes array (fixed-length strings)
             decoded_array = np.vectorize(
-                lambda x: x.decode(encoding).rstrip("\x00")
-                if isinstance(x, bytes)
-                else x
+                lambda x: (
+                    x.decode(encoding).rstrip("\x00") if isinstance(x, bytes) else x
+                )
             )(elem)
             return decoded_array.astype(str)  # Ensure the dtype is str
 
