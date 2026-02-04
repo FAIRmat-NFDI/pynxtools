@@ -82,7 +82,7 @@ except ImportError as exc:
 
 from pynxtools import NX_DOC_BASES, get_definitions_url, get_nexus_version
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import (
+from pynxtools.nomad import (
     FIELD_STATISTICS,
     NX_TYPES,
     REPLACEMENT_FOR_NX,
@@ -1159,6 +1159,7 @@ def init_nexus_metainfo():
         return
     try:
         load_nexus_schema()
+        raise Exception("test")
 
     except Exception:
         nexus_metainfo_package = create_metainfo_package()
