@@ -193,7 +193,7 @@ cython_debug/
 
 
 # Custom settings
-
+.volumes/
 .mypy_cache/
 .pyenv
 *.pyc
@@ -205,6 +205,9 @@ cython_debug/
 !src/pynxtools/remote_definitions_url.txt
 !src/pynxtools/units/constants_en.txt
 !src/pynxtools/units/default_en.txt
+src/pynxtools/NeXusOntology/ontology/NeXusOntology_c*.owl
+src/pynxtools/NeXusOntology/ontology/NeXusOntology_full_c*.owl
+src/pynxtools/NeXusOntology/ontology/NeXusOntology_full_*_inferred.owl
 build/
 src/pynxtools/nomad/nxs_metainfo_*.json
 nexusparser.egg-info/PKG-INFO

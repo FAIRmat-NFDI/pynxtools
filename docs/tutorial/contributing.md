@@ -60,6 +60,13 @@ git submodule update --init --recursive --jobs=4
 
 Note that we are using the NeXus definitions as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). The last two lines initiate the submodule and upgrade it to match the first used in pynxtools.
 
+For the [ontology service](../learn/pynxtools/ontology-service.md), adding the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/oscars-project) as a git submodule is required. Here, it is recommended to use the sparse checkout:
+
+```bash
+git sparse-checkout init --no-cone
+git sparse-checkout set "/*" '!ontology/NeXusOntology.owl' '!ontology/NeXusOntology_full.owl' '!ontology/NeXusOntology_full_testdata.owl'
+```
+
 Next, we install the package in editable mode (together with its dependencies):
 
 === "uv"
@@ -79,7 +86,7 @@ Next, we install the package in editable mode (together with its dependencies):
 
 ### Linting and formatting
 
-We are using ruff and mypy for linting, formatting, and type checking. It is recommended to use the [pre-commit hook](https://pre-commit.com/#intro) available for ruff which formats the code and checks the linting before actually making an actual Git commit.
+We are using ruff and mypy for linting, formatting, and type checking. It is recommended to use the [pre-commit hook](https://pre-commit.com/#intro) available for ruff which formats the code and checks the linting before making an actual Git commit.
 
 Install the precommit by running
 
@@ -99,7 +106,7 @@ pytest -sv tests
 
 ### Editing the documentation
 
-We are using [`mkdocs](https://www.mkdocs.org/) for the documentation. If you edit the documentation, you can build it locally. For this, you need to install an additional set of dependencies:
+We are using [mkdocs](https://www.mkdocs.org/) for the documentation. If you edit the documentation, you can build it locally. For this, you need to install an additional set of dependencies:
 
 === "uv"
 
@@ -140,7 +147,7 @@ A number of examples exist which document how the tools can be used. For a stand
 
 ### Contributing to the package on Github
 
-Once you are happy with the changes, please commit them on a separate branch and create a pull request on GitHub. We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted.
+Once you are happy with the changes, please commit them on a separate branch and create a [pull request on GitHub](https://github.com/FAIRmat-NFDI/pynxtools/pulls). We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted.
 
 ## Developing pynxtools as a NOMAD plugin
 

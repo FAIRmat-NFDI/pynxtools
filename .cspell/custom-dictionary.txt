@@ -13,6 +13,8 @@ Downsample
 Downsampled
 Draxl
 ELECTRONANALYZER
+ESRFET
+ESRF
 Emminger
 Florian
 Forschungsgemeinschaft
@@ -43,6 +45,7 @@ Namefits
 Namefitting
 OPCPA
 ORCID
+OWLREADY
 PATHCONV
 PDBX
 PYNXTOOLS
@@ -59,6 +62,7 @@ Scheidgen
 Shabih
 Sherjeel
 Tommaso
+testdata
 UNALLOWED
 Uniquified
 Uniquifies
@@ -95,8 +99,8 @@ edgeitems
 ekey
 electronanalyzer
 elems
-ellips
 elist
+ellips
 ellipsometry
 emittance
 execinfo
@@ -158,6 +162,7 @@ nexusformat
 nodemixin
 nonvariadic
 nsmap
+nxclass
 nxcollection
 nxdata
 nxdl
@@ -166,7 +171,9 @@ nxentry
 optionalities
 orcid
 otherfile
+owlready
 oxidising
+panet
 pathtovalidate
 plottable
 posint
@@ -174,6 +181,8 @@ printoptions
 punx
 pynxtools
 raman
+rdfs
+rdfxml
 redef
 reqs
 requiredness
