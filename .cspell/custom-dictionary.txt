@@ -75,6 +75,7 @@ appdef
 appdefdir
 appdefs
 arpes
+asstr
 atleast
 atomutils
 attribs
