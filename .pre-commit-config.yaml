@@ -19,12 +19,12 @@ repos:
         args: [--py36-plus]  # modernizes syntax for Python 3.6+
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.6.0
+    rev: 0.9.0
     hooks:
       - id: nbstripout  # removes notebook outputs before committing
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.3.0
+    rev: v9.6.0
     hooks:
       - id: cspell  # spellchecking
         pass_filenames: false
