@@ -116,8 +116,6 @@ validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
-"pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
-"pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
 [tool.setuptools.packages.find]
 where = [
