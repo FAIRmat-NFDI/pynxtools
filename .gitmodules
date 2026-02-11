@@ -1,4 +1,3 @@
 [submodule "src/pynxtools/definitions"]
 	path = src/pynxtools/definitions
 	url = https://github.com/FAIRmat-NFDI/nexus_definitions.git
-	branch = nxxas-new
