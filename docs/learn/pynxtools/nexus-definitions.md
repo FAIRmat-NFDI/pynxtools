@@ -2,7 +2,7 @@
 
 ## Overview
 
-`pynxtools` converts experimental data into the NeXus format and validates the resulting files against NeXus application definitions. These definitions formally describe how experimental data and metadata must be structured in a NeXus file.
+`pynxtools` converts experimental data into the NeXus format and validates the resulting HDF5 files against NeXus application definitions. These definitions formally describe how experimental data and metadata must be structured in a NeXus file.
 
 The NeXus definitions themselves are not part of the pynxtools source code. Instead, they are maintained in a dedicated repository and included in pynxtools as a Git submodule:
 
@@ -22,13 +22,13 @@ This page explains:
 
 ## What the NeXus definitions are
 
-NeXus defines a standardized structure for scientific data. The structure is described in XML files written in the NeXus Definition Language (NXDL), which define:
+NeXus defines a standardized structure for scientific data. The structure is defined in XML files written in the NeXus Definition Language (NXDL). These XML files define:
 
-- base classes (common structural components),
+- base classes (common structural components and respective semantic concepts),
 - application definitions (experiment-specific schemas),
 - contributed definitions from the community. These can be base classes or application definitions.
 
-These definitions specify naming, hierarchy, required concepts, and allowed metadata for NeXus files.
+These definitions specify naming, hierarchy, constraints on the requiredness of individual concepts, and allowed metadata for NeXus files.
 
 In practice, they serve as:
 
@@ -113,7 +113,7 @@ The script provides a small abstraction over common Git submodule operations and
     ./scripts/definitions.sh checkout <REV>
     ```
     
-    `<REV>` can be any any Git ref resolvable by `git rev-parse` (e.g., a commit hash, a tag, or a branch name).
+    `<REV>` can be any Git reference that is resolvable by `git rev-parse` (e.g., a commit hash, a tag, or a branch name).
     The behavior depends on the type:
 
     | Revision type | Result |
