@@ -17,8 +17,17 @@
 #
 """Configuration defaults of the dataconverter."""
 
+
+# HDF5 data storage layout for HDF5 datasets is "contiguous" unless
+# one wraps the payload for a dataconverter template into a dictionary with
+# keyword "compress", causing chunked layout to be used
+
 COMPRESSION_FILTER = "gzip"  # deflate
-COMPRESSION_STRENGTH = 9  # strongest compression is space efficient but can take long
+COMPRESSION_STRENGTH = 9
+# integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
+# using strongest compression is space efficient but can take substantially longer than
+# using 1
 
 # compressed payload is served as a dict with at least one keyword "compress",
-# optional keywords that can be used to overwrite defaults are "filter", and "strength"
+# "strength" is optional keyword for that dictionary to overwrite the default
+# COMPRESSION_STRENGTH

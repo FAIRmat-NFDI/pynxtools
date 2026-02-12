@@ -292,6 +292,7 @@ class Writer:
                         path, self.data.undocumented.keys()
                     )
                     if isinstance(data, dict):
+                        # links, and chunked compressed data storage layout
                         if "compress" in data.keys():
                             dataset = handle_dicts_entries(
                                 data, grp, entry_name, self.output_path, path
@@ -301,6 +302,7 @@ class Writer:
                                 [data, grp, entry_name, self.output_path, path]
                             )
                     else:
+                        # contiguous data storage layout
                         dataset = grp.create_dataset(entry_name, data=data)
             except InvalidDictProvided as exc:
                 print(str(exc))
