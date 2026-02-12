@@ -219,7 +219,13 @@ def convert(
     ignore_undocumented : bool, default False
         If True, all undocumented items are ignored in the validation.
     append : bool, default False
-        If True, allows adding instances to an existent NXentry instance.
+        If True, allows adding instances. Currently, resizing existent datasets
+        (e.g. using chunked storage layout) is not supported
+        It is the users responsibility to prepare the template dictionary
+        such that one does not instantiate any HDF5 object type that already
+        exists. If happening nonetheless, the HDF5 libraries ValueError is caught
+        and the program emits a log message warning that the instance has not been
+        added. This is in an attempt to prevent an invalidating of the file.
     Returns
     -------
     None.
@@ -328,7 +334,9 @@ def main_cli():
     "--append",
     is_flag=True,
     default=False,
-    help="Appends instance data to the given <output> file if it already exists. Will prevent an overwriting of existent data and adding of new NXentry instances.",
+    help="Appends instance data to the given <output> file if the file already exists."
+    "Will prevent an overwriting of existent data and adding of new NXentry instances."
+    "If True, will skip the validation whatever irrespective if --skip-verify is passed.",
 )
 @click.option(
     "--ignore-undocumented",

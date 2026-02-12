@@ -159,15 +159,21 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             )
             if accept is True:
                 strength = data["strength"]
-            grp.create_dataset(
-                entry_name,
-                data=data["compress"],
-                compression="gzip",
-                chunks=True,
-                compression_opts=strength,
-            )
+            try:
+                grp.create_dataset(
+                    entry_name,
+                    data=data["compress"],
+                    compression="gzip",
+                    chunks=True,
+                    compression_opts=strength,
+                )
+            except ValueError:
+                logger.warning(f"ValueError caught upon creating_dataset {path}")
         else:
-            grp.create_dataset(entry_name, data=data["compress"])
+            try:
+                grp.create_dataset(entry_name, data=data["compress"])
+            except ValueError:
+                logger.warning(f"ValueError caught upon creating_dataset {path}")
     else:
         raise InvalidDictProvided(
             "A dictionary was provided to the template but it didn't"
@@ -211,7 +217,12 @@ class Writer:
         self.data = data
         self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "a" if append else "w")
+        self.output_nexus = h5py.File(self.output_path, "r+" if append else "w")
+        # using "r+" or "a" allow resizing a dataset that uses chunked data storage layout
+        # we currently do not implement this resizing though
+        # create_{group,dataset} with an existent name throws a ValueError
+        # as the HDF5 library prevents it
+        # we catch such ValueError and warn via the logger
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
@@ -243,24 +254,39 @@ class Writer:
 
         return elem.attrib
 
-    def ensure_and_get_parent_node(self, path: str, undocumented_paths) -> h5py.Group:
-        """Returns the parent if it exists for a given path else creates the parent group."""
+    def ensure_and_get_parent_node(
+        self, path: str, undocumented_paths
+    ) -> h5py.Group | None:
+        """Returns the parent if it exists for a given path, else attempts creating the parent group, if that fails return None."""
         parent_path = path[0 : path.rindex("/")] or "/"
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
-            grp = parent.create_group(parent_path_hdf5)
+            if parent is not None:
+                try:
+                    grp = parent.create_group(parent_path_hdf5)
+                except ValueError:
+                    logger.warning(f"ValueError upon create_group {parent_path_hdf5}")
+                    return None
 
-            attrs = self.__nxdl_to_attrs(parent_path)
+                attrs = self.__nxdl_to_attrs(parent_path)
 
-            if attrs is not None:
-                if nx_class := attrs.get("type"):
-                    grp.attrs["NX_class"] = nx_class
-                else:
-                    logger.error(
-                        f"No attribute 'NX_class' could be written for {parent_path}."
-                    )
-            return grp
+                if attrs is not None:
+                    if nx_class := attrs.get("type"):
+                        grp.attrs["NX_class"] = nx_class
+                    else:
+                        logger.error(
+                            f"No attribute 'NX_class' could be written for {parent_path}."
+                        )
+                return grp
+            else:
+                return None
+        if not isinstance(
+            self.output_nexus[parent_path_hdf5], h5py.Dataset
+        ):  # for exploratory purposes
+            logger.warning(
+                f"ensure_and_get_parent_node returns h5py.Dataset, fix the return type annotation accordingly"
+            )
         return self.output_nexus[parent_path_hdf5]
 
     def _put_data_into_hdf5(self):
@@ -290,17 +316,28 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    if isinstance(data, dict):
-                        if "compress" in data.keys():
-                            dataset = handle_dicts_entries(
-                                data, grp, entry_name, self.output_path, path
-                            )
+                    if grp is not None:
+                        if isinstance(data, dict):
+                            if "compress" in data.keys():
+                                dataset = handle_dicts_entries(
+                                    data, grp, entry_name, self.output_path, path
+                                )
+                            else:
+                                hdf5_links_for_later.append(
+                                    [data, grp, entry_name, self.output_path, path]
+                                )
                         else:
-                            hdf5_links_for_later.append(
-                                [data, grp, entry_name, self.output_path, path]
-                            )
+                            try:
+                                dataset = grp.create_dataset(entry_name, data=data)
+                            except ValueError:
+                                logger.warning(
+                                    f"ValueError caught upon create_dataset {path}"
+                                )
                     else:
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        logger.warning(
+                            f"Unable to get_parent_node {path} skipped adding children"
+                        )
+                        continue
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
@@ -337,7 +374,12 @@ class Writer:
                     dataset = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    dataset.attrs[entry_name[1:]] = data
+                    if dataset is not None:
+                        dataset.attrs[entry_name[1:]] = data
+                    else:
+                        logger.warning(
+                            f"Unable to get_parent_node {path}, skipped adding attributes"
+                        )
             except Exception as exc:
                 raise OSError(
                     f"Unknown error occurred writing the path: {path}"
