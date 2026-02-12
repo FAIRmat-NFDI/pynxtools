@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 
 import click
 import lxml.etree as ET
@@ -116,6 +116,9 @@ def transfer_data_into_template(
         Root element of nxdl file, otherwise provide nxdl_name
     skip_verify: bool, default False
         Skips verification routine if set to True
+        If the dataconverter is configured with append = True,
+        verification is currently always skipped, use validate
+        on the resulting HDF5 file instead
 
     Returns
     -------
@@ -158,13 +161,19 @@ def transfer_data_into_template(
     else:
         fail = False
 
+    if "append" in kwargs:
+        append = kwargs["append"]
+        del kwargs["append"]
+    else:
+        append = False
+
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
     entry_names = data.get_all_entry_names()
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
-    if not skip_verify:
+    if not append and not skip_verify:
         valid = validate_dict_against(
             nxdl_name,
             data,
