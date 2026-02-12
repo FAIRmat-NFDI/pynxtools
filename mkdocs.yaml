@@ -31,6 +31,7 @@ nav:
       - learn/nexus/nexus-rules.md
       # - learn/nexus/multiple-appdefs.md
     - pynxtools:
+      - learn/pynxtools/nexus-definitions.md
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md

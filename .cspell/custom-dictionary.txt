@@ -109,6 +109,7 @@ fluence
 fxcef
 getlink
 getroottree
+gitmodules
 groupgroup
 groupnames
 hashkey
@@ -189,6 +190,7 @@ showgrid
 showlegend
 straße
 submoduled
+superproject
 tnxdl
 tofile
 tommaso
