@@ -131,7 +131,7 @@ git_describe_command = ["git", "describe", "--dirty", "--long", "--tags", "--mat
 
 [tool.ruff]
 include = ["src/*.py", "tests/*.py"]
-exclude = ["src/pynxtools/definitions"]
+exclude = ["src/pynxtools/definitions", "src/pynxtools/_version.py"]
 line-length = 88
 indent-width = 4
 
