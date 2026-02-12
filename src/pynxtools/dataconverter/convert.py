@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 
 import click
 import lxml.etree as ET
@@ -116,6 +116,9 @@ def transfer_data_into_template(
         Root element of nxdl file, otherwise provide nxdl_name
     skip_verify: bool, default False
         Skips verification routine if set to True
+        If the dataconverter is configured with append = True,
+        verification is currently always skipped, use validate
+        on the resulting HDF5 file instead
 
     Returns
     -------
@@ -146,17 +149,9 @@ def transfer_data_into_template(
             "The chosen NXDL isn't supported by the selected reader."
         )
 
-    if "ignore_undocumented" in kwargs:
-        ignore_undocumented = kwargs["ignore_undocumented"]
-        del kwargs["ignore_undocumented"]
-    else:
-        ignore_undocumented = False
-
-    if "fail" in kwargs:
-        fail = kwargs["fail"]
-        del kwargs["fail"]
-    else:
-        fail = False
+    ignore_undocumented = kwargs.pop("ignore_undocumented", False)
+    fail = kwargs.pop("fail", False)
+    append = kwargs.pop("append", False)
 
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
@@ -164,7 +159,7 @@ def transfer_data_into_template(
     entry_names = data.get_all_entry_names()
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
-    if not skip_verify:
+    if not append and not skip_verify:
         valid = validate_dict_against(
             nxdl_name,
             data,
@@ -200,6 +195,8 @@ def convert(
         Root name of nxdl file, e.g. NXmpes for NXmpes.nxdl.xml
     output : str
         Output file name.
+    skip_verify: bool, default False
+        Skips verification routine if set to True
     generate_template : bool, default False
         True if user wants template in logger info.
     fair : bool, default False
@@ -207,9 +204,14 @@ def convert(
         in the template.
     ignore_undocumented : bool, default False
         If True, all undocumented items are ignored in the validation.
-    skip_verify: bool, default False
-        Skips verification routine if set to True
-
+    append : bool, default False
+        If True, allows adding instances. Currently, resizing existent datasets
+        (e.g. using chunked storage layout) is not supported
+        It is the users responsibility to prepare the template dictionary
+        such that one does not instantiate any HDF5 object type that already
+        exists. If happening nonetheless, the HDF5 libraries ValueError is caught
+        and the program emits a log message warning that the instance has not been
+        added. This is in an attempt to prevent an invalidating of the file.
     Returns
     -------
     None.
@@ -226,7 +228,12 @@ def convert(
     )
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
+    Writer(
+        data=data,
+        nxdl_f_path=nxdl_f_path,
+        output_path=output,
+        append=kwargs["append"] if "append" in kwargs else False,
+    ).write()
 
     logger.info(f"The output file generated: {output}.")
 
@@ -310,6 +317,14 @@ def main_cli():
     help="Allows to pass a .yaml file with all the parameters the converter supports.",
 )
 @click.option(
+    "--append",
+    is_flag=True,
+    default=False,
+    help="Appends instance data to the given <output> file if the file already exists."
+    "Will prevent an overwriting of existent data and adding of new NXentry instances."
+    "If True, will skip the validation whatever irrespective if --skip-verify is passed.",
+)
+@click.option(
     "--ignore-undocumented",
     is_flag=True,
     default=False,
@@ -347,6 +362,7 @@ def convert_cli(
     nxdl: str,
     output: str,
     params_file: str,
+    append: bool,
     ignore_undocumented: bool,
     skip_verify: bool,
     mapping: str,
@@ -399,6 +415,7 @@ def convert_cli(
             nxdl,
             output,
             skip_verify,
+            append=append,
             ignore_undocumented=ignore_undocumented,
             fail=fail,
             **kwargs,
