@@ -31,6 +31,7 @@ nav:
       - learn/nexus/nexus-rules.md
       # - learn/nexus/multiple-appdefs.md
     - pynxtools:
+      - learn/pynxtools/nexus-definitions.md
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md
@@ -102,5 +103,4 @@ extra_css:
 
 extra_javascript:
   - javascript.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

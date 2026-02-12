@@ -96,8 +96,8 @@ edgeitems
 ekey
 electronanalyzer
 elems
-ellips
 elist
+ellips
 ellipsometry
 emittance
 execinfo
@@ -108,6 +108,7 @@ fluence
 fxcef
 getlink
 getroottree
+gitmodules
 groupgroup
 groupnames
 hashkey
@@ -185,6 +186,7 @@ showgrid
 showlegend
 straße
 submoduled
+superproject
 tnxdl
 tofile
 tommaso
