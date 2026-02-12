@@ -149,23 +149,9 @@ def transfer_data_into_template(
             "The chosen NXDL isn't supported by the selected reader."
         )
 
-    if "ignore_undocumented" in kwargs:
-        ignore_undocumented = kwargs["ignore_undocumented"]
-        del kwargs["ignore_undocumented"]
-    else:
-        ignore_undocumented = False
-
-    if "fail" in kwargs:
-        fail = kwargs["fail"]
-        del kwargs["fail"]
-    else:
-        fail = False
-
-    if "append" in kwargs:
-        append = kwargs["append"]
-        del kwargs["append"]
-    else:
-        append = False
+    ignore_undocumented = kwargs.pop("ignore_undocumented", False)
+    fail = kwargs.pop("fail", False)
+    append = kwargs.pop("append", False)
 
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
