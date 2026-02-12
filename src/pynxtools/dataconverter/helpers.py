@@ -202,7 +202,7 @@ class Collector:
         elif log_type == ValidationProblem.ExpectedField:
             logger.error(f"Expected a field at {path}, but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
-            if "@" in path.rsplit("/")[-1]:
+            if "@" in path.rsplit("/", maxsplit=1)[-1]:
                 logger.warning(f"Attribute {path} has no documentation.")
             else:
                 logger.warning(f"Field {path} has no documentation.")
@@ -908,8 +908,8 @@ def get_custom_attr_path(path: str) -> str:
     Returns:
         str: The modified path string representing the custom attribute path.
     """
-    if path.split("/")[-1].startswith("@"):
-        attr_name = path.split("/")[-1][1:]  # remove "@"
+    if path.rsplit("/", maxsplit=1)[-1].startswith("@"):
+        attr_name = path.rsplit("/", maxsplit=1)[-1][1:]  # remove "@"
         return f"{path}_custom"
     return f"{path}/@custom"
 
