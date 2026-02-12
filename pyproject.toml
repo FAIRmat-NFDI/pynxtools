@@ -115,7 +115,7 @@ generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 
 [tool.setuptools.package-data]
-pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd", "_version.py"]
 
 [tool.setuptools.packages.find]
 where = [
