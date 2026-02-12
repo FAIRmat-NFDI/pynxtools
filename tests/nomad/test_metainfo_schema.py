@@ -29,9 +29,9 @@ except ImportError:
 
 from typing import Any
 
-from pynxtools.nomad.schema import nexus_metainfo_package
-from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
-from pynxtools.nomad.utils import get_package_filepath
+from pynxtools.nomad import _rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.nomad import get_package_filepath
+from pynxtools.nomad.schema_packages.schema import nexus_metainfo_package
 
 
 def test_assert_nexus_metainfo_json_file():
