@@ -126,6 +126,7 @@ instancename
 isdt
 isscalar
 issubdtype
+itemsize
 itemsizing
 iufc
 iupac
@@ -156,6 +157,7 @@ namefitting
 nbytes
 ndarray
 ndataconverter
+ndims
 nexpy
 nexusapp
 nexusformat
