@@ -17,6 +17,9 @@
 #
 """Configuration defaults of the dataconverter."""
 
+import numpy as np
+
+from pynxtools.dataconverter.helpers import logger
 
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
@@ -71,13 +74,6 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
 }
 
 CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
-
-import numpy as np
-
-# from pynxtools.dataconverter.chunk import CHUNK_CONFIG_DEFAULT
-from pynxtools.dataconverter.helpers import logger
-
-"""Utilities for overwriting h5py chunking heuristic to consider domain-specific access pattern."""
 
 
 def prioritized_axes_heuristic(
