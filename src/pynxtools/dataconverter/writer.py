@@ -28,19 +28,15 @@ import h5py
 import numpy as np
 
 from pynxtools.dataconverter import helpers
-from pynxtools.dataconverter.chunk_cache import CHUNK_CONFIG_DEFAULT
+from pynxtools.dataconverter.chunk import CHUNK_CONFIG_DEFAULT, chunking_strategy
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
-from pynxtools.dataconverter.helpers import chunking_strategy
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.config_defaults import (
-    COMPRESSION_FILTER,
-    COMPRESSION_STRENGTH,
-)
+from pynxtools.dataconverter.chunk import COMPRESSION_FILTER, COMPRESSION_STRENGTH
 
 
 def does_path_exist(path, h5py_obj) -> bool:
