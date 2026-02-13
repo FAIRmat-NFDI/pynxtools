@@ -47,6 +47,18 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 
 logger = logging.getLogger("pynxtools")
 
+import importlib.metadata
+
+
+def get_pynxtools_version() -> str:
+    """Attempt getting the version of pynxtools at runtime with fallback."""
+    # for a discussion whether to collect at build or runtime see
+    # https://discuss.python.org/t/please-make-package-version-go-away/58501
+    try:
+        return f"{importlib.metadata.version('pynxtools')}"
+    except importlib.metadata.PackageNotFoundError:
+        return f"unknown_version"
+
 
 ISO8601 = re.compile(
     r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
@@ -1286,7 +1298,7 @@ def add_default_root_attributes(data, filename):
     update_and_warn("/@HDF5_Version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
     update_and_warn("/@creator", "pynxtools")
-    update_and_warn("/@creator_version", pynxtools_version)
+    update_and_warn("/@creator_version", get_pynxtools_version())
 
 
 def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):

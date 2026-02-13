@@ -115,7 +115,7 @@ generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 
 [tool.setuptools.package-data]
-pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd", "_version.py"]
+pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 
 [tool.setuptools.packages.find]
 where = [
@@ -126,12 +126,10 @@ exclude = ["src/pynxtools/definitions*"]
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
-write_to = "src/pynxtools/_version.py"
-git_describe_command = ["git", "describe", "--dirty", "--long", "--tags", "--match", "*[0-9]*", "--abbrev=8"]
 
 [tool.ruff]
 include = ["src/*.py", "tests/*.py"]
-exclude = ["src/pynxtools/definitions", "src/pynxtools/_version.py"]
+exclude = ["src/pynxtools/definitions"]
 line-length = 88
 indent-width = 4
 
