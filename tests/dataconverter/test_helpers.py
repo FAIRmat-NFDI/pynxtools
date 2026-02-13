@@ -19,6 +19,7 @@
 
 import logging
 import os
+import re
 import shutil
 import xml.etree.ElementTree as ET
 
@@ -245,3 +246,21 @@ def test_clean_str_attr(attr, encoding, expected):
 def test_clean_str_attr_invalid_encoding():
     with pytest.raises(UnicodeDecodeError):
         helpers.clean_str_attr(b"\xff", encoding="utf-8")
+
+
+def test_get_pynxtools_version():
+    version = helpers.get_pynxtools_version()
+    assert version != "unknown_version"
+    assert re.compile(
+        r"""
+        ^
+        (?P<major>\d+)\.
+        (?P<minor>\d+)\.
+        (?P<patch>\d+)
+        (?:\.post(?P<post>\d+))?
+        (?:\.dev(?P<dev>\d+))?
+        (?:\+(?P<local>[a-zA-Z0-9\.]+))?
+        $
+        """,
+        re.VERBOSE,
+    ).match(version)
