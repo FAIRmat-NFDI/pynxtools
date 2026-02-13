@@ -22,7 +22,7 @@
 # one wraps the payload for a dataconverter template into a dictionary with
 # keyword "compress", causing chunked layout to be used
 
-COMPRESSION_FILTER = "gzip"  # deflate
+ALLOWED_COMPRESSION_FILTERS = ["gzip"]  # deflate
 COMPRESSION_STRENGTH = 9
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
 # using strongest compression is space efficient but can take substantially longer than

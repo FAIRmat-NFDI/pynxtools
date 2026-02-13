@@ -33,6 +33,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.chunk import ALLOWED_COMPRESSION_FILTERS
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     find_definition_file,
     get_enums,
@@ -276,7 +277,9 @@ class Collector:
             )
         elif log_type == ValidationProblem.InvalidCompressionFilter:
             value = cast(dict, value)
-            logger.warning(f"Compression filter for {path} is not gzip.")
+            logger.warning(
+                f"Compression filter for {path} is not any of {ALLOWED_COMPRESSION_FILTERS}."
+            )
         elif log_type == ValidationProblem.InvalidCompressionStrength:
             value = cast(dict, value)
             logger.warning(
@@ -866,7 +869,7 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     if isinstance(value, dict) and "compress" in value:
         compressed_value = value["compress"]
         if "filter" in value:
-            if value["filter"] not in ["gzip"]:
+            if value["filter"] not in ALLOWED_COMPRESSION_FILTERS:
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidCompressionFilter, value
                 )

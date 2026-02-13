@@ -35,8 +35,8 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.config_defaults import (
-    COMPRESSION_FILTER,
+from pynxtools.dataconverter.chunk import (
+    ALLOWED_COMPRESSION_FILTERS,
     COMPRESSION_STRENGTH,
 )
 
@@ -154,7 +154,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            filter = COMPRESSION_FILTER
+            filter = ALLOWED_COMPRESSION_FILTERS[0]
             strength = COMPRESSION_STRENGTH
             accept = (
                 ("strength" in data.keys())
