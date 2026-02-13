@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Configuration defaults of the dataconverter."""
+"""Configuration and utilities for customized chunking and compression."""
 
 import numpy as np
 
