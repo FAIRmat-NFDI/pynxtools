@@ -167,20 +167,25 @@ def test_writing_of_root_attributes(caplog):
     assert "" == caplog.text
 
     keys_added = template.keys()
-    assert "/@NX_class" in keys_added
     assert template["/@NX_class"] == "NXroot"
-    assert "/@file_name" in keys_added
     assert template["/@file_name"] == filename
-    assert "/@file_time" in keys_added
-    assert "/@file_update_time" in keys_added
-    assert "/@NeXus_repository" in keys_added
-    assert "/@NeXus_release" in keys_added
-    assert "/@HDF5_Version" in keys_added
-    assert "/@h5py_version" in keys_added
-    assert "/ENTRY[entry]/definition" in keys_added
-    assert "/ENTRY[entry]/definition/@version" in keys_added
-    assert "/ENTRY[entry1]/definition" in keys_added
-    assert "/ENTRY[entry1]/definition/@version" in keys_added
+    for key in [
+        "/@NX_class",
+        "/@file_name",
+        "/@file_time",
+        "/@file_update_time",
+        "/@NeXus_repository",
+        "/@NeXus_release",
+        "/@HDF5_Version",
+        "/@h5py_version",
+        "/@creator",
+        "/@creator_version",
+        "/ENTRY[entry]/definition",
+        "/ENTRY[entry]/definition/@version",
+        "/ENTRY[entry1]/definition",
+        "/ENTRY[entry1]/definition/@version",
+    ]:
+        assert key in keys_added
 
 
 def test_warning_on_root_attribute_overwrite(caplog):
