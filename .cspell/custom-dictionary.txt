@@ -81,6 +81,7 @@ attribs
 backgroundcolor
 baseclass
 basesections
+blosc
 bulletpoint
 callspec
 caplog

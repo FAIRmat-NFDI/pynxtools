@@ -1287,7 +1287,7 @@ def validate_dict_against(
             if (
                 isinstance(keys[variant], Mapping)
                 and not all(k.startswith("@") for k in keys[variant])
-                and not list(keys[variant].keys()) == ["compress", "strength"]
+                and "compress" not in list(keys[variant].keys())
             ):
                 # A field should not have a dict of keys that are _not_ all attributes,
                 # i.e. there should be no sub-fields or sub-groups.

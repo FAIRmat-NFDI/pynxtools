@@ -33,6 +33,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.chunk import ALLOWED_COMPRESSION_FILTERS
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     find_definition_file,
     get_enums,
@@ -116,6 +117,7 @@ class ValidationProblem(Enum):
     ReservedPrefixInWrongContext = auto()
     InvalidNexusTypeForNamedConcept = auto()
     KeysWithAndWithoutConcept = auto()
+    InvalidCompressionFilter = auto()
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
     MissingNXclass = auto()
@@ -271,7 +273,12 @@ class Collector:
         elif log_type == ValidationProblem.CompressionStrengthZero:
             value = cast(dict, value)
             logger.info(
-                f"Compression strength for {path} is 0. The value '{value['compress']}' will be written uncompressed."
+                f"Compression strength for {path} is 0. The value '{value['compress']}' will be written effectively uncompressed."
+            )
+        elif log_type == ValidationProblem.InvalidCompressionFilter:
+            value = cast(dict, value)
+            logger.warning(
+                f"Compression filter for {path} is not any of {ALLOWED_COMPRESSION_FILTERS}."
             )
         elif log_type == ValidationProblem.InvalidCompressionStrength:
             value = cast(dict, value)
@@ -859,20 +866,23 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
 
         return value
 
-    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+    if isinstance(value, dict) and "compress" in value:
         compressed_value = value["compress"]
-
-        if not (1 <= value["strength"] <= 9):
-            if value["strength"] == 0:
+        if "filter" in value:
+            if value["filter"] not in ALLOWED_COMPRESSION_FILTERS:
                 collector.collect_and_log(
-                    path, ValidationProblem.CompressionStrengthZero, value
+                    path, ValidationProblem.InvalidCompressionFilter, value
                 )
-            else:
-                collector.collect_and_log(
-                    path, ValidationProblem.InvalidCompressionStrength, value
-                )
-            # In this case, we remove the compression.
-            return validate_data_value(value["compress"], nxdl_type, path)
+        if "strength" in value:
+            if not (1 <= value["strength"] <= 9):
+                if value["strength"] == 0:
+                    collector.collect_and_log(
+                        path, ValidationProblem.CompressionStrengthZero, value
+                    )
+                else:
+                    collector.collect_and_log(
+                        path, ValidationProblem.InvalidCompressionStrength, value
+                    )
 
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(compressed_value, nxdl_type, path)
@@ -929,7 +939,7 @@ def is_valid_enum(
 
     """
 
-    if isinstance(value, dict) and set(value.keys()) == {"compress", "strength"}:
+    if isinstance(value, dict) and "compress" in value:
         value = value["compress"]
 
     if nxdl_enum is not None:
