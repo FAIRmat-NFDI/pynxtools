@@ -33,7 +33,6 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools._version import version as pynxtools_version
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     find_definition_file,
     get_enums,
