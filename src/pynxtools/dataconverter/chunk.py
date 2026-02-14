@@ -114,11 +114,6 @@ def prioritized_axes_heuristic(
     a compromise for slicing about equally all three orthogonal
     directions.
 
-    Examples:
-    * prioritized_axes_heuristic((100000, 2048, 2048), (0, 1, 2))
-    * prioritized_axes_heuristic((1000000, 3), (0, 1))
-    * prioritized_axes_heuristic((60, 60, 180), (2, 1, 0))
-
     Returns value for the chunks parameter of h5py create_dataset
     * tuple[int, ...], explicit chunk size
     * True, the fallback to h5py guess_chunk auto-chunking."""
@@ -134,6 +129,11 @@ def prioritized_axes_heuristic(
             f"chunk strategy h5py auto used for incorrect axes priority setting"
         )
         return True
+    if len(priority) != len(shape):  # need a priority for each axis
+        logger.info(
+            f"chunk strategy h5py auto used for incorrect axes priority setting"
+        )
+        return True
     if len(shape) == 0:
         raise ValueError("chunk_shape not allowed for scalar datasets.")
         # also h5py by default would raise in such a case
@@ -141,7 +141,8 @@ def prioritized_axes_heuristic(
     max_byte_per_chunk: int = int(CHUNK_CONFIG_DEFAULT["byte_size"])
     byte_per_item: int = data.itemsize
 
-    dim = 0
+    pdx = 0
+    dim = priority[pdx]
     idx = 0
     logger.debug(
         f"chunk strategy, prioritized_axes_heuristic analyzing for shape {shape} and byte_per_item {byte_per_item} ..."
@@ -195,9 +196,10 @@ def prioritized_axes_heuristic(
         else:
             chunk_shape[dim] = (chunk_shape[dim] / 2) + 1
 
-        if dim < (len(shape) - 1):
+        if pdx < (len(shape) - 1):
             if chunk_shape[dim] < 2:
-                dim += 1
+                pdx += 1
+                dim = priority[pdx]
                 # seems we cannot reduce byte_per_chunk further by splitting
                 # along dim, so unfortunately need to consider splitting across
                 # the next, less prioritized axis

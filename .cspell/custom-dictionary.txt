@@ -106,6 +106,7 @@ fairmat
 fillvalue
 flatfield
 fluence
+fourd
 fxcef
 getlink
 getroottree
@@ -170,6 +171,7 @@ nxdata
 nxdl
 nxdls
 nxentry
+oned
 optionalities
 orcid
 otherfile
@@ -193,10 +195,12 @@ showlegend
 straße
 submoduled
 superproject
+threed
 tnxdl
 tofile
 tommaso
 tracebacklimit
+twod
 underload
 uniquify
 unitless
