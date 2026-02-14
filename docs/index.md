@@ -69,6 +69,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Data conversion in `pynxtools`](learn/pynxtools/dataconverter-and-readers.md)
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
 - [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
+- [Using and tailoring compression](learn/pynxtools/compression.md)
 
 </div>
 <div markdown="block">
