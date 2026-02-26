@@ -20,6 +20,7 @@
 import os
 
 import h5py
+import numpy as np
 import pytest
 
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
@@ -69,51 +70,6 @@ def test_write_link(writer):
     assert isinstance(test_nxs["/my_entry/links/ext_link"], h5py.Dataset)
 
 
-# @pytest.mark.usefixtures("filled_test_data")
-@pytest.fixture(name="writer_append")
-def fixture_entry_in_empty_file_then_append(filled_test_data, tmp_path):
-    """pytest fixture to setup Writer object with append mode."""
-    with h5py.File(os.path.join(tmp_path, "append.nxs"), "w") as append_file:
-        append_file["/already/existing_value"] = 1
-
-    # "/already/existing_value" is not a key in filled_test_data
-    writer = Writer(
-        filled_test_data,
-        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
-        os.path.join(tmp_path, "append.nxs"),
-        append=True,
-    )
-    yield writer
-    del writer
-
-
-# @pytest.mark.usefixtures("writer")
-@pytest.fixture(name="writer_overwrite")
-def fixture_overwrite_existent(filled_test_data, tmp_path):
-    """pytest fixture to setup Writer object, try to overwrite existent attributes, datasets, and groups."""
-    writer = Writer(
-        filled_test_data,
-        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
-        os.path.join(tmp_path, "overwrite.nxs"),
-    )
-    yield writer
-    del writer
-
-    template = Template()
-    template.clear()
-    template["/ENTRY[my_entry]/definition"] = "NXtest"
-    template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
-    template["/ENTRY[my_entry]/required_group/description"] = "An example description"
-    writer = Writer(
-        template,
-        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
-        os.path.join(tmp_path, "overwrite.nxs"),
-        append=True,
-    )
-    yield writer
-    del writer
-
-
 @pytest.mark.usefixtures("filled_test_data")
 def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
     """Tests if the writer correctly fails when a wrong dictionary is provided"""
@@ -136,6 +92,30 @@ def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
         )
 
 
+# @pytest.mark.usefixtures("filled_test_data")
+@pytest.fixture(name="writer_append")
+def fixture_add_to_empty_file_then_attempt_to_append(filled_test_data, tmp_path):
+    """pytest fixture to setup Writer object with append mode."""
+    with h5py.File(os.path.join(tmp_path, "append.nxs"), "w") as append_file:
+        append_file["/already/existing_value"] = 1
+    # print(
+    #     f">>>>>>>>>>>usual data>>>>>>>>{os.path.join(tmp_path, 'append.nxs')}, {os.path.getsize(os.path.join(tmp_path, 'append.nxs'))}"
+    # )
+
+    # "/already/existing_value" is not a key in filled_test_data
+    writer = Writer(
+        filled_test_data,
+        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
+        os.path.join(tmp_path, "append.nxs"),
+        append=True,
+    )
+    yield writer
+    # print(
+    #     f">>>>>>>>>>>after append>>>>>>>>{os.path.join(tmp_path, 'append.nxs')}, {os.path.getsize(os.path.join(tmp_path, 'append.nxs'))}"
+    # )
+    del writer
+
+
 def test_append(writer_append):
     """Test whether append is correctly working for the writer."""
     writer_append.write()
@@ -144,9 +124,43 @@ def test_append(writer_append):
         assert append_file["/my_entry/definition"].asstr()[...] == "NXtest"  # pylint: disable=no-member
 
 
-@pytest.mark.skip("TODO refactor, test string, scalar, and array datasets")
+# @pytest.mark.skip("TODO refactor, test string, scalar, and array datasets")
+# @pytest.mark.usefixtures("filled_test_data")
+@pytest.fixture(name="writer_overwrite")
+def fixture_normal_write_then_attempt_append(writer):
+    """pytest fixture to setup Writer object, try to overwrite existent attributes, datasets, and groups."""
+    writer.write()
+    # = Writer(
+    #    filled_test_data,
+    #    os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
+    # #   os.path.join(tmp_path, "overwrite.nxs"),
+    # del writer
+    print(
+        f">>>>>>>>>>>usual data>>>>>>>>{writer.output_path}, {os.path.getsize(writer.output_path)}"
+    )
+
+    template = Template()
+    template.clear()
+    template["/ENTRY[my_entry]/definition"] = "NXtest"
+    template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
+    template["/ENTRY[my_entry]/required_group/description"] = "An example description"
+    template["/already/existing_value"] = np.zeros((125000,), dtype=np.float64)
+    overwrite = Writer(
+        template,
+        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
+        writer.output_path,
+        append=True,
+    )
+    yield overwrite
+    print(
+        f">>>>>>>>>>>after overwriting>>>>>>>>{overwrite.output_path}, {os.path.getsize(overwrite.output_path)}"
+    )
+    del writer, overwrite
+
+
 def test_overwrite(writer_overwrite):
+    """Test whether append is correctly working for the writer."""
     writer_overwrite.write()
-    # with pytest.raises() as execinfo:
-    #     assert str(execinfo.value) == (
-    #     )
+    # with h5py.File(writer_overwrite.output_path, "r") as append_file:
+    #     assert append_file["/already/existing_value"][()] == 1
+    #     assert append_file["/my_entry/definition"].asstr()[...] == "NXtest"  # pylint: disable=no-member

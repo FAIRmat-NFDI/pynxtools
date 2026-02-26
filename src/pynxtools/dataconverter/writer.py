@@ -262,7 +262,7 @@ class Writer:
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
-            if parent is not None:
+            if isinstance(parent, h5py.Group):
                 try:
                     grp = parent.create_group(parent_path_hdf5)
                 except ValueError:
@@ -279,8 +279,8 @@ class Writer:
                             f"No attribute 'NX_class' could be written for {parent_path}."
                         )
                 return grp
-            else:
-                return None
+            # else:
+            #     return None
         return self.output_nexus[parent_path_hdf5]
 
     def _put_data_into_hdf5(self):
@@ -310,7 +310,7 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    if isinstance(grp, h5py.Group):
+                    if isinstance(grp, (h5py.Group, h5py.Dataset)):
                         if isinstance(data, dict):
                             if "compress" in data.keys():
                                 dataset = handle_dicts_entries(
@@ -331,7 +331,6 @@ class Writer:
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding children"
                         )
-                        continue
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
@@ -364,16 +363,15 @@ class Writer:
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
-                    dataset = self.ensure_and_get_parent_node(
+                    dataset_or_group = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    if isinstance(dataset, h5py.Dataset):
-                        dataset.attrs[entry_name[1:]] = data
+                    if isinstance(dataset_or_group, (h5py.Group, h5py.Dataset)):
+                        dataset_or_group.attrs[entry_name[1:]] = data
                     else:
                         logger.warning(
-                            f"Unable to get_parent_node {path}, skip adding attribute to dataset"
+                            f"Unable to get_parent_node {path}, skip adding attribute to dataset_or_group"
                         )
-                        continue
             except Exception as exc:
                 raise OSError(
                     f"Unknown error occurred writing the path: {path}"
