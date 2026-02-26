@@ -109,7 +109,7 @@ def handle_shape_entries(data, file, path):
 
 
 # pylint: disable=too-many-locals, inconsistent-return-statements
-def handle_dicts_entries(data, grp, entry_name, output_path, path):
+def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
     """Handle function for dictionaries found as value of the nexus file.
 
     Several cases can be encountered:
@@ -159,21 +159,29 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             )
             if accept is True:
                 strength = data["strength"]
-            try:
-                grp.create_dataset(
-                    entry_name,
-                    data=data["compress"],
-                    compression="gzip",
-                    chunks=True,
-                    compression_opts=strength,
-                )
-            except ValueError:
-                logger.warning(f"ValueError caught upon creating_dataset {path}")
+            if entry_name not in grp:
+                try:
+                    grp.create_dataset(
+                        entry_name,
+                        data=data["compress"],
+                        compression="gzip",
+                        chunks=True,
+                        compression_opts=strength,
+                    )
+                except ValueError:
+                    logger.warning(f"ValueError caught upon creating_dataset {path}")
+            else:
+                if append:
+                    logger.info(f"Prevented the overwriting of dataset {path}")
         else:
-            try:
-                grp.create_dataset(entry_name, data=data["compress"])
-            except ValueError:
-                logger.warning(f"ValueError caught upon creating_dataset {path}")
+            if entry_name not in grp:
+                try:
+                    grp.create_dataset(entry_name, data=data["compress"])
+                except ValueError:
+                    logger.warning(f"ValueError caught upon creating_dataset {path}")
+            else:
+                if append:
+                    logger.info(f"Prevented the overwriting of dataset {path}")
     else:
         raise InvalidDictProvided(
             "A dictionary was provided to the template but it didn't"
@@ -225,6 +233,7 @@ class Writer:
         # we catch such ValueError and warn via the logger
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
+        self.append = append
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -263,17 +272,29 @@ class Writer:
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
             if isinstance(parent, h5py.Group):
-                try:
-                    grp = parent.create_group(parent_path_hdf5)
-                except ValueError:
-                    logger.warning(f"ValueError upon create_group {parent_path_hdf5}")
-                    return None
+                if parent_path_hdf5 not in parent:
+                    try:
+                        grp = parent.create_group(parent_path_hdf5)
+                    except ValueError:
+                        logger.warning(
+                            f"ValueError upon create_group {parent_path_hdf5}"
+                        )
+                        return None
+                else:
+                    if self.append:
+                        logger.info(f"Prevented the overwriting of group {parent_path}")
 
                 attrs = self.__nxdl_to_attrs(parent_path)
 
                 if attrs is not None:
                     if nx_class := attrs.get("type"):
-                        grp.attrs["NX_class"] = nx_class
+                        if "NX_class" not in grp.attrs:
+                            grp.attrs["NX_class"] = nx_class
+                        else:
+                            if self.append:
+                                logger.info(
+                                    f"Prevented the overwriting of attribute {parent_path}/@NXclass"
+                                )
                     else:
                         logger.error(
                             f"No attribute 'NX_class' could be written for {parent_path}."
@@ -291,7 +312,13 @@ class Writer:
         def add_units_key(dataset, path):
             units_key = f"{path}/@units"
             if units_key in self.data.keys() and self.data[units_key] is not None:
-                dataset.attrs["units"] = self.data[units_key]
+                if "units" not in dataset.attrs:
+                    dataset.attrs["units"] = self.data[units_key]
+                else:
+                    if self.append:
+                        logger.info(
+                            f"Prevented the overwriting of attribute {path}/@units"
+                        )
 
         for path, value in self.data.items():
             try:
@@ -314,19 +341,30 @@ class Writer:
                         if isinstance(data, dict):
                             if "compress" in data.keys():
                                 dataset = handle_dicts_entries(
-                                    data, grp, entry_name, self.output_path, path
+                                    data,
+                                    grp,
+                                    entry_name,
+                                    self.output_path,
+                                    path,
+                                    append=self.append,
                                 )
                             else:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
                                 )
                         else:
-                            try:
-                                dataset = grp.create_dataset(entry_name, data=data)
-                            except ValueError:
-                                logger.warning(
-                                    f"ValueError caught upon create_dataset {path}"
-                                )
+                            if entry_name not in grp:
+                                try:
+                                    dataset = grp.create_dataset(entry_name, data=data)
+                                except ValueError:
+                                    logger.warning(
+                                        f"ValueError caught upon create_dataset {path}"
+                                    )
+                            else:
+                                if self.append:
+                                    logger.info(
+                                        f"Prevented overwriting of existing {path}"
+                                    )
                     else:
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding children"
@@ -340,7 +378,7 @@ class Writer:
                 ) from exc
 
         for links in hdf5_links_for_later:
-            dataset = handle_dicts_entries(*links)
+            dataset = handle_dicts_entries(*links, append=self.append)
             if dataset is None:
                 # If target of a link is invalid to be linked
                 del self.data[links[-1]]
@@ -367,7 +405,13 @@ class Writer:
                         path, self.data.undocumented.keys()
                     )
                     if isinstance(dataset_or_group, (h5py.Group, h5py.Dataset)):
-                        dataset_or_group.attrs[entry_name[1:]] = data
+                        if entry_name[1:] not in dataset_or_group.attrs:
+                            dataset_or_group.attrs[entry_name[1:]] = data
+                        else:
+                            if self.append:
+                                logger.info(
+                                    f"Prevented the overwriting of attribute {path}"
+                                )
                     else:
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding attribute to dataset_or_group"

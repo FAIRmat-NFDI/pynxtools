@@ -92,16 +92,11 @@ def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
         )
 
 
-# @pytest.mark.usefixtures("filled_test_data")
 @pytest.fixture(name="writer_append")
 def fixture_add_to_empty_file_then_attempt_to_append(filled_test_data, tmp_path):
     """pytest fixture to setup Writer object with append mode."""
     with h5py.File(os.path.join(tmp_path, "append.nxs"), "w") as append_file:
         append_file["/already/existing_value"] = 1
-    # print(
-    #     f">>>>>>>>>>>usual data>>>>>>>>{os.path.join(tmp_path, 'append.nxs')}, {os.path.getsize(os.path.join(tmp_path, 'append.nxs'))}"
-    # )
-
     # "/already/existing_value" is not a key in filled_test_data
     writer = Writer(
         filled_test_data,
@@ -110,9 +105,6 @@ def fixture_add_to_empty_file_then_attempt_to_append(filled_test_data, tmp_path)
         append=True,
     )
     yield writer
-    # print(
-    #     f">>>>>>>>>>>after append>>>>>>>>{os.path.join(tmp_path, 'append.nxs')}, {os.path.getsize(os.path.join(tmp_path, 'append.nxs'))}"
-    # )
     del writer
 
 
@@ -124,17 +116,10 @@ def test_append(writer_append):
         assert append_file["/my_entry/definition"].asstr()[...] == "NXtest"  # pylint: disable=no-member
 
 
-# @pytest.mark.skip("TODO refactor, test string, scalar, and array datasets")
-# @pytest.mark.usefixtures("filled_test_data")
 @pytest.fixture(name="writer_overwrite")
 def fixture_normal_write_then_attempt_append(writer):
     """pytest fixture to setup Writer object, try to overwrite existent attributes, datasets, and groups."""
     writer.write()
-    # = Writer(
-    #    filled_test_data,
-    #    os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
-    # #   os.path.join(tmp_path, "overwrite.nxs"),
-    # del writer
     print(
         f">>>>>>>>>>>usual data>>>>>>>>{writer.output_path}, {os.path.getsize(writer.output_path)}"
     )
@@ -161,6 +146,7 @@ def fixture_normal_write_then_attempt_append(writer):
 def test_overwrite(writer_overwrite):
     """Test whether append is correctly working for the writer."""
     writer_overwrite.write()
+    # assert caplog against expectation
     # with h5py.File(writer_overwrite.output_path, "r") as append_file:
     #     assert append_file["/already/existing_value"][()] == 1
     #     assert append_file["/my_entry/definition"].asstr()[...] == "NXtest"  # pylint: disable=no-member
