@@ -256,7 +256,7 @@ class Writer:
 
     def ensure_and_get_parent_node(
         self, path: str, undocumented_paths
-    ) -> h5py.Group | None:
+    ) -> h5py.Group | h5py.Dataset | None:
         """Returns the parent if it exists for a given path, else attempts creating the parent group, if that fails return None."""
         parent_path = path[0 : path.rindex("/")] or "/"
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
@@ -281,11 +281,11 @@ class Writer:
                 return grp
             else:
                 return None
-        if not isinstance(
+        if isinstance(
             self.output_nexus[parent_path_hdf5], h5py.Dataset
         ):  # for exploratory purposes
             logger.warning(
-                f"ensure_and_get_parent_node returns h5py.Dataset, fix the return type annotation accordingly"
+                f"{path}, ensure_and_get_parent_node about to return h5py.Dataset"
             )
         return self.output_nexus[parent_path_hdf5]
 
