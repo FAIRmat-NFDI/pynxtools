@@ -281,12 +281,6 @@ class Writer:
                 return grp
             else:
                 return None
-        if isinstance(
-            self.output_nexus[parent_path_hdf5], h5py.Dataset
-        ):  # for exploratory purposes
-            logger.warning(
-                f"{path}, ensure_and_get_parent_node about to return h5py.Dataset"
-            )
         return self.output_nexus[parent_path_hdf5]
 
     def _put_data_into_hdf5(self):
@@ -316,7 +310,7 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    if grp is not None:
+                    if isinstance(grp, h5py.Group):
                         if isinstance(data, dict):
                             if "compress" in data.keys():
                                 dataset = handle_dicts_entries(
@@ -335,7 +329,7 @@ class Writer:
                                 )
                     else:
                         logger.warning(
-                            f"Unable to get_parent_node {path} skipped adding children"
+                            f"Unable to get_parent_node {path}, skip adding children"
                         )
                         continue
             except InvalidDictProvided as exc:
@@ -370,16 +364,16 @@ class Writer:
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
-                    # consider changing the name here the value can also be group!
                     dataset = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    if dataset is not None:
+                    if isinstance(dataset, h5py.Dataset):
                         dataset.attrs[entry_name[1:]] = data
                     else:
                         logger.warning(
-                            f"Unable to get_parent_node {path}, skipped adding attributes"
+                            f"Unable to get_parent_node {path}, skip adding attribute to dataset"
                         )
+                        continue
             except Exception as exc:
                 raise OSError(
                     f"Unknown error occurred writing the path: {path}"
