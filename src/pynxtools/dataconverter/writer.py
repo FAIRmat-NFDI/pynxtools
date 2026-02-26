@@ -280,28 +280,27 @@ class Writer:
                             f"ValueError upon create_group {parent_path_hdf5}"
                         )
                         return None
+
+                    attrs = self.__nxdl_to_attrs(parent_path)
+
+                    if attrs is not None:
+                        if nx_class := attrs.get("type"):
+                            if "NX_class" not in grp.attrs:
+                                grp.attrs["NX_class"] = nx_class
+                            else:
+                                if self.append:
+                                    logger.info(
+                                        f"Prevented the overwriting of attribute {parent_path}/@NXclass"
+                                    )
+                        else:
+                            logger.error(
+                                f"No attribute 'NX_class' could be written for {parent_path}."
+                            )
+                    return grp
                 else:
                     if self.append:
                         logger.info(f"Prevented the overwriting of group {parent_path}")
-
-                attrs = self.__nxdl_to_attrs(parent_path)
-
-                if attrs is not None:
-                    if nx_class := attrs.get("type"):
-                        if "NX_class" not in grp.attrs:
-                            grp.attrs["NX_class"] = nx_class
-                        else:
-                            if self.append:
-                                logger.info(
-                                    f"Prevented the overwriting of attribute {parent_path}/@NXclass"
-                                )
-                    else:
-                        logger.error(
-                            f"No attribute 'NX_class' could be written for {parent_path}."
-                        )
-                return grp
-            # else:
-            #     return None
+                    return None
         return self.output_nexus[parent_path_hdf5]
 
     def _put_data_into_hdf5(self):
@@ -363,7 +362,7 @@ class Writer:
                             else:
                                 if self.append:
                                     logger.info(
-                                        f"Prevented overwriting of existing {path}"
+                                        f"Prevented the overwriting of dataset {path}"
                                     )
                     else:
                         logger.warning(

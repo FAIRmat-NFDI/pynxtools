@@ -17,6 +17,7 @@
 #
 """Test cases for the Writer class used by the DataConverter"""
 
+import logging
 import os
 
 import h5py
@@ -123,6 +124,7 @@ def fixture_normal_write_then_attempt_append(writer):
 
     template = Template()
     template.clear()
+    template["/ENTRY[my_entry]/@NX_class"] = "NXentry"
     template["/ENTRY[my_entry]/definition"] = "NXtest"
     template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
     template["/ENTRY[my_entry]/required_group/description"] = "An example description"
@@ -137,7 +139,22 @@ def fixture_normal_write_then_attempt_append(writer):
     del writer, overwrite
 
 
-def test_overwrite(writer_overwrite):
+def test_overwrite(writer_overwrite, caplog):
     """Test whether append is correctly working for the writer."""
     writer_overwrite.write()
-    # assert caplog against expectation
+
+    with caplog.at_level(logging.INFO):
+        observed_infos = [
+            r.getMessage() for r in caplog.records if r.levelno == logging.INFO
+        ]
+
+        prefix = "Prevented the overwriting of"
+        expected_infos = [
+            f"{prefix} attribute /ENTRY[my_entry]/@NX_class",
+            f"{prefix} dataset /ENTRY[my_entry]/definition",
+            f"{prefix} dataset /ENTRY[my_entry]/required_group/description",
+            f"{prefix} attribute /ENTRY[my_entry]/definition/@version",
+        ]
+        assert sorted(observed_infos) == sorted(expected_infos)  # order does not matter
+
+    os.remove(writer_overwrite.output_path)
