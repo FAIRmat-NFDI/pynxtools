@@ -120,9 +120,6 @@ def test_append(writer_append):
 def fixture_normal_write_then_attempt_append(writer):
     """pytest fixture to setup Writer object, try to overwrite existent attributes, datasets, and groups."""
     writer.write()
-    print(
-        f">>>>>>>>>>>usual data>>>>>>>>{writer.output_path}, {os.path.getsize(writer.output_path)}"
-    )
 
     template = Template()
     template.clear()
@@ -137,9 +134,6 @@ def fixture_normal_write_then_attempt_append(writer):
         append=True,
     )
     yield overwrite
-    print(
-        f">>>>>>>>>>>after overwriting>>>>>>>>{overwrite.output_path}, {os.path.getsize(overwrite.output_path)}"
-    )
     del writer, overwrite
 
 
@@ -147,6 +141,3 @@ def test_overwrite(writer_overwrite):
     """Test whether append is correctly working for the writer."""
     writer_overwrite.write()
     # assert caplog against expectation
-    # with h5py.File(writer_overwrite.output_path, "r") as append_file:
-    #     assert append_file["/already/existing_value"][()] == 1
-    #     assert append_file["/my_entry/definition"].asstr()[...] == "NXtest"  # pylint: disable=no-member
