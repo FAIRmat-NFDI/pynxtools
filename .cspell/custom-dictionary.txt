@@ -172,6 +172,7 @@ oxidising
 pathtovalidate
 plottable
 posint
+posteriori
 printoptions
 punx
 pynxtools
