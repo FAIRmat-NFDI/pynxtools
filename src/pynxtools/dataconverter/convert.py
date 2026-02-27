@@ -227,7 +227,11 @@ def convert(
         **kwargs,
     )
 
-    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
+    helpers.add_default_root_attributes(
+        data=data,
+        filename=os.path.basename(output),
+        append=True if "append" in kwargs else False,
+    )
     Writer(
         data=data,
         nxdl_f_path=nxdl_f_path,

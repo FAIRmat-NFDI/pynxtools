@@ -116,6 +116,7 @@ hashvalue
 hdfdict
 hdfgroup
 hdfobject
+hfive
 hixu
 hypothes
 idname

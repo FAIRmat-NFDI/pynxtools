@@ -25,6 +25,7 @@ import numpy as np
 import pytest
 
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
+from pynxtools.dataconverter.helpers import add_default_root_attributes
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.writer import Writer
 
@@ -38,10 +39,12 @@ from .test_helpers import (  # pylint: disable=unused-import
 @pytest.fixture(name="writer")
 def fixture_writer(filled_test_data, tmp_path):
     """pytest fixture to setup Writer object to be used by tests with dummy data."""
+    output_file_path = os.path.join(tmp_path, "test.nxs")
+    add_default_root_attributes(filled_test_data, filename=output_file_path)
     writer = Writer(
         filled_test_data,
         os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
-        os.path.join(tmp_path, "test.nxs"),
+        output_file_path,
     )
     yield writer
     del writer
@@ -55,10 +58,11 @@ def test_init(writer):
 def test_write(writer):
     """Test for the Writer's write function. Checks whether entries given above get written out."""
     writer.write()
-    test_nxs = h5py.File(writer.output_path, "r")
-    assert test_nxs["/my_entry/nxodd_name/int_value"][()] == 2
-    assert test_nxs["/my_entry/nxodd_name/int_value"].attrs["units"] == "eV"
-    assert test_nxs["/my_entry/nxodd_name/posint_value"].shape == (3,)  # pylint: disable=no-member
+    with h5py.File(writer.output_path, "r") as test_nxs:
+        assert "/append_mode" not in test_nxs
+        assert test_nxs["/my_entry/nxodd_name/int_value"][()] == 2
+        assert test_nxs["/my_entry/nxodd_name/int_value"].attrs["units"] == "eV"
+        assert test_nxs["/my_entry/nxodd_name/posint_value"].shape == (3,)  # pylint: disable=no-member
 
 
 def test_write_link(writer):
@@ -129,6 +133,7 @@ def fixture_normal_write_then_attempt_append(writer):
     template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
     template["/ENTRY[my_entry]/required_group/description"] = "An example description"
     template["/already/existing_value"] = np.zeros((125000,), dtype=np.float64)
+    add_default_root_attributes(template, filename=writer.output_path, append=True)
     overwrite = Writer(
         template,
         os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
@@ -143,6 +148,10 @@ def test_overwrite(writer_overwrite, caplog):
     """Test whether append is correctly working for the writer."""
     writer_overwrite.write()
 
+    with h5py.File(writer_overwrite.output_path, "r") as test_nxs:
+        assert "append_mode" in test_nxs["/"].attrs
+        assert test_nxs["/"].attrs["append_mode"] == "True"
+
     with caplog.at_level(logging.INFO):
         observed_infos = [
             r.getMessage() for r in caplog.records if r.levelno == logging.INFO
@@ -150,6 +159,14 @@ def test_overwrite(writer_overwrite, caplog):
 
         prefix = "Prevented the overwriting of"
         expected_infos = [
+            f"{prefix} attribute /@HDF5_Version",
+            f"{prefix} attribute /@NX_class",
+            f"{prefix} attribute /@NeXus_release",
+            f"{prefix} attribute /@NeXus_repository",
+            f"{prefix} attribute /@file_name",
+            f"{prefix} attribute /@file_time",
+            f"{prefix} attribute /@file_update_time",
+            f"{prefix} attribute /@h5py_version",
             f"{prefix} attribute /ENTRY[my_entry]/@NX_class",
             f"{prefix} dataset /ENTRY[my_entry]/definition",
             f"{prefix} dataset /ENTRY[my_entry]/required_group/description",
