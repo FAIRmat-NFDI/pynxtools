@@ -344,7 +344,9 @@ def main_cli():
     "--skip-verify",
     is_flag=True,
     default=False,
-    help="Skips the verification routine during conversion.",
+    help="Skips the verification routine during conversion."
+    "When --append is used the verification is always skipped"
+    "irrespective if --skip-verify is used or not.",
 )
 @click.option(
     "--mapping",

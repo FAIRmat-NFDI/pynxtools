@@ -225,7 +225,7 @@ class Writer:
         self.data = data
         self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "r+" if append else "w")
+        self.output_nexus = h5py.File(self.output_path, "a" if append else "w")
         # using "r+" or "a" allow resizing a dataset that uses chunked data storage layout
         # we currently do not implement this resizing though
         # create_{group,dataset} with an existent name throws a ValueError
