@@ -70,7 +70,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
 - [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
 - [Note on versioning](learn/pynxtools/versioning.md)
--  [Using and tailoring compression](learn/pynxtools/compression.md)
+- [Using and tailoring compression](learn/pynxtools/compression.md)
 
 </div>
 <div markdown="block">
