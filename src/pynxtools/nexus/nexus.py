@@ -738,9 +738,15 @@ def hdf_node_to_self_concept_path(hdf_info, logger):
 
 
 class HandleNexus:
-    """documentation"""
+    """
+    Thin wrapper around `NexusFileHandler` + `Annotator`.
 
-    # pylint: disable=too-many-instance-attributes
+    .. deprecated::
+        Construct `NexusFileHandler` and `Annotator` directly.
+        This class is retained for backward compatibility and will be removed
+        in a future release.
+    """
+
     def __init__(
         self,
         logger,
@@ -749,115 +755,26 @@ class HandleNexus:
         c_inq_nd=None,
         is_in_memory_file=False,
     ):
-        self.logger = logger
-        local_dir = os.path.abspath(os.path.dirname(__file__))
+        from pynxtools.nexus.handler import NexusFileHandler
 
-        self.input_file_name = (
-            nexus_file
-            if nexus_file is not None
-            else os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
-        )
-        self.parser = None
-        self.in_file = None
-        self.is_hdf5_file_obj = is_in_memory_file
+        self.logger = logger
         self.d_inq_nd = d_inq_nd
         self.c_inq_nd = c_inq_nd
-        # Aggregating hdf path corresponds to concept query node
-        self.hdf_path_list_for_c_inq_nd = []
-
-    def visit_node(self, hdf_name, hdf_node):
-        """Function called by h5py that iterates on each node of hdf5file.
-        It allows h5py visititems function to visit nodes."""
-        if self.d_inq_nd is None and self.c_inq_nd is None:
-            process_node(hdf_node, "/" + hdf_name, self.parser, self.logger)
-        elif self.d_inq_nd is not None and hdf_name in (
-            self.d_inq_nd,
-            self.d_inq_nd[1:],
-        ):
-            process_node(hdf_node, "/" + hdf_name, self.parser, self.logger)
-        elif self.c_inq_nd is not None:
-            attributed_concept = self.c_inq_nd.split("@")
-            attr = attributed_concept[1] if len(attributed_concept) > 1 else None
-            elem_list = get_all_is_a_rel_from_hdf_node(hdf_node, "/" + hdf_name)
-            if elem_list is None:
-                return
-            fnd_superclass = False
-            fnd_superclass_attr = False
-            for elem in reversed(elem_list):
-                tmp_path = elem.get("nxdlbase").split(".nxdl")[0]
-                con_path = "/NX" + tmp_path.split("NX")[-1] + elem.get("nxdlpath")
-                if fnd_superclass or con_path == attributed_concept[0]:
-                    fnd_superclass = True
-                    if attr is None:
-                        self.hdf_path_list_for_c_inq_nd.append(hdf_name)
-                        break
-                    for attribute in hdf_node.attrs.keys():
-                        attr_concept = get_nxdl_child(
-                            elem, attribute, nexus_type="attribute", go_base=False
-                        )
-                        if attr_concept is not None and attr_concept.get(
-                            "nxdlpath"
-                        ).endswith(attr):
-                            fnd_superclass_attr = True
-                            con_path = (
-                                "/NX"
-                                + tmp_path.split("NX")[-1]
-                                + attr_concept.get("nxdlpath")
-                            )
-                            self.hdf_path_list_for_c_inq_nd.append(
-                                hdf_name + "@" + attribute
-                            )
-                            break
-                if fnd_superclass_attr:
-                    break
-
-    def not_yet_visited(self, root, name):
-        """checking if a new node has already been visited in its path"""
-        path = name.split("/")
-        for i in range(1, len(path)):
-            act_path = "/".join(path[:i])
-            # print(act_path+' - '+name)
-            if root["/" + act_path] == root["/" + name]:
-                return False
-        return True
-
-    def full_visit(self, root, hdf_node, name, func):
-        """Visit recursively all children but avoid endless cycles"""
-        func(name, hdf_node)
-        if isinstance(hdf_node, h5py.Group):
-            for ch_name, child in hdf_node.items():
-                full_name = ch_name if len(name) == 0 else name + "/" + ch_name
-                if self.not_yet_visited(root, full_name):
-                    self.full_visit(root, child, full_name, func)
+        self._handler = NexusFileHandler(
+            nexus_file, is_in_memory_file=is_in_memory_file
+        )
 
     def process_nexus_master_file(self, parser):
-        """Process a nexus master file by processing all its nodes and their attributes"""
-        self.parser = parser
-        try:
-            if not self.is_hdf5_file_obj:
-                self.in_file = h5py.File(
-                    self.input_file_name[0]
-                    if isinstance(self.input_file_name, list)
-                    else self.input_file_name,
-                    "r",
-                )
-            else:
-                self.in_file = self.input_file_name
+        """Process a nexus master file by processing all its nodes and their attributes."""
+        from pynxtools.nexus.annotation import Annotator
 
-            self.full_visit(self.in_file, self.in_file, "", self.visit_node)
-
-            if self.d_inq_nd is None and self.c_inq_nd is None and parser is None:
-                get_default_plottable(self.in_file, self.logger)
-            # To log the provided concept and concepts founded
-            if self.c_inq_nd is not None:
-                for hdf_path in self.hdf_path_list_for_c_inq_nd:
-                    self.logger.info(hdf_path)
-        finally:
-            # To test if hdf_file is open print(self.in_file.id.valid)
-            self.in_file.close()
-            # To test if hdf_file is open print(self.in_file.id.valid)
-            # clear lru_cache to avoid memory pileup
-            get_inherited_hdf_nodes.cache_clear()
+        visitor = Annotator(
+            self.logger,
+            d_inq_nd=self.d_inq_nd,
+            c_inq_nd=self.c_inq_nd,
+            parser=parser,
+        )
+        self._handler.process(visitor)
 
 
 @click.command()
@@ -894,14 +811,10 @@ def main(nexus_file, documentation, concept):
     Functionality to extract documentation and concept definition
     information about the individual parts of a NeXus/HDF5 file."""
 
-    logging_format = "%(levelname)s: %(message)s"
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setLevel(logging.DEBUG)
-    logging.basicConfig(
-        level=logging.INFO, format=logging_format, handlers=[stdout_handler]
-    )
+    # The pynxtools logger already has a StreamHandler installed by pynxtools/__init__.py.
+    # We only need to lower the level to DEBUG so that detail lines are visible, and
+    # keep propagate=False so root-logger handlers don't double-emit messages.
     logger = logging.getLogger("pynxtools")
-    logger.addHandler(stdout_handler)
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
     if documentation and concept:

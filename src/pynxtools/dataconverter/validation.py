@@ -162,50 +162,80 @@ def is_valid_unit_for_node(
     )
 
 
-def validate_hdf_group_against(
-    appdef: str,
-    data: h5py.Group,
-    filename: str,
-    ignore_undocumented: bool = False,
-) -> bool:
+class FileValidator:
     """
-    Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
+    Validates an HDF5 entry group against a NeXus application definition.
 
-    Args:
-        appdef (str): The application definition to validate against.
-        data (h5py.Group): The h5py group to validate.
-        filename (str): The filename of the h5py group.
-        ignore_undocumented (bool, optional):
-            Ignore all undocumented items in the verification
-            and just check if the required concepts are properly set.
-            Defaults to False.
+    Encapsulates all traversal logic, schema resolution, and required-concept
+    tracking that was previously implemented as closures inside
+    ``validate_hdf_group_against``.
 
-    Returns:
-        bool: True if the group is valid according to `appdef`, False otherwise.
+    Usage::
+
+        visitor = FileValidator(appdef, data, filename, ignore_undocumented)
+        is_valid = visitor.run()
     """
 
-    def best_namefit_of(
+    _POSSIBLE_NODE_TYPES: tuple[str, ...] = ("group", "field", "attribute")
+    _SKIP_ATTRS: frozenset[str] = frozenset({"NX_class", "units", "target", "custom"})
+
+    def __init__(
+        self,
+        appdef: str,
+        data: h5py.Group,
+        filename: str,
+        ignore_undocumented: bool = False,
+    ) -> None:
+        collector.clear()
+
+        appdef_node = generate_tree_from(appdef)
+        self._tree: NexusNode = appdef_node.search_add_child_for("ENTRY")
+        self._appdef_node: NexusNode = appdef_node
+        self._data: h5py.Group = data
+        self._filename: str = filename
+        self._ignore_undocumented: bool = ignore_undocumented
+        self._entry_name: str = data.name
+
+        # Cache keyed by path only (same semantics as the original LRUCache with
+        # key=hashkey(path) — node_type/nx_class/hint are not part of the cache key)
+        self._node_cache: dict[str, NexusNode | None] = {}
+        self._MISSING = object()  # sentinel for "not yet cached"
+
+        self._required_groups: set[str] = set()
+        self._required_entities: set[str] = set()
+        self._update_required_concepts("", self._tree)
+
+    # ------------------------------------------------------------------
+    # Public entry point
+    # ------------------------------------------------------------------
+
+    def run(self) -> bool:
+        """
+        Execute the full validation and return True if the entry is valid.
+
+        Returns:
+            bool: True if no validation problems were found.
+        """
+        self._visititems(self._data, filename=self._filename)
+        self._report_missing()
+        return not collector.has_validation_problems()
+
+    # ------------------------------------------------------------------
+    # Schema resolution
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _best_namefit_of(
         name: str,
         nodes: Iterable[NexusNode],
         hint: Literal["axis", "signal"] | None = None,
     ) -> NexusNode | None:
-        """
-        Get the best namefit of `name` in `nodes`.
-
-        Args:
-            name (str): The name to fit against the nodes.
-            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
-            node_type (str): The type (group, field, attribute) that is expected
-
-        Returns:
-            Optional[NexusNode]: The best fitting node. None if no fit was found.
-        """
+        """Return the best-fitting node from *nodes* for the HDF5 *name*."""
         if not nodes:
             return None
 
-        best_match = None
+        best_match: NexusNode | None = None
         best_score = -1
-
         hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
 
         for node in nodes:
@@ -224,189 +254,135 @@ def validate_hdf_group_against(
 
         return best_match
 
-    # Only cache based on path. That way we retain the nx_class information
-    # in the tree
-    # Allow for 10000 cache entries. This should be enough for most cases
-    @cached(
-        cache=LRUCache(maxsize=10000),
-        key=lambda path, node_type=None, nx_class=None, hint=None: hashkey(path),
-    )
-    def find_node_for(
+    def _find_node_for(
+        self,
         path: str,
         node_type: Literal["group", "field", "attribute"] | None = None,
         nx_class: str | None = None,
         hint: Literal["axis", "signal"] | None = None,
     ) -> NexusNode | None:
         """
-        Find the NexusNode for a given HDF5 path, optionally constrained by node type and NX_class.
+        Find the NexusNode for *path*, cached by path only.
 
-        Uses caching for performance.
-
-        Args:
-            path (str): The HDF5 path.
-            node_type (Optional[str]): Node type filter: 'group', 'field', or 'attribute'.
-            nx_class (Optional[str]): NX_class to restrict search for groups.
-
-        Returns:
-            Optional[NexusNode]: Matching node, or None if no match found.
+        Raises:
+            TypeError: If the path matches a concept of a conflicting type.
         """
+        cached = self._node_cache.get(path, self._MISSING)
+        if cached is not self._MISSING:
+            return cached  # type: ignore[return-value]
+
         if path == "":
-            return tree
+            return self._tree
 
-        possible_node_types = ["group", "field", "attribute"]
+        *prev_parts, last_elem = path.rsplit("/", 1)
+        parent = (
+            self._find_node_for(prev_parts[0], hint=hint) if prev_parts else self._tree
+        )
+        parent_copy = copy.copy(parent)
 
-        *prev_path, last_elem = path.rsplit("/", 1)
-
-        node = find_node_for(prev_path[0], hint=hint) if prev_path else tree
-        current = copy.copy(node)
-
-        if node is None:
+        if parent is None:
+            self._node_cache[path] = None
             return None
 
         children_to_check = [
-            node.search_add_child_for(child)
-            for child in node.get_all_direct_children_names(
+            parent.search_add_child_for(child)
+            for child in parent.get_all_direct_children_names(
                 nx_class=nx_class, node_type=node_type
             )
         ]
-        node = best_namefit_of(last_elem, children_to_check, hint)
+        node = self._best_namefit_of(last_elem, children_to_check, hint)
 
         if node is None:
-            # Check that there is no other node with the same name, but a different type
-            other_node_types = [nt for nt in possible_node_types if nt != node_type]
-
+            other_node_types = [
+                nt for nt in self._POSSIBLE_NODE_TYPES if nt != node_type
+            ]
             for other_node_type in other_node_types:
-                children_to_check = [
-                    current.search_add_child_for(child)
-                    for child in current.get_all_direct_children_names(
-                        node_type=other_node_type,
-                        nx_class=nx_class,
+                other_children = [
+                    parent_copy.search_add_child_for(child)
+                    for child in parent_copy.get_all_direct_children_names(
+                        node_type=other_node_type, nx_class=nx_class
                     )
                 ]
-                other_node = best_namefit_of(last_elem, children_to_check)
-                if other_node is not None:
-                    if not other_node.variadic:
-                        collector.collect_and_log(
-                            path,
-                            ValidationProblem.InvalidNexusTypeForNamedConcept,
-                            other_node,
-                            node_type,
-                        )
-                        raise TypeError(
-                            f"The type ('{node_type}') of {path} conflicts with another existing concept "
-                            f"{other_node.get_path()} (which is of type '{other_node.nx_type}'."
-                        )
-
+                other_node = self._best_namefit_of(last_elem, other_children)
+                if other_node is not None and not other_node.variadic:
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.InvalidNexusTypeForNamedConcept,
+                        other_node,
+                        node_type,
+                    )
+                    raise TypeError(
+                        f"The type ('{node_type}') of {path} conflicts with another existing "
+                        f"concept {other_node.get_path()} (which is of type '{other_node.nx_type}')."
+                    )
+            self._node_cache[path] = None
             return None
 
+        self._node_cache[path] = node
         return node
 
-    def update_required_concepts(path: str, node: NexusNode):
-        """
-        Update the sets of required groups and entities based on the current node.
+    # ------------------------------------------------------------------
+    # Required-concept tracking
+    # ------------------------------------------------------------------
 
-        Args:
-            path (str): Current path in the HDF5 tree.
-            node (NexusNode): The node to extract required concepts from.
-        """
+    def _update_required_concepts(self, path: str, node: NexusNode) -> None:
+        """Collect required sub-groups and entities from *node* and register them."""
         prefix = f"{path}/" if path else ""
-
-        required_subgroups = [
+        self._required_groups.update(
             f"{prefix}{grp.lstrip('/')}"
             for grp in node.required_groups(recurse_children=False)
-        ]
-        required_sub_entities = [
+        )
+        self._required_entities.update(
             f"{prefix}{ent.lstrip('/')}"
             for ent in node.required_fields_and_attrs_names(recurse_children=False)
-        ]
-
-        required_groups.update(required_subgroups)
-        required_entities.update(required_sub_entities)
+        )
 
     def _variadic_node_exists_for(
-        path: str, variadic_name: str, node_type: str | None = None
-    ):
-        """
-        Check if a variadic node exists that matches a given path and node type.
+        self,
+        path: str,
+        variadic_name: str,
+        node_type: Literal["group", "field", "attribute"] | None = None,
+    ) -> bool:
+        """Return True if a variadic schema node at the same depth as *variadic_name* matches *path*."""
 
-        Args:
-            path (str): Path to check.
-            variadic_name (str): Variadic name to compare.
-            node_type (Optional[str]): Type of node to restrict search.
-
-        Returns:
-            bool: True if a matching variadic node exists.
-        """
-
-        def _get_parent_path(path: str) -> str:
-            """
-            Return the parent path of a given HDF5 path.
-
-            Args:
-                path (str): A full HDF5 path (e.g., "/entry/sample/temperature").
-
-            Returns:
-                str: The parent path (e.g., "/entry/sample"). If the path has no parent,
-                    returns an empty string.
-
-            Example:
-                >>> _get_parent_path("/entry/sample/temperature")
-                '/entry/sample'
-
-                >>> _get_parent_path("temperature")
-                ''
-
-                >>> _get_parent_path("/temperature")
-                ''
-            """
-            if "/" not in path.strip("/"):
+        def _parent_of(p: str) -> str:
+            if "/" not in p.strip("/"):
                 return ""
-            return path.rstrip("/").rsplit("/", 1)[0]
+            return p.rstrip("/").rsplit("/", 1)[0]
 
-        if _get_parent_path(variadic_name) == _get_parent_path(path):
-            node = find_node_for(variadic_name, node_type=node_type)
-            if node is not None and node.variadic:
-                score = get_nx_namefit(
-                    path.rsplit("/", 1)[-1],
-                    node.name,
-                    node.name_type == "any",
-                    node.name_type == "partial",
-                )
-                if score > -1:
-                    return True
-
+        if _parent_of(variadic_name) != _parent_of(path):
             return False
 
-    def remove_from_req_groups(path: str):
-        """
-        Remove a path from the set of required groups, accounting for variadic nodes.
+        node = self._find_node_for(variadic_name, node_type=node_type)
+        if node is not None and node.variadic:
+            score = get_nx_namefit(
+                path.rsplit("/", 1)[-1],
+                node.name,
+                node.name_type == "any",
+                node.name_type == "partial",
+            )
+            if score > -1:
+                return True
+        return False
 
-        Args:
-            path (str): The path to remove.
-        """
-        if path in required_groups:
-            required_groups.remove(path)
+    def _remove_from_req_groups(self, path: str) -> None:
+        """Remove *path* from required groups, accounting for variadic names."""
+        if path in self._required_groups:
+            self._required_groups.remove(path)
         else:
-            # Check if a variadic required group exists
-            for grp in list(required_groups):
-                if _variadic_node_exists_for(path, grp, node_type="group"):
-                    required_groups.remove(grp)
+            for grp in list(self._required_groups):
+                if self._variadic_node_exists_for(path, grp, node_type="group"):
+                    self._required_groups.remove(grp)
 
-    def remove_from_req_entities(path: str):
-        """
-        Remove a path from the set of required entities (fields/attributes),
-        accounting for variadic nodes.
-
-        Args:
-            path (str): The path to remove.
-        """
-        if path in required_entities:
-            required_entities.remove(path)
+    def _remove_from_req_entities(self, path: str) -> None:
+        """Remove *path* from required entities, accounting for variadic names."""
+        if path in self._required_entities:
+            self._required_entities.remove(path)
         else:
-            # Check if a variadic required node exists
-            for ent in list(required_entities):
-                node_type = "attribute" if "@" in ent else "field"
-
+            for ent in list(self._required_entities):
+                node_type: Literal["attribute", "field"] = (
+                    "attribute" if "@" in ent else "field"
+                )
                 clean_path = (
                     path.rstrip("/@units")
                     if path.endswith("@units") and ent.endswith("@units")
@@ -417,379 +393,255 @@ def validate_hdf_group_against(
                     if path.endswith("@units") and ent.endswith("@units")
                     else ent
                 )
-
-                if _variadic_node_exists_for(
+                if self._variadic_node_exists_for(
                     clean_path, clean_ent, node_type=node_type
                 ):
-                    required_entities.remove(ent)
+                    self._required_entities.remove(ent)
 
-    def _check_for_nxcollection_parent(node: NexusNode):
+    # ------------------------------------------------------------------
+    # HDF5 handlers
+    # ------------------------------------------------------------------
+
+    def _has_breakpoint(self, key_path: str) -> bool:
         """
-        Check if the given node has a parent group of type NXcollection.
+        Return True if any ancestor of *key_path* is an NXcollection or lacks NX_class.
 
-        Args:
-            node (NexusNode): The node to check.
-
-        Returns:
-            bool: True if a parent NXcollection group exists.
-        """
-        parent = node.parent
-        while parent:
-            if parent.nx_type == "group" and parent.nx_class == "NXcollection":
-                # Found a parent collection group
-                return True
-            parent = parent.parent
-
-        return False
-
-    def has_breakpoint(key_path: str) -> bool:
-        """
-        Walk up the path hierarchy and check if a parent is an NXcollection
-        or has no NX_class, indicating we should stop.
-
-        For attributes of datasets, skip the dataset itself and continue with
-        its parent group.
-
-        Args:
-            path (str): HDF5 path to start from (no @attr suffix).
-
-        Returns:
-            bool: True if a breakpoint was found, False otherwise.
+        Dataset ancestors are skipped (they have no NX_class themselves).
         """
         while "/" in key_path:
             key_path = key_path.rsplit("/", 1)[0]
-            parent_data = data.get(key_path)
-            if isinstance(parent_data, h5py.Dataset):
+            parent_obj = self._data.get(key_path)
+            if isinstance(parent_obj, h5py.Dataset):
                 continue
             nx_class = (
-                parent_data.attrs.get("NX_class") if parent_data is not None else None
+                parent_obj.attrs.get("NX_class") if parent_obj is not None else None
             )
             if nx_class == "NXcollection" or nx_class is None:
                 return True
         return False
 
-    def handle_group(path: str, group: h5py.Group):
-        """
-        Handle validation logic for HDF5 groups.
-
-        Args:
-            path (str): Relative HDF5 path to the group.
-            group (h5py.Group): The group object.
-        """
-        full_path = f"{entry_name}/{path}"
-
-        check_reserved_prefix(full_path, appdef_node.name, "group")
+    def _handle_group(self, path: str, group: h5py.Group) -> None:
+        """Validate an HDF5 group against the schema tree."""
+        full_path = f"{self._entry_name}/{path}"
+        check_reserved_prefix(full_path, self._appdef_node.name, "group")
 
         if not group.attrs.get("NX_class"):
-            # We ignore additional groups that don't have an NX_class
-            if not ignore_undocumented and full_path == group.name:
+            if not self._ignore_undocumented and full_path == group.name:
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingNXclass, None
                 )
             return
 
         try:
-            node = find_node_for(
+            node = self._find_node_for(
                 path, node_type="group", nx_class=group.attrs.get("NX_class")
             )
         except TypeError:
             return
+
         if node is None:
-            if not ignore_undocumented and full_path == group.name:
+            if not self._ignore_undocumented and full_path == group.name:
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingDocumentation, None
                 )
             return
 
         if node.nx_type != "group":
-            # In case a field was accidentally linked to a group.
-            collector.collect_and_log(
-                full_path,
-                ValidationProblem.ExpectedField,
-                None,
-            )
+            collector.collect_and_log(full_path, ValidationProblem.ExpectedField, None)
             return
 
-        update_required_concepts(path, node)
-        remove_from_req_groups(path)
+        self._update_required_concepts(path, node)
+        self._remove_from_req_groups(path)
 
-        if _check_for_nxcollection_parent(node):
-            # NXcollection found in parents, stop checking
+        if node.has_nxcollection_parent():
             return
 
         if node.nx_class == "NXdata":
-            handle_nxdata(path, group)
+            self._handle_nxdata(path, group)
         if node.nx_class == "NXcollection":
             return
 
-    def handle_nxdata(path: str, group: h5py.Group):
-        """
-        Handle validation of NXdata groups, including signal, axes, and auxiliary signals.
-
-        Args:
-            path (str): HDF5 path to the NXdata group.
-            group (h5py.Group): The NXdata group object.
-        """
-        full_path = f"{entry_name}/{path}"
-
-        def check_nxdata():
-            data_field = group.get(signal)
-
-            if data_field is None:
-                collector.collect_and_log(
-                    f"{full_path}/{signal}",
-                    ValidationProblem.NXdataMissingSignalData,
-                    None,
-                )
-            else:
-                handle_field(f"{path}/{signal}", data_field, hint="signal")
-
-            # check NXdata attributes
-            attrs = ("signal", "auxiliary_signals", "axes")
-            data_attrs = {k: group.attrs[k] for k in attrs if k in group.attrs}
-
-            handle_attributes(path, data_attrs, group)
-
-            for i, axis in enumerate(axes):
-                if axis == ".":
-                    continue
-                index = group.get(f"{axis}_indices", i)
-
-                axis_field = group.get(axis)
-
-                if axis_field is None:
-                    collector.collect_and_log(
-                        f"{full_path}/{axis}",
-                        ValidationProblem.NXdataMissingAxisData,
-                        None,
-                    )
-                    break
-                else:
-                    handle_field(f"{path}/{axis}", axis_field, hint="axis")
-                if np.shape(data_field)[index] != len(axis_field):
-                    collector.collect_and_log(
-                        f"{path}/{axis}",
-                        ValidationProblem.NXdataAxisMismatch,
-                        f"{full_path}/{signal}",
-                        index,
-                    )
-
+    def _handle_nxdata(self, path: str, group: h5py.Group) -> None:
+        """Validate an NXdata group: signal, axes, and NXdata-specific attributes."""
+        full_path = f"{self._entry_name}/{path}"
         signal = group.attrs.get("signal")
         aux_signals = group.attrs.get("auxiliary_signals", [])
         axes = group.attrs.get("axes", [])
-
         if isinstance(axes, str):
             axes = [axes]
 
-        indices = map(lambda x: f"{x}_indices", axes)
-        errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
+        if signal is None:
+            return
 
-        # TODO: check that the indices match
-        # TODO: check that the errors have the same dim as the fields
+        data_field = group.get(signal)
+        if data_field is None:
+            collector.collect_and_log(
+                f"{full_path}/{signal}", ValidationProblem.NXdataMissingSignalData, None
+            )
+        else:
+            self._handle_field(f"{path}/{signal}", data_field, hint="signal")
 
-        if signal is not None:
-            check_nxdata()
+        nxdata_attr_names = ("signal", "auxiliary_signals", "axes")
+        data_attrs = {k: group.attrs[k] for k in nxdata_attr_names if k in group.attrs}
+        self._handle_attributes(path, data_attrs, group)
 
-    def handle_field(
+        for i, axis in enumerate(axes):
+            if axis == ".":
+                continue
+            index = group.get(f"{axis}_indices", i)
+            axis_field = group.get(axis)
+            if axis_field is None:
+                collector.collect_and_log(
+                    f"{full_path}/{axis}", ValidationProblem.NXdataMissingAxisData, None
+                )
+                break
+            else:
+                self._handle_field(f"{path}/{axis}", axis_field, hint="axis")
+            if np.shape(data_field)[index] != len(axis_field):
+                collector.collect_and_log(
+                    f"{path}/{axis}",
+                    ValidationProblem.NXdataAxisMismatch,
+                    f"{full_path}/{signal}",
+                    index,
+                )
+
+    def _handle_field(
+        self,
         path: str,
         dataset: h5py.Dataset,
         hint: Literal["axis", "signal"] | None = None,
-    ):
-        """
-        Validate a NeXus field (dataset) within the HDF5 structure.
-
-        Args:
-            path (str): Path to the dataset.
-            data (h5py.Dataset): Dataset object.
-            hint (str):
-                If the field is in an NXdata group, this is used to figure out
-                if it is an AXISNAME or a DATA.
-        """
-        full_path = f"{entry_name}/{path}"
+    ) -> None:
+        """Validate an HDF5 dataset (NeXus field) against the schema tree."""
+        full_path = f"{self._entry_name}/{path}"
         key_path = path.replace("@", "")
 
-        if has_breakpoint(key_path):
-            # We are inside an NXcollection or a group without NX_class.
+        if self._has_breakpoint(key_path):
             return
 
-        check_reserved_prefix(full_path, appdef_node.name, "field")
+        check_reserved_prefix(full_path, self._appdef_node.name, "field")
 
         try:
-            node = find_node_for(path, node_type="field", hint=hint)
+            node = self._find_node_for(path, node_type="field", hint=hint)
         except TypeError:
             return
 
         if node is None:
-            # Only report undocumented if the group is not linked
-            if not ignore_undocumented and full_path == dataset.name:
+            if not self._ignore_undocumented and full_path == dataset.name:
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingDocumentation, None
                 )
             return
 
         if node.nx_type != "field":
-            # In case a group was accidentally linked to a field.
-            collector.collect_and_log(
-                full_path,
-                ValidationProblem.ExpectedGroup,
-                None,
-            )
+            collector.collect_and_log(full_path, ValidationProblem.ExpectedGroup, None)
             return
 
-        update_required_concepts(path, node)
-        remove_from_req_entities(path)
+        self._update_required_concepts(path, node)
+        self._remove_from_req_entities(path)
 
-        if _check_for_nxcollection_parent(node):
-            # NXcollection found in parents, stop checking
+        if node.has_nxcollection_parent():
             return
 
-        is_valid_data_field(
-            clean_str_attr(dataset[()]),
-            node.dtype,
-            full_path,
-        )
+        is_valid_data_field(clean_str_attr(dataset[()]), node.dtype, full_path)
         is_valid_enum(
             clean_str_attr(dataset[()]),
             node.items,
             node.open_enum,
             full_path,
-            data,
+            self._data,
         )
 
         units = dataset.attrs.get("units")
         units_path = f"{full_path}/@units"
         if node.unit is not None:
-            remove_from_req_entities(f"{path}/@units")
-
+            self._remove_from_req_entities(f"{path}/@units")
             if node.unit != "NX_UNITLESS":
                 if units is None:
                     collector.collect_and_log(
                         full_path, ValidationProblem.MissingUnit, node.unit
                     )
                     return
-            # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+            hints: dict[str, Any] = {}
             if (
                 transformation_type := dataset.attrs.get("transformation_type")
             ) is not None:
                 hints = {"transformation_type": transformation_type}
-            else:
-                hints = {}
-
             is_valid_unit_for_node(node, units, units_path, hints)
-
         elif units is not None:
-            # Only report undocumented if the field is not linked
-            if not ignore_undocumented and full_path == dataset.name:
+            if not self._ignore_undocumented and full_path == dataset.name:
                 collector.collect_and_log(
-                    units_path,
-                    ValidationProblem.UnitWithoutDocumentation,
-                    units,
+                    units_path, ValidationProblem.UnitWithoutDocumentation, units
                 )
 
-    def handle_attributes(
+    def _handle_attributes(
+        self,
         path: str,
         attrs: h5py.AttributeManager,
         parent_obj: h5py.Group | h5py.Dataset,
-    ):
-        """
-        Validate attributes on a given HDF5 object.
-
-        Args:
-            path (str): Path to the object the attributes belong to.
-            attrs (h5py.AttributeManager): The attributes collection.
-            parent_obj (Union[h5py.Group, h5py.Dataset])): Parent object of these attributes.
-        """
+    ) -> None:
+        """Validate attributes on an HDF5 object."""
         for attr_name in attrs:
-            full_path = f"{entry_name}/{path}/@{attr_name}"
-
-            if attr_name in (
-                "NX_class",
-                "units",
-                "target",
-                "custom",
-            ) or attr_name.endswith("_custom"):
-                # Ignore special attrs
+            if attr_name in self._SKIP_ATTRS or attr_name.endswith("_custom"):
                 continue
 
+            full_path = f"{self._entry_name}/{path}/@{attr_name}"
             key_path = f"{path}/{attr_name}"
 
-            if has_breakpoint(key_path):
-                # We are inside an NXcollection or a group without NX_class.
-                continue  # This continues the outer attr_name loop
+            if self._has_breakpoint(key_path):
+                continue
 
-            check_reserved_prefix(full_path, appdef_node.name, "attribute")
+            check_reserved_prefix(full_path, self._appdef_node.name, "attribute")
 
             try:
-                node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
+                node = self._find_node_for(f"{path}/{attr_name}", node_type="attribute")
             except TypeError:
                 return
 
             if node is None:
-                # Only report undocumented if the parent object is not linked
-                if not ignore_undocumented and full_path.startswith(parent_obj.name):
-                    parent_path = path.strip("/").rsplit("/", 1)[0]
+                if not self._ignore_undocumented and full_path.startswith(
+                    parent_obj.name
+                ):
                     collector.collect_and_log(
-                        full_path,
-                        ValidationProblem.MissingDocumentation,
-                        None,
+                        full_path, ValidationProblem.MissingDocumentation, None
                     )
                 continue
 
-            remove_from_req_entities(f"{path}/@{attr_name}")
+            self._remove_from_req_entities(f"{path}/@{attr_name}")
 
-            if _check_for_nxcollection_parent(node):
-                # NXcollection found in parents, stop checking
+            if node.has_nxcollection_parent():
                 return
 
             attr_data = clean_str_attr(attrs.get(attr_name))
+            is_valid_data_field(attr_data, node.dtype, full_path)
+            is_valid_enum(attr_data, node.items, node.open_enum, full_path, self._data)
 
-            is_valid_data_field(
-                attr_data,
-                node.dtype,
-                full_path,
-            )
-
-            is_valid_enum(
-                attr_data,
-                node.items,
-                node.open_enum,
-                full_path,
-                data,
-            )
-
-    def validate(path: str, h5_obj: h5py.Group | h5py.Dataset):
-        """
-        Dispatch validation for either groups or fields based on object type.
-
-        Args:
-            path (str): Path to the object.
-            h5_obj (Union[h5py.Group, h5py.Dataset]): The HDF5 object to validate.
-        """
+    def _validate_obj(self, path: str, h5_obj: h5py.Group | h5py.Dataset) -> None:
+        """Dispatch validation for a single HDF5 object (group or dataset)."""
         if isinstance(h5_obj, h5py.Group):
-            handle_group(path, h5_obj)
+            self._handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
-            handle_field(path, h5_obj)
-            check_reserved_suffix(f"{entry_name}/{path}", h5_obj.parent)
-        handle_attributes(path, h5_obj.attrs, h5_obj)
+            self._handle_field(path, h5_obj)
+            check_reserved_suffix(f"{self._entry_name}/{path}", h5_obj.parent)
+        self._handle_attributes(path, h5_obj.attrs, h5_obj)
 
-    def visititems(group: h5py.Group, path: str = "", filename: str = ""):
+    def _visititems(
+        self, group: h5py.Group, path: str = "", filename: str = ""
+    ) -> None:
         """
-        Recursively visit all items in a group and apply validation.
+        Recursively walk all items in *group* and apply validation.
 
-        Args:
-            group (h5py.Group): The group to walk.
-            path (str, optional): Current HDF5 path.
-            filename (str, optional): Name of the file for resolving links.
+        Handles hard links, soft links (intra- and cross-file), and external links.
         """
         for name in group:
             full_path = f"{path}/{name}".lstrip("/")
             link = group.get(name, getlink=True)
+
             if isinstance(link, h5py.SoftLink):
                 target_path = link.path
 
                 if "target" not in group[name].attrs:
                     collector.collect_and_log(
-                        f"{entry_name}/{full_path}",
+                        f"{self._entry_name}/{full_path}",
                         ValidationProblem.MissingTargetAttribute,
                         None,
                     )
@@ -797,24 +649,22 @@ def validate_hdf_group_against(
                     attr_target = group[name].attrs["target"]
                     if attr_target != target_path:
                         collector.collect_and_log(
-                            f"{entry_name}/{full_path}",
+                            f"{self._entry_name}/{full_path}",
                             ValidationProblem.TargetAttributeMismatch,
                             attr_target,
                             target_path,
                         )
 
-                # Resolve target relative to the link location
-                if target_path.startswith(entry_name):
-                    if target_path not in data:
+                if target_path.startswith(self._entry_name):
+                    if target_path not in self._data:
                         collector.collect_and_log(
                             path, ValidationProblem.BrokenLink, target_path
                         )
                         continue
-                    resolved_obj = data[target_path]
-                    validate(full_path, resolved_obj)
+                    resolved_obj = self._data[target_path]
+                    self._validate_obj(full_path, resolved_obj)
                     if isinstance(resolved_obj, h5py.Group):
-                        # recurse into subgroups
-                        visititems(resolved_obj, full_path, filename)
+                        self._visititems(resolved_obj, full_path, filename)
                 else:
                     with h5py.File(filename, "r") as h5file:
                         if target_path not in h5file:
@@ -823,73 +673,81 @@ def validate_hdf_group_against(
                             )
                             continue
                         resolved_obj = h5file[target_path]
-                        validate(full_path, resolved_obj)
+                        self._validate_obj(full_path, resolved_obj)
                         if isinstance(resolved_obj, h5py.Group):
-                            # recurse into subgroups
-                            visititems(resolved_obj, full_path, filename)
+                            self._visititems(resolved_obj, full_path, filename)
 
             elif isinstance(link, h5py.ExternalLink):
-                filename = link.filename
+                ext_filename = link.filename
                 target_path = link.path
-                # Open external file and validate
-                with h5py.File(filename, "r") as ext_file:
+                with h5py.File(ext_filename, "r") as ext_file:
                     if target_path not in ext_file:
                         collector.collect_and_log(
                             path, ValidationProblem.BrokenLink, target_path
                         )
+                        continue
                     resolved_obj = ext_file[target_path]
-                    validate(full_path, resolved_obj)
+                    self._validate_obj(full_path, resolved_obj)
                     if isinstance(resolved_obj, h5py.Group):
-                        # recurse into subgroups
-                        visititems(resolved_obj, full_path, filename)
+                        self._visititems(resolved_obj, full_path, ext_filename)
 
             elif isinstance(link, h5py.HardLink):
-                # Validate hard links (normal objects)
                 resolved_obj = group.get(name)
-                validate(full_path, resolved_obj)
+                self._validate_obj(full_path, resolved_obj)
                 if isinstance(resolved_obj, h5py.Group):
-                    # recurse into subgroups
-                    visititems(resolved_obj, full_path, filename)
+                    self._visititems(resolved_obj, full_path, filename)
 
-    collector.clear()
-
-    appdef_node = generate_tree_from(appdef)
-    tree = appdef_node.search_add_child_for("ENTRY")
-    entry_name = data.name
-
-    required_groups: set[str] = set()
-    required_entities: set[str] = set()
-    update_required_concepts("", tree)
-
-    visititems(data, filename=filename)
-
-    for req_concept in sorted(required_groups):
-        collector.collect_and_log(
-            f"{entry_name}/{req_concept}", ValidationProblem.MissingRequiredGroup, None
-        )
-
-    for req_concept in sorted(required_entities):
-        # Skip if the entire group is missing
-        if any(req_concept.startswith(group) for group in required_groups):
-            continue
-        if "@" in req_concept:
-            # Skip if the entire field is missing
-            if any(
-                req_concept.rsplit("@", -1)[0].startswith(group)
-                for group in required_entities
-            ):
-                continue
+    def _report_missing(self) -> None:
+        """Emit validation problems for all required concepts not found during traversal."""
+        for req_concept in sorted(self._required_groups):
             collector.collect_and_log(
-                f"{entry_name}/{req_concept}",
-                ValidationProblem.MissingRequiredAttribute,
+                f"{self._entry_name}/{req_concept}",
+                ValidationProblem.MissingRequiredGroup,
                 None,
             )
-            continue
-        collector.collect_and_log(
-            f"{entry_name}/{req_concept}", ValidationProblem.MissingRequiredField, None
-        )
 
-    return not collector.has_validation_problems()
+        for req_concept in sorted(self._required_entities):
+            if any(req_concept.startswith(grp) for grp in self._required_groups):
+                continue
+            if "@" in req_concept:
+                if any(
+                    req_concept.rsplit("@", 1)[0].startswith(ent)
+                    for ent in self._required_entities
+                ):
+                    continue
+                collector.collect_and_log(
+                    f"{self._entry_name}/{req_concept}",
+                    ValidationProblem.MissingRequiredAttribute,
+                    None,
+                )
+            else:
+                collector.collect_and_log(
+                    f"{self._entry_name}/{req_concept}",
+                    ValidationProblem.MissingRequiredField,
+                    None,
+                )
+
+
+def validate_hdf_group_against(
+    appdef: str,
+    data: h5py.Group,
+    filename: str,
+    ignore_undocumented: bool = False,
+) -> bool:
+    """
+    Validate an HDF5 group against the NeXus tree for the application definition *appdef*.
+
+    Args:
+        appdef: The application definition name.
+        data: The h5py entry group to validate.
+        filename: Path to the HDF5 file (used for link resolution).
+        ignore_undocumented: If True, skip undocumented concepts and only check
+            that required concepts are present.
+
+    Returns:
+        True if the group is valid, False otherwise.
+    """
+    return FileValidator(appdef, data, filename, ignore_undocumented).run()
 
 
 def validate_dict_against(
