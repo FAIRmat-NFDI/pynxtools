@@ -23,41 +23,35 @@ from typing import Any
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 
 
-class ExampleReader(BaseReader):
+class ExampleReader(MultiFormatReader):
     """An example reader implementation for the DataConverter."""
 
-    # pylint: disable=too-few-public-methods
-
-    # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXtest"]
 
-    def read(
-        self,
-        template: dict = None,
-        file_paths: tuple[str] = None,
-        objects: tuple[Any] = None,
-        **_,
-    ) -> dict:
-        """Reads data from given file and returns a filled template dictionary"""
-        data: dict = {}
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data: dict = {}
+        self.extensions = {
+            ".json": self.handle_json_file,
+        }
 
-        if not file_paths:
-            raise OSError("No input files were given to Example Reader.")
+    def handle_json_file(self, file_path: str) -> dict[str, Any]:
+        """Reads the JSON test data into self.data."""
+        with open(file_path, encoding="utf-8") as f:
+            self.data = json.loads(f.read())
+        return {}
 
-        for file_path in file_paths:
-            file_extension = file_path[file_path.rindex(".") :]
-            with open(file_path, encoding="utf-8") as input_file:
-                if file_extension == ".json":
-                    data = json.loads(input_file.read())
+    def setup_template(self) -> dict[str, Any]:
+        """Fills the template from self.data using the NXDL template structure."""
+        result: dict[str, Any] = {}
 
-        for k in template.keys():
-            # The entries in the template dict should correspond with what the dataconverter
-            # outputs with --generate-template for a provided NXDL file
-            if (
-                k.startswith(
+        # Generic fill: for every key in the NXDL template, look up data by field name.
+        if self.nxdl_template is not None:
+            for k in self.nxdl_template.keys():
+                if k.startswith(
                     (
                         "/ENTRY[entry]/required_group",
                         "/ENTRY[entry]/specified_group",
@@ -65,86 +59,71 @@ class ExampleReader(BaseReader):
                         "/ENTRY[entry]/identified_calibration",
                         "/ENTRY[entry]/named_collection",
                     )
-                )
-                or k
-                in (
+                ) or k in (
                     "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
                     "/ENTRY[entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatrenames]",
-                )
-                or k.startswith("/ENTRY[entry]/OPTIONAL_group")
-            ):
-                continue
+                ) or k.startswith("/ENTRY[entry]/OPTIONAL_group"):
+                    continue
 
-            field_name = k[k.rfind("/") + 1 :]
-            if field_name != "@units":
-                template[k] = data[field_name]
-                if f"{field_name}_units" in data.keys():
-                    template[f"{k}/@units"] = data[f"{field_name}_units"]
+                field_name = k[k.rfind("/") + 1 :]
+                if field_name != "@units" and field_name in self.data:
+                    result[k] = self.data[field_name]
+                    if f"{field_name}_units" in self.data:
+                        result[f"{k}/@units"] = self.data[f"{field_name}_units"]
 
-        template["required"]["/ENTRY[entry]/optional_parent/required_child"] = 1
-        template["optional"][
-            "/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]"
-        ] = [0, 1]
+        # Hardcoded paths not covered by the generic loop above
+        result["/ENTRY[entry]/optional_parent/required_child"] = 1
+        result["/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]"] = [0, 1]
+        result["/ENTRY[entry]/does/not/exist"] = "None"
+        result["/ENTRY[entry]/required_group/description"] = "A test description"
+        result["/ENTRY[entry]/required_group2/description"] = "A test description"
+        result["/ENTRY[entry]/program_name"] = "None"
 
-        # Add non template key
-        template["/ENTRY[entry]/does/not/exist"] = "None"
-        template["/ENTRY[entry]/required_group/description"] = "A test description"
-        template["/ENTRY[entry]/required_group2/description"] = "A test description"
-        template["/ENTRY[entry]/program_name"] = "None"
-
-        # internal links
-        template["/ENTRY[entry]/test_link/internal_link"] = {
+        # Internal link
+        result["/ENTRY[entry]/test_link/internal_link"] = {
             "link": "/entry/nxodd_name/posint_value"
         }
 
-        # external links
-        template[("/ENTRY[entry]/test_link/external_link")] = {
+        # External link
+        result["/ENTRY[entry]/test_link/external_link"] = {
             "link": f"{os.path.dirname(__file__)}/../../../data/"
             "xarray_saved_small_calibration.h5:/axes/ax3"
         }
 
-        # virtual datasets concatenation
+        # Virtual dataset concatenation
         my_path = str(f"{os.path.dirname(__file__)}/../../../data/")
-        my_datasets = {
+        result["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = {
             "link": [
                 f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax0",
                 f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax1",
                 f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax2",
             ]
         }
-        template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = (
-            my_datasets
-        )
 
-        # virtual datasets slicing
-        my_path = str(f"{os.path.dirname(__file__)}/../../../data/")
-        template[("/ENTRY[entry]/test_virtual_dataset/sliced_dataset")] = {
-            "link": (f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData"),
+        # Virtual dataset slicing
+        result["/ENTRY[entry]/test_virtual_dataset/sliced_dataset"] = {
+            "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
             "shape": np.index_exp[:, 1, :, :],
         }
-        template[("/ENTRY[entry]/test_virtual_dataset/sliced_dataset2")] = {
-            "link": (f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData"),
+        result["/ENTRY[entry]/test_virtual_dataset/sliced_dataset2"] = {
+            "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
             "shape": np.index_exp[:, :, :, 1],
         }
-        template[("/ENTRY[entry]/test_virtual_dataset/sliced_dataset3")] = {
-            "link": (f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData"),
+        result["/ENTRY[entry]/test_virtual_dataset/sliced_dataset3"] = {
+            "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
             "shape": np.index_exp[:, :, :, 2:4],
         }
 
-        # compression
-        my_compression_dict = {"compress": "string not to be compressed"}
-        template["/ENTRY[entry]/test_compression/not_to_compress"] = my_compression_dict
-        my_compression_dict2 = {"compress": np.array([1, 2, 3, 4])}
-        template["/ENTRY[entry]/test_compression/compressed_data"] = (
-            my_compression_dict2
-        )
+        # Compression
+        result["/ENTRY[entry]/test_compression/not_to_compress"] = {
+            "compress": "string not to be compressed"
+        }
+        result["/ENTRY[entry]/test_compression/compressed_data"] = {
+            "compress": np.array([1, 2, 3, 4])
+        }
 
-        # sh = h5py.File(file_names_to_concatenate[0], 'r')[entry_key].shape
-        # layout = h5py.VirtualLayout(shape=(len(file_names_to_concatenate),) + sh,
-        #                             dtype=np.float64)
-
-        return template
+        return result
 
 
-# This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
+# This has to be set to allow the convert script to use this reader.
 READER = ExampleReader

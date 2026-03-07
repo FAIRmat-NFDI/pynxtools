@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""An example reader implementation for the DataConverter."""
+"""JSON mapping reader built on MultiFormatReader."""
 
 import json
 import pickle
@@ -27,7 +27,7 @@ import yaml
 from mergedeep import merge
 
 from pynxtools.dataconverter import hdfdict
-from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 from pynxtools.dataconverter.template import Template
 
 
@@ -155,82 +155,93 @@ def get_map_from_partials(partials, template, data):
     return mapping
 
 
-class JsonMapReader(BaseReader):
+class JsonMapReader(MultiFormatReader):
     """A reader that takes a mapping json file and a data file/object to return a template."""
 
-    # pylint: disable=too-few-public-methods
-
-    # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXtest", "*"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data: dict = {}
+        self.mapping: dict | None = None
+        self.partials: list = []
+        self.extensions = {
+            ".json": self._handle_json_file,
+            ".pickle": self._handle_pickle_file,
+            ".yaml": self._handle_yaml_file,
+            ".hdf5": self._handle_hdf5_file,
+            ".h5": self._handle_hdf5_file,
+            ".nxs": self._handle_hdf5_file,
+        }
 
     def read(
         self,
         template: dict = None,
         file_paths: tuple[str] = None,
-        objects: tuple[Any] = None,
+        objects: tuple[Any] | None = None,
+        **kwargs,
     ) -> dict:
-        """
-        Reads data from given file and returns a filled template dictionary.
+        """Sets up data from objects before delegating to MultiFormatReader."""
+        if objects:
+            self.data = objects[0]
+        # Pass objects=None so MultiFormatReader does not re-call handle_objects
+        return super().read(
+            template=template, file_paths=file_paths, objects=None, **kwargs
+        )
 
-        Only the data object is expected to be passed as the first object.
-        Alteratively, a data object represented with a file.json or file.xarray.pickle
-        can also be used.
-        The mapping is only accepted as file.mapping.json to the inputs.
-        """
-        data: dict = {}
-        mapping: dict = None
-        partials: list = []
+    def _handle_json_file(self, file_path: str) -> dict[str, Any]:
+        with open(file_path, encoding="utf-8") as f:
+            content = json.loads(f.read())
+        if ".mapping" in file_path:
+            self.mapping = content
+        else:
+            self.data = content
+        return {}
 
-        data = objects[0] if objects else data
+    def _handle_pickle_file(self, file_path: str) -> dict[str, Any]:
+        with open(file_path, "rb") as f:  # type: ignore[assignment]
+            self.data = pickle.load(f)  # type: ignore[arg-type]
+        return {}
 
-        for file_path in file_paths:
-            file_extension = file_path[file_path.rindex(".") :]
-            if file_extension == ".json":
-                with open(file_path, encoding="utf-8") as input_file:
-                    if ".mapping" in file_path:
-                        mapping = json.loads(input_file.read())
-                    else:
-                        data = json.loads(input_file.read())
-            elif file_extension == ".pickle":
-                with open(file_path, "rb") as input_file:  # type: ignore[assignment]
-                    data = pickle.load(input_file)  # type: ignore[arg-type]
-            elif file_extension == ".yaml":
-                with open(file_path) as input_file:
-                    merge(data, yaml.safe_load(input_file))
-            else:
-                is_hdf5 = False
-                with open(file_path, "rb") as input_file:
-                    if input_file.read(8) == b"\x89HDF\r\n\x1a\n":
-                        is_hdf5 = True
-                if is_hdf5:
-                    hdf = hdfdict.load(file_path)
-                    hdf.unlazy()
-                    merge(data, dict(hdf))
-                    if "entry@" in data and "partial" in data["entry@"]:
-                        partials.extend(data["entry@"]["partial"])
+    def _handle_yaml_file(self, file_path: str) -> dict[str, Any]:
+        with open(file_path) as f:
+            merge(self.data, yaml.safe_load(f))
+        return {}
 
+    def _handle_hdf5_file(self, file_path: str) -> dict[str, Any]:
+        hdf = hdfdict.load(file_path)
+        hdf.unlazy()
+        merge(self.data, dict(hdf))
+        if "entry@" in self.data and "partial" in self.data["entry@"]:
+            self.partials.extend(self.data["entry@"]["partial"])
+        return {}
+
+    def setup_template(self) -> dict[str, Any]:
+        """Builds the output template using the mapping and the NXDL template."""
+        mapping = self.mapping
         if mapping is None:
-            if len(partials) > 0:
-                mapping = get_map_from_partials(partials, template, data)
+            if self.partials:
+                mapping = get_map_from_partials(
+                    self.partials, self.nxdl_template, self.data
+                )
             else:
-                template = Template(
-                    {x: "/hierarchical/path/in/your/datafile" for x in template}
+                hint = Template(
+                    {x: "/hierarchical/path/in/your/datafile" for x in self.nxdl_template}
                 )
                 raise OSError(
                     "Please supply a JSON mapping file: "
                     " my_nxdl_map.mapping.json\n\n You can use this "
-                    "template for the required fields: \n" + str(template)
+                    "template for the required fields: \n" + str(hint)
                 )
 
-        new_template = Template()
+        # Build a result Template pre-populated with the NXDL structure so that
+        # fill_documented routes each path to the correct optionality sub-dict.
+        result = Template(self.nxdl_template)
         convert_shapes_to_slice_objects(mapping)
-
-        fill_documented(new_template, mapping, template, data)
-
-        fill_undocumented(mapping, new_template, data)
-
-        return new_template
+        fill_documented(result, mapping, self.nxdl_template, self.data)
+        fill_undocumented(mapping, result, self.data)
+        return result
 
 
-# This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
+# This has to be set to allow the convert script to use this reader.
 READER = JsonMapReader

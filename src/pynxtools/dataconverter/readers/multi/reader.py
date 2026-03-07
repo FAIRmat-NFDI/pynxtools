@@ -337,6 +337,7 @@ class MultiFormatReader(BaseReader):
         )
         self.config_file = config_file
         self.config_dict = {}
+        self.nxdl_template: Optional[dict] = None
 
     def setup_template(self) -> dict[str, Any]:
         """
@@ -405,6 +406,7 @@ class MultiFormatReader(BaseReader):
         self.kwargs = kwargs
         self.config_file = self.kwargs.get("config_file", self.config_file)
         self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)
+        self.nxdl_template = template
 
         template = Template(overwrite_keys=self.overwrite_keys)
 
