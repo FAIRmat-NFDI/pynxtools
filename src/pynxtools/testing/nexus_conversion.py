@@ -38,7 +38,8 @@ from pynxtools.dataconverter.helpers import (
     get_nxdl_root_and_path,
 )
 from pynxtools.dataconverter.validate_file import validate
-from pynxtools.nexus.nexus import HandleNexus
+from pynxtools.nexus.annotation import Annotator
+from pynxtools.nexus.handler import NexusFileHandler
 
 
 def get_log_file(nxs_file, log_file, tmp_path):
@@ -53,8 +54,7 @@ def get_log_file(nxs_file, log_file, tmp_path):
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = HandleNexus(logger, nxs_file, None, None)
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(nxs_file).process(Annotator(logger))
     return log_file
 
 

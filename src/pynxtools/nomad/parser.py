@@ -164,10 +164,12 @@ def _get_value(hdf_node):
 
 class NomadParser:
     """
-    Thin wrapper around :class:`~pynxtools.nexus.nexus.HandleNexus` for NOMAD archive population.
+    Thin wrapper around :class:`~pynxtools.nexus.handler.NexusFileHandler` for NOMAD archive
+    population.
 
-    Encapsulates HDF5 traversal and schema resolution, delegating to ``HandleNexus``
-    while providing a clean interface that can later be migrated to ``NexusFileHandler``.
+    Encapsulates HDF5 traversal via ``NexusFileHandler`` and dispatches each documented
+    node to ``Annotator``, which invokes *callback* for fields and attributes that are
+    present in the NXDL schema.
 
     Usage::
 

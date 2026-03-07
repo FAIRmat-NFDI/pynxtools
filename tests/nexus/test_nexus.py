@@ -31,7 +31,9 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_classes,
     get_nx_units,
 )
-from pynxtools.nexus.nexus import HandleNexus, decode_if_string
+from pynxtools.nexus.annotation import Annotator
+from pynxtools.nexus.handler import NexusFileHandler
+from pynxtools.nexus.nexus import decode_if_string
 
 logger = logging.getLogger(__name__)
 
@@ -179,8 +181,7 @@ def test_nexus(tmp_path):
     logger.addHandler(handler)
 
     np.set_printoptions(edgeitems=3, threshold=1000, precision=8, linewidth=75)
-    nexus_helper = HandleNexus(logger, example_data, None, None)
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(example_data).process(Annotator(logger))
     handler.flush()
 
     log_text = open(log_path, encoding="utf-8").read()
@@ -285,8 +286,7 @@ def test_c_option(tmp_path):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    nexus_helper = HandleNexus(logger, None, None, "/NXbeam")
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(None).process(Annotator(logger, c_inq_nd="/NXbeam"))
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
@@ -299,8 +299,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = HandleNexus(logger, None, None, "/NXdetector/data")
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(None).process(Annotator(logger, c_inq_nd="/NXdetector/data"))
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
@@ -312,8 +311,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = HandleNexus(logger, None, None, "/NXdata@signal")
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(None).process(Annotator(logger, c_inq_nd="/NXdata@signal"))
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
@@ -334,8 +332,9 @@ def test_d_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = HandleNexus(logger, None, "/entry/instrument/analyser/data", None)
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(None).process(
+        Annotator(logger, d_inq_nd="/entry/instrument/analyser/data")
+    )
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()

@@ -755,8 +755,15 @@ class HandleNexus:
         c_inq_nd=None,
         is_in_memory_file=False,
     ):
+        import warnings
+
         from pynxtools.nexus.handler import NexusFileHandler
 
+        warnings.warn(
+            "HandleNexus is deprecated. Use NexusFileHandler + Annotator directly.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         self.logger = logger
         self.d_inq_nd = d_inq_nd
         self.c_inq_nd = c_inq_nd
@@ -822,10 +829,12 @@ def main(nexus_file, documentation, concept):
             "Only one option either documentation (-d) or is_a relation "
             "with a concept (-c) can be requested."
         )
-    nexus_helper = HandleNexus(
-        logger, nexus_file, d_inq_nd=documentation, c_inq_nd=concept
+    from pynxtools.nexus.annotation import Annotator
+    from pynxtools.nexus.handler import NexusFileHandler
+
+    NexusFileHandler(nexus_file).process(
+        Annotator(logger, d_inq_nd=documentation, c_inq_nd=concept)
     )
-    nexus_helper.process_nexus_master_file(None)
 
 
 if __name__ == "__main__":
