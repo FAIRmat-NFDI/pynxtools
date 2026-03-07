@@ -42,7 +42,6 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import decode_or_not
-from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad.utils import (
     FIELD_STATISTICS,
     REPLACEMENT_FOR_NX,
@@ -188,25 +187,18 @@ class NomadParser:
             callback: A callable with the signature ``(params: dict, attr=None) -> None``.
                 ``params`` contains ``hdf_info``, ``nxdef``, ``nxdl_path``, ``val``,
                 and ``logger`` keys, matching the ``_nexus_populate`` interface.
+
+        Note:
+            The ``nxdl_path`` value in *params* is still a ``list[ET.Element]``
+            produced by ``get_nxdl_doc``.  A future migration will replace this
+            with a typed ``NexusNode`` once ``_to_section`` / ``_populate_data``
+            in the NOMAD parser are updated to consume ``NexusNode`` directly.
         """
-        # TODO: Replace HandleNexus with NexusFileHandler once NomadVisitor exists:
-        #
-        #   from pynxtools.nexus.handler import NexusFileHandler
-        #   from pynxtools.nomad.visitor import NomadVisitor   # to be created
-        #   NexusFileHandler(self._mainfile).process(NomadVisitor(callback, self._logger))
-        #
-        # TODO: Replace the opaque ``params`` dict with typed NexusVisitor hooks:
-        #   on_field(hdf_path, hdf_node, nexus_node) -> None
-        #   on_attribute(hdf_path, attr_name, attr_value, parent, nexus_node) -> None
-        #   This eliminates the implicit contract between HandleNexus and _nexus_populate.
-        #
-        # TODO: Pass NexusNode directly instead of ``nxdl_path`` (list[ET.Element]).
-        #   NexusNode carries optionality, inheritance, docs, and type info natively.
-        #
-        # TODO: Derive the appdef from NXentry/@definition in the file rather than
-        #   relying on HandleNexus heuristics, so multi-entry files are handled correctly.
-        helper = HandleNexus(self._logger, self._mainfile)
-        helper.process_nexus_master_file(callback)
+        from pynxtools.nexus.annotation import Annotator
+        from pynxtools.nexus.handler import NexusFileHandler
+
+        visitor = Annotator(self._logger, parser=callback)
+        NexusFileHandler(self._mainfile).process(visitor)
 
 
 class NexusParser(MatchingParser):
