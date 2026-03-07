@@ -754,8 +754,15 @@ class HandleNexus:
         c_inq_nd=None,
         is_in_memory_file=False,
     ):
+        import warnings
+
         from pynxtools.nexus.handler import NexusFileHandler
 
+        warnings.warn(
+            "HandleNexus is deprecated. Use NexusFileHandler + Annotator directly.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         self.logger = logger
         self.d_inq_nd = d_inq_nd
         self.c_inq_nd = c_inq_nd
