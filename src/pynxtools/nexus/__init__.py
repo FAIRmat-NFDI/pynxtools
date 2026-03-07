@@ -1,4 +1,14 @@
-"""init file"""
+"""
+Public API for the pynxtools.nexus package.
+
+Primary entry points:
+
+* `NexusFileHandler` – walks a NeXus/HDF5 file and dispatches each node to a
+  `NexusVisitor` implementation.
+* `NexusVisitor` – base class for visitor implementations.
+* `Annotator` – annotates every node with NXDL documentation
+  (used by the ``read_nexus`` CLI).
+"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -16,3 +26,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+from pynxtools.nexus.annotation import Annotator
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
+
+__all__ = [
+    "NexusFileHandler",
+    "NexusVisitor",
+    "Annotator",
+]
