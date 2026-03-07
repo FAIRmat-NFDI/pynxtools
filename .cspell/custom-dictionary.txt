@@ -207,3 +207,6 @@ xraylens
 yaxis
 zaxis
 zenodo
+myreader
+Myreader
+MyreaderReader
