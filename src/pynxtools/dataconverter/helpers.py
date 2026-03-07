@@ -1281,7 +1281,7 @@ def convert_to_hill(atoms_typ):
     return atom_list + list(atoms_typ)
 
 
-def add_default_root_attributes(data, filename):
+def add_default_root_attributes(data, filename, append: bool = False):
     """
     Takes a dict/Template and adds NXroot fields/attributes that are inherently available
     """
@@ -1308,6 +1308,8 @@ def add_default_root_attributes(data, filename):
     update_and_warn("/@h5py_version", h5py.__version__)
     update_and_warn("/@creator", "pynxtools")
     update_and_warn("/@creator_version", get_pynxtools_version())
+    if append:
+        update_and_warn("/@append_mode", "True")
 
 
 def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):

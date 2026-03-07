@@ -71,6 +71,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
 - [Note on versioning](learn/pynxtools/versioning.md)
 - [Using and tailoring compression](learn/pynxtools/compression.md)
+- [Append mode for the dataconverter](learn/pynxtools/dataconverter-append-mode.md)
 
 </div>
 <div markdown="block">

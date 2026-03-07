@@ -37,6 +37,7 @@ nav:
       - learn/pynxtools/multi-format-reader.md
       - learn/pynxtools/versioning.md
       - learn/pynxtools/compression.md
+      - learn/pynxtools/dataconverter-append-mode.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md

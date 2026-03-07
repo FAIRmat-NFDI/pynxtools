@@ -11,6 +11,8 @@ repos:
     rev: v1.19.1
     hooks:
       - id: mypy  # static type checking
+        additional_dependencies:
+          - types-PyYAML
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.21.1
