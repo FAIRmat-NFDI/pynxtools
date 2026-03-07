@@ -25,6 +25,8 @@ dependencies = [
     "click>=7.1.2",
     "click_default_group",
     "h5py>=3.6.0",
+    "hdf5plugin",
+    "blosc2",
     "xarray>=0.20.2",
     "PyYAML>=6.0",
     'numpy',
