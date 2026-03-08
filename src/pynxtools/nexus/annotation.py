@@ -160,11 +160,12 @@ class Annotator(NexusVisitor):
             if decode_if_string(candidate.attrs.get("NX_class", b"")) == "NXentry":
                 try:
                     definition = candidate["definition"][()]
-                    return (
+                    raw = (
                         definition.decode()
                         if isinstance(definition, bytes)
                         else str(definition)
                     )
+                    return raw.strip()
                 except (KeyError, AttributeError):
                     return "NXroot"
         return "NO NXentry found"

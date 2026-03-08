@@ -94,7 +94,7 @@ def get_nx_class_path(hdf_info):
     return ""
 
 
-def check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node):
+def _check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node):
     """Check for several attributes. - deprecation - enums - nxdata_axis"""
     elem, path = variables
     dep_str = elem.attrib.get("deprecated")  # check for deprecation
@@ -123,7 +123,7 @@ def check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node):
     return elem, path, doc, elem_list, attr, hdf_node
 
 
-def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
+def _get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
     elem, elem_list, attr, hdf_node, doc, nxdl_path, req_str, path, hdf_info
 ):
     """Get nxdl documentation for an attribute"""
@@ -188,7 +188,7 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
                 elem_list,
                 attr,
                 hdf_node,
-            ) = check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node)
+            ) = _check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node)
     elem = old_elem
     if req_str is None and doc:
         if attr != "NX_class":
@@ -202,10 +202,17 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
 
 
 def get_nxdl_doc(hdf_info, doc, attr=False):
-    """Get nxdl documentation for an HDF5 node (or its attribute)"""
+    """Get nxdl documentation for an HDF5 node (or its attribute).
+
+    .. deprecated::
+        Uses the legacy XML-element traversal approach.  This function exists
+        solely to support the NOMAD parser callback in
+        :class:`~.annotation.Annotator`; that call-site is tagged TODO for
+        migration to :class:`~.nexus_tree.NexusNode`.
+    """
     hdf_node = hdf_info["hdf_node"]
     # new way: retrieve multiple inherited base classes
-    (class_path, nxdl_path, elem_list) = get_inherited_hdf_nodes(
+    (class_path, nxdl_path, elem_list) = _get_inherited_hdf_nodes(
         nx_name=get_nxdl_entry(hdf_info),
         hdf_node=hdf_node,
         hdf_path=hdf_info["hdf_path"] if "hdf_path" in hdf_info else None,
@@ -229,7 +236,7 @@ def get_nxdl_doc(hdf_info, doc, attr=False):
             _logger.debug("")
         return ("None", None, None)
     if attr:
-        return get_nxdl_attr_doc(
+        return _get_nxdl_attr_doc(
             elem,
             elem_list,
             attr,
@@ -244,13 +251,13 @@ def get_nxdl_doc(hdf_info, doc, attr=False):
     if doc:
         _logger.debug(req_str)
     variables = [elem, path]
-    elem, path, doc, elem_list, attr, hdf_node = check_deprecation_enum_axis(
+    elem, path, doc, elem_list, attr, hdf_node = _check_deprecation_enum_axis(
         variables, doc, elem_list, attr, hdf_node
     )
     return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
 
 
-def helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
+def _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
     """find the best fitting name in all children"""
     hdf_path, hdf_node, hdf_class_path = hdf_info2
     hdf_name = hdf_path[path_index]
@@ -274,7 +281,7 @@ def helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
     return hdf_path, hdf_node, hdf_class_path, elem_list, path_index, attr, html_name
 
 
-def get_hdf_path(hdf_info):
+def _get_hdf_path(hdf_info):
     """Get the hdf_path from an hdf_info"""
     if "hdf_path" in hdf_info:
         return hdf_info["hdf_path"].split("/")[1:]
@@ -283,7 +290,7 @@ def get_hdf_path(hdf_info):
 
 # pylint: disable=too-many-arguments,too-many-locals
 @cache
-def get_inherited_hdf_nodes(
+def _get_inherited_hdf_nodes(
     nx_name: str = None,
     elem: ET._Element = None,
     hdf_node=None,
@@ -308,7 +315,7 @@ def get_inherited_hdf_nodes(
     if hdf_root:
         hdf_root["hdf_root"] = hdf_root
     hdf_node = hdf_info["hdf_node"]
-    hdf_path = get_hdf_path(hdf_info)
+    hdf_path = _get_hdf_path(hdf_info)
     hdf_class_path = get_nx_class_path(hdf_info).split("/")[1:]
     if attr:
         hdf_path.append(attr)
@@ -327,7 +334,7 @@ def get_inherited_hdf_nodes(
             path_index,
             attr,
             html_name,
-        ] = helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr)
+        ] = _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr)
         if html_name is None:  # return if NOT IN SCHEMA
             return (class_path, nxdl_elem_path, None)
         elem_list, html_name = walk_elist(elem_list, html_name)
@@ -337,7 +344,7 @@ def get_inherited_hdf_nodes(
     return (class_path, nxdl_elem_path, elem_list)
 
 
-def process_node(hdf_node, hdf_path, parser, doc=True):
+def _process_node(hdf_node, hdf_path, parser, doc=True):
     """Processes an hdf5 node.
     - it logs the node found and also checks for its attributes
     - retrieves the corresponding nxdl documentation
@@ -394,7 +401,13 @@ def process_node(hdf_node, hdf_path, parser, doc=True):
 
 
 def get_default_plottable(root):
-    """Get default plottable"""
+    """Walk *root* to identify and log the default plottable signal and axes.
+
+    .. deprecated::
+        Depends on :func:`_process_node` / :func:`get_nxdl_doc`, the legacy
+        XML traversal stack.  Called from :meth:`.annotation.Annotator.on_complete`;
+        should be replaced by a pure NXdata inspection that uses the NexusNode tree.
+    """
     print_default_plottable_header()
     # v3 from 2014
     # nxentry
@@ -434,7 +447,7 @@ def get_default_plottable(root):
         return
     _logger.debug("")
     _logger.debug("NXdata group has been identified: " + nxdata.name)
-    process_node(nxdata, nxdata.name, None, False)
+    _process_node(nxdata, nxdata.name, None, False)
     # signal
     signal = None
     signal_dataset_name = decode_if_string(nxdata.attrs.get("signal"))
@@ -449,19 +462,29 @@ def get_default_plottable(root):
         return
     _logger.debug("")
     _logger.debug("Signal has been identified: " + signal.name)
-    process_node(signal, signal.name, None, False)
+    _process_node(signal, signal.name, None, False)
     logger_auxiliary_signal(nxdata)  # check auxiliary_signals
     dim = len(signal.shape)
     axes = []  # axes
     axis_helper(dim, nxdata, signal, axes)
 
 
+#: Backward-compatibility alias — new code should use ``_get_inherited_hdf_nodes``.
+get_inherited_hdf_nodes = _get_inherited_hdf_nodes
+
+
 def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
     """Return list of nxdl concept paths for a nxdl element which corresponds to
     hdf node.
+
+    .. deprecated::
+        This function uses the legacy XML-element traversal approach.
+        The ``-c`` / concept-query code path in :class:`~.annotation.Annotator`
+        is the only first-party caller and should be migrated to use
+        :class:`~.nexus_tree.NexusNode` directly.
     """
     hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
-    (_, _, elem_list) = get_inherited_hdf_nodes(
+    (_, _, elem_list) = _get_inherited_hdf_nodes(
         nx_name=get_nxdl_entry(hdf_info),
         hdf_node=hdf_node,
         hdf_path=hdf_info["hdf_path"] if "hdf_path" in hdf_info else None,

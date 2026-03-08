@@ -586,7 +586,8 @@ class NexusNode(NodeMixin):
 
         Args:
             path: Slash-separated HDF5 path relative to this node (no leading ``/``).
-            node_type: Node type filter for the **final** path element.
+            node_type: Node type filter for the **final** path element only.
+                Intermediate path segments are always resolved as groups.
             nx_class: NX_class filter for the **final** path element (groups only).
             hint: ``'axis'`` or ``'signal'`` hint for NXdata disambiguation.
             _cache: Optional dict used as a simple path→node memoisation store.
@@ -602,8 +603,11 @@ class NexusNode(NodeMixin):
             result = self
         else:
             *prev_parts, last_elem = path.rsplit("/", 1)
+            # Intermediate path elements are always HDF5 groups — constrain
+            # the search so that a schema field with the same name is never
+            # selected in place of the required parent group.
             parent = (
-                self.find_node_at_path(prev_parts[0], _cache=_cache)
+                self.find_node_at_path(prev_parts[0], node_type="group", _cache=_cache)
                 if prev_parts
                 else self
             )
