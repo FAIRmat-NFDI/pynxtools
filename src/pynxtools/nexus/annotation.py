@@ -26,11 +26,11 @@ information for every node in a NeXus file.
 
 Three operating modes (controlled by constructor arguments):
 
-* **Default** (both *d_inq_nd* and *c_inq_nd* are ``None``):
+* **Default** (both *documentation* and *concept* are ``None``):
   Annotate every node and print the default-plottable summary.
-* **-d / documentation mode** (*d_inq_nd* set):
+* **-d / documentation mode** (*documentation* set):
   Annotate only the single node at the given HDF5 path.
-* **-c / concept mode** (*c_inq_nd* set):
+* **-c / concept mode** (*concept* set):
   Find all HDF5 nodes that satisfy an IS-A relation with the given
   NXDL concept path and log their paths.
 """
@@ -63,10 +63,10 @@ class Annotator(NexusVisitor):
     ----------
     logger:
         Logger used for all output.
-    d_inq_nd:
+    documentation:
         If set, only the node at this HDF5 path is annotated (``-d`` mode).
         Accepts paths with or without a leading ``/``.
-    c_inq_nd:
+    concept:
         If set, collect all HDF5 paths whose schema IS-A the given NXDL
         concept path (``-c`` mode).  Results are logged in `on_complete`.
     parser:
@@ -77,15 +77,15 @@ class Annotator(NexusVisitor):
     def __init__(
         self,
         logger,
-        d_inq_nd: str | None = None,
-        c_inq_nd: str | None = None,
+        documentation: str | None = None,
+        concept: str | None = None,
         parser: Callable | None = None,
     ) -> None:
         self.logger = logger
-        self.d_inq_nd = d_inq_nd
-        self.c_inq_nd = c_inq_nd
+        self.documentation = documentation
+        self.concept = concept
         self.parser = parser
-        self.hdf_path_list_for_c_inq_nd: list[str] = []
+        self._concept_matches: list[str] = []
         # Per-appdef NexusNode tree cache and path→node lookup cache
         self._tree_cache: dict[str, NexusNode | None] = {}
         self._node_cache: dict[str, NexusNode | None] = {}
@@ -98,14 +98,14 @@ class Annotator(NexusVisitor):
         """Annotate a group or dispatch concept query."""
         if self._should_annotate(hdf_path):
             self._annotate_group(hdf_path, hdf_node)
-        elif self.c_inq_nd is not None:
+        elif self.concept is not None:
             self._handle_concept_query(hdf_path, hdf_node)
 
     def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
         """Annotate a field or dispatch concept query."""
         if self._should_annotate(hdf_path):
             self._annotate_field(hdf_path, hdf_node)
-        elif self.c_inq_nd is not None:
+        elif self.concept is not None:
             self._handle_concept_query(hdf_path, hdf_node)
 
     def on_attribute(
@@ -121,13 +121,13 @@ class Annotator(NexusVisitor):
 
     def on_complete(self, root: h5py.File) -> None:
         """Post-traversal: log -c results or print the default plottable."""
-        if self.c_inq_nd is not None:
-            for hdf_path in self.hdf_path_list_for_c_inq_nd:
+        if self.concept is not None:
+            for hdf_path in self._concept_matches:
                 self.logger.info(hdf_path)
             return
 
-        if self.d_inq_nd is None and self.parser is None:
-            get_default_plottable(root, self.logger)
+        if self.documentation is None and self.parser is None:
+            get_default_plottable(root)
 
     # ------------------------------------------------------------------
     # Schema resolution — NexusNode-based
@@ -135,11 +135,11 @@ class Annotator(NexusVisitor):
 
     def _should_annotate(self, hdf_path: str) -> bool:
         """Return True if *hdf_path* should be annotated in the current mode."""
-        if self.d_inq_nd is None and self.c_inq_nd is None:
+        if self.documentation is None and self.concept is None:
             return True
-        if self.d_inq_nd is not None and hdf_path in (
-            self.d_inq_nd,
-            self.d_inq_nd.lstrip("/"),
+        if self.documentation is not None and hdf_path in (
+            self.documentation,
+            self.documentation.lstrip("/"),
         ):
             return True
         return False
@@ -304,7 +304,7 @@ class Annotator(NexusVisitor):
         )
 
         # NXdata axis/signal annotation (pure HDF5, no schema)
-        chk_nxdata_axis(hdf_node, name, self.logger)
+        chk_nxdata_axis(hdf_node, name)
 
         val = (
             str(decode_if_string(hdf_node[()])).split("\n")
@@ -333,7 +333,7 @@ class Annotator(NexusVisitor):
             hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
             from pynxtools.nexus.nexus import get_nxdl_doc
 
-            _, nxdef, nxdl_path_doc = get_nxdl_doc(hdf_info, self.logger, doc=False)
+            _, nxdef, nxdl_path_doc = get_nxdl_doc(hdf_info, doc=False)
             self.parser(
                 {
                     "hdf_info": hdf_info,
@@ -383,7 +383,7 @@ class Annotator(NexusVisitor):
             from pynxtools.nexus.nexus import get_nxdl_doc
 
             req_str, nxdef, nxdl_path = get_nxdl_doc(
-                hdf_info, self.logger, doc=False, attr=attr_name
+                hdf_info, doc=False, attr=attr_name
             )
             if req_str and "NOT IN SCHEMA" not in req_str and "None" not in req_str:
                 self.parser(
@@ -426,11 +426,11 @@ class Annotator(NexusVisitor):
         hdf_path: str,
         hdf_node: h5py.Group | h5py.Dataset,
     ) -> None:
-        """Collect HDF5 paths that satisfy IS-A relation with *c_inq_nd*."""
+        """Collect HDF5 paths that satisfy IS-A relation with *concept*."""
         from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nxdl_child
         from pynxtools.nexus.nexus import get_all_is_a_rel_from_hdf_node
 
-        attributed_concept = self.c_inq_nd.split("@")
+        attributed_concept = self.concept.split("@")
         attr = attributed_concept[1] if len(attributed_concept) > 1 else None
 
         elist = get_all_is_a_rel_from_hdf_node(hdf_node, "/" + hdf_path)
@@ -448,7 +448,7 @@ class Annotator(NexusVisitor):
                 fnd_superclass = True
 
                 if attr is None:
-                    self.hdf_path_list_for_c_inq_nd.append(hdf_path)
+                    self._concept_matches.append(hdf_path)
                     break
 
                 for attribute in hdf_node.attrs.keys():
@@ -459,9 +459,7 @@ class Annotator(NexusVisitor):
                         "nxdlpath"
                     ).endswith(attr):
                         fnd_superclass_attr = True
-                        self.hdf_path_list_for_c_inq_nd.append(
-                            hdf_path + "@" + attribute
-                        )
+                        self._concept_matches.append(hdf_path + "@" + attribute)
                         break
 
             if fnd_superclass_attr:
