@@ -37,36 +37,36 @@ import numpy as np
 
 from pynxtools.nexus.utils import decode_if_string
 
+_logger = logging.getLogger("pynxtools")
 
-def chk_nxdata_axis_v2(
-    hdf_node: h5py.Dataset, name: str, logger: logging.Logger
-) -> None:
+
+def chk_nxdata_axis_v2(hdf_node: h5py.Dataset, name: str) -> None:
     """Check if *hdf_node* is referenced as an axis under the older NXdata conventions (v2)."""
     own_signal = hdf_node.attrs.get("signal")  # check for being a Signal
     if own_signal is str and own_signal == "1":
-        logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
+        _logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
     own_axes = hdf_node.attrs.get("axes")  # check for being an axis
     if own_axes is str:
         axes = own_axes.split(":")
         for i in range(len(axes)):
             if axes[i] and name == axes[i]:
-                logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
+                _logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
                 return None
     own_primary_axis = hdf_node.attrs.get("primary")
     own_axis = hdf_node.attrs.get("axis")
     if own_axis is int:
         # also convention v1
         if own_primary_axis is int and own_primary_axis == 1:
-            logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
+            _logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
         else:
-            logger.debug(
+            _logger.debug(
                 "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d",
                 own_axis - 1,
             )
     return None
 
 
-def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str, logger: logging.Logger) -> None:
+def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> None:
     """Check if *hdf_node* is referenced as a signal or axis in an NXdata group.
 
     Implements the NeXus Data Plotting Standard v3 (2014).  Falls back to v2
@@ -79,46 +79,43 @@ def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str, logger: logging.Logger) -
         return None
     signal = parent.attrs.get("signal")  # check for Signal
     if signal and name == signal:
-        logger.debug("Dataset referenced as NXdata SIGNAL")
+        _logger.debug("Dataset referenced as NXdata SIGNAL")
         return None
     axes = parent.attrs.get("axes")  # check for default Axes
     if axes is str:
         if name == axes:
-            logger.debug("Dataset referenced as NXdata AXIS")
+            _logger.debug("Dataset referenced as NXdata AXIS")
             return None
     elif axes is not None:
         for i, j in enumerate(axes):
             if name == j:
                 indices = parent.attrs.get(j + "_indices")
                 if indices is int:
-                    logger.debug(f"Dataset referenced as NXdata AXIS #{indices}")
+                    _logger.debug(f"Dataset referenced as NXdata AXIS #{indices}")
                 else:
-                    logger.debug(f"Dataset referenced as NXdata AXIS #{i}")
+                    _logger.debug(f"Dataset referenced as NXdata AXIS #{i}")
                 return None
     indices = parent.attrs.get(name + "_indices")  # check for alternative Axes
     if indices is int:
-        logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
-    return chk_nxdata_axis_v2(hdf_node, name, logger)  # check for older conventions
+        _logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
+    return chk_nxdata_axis_v2(hdf_node, name)  # check for older conventions
 
 
-def logger_auxiliary_signal(
-    logger: logging.Logger, nxdata: h5py.Group
-) -> logging.Logger:
+def logger_auxiliary_signal(nxdata: h5py.Group) -> None:
     """Log any auxiliary signals declared in *nxdata*."""
     aux = decode_if_string(nxdata.attrs.get("auxiliary_signals"))
     if aux is not None:
         if isinstance(aux, str):
             aux = [aux]
         for aux_sig in aux:
-            logger.debug(f"Further auxiliary signal has been identified: {aux_sig}")
-    return logger
+            _logger.debug(f"Further auxiliary signal has been identified: {aux_sig}")
 
 
-def print_default_plottable_header(logger: logging.Logger) -> None:
+def print_default_plottable_header() -> None:
     """Emit a three-line visual separator before the default-plottable block."""
-    logger.debug("========================")
-    logger.debug("=== Default Plottable ===")
-    logger.debug("========================")
+    _logger.debug("========================")
+    _logger.debug("=== Default Plottable ===")
+    _logger.debug("========================")
 
 
 def entry_helper(root: h5py.Group) -> h5py.Group | None:
@@ -197,7 +194,6 @@ def get_single_or_multiple_axes(
     ax_datasets: str | list | np.ndarray | None,
     a_item: int,
     ax_list: list,
-    logger: logging.Logger,
 ) -> list:
     """Resolve axis datasets for dimension *a_item* from the ``axes`` attribute."""
     try:
@@ -221,12 +217,12 @@ def get_single_or_multiple_axes(
             ):  # positional determination of the dimension number
                 ax_list.append(nxdata[ax_datasets[a_item]])
         else:
-            logger.warning(
+            _logger.warning(
                 f"The 'axes' attribute is neither a string or a list or an np.ndarray "
                 f"of strings, check {nxdata.name}"
             )
     except KeyError:
-        logger.warning(
+        _logger.warning(
             f"Individual axis in 'axes' attribute for NXdata {nxdata.name} is not found"
         )
     return ax_list
@@ -237,16 +233,13 @@ def axis_helper(
     nxdata: h5py.Group,
     signal: h5py.Dataset,
     axes: list,
-    logger: logging.Logger,
 ) -> None:
     """Collect axis datasets for each dimension of *signal* (in-place into *axes*)."""
     for a_item in range(dim):
         ax_list: list = []
         # primary axes listed in attribute axes
         ax_datasets = decode_if_string(nxdata.attrs.get("axes"))
-        ax_list = get_single_or_multiple_axes(
-            nxdata, ax_datasets, a_item, ax_list, logger
-        )
+        ax_list = get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list)
         for attr in nxdata.attrs.keys():  # check for corresponding AXISNAME_indices
             if (
                 attr.endswith("_indices")
@@ -264,7 +257,7 @@ def axis_helper(
         if not ax_list:  # check for axis/primary specifications
             find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list)
         axes.append(ax_list)
-        logger.debug("")
-        logger.debug(
+        _logger.debug("")
+        _logger.debug(
             f"For Axis #{a_item}, {len(ax_list)} axes have been identified: {ax_list!s}"
         )

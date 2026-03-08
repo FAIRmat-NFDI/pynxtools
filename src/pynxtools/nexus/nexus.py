@@ -43,6 +43,8 @@ from pynxtools.nexus.nxdata import (
 )
 from pynxtools.nexus.utils import decode_if_string
 
+_logger = logging.getLogger("pynxtools")
+
 
 def get_nxdl_entry(hdf_info):
     """Get the nxdl application definition for an HDF5 node"""
@@ -94,35 +96,35 @@ def get_nx_class_path(hdf_info):
 
 def check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node):
     """Check for several attributes. - deprecation - enums - nxdata_axis"""
-    logger, elem, path = variables
+    elem, path = variables
     dep_str = elem.attrib.get("deprecated")  # check for deprecation
     if dep_str:
         if doc:
-            logger.debug("DEPRECATED - " + dep_str)
+            _logger.debug("DEPRECATED - " + dep_str)
     for base_elem in elem_list if not attr else [elem]:  # check for enums
         s_doc = get_nxdl_child(base_elem, "enumeration", go_base=False)
         if s_doc is not None:
             if doc:
-                logger.debug("enumeration (" + get_node_concept_path(base_elem) + "):")
+                _logger.debug("enumeration (" + get_node_concept_path(base_elem) + "):")
             for item in s_doc:
                 if isinstance(item, ET._Comment):
                     continue
                 if get_local_name_from_xml(item) == "item":
                     if doc:
-                        logger.debug("-> " + item.attrib["value"])
+                        _logger.debug("-> " + item.attrib["value"])
     chk_nxdata_axis(
-        hdf_node, path.split("/")[-1], logger
+        hdf_node, path.split("/")[-1]
     )  # look for NXdata reference (axes/signal)
     for base_elem in elem_list if not attr else [elem]:  # check for doc
         s_doc = get_nxdl_child(base_elem, "doc", go_base=False)
         if doc:
-            logger.debug("documentation (" + get_node_concept_path(base_elem) + "):")
-            logger.debug(s_doc.text if s_doc is not None else "")
-    return logger, elem, path, doc, elem_list, attr, hdf_node
+            _logger.debug("documentation (" + get_node_concept_path(base_elem) + "):")
+            _logger.debug(s_doc.text if s_doc is not None else "")
+    return elem, path, doc, elem_list, attr, hdf_node
 
 
 def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
-    elem, elem_list, attr, hdf_node, logger, doc, nxdl_path, req_str, path, hdf_info
+    elem, elem_list, attr, hdf_node, doc, nxdl_path, req_str, path, hdf_info
 ):
     """Get nxdl documentation for an attribute"""
     new_elem = []
@@ -138,20 +140,20 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
             and elem_index == 0
         ):
             elem = None
-            logger, doc, attr = write_doc_string(logger, doc, attr)
+            _, doc, attr = write_doc_string(_logger, doc, attr)
             new_elem = elem
             break
         # units category is a compulsory attribute for any fields
         if attr == "units" and isinstance(hdf_node, h5py.Dataset):
             req_str = "<<REQUIRED>>"
-            logger, act_elem, attr_inheritance_chain, doc, attr = try_find_units(
-                logger, act_elem, attr_inheritance_chain, doc, attr
+            _, act_elem, attr_inheritance_chain, doc, attr = try_find_units(
+                _logger, act_elem, attr_inheritance_chain, doc, attr
             )
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith("_units"):
-            logger, act_elem, attr_inheritance_chain, doc, attr, req_str = (
+            _, act_elem, attr_inheritance_chain, doc, attr, req_str = (
                 check_attr_name_nxdl(
-                    (logger, act_elem, attr_inheritance_chain, doc, attr, req_str)
+                    (_logger, act_elem, attr_inheritance_chain, doc, attr, req_str)
                 )
             )
         # default is allowed for groups
@@ -161,26 +163,25 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
             act_elem = get_nxdl_child(
                 act_elem, attr, nexus_type="attribute", go_base=False
             )
-            logger, act_elem, attr_inheritance_chain, doc, attr = try_find_default(
-                logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
+            _, act_elem, attr_inheritance_chain, doc, attr = try_find_default(
+                _logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
             )
         else:  # other attributes
             act_elem = get_nxdl_child(
                 act_elem, attr, nexus_type="attribute", go_base=False
             )
             if act_elem is not None:
-                logger, act_elem, attr_inheritance_chain, doc, attr = other_attrs(
-                    logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
+                _, act_elem, attr_inheritance_chain, doc, attr = other_attrs(
+                    _logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
                 )
         if act_elem is not None:
             new_elem.append(act_elem)
             if req_str is None:
                 req_str = get_required_string(act_elem)  # check for being required
                 if doc:
-                    logger.debug(req_str)
-            variables = [logger, act_elem, path]
+                    _logger.debug(req_str)
+            variables = [act_elem, path]
             (
-                logger,
                 elem,
                 path,
                 doc,
@@ -191,8 +192,8 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
     elem = old_elem
     if req_str is None and doc:
         if attr != "NX_class":
-            logger.debug("@" + attr + " - IS NOT IN SCHEMA")
-        logger.debug("")
+            _logger.debug("@" + attr + " - IS NOT IN SCHEMA")
+        _logger.debug("")
 
     # Add the lowest child element to the nxdl_path
     if attr_inheritance_chain:
@@ -200,7 +201,7 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
     return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
 
 
-def get_nxdl_doc(hdf_info, logger, doc, attr=False):
+def get_nxdl_doc(hdf_info, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)"""
     hdf_node = hdf_info["hdf_node"]
     # new way: retrieve multiple inherited base classes
@@ -214,8 +215,8 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     nxdl_path = nxdl_path.copy()
     elem = elem_list[0] if class_path and elem_list else None
     if doc:
-        logger.debug("classpath: " + str(class_path))
-        logger.debug(
+        _logger.debug("classpath: " + str(class_path))
+        _logger.debug(
             "NOT IN SCHEMA"
             if elem is None
             else "classes:\n" + "\n".join(get_node_concept_path(e) for e in elem_list)
@@ -225,7 +226,7 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     req_str = None
     if elem is None:
         if doc:
-            logger.debug("")
+            _logger.debug("")
         return ("None", None, None)
     if attr:
         return get_nxdl_attr_doc(
@@ -233,7 +234,6 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
             elem_list,
             attr,
             hdf_node,
-            logger,
             doc,
             nxdl_path,
             req_str,
@@ -242,9 +242,9 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
         )
     req_str = get_required_string(elem)  # check for being required
     if doc:
-        logger.debug(req_str)
-    variables = [logger, elem, path]
-    logger, elem, path, doc, elem_list, attr, hdf_node = check_deprecation_enum_axis(
+        _logger.debug(req_str)
+    variables = [elem, path]
+    elem, path, doc, elem_list, attr, hdf_node = check_deprecation_enum_axis(
         variables, doc, elem_list, attr, hdf_node
     )
     return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
@@ -337,7 +337,7 @@ def get_inherited_hdf_nodes(
     return (class_path, nxdl_elem_path, elem_list)
 
 
-def process_node(hdf_node, hdf_path, parser, logger, doc=True):
+def process_node(hdf_node, hdf_path, parser, doc=True):
     """Processes an hdf5 node.
     - it logs the node found and also checks for its attributes
     - retrieves the corresponding nxdl documentation
@@ -346,20 +346,20 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     - NOMAD parser: store in NOMAD"""
     hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
     if isinstance(hdf_node, h5py.Dataset):
-        logger.debug(f"===== FIELD (/{hdf_path}): {hdf_node}")
+        _logger.debug(f"===== FIELD (/{hdf_path}): {hdf_node}")
         val = (
             str(decode_if_string(hdf_node[()])).split("\n")
             if len(hdf_node.shape) <= 1
             else str(decode_if_string(hdf_node[0])).split("\n")
         )
-        logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
+        _logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
     else:
-        logger.debug(
+        _logger.debug(
             f"===== GROUP (/{hdf_path} "
             f"[{get_nxdl_entry(hdf_info)}"
             f"::{get_nx_class_path(hdf_info)}]): {hdf_node}"
         )
-    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc)
+    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
         parser(
             {
@@ -367,14 +367,14 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
                 "nxdef": nxdef,
                 "nxdl_path": nxdl_path,
                 "val": val,
-                "logger": logger,
+                "logger": _logger,
             }
         )
     for key, value in hdf_node.attrs.items():
-        logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
+        _logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
         val = str(decode_if_string(value)).split("\n")
-        logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
-        (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc, attr=key)
+        _logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
+        (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, doc, attr=key)
         if (
             parser is not None
             and req_str is not None
@@ -387,15 +387,15 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
                     "nxdef": nxdef,
                     "nxdl_path": nxdl_path,
                     "val": val,
-                    "logger": logger,
+                    "logger": _logger,
                 },
                 attr=key,
             )
 
 
-def get_default_plottable(root, logger):
+def get_default_plottable(root):
     """Get default plottable"""
-    print_default_plottable_header(logger)
+    print_default_plottable_header()
     # v3 from 2014
     # nxentry
     nxentry = None
@@ -408,10 +408,10 @@ def get_default_plottable(root, logger):
     if not nxentry:
         nxentry = entry_helper(root)
     if not nxentry:
-        logger.debug("No NXentry has been found")
+        _logger.debug("No NXentry has been found")
         return
-    logger.debug("")
-    logger.debug("NXentry has been identified: " + nxentry.name)
+    _logger.debug("")
+    _logger.debug("NXentry has been identified: " + nxentry.name)
     # nxdata
     nxdata = None
     nxgroup = nxentry
@@ -421,7 +421,7 @@ def get_default_plottable(root, logger):
             nxgroup = nxgroup[default_group_name]
             default_group_name = decode_if_string(nxgroup.attrs.get("default"))
         except KeyError:
-            logger.debug(f"""No default group with a name
+            _logger.debug(f"""No default group with a name
                          {default_group_name} for {nxgroup} has been found.""")
             break
 
@@ -430,11 +430,11 @@ def get_default_plottable(root, logger):
     else:
         nxdata = nxgroup
     if not nxdata:
-        logger.debug("No NXdata group has been found")
+        _logger.debug("No NXdata group has been found")
         return
-    logger.debug("")
-    logger.debug("NXdata group has been identified: " + nxdata.name)
-    process_node(nxdata, nxdata.name, None, logger, False)
+    _logger.debug("")
+    _logger.debug("NXdata group has been identified: " + nxdata.name)
+    process_node(nxdata, nxdata.name, None, False)
     # signal
     signal = None
     signal_dataset_name = decode_if_string(nxdata.attrs.get("signal"))
@@ -445,15 +445,15 @@ def get_default_plottable(root, logger):
     if not signal:
         signal = signal_helper(nxdata)
     if not signal:
-        logger.debug("No Signal has been found")
+        _logger.debug("No Signal has been found")
         return
-    logger.debug("")
-    logger.debug("Signal has been identified: " + signal.name)
-    process_node(signal, signal.name, None, logger, False)
-    logger = logger_auxiliary_signal(logger, nxdata)  # check auxiliary_signals
+    _logger.debug("")
+    _logger.debug("Signal has been identified: " + signal.name)
+    process_node(signal, signal.name, None, False)
+    logger_auxiliary_signal(nxdata)  # check auxiliary_signals
     dim = len(signal.shape)
     axes = []  # axes
-    axis_helper(dim, nxdata, signal, axes, logger)
+    axis_helper(dim, nxdata, signal, axes)
 
 
 def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
@@ -470,20 +470,6 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
     return elem_list
 
 
-def hdf_node_to_self_concept_path(hdf_info, logger):
-    """Get concept or nxdl path from given hdf_node."""
-    # The below logger is for deactivating unnecessary debug message above
-    if logger is None:
-        logger = logging.getLogger("pynxtools")
-        logger.setLevel(logging.INFO)
-    (_, _, nxdl_path) = get_nxdl_doc(hdf_info, logger, None)
-    con_path = ""
-    if nxdl_path:
-        for nd_ in nxdl_path:
-            con_path = con_path + "/" + get_node_name(nd_)
-    return con_path
-
-
 class HandleNexus:
     """
     Thin wrapper around `NexusFileHandler` + `Annotator`.
@@ -498,8 +484,8 @@ class HandleNexus:
         self,
         logger,
         nexus_file,
-        d_inq_nd=None,
-        c_inq_nd=None,
+        documentation=None,
+        concept=None,
         is_in_memory_file=False,
     ):
         import warnings
@@ -512,8 +498,8 @@ class HandleNexus:
             stacklevel=2,
         )
         self.logger = logger
-        self.d_inq_nd = d_inq_nd
-        self.c_inq_nd = c_inq_nd
+        self.documentation = documentation
+        self.concept = concept
         self._handler = NexusFileHandler(
             nexus_file, is_in_memory_file=is_in_memory_file
         )
@@ -524,15 +510,17 @@ class HandleNexus:
 
         visitor = Annotator(
             self.logger,
-            d_inq_nd=self.d_inq_nd,
-            c_inq_nd=self.c_inq_nd,
+            documentation=self.documentation,
+            concept=self.concept,
             parser=parser,
         )
         self._handler.process(visitor)
 
 
 @click.command()
-@click.argument("nexus_file", type=click.Path(exists=True))
+@click.argument(
+    "nexus_file", required=False, default=None, type=click.Path(exists=True)
+)
 @click.option(
     "-d",
     "--documentation",
@@ -579,7 +567,7 @@ def main(nexus_file, documentation, concept):
     from pynxtools.nexus.handler import NexusFileHandler
 
     NexusFileHandler(nexus_file).process(
-        Annotator(logger, d_inq_nd=documentation, c_inq_nd=concept)
+        Annotator(logger, documentation=documentation, concept=concept)
     )
 
 

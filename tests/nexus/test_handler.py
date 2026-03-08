@@ -164,7 +164,7 @@ def test_annotation_visitor_d_mode_annotates_only_target(tmp_path):
 
     # Pick a path that definitely exists in the example file
     target = "/entry/data/delays"
-    visitor = Annotator(logger, d_inq_nd=target)
+    visitor = Annotator(logger, documentation=target)
     NexusFileHandler(EXAMPLE_NXS).process(visitor)
 
     fh.flush()
@@ -187,7 +187,7 @@ def test_annotation_visitor_c_mode_collects_results(tmp_path):
     logger.addHandler(fh)
 
     # NXarpes entry is a known superclass for the example file
-    visitor = Annotator(logger, c_inq_nd="/NXarpes/ENTRY")
+    visitor = Annotator(logger, concept="/NXarpes/ENTRY")
     NexusFileHandler(EXAMPLE_NXS).process(visitor)
 
     fh.flush()
