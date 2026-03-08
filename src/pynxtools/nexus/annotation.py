@@ -182,9 +182,19 @@ class Annotator(NexusVisitor):
     def _find_nexus_node(
         self, hdf_path: str, hdf_node: h5py.Group | h5py.Dataset
     ) -> NexusNode | None:
-        """Return the NexusNode for *hdf_path*, or ``None`` if not in schema."""
+        """Return the NexusNode for *hdf_path*, or ``None`` if not in schema.
+
+        Path segments are resolved one at a time.  For each intermediate group
+        we read the actual ``NX_class`` attribute from the HDF5 file and pass
+        it to :meth:`~pynxtools.nexus.nexus_tree.NexusNode.best_child_for` so
+        that variadic schema groups (e.g. ``DETECTOR[NXdetector]``,
+        ``DATA[NXdata]``, ``COLLECTION[NXcollection]``) are disambiguated
+        deterministically instead of relying on ``set`` iteration order.
+        """
         if not hdf_path:
             return None
+        if hdf_path in self._node_cache:
+            return self._node_cache[hdf_path]
         appdef = self._appdef_for(hdf_node)
         if appdef in ("NO NXentry found",):
             return None
@@ -192,9 +202,50 @@ class Annotator(NexusVisitor):
         if tree is None:
             return None
         node_type = "field" if isinstance(hdf_node, h5py.Dataset) else "group"
-        return tree.find_node_at_path(
-            hdf_path, node_type=node_type, _cache=self._node_cache
-        )
+
+        h5file = hdf_node.file
+        segments = [s for s in hdf_path.split("/") if s]
+        current: NexusNode = tree
+
+        for i, seg in enumerate(segments):
+            cache_key = "/".join(segments[: i + 1])
+            if cache_key in self._node_cache:
+                cached = self._node_cache[cache_key]
+                if cached is None:
+                    return None
+                current = cached
+                continue
+
+            is_last = i == len(segments) - 1
+            seg_node_type = node_type if is_last else "group"
+
+            # Look up the real NX_class of the intermediate HDF5 group so we
+            # can pin the schema child selection to the correct NX class and
+            # avoid the non-determinism from equally-scoring variadic nodes.
+            nx_class: str | None = None
+            if not is_last:
+                try:
+                    h5_grp = h5file["/" + "/".join(segments[: i + 1])]
+                    if isinstance(h5_grp, h5py.Group):
+                        raw = h5_grp.attrs.get("NX_class", b"")
+                        nx_class = decode_if_string(raw) or None
+                except KeyError:
+                    pass
+
+            child = current.best_child_for(
+                seg, node_type=seg_node_type, nx_class=nx_class
+            )
+            # Fall back to unconstrained search if the class-constrained one
+            # finds nothing (e.g. the group has no NX_class attribute).
+            if child is None and nx_class is not None:
+                child = current.best_child_for(seg, node_type=seg_node_type)
+
+            self._node_cache[cache_key] = child
+            if child is None:
+                return None
+            current = child
+
+        return current
 
     def _find_attr_node(
         self,
