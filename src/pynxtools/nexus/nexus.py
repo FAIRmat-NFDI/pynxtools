@@ -15,7 +15,6 @@ import numpy as np
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
     check_attr_name_nxdl,
-    decode_or_not,
     get_best_child,
     get_hdf_info_parent,
     get_local_name_from_xml,
@@ -30,56 +29,19 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     walk_elist,
     write_doc_string,
 )
-
-
-def decode_if_string(
-    elem: Any, encoding: str = "utf-8", decode: bool = True
-) -> Any | None:
-    """
-    Decodes a numpy ndarray or list of byte objects or byte strings to strings.
-    If `decode` is False, returns the input value unchanged. Non-byte/str types
-    are returned without modification.
-
-    Args:
-        elem: A numpy ndarray, list, bytes, or any other object.
-        encoding: The encoding scheme to use. Default is "utf-8".
-        decode: A boolean flag indicating whether to perform decoding.
-
-    Returns:
-        A decoded string, a numpy array of decoded strings, a list of decoded strings,
-        or the input value if not decodable.
-        Returns None if the input is empty or invalid.
-
-    Raises:
-        ValueError: If decoding fails on bytes or numpy array elements.
-    """
-    # Early return if decoding is disabled
-    if not decode:
-        return elem
-
-    # Handle numpy arrays of bytes or strings
-    if isinstance(elem, np.ndarray):
-        if elem.size == 0:
-            return elem  # Return the empty array unchanged
-
-        # This only checks for null-terminated strings,
-        # may need to be updated in the future: https://api.h5py.org/h5t.html
-        if elem.dtype.kind == "S":  # Check if it's a bytes array (fixed-length strings)
-            decoded_array = np.vectorize(
-                lambda x: (
-                    x.decode(encoding).rstrip("\x00") if isinstance(x, bytes) else x
-                )
-            )(elem)
-            return decoded_array.astype(str)  # Ensure the dtype is str
-
-        # Handle mixed-type arrays
-        if elem.dtype == object:
-            decoded_array = np.vectorize(
-                lambda x: x.decode(encoding) if isinstance(x, bytes) else x
-            )(elem)
-            return decoded_array.astype(str)  # Ensure all elements are strings
-
-    return decode_or_not(elem, encoding, decode)
+from pynxtools.nexus.nxdata import (
+    axis_helper,
+    chk_nxdata_axis,
+    chk_nxdata_axis_v2,
+    entry_helper,
+    find_attrib_axis_actual_dim_num,
+    get_single_or_multiple_axes,
+    logger_auxiliary_signal,
+    nxdata_helper,
+    print_default_plottable_header,
+    signal_helper,
+)
+from pynxtools.nexus.utils import decode_if_string
 
 
 def get_nxdl_entry(hdf_info):
@@ -128,65 +90,6 @@ def get_nx_class_path(hdf_info):
             + hdf_node.name.split("/")[-1]
         )
     return ""
-
-
-def chk_nxdata_axis_v2(hdf_node, name, logger):
-    """Check if dataset is an axis"""
-    own_signal = hdf_node.attrs.get("signal")  # check for being a Signal
-    if own_signal is str and own_signal == "1":
-        logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
-    own_axes = hdf_node.attrs.get("axes")  # check for being an axis
-    if own_axes is str:
-        axes = own_axes.split(":")
-        for i in len(axes):
-            if axes[i] and name == axes[i]:
-                logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
-                return None
-    own_primary_axis = hdf_node.attrs.get("primary")
-    own_axis = hdf_node.attrs.get("axis")
-    if own_axis is int:
-        # also convention v1
-        if own_primary_axis is int and own_primary_axis == 1:
-            logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
-        else:
-            logger.debug(
-                "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d",
-                own_axis - 1,
-            )
-    return None
-
-
-def chk_nxdata_axis(hdf_node, name, logger):
-    """NEXUS Data Plotting Standard v3: new version from 2014"""
-    if not isinstance(
-        hdf_node, h5py.Dataset
-    ):  # check if it is a field in an NXdata node
-        return None
-    parent = hdf_node.parent
-    if not parent or (parent and not parent.attrs.get("NX_class") == "NXdata"):
-        return None
-    signal = parent.attrs.get("signal")  # chk for Signal
-    if signal and name == signal:
-        logger.debug("Dataset referenced as NXdata SIGNAL")
-        return None
-    axes = parent.attrs.get("axes")  # check for default Axes
-    if axes is str:
-        if name == axes:
-            logger.debug("Dataset referenced as NXdata AXIS")
-            return None
-    elif axes is not None:
-        for i, j in enumerate(axes):
-            if name == j:
-                indices = parent.attrs.get(j + "_indices")
-                if indices is int:
-                    logger.debug(f"Dataset referenced as NXdata AXIS #{indices}")
-                else:
-                    logger.debug(f"Dataset referenced as NXdata AXIS #{i}")
-                return None
-    indices = parent.attrs.get(name + "_indices")  # check for alternative Axes
-    if indices is int:
-        logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
-    return chk_nxdata_axis_v2(hdf_node, name, logger)  # check for older conventions
 
 
 def check_deprecation_enum_axis(variables, doc, elem_list, attr, hdf_node):
@@ -490,24 +393,6 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
             )
 
 
-def logger_auxiliary_signal(logger, nxdata):
-    """Handle the presence of auxiliary signal"""
-    aux = decode_if_string(nxdata.attrs.get("auxiliary_signals"))
-    if aux is not None:
-        if isinstance(aux, str):
-            aux = [aux]
-        for aux_sig in aux:
-            logger.debug(f"Further auxiliary signal has been identified: {aux_sig}")
-    return logger
-
-
-def print_default_plottable_header(logger):
-    """Print a three-lines header"""
-    logger.debug("========================")
-    logger.debug("=== Default Plottable ===")
-    logger.debug("========================")
-
-
 def get_default_plottable(root, logger):
     """Get default plottable"""
     print_default_plottable_header(logger)
@@ -569,144 +454,6 @@ def get_default_plottable(root, logger):
     dim = len(signal.shape)
     axes = []  # axes
     axis_helper(dim, nxdata, signal, axes, logger)
-
-
-def entry_helper(root):
-    """Check entry related data"""
-    nxentries = []
-    for key in root.keys():
-        if (
-            isinstance(root[key], h5py.Group)
-            and root[key].attrs.get("NX_class")
-            and decode_if_string(root[key].attrs["NX_class"]) == "NXentry"
-        ):
-            nxentries.append(root[key])
-    if len(nxentries) >= 1:
-        return nxentries[0]
-    return None
-
-
-def nxdata_helper(nxentry):
-    """Check if nxentry hdf5 object has a NX_class and, if it contains NXdata,
-    return its value"""
-    nxdata_list = []
-    for key in nxentry.keys():
-        if (
-            isinstance(nxentry[key], h5py.Group)
-            and nxentry[key].attrs.get("NX_class")
-            and decode_if_string(nxentry[key].attrs["NX_class"]) == "NXdata"
-        ):
-            nxdata_list.append(nxentry[key])
-    if len(nxdata_list) >= 1:
-        return nxdata_list[0]
-    return None
-
-
-def signal_helper(nxdata):
-    """Check signal related data"""
-    signals = []
-    for key in nxdata.keys():
-        if isinstance(nxdata[key], h5py.Dataset):
-            signals.append(nxdata[key])
-    if (
-        len(signals) == 1
-    ):  # v3: as there was no selection given, only 1 data field shall exists
-        return signals[0]
-    if len(signals) > 1:  # v2: select the one with an attribute signal="1" attribute
-        for sig in signals:
-            signal_attr = decode_if_string(sig.attrs.get("signal"))
-            if signal_attr and isinstance(signal_attr, str) and signal_attr == "1":
-                return sig
-    return None
-
-
-def find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list):
-    """Finds axis that have defined dimensions"""
-    # find those with attribute axis= actual dimension number
-    lax = []
-    for key in nxdata.keys():
-        if isinstance(nxdata[key], h5py.Dataset):
-            try:
-                if nxdata[key].attrs["axis"] == a_item + 1:
-                    lax.append(nxdata[key])
-            except KeyError:
-                pass
-    if len(lax) == 1:
-        ax_list.append(lax[0])
-    # if there are more alternatives, prioritize the one with an attribute primary="1"
-    elif len(lax) > 1:
-        for sax in lax:
-            if sax.attrs.get("primary") and sax.attrs.get("primary") == 1:
-                ax_list.insert(0, sax)
-            else:
-                ax_list.append(sax)
-
-
-def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
-    """Gets either single or multiple axes from the NXDL"""
-    try:
-        if isinstance(ax_datasets, str):  # single axis is defined
-            # explicit definition of dimension number
-            ind = decode_if_string(nxdata.attrs.get(ax_datasets + "_indices"))
-            if ind and ind is int:
-                if ind == a_item:
-                    ax_list.append(nxdata[ax_datasets])
-            elif a_item == 0:  # positional determination of the dimension number
-                ax_list.append(nxdata[ax_datasets])
-        elif isinstance(ax_datasets, list | np.ndarray):  # multiple axes are listed
-            # explicit definition of dimension number
-            for aax in ax_datasets:
-                ind = decode_if_string(nxdata.attrs.get(aax + "_indices"))
-                if ind and isinstance(ind, int):
-                    if ind == a_item:
-                        ax_list.append(nxdata[aax])
-            if not ax_list and a_item < len(
-                ax_datasets
-            ):  # positional determination of the dimension number
-                ax_list.append(nxdata[ax_datasets[a_item]])
-        else:
-            logger.warning(
-                f"The 'axes' attribute is neither a string or a list or an np.ndarray of strings, check {nxdata.name}"
-            )
-
-    except KeyError:
-        logger.warning(
-            f"Individual axis in 'axes' attribute for NXdata {nxdata.name} is not found"
-        )
-        pass
-    return ax_list
-
-
-def axis_helper(dim, nxdata, signal, axes, logger):
-    """Check axis related data"""
-    for a_item in range(dim):
-        ax_list = []
-        # primary axes listed in attribute axes
-        ax_datasets = decode_if_string(nxdata.attrs.get("axes"))
-        ax_list = get_single_or_multiple_axes(
-            nxdata, ax_datasets, a_item, ax_list, logger
-        )
-        for attr in nxdata.attrs.keys():  # check for corresponding AXISNAME_indices
-            if (
-                attr.endswith("_indices")
-                and decode_if_string(nxdata.attrs[attr]) == a_item
-                and nxdata[attr.split("_indices")[0]] not in ax_list
-            ):
-                ax_list.append(nxdata[attr.split("_indices")[0]])
-        # v2  # check for ':' separated axes defined in Signal
-        if not ax_list:
-            try:
-                ax_datasets = decode_if_string(signal.attrs.get("axes")).split(":")
-                ax_list.append(nxdata[ax_datasets[a_item]])
-            except (KeyError, AttributeError):
-                pass
-        if not ax_list:  # check for axis/primary specifications
-            find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list)
-        axes.append(ax_list)
-        logger.debug("")
-        logger.debug(
-            f"For Axis #{a_item}, {len(ax_list)} axes have been identified: {str(ax_list)}"
-        )
 
 
 def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
