@@ -33,7 +33,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 from pynxtools.nexus.annotation import Annotator
 from pynxtools.nexus.handler import NexusFileHandler
-from pynxtools.nexus.nexus import decode_if_string
+from pynxtools.nexus.utils import decode_if_string
 
 logger = logging.getLogger(__name__)
 
