@@ -651,15 +651,16 @@ class NexusNode(NodeMixin):
 
     @property
     def concept_path(self) -> str:
-        """Return ``'NXarpes::/ENTRY/INSTRUMENT'`` style concept path string.
+        """Return ``'NXarpes/ENTRY/INSTRUMENT'`` style concept path string.
 
         The prefix is the NXDL file stem where this node is first defined
         (e.g. ``NXarpes``). The suffix is the schema path from the appdef root
-        (e.g. ``/ENTRY/INSTRUMENT``).
+        (e.g. ``/ENTRY/INSTRUMENT``), joined without a separator since the path
+        already starts with ``/``.
         """
         base = (self.nxdl_base or "").split("/")[-1].split(".nxdl.xml")[0]
         path = self.get_path()
-        return f"{base}::{path}" if base else path
+        return f"{base}{path}" if base else path
 
     def get_inheritance_docs(self) -> list[tuple[str, str]]:
         """Return ``[(nxdl_source, doc_text), ...]`` for elements with non-empty docs.
@@ -681,13 +682,13 @@ class NexusNode(NodeMixin):
         *concept_label* encodes both the NXDL file and the path of the element
         within that file, giving precise provenance for every inheritance level:
 
-        - ``"NXarpes::/ENTRY/INSTRUMENT/energy"`` — field defined inside the appdef
-        - ``"NXinstrument::/energy"`` — same field in the base class
-        - ``"NXarpes::/ENTRY/INSTRUMENT"`` — group defined in the appdef
+        - ``"NXarpes/ENTRY/INSTRUMENT/energy"`` — field defined inside the appdef
+        - ``"NXinstrument/energy"`` — same field in the base class
+        - ``"NXarpes/ENTRY/INSTRUMENT"`` — group defined in the appdef
         - ``"NXinstrument"`` — base class root (the definition element itself)
 
         The bare ``NXobject`` root entry is excluded (boilerplate common to all nodes);
-        named entries within NXobject (e.g. ``NXobject::/identifierNAME``) are kept.
+        named entries within NXobject (e.g. ``NXobject/identifierNAME``) are kept.
         """
         results: list[tuple[str, str | None]] = []
         seen: set[str] = set()
@@ -700,7 +701,7 @@ class NexusNode(NodeMixin):
             # named fields/groups inside NXobject (e.g. identifierNAME) are meaningful.
             if src == "NXobject" and not path:
                 continue
-            label = f"{src}::{path}" if path else src
+            label = f"{src}{path}" if path else src
             if label in seen:
                 continue
             seen.add(label)

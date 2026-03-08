@@ -228,9 +228,9 @@ class Annotator(NexusVisitor):
     def _emit_inheritance(self, det: str, node: NexusNode) -> None:
         """Emit a structured inheritance block with inline docs.
 
-        Each level shows a precise concept path (e.g. ``NXinstrument::/energy``
-        for a field, ``NXinstrument`` for a base-class root).  NXobject entries
-        are suppressed.
+        Each level shows a precise concept path (e.g. ``NXinstrument/energy``
+        for a field, ``NXinstrument`` for a base-class root).  The bare NXobject
+        root is suppressed; named NXobject entries are shown.
         """
         levels = node.get_inheritance_concept_paths()
 
