@@ -145,10 +145,10 @@ class NexusFileHandler:
         every node and attribute, and finally calls ``on_complete`` before
         closing the file.
 
-        The ``get_inherited_hdf_nodes`` LRU cache is cleared after processing
+        The ``_get_inherited_hdf_nodes`` LRU cache is cleared after processing
         to avoid unbounded memory growth across successive calls.
         """
-        from pynxtools.nexus.nexus import get_inherited_hdf_nodes
+        from pynxtools.nexus.nexus import _get_inherited_hdf_nodes
 
         if self._is_in_memory:
             root = self._nexus_file
@@ -164,7 +164,7 @@ class NexusFileHandler:
                 self._traverse(root, visitor)
             finally:
                 root.close()
-                get_inherited_hdf_nodes.cache_clear()
+                _get_inherited_hdf_nodes.cache_clear()
 
     def _traverse(self, root: h5py.File, visitor: NexusVisitor) -> None:
         """Run the full traversal and call on_complete."""
