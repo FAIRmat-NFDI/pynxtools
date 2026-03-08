@@ -11,7 +11,9 @@ nav:
   - Tutorials:
     - tutorial/installation.md
     - tutorial/converting-data-to-nexus.md
-    - tutorial/build-a-reader.md
+    - Workshop:
+      - tutorial/build-a-reader.md
+      - tutorial/bring-your-own-data.md
     - tutorial/nexus-to-nomad.md
     - tutorial/contributing.md
   - How-tos:
