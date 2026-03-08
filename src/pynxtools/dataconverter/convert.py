@@ -34,11 +34,11 @@ import yaml
 from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
-from pynxtools.dataconverter.nexus_tree import generate_tree_from
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
+from pynxtools.nexus.nexus_tree import generate_tree_from
 
 logger = logging.getLogger("pynxtools")
 

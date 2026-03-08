@@ -25,7 +25,7 @@ from typing import Any, Optional
 import yaml
 
 from pynxtools.dataconverter.helpers import convert_data_converter_dict_to_nxdl_path
-from pynxtools.dataconverter.nexus_tree import (
+from pynxtools.nexus.nexus_tree import (
     NexusEntity,
     NexusGroup,
     NexusNode,
