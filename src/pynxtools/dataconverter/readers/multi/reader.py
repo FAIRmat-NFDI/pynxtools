@@ -356,12 +356,11 @@ class MultiFormatReader(BaseReader):
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: list[str] = []
-    extensions: dict[str, Callable[[Any], dict]] = {}
+    # Type annotation only — each instance gets its own dict in __init__.
+    extensions: dict[str, Callable[[Any], dict]]
     kwargs: dict[str, Any] | None = None
     overwrite_keys: bool = True
-    processing_order: list[str] | None = None
     config_file: str | None = None
-    config_dict: dict[str, Any]
 
     # Override in subclasses to control how handle_eln_file maps keys.
     CONVERT_DICT: dict[str, str] = {}
@@ -375,9 +374,13 @@ class MultiFormatReader(BaseReader):
             dims=self.get_data_dims,
         )
         self.config_file = config_file
-        self.config_dict = {}
+        self.config_dict: dict[str, Any] = {}
         self.eln_data: dict[str, Any] = {}
         self.nxdl_template: Optional[dict] = None
+        # Instance-level dict — avoids shared mutable class attribute.
+        # Subclasses override this in their own __init__.
+        self.extensions: dict[str, Callable[[Any], dict]] = {}
+        self.processing_order: list[str] | None = None
 
     # ------------------------------------------------------------------
     # Built-in file handlers — register in self.extensions to activate.
@@ -392,11 +395,12 @@ class MultiFormatReader(BaseReader):
         automatically.  Subclasses may override this method or simply set
         ``CONVERT_DICT`` / ``REPLACE_NESTED`` at class level.
         """
+        entry_name = self.get_entry_names()[0]
         self.eln_data = parse_yml(
             file_path,
             convert_dict=dict(self.CONVERT_DICT),
             replace_nested=dict(self.REPLACE_NESTED),
-            parent_key="/ENTRY[entry]",
+            parent_key=f"/ENTRY[{entry_name}]",
         )
         return {}
 
