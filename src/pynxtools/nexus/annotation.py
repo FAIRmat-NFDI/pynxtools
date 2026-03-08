@@ -190,7 +190,10 @@ class Annotator(NexusVisitor):
         tree = self._get_tree(appdef)
         if tree is None:
             return None
-        return tree.find_node_at_path(hdf_path, _cache=self._node_cache)
+        node_type = "field" if isinstance(hdf_node, h5py.Dataset) else "group"
+        return tree.find_node_at_path(
+            hdf_path, node_type=node_type, _cache=self._node_cache
+        )
 
     def _find_attr_node(
         self,

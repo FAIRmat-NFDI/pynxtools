@@ -686,15 +686,20 @@ class NexusNode(NodeMixin):
         - ``"NXarpes::/ENTRY/INSTRUMENT"`` — group defined in the appdef
         - ``"NXinstrument"`` — base class root (the definition element itself)
 
-        ``NXobject`` entries are excluded (always the same boilerplate).
+        The bare ``NXobject`` root entry is excluded (boilerplate common to all nodes);
+        named entries within NXobject (e.g. ``NXobject::/identifierNAME``) are kept.
         """
         results: list[tuple[str, str | None]] = []
         seen: set[str] = set()
         for elem in self.inheritance:
             src = (elem.base or "").split("/")[-1].split(".nxdl.xml")[0]
-            if not src or src == "NXobject":
+            if not src:
                 continue
             path = _xml_path_in_nxdl(elem)
+            # Suppress only the bare NXobject root (no within-file path);
+            # named fields/groups inside NXobject (e.g. identifierNAME) are meaningful.
+            if src == "NXobject" and not path:
+                continue
             label = f"{src}::{path}" if path else src
             if label in seen:
                 continue
