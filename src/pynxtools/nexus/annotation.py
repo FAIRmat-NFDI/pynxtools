@@ -45,7 +45,10 @@ from typing import Any, Optional, Union
 import h5py
 
 from pynxtools.nexus.handler import NexusVisitor
+from pynxtools.nexus.nexus import get_default_plottable
 from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
+from pynxtools.nexus.nxdata import chk_nxdata_axis
+from pynxtools.nexus.utils import decode_if_string
 
 
 class Annotator(NexusVisitor):
@@ -118,8 +121,6 @@ class Annotator(NexusVisitor):
 
     def on_complete(self, root: h5py.File) -> None:
         """Post-traversal: log -c results or print the default plottable."""
-        from pynxtools.nexus.nexus import get_default_plottable
-
         if self.c_inq_nd is not None:
             for hdf_path in self.hdf_path_list_for_c_inq_nd:
                 self.logger.info(hdf_path)
@@ -146,8 +147,6 @@ class Annotator(NexusVisitor):
     @staticmethod
     def _appdef_for(hdf_node: h5py.Group | h5py.Dataset) -> str:
         """Walk up the HDF5 path to find the NXentry and return its ``definition`` attribute."""
-        from pynxtools.nexus.nexus import decode_if_string
-
         h5file = hdf_node.file
         parts = [p for p in hdf_node.name.split("/") if p]
         for i in range(len(parts), 0, -1):
@@ -292,8 +291,6 @@ class Annotator(NexusVisitor):
 
     def _annotate_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
         """Emit a structured block for a FIELD node."""
-        from pynxtools.nexus.nexus import chk_nxdata_axis, decode_if_string
-
         depth = self._depth(hdf_path)
         ind = "  " * depth
         det = ind + "  "
@@ -360,8 +357,6 @@ class Annotator(NexusVisitor):
         if not hdf_path or attr_name in self._SKIP_ATTRS:
             return
 
-        from pynxtools.nexus.nexus import decode_if_string
-
         depth = self._depth(hdf_path)
         ind = "  " * depth
         det = ind + "  "
@@ -406,8 +401,6 @@ class Annotator(NexusVisitor):
     def _emit_file_header(self, root: h5py.Group) -> None:
         """Log a structured file-level header from HDF5 root attributes."""
         import os
-
-        from pynxtools.nexus.nexus import decode_if_string
 
         sep = "═" * 60
         self.logger.info(sep)
