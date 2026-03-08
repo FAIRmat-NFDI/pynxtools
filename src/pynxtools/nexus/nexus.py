@@ -785,21 +785,16 @@ class HandleNexus:
 
 
 @click.command()
-@click.option(
-    "-f",
-    "--nexus-file",
-    required=False,
-    default=None,
-    help=("NeXus file with extension .nxs."),
-)
+@click.argument("nexus_file", type=click.Path(exists=True))
 @click.option(
     "-d",
     "--documentation",
     required=False,
     default=None,
     help=(
-        "Definition path in nexus output (.nxs) file. Returns debug "
-        "log relevant with that definition path. Example input: /entry/data/delays"
+        "HDF5 path of a single node to document. "
+        "Returns all schema information for that path. "
+        "Example: /entry/instrument/analyser/data"
     ),
 )
 @click.option(
@@ -808,16 +803,20 @@ class HandleNexus:
     required=False,
     default=None,
     help=(
-        "Concept path from application definition file (.nxdl.xml). Finds out "
-        "all the available concept definition (IS-A relation) for a given "
-        "concept path. Example input: /NXarpes/ENTRY/INSTRUMENT/analyser"
+        "NXDL concept path. Lists all HDF5 nodes in the file that satisfy "
+        "an IS-A relation with that concept. "
+        "Example: /NXarpes/ENTRY/INSTRUMENT/analyser"
     ),
 )
 def main(nexus_file, documentation, concept):
-    """
-    Functionality to extract documentation and concept definition
-    information about the individual parts of a NeXus/HDF5 file."""
+    """Annotate a NeXus/HDF5 file with NXDL schema documentation.
 
+    Walks NEXUS_FILE and prints schema information (concept paths, optionality,
+    inheritance chain, documentation, enumerations) for every node.
+
+    Use -d to focus on a single HDF5 path, or -c to find all nodes that
+    implement a given NXDL concept.
+    """
     # The pynxtools logger already has a StreamHandler installed by pynxtools/__init__.py.
     # We only need to lower the level to DEBUG so that detail lines are visible, and
     # keep propagate=False so root-logger handlers don't double-emit messages.
@@ -825,10 +824,10 @@ def main(nexus_file, documentation, concept):
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
     if documentation and concept:
-        raise ValueError(
-            "Only one option either documentation (-d) or is_a relation "
-            "with a concept (-c) can be requested."
+        raise click.UsageError(
+            "Options -d/--documentation and -c/--concept are mutually exclusive."
         )
+
     from pynxtools.nexus.annotation import Annotator
     from pynxtools.nexus.handler import NexusFileHandler
 
