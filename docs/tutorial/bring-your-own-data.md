@@ -30,62 +30,17 @@ Before writing any reader code, understand what you are working with.
 
 ### Identify your format
 
-| Format | Typical extensions | How to recognise |
+| Format | Typical extensions | How to recognize |
 |---|---|---|
 | HDF5 / NeXus | `.h5`, `.hdf5`, `.nxs` | Binary; starts with `\x89HDF` |
 | HDF5 (instrument brand) | `.h5m`, `.hsp`, `.he5`, … | Same magic bytes; vendor-specific internal layout |
 | VAMAS | `.vms`, `.vamas` | First line: `VAMAS Surface Chemical Analysis` |
-| SpecsLab XML | `.xml` | `<?xml` + `XMLSerializer2` in first few KB |
-| SpecsLab binary | `.sle` | SQLite database — open with `sqlite3` |
-| Igor Pro wave | `.ibw` | Binary with `IGOR` header or `.itx` text |
-| Scienta text | `.txt` | First line `[Info]`, `Number of Regions=` in line 2–3 |
+| Igor Pro wave | `.ibw` | Binary with `IGOR` header |
 | CSV / TSV | `.csv`, `.txt`, `.dat`, `.asc` | Human-readable columns |
 | JSON | `.json` | `{` or `[` as first non-whitespace character |
 | YAML | `.yaml`, `.yml` | Key-value pairs with indentation |
 | NetCDF | `.nc`, `.cdf`, `.netcdf` | Binary; readable with `netCDF4` or `xarray` |
 | TIFF (detector images) | `.tiff`, `.tif` | Binary image; use `tifffile` or `PIL` |
-| SPE (Princeton / Teledyne) | `.spe` | Binary; use `spe2py` or `readSPE` |
-| SPC (Thermo / GRAMS) | `.spc` | Binary; use `spcio` |
-
-### Run the format detective script
-
-```python
-"""format_detective.py — paste and run this for any unknown file."""
-import sys, os
-
-path = sys.argv[1] if len(sys.argv) > 1 else "your_file"
-
-# Read first 16 bytes
-with open(path, "rb") as f:
-    head = f.read(16)
-
-print(f"File:  {path}")
-print(f"Size:  {os.path.getsize(path) / 1024:.1f} KB")
-print(f"Magic: {head!r}")
-
-if head[:8] == b'\x89HDF\r\n\x1a\n':
-    print("→ HDF5 file")
-elif head[:4] == b'SQLi':
-    print("→ SQLite database")
-elif head[:4] == b'IGOR':
-    print("→ Igor Pro IBW")
-elif head[:5] == b'<?xml':
-    print("→ XML")
-elif b'VAMAS' in head:
-    print("→ VAMAS")
-else:
-    # Try as text
-    try:
-        with open(path) as f:
-            first = f.readline()
-        print(f"→ Text file, first line: {first[:80]!r}")
-    except UnicodeDecodeError:
-        print("→ Unknown binary format")
-```
-
-```bash
-python format_detective.py your_file.whatever
-```
 
 ---
 
@@ -132,7 +87,7 @@ for k in sorted(r.hdf5_data):
     print(k)
 ```
 
-Map what you see to what NXsimple (or your appdef) needs.
+Map what you see to what NXsimple (or your application definition) needs.
 
 ---
 
@@ -210,33 +165,6 @@ def handle_vamas_file(self, file_path: str) -> dict[str, Any]:
 If you have multiple blocks (spectra), store them as a list and loop in
 `get_entry_names` / `get_data`.
 
----
-
-### Format: SpecsLab XML (`.xml`)
-
-```python
-import xml.etree.ElementTree as ET
-import numpy as np
-
-def handle_specs_xml(self, file_path: str) -> dict[str, Any]:
-    tree = ET.parse(file_path)
-    root = tree.getroot()
-
-    # SpecsLab XML stores sequences and regions — adapt to your layout
-    self.data = {}
-    for region in root.iter("RegionData"):
-        name = region.get("name", "region")
-        x_node = region.find(".//Axis[@name='Kinetic Energy']")
-        y_node = region.find(".//Channel")
-        if x_node is not None and y_node is not None:
-            self.data[f"{name}/energy"] = np.fromstring(
-                x_node.text, sep=" "
-            )
-            self.data[f"{name}/counts"] = np.fromstring(
-                y_node.text, sep=" "
-            )
-    return {}
-```
 
 ---
 
@@ -262,7 +190,7 @@ def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
     return {}
 ```
 
-Or for Scienta IBW (JSON note format):
+Or for JSON note format:
 
 ```python
 import json, numpy as np
@@ -279,37 +207,6 @@ def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
         pass
     return {}
 ```
-
----
-
-### Format: Scienta text (`.txt`)
-
-```python
-import configparser, numpy as np, io
-
-def handle_scienta_txt(self, file_path: str) -> dict[str, Any]:
-    with open(file_path, encoding="utf-8", errors="replace") as f:
-        content = f.read()
-
-    # The file has INI-style sections then data blocks
-    ini_part, _, data_part = content.partition("[Data 1]")
-    config = configparser.ConfigParser()
-    config.read_string(ini_part)
-
-    self.data = {}
-    if config.has_section("Info"):
-        for key, val in config["Info"].items():
-            self.data[f"info/{key}"] = val
-
-    # Parse the data columns
-    lines = [l for l in data_part.splitlines() if l.strip() and not l.startswith("[")]
-    if lines:
-        cols = np.array([[float(x) for x in row.split()] for row in lines]).T
-        self.data["energy"] = cols[0]
-        self.data["counts"] = cols[1] if cols.shape[0] > 1 else None
-    return {}
-```
-
 ---
 
 ### Format: NetCDF (`.nc`)
@@ -390,36 +287,6 @@ def _flatten(self, d: dict, parent: str = "") -> dict:
 
 ---
 
-### Format: SQLite / SpecsLab SLE
-
-```python
-import sqlite3, json, numpy as np
-
-def handle_sqlite_file(self, file_path: str) -> dict[str, Any]:
-    self.data = {}
-    with sqlite3.connect(file_path) as con:
-        cur = con.cursor()
-
-        # SpecsLab SLE layout — adjust table/column names for your vendor
-        try:
-            cur.execute("SELECT Key, Value FROM Configuration")
-            for key, value in cur.fetchall():
-                self.data[f"config/{key}"] = value
-        except sqlite3.OperationalError:
-            pass
-
-        try:
-            cur.execute("SELECT Name, Data FROM Spectra")
-            for name, blob in cur.fetchall():
-                arr = np.frombuffer(blob, dtype=np.float64)
-                self.data[f"spectra/{name}"] = arr
-        except sqlite3.OperationalError:
-            pass
-    return {}
-```
-
----
-
 ### Format: anything else — the fallback pattern
 
 When nothing above fits, write a minimal parser that extracts the values you
@@ -490,9 +357,9 @@ def get_data(self, key: str, path: str) -> Any:
 ### Does one already exist?
 
 Check the [NeXus application definitions](https://manual.nexusformat.org/classes/applications/index.html)
-and installed pynxtools plugins:
+and installed `pynxtools` plugins:
 
-| Technique | Appdef | pynxtools plugin |
+| Technique | application definition | `pynxtools` plugin |
 |---|---|---|
 | XPS | `NXxps` | `pynxtools-xps` |
 | ARPES / multi-photon | `NXmpes`, `NXmpes_arpes`, `NXarpes` | `pynxtools-mpes` |
@@ -503,15 +370,15 @@ and installed pynxtools plugins:
 | IXS / canSAS | `NXcanSAS`, `NXiqproc` | — |
 | Generic simple | `NXsimple` | this workshop |
 
-Test whether the appdef is known:
+Test whether the application definition is known:
 
 ```bash
 dataconverter generate-template --nxdl NXmpes
 ```
 
-### No appdef? Write a minimal one.
+### No application definition? Write a minimal one.
 
-See [How-to: Write a NeXus application definition](../how-tos/nexus/writing-an-appdef.md).
+See [How-to > Write a NeXus application definition](../how-tos/nexus/writing-an-application definition.md).
 
 Minimal skeleton:
 
@@ -537,7 +404,7 @@ Minimal skeleton:
 </definition>
 ```
 
-Save it next to `reader.py` and point pynxtools at it by adding to your reader:
+Save it next to `reader.py` and point `pynxtools` at it by adding to your reader:
 
 ```python
 @classmethod
@@ -691,25 +558,26 @@ def post_process(self) -> None:
 | All `get_eln_data` return `None` | Wrong CONVERT_DICT | Print `self.eln_data.keys()` vs `key` argument |
 | File opens but data looks wrong | Wrong dataset path | Print the full `self.data` dict and re-map |
 | `struct.error` / garbage in binary file | Wrong offset or dtype | Check vendor documentation for byte layout |
-| Validation passes but file looks incomplete | Appdef has no required fields | Add required fields to the NXDL |
+| Validation passes but file looks incomplete | application definition has no required fields | Add required fields to the NXDL |
 
 ---
 
 ## Checklist before you leave
 
 - [ ] `dataconverter` runs without errors on your own data
-- [ ] All required fields in the appdef are present in `output.nxs`
+- [ ] All required fields in the application definition are present in `output.nxs`
 - [ ] Units are set for every numeric field
 - [ ] `reader.py` and `config_file.json` are committed to your repository
-- [ ] You know which appdef matches your technique (or have written a minimal one)
+- [ ] You know which application definition matches your technique (or have written a minimal one)
 
 ---
 
 ## Further reading
 
-- [How-to: Use the MultiFormatReader](../how-tos/pynxtools/use-multi-format-reader.md)
-- [How-to: Build a plugin](../how-tos/pynxtools/build-a-plugin.md)
-- [How-to: Test your reader](../how-tos/pynxtools/using-pynxtools-test-framework.md)
-- [How-to: Write a NeXus application definition](../how-tos/nexus/writing-an-appdef.md)
-- [Learn: The MultiFormatReader in depth](../learn/pynxtools/multi-format-reader.md)
-- [Reference: pynxtools plugins](../reference/plugins.md)
+- [How-to > Use the MultiFormatReader](../how-tos/pynxtools/use-multi-format-reader.md)
+- [How-to > Build a plugin](../how-tos/pynxtools/build-a-plugin.md)
+- [How-to > Test your reader](../how-tos/pynxtools/using-pynxtools-test-framework.md)
+- [How-to > Write a NeXus application definition](../how-tos/nexus/writing-an-application-definition.md)
+(../how-tos/nexus/writing-an-application definition.md)
+- [Learn > The MultiFormatReader in depth](../learn/pynxtools/multi-format-reader.md)
+- [Reference > FAIRmat-supported `pynxtools` plugins](../reference/plugins.md)
