@@ -47,11 +47,13 @@ if (
     import blosc2
     import hdf5plugin
 
-    blosc2.set_nthreads(os.cpu_count() / 2)
+    NTHREADS_BLOSC = blosc2.set_nthreads(os.cpu_count() / 2)
     # do not oversubscribe to use hyperthreading cores
     logger.info(f"blosc2 is configured to use {blosc2.nthreads} threads.")
     logger.info(f"Host has {blosc2.ncores} cores.")
     logger.info(blosc2.print_versions())
+else:
+    NTHREADS_BLOSC = 0
 
 
 def does_path_exist(path, h5py_obj) -> bool:
