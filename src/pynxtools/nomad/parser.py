@@ -163,6 +163,52 @@ def _get_value(hdf_node):
     return hdf_node[()].decode()
 
 
+class NomadParser:
+    """
+    Thin wrapper around :class:`~pynxtools.nexus.nexus.HandleNexus` for NOMAD archive population.
+
+    Encapsulates HDF5 traversal and schema resolution, delegating to ``HandleNexus``
+    while providing a clean interface that can later be migrated to ``NexusFileHandler``.
+
+    Usage::
+
+        parser = NomadParser(mainfile, logger)
+        parser.process(callback)
+    """
+
+    def __init__(self, mainfile: str, logger=None) -> None:
+        self._mainfile = mainfile
+        self._logger = logger
+
+    def process(self, callback) -> None:
+        """
+        Walk the NeXus file and invoke *callback* for each documented node.
+
+        Args:
+            callback: A callable with the signature ``(params: dict, attr=None) -> None``.
+                ``params`` contains ``hdf_info``, ``nxdef``, ``nxdl_path``, ``val``,
+                and ``logger`` keys, matching the ``_nexus_populate`` interface.
+        """
+        # TODO: Replace HandleNexus with NexusFileHandler once NomadVisitor exists:
+        #
+        #   from pynxtools.nexus.handler import NexusFileHandler
+        #   from pynxtools.nomad.visitor import NomadVisitor   # to be created
+        #   NexusFileHandler(self._mainfile).process(NomadVisitor(callback, self._logger))
+        #
+        # TODO: Replace the opaque ``params`` dict with typed NexusVisitor hooks:
+        #   on_field(hdf_path, hdf_node, nexus_node) -> None
+        #   on_attribute(hdf_path, attr_name, attr_value, parent, nexus_node) -> None
+        #   This eliminates the implicit contract between HandleNexus and _nexus_populate.
+        #
+        # TODO: Pass NexusNode directly instead of ``nxdl_path`` (list[ET.Element]).
+        #   NexusNode carries optionality, inheritance, docs, and type info natively.
+        #
+        # TODO: Derive the appdef from NXentry/@definition in the file rather than
+        #   relying on HandleNexus heuristics, so multi-entry files are handled correctly.
+        helper = HandleNexus(self._logger, self._mainfile)
+        helper.process_nexus_master_file(callback)
+
+
 class NexusParser(MatchingParser):
     """
     NexusParser doc
@@ -557,8 +603,7 @@ class NexusParser(MatchingParser):
         # if filename does not follow the pattern
         # .volumes/fs/<upload type>/<upload 2char>/<upload>/<raw/arch>/[subdirs?]/<filename>
         self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
-        nexus_helper = HandleNexus(logger, mainfile)
-        nexus_helper.process_nexus_master_file(self._nexus_populate)
+        NomadParser(mainfile, logger).process(self._nexus_populate)
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:
