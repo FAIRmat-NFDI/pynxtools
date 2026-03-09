@@ -403,11 +403,11 @@ class NexusNode(NodeMixin):
             if only_appdef and not is_appdef(elem):
                 break
 
-            for subelems in elem.xpath(search_tags, namespaces=namespaces):
-                if "name" in subelems.attrib:
-                    names.add(subelems.attrib["name"])
-                elif "type" in subelems.attrib:
-                    names.add(subelems.attrib["type"][2:].upper())
+            for sub_elems in elem.xpath(search_tags, namespaces=namespaces):
+                if "name" in sub_elems.attrib:
+                    names.add(sub_elems.attrib["name"])
+                elif "type" in sub_elems.attrib:
+                    names.add(sub_elems.attrib["type"][2:].upper())
 
         return names
 
@@ -1210,7 +1210,7 @@ class NexusEntity(NexusNode):
                 def convert_to_hashable(item):
                     """Convert lists to tuples for hashable types, leave non-list items as they are."""
                     if isinstance(item, list):
-                        return tuple(item)  # Convert sublists to tuples
+                        return tuple(item)  # Convert sub_lists to tuples
                     return item  # Non-list items remain as they are
 
                 set_items = {convert_to_hashable(sublist) for sublist in self.items}
@@ -1281,9 +1281,9 @@ class NexusEntity(NexusNode):
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
-            subelems = xml_elem.findall(f"nx:{self.nx_type}", namespaces=namespaces)
-            if subelems is not None:
-                for elem in subelems:
+            sub_elems = xml_elem.findall(f"nx:{self.nx_type}", namespaces=namespaces)
+            if sub_elems is not None:
+                for elem in sub_elems:
                     if self._check_compatibility_with(elem):
                         self.inheritance.append(elem)
 
