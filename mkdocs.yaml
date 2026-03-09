@@ -21,16 +21,18 @@ nav:
     - pynxtools:
       - how-tos/pynxtools/build-a-plugin.md
       - how-tos/pynxtools/use-multi-format-reader.md
+      - how-tos/pynxtools/implement-a-visitor.md
+      - how-tos/pynxtools/validate-nexus-files.md
+      - how-tos/pynxtools/create-nexus-files-by-python.md
       - how-tos/pynxtools/using-pynxtools-test-framework.md
       - how-tos/pynxtools/run-tests-in-parallel.md
-      - how-tos/pynxtools/create-nexus-files-by-python.md
-      - how-tos/pynxtools/validate-nexus-files.md
   - Learn:
     - NeXus:
       - learn/nexus/nexus-primer.md
       - learn/nexus/nexus-rules.md
       # - learn/nexus/multiple-appdefs.md
     - pynxtools:
+      - learn/pynxtools/architecture.md
       - learn/pynxtools/nexus-definitions.md
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md

@@ -149,10 +149,13 @@ monoclinic
 mpes
 mydatareader
 mynxdl
+myplugin
+myreader
 namefit
 namefitting
 ndarray
 ndataconverter
+ndim
 nexpy
 nexusapp
 nexusformat

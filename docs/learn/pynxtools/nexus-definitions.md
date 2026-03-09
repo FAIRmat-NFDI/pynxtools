@@ -10,6 +10,8 @@ The NeXus definitions themselves are not part of the pynxtools source code. Inst
 src/pynxtools/definitions
 ```
 
+At runtime, pynxtools parses these XML files and builds an in-memory `NexusNode` tree from them (see [pynxtools architecture](architecture.md)). All schema-aware tools — the `ValidationVisitor`, the `Annotator`, and the `dataconverter` — work exclusively against this tree rather than against the raw XML.
+
 This page explains:
 
 - what the definitions repository contains,
@@ -124,6 +126,28 @@ The script provides a small abstraction over common Git submodule operations and
     If a branch is checked out, the script updates `.gitmodules` so that future update calls follow that branch. If a commit or tag is used, branch tracking is removed.
 
     This allows temporary testing of definitions changes without permanently modifying the repository state.
+
+## The `NexusNode` schema tree
+
+When `pynxtools` needs to process a file against a given application definition, it calls `generate_tree_from(appdef_name)` (from `pynxtools.nexus.nexus_tree`). This function:
+
+1. Reads the NXDL XML file for the given application definition from `src/pynxtools/definitions/`.
+2. Resolves the full inheritance chain (base classes, contributed definitions).
+3. Returns a `NexusNode` root whose children represent every group, field, and attribute in the merged schema.
+
+Each `NexusNode` exposes:
+
+- **`optionality`**: `"required"`, `"recommended"`, or `"optional"`.
+- **`nx_type`** (`NexusType`): e.g. `"NX_FLOAT"`, `"NX_CHAR"`.
+- **`unit_category`** (`NexusUnitCategory`): e.g. `"NX_ENERGY"`.
+- **`get_inheritance_docs()`**: documentation strings from every contributing base class, most-specific first.
+- **`get_inheritance_enums()`**: enumeration values from every contributing base class, most-specific first.
+- **`get_inheritance_concept_paths()`**: full within-NXDL paths (e.g. `NXinstrument::/energy`) for every contributing class.
+- **`best_child_for(name, node_type, nx_class)`**: name-fit child selection using NeXus naming rules.
+- **`find_node_at_path(path, ..., _cache)`**: full-path traversal with optional dict cache.
+- **`has_nxcollection_parent()`**: whether this node lives inside an `NXcollection` group.
+
+The node tree is the single authoritative schema representation used by all schema-aware components in pynxtools. See [pynxtools architecture](architecture.md) for how it fits into the overall processing pipeline.
 
 ## Summary
 

@@ -1,60 +1,134 @@
 # Data conversion in pynxtools
 
-One of the main motivations for pynxtools is to develop a tool for combining various instrument output formats and electronic lab notebook (ELN) into a file according to [NeXus application definitions](https://fairmat-nfdi.github.io/nexus_definitions/classes/index.html). 
+One of the main motivations for pynxtools is to provide a principled tool for converting diverse instrument outputs and electronic lab notebook (ELN) data into NeXus-compliant HDF5 files. The `dataconverter` API does exactly that: it reads experimental data using *readers*, validates the result against a NeXus application definition, and writes a valid NeXus/HDF5 file.
 
-The `dataconverter` API in pynxtools provides exactly that: it converts experimental as well as simulation data, together with the results from analysis of such data, to NeXus files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1). Here, we are using [HDF5](https://support.hdfgroup.org/HDF5/) as the serialization format.
+## The three-step pipeline
 
-The dataconverter currently has essentially three functionalities:
+```
+Input files  ──▶  Reader  ──▶  Template  ──▶  Validator  ──▶  HDF5 writer
+                 (fills)        (dict)        (checks)         (writes .nxs)
+```
 
-1. Read in experimental data using ```readers```
-2. Validate the data and metadata against a NeXus application definition of choice (i.e., check that the output data matches all existence, shape, and format constraints of application definition)
-3. Write a valid NeXus/HDF5 file
+1. **Read** — one or more readers populate a `Template` dictionary whose keys are NXDL-style paths (e.g. `/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[my_source]/type`).
+2. **Validate** — the `ValidationVisitor` checks the populated template against the `NexusNode` tree for the target application definition.
+3. **Write** — the validated template is serialized to HDF5 using [`h5py`](https://www.h5py.org/).
 
-A set of readers has been developed which the converter calls to read in a set of experiment/method-specific file(s) and for a specific set of application definitions (NXDL XML file). These data files can be in a proprietary format, or of a certain format used in the respective scientific community, or text files. Only in combination, these files hold all the required pieces of information which the application definition demands and which are thus required to make a NeXus/HDF5 file compliant. Users can store additional pieces of information in an NeXus/HDF5 file. In this case readers will issue a warning that these data are not properly documented from the perspective of NeXus.
+The validation step uses the same `ValidationVisitor` that backs the standalone `validate_nexus` CLI. See [pynxtools architecture](architecture.md) for details.
 
-There exists two different subsets of readers:
+## Readers
 
-1. [Built-in readers](../../reference/built-in-readers.md), which are implemented directly in pynxtools and are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
-2. [Reader plugins](../../reference/plugins.md) for `pynxtools, which are used for reading data of specific experimental techniques and are typically available as their own Python packages.
+A reader is a Python class that takes input files and objects, and returns a populated `Template`. There are two levels to build from:
+
+### `BaseReader` (maximum flexibility)
+
+`BaseReader` is an abstract base class with an empty `read` method. Use it when the target format is unusual enough that none of the `MultiFormatReader` conveniences apply.
+
+```python
+from pynxtools.dataconverter.readers.base.reader import BaseReader
+
+class MyDataReader(BaseReader):
+    supported_nxdls = ["NXmynxdl"]
+
+    def read(self, template=None, file_paths=None, objects=None, **kwargs):
+        # fill template and return it
+        return template
+
+READER = MyDataReader
+```
+
+### `MultiFormatReader` (recommended)
+
+`MultiFormatReader` is the recommended base class for all new readers. It provides a structured pipeline for handling multiple file formats, a config-file mapping mechanism, and built-in callbacks for data, metadata, and ELN files.
+
+See [The MultiFormatReader](multi-format-reader.md) for an in-depth explanation, and the [how-to guide](../../how-tos/pynxtools/use-multi-format-reader.md) for a concrete implementation example.
+
+## The `Template` dictionary
+
+The `Template` object is the contract between readers and the dataconverter. Keys are NXDL-style paths that encode both the HDF5 instance path and the NeXus concept:
+
+```
+/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[my_source]/type
+ \_concept_/\__instance__/\_concept__/\__instance__/ \field/
+```
+
+- `ENTRY` — concept name (uppercase, as in the NXDL)
+- `entry` — instance name (the actual HDF5 group name)
+
+Bracket notation (`CONCEPT[instance]`) is only required when the NXDL does not fix the group name. For application definitions that fix a name, the concept and instance are the same.
+
+Keys in the template are pre-populated by the dataconverter from the target NXDL with `None` values. The reader fills in actual values. The `Template` also categorizes keys by optionality (`required`, `recommended`, `optional`, `undocumented`) so the validator knows what to enforce.
+
+### Key conventions
+
+| Syntax | Meaning |
+|---|---|
+| `/ENTRY[entry]/field` | field value |
+| `/ENTRY[entry]/field/@units` | unit attribute for `field` |
+| `/ENTRY[entry]/GROUP[name]/@NX_class` | NX_class attribute |
+| `{"link": "/path/to/target"}` | HDF5 hard link |
+
+### Generating an empty template
+
+```bash
+dataconverter generate-template --nxdl NXmynxdl
+```
 
 ## Matching to NeXus application definitions
 
-The purpose of the dataconverter is to create NeXus/HDF5 files with content that matches a specific NeXus application definition. Such application definitions are useful for collecting a set of pieces of information about a specific experiment in a given scientific field. The pieces of information are numerical and categorical (meta)data. The application definition is used to provide these data in a format that serves a data delivery contract: The HDF5 file, or so-called NeXus file, delivers all those pieces of information which the application definition specifies. Required and optional pieces of information are distinguished. NeXus classes can recommend the inclusion of certain pieces of information. Recommended data are essentially optional. The idea is that flagging these data as recommended motivates users to collect these, but does not require to write dummy or nonsense data if the recommended data is not available.
+Application definitions specify which groups, fields, and attributes a valid NeXus entry must contain, with explicit optionality. The dataconverter validates the populated template against these rules before writing:
 
-## Getting started
-
-You should start by installing `pynxtools` and (if needed) one or more of its supported plugins.
-
-- [Installation](../../tutorial/installation.md)
+- **Required** concepts must be present.
+- **Recommended** concepts produce a warning if absent.
+- **Optional** concepts are silently ignored if absent.
+- Values not defined in the NXDL land in the `undocumented` sub-dict and produce a warning.
 
 ## Usage
 
-See [here](../../reference/cli-api.md#data-conversion) for the documentation of the `dataconverter` API.
+### Basic conversion
 
-### Use with multiple input files
-
-```console
-dataconverter metadata data.raw otherfile --nxdl nxdl --reader <reader-name>
+```bash
+dataconverter --reader myreader --nxdl NXmynxdl input.dat --output out.nxs
 ```
 
-### Merge partial NeXus files into one
+### Multiple input files
 
-```console
-dataconverter --nxdl nxdl partial1.nxs partial2.nxs
+```bash
+dataconverter metadata.yaml data.raw --nxdl NXmynxdl --reader myreader
 ```
 
-### Map an HDF5 file/JSON file
+### Merging partial NeXus files
 
-```console
-dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
+```bash
+dataconverter --nxdl NXmynxdl partial1.nxs partial2.nxs
 ```
 
-You can find actual examples with data files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/).
+### Mapping an HDF5 or JSON file without a custom reader
 
-## Example data for testing and development purposes
+```bash
+dataconverter --nxdl NXmynxdl any_data.hdf5 --mapping my_map.mapping.json
+```
 
-Before using your own data we strongly encourage you to download a set of open-source test data for testing the pynxtools readers and reader  plugins. For this purpose, pynxtools and its plugins come with `examples` and `test` directories including reader-specific examples. These examples can be used for downloading test data and use specific readers as a standalone converter to translate given data into a NeXus/HDF5 file.
+The `--mapping` flag activates the built-in `JsonMapReader`. Examples are in [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/).
 
-Once you have practiced with these tools how to convert these examples, feel free to use the tools for converting your own data. You should feel invited to contact the respective corresponding author(s) of each reader if you run into issues with the reader or feel there is a necessity to include additional data into the NeXus file for your respective application.
+## Built-in readers
 
-We are looking forward to learning from your experience and learn from your use cases. You can find the contact persons [here](../../contact.md) or in the respective documentation of each reader (plugin).
+| Reader | Entry point name | Purpose |
+|---|---|---|
+| `MultiFormatReader` | — | Abstract base with full pipeline; recommended starting point |
+| `BaseReader` | — | Abstract base; minimum interface only |
+| `JsonMapReader` | `json_map` | No-code mapping from HDF5/JSON via a `.mapping.json` file |
+| `YamlJsonReader` | `json_yml` | Reads YAML/JSON files directly into the template |
+| `ExampleReader` | `example` | Minimal working example for developers |
+
+See [Built-in readers](../../reference/built-in-readers.md) for full details.
+
+## Reader plugins
+
+Technique-specific readers are distributed as separate Python packages (e.g. `pynxtools-xps`, `pynxtools-mpes`). Each registers itself via an entry point:
+
+```toml title="pyproject.toml"
+[project.entry-points."pynxtools.reader"]
+xps = "pynxtools_xps.reader:XPSReader"
+```
+
+See [FAIRmat-supported pynxtools plugins](../../reference/plugins.md) for the current list.
