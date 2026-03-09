@@ -88,6 +88,7 @@ blosc
 bulletpoint
 callspec
 caplog
+clevel
 cnxvalidate
 complexfloating
 dataarrays
@@ -122,6 +123,7 @@ hdfgroup
 hdfobject
 hfive
 hixu
+hyperthreading
 hypothes
 idname
 idobj
@@ -159,6 +161,7 @@ mynxdl
 namefit
 namefitting
 nbytes
+ncores
 ndarray
 ndataconverter
 ndims
@@ -169,6 +172,7 @@ nodemixin
 nonvariadic
 nslots
 nsmap
+nthreads
 nxcollection
 nxdata
 nxdl

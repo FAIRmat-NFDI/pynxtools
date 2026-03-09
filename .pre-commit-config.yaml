@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0
+    rev: v0.15.5
     hooks:
       - id: ruff-check
         files: ^(src/pynxtools|tests)/.*\.py$
@@ -26,7 +26,7 @@ repos:
       - id: nbstripout  # removes notebook outputs before committing
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.6.0
+    rev: v9.7.0
     hooks:
       - id: cspell  # spellchecking
         pass_filenames: false

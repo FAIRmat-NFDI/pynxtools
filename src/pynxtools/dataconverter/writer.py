@@ -20,7 +20,9 @@
 # pylint: disable=R0912
 
 import copy
+import importlib.util
 import logging
+import os
 import sys
 import xml.etree.ElementTree as ET
 
@@ -36,7 +38,20 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.chunk import COMPRESSION_FILTER, COMPRESSION_STRENGTH
+from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS, COMPRESSION_STRENGTH
+
+if (
+    importlib.util.find_spec("hdf5plugin") is not None
+    and importlib.util.find_spec("blosc2") is not None
+):
+    import blosc2
+    import hdf5plugin
+
+    blosc2.set_nthreads(os.cpu_count() / 2)
+    # do not oversubscribe to use hyperthreading cores
+    logger.info(f"blosc2 is configured to use {blosc2.nthreads} threads.")
+    logger.info(f"Host has {blosc2.ncores} cores.")
+    logger.info(blosc2.print_versions())
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -152,25 +167,34 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            compression_filter = COMPRESSION_FILTER
-            compression_strength = COMPRESSION_STRENGTH
+            if ("filter" in data.keys()) and (data["filter"] in COMPRESSION_FILTERS):
+                compression_filter = data["filter"]
+            else:  # fall-back to default
+                compression_filter = COMPRESSION_FILTERS[0]
 
-            accept = (
+            if (
                 ("strength" in data.keys())
                 and (isinstance(data["strength"], int))
-                and (data["strength"] >= 0)
-                and (data["strength"] <= 9)
-            )
-            if accept is True:
+                and (0 <= data["strength"] <= 9)
+            ):
                 compression_strength = data["strength"]
+            else:
+                compression_strength = COMPRESSION_STRENGTH
+
             if entry_name not in grp:
                 try:
+                    if compression_filter == "gzip":
+                        compression_config = dict(
+                            compression=compression_filter,
+                            compression_opts=compression_strength,
+                        )
+                    else:
+                        compression_config = hdf5plugin.Blosc2(cname="zstd", clevel=9)
                     grp.create_dataset(
                         entry_name,
                         data=data["compress"],
-                        compression=compression_filter,
                         chunks=chunking_strategy(data),
-                        compression_opts=compression_strength,
+                        **compression_config,
                     )
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")

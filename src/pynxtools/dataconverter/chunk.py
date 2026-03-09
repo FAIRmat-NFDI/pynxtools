@@ -26,8 +26,9 @@ from pynxtools.dataconverter.helpers import logger
 # one wraps the payload for a dataconverter template into a dictionary with
 # keyword "compress", causing chunked layout to be used
 
-COMPRESSION_FILTER = "gzip"  # deflate
-COMPRESSION_STRENGTH = 9
+COMPRESSION_FILTERS: list[str] = ["gzip", "blosc"]
+# order matters! 0th entry taken as the default, "gzip" -> deflate, "blosc" -> "zstd"
+COMPRESSION_STRENGTH: int = 9
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
 # using strongest compression is space efficient but can take substantially longer than
 # using 1
