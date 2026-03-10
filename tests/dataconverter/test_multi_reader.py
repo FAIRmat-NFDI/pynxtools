@@ -254,30 +254,16 @@ def test_nonexistent_file_logs_warning(caplog):
 
 
 # ---------------------------------------------------------------------------
-# nxdl_template is stored before hooks run
+# setup_template contract: static dict, no template or reader-data access
 # ---------------------------------------------------------------------------
 
 
-def test_nxdl_template_available_in_setup_template():
-    """self.nxdl_template must be set before setup_template is called."""
-    received: dict = {}
-
-    class _SnoopReader(MultiFormatReader):
-        supported_nxdls = ["NXtest"]
-
-        def __init__(self):
-            super().__init__()
-            self.extensions = {}
-
-        def setup_template(self) -> dict[str, Any]:
-            received["nxdl_template"] = self.nxdl_template
-            return {}
-
-    incoming = Template()
-    incoming["/ENTRY[entry]/some_field"] = 1
-    reader = _SnoopReader()
-    reader.read(template=incoming, file_paths=())
-    assert received["nxdl_template"] is incoming
+def test_setup_template_returns_empty_dict_by_default():
+    """The base setup_template must return an empty dict with no side effects."""
+    reader = MultiFormatReader()
+    result = reader.setup_template()
+    assert result == {}
+    assert isinstance(result, dict)
 
 
 # ---------------------------------------------------------------------------

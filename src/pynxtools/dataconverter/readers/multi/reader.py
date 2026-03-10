@@ -22,7 +22,7 @@ import logging
 import os
 import re
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import (
@@ -376,7 +376,6 @@ class MultiFormatReader(BaseReader):
         self.config_file = config_file
         self.config_dict: dict[str, Any] = {}
         self.eln_data: dict[str, Any] = {}
-        self.nxdl_template: Optional[dict] = None
         # Instance-level dict — avoids shared mutable class attribute.
         # Subclasses override this in their own __init__.
         self.extensions: dict[str, Callable[[Any], dict]] = {}
@@ -424,12 +423,17 @@ class MultiFormatReader(BaseReader):
 
     def setup_template(self) -> dict[str, Any]:
         """
-        Return static entries to add to the template before config processing.
+        Return static, hard-coded entries to add to the template.
 
-        Called after all input files have been dispatched.  Use this for
-        reader-level metadata (e.g. ``program_name``, fixed units) or any
-        data derived purely from ``self``-state rather than a config file.
-        May return a plain ``dict`` or a ``Template`` instance.
+        Called after all input files have been dispatched but before any
+        config-file processing.  Use this for entries whose values are
+        known at class-definition time — reader metadata, fixed units,
+        constant calibration values, etc.
+
+        **Contract**: this method must NOT access the NXDL template structure
+        (there is no reference to it) and must NOT access data read from input
+        files (``self.data`` or equivalent).  Any logic that depends on either
+        belongs in ``read()`` or ``post_process()``.
         """
         return {}
 
@@ -517,13 +521,12 @@ class MultiFormatReader(BaseReader):
         self.kwargs = kwargs
         self.config_file = self.kwargs.get("config_file", self.config_file)
         self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)
-        self.nxdl_template = template
 
-        result = Template(overwrite_keys=self.overwrite_keys)
+        template = Template(template=template, overwrite_keys=self.overwrite_keys)
 
         # 1. Objects — before file dispatch so handlers can build on them.
         if objects is not None:
-            result.update(self.handle_objects(objects))
+            template.update(self.handle_objects(objects))
 
         # 2. Files — dispatch each input file to its registered handler.
         def get_processing_order(path: str) -> tuple[int, str | int]:
@@ -542,10 +545,10 @@ class MultiFormatReader(BaseReader):
             if not os.path.exists(file_path):
                 logger.warning(f"File {file_path} does not exist, ignoring entry.")
                 continue
-            result.update(self.extensions[extension](file_path))
+            template.update(self.extensions[extension](file_path))
 
         # 3. Static data not derived from input files.
-        result.update(self.setup_template())
+        template.update(self.setup_template())
 
         # 4. Config file.
         if self.config_file is not None:
@@ -556,12 +559,12 @@ class MultiFormatReader(BaseReader):
         # 5. Post-processing (may modify self.config_dict and/or return data).
         post_data = self.post_process()
         if post_data:
-            result.update(post_data)
+            template.update(post_data)
 
         # 6. Fill template from config dict via @-token callbacks.
         if self.config_dict:
             suppress_warning = kwargs.pop("suppress_warning", False)
-            result.update(
+            template.update(
                 fill_from_config(
                     self.config_dict,
                     self.get_entry_names(),
@@ -570,7 +573,7 @@ class MultiFormatReader(BaseReader):
                 )
             )
 
-        return result
+        return template
 
 
 READER = MultiFormatReader
