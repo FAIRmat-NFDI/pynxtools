@@ -31,33 +31,48 @@ This file is designed to let you fill in the requirements of a NeXus Application
 
 The mapping files will always be based on the template the dataconverter generates. See above on how to generate a mapping file. The right hand side values of the template keys are what you can modify. These keys are called NeXus template paths, because they combine the actual path that will be used in the HDF5 hierarchy with additional NeXus datatype hints to guide the dataconverter to add NX_class annotations.
 
-Here are the three different ways you can fill the right hand side of the template keys:
+There are four ways to fill the right-hand side of a template key:
 
-* Write the nested path in your datafile. This is indicated by a leading `/` before the word `entry` to make `/entry/data/current_295C` below.
-Example:
+#### 1. Data path (preferred: `@data:` token)
+
+Use the `@data:` prefix to point at a path inside your data file:
+
+```json
+  "/ENTRY[entry]/DATA[data]/current_295C": "@data:entry/data/current_295C",
+  "/ENTRY[entry]/NXODD_name/posint_value": "@data:a_level_down/another_level_down/posint_value",
+```
+
+The path after `@data:` is a `/`-separated key chain into your data dictionary or HDF5 group hierarchy (no leading `/`).
+
+#### 2. Data path (legacy format)
+
+A leading `/` in the value is also accepted and is converted to an `@data:` token automatically:
 
 ```json
   "/ENTRY[entry]/DATA[data]/current_295C": "/entry/data/current_295C",
-  "/ENTRY[entry]/NXODD_name/posint_value": "/a_level_down/another_level_down/posint_value",
 ```
 
-Here, `"/entry/data/current_295C"` is the path in the original HDF5 file, while the key shown here is the template path (see above).
+Both formats are equivalent. New mapping files should prefer the `@data:` form as it is consistent with all other `MultiFormatReader`-based plugins (mpes, xps, raman, …).
 
-* Write the values directly in the mapping file for missing data from your data file.
+#### 3. Literal value
+
+Write the value directly for data that is not in your file:
 
 ```json
   "/ENTRY[entry]/PROCESS[process]/program": "Bluesky",
   "/ENTRY[entry]/PROCESS[process]/program/@version": "1.6.7"
 ```
 
-* Write JSON objects with a link key. This follows the same link mechanism that the dataconverter implements. In the context of this reader, you can only use external links to your data files. In the example below, `current.nxs` is an already existing HDF5 file that we link to in our new NeXus file without copying over the data. The format is as follows:
-`"link": "<filename>:<path_in_file>"`
-Note: This only works for HDF5 files currently.
+#### 4. Link / virtual dataset
+
+Use a JSON object with a `"link"` key to reference data in an existing HDF5 file without copying it:
 
 ```json
   "/ENTRY[entry]/DATA[data]/current_295C": {"link": "current.nxs:/entry/data/current_295C"},
   "/ENTRY[entry]/DATA[data]/current_300C": {"link": "current.nxs:/entry/data/current_300C"},
 ```
+
+Note: linking only works for HDF5 files. A `"shape"` key may be added alongside `"link"` to select a slice (e.g. `"shape": "0:100, 0:50"`).
 
 ### Examples
 
