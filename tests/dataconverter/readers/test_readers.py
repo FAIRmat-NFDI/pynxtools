@@ -64,7 +64,9 @@ def _make_nxdl_template(nxdl: str) -> Template:
     """Parse an NXDL file and return a fresh Template."""
     def_dir = os.path.join(os.getcwd(), "src", "pynxtools", "definitions")
     if nxdl in ("NXtest", "*"):
-        nxdl_file = os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml")
+        nxdl_file = os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"
+        )
     elif nxdl == "NXroot":
         nxdl_file = os.path.join(def_dir, "base_classes", "NXroot.nxdl.xml")
     else:
@@ -76,6 +78,7 @@ def _make_nxdl_template(nxdl: str) -> Template:
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_if_readers_are_children_of_base_reader(reader):
     """Test to verify that all readers are children of BaseReader or MultiFormatReader"""
     if reader.__name__ != "BaseReader":
@@ -85,6 +88,7 @@ def test_if_readers_are_children_of_base_reader(reader):
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_has_correct_read_func(reader, caplog):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
@@ -108,7 +112,9 @@ def test_has_correct_read_func(reader, caplog):
             if reader_name == "json_map":
                 # Use the config-file path (-c flag) rather than the deprecated
                 # .mapping.json format so this test exercises the current API.
-                data_files = [f for f in input_files if ".mapping" not in f and ".config" not in f]
+                data_files = [
+                    f for f in input_files if ".mapping" not in f and ".config" not in f
+                ]
                 config_file = os.path.join(reader_path, "data.config.json")
                 r = reader()
                 r.set_config_file(config_file)

@@ -105,7 +105,9 @@ Using a `.mapping.json` file will emit a `DeprecationWarning`.
 
 ## The [YamlJsonReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_yml/reader.py)
 
-!!! danger "Work in progress"
+!!! warning "Deprecated"
+    `YamlJsonReader` is deprecated and will be removed in a future release.
+    Use `MultiFormatReader` directly — it provides identical functionality.
 
 ## Installation
 
