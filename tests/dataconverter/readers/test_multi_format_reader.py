@@ -29,7 +29,6 @@ import yaml
 from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 from pynxtools.dataconverter.template import Template
 
-
 # ---------------------------------------------------------------------------
 # Minimal concrete subclasses used only in tests
 # ---------------------------------------------------------------------------
@@ -131,7 +130,9 @@ def test_setup_template_after_files():
 
     file_idx = next(i for i, e in enumerate(tracker.events) if e.startswith("file:"))
     setup_idx = tracker.events.index("setup_template")
-    assert file_idx < setup_idx, f"Expected file before setup_template, got: {tracker.events}"
+    assert file_idx < setup_idx, (
+        f"Expected file before setup_template, got: {tracker.events}"
+    )
 
 
 def test_post_process_after_setup_template():
@@ -141,7 +142,9 @@ def test_post_process_after_setup_template():
     reader.read(template=Template(), file_paths=())
     setup_idx = tracker.events.index("setup_template")
     post_idx = tracker.events.index("post_process")
-    assert setup_idx < post_idx, f"Expected setup_template before post_process, got: {tracker.events}"
+    assert setup_idx < post_idx, (
+        f"Expected setup_template before post_process, got: {tracker.events}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -247,9 +250,7 @@ def test_nonexistent_file_logs_warning(caplog):
     tracker = _OrderTracker()
     reader = _TrackedReader(tracker)
     with caplog.at_level(logging.WARNING, logger="pynxtools"):
-        reader.read(
-            template=Template(), file_paths=("/nonexistent/path/file.txt",)
-        )
+        reader.read(template=Template(), file_paths=("/nonexistent/path/file.txt",))
     assert any("does not exist" in msg.lower() for msg in caplog.messages)
 
 

@@ -345,7 +345,7 @@ class MultiFormatReader(BaseReader):
       respects ``CONVERT_DICT`` and ``REPLACE_NESTED`` class attributes.
     * ``set_config_file`` — stores the path of a JSON config file.
 
-    Built-in callbacks (override to customise):
+    Built-in callbacks (override to customize):
 
     * ``get_attr(key, path)`` — retrieve instrument metadata.
     * ``get_data(key, path)`` — retrieve measurement data.
@@ -411,9 +411,7 @@ class MultiFormatReader(BaseReader):
         replaces the old one.
         """
         if self.config_file is not None:
-            logger.warning(
-                f"Config file already set. Replaced by {file_path}."
-            )
+            logger.warning(f"Config file already set. Replaced by {file_path}.")
         self.config_file = file_path
         return {}
 
