@@ -23,7 +23,7 @@ from typing import Any
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
+from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 _EXCLUDED_PREFIXES = (
     "/ENTRY[entry]/required_group",
@@ -41,97 +41,92 @@ _EXCLUDED_KEYS = frozenset(
 )
 
 
-class ExampleReader(MultiFormatReader):
+class ExampleReader(BaseReader):
     """An example reader implementation for the DataConverter."""
 
     supported_nxdls = ["NXtest"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.data: dict = {}
-        self.extensions = {
-            ".json": self.handle_json_file,
-        }
-
-    def handle_json_file(self, file_path: str) -> dict[str, Any]:
-        """Reads the JSON test data into self.data."""
-        with open(file_path, encoding="utf-8") as f:
-            self.data = json.loads(f.read())
-        return {}
-
     def read(
         self,
         template: dict = None,
-        file_paths: tuple = None,
-        objects: tuple = None,
-        **kwargs,
+        file_paths: tuple[str] = None,
+        objects: tuple[Any] = None,
+        **_,
     ) -> dict:
-        """Dispatch files via super(), then fill generic NXtest fields from data."""
-        result = super().read(
-            template=template, file_paths=file_paths, objects=objects, **kwargs
-        )
-        # Generic fill: for each NXDL key, look up data by field name.
-        # This depends on both the template structure and self.data, so it
-        # belongs here in read() rather than in setup_template().
-        if template is not None:
-            for k in template.keys():
-                if k.startswith(_EXCLUDED_PREFIXES) or k in _EXCLUDED_KEYS:
-                    continue
-                field_name = k[k.rfind("/") + 1:]
-                if field_name != "@units" and field_name in self.data:
-                    result[k] = self.data[field_name]
-                    if f"{field_name}_units" in self.data:
-                        result[f"{k}/@units"] = self.data[f"{field_name}_units"]
-        return result
+        """Reads data from given file and returns a filled template dictionary."""
+        data: dict = {}
 
-    def setup_template(self) -> dict[str, Any]:
-        """Hard-coded NXtest entries independent of input data or template structure."""
-        my_path = str(f"{os.path.dirname(__file__)}/../../../data/")
-        return {
-            "/ENTRY[entry]/optional_parent/required_child": 1,
-            "/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]": [0, 1],
-            "/ENTRY[entry]/does/not/exist": "None",
-            "/ENTRY[entry]/required_group/description": "A test description",
-            "/ENTRY[entry]/required_group2/description": "A test description",
-            "/ENTRY[entry]/program_name": "None",
-            # Internal link
-            "/ENTRY[entry]/test_link/internal_link": {
-                "link": "/entry/nxodd_name/posint_value"
-            },
-            # External link
-            "/ENTRY[entry]/test_link/external_link": {
-                "link": f"{os.path.dirname(__file__)}/../../../data/"
-                "xarray_saved_small_calibration.h5:/axes/ax3"
-            },
-            # Virtual dataset concatenation
-            "/ENTRY[entry]/test_virtual_dataset/concatenate_datasets": {
-                "link": [
-                    f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax0",
-                    f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax1",
-                    f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax2",
-                ]
-            },
-            # Virtual dataset slicing
-            "/ENTRY[entry]/test_virtual_dataset/sliced_dataset": {
-                "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
-                "shape": np.index_exp[:, 1, :, :],
-            },
-            "/ENTRY[entry]/test_virtual_dataset/sliced_dataset2": {
-                "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
-                "shape": np.index_exp[:, :, :, 1],
-            },
-            "/ENTRY[entry]/test_virtual_dataset/sliced_dataset3": {
-                "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
-                "shape": np.index_exp[:, :, :, 2:4],
-            },
-            # Compression
-            "/ENTRY[entry]/test_compression/not_to_compress": {
-                "compress": "string not to be compressed"
-            },
-            "/ENTRY[entry]/test_compression/compressed_data": {
-                "compress": np.array([1, 2, 3, 4])
-            },
+        if not file_paths:
+            raise OSError("No input files were given to Example Reader.")
+
+        for file_path in file_paths:
+            if file_path.endswith(".json"):
+                with open(file_path, encoding="utf-8") as f:
+                    data = json.loads(f.read())
+
+        for k in template.keys():
+            if k.startswith(_EXCLUDED_PREFIXES) or k in _EXCLUDED_KEYS:
+                continue
+            field_name = k[k.rfind("/") + 1:]
+            if field_name != "@units" and field_name in data:
+                template[k] = data[field_name]
+                if f"{field_name}_units" in data:
+                    template[f"{k}/@units"] = data[f"{field_name}_units"]
+
+        template["/ENTRY[entry]/optional_parent/required_child"] = 1
+        template["/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]"] = [
+            0,
+            1,
+        ]
+        template["/ENTRY[entry]/does/not/exist"] = "None"
+        template["/ENTRY[entry]/required_group/description"] = "A test description"
+        template["/ENTRY[entry]/required_group2/description"] = "A test description"
+        template["/ENTRY[entry]/program_name"] = "None"
+
+        # Internal link
+        template["/ENTRY[entry]/test_link/internal_link"] = {
+            "link": "/entry/nxodd_name/posint_value"
         }
+
+        # External link
+        template["/ENTRY[entry]/test_link/external_link"] = {
+            "link": f"{os.path.dirname(__file__)}/../../../data/"
+            "xarray_saved_small_calibration.h5:/axes/ax3"
+        }
+
+        # Virtual dataset concatenation
+        my_path = str(f"{os.path.dirname(__file__)}/../../../data/")
+        template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = {
+            "link": [
+                f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax0",
+                f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax1",
+                f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax2",
+            ]
+        }
+
+        # Virtual dataset slicing
+        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset"] = {
+            "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
+            "shape": np.index_exp[:, 1, :, :],
+        }
+        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset2"] = {
+            "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
+            "shape": np.index_exp[:, :, :, 1],
+        }
+        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset3"] = {
+            "link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
+            "shape": np.index_exp[:, :, :, 2:4],
+        }
+
+        # Compression
+        template["/ENTRY[entry]/test_compression/not_to_compress"] = {
+            "compress": "string not to be compressed"
+        }
+        template["/ENTRY[entry]/test_compression/compressed_data"] = {
+            "compress": np.array([1, 2, 3, 4])
+        }
+
+        return template
 
 
 # This has to be set to allow the convert script to use this reader.

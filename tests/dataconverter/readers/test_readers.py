@@ -20,6 +20,7 @@
 import glob
 import logging
 import os
+import warnings
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -101,9 +102,16 @@ def test_has_correct_read_func(reader, caplog):
             template = Template()
             generate_template_from_nxdl(root, template)
 
-            read_data = reader().read(
-                template=Template(template), file_paths=tuple(input_files)
-            )
+            if reader_name == "json_map":
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", DeprecationWarning)
+                    read_data = reader().read(
+                        template=Template(template), file_paths=tuple(input_files)
+                    )
+            else:
+                read_data = reader().read(
+                    template=Template(template), file_paths=tuple(input_files)
+                )
 
             if supported_nxdl == "*":
                 supported_nxdl = "NXtest"
@@ -119,3 +127,26 @@ def test_has_correct_read_func(reader, caplog):
                     )
 
                 print(caplog.text)
+
+
+def test_json_map_reader_mapping_json_emits_deprecation_warning():
+    """Using a .mapping.json file must emit a DeprecationWarning."""
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
+    input_files = sorted(
+        glob.glob(os.path.join(dataconverter_data_dir, "readers", "json_map", "*"))
+    )
+    nxdl_file = os.path.join(
+        os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"
+    )
+    root = ET.parse(nxdl_file).getroot()
+    template = Template()
+    from pynxtools.dataconverter.helpers import generate_template_from_nxdl
+
+    generate_template_from_nxdl(root, template)
+
+    with pytest.warns(DeprecationWarning, match=r"\.mapping\.json.*deprecated"):
+        JsonMapReader().read(
+            template=Template(template), file_paths=tuple(input_files)
+        )

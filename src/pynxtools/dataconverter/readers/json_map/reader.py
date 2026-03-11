@@ -17,20 +17,26 @@
 #
 """JSON mapping reader built on MultiFormatReader.
 
-The reader accepts a ``.mapping.json`` file whose values are either:
+.. deprecated::
+    The ``.mapping.json`` file format is deprecated.  Use a config file
+    passed via the ``-c`` flag instead.  See the pynxtools documentation for
+    the config file format used by all MultiFormatReader plugins.
 
-* a data path starting with ``/`` (legacy format): ``"/a_level/field"``
-* an explicit ``@data:`` token (new format): ``"@data:a_level/field"``
+The reader accepts a config file (``-c``) whose values use ``@data:`` tokens:
+
+* ``"@data:a_level/field"`` — resolve path in the data dict
+* ``"@attrs:my_attr"``      — resolve via ``get_attr()``
+* ``"@eln:eln_path"``       — resolve from ELN data
 * a literal value (string, number, bool): ``"NXoptical_spectroscopy"``
 * a link/virtual-dataset dict: ``{"link": "...", "shape": "0:2"}``
 
-Both path formats resolve identically at runtime.  The ``@data:`` token
-format is preferred for new mapping files as it aligns with the convention
-used by pynxtools-mpes, xps, raman, and other MultiFormatReader plugins.
+For backward compatibility, ``.mapping.json`` files are still accepted but
+will emit a ``DeprecationWarning`` and will be removed in a future release.
 """
 
 import json
 import pickle
+import warnings
 from typing import Any
 
 import numpy as np
@@ -206,6 +212,13 @@ class JsonMapReader(MultiFormatReader):
         with open(file_path, encoding="utf-8") as f:
             content = json.loads(f.read())
         if ".mapping" in file_path:
+            warnings.warn(
+                f"The .mapping.json format is deprecated and will be removed in a "
+                f"future release. Please use a config file via the -c flag instead. "
+                f"See the pynxtools documentation for the config file format.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             # Convert shape strings to slice objects, then convert to
             # fill_from_config format. Pipeline step 6 resolves via get_data().
             convert_shapes_to_slice_objects(content)
