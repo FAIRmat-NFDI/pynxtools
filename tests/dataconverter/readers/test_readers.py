@@ -20,7 +20,6 @@
 import glob
 import logging
 import os
-import warnings
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -68,6 +67,7 @@ def test_if_readers_are_children_of_base_reader(reader):
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_has_correct_read_func(reader, caplog):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
@@ -102,16 +102,9 @@ def test_has_correct_read_func(reader, caplog):
             template = Template()
             generate_template_from_nxdl(root, template)
 
-            if reader_name == "json_map":
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore", DeprecationWarning)
-                    read_data = reader().read(
-                        template=Template(template), file_paths=tuple(input_files)
-                    )
-            else:
-                read_data = reader().read(
-                    template=Template(template), file_paths=tuple(input_files)
-                )
+            read_data = reader().read(
+                template=Template(template), file_paths=tuple(input_files)
+            )
 
             if supported_nxdl == "*":
                 supported_nxdl = "NXtest"
