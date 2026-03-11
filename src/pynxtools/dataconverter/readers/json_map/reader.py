@@ -35,6 +35,7 @@ will emit a ``DeprecationWarning`` and will be removed in a future release.
 """
 
 import json
+import logging
 import pickle
 import warnings
 from typing import Any
@@ -50,6 +51,8 @@ from pynxtools.dataconverter.readers.multi.reader import (
     fill_from_config,
 )
 from pynxtools.dataconverter.template import Template
+
+logger = logging.getLogger("pynxtools")
 
 
 def parse_slice(slice_string):
@@ -212,13 +215,13 @@ class JsonMapReader(MultiFormatReader):
         with open(file_path, encoding="utf-8") as f:
             content = json.loads(f.read())
         if ".mapping" in file_path:
-            warnings.warn(
-                f"The .mapping.json format is deprecated and will be removed in a "
-                f"future release. Please use a config file via the -c flag instead. "
-                f"See the pynxtools documentation for the config file format.",
-                DeprecationWarning,
-                stacklevel=2,
+            msg = (
+                "The .mapping.json format is deprecated and will be removed in a "
+                "future release. Please use a config file via the -c flag instead. "
+                "See the pynxtools documentation for the config file format."
             )
+            logger.warning(msg)
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
             # Convert shape strings to slice objects, then convert to
             # fill_from_config format. Pipeline step 6 resolves via get_data().
             convert_shapes_to_slice_objects(content)

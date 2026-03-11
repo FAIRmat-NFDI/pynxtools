@@ -59,11 +59,11 @@ Write the value directly for data that is not in your file:
 
 #### 3. Link / virtual dataset
 
-Use a JSON object with a `"link"` key to reference data in an existing HDF5 file without copying it:
+Use a JSON object with a `"link"` callback to reference data in an existing HDF5 file without copying it:
 
 ```json
-  "/ENTRY[entry]/DATA[data]/current_295C": {"link": "current.nxs:/entry/data/current_295C"},
-  "/ENTRY[entry]/DATA[data]/current_300C": {"link": "current.nxs:/entry/data/current_300C"}
+  "/ENTRY[entry]/DATA[data]/current_295C":"@link:current.nxs:/entry/data/current_295C",
+  "/ENTRY[entry]/DATA[data]/current_300C":"@link:current.nxs:/entry/data/current_300C"
 ```
 
 Note: linking only works for HDF5 files. A `"shape"` key may be added alongside `"link"` to select a slice (e.g. `"shape": "0:100, 0:50"`).
