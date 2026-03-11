@@ -32,6 +32,9 @@ from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 
+_DATACONVERTER_DATA_DIR = os.path.join("tests", "data", "dataconverter")
+_JSON_MAP_DIR = os.path.join(_DATACONVERTER_DATA_DIR, "readers", "json_map")
+
 
 def get_reader_name_from_reader_object(reader) -> str:
     """Helper function to find the name of a reader given the reader object."""
@@ -57,6 +60,21 @@ def get_all_readers() -> list[ParameterSet]:
     return readers
 
 
+def _make_nxdl_template(nxdl: str) -> Template:
+    """Parse an NXDL file and return a fresh Template."""
+    def_dir = os.path.join(os.getcwd(), "src", "pynxtools", "definitions")
+    if nxdl in ("NXtest", "*"):
+        nxdl_file = os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml")
+    elif nxdl == "NXroot":
+        nxdl_file = os.path.join(def_dir, "base_classes", "NXroot.nxdl.xml")
+    else:
+        nxdl_file = os.path.join(def_dir, "contributed_definitions", f"{nxdl}.nxdl.xml")
+    root = ET.parse(nxdl_file).getroot()
+    template = Template()
+    generate_template_from_nxdl(root, template)
+    return template
+
+
 @pytest.mark.parametrize("reader", get_all_readers())
 def test_if_readers_are_children_of_base_reader(reader):
     """Test to verify that all readers are children of BaseReader or MultiFormatReader"""
@@ -67,7 +85,6 @@ def test_if_readers_are_children_of_base_reader(reader):
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
-@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_has_correct_read_func(reader, caplog):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
@@ -75,7 +92,6 @@ def test_has_correct_read_func(reader, caplog):
         assert hasattr(reader, "supported_nxdls")
 
         reader_name = get_reader_name_from_reader_object(reader)
-        def_dir = os.path.join(os.getcwd(), "src", "pynxtools", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
         reader_path = os.path.join(dataconverter_data_dir, "readers", reader_name)
@@ -87,24 +103,22 @@ def test_has_correct_read_func(reader, caplog):
             # If there are no supported nxdls test against NXroot
             reader.supported_nxdls = ["NXroot"]
         for supported_nxdl in reader.supported_nxdls:
-            if supported_nxdl in ("NXtest", "*"):
-                nxdl_file = os.path.join(
-                    os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"
+            template = _make_nxdl_template(supported_nxdl)
+
+            if reader_name == "json_map":
+                # Use the config-file path (-c flag) rather than the deprecated
+                # .mapping.json format so this test exercises the current API.
+                data_files = [f for f in input_files if ".mapping" not in f and ".config" not in f]
+                config_file = os.path.join(reader_path, "data.config.json")
+                r = reader()
+                r.set_config_file(config_file)
+                read_data = r.read(
+                    template=Template(template), file_paths=tuple(data_files)
                 )
-            elif supported_nxdl == "NXroot":
-                nxdl_file = os.path.join(def_dir, "base_classes", "NXroot.nxdl.xml")
             else:
-                nxdl_file = os.path.join(
-                    def_dir, "contributed_definitions", f"{supported_nxdl}.nxdl.xml"
+                read_data = reader().read(
+                    template=Template(template), file_paths=tuple(input_files)
                 )
-
-            root = ET.parse(nxdl_file).getroot()
-            template = Template()
-            generate_template_from_nxdl(root, template)
-
-            read_data = reader().read(
-                template=Template(template), file_paths=tuple(input_files)
-            )
 
             if supported_nxdl == "*":
                 supported_nxdl = "NXtest"
@@ -122,24 +136,30 @@ def test_has_correct_read_func(reader, caplog):
                 print(caplog.text)
 
 
+def test_json_map_reader_with_config_file():
+    """JsonMapReader works correctly with a config file via set_config_file() (-c flag)."""
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    template = _make_nxdl_template("NXtest")
+    reader = JsonMapReader()
+    reader.set_config_file(os.path.join(_JSON_MAP_DIR, "data.config.json"))
+    read_data = reader.read(
+        template=Template(template),
+        file_paths=(os.path.join(_JSON_MAP_DIR, "data.json"),),
+    )
+    assert isinstance(read_data, Template)
+
+
 def test_json_map_reader_mapping_json_emits_deprecation_warning():
     """Using a .mapping.json file must emit a DeprecationWarning."""
     from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
 
-    dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
-    input_files = sorted(
-        glob.glob(os.path.join(dataconverter_data_dir, "readers", "json_map", "*"))
-    )
-    nxdl_file = os.path.join(
-        os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"
-    )
-    root = ET.parse(nxdl_file).getroot()
-    template = Template()
-    from pynxtools.dataconverter.helpers import generate_template_from_nxdl
-
-    generate_template_from_nxdl(root, template)
-
+    template = _make_nxdl_template("NXtest")
     with pytest.warns(DeprecationWarning, match=r"\.mapping\.json.*deprecated"):
         JsonMapReader().read(
-            template=Template(template), file_paths=tuple(input_files)
+            template=Template(template),
+            file_paths=(
+                os.path.join(_JSON_MAP_DIR, "data.json"),
+                os.path.join(_JSON_MAP_DIR, "data.mapping.json"),
+            ),
         )
