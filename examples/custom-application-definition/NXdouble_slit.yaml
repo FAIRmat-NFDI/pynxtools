@@ -65,7 +65,7 @@ NXdouble_slit(NXobject):
           \@axes:
             enumeration: [[0, 0, 1]]
           \@signal:
-            enumeration: [['y_pixel_offset x_pixel_offset']]
+            enumeration: [['x_pixel_offset', 'y_pixel_offset']]
           data(NX_NUMBER):
             exists: recommended
             unit: NX_ANY
@@ -89,20 +89,13 @@ NXdouble_slit(NXobject):
             dimensions:
               rank: 1
               dim: (n_y,)
-        data(NX_NUMBER):
-          unit: NX_ANY
-          doc: |
-            Measured 2D interference intensity pattern.
-          dimensions:
-            rank: 2
-            dim: (n_y, n_x)
     interference_pattern(NXdata):
       doc: |
         Default plot: the recorded 2D interference pattern.
       \@signal:
         enumeration: [data]
       \@axes:
-        enumeration: [['y_pixel_offset', 'y_pixel_offset']]
+        enumeration: [['x_pixel_offset', 'y_pixel_offset']]
       data(NX_NUMBER):
         unit: NX_ANY
         dimensions:
@@ -120,7 +113,7 @@ NXdouble_slit(NXobject):
           dim: (n_y,)
 
 # ++++++++++++++++++++++++++++++++++ SHA HASH ++++++++++++++++++++++++++++++++++
-# e69a6171e779985742707077bd85c725df865ce55345f1205226b08f39db2a0e
+# 48618cc9942d448902d07e7e52c3424c97b6e88d087bb1e78d54597c0cb6c894
 # <?xml version="1.0" encoding="UTF-8"?>
 # <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 # <!--
@@ -234,7 +227,7 @@ NXdouble_slit(NXobject):
 #                     </attribute>
 #                     <attribute name="signal">
 #                         <enumeration>
-#                             <item value="['y_pixel_offset x_pixel_offset']"/>
+#                             <item value="['x_pixel_offset', 'y_pixel_offset']"/>
 #                         </enumeration>
 #                     </attribute>
 #                     <field name="data" type="NX_NUMBER" recommended="true" units="NX_ANY">
@@ -263,15 +256,6 @@ NXdouble_slit(NXobject):
 #                         </dimensions>
 #                     </field>
 #                 </group>
-#                 <field name="data" type="NX_NUMBER" units="NX_ANY">
-#                     <doc>
-#                         Measured 2D interference intensity pattern.
-#                     </doc>
-#                     <dimensions rank="2">
-#                         <dim index="1" value="n_y"/>
-#                         <dim index="2" value="n_x"/>
-#                     </dimensions>
-#                 </field>
 #             </group>
 #         </group>
 #         <group name="interference_pattern" type="NXdata">
@@ -285,7 +269,7 @@ NXdouble_slit(NXobject):
 #             </attribute>
 #             <attribute name="axes">
 #                 <enumeration>
-#                     <item value="['y_pixel_offset', 'y_pixel_offset']"/>
+#                     <item value="['x_pixel_offset', 'y_pixel_offset']"/>
 #                 </enumeration>
 #             </attribute>
 #             <field name="data" type="NX_NUMBER" units="NX_ANY">
