@@ -342,6 +342,13 @@ See [How-tos > pynxtools > Validate NeXus files](../how-tos/pynxtools/validate-n
 
 ## The complete definition
 
+You can find both `NXdouble_slit.yaml` and `NXdouble_slit.nxdl.xml` in the `pynxtools` examples:
+
+- [`NXdouble_slit.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXdouble_slit.yaml)
+- [`NXdouble_slit.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXdouble_slit.nxdl.xml)
+
+Note that for the full application definitions, we have added more concepts to further illustrate the different data modelling features of NeXus.
+
 ??? success "NXdouble_slit.yaml (full)"
 
     ```yaml
@@ -650,8 +657,6 @@ See [How-tos > pynxtools > Validate NeXus files](../how-tos/pynxtools/validate-n
 
     ```
 
-Note that for the full application definitions, we have added more concepts to further illustrate the different data modelling features of NeXus.
-
 ---
 
 ## Advanced: adding a new base class
@@ -735,12 +740,8 @@ dataconverter generate-template --nxdl NXdouble_slit
 
 Because you now use the class `NXlaser`, you should see paths like `/ENTRY[entry]/LASER/wavelength` and `/ENTRY[entry]/LASER/coherence_length` in the generated JSON template.
 
----
-
 ## Next steps
 
-- [Write an application definition (how-to)](../how-tos/nexus/writing-an-application-definition.md) — quick reference for experienced users
-- [Build a pynxtools reader](build-a-reader.md) — write a reader that produces files conforming to `NXdouble_slit`
+- [How-tos > NeXus > Write an application definition (how-to)](../how-tos/nexus/writing-an-application-definition.md) — quick reference for experienced users
+- [Tutorial > Build a pynxtools reader](build-a-reader.md) — write a reader that produces files conforming to `NXdouble_slit`
 - Contribute to [FAIRmat NeXus definitions](https://github.com/FAIRmat-NFDI/nexus_definitions)
-
-
