@@ -331,7 +331,8 @@ class MultiFormatReader(BaseReader):
     4. **config file** — if ``self.config_file`` is set, it is parsed into
        ``self.config_dict``.
     5. **post-processing** — ``post_process()`` may modify ``self.config_dict``
-       and/or return a dict of additional template entries.
+       or other instance attributes (like ``self.eln_data`` or ``self.data``) or
+       may returns a dict/Template of entries to update the template.
     6. **config fill** — ``fill_from_config()`` resolves ``@attrs``/``@data``/
        ``@eln``/``@link`` tokens in ``self.config_dict`` via callbacks and
        updates the template.
@@ -497,7 +498,8 @@ class MultiFormatReader(BaseReader):
         """
         Post-process after files are read and the config file is parsed.
 
-        May modify ``self.config_dict`` in-place (e.g. to add dynamic entries
+        May modify ``self.config_dict`` (or other instance attributes like
+        ``self.eln_data`` or ``self.data``) in-place (e.g. to add dynamic entries
         for multi-detector setups) and/or return a dict of template entries to
         add before ``fill_from_config`` runs.  Return ``None`` or ``{}`` if
         no additional entries are needed.
@@ -554,8 +556,10 @@ class MultiFormatReader(BaseReader):
                 self.config_file, create_link_dict=False
             )
 
-        # 5. Post-processing (may modify self.config_dict/self.data/etc. directly).
-        self.post_process()
+        # 5. Post-processing.
+        post_result = self.post_process()
+        if post_result:
+            template.update(post_result)
 
         # 6. Fill template from config dict via @-token callbacks.
         if self.config_dict:

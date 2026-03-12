@@ -72,6 +72,7 @@ class _TrackedReader(MultiFormatReader):
 
     def post_process(self) -> dict[str, Any] | None:
         self._tracker.events.append("post_process")
+        self.config_dict["/ENTRY[entry]/from_post_in_config"] = "post_in_conf"
         return {"/ENTRY[entry]/from_post": "post"}
 
     def get_attr(self, key: str, path: str) -> Any:
@@ -185,6 +186,7 @@ def test_post_process_result_in_output():
     tracker = _OrderTracker()
     reader = _TrackedReader(tracker)
     result = reader.read(template=Template(), file_paths=())
+    assert result["/ENTRY[entry]/from_post_in_config"] == "post_in_conf"
     assert result["/ENTRY[entry]/from_post"] == "post"
 
 
