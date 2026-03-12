@@ -38,7 +38,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 #### NeXus data modelling
 
-- [Writing an application definition](how-tos/nexus/writing-an-application-definition.md)
+- [Writing an application definition](how-tos/nexus/write-an-application-definition.md)
 <!-- - [Using multiple application definitions](how-tos/nexus/using-multiple-appdefs.md) -->
 <!-- - [Representing experimental geometries](how-tos/nexus/transformations.md) -->
 

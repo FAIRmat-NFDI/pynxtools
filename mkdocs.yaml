@@ -11,6 +11,7 @@ nav:
   - Tutorials:
     - tutorial/installation.md
     - tutorial/converting-data-to-nexus.md
+    - tutorial/writing-an-application-definition.md
     - Workshop:
       - tutorial/build-a-reader.md
       - tutorial/bring-your-own-data.md
@@ -18,7 +19,7 @@ nav:
     - tutorial/contributing.md
   - How-tos:
     - NeXus:
-      - how-tos/nexus/writing-an-application-definition.md
+      - how-tos/nexus/write-an-application-definition.md
       # - how-tos/nexus/using-multiple-appdefs.md
       # - how-tos/nexus/transformations.md
     - pynxtools:

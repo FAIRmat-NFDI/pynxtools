@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<!--
+# NeXus - Neutron and X-ray Common Data Format
+#
+# Copyright (C) 2026-2026 NeXus International Advisory Committee (NIAC)
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# For further information, see http://www.nexusformat.org
+-->
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" type="group" name="NXdouble_slit" extends="NXobject" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+    <symbols>
+        <doc>
+            Dimension symbols used in this definition.
+        </doc>
+        <symbol name="n_x">
+            <doc>
+                Number of detector pixels along x.
+            </doc>
+        </symbol>
+        <symbol name="n_y">
+            <doc>
+                Number of detector pixels along y.
+            </doc>
+        </symbol>
+    </symbols>
+    <doc>
+        Application definition for a double-slit interference experiment.
+        Records the light source, aperture geometry, detector layout, and the
+        measured 2D interference pattern needed to determine fringe spacing and
+        source coherence length.
+        
+        See https://en.wikipedia.org/wiki/Double-slit_experiment.
+    </doc>
+    <group type="NXentry">
+        <field name="definition">
+            <enumeration>
+                <item value="NXdouble_slit"/>
+            </enumeration>
+        </field>
+        <field name="title"/>
+        <field name="start_time" type="NX_DATE_TIME">
+            <doc>
+                ISO 8601 datetime
+            </doc>
+        </field>
+        <field name="end_time" type="NX_DATE_TIME" recommended="true"/>
+        <group type="NXinstrument">
+            <group name="source" type="NXsource">
+                <field name="wavelength" type="NX_FLOAT" units="NX_WAVELENGTH">
+                    <doc>
+                        Central wavelength of the light source.
+                    </doc>
+                </field>
+                <field name="coherence_length" type="NX_FLOAT" units="NX_LENGTH" recommended="true">
+                    <doc>
+                        Temporal coherence length of the source.
+                    </doc>
+                </field>
+                <field name="type" type="NX_CHAR" optional="true">
+                    <enumeration>
+                        <item value="Laser"/>
+                        <item value="Filtered lamp"/>
+                        <item value="LED"/>
+                    </enumeration>
+                </field>
+            </group>
+            <group name="double_slit" type="NXslit">
+                <field name="x_gap" type="NX_FLOAT" units="NX_LENGTH">
+                    <doc>
+                        Width of each individual slit.
+                    </doc>
+                </field>
+                <field name="slit_separation" type="NX_FLOAT" units="NX_LENGTH">
+                    <doc>
+                        Center-to-center distance between the two slits.
+                    </doc>
+                </field>
+                <field name="height" type="NX_FLOAT" units="NX_LENGTH" optional="true"/>
+                <field name="material" type="NX_CHAR" optional="true"/>
+            </group>
+            <group name="detector" type="NXdetector">
+                <field name="distance" type="NX_FLOAT" units="NX_LENGTH">
+                    <doc>
+                        Distance from the slit plane to the detector surface.
+                    </doc>
+                </field>
+                <group name="data" type="NXdata">
+                    <doc>
+                        Contains the raw data collected by the detector before calibration.
+                        This group ideally collects the data with the lowest level of processing
+                        possible.
+                    </doc>
+                    <attribute name="axes">
+                        <enumeration>
+                            <item value="[0, 0, 1]"/>
+                        </enumeration>
+                    </attribute>
+                    <attribute name="signal">
+                        <enumeration>
+                            <item value="['y_pixel_offset x_pixel_offset']"/>
+                        </enumeration>
+                    </attribute>
+                    <field name="data" type="NX_NUMBER" recommended="true" units="NX_ANY">
+                        <doc>
+                            Measured 2D interference intensity pattern.
+                        </doc>
+                        <dimensions rank="2">
+                            <dim index="1" value="n_x"/>
+                            <dim index="2" value="n_y"/>
+                        </dimensions>
+                    </field>
+                    <field name="x_pixel_offset" type="NX_FLOAT" units="NX_LENGTH">
+                        <doc>
+                            Horizontal pixel positions relative to the detector centre.
+                        </doc>
+                        <dimensions rank="1">
+                            <dim index="1" value="n_x"/>
+                        </dimensions>
+                    </field>
+                    <field name="y_pixel_offset" type="NX_FLOAT" units="NX_LENGTH" recommended="true">
+                        <doc>
+                            Vertical pixel positions relative to the detector centre.
+                        </doc>
+                        <dimensions rank="1">
+                            <dim index="1" value="n_y"/>
+                        </dimensions>
+                    </field>
+                </group>
+                <field name="data" type="NX_NUMBER" units="NX_ANY">
+                    <doc>
+                        Measured 2D interference intensity pattern.
+                    </doc>
+                    <dimensions rank="2">
+                        <dim index="1" value="n_y"/>
+                        <dim index="2" value="n_x"/>
+                    </dimensions>
+                </field>
+            </group>
+        </group>
+        <group name="interference_pattern" type="NXdata">
+            <doc>
+                Default plot: the recorded 2D interference pattern.
+            </doc>
+            <attribute name="signal">
+                <enumeration>
+                    <item value="data"/>
+                </enumeration>
+            </attribute>
+            <attribute name="axes">
+                <enumeration>
+                    <item value="['y_pixel_offset', 'y_pixel_offset']"/>
+                </enumeration>
+            </attribute>
+            <field name="data" type="NX_NUMBER" units="NX_ANY">
+                <dimensions rank="2">
+                    <dim index="1" value="n_x"/>
+                    <dim index="2" value="n_y"/>
+                </dimensions>
+            </field>
+            <field name="x_pixel_offset" type="NX_FLOAT" units="NX_LENGTH">
+                <dimensions rank="1">
+                    <dim index="1" value="n_x"/>
+                </dimensions>
+            </field>
+            <field name="y_pixel_offset" type="NX_FLOAT" units="NX_LENGTH">
+                <dimensions rank="1">
+                    <dim index="1" value="n_y"/>
+                </dimensions>
+            </field>
+        </group>
+    </group>
+</definition>
