@@ -543,7 +543,7 @@ class MultiFormatReader(BaseReader):
             if not os.path.exists(file_path):
                 logger.warning(f"File {file_path} does not exist, ignoring entry.")
                 continue
-            template.update(self.extensions[extension](file_path))
+            template.update(self.extensions.get(extension, lambda _: {})(file_path))
 
         # 3. Static data not derived from input files.
         template.update(self.setup_template())
@@ -554,10 +554,8 @@ class MultiFormatReader(BaseReader):
                 self.config_file, create_link_dict=False
             )
 
-        # 5. Post-processing (may modify self.config_dict and/or return data).
-        post_data = self.post_process()
-        if post_data:
-            template.update(post_data)
+        # 5. Post-processing (may modify self.config_dict/self.data/etc. directly).
+        self.post_process()
 
         # 6. Fill template from config dict via @-token callbacks.
         if self.config_dict:

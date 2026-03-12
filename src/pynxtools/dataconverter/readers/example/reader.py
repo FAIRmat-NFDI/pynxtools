@@ -67,14 +67,16 @@ class ExampleReader(BaseReader):
         for k in template.keys():
             if k.startswith(_EXCLUDED_PREFIXES) or k in _EXCLUDED_KEYS:
                 continue
-            field_name = k[k.rfind("/") + 1:]
+            field_name = k[k.rfind("/") + 1 :]
             if field_name != "@units" and field_name in data:
                 template[k] = data[field_name]
                 if f"{field_name}_units" in data:
                     template[f"{k}/@units"] = data[f"{field_name}_units"]
 
-        template["/ENTRY[entry]/optional_parent/required_child"] = 1
-        template["/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]"] = [
+        template["required"]["/ENTRY[entry]/optional_parent/required_child"] = 1
+        template["optional"][
+            "/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]"
+        ] = [
             0,
             1,
         ]
