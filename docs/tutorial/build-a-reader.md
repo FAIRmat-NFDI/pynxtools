@@ -1,8 +1,7 @@
-# Day 1 — Build your first pynxtools reader
+# Build your first pynxtools reader
 
 **Duration:** ~3 hours
-**Goal:** Convert a real instrument HDF5 file + an ELN YAML file into a validated
-NeXus/HDF5 output using a reader you write yourself.
+**Goal:** Convert a real instrument HDF5 file + an ELN YAML file into a validated NeXus/HDF5 output using a reader you write yourself.
 
 ---
 
@@ -10,17 +9,11 @@ NeXus/HDF5 output using a reader you write yourself.
 
 ### What is NeXus and why does it matter?
 
-Scientific instruments produce data in dozens of incompatible formats.
-[NeXus](https://www.nexusformat.org/) is a community standard that defines a
-common structure for scientific data files so that tools, scripts, and databases
-can read them without format-specific code.
+Scientific instruments produce data in dozens of incompatible formats. [NeXus](https://www.nexusformat.org/) is a community standard that defines a common structure for scientific data files so that tools, scripts, and databases can read them without format-specific code.
 
-A NeXus file is an HDF5 file with an agreed-upon internal layout.
-The layout is defined by an **application definition** (NXDL file): an XML
-schema that says which groups and fields a valid file must contain.
+A NeXus file is an HDF5 file with an agreed-upon internal layout. The layout is defined by an **application definition** (NXDL file): an XML schema that says which groups and fields a valid file must contain.
 
-`pynxtools` is the Python library that converts your raw data into a NeXus file
-and validates the result.
+`pynxtools` is the Python library that converts your raw data into a NeXus file and validates the result.
 
 ### The three-file pattern
 

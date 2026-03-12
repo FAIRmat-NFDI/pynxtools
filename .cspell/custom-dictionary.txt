@@ -185,6 +185,7 @@ nxdl
 nxdls
 nxentry
 oned
+nyaml
 optionalities
 orcid
 otherfile
