@@ -111,7 +111,7 @@
                     </attribute>
                     <attribute name="signal">
                         <enumeration>
-                            <item value="['y_pixel_offset x_pixel_offset']"/>
+                            <item value="['x_pixel_offset', 'y_pixel_offset']"/>
                         </enumeration>
                     </attribute>
                     <field name="data" type="NX_NUMBER" recommended="true" units="NX_ANY">
@@ -140,15 +140,6 @@
                         </dimensions>
                     </field>
                 </group>
-                <field name="data" type="NX_NUMBER" units="NX_ANY">
-                    <doc>
-                        Measured 2D interference intensity pattern.
-                    </doc>
-                    <dimensions rank="2">
-                        <dim index="1" value="n_y"/>
-                        <dim index="2" value="n_x"/>
-                    </dimensions>
-                </field>
             </group>
         </group>
         <group name="interference_pattern" type="NXdata">
@@ -162,7 +153,7 @@
             </attribute>
             <attribute name="axes">
                 <enumeration>
-                    <item value="['y_pixel_offset', 'y_pixel_offset']"/>
+                    <item value="['x_pixel_offset', 'y_pixel_offset']"/>
                 </enumeration>
             </attribute>
             <field name="data" type="NX_NUMBER" units="NX_ANY">
