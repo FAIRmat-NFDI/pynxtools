@@ -75,7 +75,7 @@ def get_val_nested_keystring_from_dict(keystring, data):
     current_key = keystring.split("/")[0]
     if isinstance(data[current_key], dict | hdfdict.LazyHdfDict):
         return get_val_nested_keystring_from_dict(
-            keystring[keystring.find("/") + 1:], data[current_key]
+            keystring[keystring.find("/") + 1 :], data[current_key]
         )
     if isinstance(data[current_key], xarray.DataArray):
         return data[current_key].values
