@@ -455,6 +455,7 @@ def get_nxdl_root_and_path(nxdl: str):
         "data",
     )
     special_names = {
+        "NXsimple": os.path.join(data_path, "NXsimple.nxdl.xml"),
         "NXtest": os.path.join(data_path, "NXtest.nxdl.xml"),
         "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
     }
