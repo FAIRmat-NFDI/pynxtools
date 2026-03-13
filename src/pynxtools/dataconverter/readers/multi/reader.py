@@ -573,6 +573,8 @@ class MultiFormatReader(BaseReader):
                 )
             )
 
+        template.remove_none_values()
+
         return template
 
 
