@@ -623,7 +623,7 @@
   <span class="md-ellipsis">
     
   
-    How to use the built-in MultiFormatReader
+    Use the MultiFormatReader
   
 
     
@@ -1302,13 +1302,63 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-mappingjson-file" class="md-nav__link">
+  <a href="#the-config-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The mapping.json file
+        The config file
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="The config file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-data-path-data-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Data path (@data: token)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-literal-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Literal value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-link-virtual-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Link / virtual dataset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-eln-attribute-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ELN / attribute data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1325,10 +1375,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#basic-mappings" class="md-nav__link">
+  <a href="#basic-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic mappings
+        Basic example
       
     </span>
   </a>
@@ -1348,6 +1398,17 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-mappingjson-format-deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The .mapping.json format (deprecated)
+      
+    </span>
+  </a>
   
 </li>
         
@@ -1483,13 +1544,63 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-mappingjson-file" class="md-nav__link">
+  <a href="#the-config-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The mapping.json file
+        The config file
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="The config file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-data-path-data-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Data path (@data: token)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-literal-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Literal value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-link-virtual-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Link / virtual dataset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-eln-attribute-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ELN / attribute data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1506,10 +1617,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#basic-mappings" class="md-nav__link">
+  <a href="#basic-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic mappings
+        Basic example
       
     </span>
   </a>
@@ -1529,6 +1640,17 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-mappingjson-format-deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The .mapping.json format (deprecated)
+      
+    </span>
+  </a>
   
 </li>
         
@@ -1583,57 +1705,69 @@
 <h2 id="the-multiformatreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py">MultiFormatReader</a><a class="headerlink" href="#the-multiformatreader" title="Permanent link">&para;</a></h2>
 <p>Another reader that can act as the basis for any reader implementation is the <code>MultiFormatReader</code>, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described <a href="../learn/pynxtools/multi-format-reader.html">here</a>. There is also a <a href="../how-tos/pynxtools/use-multi-format-reader.html">how-to guide</a> on how to implement a new reader off of the <code>MultiFormatReader</code> using a concrete example.</p>
 <h2 id="the-jsonmapreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_map/reader.py">JsonMapReader</a><a class="headerlink" href="#the-jsonmapreader" title="Permanent link">&para;</a></h2>
-<p>This reader is designed to allow users of <code>pynxtools</code> to convert their existing data with the help of a map file. The map file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:</p>
+<p>This reader is designed to allow users of <code>pynxtools</code> to convert their existing data with the help of a mapping config file. The config file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:</p>
 <ul>
 <li>HDF5</li>
 <li>JSON</li>
-<li>Python Dict Objects pickled with <a href="https://docs.python.org/3/library/pickle.html">pickle</a>. These can contain <a href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html">xarray.DataArray</a> objects as well as regular Python types and Numpy types. Note that while it is supported, we strongly recommend note to use pickle due to its known <a href="https://huggingface.co/docs/hub/security-pickle">security concerns</a>.</li>
+<li>YAML</li>
+<li>Python Dict Objects pickled with <a href="https://docs.python.org/3/library/pickle.html">pickle</a>. These can contain <a href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html">xarray.DataArray</a> objects as well as regular Python types and Numpy types. Note that while it is supported, we strongly recommend not to use pickle due to its known <a href="https://huggingface.co/docs/hub/security-pickle">security concerns</a>.</li>
 </ul>
-<p>It accepts any XML file that follows the NXDL schema definition language file as long as your mapping file contains all the required fields.
-Please use the <code>--generate-template</code> function of the <code>dataconverter</code> to create a <code>.mapping.json</code> file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>--generate-template<span class="w"> </span>&gt;<span class="w"> </span>mynxdl.mapping.json
+<p>It accepts any NXDL application definition as long as your config file contains all the required fields.</p>
+<h3 id="the-config-file">The config file<a class="headerlink" href="#the-config-file" title="Permanent link">&para;</a></h3>
+<p>Pass the config file via the <code>-c</code> flag:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>data.json<span class="w"> </span>-c<span class="w"> </span>my_config.json
 </code></pre></div>
-<h3 id="the-mappingjson-file">The mapping.json file<a class="headerlink" href="#the-mappingjson-file" title="Permanent link">&para;</a></h3>
-<p>This file is designed to let you fill in the requirements of a NeXus Application Definition without writing any code. If you already have data in the formats listed above, you just need to use this mapping file to help the dataconverter pick your data correctly.</p>
-<p>The mapping files will always be based on the template the dataconverter generates. See above on how to generate a mapping file. The right hand side values of the template keys are what you can modify. These keys are called NeXus template paths, because they combine the actual path that will be used in the HDF5 hierarchy with additional NeXus datatype hints to guide the dataconverter to add NX_class annotations.</p>
-<p>Here are the three different ways you can fill the right hand side of the template keys:</p>
-<ul>
-<li>Write the nested path in your datafile. This is indicated by a leading <code>/</code> before the word <code>entry</code> to make <code>/entry/data/current_295C</code> below.
-Example:</li>
-</ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/entry/data/current_295C&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/NXODD_name/posint_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/a_level_down/another_level_down/posint_value&quot;</span><span class="p">,</span>
+<p>The config file is a JSON (or YAML) file that maps NeXus template paths to values. Use <code>--generate-template</code> to get the list of paths for your NXDL:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>--generate-template
 </code></pre></div>
-<p>Here, <code>"/entry/data/current_295C"</code> is the path in the original HDF5 file, while the key shown here is the template path (see above).</p>
-<ul>
-<li>Write the values directly in the mapping file for missing data from your data file.</li>
-</ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/PROCESS[process]/program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bluesky&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/PROCESS[process]/program/@version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.6.7&quot;</span>
+<p>There are four ways to fill the right-hand side of a template key:</p>
+<h4 id="1-data-path-data-token">1. Data path (<code>@data:</code> token)<a class="headerlink" href="#1-data-path-data-token" title="Permanent link">&para;</a></h4>
+<p>Use the <code>@data:</code> prefix to point at a path inside your data file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@data:entry/data/current_295C&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/NXODD_name/posint_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@data:a_level_down/another_level_down/posint_value&quot;</span>
 </code></pre></div>
-<ul>
-<li>Write JSON objects with a link key. This follows the same link mechanism that the dataconverter implements. In the context of this reader, you can only use external links to your data files. In the example below, <code>current.nxs</code> is an already existing HDF5 file that we link to in our new NeXus file without copying over the data. The format is as follows:
-<code>"link": "&lt;filename&gt;:&lt;path_in_file&gt;"</code>
-Note: This only works for HDF5 files currently.</li>
-</ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;current.nxs:/entry/data/current_295C&quot;</span><span class="p">},</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_300C&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;current.nxs:/entry/data/current_300C&quot;</span><span class="p">},</span>
+<p>The path after <code>@data:</code> is a <code>/</code>-separated key chain into your data dictionary or HDF5 group hierarchy (no leading <code>/</code>). This is the same convention used by all other <code>MultiFormatReader</code>-based plugins (mpes, xps, raman, …).</p>
+<h4 id="2-literal-value">2. Literal value<a class="headerlink" href="#2-literal-value" title="Permanent link">&para;</a></h4>
+<p>Write the value directly for data that is not in your file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/PROCESS[process]/program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bluesky&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/PROCESS[process]/program/@version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.6.7&quot;</span>
+</code></pre></div>
+<h4 id="3-link-virtual-dataset">3. Link / virtual dataset<a class="headerlink" href="#3-link-virtual-dataset" title="Permanent link">&para;</a></h4>
+<p>Use a JSON object with a <code>"link"</code> callback to reference data in an existing HDF5 file without copying it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="s2">&quot;@link:current.nxs:/entry/data/current_295C&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_300C&quot;</span><span class="p">:</span><span class="s2">&quot;@link:current.nxs:/entry/data/current_300C&quot;</span>
+</code></pre></div>
+<p>Equivalently, it is also possible to use a dictionary for linking:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;current.nxs:/entry/data/current_295C&quot;</span><span class="p">},</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_300C&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;current.nxs:/entry/data/current_300C&quot;</span><span class="p">},</span>
+</code></pre></div>
+<p>Note: linking only works for HDF5 files. A <code>"shape"</code> key may be added alongside <code>"link"</code> to select a slice (e.g. <code>"shape": "0:100, 0:50"</code>). However, this only works when using the dictionary notation: <code>{"link":&lt;path&gt;, "shape":&lt;shape&gt;}</code>. For the shorthand <code>"@link:&lt;path&gt;"</code> notation, <code>"shape"</code> is not yet supported.</p>
+<h4 id="4-eln-attribute-data">4. ELN / attribute data<a class="headerlink" href="#4-eln-attribute-data" title="Permanent link">&para;</a></h4>
+<p>Other token prefixes allow pulling from ELN files or reader attributes:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@eln:title&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/start_time/@units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@attrs:start_time_units&quot;</span>
 </code></pre></div>
 <h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
-<h4 id="basic-mappings">Basic mappings<a class="headerlink" href="#basic-mappings" title="Permanent link">&para;</a></h4>
-<p>There are some example files you can use:</p>
-<p><a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests/data/dataconverter/readers/json_map/data.mapping.json">data.mapping.json</a></p>
-<p><a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests/data/dataconverter/readers/json_map/data.json">data.json</a></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXtest<span class="w"> </span>data.json<span class="w"> </span>--mapping<span class="w"> </span>data.mapping.json
+<h4 id="basic-example">Basic example<a class="headerlink" href="#basic-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXtest<span class="w"> </span>data.json<span class="w"> </span>-c<span class="w"> </span>my_config.json
 </code></pre></div>
 <h4 id="example-with-hdf5-files">Example with HDF5 files<a class="headerlink" href="#example-with-hdf5-files" title="Permanent link">&para;</a></h4>
-<p>You can find example data files for using the mapping with HDF5 files at <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/examples/json_map/"><code>examples/json_map</code></a>.</p>
-<p>The example can be run by calling</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>any_data.hdf5<span class="w"> </span>--mapping<span class="w"> </span>my_custom_map.mapping.json
+<p>You can find example data files for using the config with HDF5 files at <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/examples/json_map/"><code>examples/json_map</code></a>.</p>
+<h3 id="the-mappingjson-format-deprecated">The <code>.mapping.json</code> format (deprecated)<a class="headerlink" href="#the-mappingjson-format-deprecated" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>The <code>.mapping.json</code> file format is deprecated and will be removed in a future release.
+Please migrate to the config file format described above (passed via the <code>-c</code> flag).</p>
+</div>
+<p>For backward compatibility, the reader still accepts <code>.mapping.json</code> files. In this format, data paths are written with a leading <code>/</code> instead of <code>@data:</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/entry/data/current_295C&quot;</span>
 </code></pre></div>
+<p>Using a <code>.mapping.json</code> file will emit a <code>DeprecationWarning</code>.</p>
 <h2 id="the-yamljsonreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_yml/reader.py">YamlJsonReader</a><a class="headerlink" href="#the-yamljsonreader" title="Permanent link">&para;</a></h2>
-<div class="admonition danger">
-<p class="admonition-title">Work in progress</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p><code>YamlJsonReader</code> is deprecated and will be removed in a future release.
+Use <code>MultiFormatReader</code> directly — it provides identical functionality.</p>
 </div>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>Each of the built-in readers are shipped/installed with the main <code>pynxtools</code> package. Hence, these readers are available after installation:</p>
