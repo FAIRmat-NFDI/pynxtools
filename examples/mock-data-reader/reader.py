@@ -26,20 +26,19 @@ from pynxtools.dataconverter.readers.utils import parse_yml
 
 logger = logging.getLogger("pynxtools")
 
-CONVERT_DICT = {
-    "unit": "@units",
-    "version": "@version",
-    "user": "USER[user]",
-    "instrument": "INSTRUMENT[instrument]",
-    "detector": "DETECTOR[detector]",
-    "sample": "SAMPLE[sample]",
-}
-
-
 class MyDataReader(MultiFormatReader):
     """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 
     supported_nxdls = ["NXsimple"]
+
+    CONVERT_DICT = {
+        "unit": "@units",
+        "version": "@version",
+        "user": "USER[user]",
+        "instrument": "INSTRUMENT[instrument]",
+        "detector": "DETECTOR[detector]",
+        "sample": "SAMPLE[sample]",
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,14 +50,6 @@ class MyDataReader(MultiFormatReader):
             ".hdf5": self.handle_hdf5_file,
             ".h5": self.handle_hdf5_file,
         }
-
-    def set_config_file(self, file_path: str) -> dict[str, Any]:
-        if self.config_file is not None:
-            logger.info(
-                f"Config file already set. Replaced by the new file {file_path}."
-            )
-        self.config_file = file_path
-        return {}
 
     def handle_hdf5_file(self, filepath) -> dict[str, Any]:
         def recursively_read_group(group, path=""):
@@ -82,7 +73,7 @@ class MyDataReader(MultiFormatReader):
     def handle_eln_file(self, file_path: str) -> dict[str, Any]:
         self.eln_data = parse_yml(
             file_path,
-            convert_dict=CONVERT_DICT,
+            convert_dict=dict(self.CONVERT_DICT),
             parent_key="/ENTRY[entry]",
         )
 

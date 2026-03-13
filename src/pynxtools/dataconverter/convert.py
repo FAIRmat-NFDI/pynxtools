@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 
 import click
 import lxml.etree as ET
@@ -329,7 +329,10 @@ def main_cli():
 )
 @click.option(
     "--mapping",
-    help="Takes a <name>.mapping.json file and converts data from given input files.",
+    help=(
+        "Takes a <name>.mapping.json file and converts data from given input files. "
+        "Deprecated. Will be removed in a future release. The --config flag can be used instead."
+    ),
 )
 @click.option(
     "-c",
@@ -349,9 +352,9 @@ def convert_cli(
     params_file: str,
     ignore_undocumented: bool,
     skip_verify: bool,
-    mapping: str,
     config_file: str,
     fail: bool,
+    mapping: str | None,
     **kwargs,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
@@ -370,9 +373,11 @@ def convert_cli(
     if nxdl is None:
         raise click.UsageError("Missing option '--nxdl'")
     if mapping:
+        logger.warning(
+            "The --mapping option is deprecated. Please use a config file with the -c argument instead."
+        )
         reader = "json_map"
         input_file = input_file + tuple([mapping])
-        # needs own call
 
     if config_file:
         kwargs["config_file"] = config_file

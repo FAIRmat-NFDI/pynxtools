@@ -15,10 +15,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""An example reader implementation for the DataConverter."""
+"""JSON mapping reader built on MultiFormatReader.
+
+.. deprecated::
+    The ``.mapping.json`` file format is deprecated.  Use a config file
+    passed via the ``-c`` flag instead.  See the pynxtools documentation for
+    the config file format used by all MultiFormatReader plugins.
+
+The reader accepts a config file (``-c``) whose values use ``@data:`` tokens:
+
+* ``"@data:a_level/field"`` — resolve path in the data dict
+* ``"@attrs:my_attr"``      — resolve via ``get_attr()``
+* ``"@eln:eln_path"``       — resolve from ELN data
+* a literal value (string, number, bool): ``"NXoptical_spectroscopy"``
+* a link/virtual-dataset dict: ``{"link": "...", "shape": "0:2"}``
+
+For backward compatibility, ``.mapping.json`` files are still accepted but
+will emit a ``DeprecationWarning`` and will be removed in a future release.
+"""
 
 import json
+import logging
 import pickle
+import warnings
 from typing import Any
 
 import numpy as np
@@ -27,12 +46,17 @@ import yaml
 from mergedeep import merge
 
 from pynxtools.dataconverter import hdfdict
-from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.readers.multi.reader import (
+    MultiFormatReader,
+    fill_from_config,
+)
 from pynxtools.dataconverter.template import Template
+
+logger = logging.getLogger("pynxtools")
 
 
 def parse_slice(slice_string):
-    """Converts slice strings to actual tuple sets of slices for index syntax"""
+    """Converts slice strings to actual tuple sets of slices for index syntax."""
     slices = slice_string.split(",")
     for index, item in enumerate(slices):
         values = item.split(":")
@@ -80,52 +104,8 @@ def get_attrib_nested_keystring_from_dict(keystring, data):
     return data[target + "@"] if target + "@" in data.keys() else None
 
 
-def is_path(keystring):
-    """Checks whether a given value in the mapping is a mapping path or just data"""
-    return isinstance(keystring, str) and len(keystring) > 0 and keystring[0] == "/"
-
-
-def fill_undocumented(mapping, template, data):
-    """Fill the extra paths provided in the map file that are not in the NXDL"""
-    for path, value in mapping.items():
-        if is_path(value):
-            template["undocumented"][path] = get_val_nested_keystring_from_dict(
-                value[1:], data
-            )
-            fill_attributes(path, value[1:], data, template)
-        else:
-            template["undocumented"][path] = value
-
-
-def fill_documented(template, mapping, template_provided, data):
-    """Fill the needed paths that are explicitly mentioned in the NXDL"""
-    for req in ("required", "optional", "recommended"):
-        for path in template_provided[req]:
-            try:
-                map_str = mapping[path]
-                if is_path(map_str):
-                    template[path] = get_val_nested_keystring_from_dict(
-                        map_str[1:], data
-                    )
-                    fill_attributes(path, map_str[1:], data, template)
-                else:
-                    template[path] = map_str
-
-                del mapping[path]
-            except KeyError:
-                pass
-
-
-def fill_attributes(path, map_str, data, template):
-    """Fills in the template all attributes found in the data object"""
-    attribs = get_attrib_nested_keystring_from_dict(map_str, data)
-    if attribs:
-        for key, value in attribs.items():
-            template[path + "/@" + key] = value
-
-
 def convert_shapes_to_slice_objects(mapping):
-    """Converts shape slice strings to slice objects for indexing"""
+    """Converts shape slice strings to slice objects for indexing."""
     for key in mapping:
         if isinstance(mapping[key], dict):
             if "shape" in mapping[key]:
@@ -133,7 +113,7 @@ def convert_shapes_to_slice_objects(mapping):
 
 
 def get_map_from_partials(partials, template, data):
-    """Takes a list of partials and returns a mapping dictionary to fill partials in our template"""
+    """Takes a list of partials and returns a mapping dictionary."""
     mapping: dict = {}
     for partial in partials:
         path = ""
@@ -148,89 +128,126 @@ def get_map_from_partials(partials, template, data):
                     f"{attribs['NX_class'][2:].upper()}[{part}]"
                     if attribs and "NX_class" in attribs
                     else part
-                )  # pylint: disable=line-too-long
+                )
                 template_path = template_path + "/" + nx_name
         mapping[template_path] = path
 
     return mapping
 
 
-class JsonMapReader(BaseReader):
+def mapping_to_config(mapping: dict) -> dict:
+    """Convert a json_map mapping dict to ``fill_from_config`` format.
+
+    Values that are data paths (start with ``/``) are converted to
+    ``@data:<path>`` tokens.  Literal values and link/shape dicts pass
+    through unchanged.
+
+    This makes ``.mapping.json`` files work with the ``fill_from_config``
+    pipeline used by all MultiFormatReader plugins.
+    """
+    result = {}
+    for k, v in mapping.items():
+        if isinstance(v, str) and v.startswith("/"):
+            result[k] = f"@data:{v[1:]}"
+        else:
+            result[k] = v
+    return result
+
+
+class JsonMapReader(MultiFormatReader):
     """A reader that takes a mapping json file and a data file/object to return a template."""
 
-    # pylint: disable=too-few-public-methods
-
-    # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXtest", "*"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data: dict = {}
+        self.partials: list = []
+        self.extensions = {
+            ".json": self._handle_json_file,
+            ".pickle": self._handle_pickle_file,
+            ".yaml": self._handle_yaml_file,
+            ".hdf5": self._handle_hdf5_file,
+            ".h5": self._handle_hdf5_file,
+            ".nxs": self._handle_hdf5_file,
+        }
 
     def read(
         self,
         template: dict = None,
         file_paths: tuple[str] = None,
-        objects: tuple[Any] = None,
+        objects: tuple[Any] | None = None,
+        **kwargs,
     ) -> dict:
-        """
-        Reads data from given file and returns a filled template dictionary.
+        """Dispatch files via super(), then apply mapping or partials."""
+        if objects:
+            self.data = objects[0]
+        result = super().read(
+            template=template, file_paths=file_paths, objects=None, **kwargs
+        )
+        if self.partials and not self.config_dict:
+            # Partials require the NXDL template for path resolution.
+            mapping = get_map_from_partials(self.partials, template, self.data)
+            convert_shapes_to_slice_objects(mapping)
+            config = mapping_to_config(mapping)
+            result.update(
+                fill_from_config(config, self.get_entry_names(), self.callbacks)
+            )
+        elif not self.config_dict and not self.partials:
+            hint = Template(
+                {x: "/hierarchical/path/in/your/datafile" for x in (template or {})}
+            )
+            raise OSError(
+                "Please supply a JSON mapping file: "
+                " my_nxdl_map.mapping.json\n\n You can use this "
+                "template for the required fields: \n" + str(hint)
+            )
+        return result
 
-        Only the data object is expected to be passed as the first object.
-        Alteratively, a data object represented with a file.json or file.xarray.pickle
-        can also be used.
-        The mapping is only accepted as file.mapping.json to the inputs.
-        """
-        data: dict = {}
-        mapping: dict = None
-        partials: list = []
+    def get_data(self, key: str, path: str) -> Any:
+        """Resolve ``@data:path`` tokens by traversal into ``self.data``."""
+        try:
+            return get_val_nested_keystring_from_dict(path, self.data)
+        except (KeyError, TypeError):
+            return None
 
-        data = objects[0] if objects else data
+    def _handle_json_file(self, file_path: str) -> dict[str, Any]:
+        with open(file_path, encoding="utf-8") as f:
+            content = json.loads(f.read())
+        if ".mapping" in file_path:
+            msg = (
+                "The .mapping.json format is deprecated and will be removed in a "
+                "future release. Please use a config file via the -c flag instead. "
+                "See the pynxtools documentation for the config file format."
+            )
+            logger.warning(msg)
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+            # Convert shape strings to slice objects, then convert to
+            # fill_from_config format. Pipeline step 6 resolves via get_data().
+            convert_shapes_to_slice_objects(content)
+            self.config_dict = mapping_to_config(content)
+        else:
+            self.data = content
+        return {}
 
-        for file_path in file_paths:
-            file_extension = file_path[file_path.rindex(".") :]
-            if file_extension == ".json":
-                with open(file_path, encoding="utf-8") as input_file:
-                    if ".mapping" in file_path:
-                        mapping = json.loads(input_file.read())
-                    else:
-                        data = json.loads(input_file.read())
-            elif file_extension == ".pickle":
-                with open(file_path, "rb") as input_file:  # type: ignore[assignment]
-                    data = pickle.load(input_file)  # type: ignore[arg-type]
-            elif file_extension == ".yaml":
-                with open(file_path) as input_file:
-                    merge(data, yaml.safe_load(input_file))
-            else:
-                is_hdf5 = False
-                with open(file_path, "rb") as input_file:
-                    if input_file.read(8) == b"\x89HDF\r\n\x1a\n":
-                        is_hdf5 = True
-                if is_hdf5:
-                    hdf = hdfdict.load(file_path)
-                    hdf.unlazy()
-                    merge(data, dict(hdf))
-                    if "entry@" in data and "partial" in data["entry@"]:
-                        partials.extend(data["entry@"]["partial"])
+    def _handle_pickle_file(self, file_path: str) -> dict[str, Any]:
+        with open(file_path, "rb") as f:  # type: ignore[assignment]
+            self.data = pickle.load(f)  # type: ignore[arg-type]
+        return {}
 
-        if mapping is None:
-            if len(partials) > 0:
-                mapping = get_map_from_partials(partials, template, data)
-            else:
-                template = Template(
-                    {x: "/hierarchical/path/in/your/datafile" for x in template}
-                )
-                raise OSError(
-                    "Please supply a JSON mapping file: "
-                    " my_nxdl_map.mapping.json\n\n You can use this "
-                    "template for the required fields: \n" + str(template)
-                )
+    def _handle_yaml_file(self, file_path: str) -> dict[str, Any]:
+        with open(file_path) as f:
+            merge(self.data, yaml.safe_load(f))
+        return {}
 
-        new_template = Template()
-        convert_shapes_to_slice_objects(mapping)
-
-        fill_documented(new_template, mapping, template, data)
-
-        fill_undocumented(mapping, new_template, data)
-
-        return new_template
+    def _handle_hdf5_file(self, file_path: str) -> dict[str, Any]:
+        hdf = hdfdict.load(file_path)
+        hdf.unlazy()
+        merge(self.data, dict(hdf))
+        if "entry@" in self.data and "partial" in self.data["entry@"]:
+            self.partials.extend(self.data["entry@"]["partial"])
+        return {}
 
 
-# This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
+# This has to be set to allow the convert script to use this reader.
 READER = JsonMapReader
