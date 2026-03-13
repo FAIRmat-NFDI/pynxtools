@@ -12,7 +12,7 @@ Another reader that can act as the basis for any reader implementation is the `M
 
 ## The [JsonMapReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_map/reader.py)
 
-This reader is designed to allow users of `pynxtools` to convert their existing data with the help of a config file. The config file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:
+This reader is designed to allow users of `pynxtools` to convert their existing data with the help of a mapping config file. The config file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:
 
 * HDF5
 * JSON
@@ -66,7 +66,14 @@ Use a JSON object with a `"link"` callback to reference data in an existing HDF5
   "/ENTRY[entry]/DATA[data]/current_300C":"@link:current.nxs:/entry/data/current_300C"
 ```
 
-Note: linking only works for HDF5 files. A `"shape"` key may be added alongside `"link"` to select a slice (e.g. `"shape": "0:100, 0:50"`).
+Equivalently, it is also possible to use a dictionary for linking:
+
+```json
+  "/ENTRY[entry]/DATA[data]/current_295C": {"link": "current.nxs:/entry/data/current_295C"},
+  "/ENTRY[entry]/DATA[data]/current_300C": {"link": "current.nxs:/entry/data/current_300C"},
+```
+
+Note: linking only works for HDF5 files. A `"shape"` key may be added alongside `"link"` to select a slice (e.g. `"shape": "0:100, 0:50"`). However, this only works when using the dictionary notation: `{"link":<path>, "shape":<shape>}`. For the shorthand `"@link:<path>"` notation, `"shape"` is not yet supported.
 
 #### 4. ELN / attribute data
 
