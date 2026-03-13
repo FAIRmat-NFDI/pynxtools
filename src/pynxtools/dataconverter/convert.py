@@ -233,7 +233,7 @@ def convert(
 
 def parse_params_file(params_file):
     """Parses the parameters from a given dictionary and returns them"""
-    params = yaml.load(params_file, Loader=yaml.Loader)["dataconverter"]
+    params = yaml.load(params_file, Loader=yaml.SafeLoader)["dataconverter"]
     for param in list(params.keys()):
         params[param.replace("-", "_")] = params.pop(param)
     return params
