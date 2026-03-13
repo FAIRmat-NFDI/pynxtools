@@ -331,7 +331,7 @@ def main_cli():
     "--mapping",
     help=(
         "Takes a <name>.mapping.json file and converts data from given input files. "
-        "Deprecated. Will be removed in a future release."
+        "Deprecated. Will be removed in a future release. The --config flag can be used instead."
     ),
 )
 @click.option(
