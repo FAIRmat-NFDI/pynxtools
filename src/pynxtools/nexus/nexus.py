@@ -288,7 +288,6 @@ def _get_hdf_path(hdf_info):
     return hdf_info["hdf_node"].name.split("/")[1:]
 
 
-# pylint: disable=too-many-arguments,too-many-locals
 @cache
 def _get_inherited_hdf_nodes(
     nx_name: str = None,
