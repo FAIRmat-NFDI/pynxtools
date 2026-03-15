@@ -28,6 +28,7 @@ import h5py
 import numpy as np
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.chunk import CHUNK_CONFIG_DEFAULT, chunking_strategy
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
@@ -35,6 +36,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
+from pynxtools.dataconverter.chunk import COMPRESSION_FILTER, COMPRESSION_STRENGTH
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -150,7 +152,8 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            strength = 9  # strongest compression is space efficient but can take long
+            compression_filter = COMPRESSION_FILTER
+            compression_strength = COMPRESSION_STRENGTH
             accept = (
                 ("strength" in data.keys())
                 and (isinstance(data["strength"], int))
@@ -158,13 +161,13 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
                 and (data["strength"] <= 9)
             )
             if accept is True:
-                strength = data["strength"]
+                compression_strength = data["strength"]
             grp.create_dataset(
                 entry_name,
                 data=data["compress"],
-                compression="gzip",
-                chunks=True,
-                compression_opts=strength,
+                compression=compression_filter,
+                chunks=chunking_strategy(data),
+                compression_opts=compression_strength,
             )
         else:
             grp.create_dataset(entry_name, data=data["compress"])
@@ -207,7 +210,13 @@ class Writer:
         self.data = data
         self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "w")
+        self.output_nexus = h5py.File(
+            self.output_path,
+            "w",
+            rdcc_nslots=CHUNK_CONFIG_DEFAULT["rdcc_nslots"],
+            rdcc_nbytes=CHUNK_CONFIG_DEFAULT["rdcc_nbytes"],
+            rdcc_w0=CHUNK_CONFIG_DEFAULT["rdcc_w0"],
+        )
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
