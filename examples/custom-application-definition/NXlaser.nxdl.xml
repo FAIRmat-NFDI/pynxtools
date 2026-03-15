@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<!--
+# NeXus - Neutron and X-ray Common Data Format
+#
+# Copyright (C) 2026-2026 NeXus International Advisory Committee (NIAC)
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# For further information, see http://www.nexusformat.org
+-->
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            category="base"
+            type="group"
+            name="NXlaser"
+            extends="NXsource"
+            xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+    <doc>
+        A specialisation of NXsource for coherent laser sources.
+
+        Extends NXsource by adding a temporal coherence_length field and
+        restricting the inherited type field to the single value "Laser".
+        Use this base class in application definitions that require a laser
+        as the illumination source.
+    </doc>
+    <field name="wavelength" type="NX_FLOAT" units="NX_WAVELENGTH">
+        <doc>
+            Central wavelength of the laser line.
+        </doc>
+    </field>
+    <field name="coherence_length" type="NX_FLOAT" units="NX_LENGTH" recommended="true">
+        <doc>
+            Temporal coherence length of the source.
+            Determines the maximum path-length difference for which
+            interference fringes are visible.
+        </doc>
+    </field>
+    <field name="type" type="NX_CHAR">
+        <enumeration>
+            <item value="Laser"/>
+        </enumeration>
+    </field>
+</definition>

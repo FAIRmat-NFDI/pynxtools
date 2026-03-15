@@ -28,6 +28,9 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 - [Installation guide](tutorial/installation.md)
 - [Converting your research data to NeXus](tutorial/converting-data-to-nexus.md)
+- [Writing your first application definition](tutorial/writing-an-application-definition.md)
+- [Building your first pynxtools reader](tutorial/build-a-reader.md)
+- [Bringing your own data](tutorial/bring-your-own-data.md)
 - [Uploading NeXus data to NOMAD](tutorial/nexus-to-nomad.md)
 - [Development guide](tutorial/contributing.md)
 

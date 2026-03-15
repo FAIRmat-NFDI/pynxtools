@@ -171,12 +171,9 @@ If you have multiple blocks (spectra), store them as a list and loop in
 ### Format: Igor Pro IBW (`.ibw`)
 
 ```python
-def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
-    try:
-        import igor2.igorpy as igor
-    except ImportError:
-        raise ImportError("pip install igor2")
+import igor2.igorpy as igor
 
+def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
     wave = igor.load(file_path)
     self.data = {
         "data": wave.data,
@@ -193,10 +190,10 @@ def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
 Or for JSON note format:
 
 ```python
-import json, numpy as np
+import igor2.igorpy as igor
+import json
 
 def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
-    import igor2.igorpy as igor
     wave = igor.load(file_path)
     self.data = {"signal": wave.data}
     try:
@@ -212,12 +209,9 @@ def handle_ibw_file(self, file_path: str) -> dict[str, Any]:
 ### Format: NetCDF (`.nc`)
 
 ```python
-def handle_netcdf_file(self, file_path: str) -> dict[str, Any]:
-    try:
-        import xarray as xr
-    except ImportError:
-        raise ImportError("pip install xarray netcdf4")
+import xarray as xr
 
+def handle_netcdf_file(self, file_path: str) -> dict[str, Any]:
     ds = xr.open_dataset(file_path)
     self.data = {}
     for var in ds.data_vars:
@@ -234,12 +228,9 @@ def handle_netcdf_file(self, file_path: str) -> dict[str, Any]:
 ### Format: TIFF / detector images
 
 ```python
-def handle_tiff_file(self, file_path: str) -> dict[str, Any]:
-    try:
-        import tifffile
-    except ImportError:
-        raise ImportError("pip install tifffile")
+ import tifffile
 
+def handle_tiff_file(self, file_path: str) -> dict[str, Any]:
     with tifffile.TiffFile(file_path) as tif:
         data = tif.asarray()       # shape: (frames, height, width) or (H, W)
         meta = {}
@@ -378,7 +369,7 @@ dataconverter generate-template --nxdl NXmpes
 
 ### No application definition? Write a minimal one.
 
-See [How-to > Write a NeXus application definition](../how-tos/nexus/writing-an-application definition.md).
+See [How-to > Write a NeXus application definition](../how-tos/nexus/write-an-application-definition.md).
 
 Minimal skeleton:
 
@@ -579,6 +570,6 @@ def post_process(self) -> None:
 - [How-to > Test your reader](../how-tos/pynxtools/using-pynxtools-test-framework.md)
 - [Tutorial > Write your first application definition](../tutorial/writing-an-application-definition.md)
 - [How-to > Write a NeXus application definition](../how-tos/nexus/write-an-application-definition.md)
-(../how-tos/nexus/writing-an-application definition.md)
+(../how-tos/nexus/write-an-application definition.md)
 - [Learn > The MultiFormatReader in depth](../learn/pynxtools/multi-format-reader.md)
 - [Reference > FAIRmat-supported `pynxtools` plugins](../reference/plugins.md)
