@@ -226,6 +226,6 @@ This confirms `pynxtools` resolves the definition and lists all expected paths.
 
 ## Step 5 — Contribute
 
-Submit to the [FAIRmat NeXus definitions repository](https://github.com/FAIRmat-NFDI/nexus_definitions) — new classes go in `contributed_definitions/`. Open a pull request and the FAIRmat team will review it. Once the application definition or base class has gained sufficient from the community, it is possible to submit it to the NeXus International Advisory Committee for review. If approved, the new application definitions and base classes get eventually promoted to `applications/` or `base classes`, respectively.
+Submit to the [FAIRmat NeXus definitions repository](https://github.com/FAIRmat-NFDI/nexus_definitions) — new classes go in `contributed_definitions/`. Open a pull request and the FAIRmat team will review it. Once the application definition or base class has gained sufficient approval from the community, it is possible to submit it to the NeXus International Advisory Committee (NIAC) for review. If approved, the new application definitions and base classes get eventually promoted to `applications/` or `base classes`, respectively.
 
 To gather feedback before submitting, use the [hypothes.is](https://hypothes.is/) annotation tool on the [FAIRmat NeXus definitions site](https://fairmat-nfdi.github.io/nexus_definitions/).

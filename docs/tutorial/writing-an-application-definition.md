@@ -1,4 +1,4 @@
-# Write your first application definition
+# Writing your first application definition
 
 This tutorial will guide you through writing your first valid NeXus application definition.
 
@@ -32,8 +32,9 @@ You will understand
 
 We want to build an application definition `NXdouble_slit` from scratch — a minimal but complete NeXus application definition for a classic optics experiment. 
 
+---
 
-### 0. The experiment
+## The experiment
 
 In a [double-slit experiment](https://en.wikipedia.org/wiki/Double-slit_experiment) a coherent light source illuminates a barrier with two narrow slits. The diffracted waves interfere and produce a characteristic fringe pattern on a detector screen. Standard analysis extracts fringe spacing (→ wavelength) and envelope width (→ coherence length).
 
@@ -47,6 +48,10 @@ The data we need to record:
 | 2D intensity array | The measurement itself |
 
 ---
+
+## Steps
+
+
 
 ### 1. Start with the skeleton
 
@@ -87,8 +92,7 @@ dataconverter generate-template --nxdl NXdouble_slit
 You should see a JSON template listing paths like `/ENTRY[entry]/title` and `/ENTRY[entry]/start_time`.
 
 !!! note "Concept paths vs. instance paths"
-    The template uses *concept* names in upper case (`ENTRY`, `INSTRUMENT`) and *instance* names
-    in brackets (`[entry]`). The bracketed name is the literal group name written to the HDF5 file; the upper-case name is the NeXus base class. Read more in
+    The template uses *concept* names (`ENTRY`, `INSTRUMENT`) and *instance* names in brackets (`[entry]`). The bracketed name is the literal group name written to the HDF5 file; the upper-case name is the name of the NeXus concept. Read more in
     [Learn > ... > Rules for storing data in NeXus](../learn/nexus/nexus-rules.md).
 
 The `definition` field with an `<enumeration>` is a convention — it locks the field to the name of the application definition so that readers and validators can identify the file format unambiguously.
@@ -217,6 +221,8 @@ symbols:
     Number of detector pixels along y.
 ```
 
+Using symbolic names (`n_x`, `n_y`) instead of hardcoded integers makes the definition self-documenting and allows validation tools to verify dimensional consistency across fields.
+
 Then add the detector group inside `NXinstrument`:
 
 ```yaml
@@ -227,45 +233,44 @@ Then add the detector group inside `NXinstrument`:
             Distance from the slit plane to the detector surface.
         data(NXdata):
           doc: |
-            Contains the raw data collected by the detector before calibration.
-            This group ideally collects the data with the lowest level of processing
-            possible.
-          \@axes:
-            enumeration: [[0, 0, 1]]
+            Raw 2D pixel data collected by the detector with no calibration
+            applied. This group stores data at the lowest level of processing
+            possible, indexed by integer pixel coordinates.
           \@signal:
-            enumeration: [['x_pixel_offset', 'y_pixel_offset']]
+            enumeration: [data]
+          \@axes:
+            enumeration: [['x', 'y']]
           data(NX_NUMBER):
             exists: recommended
             unit: NX_ANY
             doc: |
-              Measured 2D interference intensity pattern.
+              Raw 2D intensity array indexed by pixel position.
             dimensions:
               rank: 2
               dim: (n_x, n_y)
-          x_pixel_offset(NX_FLOAT):
-            unit: NX_LENGTH
+          x(NX_INT):
             doc: |
-              Horizontal pixel positions relative to the detector centre.
+              Pixel indices along the horizontal detector axis (0-based).
             dimensions:
               rank: 1
               dim: (n_x,)
-          y_pixel_offset(NX_FLOAT):
-            unit: NX_LENGTH
-            exists: recommended
+          y(NX_INT):
             doc: |
-              Vertical pixel positions relative to the detector centre.
+              Pixel indices along the vertical detector axis (0-based).
             dimensions:
               rank: 1
               dim: (n_y,)
 ```
 
-Using symbolic names (`n_x`, `n_y`) instead of hardcoded integers makes the definition self-documenting and allows validation tools to verify dimensional consistency across fields.
+!!! note "Raw data first, processed data separately"
+    Always store the rawest data you have. Here the detector axes are integer pixel indices (`x`, `y`), i.e., exactly what the hardware records. The calibrated  view with physical spatial offsets (mm, µm) belongs in a *separate* `NXdata`  group at the `NXentry` level, wired as the default plot (step 6 below). An optional `NXprocess` group can document the conversion between the two
+    (step 5 below).
 
 ---
 
-### 5. Optionality levels
+### 5. Add an optional processing group
 
-Three levels express how important a field is for conformance:
+Three levels express how important a concept is for conformance:
 
 | Level | NXDL | nyaml | What validators do |
 |-------|------|-------|------------|
@@ -280,36 +285,87 @@ The pixel offsets above are recommended — essential for calibrated analysis bu
 !!! tip
     When in doubt, lean towards `recommended` over `required`. A definition that is too strict discourages adoption; a definition that is too loose loses its interoperability value.
 
+#### Flexible naming with `nameType`
+
+Names in both NXDL files and the files that instantiate the schema follow a particular naming logic. There's the possibility to define concept names that are _different_ to the names of the actual data instances. You can learn more about the naming rules in  [Learn > ... > Rules for storing data in NeXus](../learn/nexus/nexus-rules.md). In summary, NeXus names are defined by a combination of the `nameType` attribute and whether (parts of) the names are lower- or uppercase.
+
+By default every named group, field, or attribute in NXDL requires an **exact** name in the HDF5 file (`nameType="specified"`). NeXus provides two relaxed alternatives:
+
+| `nameType` | nyaml example | What it means |
+|---|---|---|
+| `specified` (default) | `double_slit(NXslit):` | Exactly the literal name `double_slit` |
+| `any` | `(NXinstrument):` | Any valid HDF5 group name is accepted |
+| `partial` | `processID(NXprocess):` | The `ID` suffix is a placeholder; any string can replace it |
+
+The `(NXinstrument):` syntax (parentheses only, no name) that you already wrote is the `nameType="any"` shorthand — any instrument group name is valid.
+
+`nameType="partial"` is useful when you expect **multiple concepts of the same type** but want to give each a meaningful name. The uppercase sequence `ID` marks the variable part; everything before it is the fixed prefix. For example, `processID` would match `processing_pixel_cal`, `processing01`, etc.
+
+Add an optional processing group at the `(NXentry)` level (sibling of `(NXinstrument)`) to document how raw pixel data were converted to calibrated spatial offsets:
+
+```yaml
+    processID(NXprocess):
+      nameType: partial
+      exists: optional
+      doc: |
+        Describes one processing step that converts raw detector pixel data
+        to the calibrated interference pattern. Replace 'ID' with a short
+        identifier, e.g. 'pixel_calibration' or 'background_correction'.
+        Multiple NXprocess groups are allowed; their order is given by
+        sequence_index.
+      sequence_index(NX_INT):
+        doc: Order of this step in the processing chain (1-based).
+      description(NX_CHAR):
+        doc: Free-text description of what this step does.
+      program(NX_CHAR):
+        exists: optional
+        doc: Name of the software used.
+      version(NX_CHAR):
+        exists: optional
+      date(NX_DATE_TIME):
+        exists: optional
+```
+
 ---
 
 ### 6. Wire up NXdata
 
-`NXdata` marks the default plot. Tools like NOMAD use the `@signal` and `@axes` attributes to render data without requiring user configuration. Add it as a sibling of `NXinstrument`:
+`NXdata` marks the default plot. Tools like NOMAD use the `@signal` and `@axes` attributes to render data without requiring user configuration. Add it as a sibling of `NXinstrument` (and `processID`):
 
 ```yaml
     interference_pattern(NXdata):
       doc: |
-        Default plot: the recorded 2D interference pattern.
+        Default plot: the calibrated 2D interference pattern with spatial axes. The signal and axes may be linked to the raw detector arrays or derived from it via one or more NXprocess steps.
       \@signal:
         enumeration: [data]
       \@axes:
-        enumeration: [['x_pixel_offset', 'y_pixel_offset']]
+        enumeration: [['x_offset', 'y_offset']]
       data(NX_NUMBER):
         unit: NX_ANY
+        doc: |
+          2D interference intensity after any processing steps.
         dimensions:
           rank: 2
           dim: (n_x, n_y)
-      x_pixel_offset(NX_FLOAT):
+      x_offset(NX_FLOAT):
         unit: NX_LENGTH
+        doc: |
+          Horizontal spatial offset from the detector centre, derived from
+          pixel index and pixel pitch.
         dimensions:
           rank: 1
           dim: (n_x,)
-      y_pixel_offset(NX_FLOAT):
+      y_offset(NX_FLOAT):
         unit: NX_LENGTH
+        doc: |
+          Vertical spatial offset from the detector centre, derived from
+          pixel index and pixel pitch.
         dimensions:
           rank: 1
           dim: (n_y,)
 ```
+
+The axes here are physical lengths (NX_LENGTH), not pixel indices — they represent where each pixel falls in real space after calibration.
 
 !!! note
     In a real HDF5 file, `data` and the axis fields in `NXdata` could be HDF5 links pointing to the detector group — not duplicated data. The NXDL defines what *must be accessible* at that path; the writer decides whether to copy or link.
@@ -347,314 +403,14 @@ You can find both `NXdouble_slit.yaml` and `NXdouble_slit.nxdl.xml` in the `pynx
 - [`NXdouble_slit.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXdouble_slit.yaml)
 - [`NXdouble_slit.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXdouble_slit.nxdl.xml)
 
-Note that for the full application definitions, we have added more concepts to further illustrate the different data modelling features of NeXus.
-
 ??? success "NXdouble_slit.yaml (full)"
-
     ```yaml
-    category: application
-    doc: |
-      Application definition for a double-slit interference experiment.
-      Records the light source, aperture geometry, detector layout, and the
-      measured 2D interference pattern needed to determine fringe spacing and
-      source coherence length.
-
-      See https://en.wikipedia.org/wiki/Double-slit_experiment.
-    symbols:
-    doc: |
-      Dimension symbols used in this definition.
-    n_x: |
-      Number of detector pixels along x.
-    n_y: |
-      Number of detector pixels along y.
-    type: group
-    NXdouble_slit(NXobject):
-    (NXentry):
-      definition:
-      enumeration: [NXdouble_slit]
-      title:
-      start_time(NX_DATE_TIME):
-        doc: |
-          ISO 8601 datetime
-      end_time(NX_DATE_TIME):
-        exists: recommended
-      (NXinstrument):
-        source(NXsource):
-          wavelength(NX_FLOAT):
-            unit: NX_WAVELENGTH
-            doc: |
-              Central wavelength of the light source.
-          coherence_length(NX_FLOAT):
-            unit: NX_LENGTH
-            exists: recommended
-            doc: |
-                Temporal coherence length of the source.
-            type(NX_CHAR):
-            exists: optional
-            enumeration: [Laser]
-        double_slit(NXslit):
-          x_gap(NX_FLOAT):
-            unit: NX_LENGTH
-            doc: |
-                Width of each individual slit.
-            slit_separation(NX_FLOAT):
-            unit: NX_LENGTH
-            doc: |
-                Center-to-center distance between the two slits.
-          height(NX_FLOAT):
-            unit: NX_LENGTH
-            exists: optional
-          material(NX_CHAR):
-            exists: optional
-        detector(NXdetector):
-          distance(NX_FLOAT):
-            unit: NX_LENGTH
-            doc: |
-              Distance from the slit plane to the detector surface.
-          data(NXdata):
-            doc: |
-              Contains the raw data collected by the detector before calibration.
-              This group ideally collects the data with the lowest level of processing
-              possible.
-            \@axes:
-              enumeration: [[0, 0, 1]]
-            \@signal:
-              enumeration: [['x_pixel_offset', 'y_pixel_offset']]
-            data(NX_NUMBER):
-              exists: recommended
-              unit: NX_ANY
-              doc: |
-                Measured 2D interference intensity pattern.
-              dimensions:
-                rank: 2
-                dim: (n_x, n_y)
-            x_pixel_offset(NX_FLOAT):
-              unit: NX_LENGTH
-              doc: |
-                Horizontal pixel positions relative to the detector centre.
-              dimensions:
-                rank: 1
-                dim: (n_x,)
-            y_pixel_offset(NX_FLOAT):
-              unit: NX_LENGTH
-              exists: recommended
-              doc: |
-                Vertical pixel positions relative to the detector centre.
-              dimensions:
-                rank: 1
-                dim: (n_y,)
-      interference_pattern(NXdata):
-        doc: |
-          Default plot: the recorded 2D interference pattern.
-        \@signal:
-          enumeration: [data]
-        \@axes:
-          enumeration: [['x_pixel_offset', 'y_pixel_offset']]
-        data(NX_NUMBER):
-          unit: NX_ANY
-          dimensions:
-            rank: 2
-            dim: (n_x, n_y)
-        x_pixel_offset(NX_FLOAT):
-          unit: NX_LENGTH
-          dimensions:
-            rank: 1
-            dim: (n_x,)
-        y_pixel_offset(NX_FLOAT):
-          unit: NX_LENGTH
-          dimensions:
-            rank: 1
-            dim: (n_y,)
+    --8<-- "examples/custom-application-definition/NXdouble_slit.yaml"
     ```
 
 ??? success "NXdouble_slit.nxdl.xml (full)"
-
     ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
-    <!--
-    # NeXus - Neutron and X-ray Common Data Format
-    #
-    # Copyright (C) 2026-2026 NeXus International Advisory Committee (NIAC)
-    #
-    # This library is free software; you can redistribute it and/or
-    # modify it under the terms of the GNU Lesser General Public
-    # License as published by the Free Software Foundation; either
-    # version 3 of the License, or (at your option) any later version.
-    #
-    # This library is distributed in the hope that it will be useful,
-    # but WITHOUT ANY WARRANTY; without even the implied warranty of
-    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    # Lesser General Public License for more details.
-    #
-    # You should have received a copy of the GNU Lesser General Public
-    # License along with this library; if not, write to the Free Software
-    # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-    #
-    # For further information, see http://www.nexusformat.org
-    -->
-    <definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" type="group" name="NXdouble_slit" extends="NXobject" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
-        <symbols>
-            <doc>
-                Dimension symbols used in this definition.
-            </doc>
-            <symbol name="n_x">
-                <doc>
-                    Number of detector pixels along x.
-                </doc>
-            </symbol>
-            <symbol name="n_y">
-                <doc>
-                    Number of detector pixels along y.
-                </doc>
-            </symbol>
-        </symbols>
-        <doc>
-            Application definition for a double-slit interference experiment.
-            Records the light source, aperture geometry, detector layout, and the
-            measured 2D interference pattern needed to determine fringe spacing and
-            source coherence length.
-            
-            See https://en.wikipedia.org/wiki/Double-slit_experiment.
-        </doc>
-        <group type="NXentry">
-            <field name="definition">
-                <enumeration>
-                    <item value="NXdouble_slit"/>
-                </enumeration>
-            </field>
-            <field name="title"/>
-            <field name="start_time" type="NX_DATE_TIME">
-                <doc>
-                    ISO 8601 datetime
-                </doc>
-            </field>
-            <field name="end_time" type="NX_DATE_TIME" recommended="true"/>
-            <group type="NXinstrument">
-                <group name="source" type="NXsource">
-                    <field name="wavelength" type="NX_FLOAT" units="NX_WAVELENGTH">
-                        <doc>
-                            Central wavelength of the light source.
-                        </doc>
-                    </field>
-                    <field name="coherence_length" type="NX_FLOAT" units="NX_LENGTH" recommended="true">
-                        <doc>
-                            Temporal coherence length of the source.
-                        </doc>
-                    </field>
-                    <field name="type" type="NX_CHAR" optional="true">
-                        <enumeration>
-                            <item value="Laser"/>
-                        </enumeration>
-                    </field>
-                </group>
-                <group name="double_slit" type="NXslit">
-                    <field name="x_gap" type="NX_FLOAT" units="NX_LENGTH">
-                        <doc>
-                            Width of each individual slit.
-                        </doc>
-                    </field>
-                    <field name="slit_separation" type="NX_FLOAT" units="NX_LENGTH">
-                        <doc>
-                            Center-to-center distance between the two slits.
-                        </doc>
-                    </field>
-                    <field name="height" type="NX_FLOAT" units="NX_LENGTH" optional="true"/>
-                    <field name="material" type="NX_CHAR" optional="true"/>
-                </group>
-                <group name="detector" type="NXdetector">
-                    <field name="distance" type="NX_FLOAT" units="NX_LENGTH">
-                        <doc>
-                            Distance from the slit plane to the detector surface.
-                        </doc>
-                    </field>
-                    <group name="data" type="NXdata">
-                        <doc>
-                            Contains the raw data collected by the detector before calibration.
-                            This group ideally collects the data with the lowest level of processing
-                            possible.
-                        </doc>
-                        <attribute name="axes">
-                            <enumeration>
-                                <item value="[0, 0, 1]"/>
-                            </enumeration>
-                        </attribute>
-                        <attribute name="signal">
-                            <enumeration>
-                                <item value="['x_pixel_offset', 'y_pixel_offset']"/>
-                            </enumeration>
-                        </attribute>
-                        <field name="data" type="NX_NUMBER" recommended="true" units="NX_ANY">
-                            <doc>
-                                Measured 2D interference intensity pattern.
-                            </doc>
-                            <dimensions rank="2">
-                                <dim index="1" value="n_x"/>
-                                <dim index="2" value="n_y"/>
-                            </dimensions>
-                        </field>
-                        <field name="x_pixel_offset" type="NX_FLOAT" units="NX_LENGTH">
-                            <doc>
-                                Horizontal pixel positions relative to the detector centre.
-                            </doc>
-                            <dimensions rank="1">
-                                <dim index="1" value="n_x"/>
-                            </dimensions>
-                        </field>
-                        <field name="y_pixel_offset" type="NX_FLOAT" units="NX_LENGTH" recommended="true">
-                            <doc>
-                                Vertical pixel positions relative to the detector centre.
-                            </doc>
-                            <dimensions rank="1">
-                                <dim index="1" value="n_y"/>
-                            </dimensions>
-                        </field>
-                    </group>
-                    <field name="data" type="NX_NUMBER" units="NX_ANY">
-                        <doc>
-                            Measured 2D interference intensity pattern.
-                        </doc>
-                        <dimensions rank="2">
-                            <dim index="1" value="n_y"/>
-                            <dim index="2" value="n_x"/>
-                        </dimensions>
-                    </field>
-                </group>
-            </group>
-            <group name="interference_pattern" type="NXdata">
-                <doc>
-                    Default plot: the recorded 2D interference pattern.
-                </doc>
-                <attribute name="signal">
-                    <enumeration>
-                        <item value="data"/>
-                    </enumeration>
-                </attribute>
-                <attribute name="axes">
-                    <enumeration>
-                        <item value="['x_pixel_offset', 'y_pixel_offset']"/>
-                    </enumeration>
-                </attribute>
-                <field name="data" type="NX_NUMBER" units="NX_ANY">
-                    <dimensions rank="2">
-                        <dim index="1" value="n_x"/>
-                        <dim index="2" value="n_y"/>
-                    </dimensions>
-                </field>
-                <field name="x_pixel_offset" type="NX_FLOAT" units="NX_LENGTH">
-                    <dimensions rank="1">
-                        <dim index="1" value="n_x"/>
-                    </dimensions>
-                </field>
-                <field name="y_pixel_offset" type="NX_FLOAT" units="NX_LENGTH">
-                    <dimensions rank="1">
-                        <dim index="1" value="n_y"/>
-                    </dimensions>
-                </field>
-            </group>
-        </group>
-    </definition>
-
+    --8<-- "examples/custom-application-definition/NXdouble_slit.nxdl.xml"
     ```
 
 ---
@@ -694,21 +450,16 @@ All of this is possible and valid NXDL syntax. However, many experiments in NeXu
 Create a new YAML file called `NXlaser.yaml`:
 
 ```yaml
-NXlaser(NXsource):
-  wavelength(NX_FLOAT):
-    doc: |
-        Central wavelength of the light source.
-  coherence_length(NX_FLOAT):
-    unit: NX_LENGTH
-    exists: recommended
-    doc: |
-      Temporal coherence length of the source.
-  type(NX_CHAR):
-    enumeration: [Laser]
-```       
+--8<-- "examples/custom-application-definition/NXlaser.yaml"
+```
 
 !!! note
     You do not need to redefine the units of the `wavelength` field here. In general, only those concepts that are either not defined in the inherited class or are overwritten shall be defined in the child class.
+
+The complete `NXlaser.yaml` and `NXlaser.nxdl.xml` are in the `pynxtools` examples:
+
+- [`NXlaser.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXlaser.yaml)
+- [`NXlaser.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXlaser.nxdl.xml)
 
 You can then use this new base class `NXlaser` in `NXdouble_slit`:
 
@@ -732,16 +483,57 @@ nyaml2nxdl NXlaser.yaml --output-file NXlaser.nxdl.xml
 nyaml2nxdl NXdouble_slit.yaml --output-file NXdouble_slit.nxdl.xml
 ```
 
-Add the NXDL XML file under `src/pynxtools/definitions/contributed_definitions` and validate that pynxtools can read it:
+Because you now use the class `NXlaser`, you should see paths like `/ENTRY[entry]/LASER/wavelength` and `/ENTRY[entry]/LASER/coherence_length` in the generated JSON template.
+
+---
+
+## Add your definition to `pynxtools`
+
+There are two paths depending on whether you want a local prototype or a community contribution.
+
+### Option A — Local development (fastest)
+
+Copy both NXDL files directly into the `contributed_definitions/` folder of your local `pynxtools` install or working tree:
+
+```bash
+cp NXlaser.nxdl.xml        src/pynxtools/definitions/contributed_definitions/
+cp NXdouble_slit.nxdl.xml  src/pynxtools/definitions/contributed_definitions/
+```
+
+Verify that pynxtools picks them up:
 
 ```bash
 dataconverter generate-template --nxdl NXdouble_slit
 ```
 
-Because you now use the class `NXlaser`, you should see paths like `/ENTRY[entry]/LASER/wavelength` and `/ENTRY[entry]/LASER/coherence_length` in the generated JSON template.
+This change lives only in your local checkout. It is useful for iterating quickly before submitting upstream.
+
+### Option B — Community contribution (permanent)
+
+When your definition is stable, contribute it to the shared NeXus definitions repository so that all `pynxtools` users can benefit:
+
+1. Fork [FAIRmat-NFDI/nexus_definitions](https://github.com/FAIRmat-NFDI/nexus_definitions) on GitHub.
+2. Add your NXDL files under `contributed_definitions/` (new definitions) or `applications/` (promoted application definitions).
+3. Open a pull request. The FAIRmat team will review the definition.
+4. Once merged, update the `pynxtools` definitions submodule to bring the new definition in:
+
+    ```bash
+    # From the pynxtools repository root
+    ./scripts/definitions.sh update
+    ```
+
+    This runs `git submodule update --remote` on the definitions submodule and records the new commit hash in pynxtools.
+
+!!! note
+    For very early-stage or instrument-specific definitions that are not yet ready for the community repository, Option A is the right choice. The `contributed_definitions/` path is scanned automatically by pynxtools — no code changes are needed.
+
+### Option C — Standardization with the NIAC
+
+When you use option B, your new definition will only be part of the FAIRmat NeXus definitions. Once your application definition or base class has gained sufficient approval from the community, it is possible to submit it to the NeXus International Advisory Committee (NIAC) for standardization. If approved, the new application definitions and base classes get eventually promoted to `applications/` or `base classes`, respectively.
+
 
 ## Next steps
 
-- [How-tos > NeXus > Write an application definition (how-to)](../how-tos/nexus/writing-an-application-definition.md) — quick reference for experienced users
+- [How-tos > NeXus > Write an application definition (how-to)](../how-tos/nexus/write-an-application-definition.md) — quick reference for experienced users
 - [Tutorial > Build a pynxtools reader](build-a-reader.md) — write a reader that produces files conforming to `NXdouble_slit`
 - Contribute to [FAIRmat NeXus definitions](https://github.com/FAIRmat-NFDI/nexus_definitions)

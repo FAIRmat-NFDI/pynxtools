@@ -1,6 +1,27 @@
-# Build your first pynxtools reader
+# Building your first pynxtools reader
+
+This tutorial will guide you through writing your first `pynxtools` reader plugin.
+
+## What should you should know before this tutorial?
+
+- You should have a basic understanding of NeXus: see [Learn > NeXus -> A primer on NeXus](../learn/nexus/nexus-primer.md)
+- You should have `pynxtools` installed: see the [Installation guide](./installation.md)
+
+## What you will know at the end of this tutorial?
+
+You will know
+
+- how to use the template for `pynxtools` plugins
+- how to set up a basic reader using the `MultiFormatReader`
+- how to validate your NeXus file
+- how to upload your NeXus file to NOMAD
+
+---
+
+## About this tutorial
 
 **Duration:** ~3 hours
+
 **Goal:** Convert a real instrument HDF5 file + an ELN YAML file into a validated NeXus/HDF5 output using a reader you write yourself.
 
 ---
@@ -33,8 +54,8 @@ You will write all three today.
 ```
 mock_data.h5   ──► handle_hdf5_file()  ──►  self.hdf5_data  ──┐
 eln_data.yaml  ──► handle_eln_file()   ──►  self.eln_data   ──┤
-                                                               │
-config_file.json  ◄──────────────────────────────────────────┘
+                                                              │
+config_file.json  ◄──────────────────────────────────────┘
        │
        │  "@attrs:some/hdf5/path"  ──►  get_attr(key, path)
        │  "@eln"                   ──►  get_eln_data(key, path)
@@ -50,7 +71,7 @@ The `MultiFormatReader` base class handles all the plumbing.
 ### Create your plugin
 
 ```bash
-pip install cookiecutter
+uv ip install cookiecutter
 cookiecutter gh:FAIRmat-NFDI/pynxtools-plugin-template --checkout workshop
 ```
 
@@ -63,6 +84,9 @@ Enter these values:
 | `short_description` | one-liner | `My first pynxtools reader` |
 | All others | optional | press Enter to accept defaults |
 
+Note that the template allows for many more optional features in your `pynxtools` plugin.
+We are working on those in separate tutorials.
+
 This creates the directory `pynxtools-simple/`. Enter it:
 
 ```bash
@@ -73,10 +97,10 @@ cd pynxtools-simple
 
 ```bash
 # pynxtools from the workshop branch (contains NXsimple)
-pip install "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools.git@workshop"
+uv pip install "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools.git@workshop"
 
 # your plugin in editable mode
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"
 ```
 
 ### Verify the setup
@@ -223,7 +247,7 @@ The dictionary should map slash-separated paths to values:
 
 1. Add `import h5py` at the top of `reader.py`
 2. Add `"h5py"` to the `dependencies` list in `pyproject.toml`
-3. Reinstall your plugin: `pip install -e .`
+3. Reinstall your plugin: `uv pip install -e .`
 4. Implement the method body (see the docstring in `reader.py` for hints)
 
 ### Check your work
@@ -253,7 +277,7 @@ instrument version: 1.0
 
     First, add `import h5py` at the top of `reader.py`.
     Then add `"h5py"` to `dependencies` in `pyproject.toml` and run
-    `pip install -e .`.
+    `uv pip install -e .`.
 
     ```python
     def handle_hdf5_file(self, file_path: str) -> dict[str, Any]:
@@ -641,7 +665,7 @@ For more on the test framework, see
 
 | Symptom | Most likely cause | Fix |
 |---|---|---|
-| `ModuleNotFoundError: h5py` | h5py not installed | Add `"h5py"` to `dependencies` in `pyproject.toml`, run `pip install -e .` |
+| `ModuleNotFoundError: h5py` | h5py not installed | Add `"h5py"` to `dependencies` in `pyproject.toml`, run `uv pip install -e .` |
 | `NXsimple not found` | Wrong pynxtools version | Run `pip install "pynxtools @ git+https://…@workshop"` |
 | `Required field /ENTRY/.../X missing` | Config doesn't map that path | Add the missing key to your config file |
 | Callback always returns `None` | Handler didn't run | Check that the file extension is in `self.extensions`; print `self.hdf5_data` |
@@ -720,6 +744,113 @@ plt.show()
 | Exercise 6 | `config_file.json` | Semantic source↔NeXus mapping |
 | Run | `dataconverter` | Validation is automatic |
 | Tests | `pytest` | Reproducibility testing |
+| Section 7 | Uploaded to NOMAD | NeXus files are parsed automatically; explore via DATA tab and NORTH |
+
+---
+
+## 7 — Upload your NeXus file to NOMAD
+
+You have produced a validated `.nxs` file. This section shows how to bring it
+into [NOMAD](https://nomad-lab.eu) — the research data management platform that
+understands NeXus natively — so that your data becomes findable, searchable, and
+shareable.
+
+### 7.1 Where to go
+
+| Instance | URL | Who it is for |
+|---|---|---|
+| NOMAD production | nomad-lab.eu/prod/v1/gui | Public datasets |
+| NOMAD test | nomad-lab.eu/prod/v1/test/gui | Safe to experiment — data is not permanent |
+| Local deployment | `localhost:8080` | Your own NOMAD install |
+
+You need a free NOMAD account to upload. Create one via **Login → Register** on
+any of the instances above. Browsing published data is always public.
+
+<!-- IMAGE: NOMAD landing page showing the Login button and search bar -->
+
+### 7.2 Create an upload and drop your file
+
+1. Log in and go to **Publish → Your uploads**.
+2. Click **CREATE NEW UPLOAD** and give it a name (e.g. "double-slit workshop").
+3. Drag and drop `output.nxs` onto the upload area, or click to browse for it.
+4. NOMAD detects the `.nxs` extension, identifies the parser, and starts
+   processing automatically.
+5. Wait for the green **processed** indicator next to the entry.
+
+<!-- IMAGE: Upload overview page with the drag-drop area highlighted -->
+
+!!! tip
+    You can upload a `.zip` file containing `output.nxs` plus any auxiliary
+    files (ELN YAML, raw data). NOMAD extracts the archive and processes each
+    file independently.
+
+### 7.3 Explore your entry
+
+Click the arrow icon → next to the entry to open the entry page. Three tabs are
+available:
+
+| Tab | What you see |
+|---|---|
+| **OVERVIEW** | Summary cards: metadata on the left, visualizations on the right |
+| **FILES** | The raw `.nxs` file and any auxiliary files in the upload |
+| **DATA** | The fully parsed NeXus tree — every group and field from your NXDL |
+
+The **DATA** tab is the most interesting for NeXus work: it renders the
+HDF5 hierarchy using NOMAD's metainfo schema, with unit-aware values and
+inline documentation drawn from the NXDL `<doc>` strings.
+
+<!-- IMAGE: Entry DATA tab showing the NXentry → NXinstrument → NXdetector hierarchy -->
+
+### 7.4 View in the NeXus app and filter by definition
+
+**Search and filter:**
+
+1. Go to **Explore → Entries** in the top menu.
+2. Open the filter panel on the left.
+3. Under **Data**, expand the **NeXus** filter group.
+4. Set **Application definition** to `NXsimple` (or whichever definition your
+   file uses) to show only matching entries.
+
+**NeXus viewer:**
+
+On the entry **OVERVIEW** page, look for the *NeXus* card. It opens an
+interactive tree viewer that mirrors the HDF5 structure and lets you browse
+groups, fields, and attributes without downloading the file.
+
+<!-- IMAGE: Explore → Entries page with the NeXus filter expanded, showing "NXsimple" selected -->
+
+### 7.5 Analyze with NORTH
+
+NORTH (NOMAD Remote Tools Hub) runs containerized Jupyter notebooks that connect
+directly to the files in your upload — no download needed.
+
+1. From the entry **OVERVIEW** page, click **Analyze in NORTH** (or navigate to
+   **Analyze → NORTH tools** from the top menu).
+2. Choose a container. The generic **Jupyter** tool works for standard Python
+   analysis.
+3. NOMAD launches the container and mounts your upload directory. A new Jupyter
+   tab opens in the browser.
+4. Inside the notebook, the upload path is available via an environment variable:
+
+    ```python
+    import h5py, os
+
+    upload_path = os.environ.get("NOMAD_UPLOAD_PATH", ".")
+    with h5py.File(f"{upload_path}/output.nxs", "r") as f:
+        data = f["entry/data/data"][()]
+        print(data.shape)
+    ```
+
+5. Any files you write back into the upload directory are stored in NOMAD. Click
+   **Reprocess** on the upload page to re-index newly created entries.
+
+<!-- IMAGE: NORTH Jupyter notebook open in a browser tab with a plot of the interference pattern -->
+
+!!! note
+    NORTH availability depends on the NOMAD deployment. The public instance at
+    nomad-lab.eu has NORTH enabled. Local deployments need a separate NORTH
+    configuration — see
+    [NOMAD docs > NORTH](https://nomad-lab.eu/prod/v1/docs/explanation/north.html).
 
 ---
 
