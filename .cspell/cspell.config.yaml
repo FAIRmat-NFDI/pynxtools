@@ -1,0 +1,11 @@
+---
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+version: '0.2'
+dictionaryDefinitions:
+  - name: custom-dictionary
+    path: './custom-dictionary.txt'
+    addWords: true
+dictionaries:
+  - custom-dictionary
+ignorePaths:
+  - 'paper/paper.bib'
