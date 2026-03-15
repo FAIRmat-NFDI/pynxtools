@@ -75,6 +75,7 @@ appdef
 appdefdir
 appdefs
 arpes
+asstr
 atleast
 atomutils
 attribs
@@ -115,6 +116,7 @@ hashvalue
 hdfdict
 hdfgroup
 hdfobject
+hfive
 hixu
 hypothes
 idname
@@ -171,6 +173,7 @@ oxidising
 pathtovalidate
 plottable
 posint
+posteriori
 printoptions
 punx
 pynxtools
