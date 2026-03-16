@@ -1,5 +1,8 @@
 # The MultiFormatReader as a reader superclass
 
+!!! info
+    Here, we will explain the inner workings of the `MultiFormatReader`. Note that there is also a how-to guide at [How-tos > pynxtools > Use the MultiFormatReader](../../how-tos/pynxtools/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example. In case you simply want to use the `MultiFormatReader` without understanding its inner logic, we recommend you start there.
+
 There are three options for building a new `pynxtools` reader:
 
 1. build the reader from scratch
@@ -10,8 +13,6 @@ While option 1 is generally not recommended, inheriting and extending the `BaseR
 
 While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the NeXus file based on the read data, in compliance with a NeXus application definition. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for any new data.
 
-Here, we will explain the inner workings of the `MultiFormatReader`. Note that there is also a [how-to guide](../../how-tos/pynxtools/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example. In case you simply want to use the `MultiFormatReader` without understanding its inner logic, we recommend you start there.
-
 ## The basic structure
 
 For extending the `MultiFormatReader`, the following basic structure must be implemented:
@@ -20,7 +21,7 @@ For extending the `MultiFormatReader`, the following basic structure must be imp
 """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 from typing import Any
 
-from pynxtools.dataconverter.readers.base.reader import MultiFormatReader
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 
 class MyDataReader(MultiFormatReader):
     """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
@@ -111,7 +112,7 @@ Note that for several input formats, standardized parser functions already exist
     template.update(self.setup_template())
 ```
 
-Next, the `setup_template` method can be implemented, which is used to populate the template with initial data that does not come from the files themselves. This may be used to set fixed information, e.g., about the reader. As an example, `NXentry/program_name` (which is defined as the name of program used to generate the NeXus file) scan be set to `pynxtools-plugin` by making `setup_template` return a dictionary of the form
+Next, the `setup_template` method can be implemented, which is used to populate the template with initial data that does not come from the files themselves. This may be used to set fixed information, e.g., about the reader. As an example, `NXentry/program_name` (which is defined as the name of program used to generate the NeXus file) can be set to `pynxtools-plugin` by making `setup_template` return a dictionary of the form
 
 ```json
 {
@@ -119,6 +120,9 @@ Next, the `setup_template` method can be implemented, which is used to populate 
   "/ENTRY[my_entry]/program_name/@version": "v0.1.0"
 }
 ```
+
+!!! note
+    `setup_template` must return **static, hard-coded values only**. It must not access the NXDL template structure or data read from input files. Any logic that depends on either belongs in `read()` (for template-dependent logic) or `post_process()` (for data-dependent dynamic entries).
 
 ## Handling objects
 
@@ -130,13 +134,6 @@ Next, the `setup_template` method can be implemented, which is used to populate 
 Aside from data files, it is also possible to directly pass any Python objects to the `read` function (e.g., a numpy array with measurement data). In order to exploit this, the `handle_objects` method must implemented, which should return a dictionary that populates the template.
 
 ## Parsing the config file
-
-```python title="multi/reader.py"
-    if self.config_file is not None:
-        self.config_dict = parse_flatten_json(
-            self.config_file, create_link_dict=False
-        )
-```
 
 Next up, we can make use of the config file, which is a JSON file that tells the reader which input data to use to populate the template. In other words, the config.json is used for ontology mapping between the input file paths and the NeXus application definition. Essentially, the config file should contain all keys that are present in the NXDL. A subset of a typical config file may look like this:
 
