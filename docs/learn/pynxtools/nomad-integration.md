@@ -19,7 +19,7 @@ developed within the FAIRmat consortium. It covers the *findable* and *accessibl
 
 NOMAD is available as:
 
-- **Public instance** — [nomad-lab.eu](https://nomad-lab.eu/prod/v1/gui/) — hosted by  FAIRmat/FHI, free for research use.
+- **Public instance** — [nomad-lab.eu](https://nomad-lab.eu/prod/v1/gui/) — hosted by FAIRmat, free for research use.
 - [**NOMAD OASIS**](https://nomad-lab.eu/nomad-lab/nomad-oasis.html) — a self-hosted deployment for institutions that need local data control, privacy, or integration with existing IT infrastructure.
 
 ---
