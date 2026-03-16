@@ -12,7 +12,7 @@ For a step-by-step walkthrough of the same material see the tutorial at [Tutoria
 
 ## Step 1 — Design the data contract
 
-Identify what information is needed for *standard measurements and analysis* in your field — nothing more, nothing less. Assign each piece an optionality level:
+Identify which concepts are needed for *standard measurements and analysis* in your field — nothing more, nothing less. Assign each piece a presence constraint:
 
 | Level | NXDL attribute | Meaning |
 |-------|----------------|---------|

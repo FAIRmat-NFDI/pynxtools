@@ -34,7 +34,7 @@ Scientific instruments produce data in dozens of incompatible formats. [NeXus](h
 
 A NeXus file is an HDF5 file with an agreed-upon internal layout. The layout is defined by an **application definition** (NXDL file): an XML schema that says which groups and fields a valid file must contain.
 
-`pynxtools` is the Python library that converts your raw data into a NeXus file and validates the result.
+`pynxtools` is the Python library that converts your raw data into a NeXus/HDF5 file and validates the result.
 
 ### The three-file pattern
 
