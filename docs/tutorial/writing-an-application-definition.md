@@ -16,7 +16,7 @@ This tutorial will guide you through writing your first valid NeXus application 
 You will know
 
 - how to write a basic application definition
-- how to validate the result with pynxtools.
+- how to validate the result with pynxtools
 - how to add your new definition to `pynxtools`
 
 You will understand
