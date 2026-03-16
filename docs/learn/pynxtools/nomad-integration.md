@@ -31,7 +31,7 @@ NOMAD is available as:
 
 The plugin registers:
 
-1. **A parser** (`NexusParser`) — called for any file with extension `.nxs` or `.hdf5` (when the file carries an `NX_class` HDF5 attribute at the root level).
+1. **A parser** (`NexusParser`) — called for any file with extension `.nxs` or `.hdf5` (when the file has an HDF5 attribute named `NX_class` at the root level with the value `NXroot`).
 2. **Schema extensions** — the NeXus definitions bundled with pynxtools are translated into NOMAD's internal schema language (*Metainfo*), making all NeXus concepts searchable.
 3. **A normalizer** — runs after parsing to extract NOMAD-searchable quantities such as the measurement technique and object identifiers.
 
@@ -118,7 +118,7 @@ To use `pynxtools` with NOMAD, install both packages in the same environment:
     ```
 
 
-For reader plugins (e.g., XPS, MPES, …), install them alongside:
+For `pynxtools` reader plugins install them alongside:
 
 === "uv"
 
@@ -158,7 +158,7 @@ optional dependencies in `pyproject.toml`:
 [project.optional-dependencies]
 plugins = [
  "pynxtools"
-  ]
+]
 ```
 
 For OASIS setup details see the

@@ -1,7 +1,7 @@
 # Use pynxtools with NOMAD
 
-This how-to covers practical workflows for using `pynxtools` together with NOMAD:
-uploading NeXus files via the API, verifying your file is parsed correctly, and
+This how-to covers practical workflows for using `pynxtools` together with NOMAD, such as
+uploading NeXus files via the API, verifying that your file is parsed correctly, and
 configuring a NOMAD OASIS instance.
 
 For the conceptual background see
@@ -131,7 +131,7 @@ If NOMAD reports a parsing error or your entry shows no data:
    read_nexus my_data.nxs -d /entry/definition
    ```
 
-3. **Check which parser was selected** — in the NOMAD GUI, go to your entry and open the **LOG** tab. The log shows which parser was invoked and any errors it raised.
+3. **Check which parser was selected** — in the NOMAD GUI, go to your entry and open the **LOG** tab. The log shows which parser was invoked and if any warnings or errors were raised.
 
 4. **Test the NOMAD parser locally** (see the code snippet above) and check for Python exceptions or missing Metainfo fields.
 
@@ -150,7 +150,7 @@ plugins = [
  "pynxtools",
  "pynxtools-em>=0.4",
  "pynxtools-xps>=0.5.3"
-  ]
+]
 ```
 ### Test the OASIS parser
 
