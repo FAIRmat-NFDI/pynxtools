@@ -80,6 +80,8 @@ After parsing, your NeXus data is available in NOMAD as:
 | **Search index** | All Metainfo quantities that NOMAD has indexed for cross-dataset comparison |
 | **API** | Raw archive JSON accessible via the REST API |
 
+Note that for all NeXus/HDF5 datasets with non-scalar content, i.e. arrays, the contents are not copied into the NOMAD archive JSON. Instead, the value of the Metainfo `Quantity` in the `DATA` tab for this NeXus field is the mean value of the array.
+
 The key quantities indexed by the NeXus normalizer depend on the application definition: common entries include technique name (`definition`), sample identifiers, start time, and instrument names.
 
 ---
