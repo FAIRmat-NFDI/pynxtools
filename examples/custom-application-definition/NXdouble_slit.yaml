@@ -92,13 +92,14 @@ NXdouble_slit(NXobject):
       doc: |
         Describes one step in the processing chain that converts raw detector
         pixel data to the calibrated interference pattern stored in
-        interference_pattern. The 'ID' suffix in the group name is replaced
+        ``interference_pattern``. The 'ID' suffix in the group name is replaced
         by a short identifier chosen by the writer, e.g. 'pixel_calibration'
         or 'background_correction'. Multiple NXprocess groups may be present;
         their order is given by sequence_index.
-      sequence_index(NX_INT):
+      sequence_index(NX_POSINT):
         doc: |
-          Order of this processing step in the chain (1-based integer).
+          Sequence index of processing, for determining the order of multiple
+          NXprocess steps. Starts with 1.
       description(NX_CHAR):
         doc: |
           Free-text description of what this processing step does.

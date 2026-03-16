@@ -21,13 +21,7 @@
 #
 # For further information, see http://www.nexusformat.org
 -->
-<definition xmlns="http://definition.nexusformat.org/nxdl/3.1"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            category="application"
-            type="group"
-            name="NXdouble_slit"
-            extends="NXobject"
-            xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" type="group" name="NXdouble_slit" extends="NXobject" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
     <symbols>
         <doc>
             Dimension symbols used in this definition.
@@ -48,7 +42,7 @@
         Records the light source, aperture geometry, detector layout, and the
         measured 2D interference pattern needed to determine fringe spacing and
         source coherence length.
-
+        
         See https://en.wikipedia.org/wiki/Double-slit_experiment.
     </doc>
     <group type="NXentry">
@@ -152,14 +146,15 @@
             <doc>
                 Describes one step in the processing chain that converts raw detector
                 pixel data to the calibrated interference pattern stored in
-                interference_pattern. The 'ID' suffix in the group name is replaced
+                ``interference_pattern``. The 'ID' suffix in the group name is replaced
                 by a short identifier chosen by the writer, e.g. 'pixel_calibration'
                 or 'background_correction'. Multiple NXprocess groups may be present;
                 their order is given by sequence_index.
             </doc>
-            <field name="sequence_index" type="NX_INT">
+            <field name="sequence_index" type="NX_POSINT">
                 <doc>
-                    Order of this processing step in the chain (1-based integer).
+                    Sequence index of processing, for determining the order of multiple
+                    NXprocess steps. Starts with 1.
                 </doc>
             </field>
             <field name="description" type="NX_CHAR">

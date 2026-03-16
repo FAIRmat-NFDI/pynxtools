@@ -200,6 +200,7 @@ pynxtools
 raman
 rdcc
 redef
+renamable
 reqs
 requiredness
 rtol

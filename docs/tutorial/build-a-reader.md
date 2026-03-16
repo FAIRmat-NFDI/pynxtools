@@ -32,13 +32,13 @@ You will know
 
 Scientific instruments produce data in dozens of incompatible formats. [NeXus](https://www.nexusformat.org/) is a community standard that defines a common structure for scientific data files so that tools, scripts, and databases can read them without format-specific code.
 
-A NeXus file is an HDF5 file with an agreed-upon internal layout. The layout is defined by an **application definition** (NXDL file): an XML schema that says which groups and fields a valid file must contain.
+A NeXus file is an HDF5 file with an agreed-upon internal layout. The layout is defined by an **application definition** (NXDL file): an XML schema that defines which groups, fields, and attributes a valid file must contain. An application definition also defines how instances of concepts in a NeXus file should be named. Names frequently have a templated part, i.e., concepts names can be (partially) renamable.
 
 `pynxtools` is the Python library that converts your raw data into a NeXus/HDF5 file and validates the result.
 
 ### The three-file pattern
 
-Every pynxtools reader plugin works with three types of input:
+Typically, a `pynxtools` reader plugin works with three types of input:
 
 | File | What it is | Example |
 |---|---|---|
@@ -120,7 +120,7 @@ Open the `README.md` there now — it describes every file.
 
 ### Explore the HDF5 file
 
-Run this in a Python REPL or a script:
+Run this using Python:
 
 ```python
 import h5py
@@ -252,7 +252,7 @@ The dictionary should map slash-separated paths to values:
 
 ### Check your work
 
-Open a Python REPL in your project directory and run:
+Open a Python file in your project directory and run:
 
 ```python
 from pynxtools_simple.reader import SimpleReader
@@ -525,8 +525,7 @@ For each required or recommended path, decide:
 
 ### Step 2 — path notation in the config
 
-Use `/ENTRY/` (without `[entry]`) in config keys — the base class replaces
-it with `/ENTRY[entry]/` for each entry name automatically.
+Use `/ENTRY/` (without `[entry]`) in config keys — the base class replaces it with `/ENTRY[entry]/` for each entry name automatically.
 
 For nested group keys, you can write them either flat or nested:
 

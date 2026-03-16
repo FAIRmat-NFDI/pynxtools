@@ -1,9 +1,26 @@
-# Day 2 — Bring your own data
+# Bring your own data
 
-**Duration:** ~3 hours (self-paced, individual support)
+This tutorial will guide you through writing a `pynxtools` reader plugin for the data from your specific experiment.
 
-**Goal:** Apply yesterday's MultiFormatReader pattern to your own instrument
-data and produce a validated NeXus file.
+## What should you should know before this tutorial?
+
+- This is a direct follow-up to the tutorial on building your own `pynxtools` reader, see [Building your first pynxtools reader](./build-a-reader.md). If you are unfamiliar with `pynxtools`, you should go through that tutorial first.
+
+## What you will know at the end of this tutorial?
+
+You will know
+
+- how to set up a reader fpr the data from your specific experiment
+- how to validate your very own NeXus file
+- how to upload your NeXus file to NOMAD
+
+---
+
+## About this tutorial
+
+**Duration:** ~3 hours (self-paced)
+
+**Goal:** Apply the `MultiFormatReader` pattern to your own instrument data and produce a validated NeXus file.
 
 **What to bring:** one or more data files from your instrument.
 
@@ -369,7 +386,7 @@ dataconverter generate-template --nxdl NXmpes
 
 ### No application definition? Write a minimal one.
 
-See [How-to > Write a NeXus application definition](../how-tos/nexus/write-an-application-definition.md).
+See the tutorial on [Writing your first application definition](./writing-an-application-definition.md).
 
 Minimal skeleton:
 
@@ -395,17 +412,7 @@ Minimal skeleton:
 </definition>
 ```
 
-Save it next to `reader.py` and point `pynxtools` at it by adding to your reader:
-
-```python
-@classmethod
-def get_nxdl_root_and_path(cls, nxdl: str):
-    import os, lxml.etree as ET
-    local = os.path.join(os.path.dirname(__file__), f"{nxdl}.nxdl.xml")
-    if os.path.exists(local):
-        return ET.parse(local).getroot(), local
-    return super().get_nxdl_root_and_path(nxdl)
-```
+Add it to point `pynxtools` in the `contributed_definitions` folder.
 
 ---
 
@@ -501,7 +508,7 @@ def get_entry_names(self) -> list[str]:
 Then use wildcard keys in the config with `*`:
 
 ```json
-{ "/ENTRY/data/*/signal": "@data:signal" }
+{ "/ENTRY/data/*": "@data:signal" }
 ```
 
 ### Unit conversion in a callback

@@ -4,7 +4,7 @@ An application definition is a formal contract specifying which fields and group
 
 For this how-to guide, we assume that you are familiar with:
 - the NeXus data model — see [Learn > NeXus > A primer on NeXus](../../learn/nexus/nexus-primer.md)
-- naming rules in NeXus — see [Learn > NeXus > # Rules for storing data in NeXus](../../learn/nexus/nexus-rules.md)
+- naming rules in NeXus — see [Learn > NeXus > Rules for storing data in NeXus](../../learn/nexus/nexus-rules.md)
 
 For a step-by-step walkthrough of the same material see the tutorial at [Tutorials > Writing your first application definition](../../tutorial/writing-an-application-definition.md).
 
@@ -12,7 +12,7 @@ For a step-by-step walkthrough of the same material see the tutorial at [Tutoria
 
 ## Step 1 — Design the data contract
 
-Identify which concepts are needed for *standard measurements and analysis* in your field — nothing more, nothing less. Assign each piece a presence constraint:
+Identify which concepts are needed for *standard measurements and analysis* in your field — nothing more, nothing less. Assign each element a constraint indicating whether its presence is required, recommended, or optional:
 
 | Level | NXDL attribute | Meaning |
 |-------|----------------|---------|
@@ -24,6 +24,7 @@ Identify which concepts are needed for *standard measurements and analysis* in y
 
 | Data | Level |
 |------|-------|
+| Source | Required |
 | Source wavelength | Required |
 | Slit width, slit separation | Required |
 | Detector distance | Required |
@@ -182,8 +183,7 @@ Key patterns:
    [NeXus units reference](https://manual.nexusformat.org/nxdl-types.html#unit-categories).
 5. **Optionality** — no attribute = required; `recommended="true"` = soft requirement;
    `optional="true"` = free.
-6. **Instance vs. concept name** — `name="double_slit"` is the *instance* name written to the HDF5
-   file; `type="NXslit"` is the *concept*. See [naming rules](../../learn/nexus/nexus-rules.md).
+6. **Instance vs. concept name** — `name="double_slit"` is the *instance* name written to the HDF5 file; `type="NXslit"` is the *base class* used. The full *concept name* is `NXdouble_slit/ENTRY/INSTRUMENT/double_slit`. See [naming rules](../../learn/nexus/nexus-rules.md).
 7. **`<dimensions>`** — rank and `dim` values must be consistent. Use symbolic names from
    `<symbols>`.
 8. **`NXdata`** — always include a default-plot group with `@signal` and `@axes` attributes. In a
