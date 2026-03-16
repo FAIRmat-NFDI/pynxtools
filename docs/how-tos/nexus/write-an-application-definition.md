@@ -191,7 +191,7 @@ Key patterns:
 
 ### Alternative: write in YAML with nyaml
 
-The [`nyaml`](https://github.com/FAIRmat-NFDI/nyaml) tool (developed by FAIRmat) lets you write the same definition in YAML and convert it to NXDL XML:
+The [`nyaml`](https://github.com/FAIRmat-NFDI/nyaml) tool (developed by FAIRmat) lets you write the same definition in YAML and convert it to NXDL XML and vice versa:
 
 ```bash
 pip install nyaml
@@ -217,15 +217,15 @@ This confirms `pynxtools` resolves the definition and lists all expected paths.
 
 !!! note
     The `dataconverter generate-template` method does not actually validate the NeXus definition
-    by itself. Rather, it creates a `pynxtools` Template from a given application definition. 
+    by itself. Rather, it creates a `pynxtools` template from a given application definition. 
     For this to work, the application definition has to be valid.
 
-    Note that there exist a [validation workflow](https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/.github/workflows/validate.yaml) that is run in the GitHub CI/CD of the definitions repository. For this to run on your NXDL file, you need to add your application definition there (see below).
+    Note that there exists a [validation workflow](https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/.github/workflows/validate.yaml) that is run in the GitHub CI/CD of the definitions repository. For this to run on your NXDL file, you need to add your application definition there (see below).
 
 ---
 
 ## Step 5 — Contribute
 
-Submit to the [FAIRmat NeXus definitions repository](https://github.com/FAIRmat-NFDI/nexus_definitions) — new classes go in `contributed_definitions/`. Open a pull request and the FAIRmat team will review it. Once the application definition or base class has gained sufficient approval from the community, it is possible to submit it to the NeXus International Advisory Committee (NIAC) for review. If approved, the new application definitions and base classes get eventually promoted to `applications/` or `base classes`, respectively.
+Submit to the [FAIRmat NeXus definitions repository](https://github.com/FAIRmat-NFDI/nexus_definitions) — new classes go in `contributed_definitions/`. Open a pull request and the FAIRmat team will review it. Once the application definition or base class has gained sufficient approval from the community, it is possible to submit it to the NeXus International Advisory Committee (NIAC) for review. If approved, the new application definitions and base classes get eventually promoted to `applications/` or `base classes/`, respectively.
 
 To gather feedback before submitting, use the [hypothes.is](https://hypothes.is/) annotation tool on the [FAIRmat NeXus definitions site](https://fairmat-nfdi.github.io/nexus_definitions/).

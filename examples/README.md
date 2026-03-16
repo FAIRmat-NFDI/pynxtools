@@ -1,6 +1,6 @@
 # Getting started
 
-Here, we provide examples for the folllowing topics:
+Here, we provide examples for the following topics:
 - creating NeXus application definitions
 - convert your data (raw data, numerical data, metadata) into a NeXus/HDF5 file using the [built-in readers of pynxtools](https://fairmat-nfdi.github.io/pynxtools/reference/built-in-readers.html).
 - creating your own reader plugin for pynxtools
