@@ -87,7 +87,7 @@ NXdouble_slit(NXobject):
               rank: 1
               dim: (n_y,)
     processID(NXprocess):
-      nameType: "partial"
+      nameType: partial
       exists: optional
       doc: |
         Describes one step in the processing chain that converts raw detector
@@ -105,12 +105,9 @@ NXdouble_slit(NXobject):
           Free-text description of what this processing step does.
       program(NX_CHAR):
         exists: optional
-        doc: |
-          Name of the software or script used for this step.
+        doc: Version string of the software.
       version(NX_CHAR):
         exists: optional
-        doc: |
-          Version string of the software.
       date(NX_DATE_TIME):
         exists: optional
     interference_pattern(NXdata):

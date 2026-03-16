@@ -164,14 +164,10 @@
             </field>
             <field name="program" type="NX_CHAR" optional="true">
                 <doc>
-                    Name of the software or script used for this step.
-                </doc>
-            </field>
-            <field name="version" type="NX_CHAR" optional="true">
-                <doc>
                     Version string of the software.
                 </doc>
             </field>
+            <field name="version" type="NX_CHAR" optional="true"/>
             <field name="date" type="NX_DATE_TIME" optional="true"/>
         </group>
         <group name="interference_pattern" type="NXdata">

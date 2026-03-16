@@ -308,18 +308,16 @@ Add an optional processing group at the `(NXentry)` level (sibling of `(NXinstru
       nameType: partial
       exists: optional
       doc: |
-        Describes one processing step that converts raw detector pixel data
-        to the calibrated interference pattern. Replace 'ID' with a short
-        identifier, e.g. 'pixel_calibration' or 'background_correction'.
-        Multiple NXprocess groups are allowed; their order is given by
-        sequence_index.
+        Describes one step in the processing chain that converts raw detector pixel data to the calibrated interference pattern stored in ``interference_pattern``. The 'ID' suffix in the group name is replaced by a short identifier chosen by the writer, e.g. 'pixel_calibration' or 'background_correction'. Multiple NXprocess groups may be present; their order is given by sequence_index.
       sequence_index(NX_INT):
-        doc: Order of this step in the processing chain (1-based).
+        doc: |
+          Sequence index of processing, for determining the order of multiple
+          NXprocess steps. Starts with 1.
       description(NX_CHAR):
         doc: Free-text description of what this step does.
       program(NX_CHAR):
         exists: optional
-        doc: Name of the software used.
+        doc: Version string of the software.
       version(NX_CHAR):
         exists: optional
       date(NX_DATE_TIME):
