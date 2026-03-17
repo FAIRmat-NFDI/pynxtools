@@ -9,11 +9,7 @@ There are cases where users wish to compose a NeXus/HDF5 file with data from mul
 Enabling such use cases while minimizing data copying is the idea behind the append mode of the dataconverter. It is activated by
 passing the `--append` flag during command line invocation (see [Tutorial -> Converting your research data to NeXus](../../tutorial/converting-data-to-nexus.md).
 
-Taking this tutorial and its NXxps case study as an example. It composes the HDF5 file with content from two input files
-the `EX439_S718_Au.sle` with proprietary formatting and the `eln_data_sle.yaml`, a NOMAD-specific metadata exchange file.
-Instead of running the tutorial with passing both input in one go, one could first add process only the proprietary file
-(without using `--append`) and thereafter process the YAML file (with using `--append`). The minimal command line call
-reads as follows.
+We take this tutorial and its `NXxps` case study as an example. It composes the HDF5 file with content from two input files: the `EX439_S718_Au.sle` with proprietary formatting and the `eln_data_sle.yaml`, a NOMAD-specific metadata exchange file. Instead of running the tutorial with passing both input in one go, one could first add process only the proprietary file (without using `--append`) and thereafter process the YAML file (with using `--append`). The minimal command line call reads as follows.
 
 ```
 dataconverter EX439_S718_Au.sle --reader xps --nxdl NXxps --output Au_25_mbar_O2_no_align.nxs
@@ -23,8 +19,7 @@ dataconverter eln_data_sle.yaml --reader xps --nxdl NXxps --append --output Au_2
 When processing both the `*.sle` and `*.yaml` file in one call, adding `--append` has no effect, i.e.,
 `pynxtools` proceeds as if `--append` is absent but mind that adding the flag deactivates the verification.
 
-Users who wish to use a `params.yaml` parameters file, like it is shown in the tutorial,
-should add the `append` flag like this:
+Users who wish to use a `params.yaml` parameters file, like it is shown in the tutorial, should add the `append` flag like this:
 
 ```
 dataconverter:
@@ -37,8 +32,7 @@ dataconverter:
   append: True
 ```
 
-Users who wish to call the dataconverter as a step in other Python code or Jupyter Notebooks may find
-the following variation and code a useful snippet to include in their batch pipeline:
+Users who wish to call the dataconverter as a step in a workflow may find the following variation and code a useful snippet to include in their batch pipeline:
 
 ```
 from pynxtools.dataconverter.convert import convert
@@ -54,7 +48,9 @@ _ = convert(
     output="Au_25_mbar_O2_no_align.nxs",
 )
 
-# modify tuple[str] input_file to include the actual files you wish to convert
+# "Au_25_mbar_O2_no_align.nxs" is the file content from eln_data_sle.yaml is appended to
+
+# modify tuple[str] input_file to include the actual files you wish to append to Au_25_mbar_O2_no_align.nxs
 # modify output: str to customize output file path and name
 ```
 
