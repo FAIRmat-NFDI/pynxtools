@@ -1278,6 +1278,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../learn/pynxtools/dataconverter-append-mode.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataconverter append mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../learn/pynxtools/compression.html" class="md-nav__link">
         
   
@@ -1849,6 +1877,12 @@ dataconverter call. Here is its API:</p>
 <td>None</td>
 </tr>
 <tr>
+<td><code>--append</code></td>
+<td>boolean</td>
+<td>Appends instance data to the given <output> file if the file already exists.Will prevent an overwriting of existent data and adding of new NXentry instances.If True, will skip the validation whatever irrespective if --skip-verify is passed.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
 <td><code>--ignore-undocumented</code></td>
 <td>boolean</td>
 <td>Ignore all undocumented concepts during validation.</td>
@@ -1863,7 +1897,7 @@ dataconverter call. Here is its API:</p>
 <tr>
 <td><code>--skip-verify</code></td>
 <td>boolean</td>
-<td>Skips the verification routine during conversion.</td>
+<td>Skips the verification routine during conversion.When --append is used the verification is always skippedirrespective if --skip-verify is used or not.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
