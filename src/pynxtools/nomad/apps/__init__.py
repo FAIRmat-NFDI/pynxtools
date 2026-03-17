@@ -16,68 +16,23 @@
 # limitations under the License.
 #
 try:
-    from nomad.config.models.plugins import (
-        AppEntryPoint,
-        ExampleUploadEntryPoint,
-        ParserEntryPoint,
-        SchemaPackageEntryPoint,
+    from nomad.config.models.plugins import AppEntryPoint
+    from nomad.config.models.ui import (
+        App,
+        Column,
+        Menu,
+        MenuItemHistogram,
+        MenuItemPeriodicTable,
+        MenuItemTerms,
+        MenuSizeEnum,
+        SearchQuantities,
     )
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-
-class NexusParserEntryPoint(ParserEntryPoint):
-    def load(self):
-        from pynxtools.nomad.parser import NexusParser
-
-        return NexusParser(**self.dict())
-
-
-class NexusSchemaEntryPoint(SchemaPackageEntryPoint):
-    def load(self):
-        from pynxtools.nomad.schema import nexus_metainfo_package
-
-        return nexus_metainfo_package
-
-
-class NexusDataConverterEntryPoint(SchemaPackageEntryPoint):
-    def load(self):
-        from pynxtools.nomad.dataconverter import m_package
-
-        return m_package
-
-
-nexus_schema = NexusSchemaEntryPoint(
-    name="NeXus",
-    description="The NeXus metainfo package.",
-)
-
-nexus_data_converter = NexusDataConverterEntryPoint(
-    name="NeXus Dataconverter",
-    description="The NeXus dataconverter to convert data into the NeXus format.",
-)
-
-nexus_parser = NexusParserEntryPoint(
-    name="pynxtools parser",
-    description="A parser for nexus files.",
-    mainfile_name_re=r".*\.nxs",
-    mainfile_mime_re="application/x-hdf*",
-)
-
-from nomad.config.models.ui import (
-    App,
-    Column,
-    Menu,
-    MenuItemHistogram,
-    MenuItemPeriodicTable,
-    MenuItemTerms,
-    MenuSizeEnum,
-    SearchQuantities,
-)
-
-schema = "pynxtools.nomad.schema.Root"
+schema = "pynxtools.nomad.schema_packages.schema.Root"
 
 
 nexus_app = AppEntryPoint(
@@ -355,24 +310,4 @@ nexus_app = AppEntryPoint(
             ]
         },
     ),
-)
-
-simple_nexus_example = ExampleUploadEntryPoint(
-    title="Simple NeXus Example",
-    category="NeXus Experiment Examples",
-    description="""
-        Sensor Scan - IV Temperature Curve
-        This example shows how experimental data can be mapped to a Nexus application definition.
-        Here, data from an IV Temperature measurements as taken by a Python framework is
-        converted to [`NXiv_temp`](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
-        We also demonstrate the use of Nexus ELN features of NOMAD to add further details
-        which were not provided by the data acquisition software.
-        This example demonstrates how
-        - a NOMAD ELN can be built and its content can be written to an RDM platform agnostic yaml format
-        - NOMAD ELN can be used to combine ELN data with experiment data and export them to NeXus
-        - NeXus data is represented as an Entry with searchable quantities in NOMAD
-        - NORTH tools can be used to work with data in NOMAD uploads
-    """,
-    plugin_package="pynxtools",
-    resources=["nomad/examples/*"],
 )
