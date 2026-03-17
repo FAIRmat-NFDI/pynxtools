@@ -167,6 +167,8 @@ def test_overwrite(writer_overwrite, caplog):
             f"{prefix} attribute /@file_time",
             f"{prefix} attribute /@file_update_time",
             f"{prefix} attribute /@h5py_version",
+            f"{prefix} attribute /@creator",
+            f"{prefix} attribute /@creator_version",
             f"{prefix} attribute /ENTRY[my_entry]/@NX_class",
             f"{prefix} dataset /ENTRY[my_entry]/definition",
             f"{prefix} dataset /ENTRY[my_entry]/required_group/description",
