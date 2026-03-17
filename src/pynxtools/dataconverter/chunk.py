@@ -22,11 +22,25 @@ import logging
 
 import numpy as np
 
+import importlib.util
+
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
 # keyword "compress", causing chunked layout to be used
 
-COMPRESSION_FILTERS: list[str] = ["gzip"]  # deflate
+PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
+# use only when it is acceptable to work with blosc2-compressed content downstreams
+# mind that doing so in C/C++, Matlab, and Fortran application requires specific linking of these apps
+# consider that using blosc sets explicit a certain number of cores eligible for doing compression and decompression
+# work that may drain resources when pynxtools is used in conjunction with other apps and services like NOMAD
+# check the set_nthreads in writer.py to modify according to your best practice
+
+if PYNX_ENABLE_BLOSC and importlib.util.find_spec("hdf5plugin") is not None and importlib.util.find_spec("blosc2") is not None:
+    COMPRESSION_FILTERS: list[str] = ["gzip"]
+else:
+    COMPRESSION_FILTERS: list[str] = ["gzip", "blosc"]
+# order matters! 0th entry always taken as the default for backwards compatibility
+# "gzip" -> deflate, "blosc" -> "zstd"]
 COMPRESSION_STRENGTH: int = 9
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
 # using strongest compression is space efficient but can take substantially longer than
@@ -75,7 +89,6 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
 }
 
 CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
-
 
 logger = logging.getLogger("pynxtools")
 

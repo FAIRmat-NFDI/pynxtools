@@ -25,6 +25,8 @@ dependencies = [
     "click>=7.1.2",
     "click_default_group",
     "h5py>=3.6.0",
+    "hdf5plugin",  # making explicit what in the past came implicit through pandas
+    "blosc2",  # making explicit what in the past came implicit through pandas
     "xarray>=0.20.2",
     "PyYAML>=6.0",
     'numpy',

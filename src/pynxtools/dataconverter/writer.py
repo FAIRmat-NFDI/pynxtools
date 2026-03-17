@@ -20,7 +20,9 @@
 # pylint: disable=R0912
 
 import copy
+import importlib.util
 import logging
+import os
 import sys
 import xml.etree.ElementTree as ET
 
@@ -36,9 +38,18 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS, COMPRESSION_STRENGTH
+from pynxtools.dataconverter.chunk import PYNX_ENABLE_BLOSC, COMPRESSION_FILTERS, COMPRESSION_STRENGTH
 
+if PYNX_ENABLE_BLOSC and importlib.util.find_spec("hdf5plugin") is not None and importlib.util.find_spec("blosc2") is not None:
+    import blosc2
+    import hdf5plugin
 
+    NTHREADS_BLOSC = blosc2.set_nthreads(max(int(os.cpu_count() / 2), 1))
+    # do not oversubscribe to use hyperthreading cores
+    logger.info(f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores")
+    logger.info(blosc2.print_versions())
+else:
+    NTHREADS_BLOSC = 0
 def does_path_exist(path, h5py_obj) -> bool:
     """Returns true if the requested path exists in the given h5py object."""
     try:
@@ -153,7 +164,10 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
             if ("filter" in data.keys()) and (data["filter"] in COMPRESSION_FILTERS):
-                compression_filter = data["filter"]
+                if PYNX_ENABLE_BLOSC and data["filter"] == "blosc":
+                    compression_filter = data["filter"]
+                else:
+                    compression_filter = COMPRESSION_FILTERS[0]
             else:  # fall-back to default
                 compression_filter = COMPRESSION_FILTERS[0]
 
@@ -168,12 +182,19 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
 
             if entry_name not in grp:
                 try:
+                    if compression_filter == "gzip":
+                        compression_config = dict(
+                            compression=compression_filter,
+                            compression_opts=compression_strength,
+                        )
+                    else:  # by virtue of construction blosc
+                        compression_config = hdf5plugin.Blosc2(cname="zstd", clevel=9)
                     grp.create_dataset(
                         entry_name,
                         data=data["compress"],
                         compression=compression_filter,
                         chunks=chunking_strategy(data),
-                        compression_opts=compression_strength,
+                        **compression_config,
                     )
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")
