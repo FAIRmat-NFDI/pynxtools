@@ -24,6 +24,7 @@ import os
 import lxml.etree as ET
 import numpy as np
 import pytest
+
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_inherited_nodes,
     get_node_at_nxdl_path,
@@ -31,7 +32,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_classes,
     get_nx_units,
 )
-
 from pynxtools.nexus.nexus import HandleNexus, decode_if_string
 
 logger = logging.getLogger(__name__)

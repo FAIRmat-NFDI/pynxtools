@@ -1,17 +1,17 @@
 from typing import Any, get_args
 
 from anytree import Resolver
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_app_defs_names,
-    get_nx_attribute_type,
-    get_nx_units,
-)
 
 from pynxtools.dataconverter.nexus_tree import (
     NexusNode,
     NexusType,
     NexusUnitCategory,
     generate_tree_from,
+)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_app_defs_names,
+    get_nx_attribute_type,
+    get_nx_units,
 )
 
 

@@ -165,6 +165,7 @@ ignore = [
 ]
 fixable = ["ALL"]
 isort.split-on-trailing-comma = false
+isort.known-first-party = ["pynxtools"]
 
 [tool.ruff.format]
 quote-style = "double"
