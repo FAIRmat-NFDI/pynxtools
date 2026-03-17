@@ -35,13 +35,13 @@ PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
 # check the set_nthreads in writer.py to modify according to your best practice
 
 COMPRESSION_FILTERS: list[str] = (
-    ["gzip"]
+    ["gzip", "blosc"]
     if (
         PYNX_ENABLE_BLOSC
         and importlib.util.find_spec("hdf5plugin") is not None
         and importlib.util.find_spec("blosc2") is not None
     )
-    else ["gzip", "blosc"]
+    else ["gzip"]
 )
 # order matters! 0th entry always taken as the default for backwards compatibility
 # "gzip" -> deflate, "blosc" -> "zstd"]
