@@ -91,7 +91,7 @@ Observing that our exclusive relying on the heuristic of `h5py` delivered freque
 for HDF5 files that were generated with `pynxtools` using H5Web in the NOMAD research data management system. This motivated adding the
 here described customization option. For technical details we refer to the [implementation](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/chunk.py).
 
-## Expectation management and parallel file systems
+## Customizing chunk settings for different file systems
 
 The customization of the chunking heuristic has an additional level of hardware-dependent complexity though. Specifically, the actual
 read-out performance of chunked HDF5 content can heavily depend on the file system architecture and its settings. It is important to understand

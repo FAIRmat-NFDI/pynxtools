@@ -18,9 +18,9 @@
 
 """Configuration and utilities for customized chunking and compression."""
 
-import numpy as np
+import logging
 
-from pynxtools.dataconverter.helpers import logger
+import numpy as np
 
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
@@ -75,6 +75,9 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
 }
 
 CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
+
+
+logger = logging.getLogger("pynxtools")
 
 
 def prioritized_axes_heuristic(
