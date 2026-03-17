@@ -244,7 +244,7 @@ def convert(
 
 def parse_params_file(params_file):
     """Parses the parameters from a given dictionary and returns them"""
-    params = yaml.load(params_file, Loader=yaml.Loader)["dataconverter"]
+    params = yaml.load(params_file, Loader=yaml.SafeLoader)["dataconverter"]
     for param in list(params.keys()):
         params[param.replace("-", "_")] = params.pop(param)
     return params
@@ -350,7 +350,10 @@ def main_cli():
 )
 @click.option(
     "--mapping",
-    help="Takes a <name>.mapping.json file and converts data from given input files.",
+    help=(
+        "Takes a <name>.mapping.json file and converts data from given input files. "
+        "Deprecated. Will be removed in a future release. The --config flag can be used instead."
+    ),
 )
 @click.option(
     "-c",
@@ -371,9 +374,9 @@ def convert_cli(
     append: bool,
     ignore_undocumented: bool,
     skip_verify: bool,
-    mapping: str,
     config_file: str,
     fail: bool,
+    mapping: str | None,
     **kwargs,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
@@ -392,9 +395,11 @@ def convert_cli(
     if nxdl is None:
         raise click.UsageError("Missing option '--nxdl'")
     if mapping:
+        logger.warning(
+            "The --mapping option is deprecated. Please use a config file with the -c argument instead."
+        )
         reader = "json_map"
         input_file = input_file + tuple([mapping])
-        # needs own call
 
     if config_file:
         kwargs["config_file"] = config_file

@@ -36,6 +36,8 @@ nav:
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md
       - learn/pynxtools/dataconverter-append-mode.md
+      - learn/pynxtools/compression.md
+      - learn/pynxtools/versioning.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md

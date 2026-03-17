@@ -2005,13 +2005,25 @@ def format_error_message(msg: str) -> str:
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
-                {"compress": 2, "strength": 11},
+                {"compress": 2, "strength": 10},
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
-                "{'compress': 2, 'strength': 11} should be between 0 and 9.",
+                "{'compress': 2, 'strength': 10} should be between 0 and 9.",
             ],
-            id="appdef-compressed-invalid-strength",
+            id="appdef-compressed-strength-invalid-upper",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"compress": 2, "strength": -1},
+            ),
+            [
+                "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
+                "{'compress': 2, 'strength': -1} should be between 0 and 9.",
+            ],
+            id="appdef-compressed-strength-invalid-lower",
         ),
         pytest.param(
             alter_dict(
@@ -2021,9 +2033,18 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value "
-                "is 0. The value '2.0' will be written uncompressed.",
+                "is 0. The value '2.0' will be written effectively uncompressed.",
             ],
             id="appdef-compressed-strength-0",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"compress": np.float32(2.0)},
+            ),
+            [],
+            id="appdef-compressed-strength-not-a-keyword",
         ),
         pytest.param(
             alter_dict(
@@ -2047,6 +2068,27 @@ def format_error_message(msg: str) -> str:
                 "NXDL as NX_INT."
             ],
             id="baseclass-compressed-wrong-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": 2, "filter": "gzip", "strength": 3},
+            ),
+            [],
+            id="baseclass-compressed-filter-supported-true",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": 2, "filter": "blosc", "strength": 3},
+            ),
+            [
+                "Compression filter for /ENTRY[my_entry]/SAMPLE[sample1]]/"
+                "changer_position is not any of ['gzip']."
+            ],
+            id="baseclass-compressed-filter-supported-false",
         ),
     ],
 )
