@@ -79,6 +79,7 @@ appdef
 appdefdir
 appdefs
 arange
+arcname
 argmax
 arpes
 asarray
