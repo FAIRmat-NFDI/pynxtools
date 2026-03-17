@@ -45,7 +45,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 #### pynxtools
 
 - [Build your own `pynxtools` plugin](how-tos/pynxtools/build-a-plugin.md)
-- [How to use the built-in `MultiFormatReader`](how-tos/pynxtools/use-multi-format-reader.md)
+- [Use the built-in `MultiFormatReader`](how-tos/pynxtools/use-multi-format-reader.md)
 - [Test functionality for `pynxtools` plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
 - [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
 - [Using Python to create NeXus files](how-tos/pynxtools/create-nexus-files-by-python.md)
@@ -70,6 +70,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
 - [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
 - [Using and tailoring compression](learn/pynxtools/compression.md)
+- [Note on versioning](learn/pynxtools/versioning.md)
 
 </div>
 <div markdown="block">

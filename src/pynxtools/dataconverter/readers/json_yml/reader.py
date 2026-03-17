@@ -15,59 +15,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""An example reader implementation for the DataConverter."""
+"""A reader for YAML/JSON-based ELN and config data, built on MultiFormatReader.
 
-import os
-from collections.abc import Callable
-from typing import Any
+.. deprecated::
+    ``YamlJsonReader`` is deprecated and will be removed in a future release.
+    Use ``MultiFormatReader`` directly instead — it provides identical
+    functionality with no additional overhead.
+"""
 
-from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.template import Template
+import logging
+import warnings
+
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
+
+logger = logging.getLogger("pynxtools")
+
+_DEPRECATION_MSG = (
+    "YamlJsonReader is deprecated and will be removed in a future release. "
+    "Use MultiFormatReader directly instead."
+)
 
 
-class YamlJsonReader(BaseReader):
-    """A reader that takes a mapping json file and a data file/object to return a template."""
+class YamlJsonReader(MultiFormatReader):
+    """
+    .. deprecated::
+        Use ``MultiFormatReader`` directly.
 
-    # pylint: disable=too-few-public-methods
+    A thin alias for ``MultiFormatReader`` with no additional behavior.
+    All functionality is inherited unchanged.
+    """
 
-    # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls: list[str] = []
-    extensions: dict[str, Callable[[Any], dict]] = {}
-    kwargs: dict[str, Any] = None
+    supported_nxdls: list[str] = ["*"]
 
-    def read(
-        self,
-        template: dict = None,
-        file_paths: tuple[str] = None,
-        objects: tuple[Any] = None,
-        **kwargs,
-    ) -> dict:
-        """
-        Reads data from multiple files and passes them to the appropriate functions
-        in the extensions dict.
-        """
-        template = Template()
-        self.kwargs = kwargs
-
-        sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
-        for file_path in sorted_paths:
-            extension = os.path.splitext(file_path)[1].lower()
-            if extension not in self.extensions:
-                print(
-                    f"WARNING: "
-                    f"File {file_path} has an unsupported extension, ignoring file."
-                )
-                continue
-            if not os.path.exists(file_path):
-                print(f"WARNING: File {file_path} does not exist, ignoring entry.")
-                continue
-
-            template.update(self.extensions.get(extension, lambda _: {})(file_path))
-
-        template.update(self.extensions.get("default", lambda _: {})(""))
-        template.update(self.extensions.get("objects", lambda _: {})(objects))
-
-        return template
+    def __init__(self, *args, **kwargs):
+        logger.warning(_DEPRECATION_MSG)
+        warnings.warn(_DEPRECATION_MSG, DeprecationWarning, stacklevel=2)
+        super().__init__(*args, **kwargs)
 
 
 READER = YamlJsonReader

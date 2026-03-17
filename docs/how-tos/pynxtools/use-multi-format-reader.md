@@ -1,6 +1,9 @@
-# How to use the built-in MultiFormatReader
+# Use the MultiFormatReader
 
-While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data. In this how-to guide, we will focus on an implementation using a concrete example. If you are also interested in the general structure of the `MultiFormatReader`, you can find more information [here](../../learn/pynxtools/multi-format-reader.md).
+!!! info
+    In this how-to guide, we will focus on an how-to implement a `pynxtools` reader using a the `MultiFormatReader`. If you are interested in the general structure of the `MultiFormatReader`, you can find more information at [Learn > pynxtools > The MultiFormatReader as a reader superclass](../../learn/pynxtools/multi-format-reader.md).
+
+While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data.
 
 ## Getting started
 
@@ -78,7 +81,7 @@ We first start by implementing the class and its ``__init__`` call:
 """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 from typing import Any
 
-from pynxtools.dataconverter.readers.base.reader import ParseJsonCallbacks, MultiFormatReader
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 
 class MyDataReader(MultiFormatReader):
     """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
@@ -86,6 +89,15 @@ class MyDataReader(MultiFormatReader):
     supported_nxdls = [
         "NXsimple"
     ]
+
+    CONVERT_DICT = {
+        "unit": "@units",
+        "version": "@version",
+        "user": "USER[user]",
+        "instrument": "INSTRUMENT[instrument]",
+        "detector": "DETECTOR[detector]",
+        "sample": "SAMPLE[sample]",
+    }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -94,8 +106,8 @@ class MyDataReader(MultiFormatReader):
             ".yml": self.handle_eln_file,
             ".yaml": self.handle_eln_file,
             ".json": self.set_config_file,
-            ".hdf5": self.handle_eln_file,
-            ".h5": self.handle_eln_file,
+            ".hdf5": self.handle_hdf5_file,
+            ".h5": self.handle_hdf5_file,
         }
 
 READER = MyDataReader
@@ -159,6 +171,9 @@ Note that here we are returning an empty dictionary because we don't want to fil
 }
 ```
 
+!!! note
+    This recursive approach flattens the HDF5 hierarchy into a plain dict, which is convenient for config-driven mapping via `@data:` tokens. An alternative is to keep the HDF5 file object open and resolve paths lazily in `get_data` — useful when the file is large or when you want to avoid loading all datasets upfront. The built-in [`JsonMap` Reader](../../reference/built-in-readers.md#the-jsonmapreader) has functionality that does exactly that. This is just an example to illustrate how to read data from a file.
+
 ## Reading in ELN data
 
 As we can see in the application definition `NXsimple` above, there are some concepts defined for which there is no equivalent metadata in the HDF5 file. We are therefore using a YAML ELN file to add additional metadata. The ELN file `eln_data.yaml` looks like this:
@@ -183,19 +198,10 @@ We now need to write a function to read in this ELN data. Luckily, there exists 
 ```python title="reader.py"
 from pynxtools.dataconverter.readers.utils import parse_yml
 
-CONVERT_DICT = {
-    "unit": "@units",
-    "version": "@version",
-    "user": "USER[user]",
-    "instrument": "INSTRUMENT[instrument]",
-    "detector": "DETECTOR[detector]",
-    "sample": "SAMPLE[sample]",
-}
-
 def handle_eln_file(self, file_path: str) -> dict[str, Any]:
     self.eln_data = parse_yml(
         file_path,
-        convert_dict=CONVERT_DICT,
+        convert_dict=dict(self.CONVERT_DICT),
         parent_key="/ENTRY[entry]",
     )
             
@@ -216,7 +222,7 @@ When this method is called, `self.eln_data` will look like this:
 }
 ```
 
-Note that here we are using `parent_key="/ENTRY[entry]"` as well as a `CONVERT_DICT`, meaning that each key in `self.eln_data` will start with `"/ENTRY[entry]"` and some of the paths will be converted to match the template notation. This will be important later.
+Note that here we are using `parent_key="/ENTRY[entry]"` as well as a `self.CONVERT_DICT`, meaning that each key in `self.eln_data` will start with `"/ENTRY[entry]"` and some of the paths will be converted to match the template notation. This will be important later.
 
 ## Parsing the config file
 
@@ -255,18 +261,7 @@ Next up, we can make use of the **config file**, which is a JSON file that tells
 
 Note that here we are using `@`-prefixes which are used to fill the template from the different data sources. We discuss this below in more detail.
 
-We also implement a method for setting the config file in the reader:
-
-```python title="reader.py"
-def set_config_file(self, file_path: str) -> dict[str, Any]:
-    if self.config_file is not None:
-        logger.info(
-            f"Config file already set. Replaced by the new file {file_path}."
-        )
-    self.config_file = file_path
-  
-    return {}
-```
+The `set_config_file` method is already built into `MultiFormatReader` — the `.json` extension mapping in `self.extensions` is all that is needed and no override is required.
 
 ## Filling the template from the read-in data
 
@@ -358,14 +353,6 @@ class MyDataReader(MultiFormatReader):
             ".h5": self.handle_hdf5_file,
         }
         
-    def set_config_file(self, file_path: str) -> dict[str, Any]:
-        if self.config_file is not None:
-            logger.info(
-                f"Config file already set. Replaced by the new file {file_path}."
-            )
-        self.config_file = file_path
-        return {}
-    
     def handle_hdf5_file(self, filepath) -> dict[str, Any]:
         def recursively_read_group(group, path=""):
             result = {}
@@ -425,9 +412,9 @@ READER = MyDataReader
 We can call our reader using the following command
 
 ```console
-dataconverter mock_data.h5 eln_data.yaml -c config_file --reader mydatareader --nxdl NXsimple  --output output.nxs
+dataconverter mock_data.h5 eln_data.yaml -c config_file.json --reader mydatareader --nxdl NXsimple --output output.nxs
 ```
 
 The final `output.nxs` file gets automatically validated against `NXsimple`, so we can be sure that it is compliant with that application definition. Here is a look at our final NeXus file:
 
-<img src="media/resulting_file.png" style="width: 50vw; min-width: 330px;" />
+<img src="../media/resulting_file.png" style="width: 50vw; min-width: 330px;" />
