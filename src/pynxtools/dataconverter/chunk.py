@@ -18,11 +18,10 @@
 
 """Configuration and utilities for customized chunking and compression."""
 
+import importlib.util
 import logging
 
 import numpy as np
-
-import importlib.util
 
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
@@ -35,10 +34,15 @@ PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
 # work that may drain resources when pynxtools is used in conjunction with other apps and services like NOMAD
 # check the set_nthreads in writer.py to modify according to your best practice
 
-if PYNX_ENABLE_BLOSC and importlib.util.find_spec("hdf5plugin") is not None and importlib.util.find_spec("blosc2") is not None:
-    COMPRESSION_FILTERS: list[str] = ["gzip"]
-else:
-    COMPRESSION_FILTERS: list[str] = ["gzip", "blosc"]
+COMPRESSION_FILTERS: list[str] = (
+    ["gzip"]
+    if (
+        PYNX_ENABLE_BLOSC
+        and importlib.util.find_spec("hdf5plugin") is not None
+        and importlib.util.find_spec("blosc2") is not None
+    )
+    else ["gzip", "blosc"]
+)
 # order matters! 0th entry always taken as the default for backwards compatibility
 # "gzip" -> deflate, "blosc" -> "zstd"]
 COMPRESSION_STRENGTH: int = 9

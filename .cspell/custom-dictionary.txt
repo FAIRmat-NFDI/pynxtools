@@ -40,6 +40,7 @@ Márquez
 NFDI
 NIAC
 NINF
+NTHREADS
 NXDL
 Namefits
 Namefitting
@@ -47,6 +48,7 @@ OPCPA
 ORCID
 PATHCONV
 PDBX
+PYNX
 PYNXTOOLS
 Pielsticker
 Pincelli
@@ -88,6 +90,7 @@ blosc
 bulletpoint
 callspec
 caplog
+clevel
 cnxvalidate
 complexfloating
 dataarrays
@@ -95,6 +98,7 @@ dataconverter
 datamodel
 defaultdicts
 docstrings
+downstreams
 edgeitems
 ekey
 electronanalyzer
@@ -122,6 +126,7 @@ hdfgroup
 hdfobject
 hfive
 hixu
+hyperthreading
 hypothes
 idname
 idobj
@@ -159,6 +164,7 @@ mynxdl
 namefit
 namefitting
 nbytes
+ncores
 ndarray
 ndataconverter
 ndims
@@ -169,6 +175,7 @@ nodemixin
 nonvariadic
 nslots
 nsmap
+nthreads
 nxcollection
 nxdata
 nxdl

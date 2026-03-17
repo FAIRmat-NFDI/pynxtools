@@ -38,18 +38,30 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.chunk import PYNX_ENABLE_BLOSC, COMPRESSION_FILTERS, COMPRESSION_STRENGTH
+from pynxtools.dataconverter.chunk import (
+    COMPRESSION_FILTERS,
+    COMPRESSION_STRENGTH,
+    PYNX_ENABLE_BLOSC,
+)
 
-if PYNX_ENABLE_BLOSC and importlib.util.find_spec("hdf5plugin") is not None and importlib.util.find_spec("blosc2") is not None:
+if (
+    PYNX_ENABLE_BLOSC
+    and importlib.util.find_spec("hdf5plugin") is not None
+    and importlib.util.find_spec("blosc2") is not None
+):
     import blosc2
     import hdf5plugin
 
     NTHREADS_BLOSC = blosc2.set_nthreads(max(int(os.cpu_count() / 2), 1))
     # do not oversubscribe to use hyperthreading cores
-    logger.info(f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores")
+    logger.info(
+        f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
+    )
     logger.info(blosc2.print_versions())
 else:
     NTHREADS_BLOSC = 0
+
+
 def does_path_exist(path, h5py_obj) -> bool:
     """Returns true if the requested path exists in the given h5py object."""
     try:
