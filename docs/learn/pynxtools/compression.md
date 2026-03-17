@@ -1,4 +1,4 @@
-# Using compression with HDF5 
+# Using compression with HDF5
 
 ## Approach
 
@@ -60,7 +60,45 @@ the number of counts is substantially lower than the maximum value that the inte
 Compression is often observed as less effective when applied on floating point data. Frequently this is the case for measurements or simulations
 where physically insignificant changes in the last digits still demand for storage when using lossless compression schemes.
 The often smaller precision requirements or physical precision offered by a measurement in relation to the maximum precision of the datatype,
-i.e., discretization, is the motivation behind developing lossy compression methods and using lower precision floating point numbers
-e.g., in the field of machine learning and artificial intelligence. 
+i.e., discretization, is the motivation behind developing lossy compression methods and using floating point numbers with a lower precision
+as those frequently used by machine learning and artificial intelligence frameworks.
 
+## Tailoring the chunking
 
+While efficient and effective for performing compression tasks, the usage of chunks has also drawbacks that can affect performance.
+Consequently, the efficiency and thus processing speed that compressed data offer when used in downstream processing and visualization depends
+on the configuration of the chunks. Compromises need to be made especially for large datasets. The `h5py` library uses a heuristic to generate
+chunk shapes that resemble the dimensions of the original dataset. This serves users that slice a datasets approximately equally
+frequently across all perpendicular viewing directions.
+
+However, there are often cases where one of the viewing directions is prioritized and users expect that displaying should be fastest when
+slicing perpendicular to this direction. In this case, it can be useful to overwrite the `h5py` heuristic
+with another one which favors that direction by shaping the chunks differently.
+
+As an example, assume you wish to inspect an image stack with 100,000 images each having 1024 x 1024 pixels.
+Assume further for simplicity that these pixels are organized in a three-dimensional array that is 100,000 images deep.
+Depending on the data layout in memory, the values for the pixels of the same image pack closer in memory than for pixels of neighboring images.
+Assume now you wish to inspect primarily one image at a time, i.e. you slice perpendicular to the
+image id axis. In this case, it would be ideal to load only the 1024 x 1024 pixels you need and ideally these should be in the same chunk.
+Loading neighboring images, or portions of it, speculatively is what modern hardware does and sophisticated visualization software offers,
+as it brings advantages when navigating forwards and backwards along the slicing direction.
+Assume another user who is interested in seeing the contrast changes along the image id direction, i.e. narrowing on a single pixel column
+interested in displaying an array with 100,000 entries. That user would like to have all contrast values again ideally in one chunk and
+read-out in one operation. Such use cases can collide substantiating why the optional functionality of `pynxtools` to customize the
+chunk settings should be used when there is clear bias towards one particular viewing direction.
+
+Observing that our exclusive relying on the heuristic of `h5py` delivered frequently too small chunks that increased loading and display times
+for HDF5 files that were generated with `pynxtools` using H5Web in the NOMAD research data management system. This motivated adding the
+here described customization option. For technical details we refer to the [implementation](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/chunk.py).
+
+## Customizing chunk settings for different file systems
+
+The customization of the chunking heuristic has an additional level of hardware-dependent complexity though. Specifically, the actual
+read-out performance of chunked HDF5 content can heavily depend on the file system architecture and its settings. It is important to understand
+that the chunk configuration though is defined upon writing dataset into the HDF5 file and cannot be changed thereafter.
+The `src/pynxtools/dataconverter/chunk.py` configuration makes explicit typical default values one can use for starting analyses
+on different file systems used for deploying NOMAD. By default, we follow the default of the `h5py` library, which tries to achieve a
+performance compromise that is tailored towards single storage operations like on servers and laptops.
+
+Developers that customize for Lustre or GPFS based hardware and NOMAD deployments can use the chunk_cache settings to explore further
+optimization routes to make the most out of their NeXus/HDF5-file-based RDM pipeline in NOMAD.
