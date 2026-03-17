@@ -1,0 +1,2014 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The documentation of the FAIRmat-NeXus definitions & pynxtools
+">
+      
+      
+        <meta name="author" content="The NOMAD authors">
+      
+      
+      
+        <link rel="prev" href="../../tutorial/contributing.html">
+      
+      
+        <link rel="next" href="../pynxtools/build-a-plugin.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Write an application definition - Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Titillium Web";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="#2A4CDF" data-md-color-accent="#008A67">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#write-an-application-definition" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="header.title">
+    <a href="../../index.html" title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
+      
+  <img src="../../assets/nomad-plugin-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Write an application definition
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/FAIRmat-NFDI/pynxtools" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
+      
+  <img src="../../assets/nomad-plugin-logo.png" alt="logo">
+
+    </a>
+    Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/FAIRmat-NFDI/pynxtools" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/converting-data-to-nexus.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Converting your research data to NeXus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/writing-an-application-definition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing your first application definition
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/build-a-reader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building your first pynxtools reader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/bring-your-own-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/nexus-to-nomad.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Uploading NeXus data to NOMAD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-tos
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-tos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NeXus
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write an application definition
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="write-an-application-definition.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write an application definition
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-design-the-data-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Design the data contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-map-to-nexus-base-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Map to NeXus base classes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-write-the-nxdl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Write the NXDL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3 — Write the NXDL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alternative-write-in-yaml-with-nyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternative: write in YAML with nyaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-validate-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Validate locally
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-contribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Contribute
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    pynxtools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pynxtools/build-a-plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build your own pynxtools plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pynxtools/use-multi-format-reader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the MultiFormatReader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pynxtools/using-pynxtools-test-framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test functionality for pynxtools plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pynxtools/run-tests-in-parallel.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running pynxtools tests in parallel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pynxtools/create-nexus-files-by-python.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Python to create NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pynxtools/validate-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation of NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learn
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learn
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NeXus
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/nexus/nexus-primer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A primer on NeXus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/nexus/nexus-rules.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rules for storing data in NeXus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    pynxtools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/nexus-definitions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/dataconverter-and-readers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data conversion in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/nexus-validation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation of NeXus files in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/multi-format-reader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The MultiFormatReader as a reader superclass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/dataconverter-append-mode.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataconverter append mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/compression.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using compression with HDF5
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/versioning.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note on versioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/definitions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus definitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli-api.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API for command line tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/built-in-readers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Built-in pynxtools readers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugins.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAIRmat-supported pynxtools plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-design-the-data-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Design the data contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-map-to-nexus-base-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Map to NeXus base classes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-write-the-nxdl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Write the NXDL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3 — Write the NXDL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alternative-write-in-yaml-with-nyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternative: write in YAML with nyaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-validate-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Validate locally
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-contribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Contribute
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="write-an-application-definition">Write an application definition<a class="headerlink" href="#write-an-application-definition" title="Permanent link">&para;</a></h1>
+<p>An application definition is a formal contract specifying which fields and groups a NeXus file must, should, or may contain for a given experimental technique. Write one when no existing definition covers your measurement — consult the <a href="https://fairmat-nfdi.github.io/nexus_definitions/">NeXus definitions catalogue</a> first.</p>
+<p>For this how-to guide, we assume that you are familiar with:
+- the NeXus data model — see <a href="../../learn/nexus/nexus-primer.html">Learn &gt; NeXus &gt; A primer on NeXus</a>
+- naming rules in NeXus — see <a href="../../learn/nexus/nexus-rules.html">Learn &gt; NeXus &gt; Rules for storing data in NeXus</a></p>
+<p>For a step-by-step walkthrough of the same material see the tutorial at <a href="../../tutorial/writing-an-application-definition.html">Tutorials &gt; Writing your first application definition</a>.</p>
+<hr />
+<h2 id="step-1-design-the-data-contract">Step 1 — Design the data contract<a class="headerlink" href="#step-1-design-the-data-contract" title="Permanent link">&para;</a></h2>
+<p>Identify which concepts are needed for <em>standard measurements and analysis</em> in your field — nothing more, nothing less. Assign each element a constraint indicating whether its presence is required, recommended, or optional:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>NXDL attribute</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Required</td>
+<td><em>(none)</em></td>
+<td>Validation fails if absent</td>
+</tr>
+<tr>
+<td>Recommended</td>
+<td><code>recommended="true"</code></td>
+<td>Should be present; validation warns if absent</td>
+</tr>
+<tr>
+<td>Optional</td>
+<td><code>optional="true"</code></td>
+<td>May be present; never causes a validation error</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example — double-slit interference experiment</strong></p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Source wavelength</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Slit width, slit separation</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Detector distance</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>2D intensity array + pixel axes</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Source coherence length</td>
+<td>Recommended</td>
+</tr>
+<tr>
+<td>Slit height, slit material</td>
+<td>Optional</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="step-2-map-to-nexus-base-classes">Step 2 — Map to NeXus base classes<a class="headerlink" href="#step-2-map-to-nexus-base-classes" title="Permanent link">&para;</a></h2>
+<p>Use the standard hierarchy and the most specific existing base class. Browse base classes at <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/index.html">fairmat-nfdi.github.io/nexus_definitions</a>.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>/NXentry
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  /NXinstrument
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    /source (NXsource)              — light source
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    /double_slit (NXslit)           — prefer NXslit over the generic NXaperture
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    /detector (NXdetector)          — area detector
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  /interference_pattern (NXdata)    — default plot
+</code></pre></div>
+Use standard field names from the chosen base class where they exist
+(<code>x_pixel_offset</code>, <code>y_pixel_offset</code> in <code>NXdetector</code>; <code>x_gap</code> in <code>NXslit</code>).</p>
+<hr />
+<h2 id="step-3-write-the-nxdl">Step 3 — Write the NXDL<a class="headerlink" href="#step-3-write-the-nxdl" title="Permanent link">&para;</a></h2>
+<p>Save as <code>NXdouble_slit.nxdl.xml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;nxdlformat.xsl&quot;?&gt;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">&lt;definition</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://definition.nexusformat.org/nxdl/3.1&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">            </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">            </span><span class="na">category=</span><span class="s">&quot;application&quot;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">            </span><span class="na">type=</span><span class="s">&quot;group&quot;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">            </span><span class="na">name=</span><span class="s">&quot;NXdouble_slit&quot;</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">            </span><span class="na">extends=</span><span class="s">&quot;NXobject&quot;</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">            </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nt">&lt;symbols&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (1) --&gt;</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="nt">&lt;doc&gt;</span>Dimension<span class="w"> </span>symbols<span class="w"> </span>used<span class="w"> </span>in<span class="w"> </span>this<span class="w"> </span>definition.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="nt">&lt;symbol</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;n_x&quot;</span><span class="nt">&gt;&lt;doc&gt;</span>Number<span class="w"> </span>of<span class="w"> </span>detector<span class="w"> </span>pixels<span class="w"> </span>along<span class="w"> </span>x.<span class="nt">&lt;/doc&gt;&lt;/symbol&gt;</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">        </span><span class="nt">&lt;symbol</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;n_y&quot;</span><span class="nt">&gt;&lt;doc&gt;</span>Number<span class="w"> </span>of<span class="w"> </span>detector<span class="w"> </span>pixels<span class="w"> </span>along<span class="w"> </span>y.<span class="nt">&lt;/doc&gt;&lt;/symbol&gt;</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="nt">&lt;/symbols&gt;</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="nt">&lt;doc&gt;</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span>Application<span class="w"> </span>definition<span class="w"> </span>for<span class="w"> </span>a<span class="w"> </span>double-slit<span class="w"> </span>interference<span class="w"> </span>experiment.
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">        </span>Records<span class="w"> </span>the<span class="w"> </span>light<span class="w"> </span>source,<span class="w"> </span>aperture<span class="w"> </span>geometry,<span class="w"> </span>detector<span class="w"> </span>layout,<span class="w"> </span>and<span class="w"> </span>the
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">        </span>measured<span class="w"> </span>2D<span class="w"> </span>interference<span class="w"> </span>pattern<span class="w"> </span>needed<span class="w"> </span>to<span class="w"> </span>determine<span class="w"> </span>fringe<span class="w"> </span>spacing<span class="w"> </span>and
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">        </span>source<span class="w"> </span>coherence<span class="w"> </span>length.
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">        </span>See<span class="w"> </span>https://en.wikipedia.org/wiki/Double-slit_experiment.
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">    </span><span class="nt">&lt;group</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NXentry&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">        </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;definition&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (2) --&gt;</span>
+<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="w">            </span><span class="nt">&lt;enumeration&gt;&lt;item</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;NXdouble_slit&quot;</span><span class="nt">/&gt;&lt;/enumeration&gt;</span>
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">        </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="w">        </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;title&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">        </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;start_time&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_DATE_TIME&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (3) --&gt;</span>
+<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">            </span><span class="nt">&lt;doc&gt;</span>ISO<span class="w"> </span>8601<span class="w"> </span>datetime.<span class="w"> </span>Include<span class="w"> </span>an<span class="w"> </span>explicit<span class="w"> </span>timezone.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="w">        </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="w">        </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;end_time&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_DATE_TIME&quot;</span><span class="w"> </span><span class="na">recommended=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>
+<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="w">        </span><span class="nt">&lt;group</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NXinstrument&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>
+<a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a><span class="w">            </span><span class="nt">&lt;group</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;source&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NXsource&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;wavelength&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_WAVELENGTH&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (4) --&gt;</span>
+<a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Central<span class="w"> </span>wavelength<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>light<span class="w"> </span>source.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;coherence_length&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span>
+<a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a><span class="w">                       </span><span class="na">recommended=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (5) --&gt;</span>
+<a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Temporal<span class="w"> </span>coherence<span class="w"> </span>length<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>source.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_CHAR&quot;</span><span class="w"> </span><span class="na">optional=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a><span class="w">                    </span><span class="nt">&lt;enumeration&gt;</span>
+<a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a><span class="w">                        </span><span class="nt">&lt;item</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;Laser&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a><span class="w">                        </span><span class="nt">&lt;item</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;Filtered lamp&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a><span class="w">                        </span><span class="nt">&lt;item</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;LED&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a><span class="w">                    </span><span class="nt">&lt;/enumeration&gt;</span>
+<a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a><span class="w">            </span><span class="nt">&lt;/group&gt;</span>
+<a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>
+<a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a><span class="w">            </span><span class="nt">&lt;group</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;double_slit&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NXslit&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (6) --&gt;</span>
+<a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;x_gap&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Width<span class="w"> </span>of<span class="w"> </span>each<span class="w"> </span>individual<span class="w"> </span>slit.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;slit_separation&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Center-to-center<span class="w"> </span>distance<span class="w"> </span>between<span class="w"> </span>the<span class="w"> </span>two<span class="w"> </span>slits.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;height&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span><span class="w"> </span><span class="na">optional=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;material&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_CHAR&quot;</span><span class="w"> </span><span class="na">optional=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a><span class="w">            </span><span class="nt">&lt;/group&gt;</span>
+<a id="__codelineno-1-66" name="__codelineno-1-66" href="#__codelineno-1-66"></a>
+<a id="__codelineno-1-67" name="__codelineno-1-67" href="#__codelineno-1-67"></a><span class="w">            </span><span class="nt">&lt;group</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;detector&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NXdetector&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-68" name="__codelineno-1-68" href="#__codelineno-1-68"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;distance&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-69" name="__codelineno-1-69" href="#__codelineno-1-69"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Distance<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>slit<span class="w"> </span>plane<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>detector<span class="w"> </span>surface.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-70" name="__codelineno-1-70" href="#__codelineno-1-70"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-71" name="__codelineno-1-71" href="#__codelineno-1-71"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_NUMBER&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_ANY&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-72" name="__codelineno-1-72" href="#__codelineno-1-72"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Measured<span class="w"> </span>2D<span class="w"> </span>interference<span class="w"> </span>intensity<span class="w"> </span>pattern.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-73" name="__codelineno-1-73" href="#__codelineno-1-73"></a><span class="w">                    </span><span class="nt">&lt;dimensions</span><span class="w"> </span><span class="na">rank=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (7) --&gt;</span>
+<a id="__codelineno-1-74" name="__codelineno-1-74" href="#__codelineno-1-74"></a><span class="w">                        </span><span class="nt">&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_y&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-75" name="__codelineno-1-75" href="#__codelineno-1-75"></a><span class="w">                        </span><span class="nt">&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;2&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_x&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-76" name="__codelineno-1-76" href="#__codelineno-1-76"></a><span class="w">                    </span><span class="nt">&lt;/dimensions&gt;</span>
+<a id="__codelineno-1-77" name="__codelineno-1-77" href="#__codelineno-1-77"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-78" name="__codelineno-1-78" href="#__codelineno-1-78"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;x_pixel_offset&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span>
+<a id="__codelineno-1-79" name="__codelineno-1-79" href="#__codelineno-1-79"></a><span class="w">                       </span><span class="na">recommended=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-80" name="__codelineno-1-80" href="#__codelineno-1-80"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Horizontal<span class="w"> </span>pixel<span class="w"> </span>positions<span class="w"> </span>relative<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>detector<span class="w"> </span>centre.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-81" name="__codelineno-1-81" href="#__codelineno-1-81"></a><span class="w">                    </span><span class="nt">&lt;dimensions</span><span class="w"> </span><span class="na">rank=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_x&quot;</span><span class="nt">/&gt;&lt;/dimensions&gt;</span>
+<a id="__codelineno-1-82" name="__codelineno-1-82" href="#__codelineno-1-82"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-83" name="__codelineno-1-83" href="#__codelineno-1-83"></a><span class="w">                </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;y_pixel_offset&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span>
+<a id="__codelineno-1-84" name="__codelineno-1-84" href="#__codelineno-1-84"></a><span class="w">                       </span><span class="na">recommended=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-85" name="__codelineno-1-85" href="#__codelineno-1-85"></a><span class="w">                    </span><span class="nt">&lt;doc&gt;</span>Vertical<span class="w"> </span>pixel<span class="w"> </span>positions<span class="w"> </span>relative<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>detector<span class="w"> </span>centre.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-86" name="__codelineno-1-86" href="#__codelineno-1-86"></a><span class="w">                    </span><span class="nt">&lt;dimensions</span><span class="w"> </span><span class="na">rank=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_y&quot;</span><span class="nt">/&gt;&lt;/dimensions&gt;</span>
+<a id="__codelineno-1-87" name="__codelineno-1-87" href="#__codelineno-1-87"></a><span class="w">                </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-88" name="__codelineno-1-88" href="#__codelineno-1-88"></a><span class="w">            </span><span class="nt">&lt;/group&gt;</span>
+<a id="__codelineno-1-89" name="__codelineno-1-89" href="#__codelineno-1-89"></a>
+<a id="__codelineno-1-90" name="__codelineno-1-90" href="#__codelineno-1-90"></a><span class="w">        </span><span class="nt">&lt;/group&gt;</span>
+<a id="__codelineno-1-91" name="__codelineno-1-91" href="#__codelineno-1-91"></a>
+<a id="__codelineno-1-92" name="__codelineno-1-92" href="#__codelineno-1-92"></a><span class="w">        </span><span class="nt">&lt;group</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;interference_pattern&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NXdata&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="cm">&lt;!-- (8) --&gt;</span>
+<a id="__codelineno-1-93" name="__codelineno-1-93" href="#__codelineno-1-93"></a><span class="w">            </span><span class="nt">&lt;doc&gt;</span>Default<span class="w"> </span>plot:<span class="w"> </span>the<span class="w"> </span>recorded<span class="w"> </span>2D<span class="w"> </span>interference<span class="w"> </span>pattern.<span class="nt">&lt;/doc&gt;</span>
+<a id="__codelineno-1-94" name="__codelineno-1-94" href="#__codelineno-1-94"></a><span class="w">            </span><span class="nt">&lt;attribute</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;signal&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;data&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-95" name="__codelineno-1-95" href="#__codelineno-1-95"></a><span class="w">            </span><span class="nt">&lt;attribute</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;axes&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;y_pixel_offset x_pixel_offset&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-96" name="__codelineno-1-96" href="#__codelineno-1-96"></a><span class="w">            </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_NUMBER&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_ANY&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-97" name="__codelineno-1-97" href="#__codelineno-1-97"></a><span class="w">                </span><span class="nt">&lt;dimensions</span><span class="w"> </span><span class="na">rank=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-98" name="__codelineno-1-98" href="#__codelineno-1-98"></a><span class="w">                    </span><span class="nt">&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_y&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-99" name="__codelineno-1-99" href="#__codelineno-1-99"></a><span class="w">                    </span><span class="nt">&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;2&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_x&quot;</span><span class="nt">/&gt;</span>
+<a id="__codelineno-1-100" name="__codelineno-1-100" href="#__codelineno-1-100"></a><span class="w">                </span><span class="nt">&lt;/dimensions&gt;</span>
+<a id="__codelineno-1-101" name="__codelineno-1-101" href="#__codelineno-1-101"></a><span class="w">            </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-102" name="__codelineno-1-102" href="#__codelineno-1-102"></a><span class="w">            </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;x_pixel_offset&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-103" name="__codelineno-1-103" href="#__codelineno-1-103"></a><span class="w">                </span><span class="nt">&lt;dimensions</span><span class="w"> </span><span class="na">rank=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_x&quot;</span><span class="nt">/&gt;&lt;/dimensions&gt;</span>
+<a id="__codelineno-1-104" name="__codelineno-1-104" href="#__codelineno-1-104"></a><span class="w">            </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-105" name="__codelineno-1-105" href="#__codelineno-1-105"></a><span class="w">            </span><span class="nt">&lt;field</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;y_pixel_offset&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;NX_FLOAT&quot;</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;NX_LENGTH&quot;</span><span class="nt">&gt;</span>
+<a id="__codelineno-1-106" name="__codelineno-1-106" href="#__codelineno-1-106"></a><span class="w">                </span><span class="nt">&lt;dimensions</span><span class="w"> </span><span class="na">rank=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;&lt;dim</span><span class="w"> </span><span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;n_y&quot;</span><span class="nt">/&gt;&lt;/dimensions&gt;</span>
+<a id="__codelineno-1-107" name="__codelineno-1-107" href="#__codelineno-1-107"></a><span class="w">            </span><span class="nt">&lt;/field&gt;</span>
+<a id="__codelineno-1-108" name="__codelineno-1-108" href="#__codelineno-1-108"></a><span class="w">        </span><span class="nt">&lt;/group&gt;</span>
+<a id="__codelineno-1-109" name="__codelineno-1-109" href="#__codelineno-1-109"></a>
+<a id="__codelineno-1-110" name="__codelineno-1-110" href="#__codelineno-1-110"></a><span class="w">    </span><span class="nt">&lt;/group&gt;</span>
+<a id="__codelineno-1-111" name="__codelineno-1-111" href="#__codelineno-1-111"></a>
+<a id="__codelineno-1-112" name="__codelineno-1-112" href="#__codelineno-1-112"></a><span class="nt">&lt;/definition&gt;</span>
+</code></pre></div>
+<p>Key patterns:</p>
+<ol>
+<li><strong><code>&lt;symbols&gt;</code></strong> — named dimension constants; reference them in <code>&lt;dim value="..."/&gt;</code> instead of
+   hardcoding integers.</li>
+<li><strong><code>definition</code> field with <code>&lt;enumeration&gt;</code></strong> — locks the field to the appdef name; required by
+   modern convention.</li>
+<li><strong>NeXus types</strong> — always specify <code>type="NX_DATE_TIME"</code>, <code>type="NX_FLOAT"</code>, etc. The default is
+   <code>NX_CHAR</code>.</li>
+<li><strong>Unit categories</strong> — use <code>NX_WAVELENGTH</code>, <code>NX_LENGTH</code>, <code>NX_ENERGY</code>, etc., <em>not</em> raw strings
+   like <code>"m"</code>. Full list in the
+   <a href="https://manual.nexusformat.org/nxdl-types.html#unit-categories">NeXus units reference</a>.</li>
+<li><strong>Optionality</strong> — no attribute = required; <code>recommended="true"</code> = soft requirement;
+   <code>optional="true"</code> = free.</li>
+<li><strong>Instance vs. concept name</strong> — <code>name="double_slit"</code> is the <em>instance</em> name written to the HDF5 file; <code>type="NXslit"</code> is the <em>base class</em> used. The full <em>concept name</em> is <code>NXdouble_slit/ENTRY/INSTRUMENT/double_slit</code>. See <a href="../../learn/nexus/nexus-rules.html">naming rules</a>.</li>
+<li><strong><code>&lt;dimensions&gt;</code></strong> — rank and <code>dim</code> values must be consistent. Use symbolic names from
+   <code>&lt;symbols&gt;</code>.</li>
+<li><strong><code>NXdata</code></strong> — always include a default-plot group with <code>@signal</code> and <code>@axes</code> attributes. In a
+   real HDF5 file these fields would typically be hard links into the detector group.</li>
+</ol>
+<h3 id="alternative-write-in-yaml-with-nyaml">Alternative: write in YAML with nyaml<a class="headerlink" href="#alternative-write-in-yaml-with-nyaml" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/FAIRmat-NFDI/nyaml"><code>nyaml</code></a> tool (developed by FAIRmat) lets you write the same definition in YAML and convert it to NXDL XML and vice versa:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>nyaml
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>nyaml2nxdl<span class="w"> </span>NXdouble_slit.yaml<span class="w">   </span><span class="c1"># → NXdouble_slit.nxdl.xml</span>
+</code></pre></div>
+<p>The YAML syntax maps one-to-one to the XML: groups become keys, fields become nested keys with
+<code>type</code>/<code>unit</code>/<code>doc</code> sub-keys, and attributes use the <code>\@</code>-prefix.</p>
+<p>You can learn more in the <a href="https://fairmat-nfdi.github.io/nyaml/"><code>nyaml</code> documentation</a>.</p>
+<hr />
+<h2 id="step-4-validate-locally">Step 4 — Validate locally<a class="headerlink" href="#step-4-validate-locally" title="Permanent link">&para;</a></h2>
+<p>Place the file in <code>src/pynxtools/definitions/contributed_definitions/</code> and run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXdouble_slit
+</code></pre></div>
+<p>This confirms <code>pynxtools</code> resolves the definition and lists all expected paths.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>dataconverter generate-template</code> method does not actually validate the NeXus definition
+by itself. Rather, it creates a <code>pynxtools</code> template from a given application definition. 
+For this to work, the application definition has to be valid.</p>
+<p>Note that there exists a <a href="https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/.github/workflows/validate.yaml">validation workflow</a> that is run in the GitHub CI/CD of the definitions repository. For this to run on your NXDL file, you need to add your application definition there (see below).</p>
+</div>
+<hr />
+<h2 id="step-5-contribute">Step 5 — Contribute<a class="headerlink" href="#step-5-contribute" title="Permanent link">&para;</a></h2>
+<p>Submit to the <a href="https://github.com/FAIRmat-NFDI/nexus_definitions">FAIRmat NeXus definitions repository</a> — new classes go in <code>contributed_definitions/</code>. Open a pull request and the FAIRmat team will review it. Once the application definition or base class has gained sufficient approval from the community, it is possible to submit it to the NeXus International Advisory Committee (NIAC) for review. If approved, the new application definitions and base classes get eventually promoted to <code>applications/</code> or <code>base classes/</code>, respectively.</p>
+<p>To gather feedback before submitting, use the <a href="https://hypothes.is/">hypothes.is</a> annotation tool on the <a href="https://fairmat-nfdi.github.io/nexus_definitions/">FAIRmat NeXus definitions site</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../tutorial/contributing.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Development guide">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Development guide
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../pynxtools/build-a-plugin.html" class="md-footer__link md-footer__link--next" aria-label="Next: Build your own pynxtools plugin">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Build your own pynxtools plugin
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
+      
+        <script src="../../javascript.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
