@@ -22,12 +22,11 @@ import numpy as np
 
 from pynxtools.dataconverter.helpers import logger
 
-
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
 # keyword "compress", causing chunked layout to be used
 
-COMPRESSION_FILTER = "gzip"  # deflate
+COMPRESSION_FILTERS = ["gzip"]  # deflate
 COMPRESSION_STRENGTH = 9
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
 # using strongest compression is space efficient but can take substantially longer than
@@ -238,4 +237,3 @@ def chunking_strategy(data) -> bool | tuple[int, ...]:
                     if len(np.shape(data["compress"])) == len(data["chunks"]):
                         return data["chunks"]
     return True
-
