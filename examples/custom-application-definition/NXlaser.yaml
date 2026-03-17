@@ -1,0 +1,22 @@
+category: base
+doc: |
+  A specialisation of NXsource for coherent laser sources.
+
+  Extends NXsource by adding a temporal coherence_length field and
+  restricting the inherited type field to the single value "Laser".
+  Use this base class in application definitions that require a laser
+  as the illumination source.
+type: group
+NXlaser(NXsource):
+  wavelength(NX_FLOAT):
+    doc: |
+      Central wavelength of the laser line.
+  coherence_length(NX_FLOAT):
+    unit: NX_LENGTH
+    exists: recommended
+    doc: |
+      Temporal coherence length of the source.
+      Determines the maximum path-length difference for which
+      interference fringes are visible.
+  type(NX_CHAR):
+    enumeration: [Laser]

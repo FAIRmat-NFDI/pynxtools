@@ -64,6 +64,8 @@ Tommaso
 UNALLOWED
 Uniquified
 Uniquifies
+VAMAS
+Vamas
 Walid
 Xclass
 Zenodo
@@ -76,7 +78,10 @@ anamethatrenames
 appdef
 appdefdir
 appdefs
+arange
+argmax
 arpes
+asarray
 asstr
 atleast
 atomutils
@@ -95,6 +100,7 @@ dataconverter
 datamodel
 defaultdicts
 docstrings
+dtype
 edgeitems
 ekey
 electronanalyzer
@@ -110,6 +116,7 @@ flatfield
 fluence
 fourd
 fxcef
+genfromtxt
 getlink
 getroottree
 gitmodules
@@ -125,6 +132,8 @@ hixu
 hypothes
 idname
 idobj
+igorpy
+imagej
 infile
 instancename
 isdt
@@ -155,6 +164,7 @@ monochromator
 monoclinic
 mpes
 mydatareader
+myext
 mynxdl
 namefit
 namefitting
@@ -174,6 +184,7 @@ nxdata
 nxdl
 nxdls
 nxentry
+nyaml
 oned
 optionalities
 orcid
@@ -189,6 +200,7 @@ pynxtools
 raman
 rdcc
 redef
+renamable
 reqs
 requiredness
 rtol
@@ -196,6 +208,7 @@ setpoint
 sherjeelshabih
 showgrid
 showlegend
+skiprows
 straße
 submoduled
 superproject
@@ -213,12 +226,15 @@ unlazying
 unsignedinteger
 ureg
 usefixtures
+vamas
 visititems
 xarrays
 xaxis
 xdist
 xfbaa
+xlabel
 xraylens
 yaxis
+ylabel
 zaxis
 zenodo

@@ -1,0 +1,144 @@
+category: application
+doc: |
+  Application definition for a double-slit interference experiment.
+  Records the light source, aperture geometry, detector layout, and the
+  measured 2D interference pattern needed to determine fringe spacing and
+  source coherence length.
+
+  See https://en.wikipedia.org/wiki/Double-slit_experiment.
+symbols:
+  doc: |
+    Dimension symbols used in this definition.
+  n_x: |
+    Number of detector pixels along x.
+  n_y: |
+    Number of detector pixels along y.
+type: group
+NXdouble_slit(NXobject):
+  (NXentry):
+    definition:
+      enumeration: [NXdouble_slit]
+    title:
+    start_time(NX_DATE_TIME):
+      doc: |
+        ISO 8601 datetime of the measurement start.
+    end_time(NX_DATE_TIME):
+      exists: recommended
+    (NXinstrument):
+      source(NXsource):
+        wavelength(NX_FLOAT):
+          unit: NX_WAVELENGTH
+          doc: |
+            Central wavelength of the light source.
+        coherence_length(NX_FLOAT):
+          unit: NX_LENGTH
+          exists: recommended
+          doc: |
+            Temporal coherence length of the source.
+        type(NX_CHAR):
+          exists: optional
+          enumeration: [Laser, Filtered lamp, LED]
+      double_slit(NXslit):
+        x_gap(NX_FLOAT):
+          unit: NX_LENGTH
+          doc: |
+            Width of each individual slit.
+        slit_separation(NX_FLOAT):
+          unit: NX_LENGTH
+          doc: |
+            Center-to-center distance between the two slits.
+        height(NX_FLOAT):
+          unit: NX_LENGTH
+          exists: optional
+        material(NX_CHAR):
+          exists: optional
+      detector(NXdetector):
+        distance(NX_FLOAT):
+          unit: NX_LENGTH
+          doc: |
+            Distance from the slit plane to the detector surface.
+        data(NXdata):
+          doc: |
+            Raw 2D pixel data collected by the detector with no calibration
+            applied. This group stores data at the lowest level of processing
+            possible, indexed by integer pixel coordinates.
+          \@signal:
+            enumeration: [data]
+          \@axes:
+            enumeration: [['x', 'y']]
+          data(NX_NUMBER):
+            exists: recommended
+            unit: NX_ANY
+            doc: |
+              Raw 2D intensity array indexed by pixel position.
+            dimensions:
+              rank: 2
+              dim: (n_x, n_y)
+          x(NX_INT):
+            doc: |
+              Pixel indices along the horizontal detector axis (0-based).
+            dimensions:
+              rank: 1
+              dim: (n_x,)
+          y(NX_INT):
+            doc: |
+              Pixel indices along the vertical detector axis (0-based).
+            dimensions:
+              rank: 1
+              dim: (n_y,)
+    processID(NXprocess):
+      nameType: partial
+      exists: optional
+      doc: |
+        Describes one step in the processing chain that converts raw detector
+        pixel data to the calibrated interference pattern stored in
+        ``interference_pattern``. The 'ID' suffix in the group name is replaced
+        by a short identifier chosen by the writer, e.g. 'pixel_calibration'
+        or 'background_correction'. Multiple NXprocess groups may be present;
+        their order is given by sequence_index.
+      sequence_index(NX_POSINT):
+        doc: |
+          Sequence index of processing, for determining the order of multiple
+          NXprocess steps. Starts with 1.
+      description(NX_CHAR):
+        doc: |
+          Free-text description of what this processing step does.
+      program(NX_CHAR):
+        exists: optional
+        doc: Version string of the software.
+      version(NX_CHAR):
+        exists: optional
+      date(NX_DATE_TIME):
+        exists: optional
+    interference_pattern(NXdata):
+      doc: |
+        Default plot: the calibrated 2D interference pattern with spatial
+        axes. The signal data may be identical to the raw detector array or
+        derived from it via one or more NXprocess steps.
+      \@signal:
+        enumeration: [data]
+      \@axes:
+        enumeration: [['x_offset', 'y_offset']]
+      data(NX_NUMBER):
+        unit: NX_ANY
+        doc: |
+          2D interference intensity after any processing steps.
+        dimensions:
+          rank: 2
+          dim: (n_x, n_y)
+      x_offset(NX_FLOAT):
+        unit: NX_LENGTH
+        doc: |
+          Horizontal spatial offset from the detector centre, derived from
+          pixel index and pixel pitch.
+        dimensions:
+          rank: 1
+          dim: (n_x,)
+      y_offset(NX_FLOAT):
+        unit: NX_LENGTH
+        doc: |
+          Vertical spatial offset from the detector centre, derived from
+          pixel index and pixel pitch.
+        dimensions:
+          rank: 1
+          dim: (n_y,)
