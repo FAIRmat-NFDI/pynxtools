@@ -179,6 +179,12 @@ class Template(dict):
         ):
             del_dict.clear()
 
+    def remove_none_values(self) -> None:
+        """Remove all entries whose value is None from the template."""
+        for name in ("optional", "recommended", "required", "undocumented"):
+            d = getattr(self, name)
+            setattr(self, name, {k: v for k, v in d.items() if v is not None})
+
     def rename_entry(self, old_name: str, new_name: str, deepcopy=True):
         """Rename all entries under old name to new name."""
         for internal_dict in (

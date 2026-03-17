@@ -15,11 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 """Configuration and utilities for customized chunking and compression."""
 
 import numpy as np
 
 from pynxtools.dataconverter.helpers import logger
+
 
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
@@ -236,3 +238,4 @@ def chunking_strategy(data) -> bool | tuple[int, ...]:
                     if len(np.shape(data["compress"])) == len(data["chunks"]):
                         return data["chunks"]
     return True
+

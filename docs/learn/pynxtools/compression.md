@@ -60,8 +60,8 @@ the number of counts is substantially lower than the maximum value that the inte
 Compression is often observed as less effective when applied on floating point data. Frequently this is the case for measurements or simulations
 where physically insignificant changes in the last digits still demand for storage when using lossless compression schemes.
 The often smaller precision requirements or physical precision offered by a measurement in relation to the maximum precision of the datatype,
-i.e., discretization, is the motivation behind developing lossy compression methods and using lower precision floating point numbers
-e.g., in the field of machine learning and artificial intelligence.
+i.e., discretization, is the motivation behind developing lossy compression methods and using floating point numbers with a lower precision
+as those frequently used by machine learning and artificial intelligence frameworks.
 
 ## Tailoring the chunking
 
