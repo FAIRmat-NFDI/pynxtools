@@ -152,16 +152,20 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            compression_filter = COMPRESSION_FILTERS[0]
-            compression_strength = COMPRESSION_STRENGTH
-            accept = (
+            if ("filter" in data.keys()) and (data["filter"] in COMPRESSION_FILTERS):
+                compression_filter = data["filter"]
+            else:  # fall-back to default
+                compression_filter = COMPRESSION_FILTERS[0]
+
+            if (
                 ("strength" in data.keys())
                 and (isinstance(data["strength"], int))
-                and (data["strength"] >= 0)
-                and (data["strength"] <= 9)
-            )
-            if accept is True:
+                and (0 <= data["strength"] <= 9)
+            ):
                 compression_strength = data["strength"]
+            else:
+                compression_strength = COMPRESSION_STRENGTH
+
             if entry_name not in grp:
                 try:
                     grp.create_dataset(
@@ -347,6 +351,7 @@ class Writer:
                     )
                     if isinstance(grp, (h5py.Group, h5py.Dataset)):
                         if isinstance(data, dict):
+                            # links, and chunked compressed data storage layout
                             if "compress" in data.keys():
                                 dataset = handle_dicts_entries(
                                     data,
@@ -374,6 +379,8 @@ class Writer:
                                         f"Prevented the overwriting of dataset {path}"
                                     )
                     else:
+                        # contiguous data storage layout
+                        dataset = grp.create_dataset(entry_name, data=data)
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding children"
                         )
