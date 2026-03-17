@@ -130,17 +130,17 @@ def _get_value(hdf_node):
     """
     Get value from hdf5 node
     """
+    if np.issubdtype(hdf_node.dtype, np.bool_):
+        if hdf_node.shape == ():  # scalar
+            return bool(hdf_node[()])
+        else:
+            return bool(hdf_node[0])
 
-    hdf_value = hdf_node[...]
-    if str(hdf_value.dtype) == "bool":
-        if len(hdf_value.shape) > 0:
-            return bool(hdf_value.tolist()[0])
-        return bool(hdf_value)
-    if hdf_value.dtype.kind in "iufc":
-        return hdf_value
-    if len(hdf_value.shape) > 0:
-        # Variable-length UTF-8 / object arrays
-        if hdf_value.dtype.kind == "O":
+    if hdf_node.ndim > 0:
+        hdf_value = hdf_node[...]
+        if hdf_value.dtype.kind == "iufc":
+            return hdf_value
+        if hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
             # Recursively decode nested lists if needed
             def decode_array(arr):
                 result = []
@@ -152,12 +152,59 @@ def _get_value(hdf_node):
                 return result
 
             return decode_array(hdf_value)
-
-        # Fallback for other arrays
-        return str([i for i in hdf_value.astype(str)])
+        return str([i for i in hdf_value.astype(str)])  # fallback for other arrays
 
     return hdf_node[()].decode()
 
+
+def _get_field_stats_chunked(hdf_node):
+    """
+    Get field stats when hdf_node uses chunked storage layout
+    """
+    stats = None
+    if hdf_node.dtype.kind in "iufc":
+        pass
+        """
+        for chunk in hdf_node.iter_chunks():
+            field_chunk = hdf_node[chunk]  # auto-decompression, HDF5
+            # chunked storage does not necessarily demand compression
+            mask_chunk = np.isfinite(field_chunk)
+            if np.any(mask_chunk):
+                field_stats = _get_field_stats
+            # ######
+        """
+    return (stats, False)
+
+
+def __get_field_stats_contiguous(hdf_node):
+    """
+    Get field stats when hdf_node uses contiguous storage layout
+    """
+    stats = None
+    if hdf_node.dtype.kind in "iufc":
+        pass
+    return (stats, False)
+    """
+    field = _get_value(hdf_node)
+    mask = np.isfinite(field)
+    if np.any(mask):
+        field_stats = [
+            func(field[mask] if is_mask else field)
+            for func, is_mask in zip(
+                FIELD_STATISTICS["function"],
+                FIELD_STATISTICS["mask"],
+            )
+        ]
+        field = field_stats[0]
+        if not np.isfinite(field):
+            self._logger.info(
+                "set NaN for field of an array",
+                target_name=field_name + "[" + data_instance_name + "]",
+            )
+            return
+    else:
+        return
+    """
 
 class NexusParser(MatchingParser):
     """
@@ -273,7 +320,6 @@ class NexusParser(MatchingParser):
                         exc_info=e,
                     )
         else:  # it is a field
-            field = _get_value(hdf_node)
 
             # get the corresponding field name
             html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
@@ -292,35 +338,41 @@ class NexusParser(MatchingParser):
                 )
                 return
 
-            # for data arrays only statistics if not all values NINF, Inf, or NaN
-            field_stats = None
-            if hdf_node[...].dtype.kind in "iufc":
-                if isinstance(field, np.ndarray) and field.size > 1:
-                    mask = np.isfinite(field)
-                    if np.any(mask):
-                        field_stats = [
-                            func(field[mask] if is_mask else field)
-                            for func, is_mask in zip(
-                                FIELD_STATISTICS["function"],
-                                FIELD_STATISTICS["mask"],
-                            )
-                        ]
-                        field = field_stats[0]
-                        if not np.isfinite(field):
+            # for iufc datasets only statistics if not all values NINF, Inf, or NaN
+            if hdf_node.dtype.kind == "iufc":
+                if hdf_node.ndim > 0:  # stats for arrays for chunked storage layout
+                    # iterating over chunks / hyperslabs is preferred as demands
+                    # only as much memory as for the chunk instead of entire dataset
+                    field_stats = None
+                    if hdf_node.chunks is not None:
+                        fields_stats, not_isfinite = _get_field_stats_chunked(hdf_node)
+                        if not_isfinite:
                             self._logger.info(
-                                "set NaN for field of an array",
+                                "set NaN for field of a chunked array",
                                 target_name=field_name + "[" + data_instance_name + "]",
                             )
                             return
-                    else:
-                        return
-                else:
-                    if field.size == 1 and not np.isfinite(field):
+                    else:  # costly loading of entire dataset contiguous storage layout
+                        field_stats, not_isfinite = _get_field_stats_contiguous(hdf_node)
+                        if not_isfinite:
+                            self._logger.info(
+                                "set NaN for field of a contiguous array",
+                                target_name=field_name + "[" + data_instance_name + "]",
+                            )
+                            return
+                    # not returned set field to th mean value
+                    field = field_stats[0]
+                else:  # no stats for scalars
+                    field = hdf_node[()]
+                    if not np.isfinite(field):
                         self._logger.info(
                             "set NaN for field of a scalar",
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
+            else:  # non iufc data using old approach, no stats for these
+                # further optimization likely possible if needed
+                field = _get_value(hdf_node)
 
             # check if unit is given
             unit = hdf_node.attrs.get("units", None)
