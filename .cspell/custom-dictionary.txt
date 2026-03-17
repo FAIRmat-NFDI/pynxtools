@@ -81,8 +81,8 @@ appdefs
 arange
 argmax
 arpes
-asstr
 asarray
+asstr
 atleast
 atomutils
 attribs
@@ -184,8 +184,8 @@ nxdata
 nxdl
 nxdls
 nxentry
-oned
 nyaml
+oned
 optionalities
 orcid
 otherfile
