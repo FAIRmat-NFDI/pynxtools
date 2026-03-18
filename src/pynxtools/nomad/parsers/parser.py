@@ -166,12 +166,63 @@ def _get_field_stats_chunked(hdf_node):
         pass
         """
         for chunk in hdf_node.iter_chunks():
-            field_chunk = hdf_node[chunk]  # auto-decompression, HDF5
+            field_chunk = hdf_node[chunk].ravel()  # auto-decompressed, 1d value stream
             # chunked storage does not necessarily demand compression
             mask_chunk = np.isfinite(field_chunk)
             if np.any(mask_chunk):
                 field_stats = _get_field_stats
             # ######
+        """
+        """
+        n = 0
+        mean = 0.0
+        M2 = 0.0
+
+        for chunk in chunks:
+            for x in chunk.ravel():
+                n += 1
+                delta = x - mean
+                mean += delta / n
+                M2 += delta * (x - mean)
+
+        # results
+        variance = M2 / n          # population variance (like numpy.std(..., ddof=0)**2)
+        std = math.sqrt(variance)
+
+        If you need sample std (ddof=1):
+
+        variance = M2 / (n - 1)
+        std = math.sqrt(variance)
+
+        n = 0
+        mean = 0.0
+        M2 = 0.0
+
+        for chunk in chunks:
+            x = np.asarray(chunk)
+
+            # chunk stats (vectorized)
+            k = x.size
+            if k == 0:
+                continue
+            mean_c = x.mean()
+            M2_c = ((x - mean_c) ** 2).sum()   # or: x.var(ddof=0) * k
+
+            # combine (parallel/Welford merge)
+            if n == 0:
+                n = k
+                mean = mean_c
+                M2 = M2_c
+            else:
+                delta = mean_c - mean
+                n_new = n + k
+                mean = mean + delta * (k / n_new)
+                M2 = M2 + M2_c + delta * delta * (n * k / n_new)
+                n = n_new
+
+        # results
+        var = M2 / n            # ddof=0
+        std = math.sqrt(var)
         """
     return (stats, False)
 
@@ -182,8 +233,7 @@ def __get_field_stats_contiguous(hdf_node):
     """
     stats = None
     if hdf_node.dtype.kind in "iufc":
-        pass
-    return (stats, False)
+        return (stats, False)
     """
     field = _get_value(hdf_node)
     mask = np.isfinite(field)
@@ -205,6 +255,7 @@ def __get_field_stats_contiguous(hdf_node):
     else:
         return
     """
+
 
 class NexusParser(MatchingParser):
     """
@@ -320,7 +371,6 @@ class NexusParser(MatchingParser):
                         exc_info=e,
                     )
         else:  # it is a field
-
             # get the corresponding field name
             html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
             data_instance_name = hdf_node.name.split("/")[-1] + "__field"
@@ -353,7 +403,9 @@ class NexusParser(MatchingParser):
                             )
                             return
                     else:  # costly loading of entire dataset contiguous storage layout
-                        field_stats, not_isfinite = _get_field_stats_contiguous(hdf_node)
+                        field_stats, not_isfinite = _get_field_stats_contiguous(
+                            hdf_node
+                        )
                         if not_isfinite:
                             self._logger.info(
                                 "set NaN for field of a contiguous array",
