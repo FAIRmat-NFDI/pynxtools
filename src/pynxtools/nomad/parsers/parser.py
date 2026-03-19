@@ -21,8 +21,8 @@ from typing import Optional
 import lxml.etree as ET
 import numpy as np
 
-DEBUG_PYNXTOOLS_WITH_NOMAD = False
-
+DEBUG_PYNXTOOLS_WITH_NOMAD: bool = False
+COMPUTE_MEAN_AND_STD_FOR_ARRAYS: bool = False  # True old behavior
 
 try:
     from ase.data import chemical_symbols
@@ -126,7 +126,7 @@ def _to_section(
     return new_section
 
 
-def _get_value(hdf_node):
+def _get_field(hdf_node):
     """
     Fetching routine to use for non-iuf and contiguous storage layout
     Get value from hdf5 node if scalar.
@@ -134,8 +134,8 @@ def _get_value(hdf_node):
     """
     if not np.issubdtype(hdf_node.dtype, np.bool_):  # bool datasets less frequent
         hdf_value = hdf_node[...]
-        if hdf_value.shape == ():  # arrays more likely than scalars
-            if hdf_value.dtype.kind == "iufc":  # numbers more likely than objects
+        if hdf_value.shape != ():  # arrays more likely than scalars
+            if hdf_value.dtype.kind in "iufc":  # numbers more likely than objects
                 return hdf_value
             if hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
                 # Recursively decode nested lists if needed
@@ -151,13 +151,14 @@ def _get_value(hdf_node):
                 return decode_array(hdf_value)
             return str([i for i in hdf_value.astype(str)])  # fallback for other arrays
         else:
-            if hdf_value.dtype.kind == "iufc":
+            if hdf_value.dtype.kind in "iufc":
                 return hdf_value
     else:  # bool
-        if hdf_node.shape == ():  # scalar bool more likely
-            return bool(hdf_node[()])
-        else:
+        if hdf_node.shape != ():
             return bool(hdf_node[0])
+        else:
+            return bool(hdf_node[()])
+
     return hdf_node[()].decode()
 
 
@@ -186,36 +187,51 @@ def _get_field_stats_iuf_chunked(hdf_node) -> dict:
     M2 = 0.0
 
     for chunk in hdf_node.iter_chunks():
-        slab = hdf_node[chunk]  # .reshape(-1)
-        # auto-decompressed, 1d value stream
-        values = slab[np.isfinite(slab)]
-        if values.size == 0:
-            continue
+        slab = hdf_node[chunk]  # will automatically decompress
+        values = slab[np.isfinite(slab)]  # copy ok, because chunks typically MiB
 
-        stats["__min"] = np.minimum(stats["__min"], values.min())
-        stats["__max"] = np.maximum(stats["__max"], values.max())
+        if values.size > 0:
+            stats["__min"] = np.minimum(stats["__min"], values.min())
+            stats["__max"] = np.maximum(stats["__max"], values.max())
 
-        # vectorized Welford update
-        k = values.size
-        mean_c = values.mean()
-        M2_c = ((values - mean_c) ** 2).sum()
+            if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
+                # true element-wise Welford update more precise but substantially slower
+                for x in values:
+                    n += 1
+                    delta = x - mean
+                    mean += delta / n
+                    delta2 = x - mean
+                    M2 += delta * delta2
 
-        if n == 0:
-            n = k
-            mean = mean_c
-            M2 = M2_c
-            continue
+                """
+                # vectorized Welford update
+                # empirically found not as stable
+                k = values.size
+                mean_c = values.mean()
+                M2_c = ((values - mean_c) ** 2).sum()
 
-        delta = mean_c - mean
-        n_new = n + k
+                if n == 0:
+                    n = k
+                    mean = mean_c
+                    M2 = M2_c
+                    continue
 
-        mean = mean + delta * (k / n_new)
-        M2 = M2 + M2_c + delta * delta * (n * k / n_new)
-        n = n_new
+                delta = mean_c - mean
+                n_new = n + k
 
-    stats["__mean"] = mean if n > 0 else np.nan
-    stats["__std"] = np.sqrt(M2 / n) if n > 0 else np.nan
-    # to match np.std uses ddof=0 by default
+                mean = mean + delta * (k / n_new)
+                M2 = M2 + M2_c + delta * delta * (n * k / n_new)
+                n = n_new
+                """
+
+    if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
+        stats["__mean"] = mean if n > 0 else np.nan
+        stats["__std"] = np.sqrt(M2 / n) if n > 0 else np.nan
+        # to match np.std uses ddof=0 by default
+    else:
+        stats["__mean"] = 0.0
+        stats["__std"] = 0.0
+
     return stats
     # use M2 / (n - 1) for sample std, casting necessary ?
     # summary_statistics["__mean"] = np.asarray(mean, dtype=hdf_node.dtype).item()
@@ -227,12 +243,23 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
     """
     stats: dict = {}
 
-    field = _get_value(hdf_node)
+    field = _get_field(hdf_node)
     mask = np.isfinite(field)
     if np.any(mask):
-        for suffix in FIELD_STATISTICS:
-            spec = FIELD_STATISTICS[suffix]
-            stats[suffix] = spec["function"](field[mask] if spec["mask"] else field)
+        if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
+            for suffix in FIELD_STATISTICS:
+                spec = FIELD_STATISTICS[suffix]
+                # this field[mask] btw is another copy what made the original so costly
+                stats[suffix] = spec["function"](field[mask] if spec["mask"] else field)
+        else:
+            for suffix in FIELD_STATISTICS:
+                if suffix not in ["__mean", "__std"]:
+                    spec = FIELD_STATISTICS[suffix]
+                    stats[suffix] = spec["function"](
+                        field[mask] if spec["mask"] else field
+                    )
+                else:
+                    stats[suffix] = 0.0
 
     return stats
 
@@ -367,10 +394,18 @@ class NexusParser(MatchingParser):
                 )
                 return
 
+            # Metainfo does not support precision higher than i8, u8, f8, c16
+            # is f2 supported ? maybe silently promoted to float or f8
+            if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
+                self._logger.warning(
+                    f"error while setting field {data_instance_name} in {current.m_def} precision {hdf_node.dtype.itemsize} too high for {field_name}"
+                )
+                return
+
             field_stats: dict = {}  # stats built from finite iuf arrays
 
-            if hdf_node.dtype.kind == "iuf":
-                if hdf_node.shape == ():  # non-scalar, compute stats
+            if hdf_node.dtype.kind in "iuf":
+                if hdf_node.shape != ():  # non-scalar, compute stats
                     if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
                         field_stats = _get_field_stats_iuf_chunked(hdf_node)
                     else:  # load entire contiguous storage layout dataset at once
@@ -385,7 +420,10 @@ class NexusParser(MatchingParser):
                             return
 
                     # now we are sure that key "__mean" exists and it value is finite
-                    field = field_stats["__mean"]
+                    if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
+                        field = field_stats["__mean"]
+                    else:
+                        field = hdf_node[(0,) * hdf_node.ndim]
                 else:  # scalar, no stats
                     field = hdf_node[()]
                     if not np.isfinite(field):
@@ -398,7 +436,7 @@ class NexusParser(MatchingParser):
             # eventually make a second optimization round for complex numbers
             # we have not faced though high volume examples yet
             elif hdf_node.dtype.kind in "c":
-                if hdf_node.shape == ():
+                if hdf_node.shape != ():
                     field = hdf_node[(0,) * hdf_node.ndim]  # just "first" value
                 else:
                     field = hdf_node[()]
@@ -409,7 +447,7 @@ class NexusParser(MatchingParser):
                     )
                     return
             else:
-                field = _get_value(hdf_node)
+                field = _get_field(hdf_node)
 
             # check if unit is given
             unit = hdf_node.attrs.get("units", None)
@@ -422,7 +460,7 @@ class NexusParser(MatchingParser):
                     else:
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
-                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape == ():
+                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
                         for suffix in FIELD_STATISTICS:
                             if FIELD_STATISTICS[suffix]["mask"]:
                                 field_stats[suffix] = ureg.Quantity(
@@ -456,7 +494,15 @@ class NexusParser(MatchingParser):
                     concept_basename = get_quantity_base_name(field.name)
                     instance_name = get_quantity_base_name(data_instance_name)
                     for suffix in FIELD_STATISTICS:
+                        # ignore mean as for non-scalar iuf datasets
+                        # the mean is taken as the representative value
+                        # I do not think that taking the mean as a proxy is useful
                         if suffix != "__mean":
+                            if (
+                                suffix == "__std"
+                                and not COMPUTE_MEAN_AND_STD_FOR_ARRAYS
+                            ):
+                                continue
                             stat_metainfo_def = resolve_variadic_name(
                                 current.m_def.all_quantities, concept_basename + suffix
                             )
@@ -464,8 +510,8 @@ class NexusParser(MatchingParser):
                                 FIELD_STATISTICS[suffix], instance_name + suffix
                             )
                             current.m_set(stat_metainfo_def, stat)
-                            stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                            stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                            # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                            # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
