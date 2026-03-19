@@ -128,7 +128,8 @@ def _to_section(
 
 def _get_value(hdf_node):
     """
-    Get value from hdf5 node
+    Get value from hdf5 node if scalar.
+    Get one value sampled from hdf5 node if non-scalar.
     """
     if np.issubdtype(hdf_node.dtype, np.bool_):
         if hdf_node.shape == ():  # scalar
@@ -136,7 +137,7 @@ def _get_value(hdf_node):
         else:
             return bool(hdf_node[0])
 
-    if hdf_node.ndim > 0:
+    if hdf_node.shape != ():
         hdf_value = hdf_node[...]
         if hdf_value.dtype.kind == "iufc":
             return hdf_value
@@ -157,104 +158,104 @@ def _get_value(hdf_node):
     return hdf_node[()].decode()
 
 
-def _get_field_stats_chunked(hdf_node):
+def _get_field_stats_chunked(hdf_node) -> dict[str, np.number]:
     """
     Get field stats when hdf_node uses chunked storage layout
     """
-    stats = None
-    if hdf_node.dtype.kind in "iufc":
+    summary_statistics: dict[str, np.number] = {}
+    # computing stats using chunks requires incremental updating of stats
+    # thus measures which improve numerical robustness built into np.mean and np.std
+    # cannot be taken advantage of directly, here using Welford's algorithm to prevent
+    # catastrophic cancellation errors
+    # implementation differs for iuf and c datatype kinds
+    # mean and std for iu types will be promoted to floating like np does
+    """
+    for chunk in hdf_node.iter_chunks():
+        field_chunk = hdf_node[chunk].ravel()  # auto-decompressed, 1d value stream
+        # chunked storage does not necessarily demand compression
+        mask_chunk = np.isfinite(field_chunk)
+        if np.any(mask_chunk):
+            field_stats = _get_field_stats
+        # ######
+    """
+    """
+    n = 0
+    mean = 0.0
+    M2 = 0.0
+
+    for chunk in chunks:
+        for x in chunk.ravel():
+            n += 1
+            delta = x - mean
+            mean += delta / n
+            M2 += delta * (x - mean)
+
+    # results
+    variance = M2 / n          # population variance (like numpy.std(..., ddof=0)**2)
+    std = math.sqrt(variance)
+
+    If you need sample std (ddof=1):
+
+    variance = M2 / (n - 1)
+    std = math.sqrt(variance)
+
+    n = 0
+    mean = 0.0
+    M2 = 0.0
+
+    for chunk in chunks:
+        x = np.asarray(chunk)
+
+        # chunk stats (vectorized)
+        k = x.size
+        if k == 0:
+            continue
+        mean_c = x.mean()
+        M2_c = ((x - mean_c) ** 2).sum()   # or: x.var(ddof=0) * k
+
+        # combine (parallel/Welford merge)
+        if n == 0:
+            n = k
+            mean = mean_c
+            M2 = M2_c
+        else:
+            delta = mean_c - mean
+            n_new = n + k
+            mean = mean + delta * (k / n_new)
+            M2 = M2 + M2_c + delta * delta * (n * k / n_new)
+            n = n_new
+
+    # results
+    var = M2 / n            # ddof=0
+    std = math.sqrt(var)
+    """
+    if hdf_node.dtype.kind in "iu":
         pass
-        """
-        for chunk in hdf_node.iter_chunks():
-            field_chunk = hdf_node[chunk].ravel()  # auto-decompressed, 1d value stream
-            # chunked storage does not necessarily demand compression
-            mask_chunk = np.isfinite(field_chunk)
-            if np.any(mask_chunk):
-                field_stats = _get_field_stats
-            # ######
-        """
-        """
-        n = 0
-        mean = 0.0
-        M2 = 0.0
-
-        for chunk in chunks:
-            for x in chunk.ravel():
-                n += 1
-                delta = x - mean
-                mean += delta / n
-                M2 += delta * (x - mean)
-
-        # results
-        variance = M2 / n          # population variance (like numpy.std(..., ddof=0)**2)
-        std = math.sqrt(variance)
-
-        If you need sample std (ddof=1):
-
-        variance = M2 / (n - 1)
-        std = math.sqrt(variance)
-
-        n = 0
-        mean = 0.0
-        M2 = 0.0
-
-        for chunk in chunks:
-            x = np.asarray(chunk)
-
-            # chunk stats (vectorized)
-            k = x.size
-            if k == 0:
-                continue
-            mean_c = x.mean()
-            M2_c = ((x - mean_c) ** 2).sum()   # or: x.var(ddof=0) * k
-
-            # combine (parallel/Welford merge)
-            if n == 0:
-                n = k
-                mean = mean_c
-                M2 = M2_c
-            else:
-                delta = mean_c - mean
-                n_new = n + k
-                mean = mean + delta * (k / n_new)
-                M2 = M2 + M2_c + delta * delta * (n * k / n_new)
-                n = n_new
-
-        # results
-        var = M2 / n            # ddof=0
-        std = math.sqrt(var)
-        """
-    return (stats, False)
+    elif hdf_node.dtype.kind in "f":
+        pass
+    elif hdf_node.dtype.kind in "c":
+        pass
+        # no summary statistics currently for complex arrays
+    return summary_statistics
 
 
-def __get_field_stats_contiguous(hdf_node):
+def _get_field_stats_contiguous(hdf_node) -> dict[str, np.number]:
     """
     Get field stats when hdf_node uses contiguous storage layout
     """
-    stats = None
+    summary_statistics: dict[str, np.number] = {}
     if hdf_node.dtype.kind in "iufc":
-        return (stats, False)
-    """
-    field = _get_value(hdf_node)
-    mask = np.isfinite(field)
-    if np.any(mask):
-        field_stats = [
-            func(field[mask] if is_mask else field)
-            for func, is_mask in zip(
-                FIELD_STATISTICS["function"],
-                FIELD_STATISTICS["mask"],
-            )
-        ]
-        field = field_stats[0]
-        if not np.isfinite(field):
-            self._logger.info(
-                "set NaN for field of an array",
-                target_name=field_name + "[" + data_instance_name + "]",
-            )
-            return
-    else:
-        return
-    """
+        # TODO whats with c ?
+        field = _get_value(hdf_node)
+        mask = np.isfinite(field)
+        if np.any(mask):
+            for suffix in FIELD_STATISTICS:
+                spec = FIELD_STATISTICS[suffix]
+                summary_statistics[suffix] = spec["function"](
+                    field[mask] if spec["mask"] else field
+                )
+        del mask, field
+    return summary_statistics
 
 
 class NexusParser(MatchingParser):
@@ -292,8 +293,7 @@ class NexusParser(MatchingParser):
         """
         Populate attributes and fields
         """
-        if attr:
-            # it is an attribute of either field or group
+        if attr:  # it is an attribute of either a field or a group
             nx_root = False
             if nx_path[0] == "/":
                 nx_attr = nx_path[1]
@@ -389,32 +389,29 @@ class NexusParser(MatchingParser):
                 return
 
             # for iufc datasets only statistics if not all values NINF, Inf, or NaN
+            field_stats: dict[str, np.number] = {}
             if hdf_node.dtype.kind == "iufc":
-                if hdf_node.ndim > 0:  # stats for arrays for chunked storage layout
-                    # iterating over chunks / hyperslabs is preferred as demands
-                    # only as much memory as for the chunk instead of entire dataset
-                    field_stats = None
-                    if hdf_node.chunks is not None:
-                        fields_stats, not_isfinite = _get_field_stats_chunked(hdf_node)
-                        if not_isfinite:
-                            self._logger.info(
-                                "set NaN for field of a chunked array",
-                                target_name=field_name + "[" + data_instance_name + "]",
-                            )
-                            return
+                if hdf_node.shape != ():  # non-scalar, compute stats
+                    if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
+                        field_stats = _get_field_stats_chunked(hdf_node)
                     else:  # costly loading of entire dataset contiguous storage layout
-                        field_stats, not_isfinite = _get_field_stats_contiguous(
-                            hdf_node
-                        )
-                        if not_isfinite:
+                        field_stats = _get_field_stats_contiguous(hdf_node)
+
+                    if "__mean" in field_stats:
+                        field = field_stats["__mean"]
+                        if not np.isfinite(field):
                             self._logger.info(
-                                "set NaN for field of a contiguous array",
+                                "set NaN for field of an array",
                                 target_name=field_name + "[" + data_instance_name + "]",
                             )
                             return
-                    # not returned set field to th mean value
-                    field = field_stats[0]
-                else:  # no stats for scalars
+                    else:
+                        self._logger.info(
+                            "unable to retrieve field_stats of an array",
+                            target_name=field_name + "[" + data_instance_name + "]",
+                        )
+                        return
+                else:  # scalar, no stats
                     field = hdf_node[()]
                     if not np.isfinite(field):
                         self._logger.info(
@@ -422,8 +419,7 @@ class NexusParser(MatchingParser):
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
-            else:  # non iufc data using old approach, no stats for these
-                # further optimization likely possible if needed
+            else:  # for non iufc data use old approach, no stats for these
                 field = _get_value(hdf_node)
 
             # check if unit is given
@@ -437,12 +433,11 @@ class NexusParser(MatchingParser):
                     else:
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
-                    if field_stats is not None:
-                        for i in range(len(field_stats)):
-                            if FIELD_STATISTICS["mask"][i]:
-                                field_stats[i] = ureg.Quantity(
-                                    field_stats[i], pint_unit
-                                )
+                    for suffix in FIELD_STATISTICS:
+                        if FIELD_STATISTICS[suffix]["mask"]:
+                            field_stats[suffix] = ureg.Quantity(
+                                field_stats[suffix], pint_unit
+                            )
 
                 except (ValueError, UndefinedUnitError):
                     pass
@@ -467,20 +462,20 @@ class NexusParser(MatchingParser):
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
                     name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                if field_stats is not None:
+                if len(field_stats) > 0:
                     concept_basename = get_quantity_base_name(field.name)
                     instance_name = get_quantity_base_name(data_instance_name)
-                    for suffix, stat in zip(
-                        FIELD_STATISTICS["suffix"][1:],
-                        field_stats[1:],
-                    ):
-                        stat_metainfo_def = resolve_variadic_name(
-                            current.m_def.all_quantities, concept_basename + suffix
-                        )
-                        stat = MQuantity.wrap(stat, instance_name + suffix)
-                        current.m_set(stat_metainfo_def, stat)
-                        stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                        stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                    for suffix in FIELD_STATISTICS:
+                        if suffix != "__mean":
+                            stat_metainfo_def = resolve_variadic_name(
+                                current.m_def.all_quantities, concept_basename + suffix
+                            )
+                            stat = MQuantity.wrap(
+                                FIELD_STATISTICS[suffix], instance_name + suffix
+                            )
+                            current.m_set(stat_metainfo_def, stat)
+                            stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                            stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",

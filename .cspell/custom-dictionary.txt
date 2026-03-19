@@ -67,6 +67,8 @@ Uniquifies
 VAMAS
 Vamas
 Walid
+Welford
+Welford's
 Xclass
 Zenodo
 allclose
@@ -99,6 +101,7 @@ complexfloating
 dataarrays
 dataconverter
 datamodel
+ddof
 defaultdicts
 docstrings
 dtype
@@ -130,6 +133,8 @@ hdfgroup
 hdfobject
 hfive
 hixu
+hyperslab
+hyperslabs
 hypothes
 idname
 idobj
