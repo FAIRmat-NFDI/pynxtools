@@ -115,7 +115,7 @@ class NexusNode(NodeMixin):
     Args:
         name (str):
             The name of the node.
-        nx_type (Literal["group", "field", "attribute", "choice"]):
+        nx_type (Literal["group", "field", "attribute", "choice", "link"]):
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
             The nameType of the node.
@@ -155,7 +155,7 @@ class NexusNode(NodeMixin):
     """
 
     name: str
-    nx_type: Literal["group", "field", "attribute", "choice"]
+    nx_type: Literal["group", "field", "attribute", "choice", "link"]
     name_type: Literal["specified", "any", "partial"] | None = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
@@ -201,7 +201,7 @@ class NexusNode(NodeMixin):
     def __init__(
         self,
         name: str,
-        nx_type: Literal["group", "field", "attribute", "choice"],
+        nx_type: Literal["group", "field", "attribute", "choice", "link"],
         name_type: Literal["specified", "any", "partial"] | None = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: bool | None = None,
@@ -283,7 +283,8 @@ class NexusNode(NodeMixin):
         """
         tags = (
             "*[self::nx:field or self::nx:group "
-            "or self::nx:attribute or self::nx:choice]"
+            "or self::nx:attribute or self::nx:choice "
+            "or self::nx:link]"
         )
         for elem in self.inheritance:
             xml_elem = elem.xpath(
@@ -371,7 +372,8 @@ class NexusNode(NodeMixin):
         else:
             search_tags = (
                 r"*[self::nx:field or self::nx:group "
-                r"or self::nx:attribute or self::nx:choice]"
+                r"or self::nx:attribute or self::nx:choice "
+                r"or self::nx:link]"
             )
 
         names = set()
@@ -475,6 +477,10 @@ class NexusNode(NodeMixin):
                 req_children.append(f"{prev_path}/{child.name}")
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
+
+            if child.nx_type == "link":
+                req_children.append(f"{prev_path}/{child.name}")
+                continue
 
             if recurse_children:
                 req_children.extend(
@@ -676,8 +682,16 @@ class NexusNode(NodeMixin):
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
             )
+        elif tag == "link":
+            current_elem = NexusLink(
+                parent=self,
+                name=xml_elem.attrib["name"],
+                name_type=name_type,
+                optionality=default_optionality,
+                target=xml_elem.attrib.get("target"),
+                nxdl_base=xml_elem.base,
+            )
         else:
-            # TODO: Tags: link
             # We don't know the tag, skip processing children of it
             # TODO: Add logging or raise an error as this is not a known nxdl tag
             return None
@@ -713,6 +727,11 @@ class NexusNode(NodeMixin):
                 return self.add_node_from(xml_elem[0])
         return None
 
+    def __repr__(self) -> str:
+        if self.nx_type == "attribute":
+            return f"@{self.name} ({self.optionality[:3]})"
+        return f"{self.name} ({self.optionality[:3]})"
+
 
 class NexusChoice(NexusNode):
     """
@@ -730,6 +749,41 @@ class NexusChoice(NexusNode):
 
     def __init__(self, **data) -> None:
         super().__init__(nx_type=self.nx_type, **data)
+        self._construct_inheritance_chain_from_parent()
+        self._set_optionality()
+
+    def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
+        if self.parent is None:
+            return
+        for xml_elem in self.parent.inheritance:
+            elem = xml_elem.find(
+                f"nx:{self.nx_type}/[@name='{self.name}']", namespaces=namespaces
+            )
+            if elem is not None:
+                self.inheritance.append(elem)
+
+
+class NexusLink(NexusNode):
+    """
+    A representation of a NeXus choice.
+    It just collects the suggested target value.
+
+    Args:
+        nx_type (Literal["choice"]):
+            Just ties this node to the choice tag in the nxdl file.
+            Should and cannot be manually altered.
+            Defaults to "choice".
+    """
+
+    nx_type: Literal["link"] = "link"
+    target: str
+
+    def __init__(self, target: str, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+        self.target = target
         self._construct_inheritance_chain_from_parent()
         self._set_optionality()
 
@@ -872,11 +926,6 @@ class NexusGroup(NexusNode):
         self._set_occurrence_limits()
         self._set_optionality()
         self._check_sibling_namefit()
-
-    def __repr__(self) -> str:
-        if self.nx_type == "attribute":
-            return f"@{self.name} ({self.optionality[:3]})"
-        return f"{self.name} ({self.optionality[:3]})"
 
 
 class NexusEntity(NexusNode):
@@ -1078,7 +1127,7 @@ class NexusEntity(NexusNode):
     def _set_unit(self):
         """
         Sets the unit of the current entity based on the values in the inheritance chain.
-        The first vale found is used.
+        The first vale found is used.ad
         """
         for elem in self.inheritance:
             if "units" in elem.attrib:
@@ -1164,11 +1213,6 @@ class NexusEntity(NexusNode):
         self._set_optionality()
         self._set_shape()
 
-    def __repr__(self) -> str:
-        if self.nx_type == "attribute":
-            return f"@{self.name} ({self.optionality[:3]})"
-        return f"{self.name} ({self.optionality[:3]})"
-
 
 def populate_tree_from_parents(node: NexusNode):
     """
@@ -1213,7 +1257,8 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         for child in xml_elem.xpath(
             (
                 r"*[self::nx:field or self::nx:group "
-                r"or self::nx:attribute or self::nx:choice]"
+                r"or self::nx:attribute or self::nx:choice "
+                r"or self::nx:link]"
             ),
             namespaces=namespaces,
         ):

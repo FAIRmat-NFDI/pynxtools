@@ -44,6 +44,7 @@ from pynxtools.dataconverter.helpers import (
     get_custom_attr_path,
     is_valid_data_field,
     is_valid_enum,
+    path_in_data_dict,
     split_class_and_name_of,
 )
 from pynxtools.dataconverter.nexus_tree import (
@@ -1352,6 +1353,19 @@ def validate_dict_against(
                     )
                     return
             if variant not in keys or mapping.get(variant_path) is None:
+                continue
+
+            if node.nx_type == "link":
+                target = node.target
+                nxdl_target = "/".join(
+                    seg[2:].upper() if seg.startswith("NX") else seg
+                    for seg in target.split("/")
+                )
+                if not path_in_data_dict(nxdl_target, tuple(mapping.keys())):
+                    # TODO: make this its own ValidationProblem items
+                    collector.collect_and_log(
+                        variant_path, ValidationProblem.BrokenLink, target
+                    )
                 continue
 
             # Check general validity

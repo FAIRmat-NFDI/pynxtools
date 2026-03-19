@@ -202,12 +202,20 @@ class JsonMapReader(MultiFormatReader):
                 " my_nxdl_map.mapping.json\n\n You can use this "
                 "template for the required fields: \n" + str(hint)
             )
+
         return result
 
     def get_data(self, key: str, path: str) -> Any:
         """Resolve ``@data:path`` tokens by traversal into ``self.data``."""
         try:
             return get_val_nested_keystring_from_dict(path, self.data)
+        except (KeyError, TypeError):
+            return None
+
+    def get_eln_data(self, key: str, path: str) -> Any:
+        """Resolve ``@eln:path`` tokens by traversal into ``self.eln_data``."""
+        try:
+            return get_val_nested_keystring_from_dict(path, self.eln_data)
         except (KeyError, TypeError):
             return None
 
@@ -237,7 +245,7 @@ class JsonMapReader(MultiFormatReader):
 
     def _handle_yaml_file(self, file_path: str) -> dict[str, Any]:
         with open(file_path) as f:
-            merge(self.data, yaml.safe_load(f))
+            merge(self.eln_data, yaml.safe_load(f))
         return {}
 
     def _handle_hdf5_file(self, file_path: str) -> dict[str, Any]:
