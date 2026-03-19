@@ -40,6 +40,7 @@ from pynxtools.dataconverter.helpers import (
     check_reserved_suffix,
     clean_str_attr,
     collector,
+    convert_data_dict_path_to_hdf5_path,
     convert_nexus_to_caps,
     get_custom_attr_path,
     is_valid_data_field,
@@ -1361,10 +1362,17 @@ def validate_dict_against(
                     seg[2:].upper() if seg.startswith("NX") else seg
                     for seg in target.split("/")
                 )
-                if not path_in_data_dict(nxdl_target, tuple(mapping.keys())):
+                mapping_keys = tuple(mapping.keys())
+                target_exists = bool(
+                    path_in_data_dict(nxdl_target, mapping_keys)
+                ) or any(
+                    convert_data_dict_path_to_hdf5_path(k) == target
+                    for k in mapping_keys
+                )
+                if not target_exists:
                     # TODO: make this its own ValidationProblem items
                     collector.collect_and_log(
-                        variant_path, ValidationProblem.BrokenLink, target
+                        not_visited_key, ValidationProblem.BrokenLink, target
                     )
                 continue
 
@@ -1590,9 +1598,11 @@ def validate_dict_against(
             if index < key_len - 1:
                 expected_types = ["group"]
             elif index == key_len - 1:
-                expected_types = ["group"] if not is_last_attr else ["group", "field"]
+                expected_types = (
+                    ["group"] if not is_last_attr else ["group", "field", "link"]
+                )
             elif index == key_len:
-                expected_types = ["attribute"] if is_last_attr else ["field"]
+                expected_types = ["attribute"] if is_last_attr else ["field", "link"]
                 if "link" in str(mapping.get(key, "")):
                     expected_types += ["group"]
 
@@ -1954,7 +1964,29 @@ def validate_dict_against(
                             break
                     continue
 
-                if node is None or node.nx_type != "field" or node.unit is None:
+                if node.nx_type == "link":
+                    target = node.target
+                    nxdl_target = "/".join(
+                        seg[2:].upper() if seg.startswith("NX") else seg
+                        for seg in target.split("/")
+                    )
+
+                    mapping_keys = tuple(mapping.keys())
+                    target_exists = bool(
+                        path_in_data_dict(nxdl_target, mapping_keys)
+                    ) or any(
+                        convert_data_dict_path_to_hdf5_path(k) == target
+                        for k in mapping_keys
+                    )
+                    if not target_exists:
+                        # TODO: make this its own ValidationProblem items
+                        collector.collect_and_log(
+                            not_visited_key, ValidationProblem.BrokenLink, target
+                        )
+
+                    continue
+
+                if node.nx_type != "field" or node.unit is None:
                     if not ignore_undocumented:
                         collector.collect_and_log(
                             not_visited_key,
