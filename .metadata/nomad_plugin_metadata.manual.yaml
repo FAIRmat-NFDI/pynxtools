@@ -11,7 +11,7 @@ subject:
 # enum {alpha, beta, stable, archived}
 maturity: stable
 # str, e.g. "main"
-repository_default_branch: main
+repository_default_branch: master
 
 # Deployment flags.
 deployment:
