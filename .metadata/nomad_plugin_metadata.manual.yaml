@@ -1,0 +1,84 @@
+# Maintainer-owned metadata overrides and manual additions.
+# This file is never machine-overwritten after creation.
+# Use null/empty values as placeholders; only non-empty values override auto output.
+# list[str] domain/topic tags (e.g. "simulations", "spectroscopy")
+subject:
+  - cross-domain
+  - measurements
+  - nexus
+  - data-conversion
+  - data-standardization
+# enum {alpha, beta, stable, archived}
+maturity: stable
+# str, e.g. "main"
+repository_default_branch: main
+
+# Deployment flags.
+deployment:
+  # boolean
+  on_central: true
+  # boolean
+  on_example_oasis: true
+  # boolean
+  on_pypi: true
+  # str (PyPI package name)
+  pypi_package: pynxtools
+
+# Suggested usages for registry filtering/discovery.
+suggested_usages:
+  -
+    # str (stable ID slug), e.g. "parse-xrd-patterns"
+    id: convert-instrument-data-to-nexus
+    # str
+    title: Convert instrument data to NeXus
+    # str (what user wants to do), e.g. "Import and parse raw files"
+    user_intent: Transform heterogeneous experimental outputs into NeXus-compliant files
+    # enum {simulations, measurements, synthesis, cross-domain, workflow, infrastructure}
+    domain_category: cross-domain
+    # str, e.g. "XRD", "DFT"
+    technique: nexus-data-conversion
+    # str, e.g. "beginner", "expert"
+    audience: intermediate
+    # enum {alpha, beta, stable, archived}
+    maturity: stable
+    # list[str]
+    tags: [nexus, conversion, interoperability, readers]
+  -
+    # str (stable ID slug), e.g. "parse-xrd-patterns"
+    id: run-nexus-parser-in-nomad
+    # str
+    title: Parse NeXus files in NOMAD
+    # str (what user wants to do), e.g. "Import and parse raw files"
+    user_intent: Ingest and validate NeXus datasets through NOMAD parser/app integration
+    # enum {simulations, measurements, synthesis, cross-domain, workflow, infrastructure}
+    domain_category: infrastructure
+    # str, e.g. "XRD", "DFT"
+    technique: nexus-parser
+    # str, e.g. "beginner", "expert"
+    audience: advanced
+    # enum {alpha, beta, stable, archived}
+    maturity: stable
+    # list[str]
+    tags: [nomad, parser, app, nexus]
+
+# Optional file format metadata enrichments.
+file_format_support:
+  -
+    # str (stable ID), e.g. "csv"
+    id: nxs
+    # str display label, e.g. ".csv"
+    label: .nxs
+    # str capability reference (links to capabilities[].id), e.g. "vasp_parser"
+    capability_id: nexus_parser
+    # str producer/code family for ambiguous extensions, e.g. "vasp", "quantumespresso"
+    producer: nexus
+    # list[str] extensions including dot, e.g. [".csv", ".txt"]
+    extensions: [.nxs, .nx5, .h5, .hdf5]
+    # list[str], e.g. ["text/csv"]
+    mime_types: [application/x-hdf5]
+    # str, e.g. "CIF", "NeXus"
+    standard: NeXus
+    # str, instrument or context label
+    instrument_context: multi-technique
+    # str free text notes
+    notes: Canonical NeXus/HDF5 containers parsed or generated via pynxtools workflows.
