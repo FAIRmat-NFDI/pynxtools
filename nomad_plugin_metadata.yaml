@@ -309,15 +309,15 @@ schema_dependencies:
 metadata_provenance:
 - source: pyproject
   extraction_method: deterministic
-  generated_at: '2026-03-19T15:18:48.314663+00:00'
+  generated_at: '2026-03-19T15:20:32.681116+00:00'
   generator_version: 0.1.0
 - source: plugin_entry_points
   extraction_method: deterministic
-  generated_at: '2026-03-19T15:18:48.314700+00:00'
+  generated_at: '2026-03-19T15:20:32.681161+00:00'
   generator_version: 0.1.0
 - source: citation_cff
   extraction_method: deterministic
-  generated_at: '2026-03-19T15:18:48.314714+00:00'
+  generated_at: '2026-03-19T15:20:32.681176+00:00'
   generator_version: 0.1.0
 stars: 21
 owner: FAIRmat-NFDI
@@ -332,7 +332,7 @@ subject:
 - data-conversion
 - data-standardization
 maturity: stable
-repository_default_branch: main
+repository_default_branch: master
 deployment:
   on_central: true
   on_example_oasis: true
