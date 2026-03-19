@@ -169,6 +169,7 @@ myext
 mynxdl
 namefit
 namefitting
+nbstripout
 nbytes
 ndarray
 ndataconverter
@@ -198,6 +199,7 @@ posteriori
 printoptions
 punx
 pynxtools
+pyupgrade
 raman
 rdcc
 redef
@@ -229,6 +231,7 @@ ureg
 usefixtures
 vamas
 visititems
+vlen
 xarrays
 xaxis
 xdist

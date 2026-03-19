@@ -43,6 +43,7 @@ from pynxtools.dataconverter.helpers import (
     convert_nexus_to_caps,
     get_custom_attr_path,
     is_valid_data_field,
+    is_valid_data_field_hdf,
     is_valid_enum,
     split_class_and_name_of,
 )
@@ -643,8 +644,8 @@ def validate_hdf_group_against(
             # NXcollection found in parents, stop checking
             return
 
-        is_valid_data_field(
-            clean_str_attr(dataset[()]),
+        is_valid_data_field_hdf(
+            dataset,
             node.dtype,
             full_path,
         )
