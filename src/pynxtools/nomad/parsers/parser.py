@@ -161,11 +161,11 @@ def _get_value(hdf_node):
     return hdf_node[()].decode()
 
 
-def _get_field_stats_iuf_chunked(hdf_node) -> dict[str, np.number]:
+def _get_field_stats_iuf_chunked(hdf_node) -> dict:
     """
     Get field stats when hdf_node uses chunked storage layout
     """
-    stats: dict[str, np.number] = {}
+    stats: dict = {}
     # chunked storage does not necessarily demand compression
     # computing stats using chunks requires incremental updating of stats
     # thus measures which improve numerical robustness built into np.mean and np.std
@@ -221,11 +221,11 @@ def _get_field_stats_iuf_chunked(hdf_node) -> dict[str, np.number]:
     # summary_statistics["__mean"] = np.asarray(mean, dtype=hdf_node.dtype).item()
 
 
-def _get_field_stats_iuf_contiguous(hdf_node) -> dict[str, np.number]:
+def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
     """
     Get field stats when hdf_node uses contiguous storage layout
     """
-    stats: dict[str, np.number] = {}
+    stats: dict = {}
 
     field = _get_value(hdf_node)
     mask = np.isfinite(field)
@@ -368,7 +368,7 @@ class NexusParser(MatchingParser):
                 )
                 return
 
-            field_stats: dict[str, np.number] = {}  # stats built from finite iuf arrays
+            field_stats: dict = {}  # stats built from finite iuf arrays
 
             if hdf_node.dtype.kind == "iuf":
                 if hdf_node.shape > 0:  # non-scalar, compute stats
@@ -385,7 +385,7 @@ class NexusParser(MatchingParser):
                             )
                             return
 
-                    # now we are sure there that "__mean" and it is finite
+                    # now we are sure that key "__mean" exists and it value is finite
                     field = field_stats["__mean"]
                 else:  # scalar, no stats
                     field = hdf_node[()]
