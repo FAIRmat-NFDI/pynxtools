@@ -134,8 +134,8 @@ def _get_value(hdf_node):
     """
     if not np.issubdtype(hdf_node.dtype, np.bool_):  # bool datasets less frequent
         hdf_value = hdf_node[...]
-        if hdf_value.shape > 0:  # arrays more like than scalars
-            if hdf_value.dtype.kind == "iufc":  # more likely than "O"
+        if hdf_value.shape == ():  # arrays more likely than scalars
+            if hdf_value.dtype.kind == "iufc":  # numbers more likely than objects
                 return hdf_value
             if hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
                 # Recursively decode nested lists if needed
@@ -233,7 +233,6 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
         for suffix in FIELD_STATISTICS:
             spec = FIELD_STATISTICS[suffix]
             stats[suffix] = spec["function"](field[mask] if spec["mask"] else field)
-    del mask, field
 
     return stats
 
@@ -371,7 +370,7 @@ class NexusParser(MatchingParser):
             field_stats: dict = {}  # stats built from finite iuf arrays
 
             if hdf_node.dtype.kind == "iuf":
-                if hdf_node.shape > 0:  # non-scalar, compute stats
+                if hdf_node.shape == ():  # non-scalar, compute stats
                     if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
                         field_stats = _get_field_stats_iuf_chunked(hdf_node)
                     else:  # load entire contiguous storage layout dataset at once
@@ -399,7 +398,7 @@ class NexusParser(MatchingParser):
             # eventually make a second optimization round for complex numbers
             # we have not faced though high volume examples yet
             elif hdf_node.dtype.kind in "c":
-                if hdf_node.shape > 0:
+                if hdf_node.shape == ():
                     field = hdf_node[(0,) * hdf_node.ndim]  # just "first" value
                 else:
                     field = hdf_node[()]
@@ -423,7 +422,7 @@ class NexusParser(MatchingParser):
                     else:
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
-                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape > 0:
+                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape == ():
                         for suffix in FIELD_STATISTICS:
                             if FIELD_STATISTICS[suffix]["mask"]:
                                 field_stats[suffix] = ureg.Quantity(
