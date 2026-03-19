@@ -683,16 +683,15 @@ def _add_quantity_stats(container: Section, quantity: Quantity):
         )
     if not_number:
         return
-    # no statistics for complex numbers
 
-    for summary_statistic in FIELD_STATISTICS:
-        if summary_statistic != "__mean":
-            # NeXus HDF5 non-scalar iufc dataset in NOMAD get only
-            # one exemplar value copied into Metainfo
-            dtype = FIELD_STATISTICS[summary_statistic]["type"]
+    # no statistics for complex numbers
+    for suffix in FIELD_STATISTICS:
+        if suffix != "__mean":  # exclude because for NeXus HDF5 non-scalar iuf datasets
+            # we register in Metainfo the mean value as a representative
+            dtype = FIELD_STATISTICS[suffix]["type"]
             container.quantities.append(
                 Quantity(
-                    name=basename + summary_statistic,
+                    name=basename + suffix,
                     variable=quantity.variable,
                     shape=[],
                     type=dtype if dtype else quantity.type,

@@ -63,8 +63,8 @@ NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
 FIELD_STATISTICS: dict[str, dict] = {
     "__mean": {"function": np.mean, "type": np.float64, "mask": True},
     "__std": {"function": np.std, "type": np.float64, "mask": True},
-    "__min": {"function": np.min, "type": None, "mask": True},
-    "__max": {"function": np.max, "type": None, "mask": True},
+    "__min": {"function": np.minimum, "type": None, "mask": True},
+    "__max": {"function": np.maximum, "type": None, "mask": True},
     "__size": {
         "function": np.size,
         "type": np.uint64,

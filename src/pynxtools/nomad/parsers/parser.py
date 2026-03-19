@@ -128,136 +128,114 @@ def _to_section(
 
 def _get_value(hdf_node):
     """
+    Fetching routine to use for non-iuf and contiguous storage layout
     Get value from hdf5 node if scalar.
     Get one value sampled from hdf5 node if non-scalar.
     """
-    if np.issubdtype(hdf_node.dtype, np.bool_):
-        if hdf_node.shape == ():  # scalar
+    if not np.issubdtype(hdf_node.dtype, np.bool_):  # bool datasets less frequent
+        hdf_value = hdf_node[...]
+        if hdf_value.shape > 0:  # arrays more like than scalars
+            if hdf_value.dtype.kind == "iufc":  # more likely than "O"
+                return hdf_value
+            if hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
+                # Recursively decode nested lists if needed
+                def decode_array(arr):
+                    result = []
+                    for x in arr:
+                        if isinstance(x, (np.ndarray, list)):
+                            result.append(decode_array(x))
+                        else:
+                            result.append(str(decode_or_not(x)))
+                    return result
+
+                return decode_array(hdf_value)
+            return str([i for i in hdf_value.astype(str)])  # fallback for other arrays
+        else:
+            if hdf_value.dtype.kind == "iufc":
+                return hdf_value
+    else:  # bool
+        if hdf_node.shape == ():  # scalar bool more likely
             return bool(hdf_node[()])
         else:
             return bool(hdf_node[0])
-
-    hdf_value = hdf_node[...]
-    if hdf_value.shape != ():
-        if hdf_value.dtype.kind == "iufc":
-            return hdf_value
-        elif hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
-            # Recursively decode nested lists if needed
-            def decode_array(arr):
-                result = []
-                for x in arr:
-                    if isinstance(x, (np.ndarray, list)):
-                        result.append(decode_array(x))
-                    else:
-                        result.append(str(decode_or_not(x)))
-                return result
-
-            return decode_array(hdf_value)
-        return str([i for i in hdf_value.astype(str)])  # fallback for other arrays
-    else:
-        if hdf_value.dtype.kind == "iufc":
-            return hdf_value
     return hdf_node[()].decode()
 
 
-def _get_field_stats_chunked(hdf_node) -> dict[str, np.number]:
+def _get_field_stats_iuf_chunked(hdf_node) -> dict[str, np.number]:
     """
     Get field stats when hdf_node uses chunked storage layout
     """
-    summary_statistics: dict[str, np.number] = {}
+    stats: dict[str, np.number] = {}
+    # chunked storage does not necessarily demand compression
     # computing stats using chunks requires incremental updating of stats
     # thus measures which improve numerical robustness built into np.mean and np.std
-    # cannot be taken advantage of directly, here using Welford's algorithm to prevent
-    # catastrophic cancellation errors
-    # implementation differs for iuf and c datatype kinds
-    # mean and std for iu types will be promoted to floating like np does
-    """
+    # Welford's algorithm to prevent catastrophic cancellation errors but other
+    # numerical robustness tricks that np.mean and np.std use are not applied !
+    # only one implementation for "iu" and "f" kinds despite "iu" np.mean and np.std
+    # internally promote to float(ing)
+    stats["__mean"] = np.nan
+    stats["__std"] = np.nan
+    stats["__min"] = +np.inf
+    stats["__max"] = -np.inf
+    stats["__size"] = np.size(hdf_node)
+    stats["__ndim"] = np.ndim(hdf_node)
+
+    # initialize Welford
+    n = 0
+    mean = 0.0
+    M2 = 0.0
+
     for chunk in hdf_node.iter_chunks():
-        field_chunk = hdf_node[chunk].ravel()  # auto-decompressed, 1d value stream
-        # chunked storage does not necessarily demand compression
-        mask_chunk = np.isfinite(field_chunk)
-        if np.any(mask_chunk):
-            field_stats = _get_field_stats
-        # ######
-    """
-    """
-    n = 0
-    mean = 0.0
-    M2 = 0.0
-
-    for chunk in chunks:
-        for x in chunk.ravel():
-            n += 1
-            delta = x - mean
-            mean += delta / n
-            M2 += delta * (x - mean)
-
-    # results
-    variance = M2 / n          # population variance (like numpy.std(..., ddof=0)**2)
-    std = math.sqrt(variance)
-
-    If you need sample std (ddof=1):
-
-    variance = M2 / (n - 1)
-    std = math.sqrt(variance)
-
-    n = 0
-    mean = 0.0
-    M2 = 0.0
-
-    for chunk in chunks:
-        x = np.asarray(chunk)
-
-        # chunk stats (vectorized)
-        k = x.size
-        if k == 0:
+        slab = hdf_node[chunk]  # .reshape(-1)
+        # auto-decompressed, 1d value stream
+        values = slab[np.isfinite(slab)]
+        if values.size == 0:
             continue
-        mean_c = x.mean()
-        M2_c = ((x - mean_c) ** 2).sum()   # or: x.var(ddof=0) * k
 
-        # combine (parallel/Welford merge)
+        stats["__min"] = np.minimum(stats["__min"], values.min())
+        stats["__max"] = np.maximum(stats["__max"], values.max())
+
+        # vectorized Welford update
+        k = values.size
+        mean_c = values.mean()
+        M2_c = ((values - mean_c) ** 2).sum()
+
         if n == 0:
             n = k
             mean = mean_c
             M2 = M2_c
-        else:
-            delta = mean_c - mean
-            n_new = n + k
-            mean = mean + delta * (k / n_new)
-            M2 = M2 + M2_c + delta * delta * (n * k / n_new)
-            n = n_new
+            continue
 
-    # results
-    var = M2 / n            # ddof=0
-    std = math.sqrt(var)
-    """
-    if hdf_node.dtype.kind in "iu":
-        pass
-    elif hdf_node.dtype.kind in "f":
-        pass
-    elif hdf_node.dtype.kind in "c":
-        pass
-        # no summary statistics currently for complex arrays
-    return summary_statistics
+        delta = mean_c - mean
+        n_new = n + k
+
+        mean = mean + delta * (k / n_new)
+        M2 = M2 + M2_c + delta * delta * (n * k / n_new)
+        n = n_new
+
+    stats["__mean"] = mean if n > 0 else np.nan
+    stats["__std"] = np.sqrt(M2 / n) if n > 0 else np.nan
+    # to match np.std uses ddof=0 by default
+    return stats
+    # use M2 / (n - 1) for sample std, casting necessary ?
+    # summary_statistics["__mean"] = np.asarray(mean, dtype=hdf_node.dtype).item()
 
 
-def _get_field_stats_contiguous(hdf_node) -> dict[str, np.number]:
+def _get_field_stats_iuf_contiguous(hdf_node) -> dict[str, np.number]:
     """
     Get field stats when hdf_node uses contiguous storage layout
     """
-    summary_statistics: dict[str, np.number] = {}
-    if hdf_node.dtype.kind in "iufc":
-        # TODO whats with c ?
-        field = _get_value(hdf_node)
-        mask = np.isfinite(field)
-        if np.any(mask):
-            for suffix in FIELD_STATISTICS:
-                spec = FIELD_STATISTICS[suffix]
-                summary_statistics[suffix] = spec["function"](
-                    field[mask] if spec["mask"] else field
-                )
-        del mask, field
-    return summary_statistics
+    stats: dict[str, np.number] = {}
+
+    field = _get_value(hdf_node)
+    mask = np.isfinite(field)
+    if np.any(mask):
+        for suffix in FIELD_STATISTICS:
+            spec = FIELD_STATISTICS[suffix]
+            stats[suffix] = spec["function"](field[mask] if spec["mask"] else field)
+    del mask, field
+
+    return stats
 
 
 class NexusParser(MatchingParser):
@@ -390,38 +368,48 @@ class NexusParser(MatchingParser):
                 )
                 return
 
-            # for iufc datasets only statistics if not all values NINF, Inf, or NaN
-            field_stats: dict[str, np.number] = {}
-            if hdf_node.dtype.kind == "iufc":
-                if hdf_node.shape != ():  # non-scalar, compute stats
-                    if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
-                        field_stats = _get_field_stats_chunked(hdf_node)
-                    else:  # costly loading of entire dataset contiguous storage layout
-                        field_stats = _get_field_stats_contiguous(hdf_node)
+            field_stats: dict[str, np.number] = {}  # stats built from finite iuf arrays
 
-                    if "__mean" in field_stats:
-                        field = field_stats["__mean"]
-                        if not np.isfinite(field):
+            if hdf_node.dtype.kind == "iuf":
+                if hdf_node.shape > 0:  # non-scalar, compute stats
+                    if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
+                        field_stats = _get_field_stats_iuf_chunked(hdf_node)
+                    else:  # load entire contiguous storage layout dataset at once
+                        field_stats = _get_field_stats_iuf_contiguous(hdf_node)
+
+                    for suffix in FIELD_STATISTICS:
+                        if not np.isfinite(field_stats.get(suffix, np.nan)):
                             self._logger.info(
-                                "set NaN for field of an array",
+                                f"found {suffix} non existent or not finite for iuf value",
                                 target_name=field_name + "[" + data_instance_name + "]",
                             )
                             return
-                    else:
-                        self._logger.info(
-                            "unable to retrieve field_stats of an array",
-                            target_name=field_name + "[" + data_instance_name + "]",
-                        )
-                        return
+
+                    # now we are sure there that "__mean" and it is finite
+                    field = field_stats["__mean"]
                 else:  # scalar, no stats
                     field = hdf_node[()]
                     if not np.isfinite(field):
                         self._logger.info(
-                            "set NaN for field of a scalar",
+                            "found non finite iuf scalar",
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
-            else:  # for non iufc data use old approach, no stats for these
+            # for all non iuf data use old approach, no stats for any of these
+            # eventually make a second optimization round for complex numbers
+            # we have not faced though high volume examples yet
+            elif hdf_node.dtype.kind in "c":
+                if hdf_node.shape > 0:
+                    field = hdf_node[(0,) * hdf_node.ndim]  # just "first" value
+                else:
+                    field = hdf_node[()]
+                if not np.isfinite(field):
+                    self._logger.info(
+                        "found non finite c value",
+                        target_name=field_name + "[" + data_instance_name + "]",
+                    )
+                    return
+            else:
                 field = _get_value(hdf_node)
 
             # check if unit is given
@@ -435,11 +423,12 @@ class NexusParser(MatchingParser):
                     else:
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
-                    for suffix in FIELD_STATISTICS:
-                        if FIELD_STATISTICS[suffix]["mask"]:
-                            field_stats[suffix] = ureg.Quantity(
-                                field_stats[suffix], pint_unit
-                            )
+                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape > 0:
+                        for suffix in FIELD_STATISTICS:
+                            if FIELD_STATISTICS[suffix]["mask"]:
+                                field_stats[suffix] = ureg.Quantity(
+                                    field_stats[suffix], pint_unit
+                                )
 
                 except (ValueError, UndefinedUnitError):
                     pass
