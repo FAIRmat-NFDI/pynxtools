@@ -137,11 +137,11 @@ def _get_value(hdf_node):
         else:
             return bool(hdf_node[0])
 
-    if hdf_node.shape != ():
-        hdf_value = hdf_node[...]
+    hdf_value = hdf_node[...]
+    if hdf_value.shape != ():
         if hdf_value.dtype.kind == "iufc":
             return hdf_value
-        if hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
+        elif hdf_value.dtype.kind == "O":  # variable-length UTF-8 / object arrays
             # Recursively decode nested lists if needed
             def decode_array(arr):
                 result = []
@@ -154,7 +154,9 @@ def _get_value(hdf_node):
 
             return decode_array(hdf_value)
         return str([i for i in hdf_value.astype(str)])  # fallback for other arrays
-
+    else:
+        if hdf_value.dtype.kind == "iufc":
+            return hdf_value
     return hdf_node[()].decode()
 
 
