@@ -1314,6 +1314,29 @@ def format_error_message(msg: str) -> str:
         ),
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/my_link",
+                {
+                    "link": "/my_entry/specified_group_with_no_name_type/specified_field_with_no_name_type"
+                },
+            ),
+            [],
+            id="valid-nxlink-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/my_link",
+                {"link": "my_entry/required_group/non_existent_field"},
+            ),
+            [
+                "Broken link at /ENTRY[my_entry]/my_link to my_entry/required_group/non_existent_field.",
+                "The key /ENTRY[my_entry]/my_link will not be written.",
+            ],
+            id="invalid-nxlink-type",
+        ),
+        pytest.param(
+            alter_dict(
                 remove_from_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/optional_parent/optional_child",
