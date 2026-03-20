@@ -768,14 +768,14 @@ class NexusChoice(NexusNode):
 
 class NexusLink(NexusNode):
     """
-    A representation of a NeXus choice.
+    A representation of a NeXus link.
     It just collects the suggested target value.
 
     Args:
         nx_type (Literal["choice"]):
-            Just ties this node to the choice tag in the nxdl file.
+            Just ties this node to the link tag in the nxdl file.
             Should and cannot be manually altered.
-            Defaults to "choice".
+            Defaults to "link".
     """
 
     nx_type: Literal["link"] = "link"
@@ -1117,7 +1117,7 @@ class NexusEntity(NexusNode):
     def _set_type(self):
         """
         Sets the dtype of the current entity based on the values in the inheritance chain.
-        The first vale found is used.
+        The first value found is used.
         """
         for elem in self.inheritance:
             if "type" in elem.attrib:
@@ -1127,7 +1127,7 @@ class NexusEntity(NexusNode):
     def _set_unit(self):
         """
         Sets the unit of the current entity based on the values in the inheritance chain.
-        The first vale found is used.ad
+        The first value found is used.
         """
         for elem in self.inheritance:
             if "units" in elem.attrib:
@@ -1138,7 +1138,7 @@ class NexusEntity(NexusNode):
         """
         Sets the enumeration items of the current entity
         based on the values in the inheritance chain.
-        The first vale found is used.
+        The first value found is used.
         """
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
@@ -1165,7 +1165,7 @@ class NexusEntity(NexusNode):
     def _set_shape(self):
         """
         Sets the shape of the current entity based on the values in the inheritance chain.
-        The first vale found is used.
+        The first value found is used.
         """
         for elem in self.inheritance:
             dimension = elem.find(f"nx:dimensions", namespaces=namespaces)
