@@ -156,7 +156,7 @@ class NomadElnGenerator(ElnGenerator):
         sections[root_name].update(
             {
                 "base_sections": [
-                    "pynxtools.nomad.dataconverter.NexusDataConverter",
+                    "pynxtools.nomad.schema_packages.dataconverter.NexusDataConverter",
                     "nomad.datamodel.data.EntryData",
                 ]
             }
