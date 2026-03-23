@@ -74,31 +74,31 @@ convert = [
 ]
 
 apm = [
-    "pynxtools-apm>=0.2.3",
+    "pynxtools-apm>=0.5.0",
 ]
 ellips = [
-    "pynxtools-ellips>=0.0.10",
+    "pynxtools-ellips>=0.1.2",
 ]
 em = [
-    "pynxtools-em>=0.3.2",
+    "pynxtools-em>=0.4.3",
 ]
 igor = [
-    "pynxtools-igor>=0.1.2",
+    "pynxtools-igor>=0.1.5",
 ]
 mpes = [
-    "pynxtools-mpes>=0.2.3",
+    "pynxtools-mpes>=0.2.7",
 ]
 raman = [
-    "pynxtools-raman>=0.0.11",
+    "pynxtools-raman>=0.1.2",
 ]
 spm = [
-    "pynxtools-spm>=0.1.2",
+    "pynxtools-spm>=0.2.3",
 ]
 xps = [
-    "pynxtools-xps>=0.5.2",
+    "pynxtools-xps>=0.6.0",
 ]
 xrd = [
-    "pynxtools-xrd>=0.0.5",
+    "pynxtools-xrd>=0.0.8",
 ]
 
 [project.entry-points.'nomad.plugin']
