@@ -1163,7 +1163,7 @@ def init_nexus_metainfo():
 
     except Exception:
         nexus_metainfo_package = create_metainfo_package()
-        save_nexus_schema()
+        # save_nexus_schema()
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
