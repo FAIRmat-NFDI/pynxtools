@@ -507,7 +507,7 @@ class NexusParser(MatchingParser):
                                 current.m_def.all_quantities, concept_basename + suffix
                             )
                             stat = MQuantity.wrap(
-                                FIELD_STATISTICS[suffix], instance_name + suffix
+                                field_stats[suffix], instance_name + suffix
                             )
                             current.m_set(stat_metainfo_def, stat)
                             # stat.m_set_attribute("m_nx_data_path", hdf_node.name)

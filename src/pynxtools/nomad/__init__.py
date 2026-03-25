@@ -67,7 +67,7 @@ FIELD_STATISTICS: dict[str, dict] = {
     "__max": {"function": np.max, "type": None, "mask": True},
     "__size": {
         "function": np.size,
-        "type": np.uint64,
+        "type": np.int64,
         "mask": False,
     },  # old value np.int32 could have overflown if array values are larger than 2**32
     "__ndim": {
