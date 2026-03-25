@@ -32,7 +32,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-schema = "pynxtools.nomad.schema_packages.schema.Root"
+schema = "pynxtools.nomad.schema.Root"
 
 
 nexus_app = AppEntryPoint(
