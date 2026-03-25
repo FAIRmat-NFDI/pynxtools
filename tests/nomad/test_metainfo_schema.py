@@ -41,7 +41,7 @@ def test_assert_nexus_metainfo_json_file():
 
 
 @pytest.mark.skip(
-    reason="This test is for testing the nexus metainfo schema from a jaon file. Currently we deactivated it."
+    reason="This test is for testing the nexus metainfo schema from a json file. Currently we deactivated it."
 )
 @pytest.mark.parametrize(
     "path,value",
