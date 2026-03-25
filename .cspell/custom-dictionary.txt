@@ -181,6 +181,7 @@ ndims
 nexpy
 nexusapp
 nexusformat
+njit
 nodemixin
 nonvariadic
 nslots

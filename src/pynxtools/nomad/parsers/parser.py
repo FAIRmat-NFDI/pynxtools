@@ -22,7 +22,6 @@ import lxml.etree as ET
 import numpy as np
 
 DEBUG_PYNXTOOLS_WITH_NOMAD: bool = False
-COMPUTE_MEAN_AND_STD_FOR_ARRAYS: bool = False  # True old behavior
 
 try:
     from ase.data import chemical_symbols
@@ -162,79 +161,100 @@ def _get_field(hdf_node):
     return hdf_node[()].decode()
 
 
-def _get_field_stats_iuf_chunked(hdf_node) -> dict:
+def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
     """
     Get field stats when hdf_node uses chunked storage layout
     """
     stats: dict = {}
-    # chunked storage does not necessarily demand compression
-    # computing stats using chunks requires incremental updating of stats
-    # thus measures which improve numerical robustness built into np.mean and np.std
-    # Welford's algorithm to prevent catastrophic cancellation errors but other
-    # numerical robustness tricks that np.mean and np.std use are not applied !
+    # using a chunked storage layout does not necessarily demand usage of compression
+    # computing stats using chunks enables an incremental updating of stats
+    # while excellent for reducing the memory consumption a clear disadvantage is that
+    # measures typically implemented under the hood of np.mean and np.std cannot be used
+    # out of the box and expected to yield the best possible numerical robustness
+    # and accuracy given that how chunks stream in and how large they can affect
+    # numerical precision
+    # an alternative in every case is using Welford's algorithm to prevent such
+    # catastrophic cancellation errors, this algorithm is inherently sequential though
+    # and thus even if vectorized (non-trivial implementation) eventual an order of
+    # magnitude more costly than np.mean and np.std which are vectorized
+
+    # passing the mean as the representative of an array for NOMAD Metainfo is a choice
+    # that is also not without debate it is questionable though whether this warrants
+    # to use then one of the most costly algorithms despite it being theoretically the
+    # most precise one
+
+    # the implementation here shows two approaches:
+    # i) classical Welford
+    # ii) vectorized implementation of the naive formula summarizing over chunks
+    # for computing mean and std using np.float64 in the accumulator though
+    # iii) using np.float128 precision would result in software emulation on the hardware
+    # making the computation substantially more costly than for np.float64
+
     # only one implementation for "iu" and "f" kinds despite "iu" np.mean and np.std
     # internally promote to float(ing)
-    stats["__mean"] = np.nan
-    stats["__std"] = np.nan
-    stats["__min"] = +np.inf
-    stats["__max"] = -np.inf
-    stats["__size"] = np.size(hdf_node)
-    stats["__ndim"] = np.ndim(hdf_node)
+    stats["__min"] = np.float64(+np.inf)
+    stats["__max"] = np.float64(-np.inf)
+    # required inits with use_welford == True
+    n = np.int64(0)
+    mean = np.float64(0.0)
+    # M2 = np.float64(0.0)
+    # required inits with use_welford == False
+    sum = np.float64(0.0)
 
-    # initialize Welford
-    n = 0
-    mean = 0.0
-    M2 = 0.0
+    # not that np.mean on iu types by default promotes to np.float64
+    # but np.mean on an np.ndarray of dtype=np.float32 does not automatically
+    # use an np.float64 accumulator !
 
-    for chunk in hdf_node.iter_chunks():
-        slab = hdf_node[chunk]  # will automatically decompress
-        values = slab[np.isfinite(slab)]  # copy ok, because chunks typically MiB
+    if not use_welford:
+        for chunk in hdf_node.iter_chunks():
+            slab = hdf_node[chunk]
+            values = slab[np.isfinite(slab)]
+            number_of_values = values.size
+            if number_of_values > 0:
+                stats["__min"] = np.minimum(stats["__min"], values.min())
+                stats["__max"] = np.maximum(stats["__max"], values.max())
 
-        if values.size > 0:
-            stats["__min"] = np.minimum(stats["__min"], values.min())
-            stats["__max"] = np.maximum(stats["__max"], values.max())
-
-            if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
-                # true element-wise Welford update more precise but substantially slower
-                for x in values:
-                    n += 1
-                    delta = x - mean
-                    mean += delta / n
-                    delta2 = x - mean
-                    M2 += delta * delta2
-
-                """
-                # vectorized Welford update
-                # empirically found not as stable
-                k = values.size
-                mean_c = values.mean()
-                M2_c = ((values - mean_c) ** 2).sum()
-
-                if n == 0:
-                    n = k
-                    mean = mean_c
-                    M2 = M2_c
-                    continue
-
-                delta = mean_c - mean
-                n_new = n + k
-
-                mean = mean + delta * (k / n_new)
-                M2 = M2 + M2_c + delta * delta * (n * k / n_new)
-                n = n_new
-                """
-
-    if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
-        stats["__mean"] = mean if n > 0 else np.nan
-        stats["__std"] = np.sqrt(M2 / n) if n > 0 else np.nan
-        # to match np.std uses ddof=0 by default
+                sum += np.sum(values, dtype=np.float64)
+                n += np.int64(number_of_values)
+        mean_result = sum / np.float64(n) if n > 0 else np.float64(np.nan)
     else:
-        stats["__mean"] = 0.0
-        stats["__std"] = 0.0
+        for chunk in hdf_node.iter_chunks():
+            slab = hdf_node[chunk]  # will automatically decompress
+            values = slab[np.isfinite(slab)]
+            # copies ok, because chunks typically in MiB size range
+
+            if values.size > 0:
+                stats["__min"] = np.minimum(stats["__min"], values.min())
+                stats["__max"] = np.maximum(stats["__max"], values.max())
+                # true element-wise Welford update more precise but substantially slower
+                # @njit, i.e. numba could make this faster but add third-party deps
+                for x in values:  # inherently sequential algorithm
+                    value = np.float64(x)
+                    n += np.int64(1)
+                    delta = value - mean
+                    mean += delta / np.float64(n)
+                    # delta2 = value - mean
+                    # M2 += delta * delta2
+        mean_result = mean if n > 0 else np.float64(np.nan)
+        # std_result = np.sqrt(M2 / np.float64(n)) if n > 0 else np.float64(np.nan)
+        # to match np.std uses ddof=0 by default, use M2 / (n - 1) for sample std
+
+    # need to cast to correct return type
+    if hdf_node.dtype.kind == "iu":
+        stats["__mean"] = np.asarray(mean_result, dtype=hdf_node.dtype).item()
+        # stats["__std"] = np.asarray(std_result, dtype=hdf_node.dtype).item()
+        stats["__min"] = np.asarray(stats["__min"], dtype=hdf_node.dtype).item()
+        stats["__max"] = np.asarray(stats["__max"], dtype=hdf_node.dtype).item()
+    else:  # f, always return float64
+        stats["__mean"] = mean_result
+        # stats["__std"] = std_result
+        stats["__min"] = np.float64(stats["__min"])
+        stats["__max"] = np.float64(stats["__max"])
+
+    stats["__size"] = np.int64(np.size(hdf_node))
+    stats["__ndim"] = np.uint8(np.ndim(hdf_node))
 
     return stats
-    # use M2 / (n - 1) for sample std, casting necessary ?
-    # summary_statistics["__mean"] = np.asarray(mean, dtype=hdf_node.dtype).item()
 
 
 def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
@@ -243,23 +263,36 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
     """
     stats: dict = {}
 
+    stats["__min"] = np.float64(+np.inf)
+    stats["__max"] = np.float64(-np.inf)
+    n = np.int64(0)
+    sum = np.float64(0.0)
+
     field = _get_field(hdf_node)
     mask = np.isfinite(field)
-    if np.any(mask):
-        if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
-            for suffix in FIELD_STATISTICS:
-                spec = FIELD_STATISTICS[suffix]
-                # this field[mask] btw is another copy what made the original so costly
-                stats[suffix] = spec["function"](field[mask] if spec["mask"] else field)
-        else:
-            for suffix in FIELD_STATISTICS:
-                if suffix not in ["__mean", "__std"]:
-                    spec = FIELD_STATISTICS[suffix]
-                    stats[suffix] = spec["function"](
-                        field[mask] if spec["mask"] else field
-                    )
-                else:
-                    stats[suffix] = 0.0
+    n_values = np.count_nonzero(mask)
+    if n_values > 0:
+        stats["__min"] = np.minimum(stats["__min"], np.min(field[mask]))
+        stats["__max"] = np.maximum(stats["__max"], np.max(field[mask]))
+
+        sum = np.sum(field[mask], dtype=np.float64)
+        n += np.int64(n_values)
+        mean_result = sum / np.float64(n) if n > 0 else np.float64(np.nan)
+    else:
+        mean_result = np.float64(np.nan)
+
+    # need to cast to correct return type
+    if hdf_node.dtype.kind == "iu":
+        stats["__mean"] = np.asarray(mean_result, dtype=hdf_node.dtype).item()
+        stats["__min"] = np.asarray(stats["__min"], dtype=hdf_node.dtype).item()
+        stats["__max"] = np.asarray(stats["__max"], dtype=hdf_node.dtype).item()
+    else:  # f, always return float64, possibly promoting
+        stats["__mean"] = mean_result
+        stats["__min"] = np.float64(stats["__min"])
+        stats["__max"] = np.float64(stats["__max"])
+
+    stats["__size"] = np.int64(np.size(hdf_node))
+    stats["__ndim"] = np.uint8(np.ndim(hdf_node))
 
     return stats
 
@@ -420,10 +453,9 @@ class NexusParser(MatchingParser):
                             return
 
                     # now we are sure that key "__mean" exists and it value is finite
-                    if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
-                        field = field_stats["__mean"]
-                    else:
-                        field = hdf_node[(0,) * hdf_node.ndim]
+                    # if COMPUTE_MEAN_AND_STD_FOR_ARRAYS:
+                    field = field_stats["__mean"]
+                    # field = hdf_node[(0,) * hdf_node.ndim]
                 else:  # scalar, no stats
                     field = hdf_node[()]
                     if not np.isfinite(field):
@@ -497,12 +529,7 @@ class NexusParser(MatchingParser):
                         # ignore mean as for non-scalar iuf datasets
                         # the mean is taken as the representative value
                         # I do not think that taking the mean as a proxy is useful
-                        if suffix != "__mean":
-                            if (
-                                suffix == "__std"
-                                and not COMPUTE_MEAN_AND_STD_FOR_ARRAYS
-                            ):
-                                continue
+                        if suffix != "__mean":  # , "__std"):
                             stat_metainfo_def = resolve_variadic_name(
                                 current.m_def.all_quantities, concept_basename + suffix
                             )
