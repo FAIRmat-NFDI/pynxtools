@@ -44,22 +44,24 @@ from pynxtools.dataconverter.chunk import (
     PYNX_ENABLE_BLOSC,
 )
 
-if (
-    PYNX_ENABLE_BLOSC
-    and importlib.util.find_spec("hdf5plugin") is not None
-    and importlib.util.find_spec("blosc2") is not None
-):
+if PYNX_ENABLE_BLOSC:
     import blosc2
     import hdf5plugin
 
-    NTHREADS_BLOSC = blosc2.set_nthreads(max(int(os.cpu_count() / 2), 1))
-    # do not oversubscribe to use hyperthreading cores
+    PYNX_ENABLE_BLOSC_NTHREADS = blosc2.set_nthreads(
+        min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
+    )
+    # do not oversubscribe as cpu_count counts Intel hyperthreading cores as real cores
+    # option to go with half also reasonable when used in a NOMAD deployment
+    # for getting maximum performance users should for now deploy from custom branches
+    # until there is a mechanism in NOMAD whereby configurations can be passed
+    # NOMAD plugins
     logger.info(
         f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
     )
     logger.info(blosc2.print_versions())
 else:
-    NTHREADS_BLOSC = 0
+    PYNX_ENABLE_BLOSC_NTHREADS = 0
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -216,7 +218,12 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
         else:
             if entry_name not in grp:
                 try:
-                    grp.create_dataset(entry_name, data=data["compress"])
+                    if not np.isscalar(data["compress"]):
+                        grp.create_dataset(
+                            entry_name, chunks=True, data=data["compress"]
+                        )
+                    else:
+                        grp.create_dataset(entry_name, data=data["compress"])
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")
             else:
@@ -398,10 +405,19 @@ class Writer:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
                                 )
-                        else:
+                        else:  # not compressed but chunked
+                            # yields fast retrieval and reduces large malloc calls via
+                            # enabling iterating over chunks (nomad/parsers/parser.py)
                             if entry_name not in grp:
                                 try:
-                                    dataset = grp.create_dataset(entry_name, data=data)
+                                    if not np.isscalar(data):
+                                        dataset = grp.create_dataset(
+                                            entry_name, chunks=True, data=data
+                                        )
+                                    else:
+                                        dataset = grp.create_dataset(
+                                            entry_name, data=data
+                                        )
                                 except ValueError:
                                     logger.warning(
                                         f"ValueError caught upon create_dataset {path}"
@@ -412,8 +428,13 @@ class Writer:
                                         f"Prevented the overwriting of dataset {path}"
                                     )
                     else:
-                        # contiguous data storage layout
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        # scalar data
+                        if not np.isscalar(data):
+                            dataset = grp.create_dataset(
+                                entry_name, chunks=True, data=data
+                            )
+                        else:
+                            dataset = grp.create_dataset(entry_name, data=data)
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding children"
                         )

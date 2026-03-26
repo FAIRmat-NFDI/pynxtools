@@ -35,13 +35,7 @@ COMPRESSION_STRENGTH: int = 9
 # using strongest compression is space efficient but takes substantially longer than 1
 
 PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
-# use only when it is acceptable to work with blosc2-compressed content downstreams
-# mind that doing so in C/C++, Matlab, and Fortran application requires specific
-# linking of these apps with a customized HDF5 library that links to the blosc library
-# consider that using blosc sets explicit a certain number of cores eligible for
-# doing compression and decompression work that may drain resources when pynxtools
-# is used in conjunction with other apps and services like NOMAD
-# check the set_nthreads in writer.py to modify accordingly for your best practice
+
 
 COMPRESSION_FILTERS: list[str] = (
     [COMPRESSION_FILTER, "blosc"]

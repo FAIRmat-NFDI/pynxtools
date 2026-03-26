@@ -213,6 +213,7 @@ reqs
 requiredness
 rtol
 setpoint
+sequentialization
 sherjeelshabih
 showgrid
 showlegend
@@ -246,3 +247,4 @@ yaxis
 ylabel
 zaxis
 zenodo
+zstd
