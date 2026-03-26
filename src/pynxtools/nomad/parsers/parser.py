@@ -199,7 +199,7 @@ def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
     mean = np.float64(0.0)
     # M2 = np.float64(0.0)
     # required inits with use_welford == False
-    sum = np.float64(0.0)
+    mean_sum = np.float64(0.0)
 
     # not that np.mean on iu types by default promotes to np.float64
     # but np.mean on an np.ndarray of dtype=np.float32 does not automatically
@@ -214,9 +214,9 @@ def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
                 stats["__min"] = np.minimum(stats["__min"], values.min())
                 stats["__max"] = np.maximum(stats["__max"], values.max())
 
-                sum += np.sum(values, dtype=np.float64)
+                mean_sum += np.sum(values, dtype=np.float64)
                 n += np.int64(number_of_values)
-        mean_result = sum / np.float64(n) if n > 0 else np.float64(np.nan)
+        mean_result = mean_sum / np.float64(n) if n > 0 else np.float64(np.nan)
     else:
         for chunk in hdf_node.iter_chunks():
             slab = hdf_node[chunk]  # will automatically decompress
@@ -228,7 +228,7 @@ def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
                 stats["__max"] = np.maximum(stats["__max"], values.max())
                 # true element-wise Welford update more precise but substantially slower
                 # @njit, i.e. numba could make this faster but add third-party deps
-                for x in values:  # inherently sequential algorithm
+                for x in values:  # inherently sequential Welford algorithm
                     value = np.float64(x)
                     n += np.int64(1)
                     delta = value - mean
@@ -236,7 +236,7 @@ def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
                     # delta2 = value - mean
                     # M2 += delta * delta2
         mean_result = mean if n > 0 else np.float64(np.nan)
-        # std_result = np.sqrt(M2 / np.float64(n)) if n > 0 else np.float64(np.nan)
+        # std_result = np.float64(np.sqrt(M2 / np.float64(n))) if n > 0 else np.float64(np.nan)
         # to match np.std uses ddof=0 by default, use M2 / (n - 1) for sample std
 
     # need to cast to correct return type
