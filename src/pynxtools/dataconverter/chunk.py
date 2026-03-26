@@ -27,6 +27,13 @@ import numpy as np
 # one wraps the payload for a dataconverter template into a dictionary with
 # keyword "compress", causing chunked layout to be used
 
+# order matters! 0th entry always taken as the default for backwards compatibility
+# "gzip" -> deflate, "blosc" -> "zstd"]
+COMPRESSION_FILTER: str = "gzip"
+COMPRESSION_STRENGTH: int = 9
+# integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
+# using strongest compression is space efficient but takes substantially longer than 1
+
 PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
 # use only when it is acceptable to work with blosc2-compressed content downstreams
 # mind that doing so in C/C++, Matlab, and Fortran application requires specific
@@ -37,7 +44,7 @@ PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
 # check the set_nthreads in writer.py to modify accordingly for your best practice
 
 COMPRESSION_FILTERS: list[str] = (
-    ["gzip", "blosc"]
+    [COMPRESSION_FILTER, "blosc"]
     if (
         PYNX_ENABLE_BLOSC
         and importlib.util.find_spec("hdf5plugin") is not None
@@ -45,11 +52,6 @@ COMPRESSION_FILTERS: list[str] = (
     )
     else ["gzip"]
 )
-# order matters! 0th entry always taken as the default for backwards compatibility
-# "gzip" -> deflate, "blosc" -> "zstd"]
-COMPRESSION_STRENGTH: int = 9
-# integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
-# using strongest compression is space efficient but takes substantially longer than 1
 
 # compressed payload is served as a dict with at least one keyword "compress",
 # "strength" is optional keyword for that dictionary to overwrite the default

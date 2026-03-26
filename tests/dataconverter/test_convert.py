@@ -222,6 +222,7 @@ def test_compression(tmp_path):
     assert "entry/test_compression/compressed_data" in test_nxs
     assert isinstance(test_nxs["/entry/test_compression/compressed_data"], h5py.Dataset)
     # pylint: disable=no-member
+    print(f">>>>>>> {test_nxs['/entry/test_compression/compressed_data'].compression}")
     assert test_nxs["/entry/test_compression/compressed_data"].compression == "gzip"
     assert test_nxs["/entry/test_compression/not_to_compress"].compression is None
 

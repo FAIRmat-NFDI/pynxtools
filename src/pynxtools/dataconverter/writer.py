@@ -39,7 +39,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 from pynxtools.dataconverter.chunk import (
-    COMPRESSION_FILTERS,
+    COMPRESSION_FILTER,
     COMPRESSION_STRENGTH,
     PYNX_ENABLE_BLOSC,
 )
@@ -175,13 +175,14 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            if ("filter" in data.keys()) and (data["filter"] in COMPRESSION_FILTERS):
-                if PYNX_ENABLE_BLOSC and data["filter"] == "blosc":
-                    compression_filter = data["filter"]
-                else:
-                    compression_filter = COMPRESSION_FILTERS[0]
+            if (
+                PYNX_ENABLE_BLOSC
+                and "filter" in data.keys()
+                and data["filter"] == "blosc"
+            ):
+                compression_filter = "blosc"
             else:  # fall-back to default
-                compression_filter = COMPRESSION_FILTERS[0]
+                compression_filter = COMPRESSION_FILTER
 
             if (
                 ("strength" in data.keys())
@@ -204,7 +205,6 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
                     grp.create_dataset(
                         entry_name,
                         data=data["compress"],
-                        compression=compression_filter,
                         chunks=chunking_strategy(data),
                         **compression_config,
                     )
