@@ -29,11 +29,11 @@ repos:
     rev: v9.7.0
     hooks:
       - id: cspell  # spellchecking
-        # pass_filenames: false
+        pass_filenames: false
         args:
           - --config
           - cspell.json
-          - --verbose
+          # - --verbose
           - README.md
           - CITATION.cff
           - docs/**/*

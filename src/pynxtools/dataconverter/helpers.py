@@ -306,7 +306,7 @@ class Collector:
         self,
         path: str,
         log_type: ValidationProblem,
-        value: Any | None = None,
+        value: Any | None,
         *args,
         **kwargs,
     ):
@@ -798,21 +798,15 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
 
 def is_valid_data_type_hdf(hdf_node: h5py.Dataset, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
-    dtype = hdf_node.dtype
+    if hdf_node.dtype != np.dtype("O"):
+        # standard numeric / fixed dtypes
+        return any(np.issubdtype(hdf_node.dtype, t) for t in accepted_types)
 
-    # handle object dtype (e.g., variable-length strings in HDF5)
-    if dtype == np.dtype("O"):
-        # for HDF5, object dtype usually means variable-length data
-        # we inspect the base type if available
-        vlen_type = h5py.check_dtype(vlen=dtype)
-
-        if vlen_type is not None:
-            return any(issubclass(vlen_type, t) for t in accepted_types)
-
-        return False
-
-    # standard numeric / fixed dtypes
-    return any(np.issubdtype(dtype, t) for t in accepted_types)
+    # Handle 'object' dtype separately (for lists from HDF5 files)
+    return all(
+        isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
+        for v in hdf_node[...].flat
+    )
 
 
 def is_positive_int(value: Any) -> bool:
@@ -834,7 +828,7 @@ def is_positive_int_hdf(hdf_node: h5py.Dataset) -> bool:
                     return False
             return True
         else:
-            return np.all(hdf_node[...] > 0)
+            return bool(np.all(hdf_node[...] > 0))
     return False
 
 
@@ -951,13 +945,18 @@ def is_valid_data_field_hdf(hdf_node: h5py.Dataset, nxdl_type: str, path: str):
 
     # type-specific validation
     if nxdl_type == "NX_POSINT" and not is_positive_int_hdf(hdf_node):
-        collector.collect_and_log(path, ValidationProblem.IsNotPosInt)
+        collector.collect_and_log(
+            path, ValidationProblem.IsNotPosInt, hdf_node[(0,) * hdf_node.ndim]
+        )
 
-    # TODO
-    # if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-    #     results = ISO8601.search(clean_str_attr(value))
-    #     if results is None:
-    #         collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
+    if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
+        if h5py.check_string_dtype(hdf_node.dtype) is not None and hdf_node.shape == ():
+            value = clean_str_attr(hdf_node[()])
+            results = ISO8601.search(value)
+            if results is None:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidDatetime, value
+                )
 
 
 def get_custom_attr_path(path: str) -> str:

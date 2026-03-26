@@ -2247,7 +2247,9 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 0,
             ),
-            [],
+            [
+                "The value at /my_entry/nxodd_name/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+            ],
             id="int-instead-of-float",
         ),
         pytest.param(
@@ -2315,7 +2317,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "The value at /my_entry/nxodd_name/posint_value "
-                "should be a positive int, but is [-1  2]."
+                "should be a positive int, but is -1."
             ],
             id="negative-posint-list",
         ),
@@ -2327,7 +2329,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [
                 "The value at /my_entry/nxodd_name/posint_value "
-                "should be a positive int, but is [-1  2]."
+                "should be a positive int, but is -1."
             ],
             id="negative-posint-array",
         ),
@@ -2400,7 +2402,9 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 [2],  # pylint: disable=E1126
             ),
-            [],
+            [
+                "The value at /my_entry/nxodd_name/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+            ],
             id="list-of-int-instead-of-float",
         ),
         pytest.param(
@@ -2409,7 +2413,9 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 np.array([2]),  # pylint: disable=E1126
             ),
-            [],
+            [
+                "The value at /my_entry/nxodd_name/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
+            ],
             id="array-of-int-instead-of-float",
         ),
         pytest.param(
@@ -3589,6 +3595,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
         pytest.param(
             ["src/pynxtools/data/201805_WSe2_arpes.nxs"],
             [
+                "The value at /entry/collection_time should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "The unit /entry/data/data/@units = counts has no documentation.",
                 "The unit /entry/data/angles/@units = 1/Å has no documentation.",
                 "The unit /entry/data/energies/@units = eV has no documentation.",
@@ -3606,15 +3613,20 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
                 "Field /entry/instrument/analyser/projection has no documentation.",
                 "Field /entry/instrument/analyser/sensor_count has no documentation.",
                 "Field /entry/instrument/analyser/working_distance has no documentation.",
+                "The value at /entry/instrument/beam_probe_0/distance should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "Field /entry/instrument/beam_probe_0/photon_energy has no documentation.",
                 "Field /entry/instrument/beam_probe_0/polarization_angle has no documentation.",
                 "Field /entry/instrument/beam_probe_0/polarization_ellipticity has no documentation.",
+                "The value at /entry/instrument/beam_probe_0/pulse_duration should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "Field /entry/instrument/beam_probe_0/size_x has no documentation.",
                 "Field /entry/instrument/beam_probe_0/size_y has no documentation.",
                 "Field /entry/instrument/beam_pump_0/center_wavelength has no documentation.",
+                "The value at /entry/instrument/beam_pump_0/distance should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+                "The value at /entry/instrument/beam_pump_0/fluence should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "Field /entry/instrument/beam_pump_0/photon_energy has no documentation.",
                 "Field /entry/instrument/beam_pump_0/polarization_angle has no documentation.",
                 "Field /entry/instrument/beam_pump_0/polarization_ellipticity has no documentation.",
+                "The value at /entry/instrument/beam_pump_0/pulse_duration should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "Field /entry/instrument/beam_pump_0/size_x has no documentation.",
                 "Field /entry/instrument/beam_pump_0/size_y has no documentation.",
                 "Field /entry/instrument/energy_resolution has no documentation.",
@@ -3629,16 +3641,24 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
                 "Field /entry/instrument/manipulator/type has no documentation.",
                 "Field /entry/instrument/monochromator/slit has no documentation.",
                 "Field /entry/instrument/monochromator/slit/y_gap has no documentation.",
+                "The value at /entry/instrument/source/bunch_distance should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+                "The value at /entry/instrument/source/bunch_length should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "Field /entry/instrument/source/burst_distance has no documentation.",
                 "Field /entry/instrument/source/burst_length has no documentation.",
                 "Field /entry/instrument/source/burst_number_end has no documentation.",
                 "Reserved suffix '_end' was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.",
                 "Field /entry/instrument/source/burst_number_start has no documentation.",
+                "The value at /entry/instrument/source/current should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+                "The value at /entry/instrument/source/energy should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+                "The value at /entry/instrument/source/frequency should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "The value 'Burst' at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.",
                 "Field /entry/instrument/source/number_of_bursts has no documentation.",
                 "The value 'Free Electron Laser' at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.",
+                "The value at /entry/instrument/source_pump/bunch_distance should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
+                "The value at /entry/instrument/source_pump/bunch_length should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "Field /entry/instrument/source_pump/burst_distance has no documentation.",
                 "Field /entry/instrument/source_pump/burst_length has no documentation.",
+                "The value at /entry/instrument/source_pump/frequency should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT.",
                 "The value 'Burst' at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.",
                 "Field /entry/instrument/source_pump/number_of_bursts has no documentation.",
                 "The value 'NIR' at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].",
