@@ -16,6 +16,24 @@
 # limitations under the License.
 #
 
-# Backwards compatible fix to bring schemas to GUI
-# TODO: remove this entire file; this dynamic registration shall anyway be removed
-from pynxtools.nomad.schema_packages.schema import *
+try:
+    from nomad.config.models.plugins import ParserEntryPoint
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
+
+
+class NexusParserEntryPoint(ParserEntryPoint):
+    def load(self):
+        from pynxtools.nomad.parsers.parser import NexusParser
+
+        return NexusParser(**self.dict())
+
+
+nexus_parser = NexusParserEntryPoint(
+    name="pynxtools parser",
+    description="A parser for nexus files.",
+    mainfile_name_re=r".*\.nxs",
+    mainfile_mime_re="application/x-hdf*",
+)

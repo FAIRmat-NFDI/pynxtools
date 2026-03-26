@@ -11,11 +11,14 @@ nav:
   - Tutorials:
     - tutorial/installation.md
     - tutorial/converting-data-to-nexus.md
+    - tutorial/writing-an-application-definition.md
+    - tutorial/build-a-reader.md
+    - tutorial/bring-your-own-data.md
     - tutorial/nexus-to-nomad.md
     - tutorial/contributing.md
   - How-tos:
     - NeXus:
-      - how-tos/nexus/writing-an-appdef.md
+      - how-tos/nexus/write-an-application-definition.md
       # - how-tos/nexus/using-multiple-appdefs.md
       # - how-tos/nexus/transformations.md
     - pynxtools:
@@ -25,6 +28,7 @@ nav:
       - how-tos/pynxtools/run-tests-in-parallel.md
       - how-tos/pynxtools/create-nexus-files-by-python.md
       - how-tos/pynxtools/validate-nexus-files.md
+      - how-tos/pynxtools/use-with-nomad.md
   - Learn:
     - NeXus:
       - learn/nexus/nexus-primer.md
@@ -38,6 +42,7 @@ nav:
       - learn/pynxtools/dataconverter-append-mode.md
       - learn/pynxtools/compression.md
       - learn/pynxtools/versioning.md
+      - learn/pynxtools/nomad-integration.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md

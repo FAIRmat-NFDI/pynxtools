@@ -226,17 +226,16 @@ def convert(
         skip_verify=skip_verify,
         **kwargs,
     )
-
     helpers.add_default_root_attributes(
         data=data,
         filename=os.path.basename(output),
-        append=True if "append" in kwargs else False,
+        append=kwargs.get("append", False),
     )
     Writer(
         data=data,
         nxdl_f_path=nxdl_f_path,
         output_path=output,
-        append=kwargs["append"] if "append" in kwargs else False,
+        append=kwargs.get("append", False),
     ).write()
 
     logger.info(f"The output file generated: {output}.")
