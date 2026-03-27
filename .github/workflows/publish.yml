@@ -82,9 +82,9 @@ jobs:
       - name: Build package
         run: |
           git reset --hard HEAD
-          rm -f src/pynxtools/nomad/schema_packages/nxs_metainfo_package_*.json
-          export PYNXTOOLS_BUILD_PACKAGE=1
-          uv run --extra nomad scripts/generate_package.py
+          # rm -f src/pynxtools/nomad/schema_packages/nxs_metainfo_package_*.json
+          # export PYNXTOOLS_BUILD_PACKAGE=1
+          # uv run --extra nomad scripts/generate_package.py
           uv build
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
