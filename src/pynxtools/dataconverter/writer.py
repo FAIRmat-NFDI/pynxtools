@@ -20,7 +20,9 @@
 # pylint: disable=R0912
 
 import copy
+import importlib.util
 import logging
+import os
 import sys
 import xml.etree.ElementTree as ET
 
@@ -36,7 +38,30 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS, COMPRESSION_STRENGTH
+from pynxtools.dataconverter.chunk import (
+    COMPRESSION_FILTER,
+    COMPRESSION_STRENGTH,
+    PYNX_ENABLE_BLOSC,
+)
+
+if PYNX_ENABLE_BLOSC:
+    import blosc2
+    import hdf5plugin
+
+    PYNX_ENABLE_BLOSC_NTHREADS = blosc2.set_nthreads(
+        min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
+    )
+    # do not oversubscribe as cpu_count counts Intel hyperthreading cores as real cores
+    # option to go with half also reasonable when used in a NOMAD deployment
+    # for getting maximum performance users should for now deploy from custom branches
+    # until there is a mechanism in NOMAD whereby configurations can be passed
+    # NOMAD plugins
+    logger.info(
+        f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
+    )
+    logger.info(blosc2.print_versions())
+else:
+    PYNX_ENABLE_BLOSC_NTHREADS = 0
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -152,10 +177,14 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            if ("filter" in data.keys()) and (data["filter"] in COMPRESSION_FILTERS):
-                compression_filter = data["filter"]
+            if (
+                PYNX_ENABLE_BLOSC
+                and "filter" in data.keys()
+                and data["filter"] == "blosc"
+            ):
+                compression_filter = "blosc"
             else:  # fall-back to default
-                compression_filter = COMPRESSION_FILTERS[0]
+                compression_filter = COMPRESSION_FILTER
 
             if (
                 ("strength" in data.keys())
@@ -168,12 +197,18 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
 
             if entry_name not in grp:
                 try:
+                    if compression_filter == "gzip":
+                        compression_config = dict(
+                            compression=compression_filter,
+                            compression_opts=compression_strength,
+                        )
+                    else:  # by virtue of construction blosc
+                        compression_config = hdf5plugin.Blosc2(cname="zstd", clevel=9)
                     grp.create_dataset(
                         entry_name,
                         data=data["compress"],
-                        compression=compression_filter,
                         chunks=chunking_strategy(data),
-                        compression_opts=compression_strength,
+                        **compression_config,
                     )
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")
@@ -183,7 +218,12 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
         else:
             if entry_name not in grp:
                 try:
-                    grp.create_dataset(entry_name, data=data["compress"])
+                    if not np.isscalar(data["compress"]):
+                        grp.create_dataset(
+                            entry_name, chunks=True, data=data["compress"]
+                        )
+                    else:
+                        grp.create_dataset(entry_name, data=data["compress"])
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")
             else:
@@ -365,10 +405,19 @@ class Writer:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
                                 )
-                        else:
+                        else:  # not compressed but chunked
+                            # yields fast retrieval and reduces large malloc calls via
+                            # enabling iterating over chunks (nomad/parsers/parser.py)
                             if entry_name not in grp:
                                 try:
-                                    dataset = grp.create_dataset(entry_name, data=data)
+                                    if not np.isscalar(data):
+                                        dataset = grp.create_dataset(
+                                            entry_name, chunks=True, data=data
+                                        )
+                                    else:
+                                        dataset = grp.create_dataset(
+                                            entry_name, data=data
+                                        )
                                 except ValueError:
                                     logger.warning(
                                         f"ValueError caught upon create_dataset {path}"
@@ -379,8 +428,13 @@ class Writer:
                                         f"Prevented the overwriting of dataset {path}"
                                     )
                     else:
-                        # contiguous data storage layout
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        # scalar data
+                        if not np.isscalar(data):
+                            dataset = grp.create_dataset(
+                                entry_name, chunks=True, data=data
+                            )
+                        else:
+                            dataset = grp.create_dataset(entry_name, data=data)
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding children"
                         )

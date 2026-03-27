@@ -18,6 +18,7 @@
 
 """Configuration and utilities for customized chunking and compression."""
 
+import importlib.util
 import logging
 
 import numpy as np
@@ -26,11 +27,25 @@ import numpy as np
 # one wraps the payload for a dataconverter template into a dictionary with
 # keyword "compress", causing chunked layout to be used
 
-COMPRESSION_FILTERS: list[str] = ["gzip"]  # deflate
+# order matters! 0th entry always taken as the default for backwards compatibility
+# "gzip" -> deflate, "blosc" -> "zstd"]
+COMPRESSION_FILTER: str = "gzip"
 COMPRESSION_STRENGTH: int = 9
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
-# using strongest compression is space efficient but can take substantially longer than
-# using 1
+# using strongest compression is space efficient but takes substantially longer than 1
+
+PYNX_ENABLE_BLOSC: bool = False  # deactivated by default
+
+
+COMPRESSION_FILTERS: list[str] = (
+    [COMPRESSION_FILTER, "blosc"]
+    if (
+        PYNX_ENABLE_BLOSC
+        and importlib.util.find_spec("hdf5plugin") is not None
+        and importlib.util.find_spec("blosc2") is not None
+    )
+    else ["gzip"]
+)
 
 # compressed payload is served as a dict with at least one keyword "compress",
 # "strength" is optional keyword for that dictionary to overwrite the default
@@ -75,7 +90,6 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
 }
 
 CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
-
 
 logger = logging.getLogger("pynxtools")
 
