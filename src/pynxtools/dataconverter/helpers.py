@@ -803,9 +803,12 @@ def is_valid_data_type_hdf(hdf_node: h5py.Dataset, accepted_types: Sequence) -> 
         return any(np.issubdtype(hdf_node.dtype, t) for t in accepted_types)
 
     # Handle 'object' dtype separately (for lists from HDF5 files)
+    value = hdf_node[...]
+    if not isinstance(value, np.ndarray):
+        value = np.array(value)
     return all(
         isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
-        for v in hdf_node[...].flat
+        for v in value.flat
     )
 
 
