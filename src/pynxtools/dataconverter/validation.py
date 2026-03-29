@@ -229,10 +229,10 @@ def validate_hdf_group_against(
     # Only cache based on path. That way we retain the nx_class information
     # in the tree
     # Allow for 10000 cache entries. This should be enough for most cases
-    @cached(
-        cache=LRUCache(maxsize=10000),
-        key=lambda path, node_type=None, nx_class=None, hint=None: hashkey(path),
-    )
+    # @cached(
+    #     cache=LRUCache(maxsize=10000),
+    #     key=lambda path, node_type=None, nx_class=None, hint=None: hashkey(path),
+    # )
     def find_node_for(
         path: str,
         node_type: Literal["group", "field", "attribute"] | None = None,
@@ -701,7 +701,7 @@ def validate_hdf_group_against(
             attrs (h5py.AttributeManager): The attributes collection.
             parent_obj (Union[h5py.Group, h5py.Dataset])): Parent object of these attributes.
         """
-        for attr_name in attrs:
+        for attr_name in sorted(attrs):
             full_path = f"{entry_name}/{path}/@{attr_name}"
 
             if attr_name in (
@@ -767,6 +767,7 @@ def validate_hdf_group_against(
             path (str): Path to the object.
             h5_obj (Union[h5py.Group, h5py.Dataset]): The HDF5 object to validate.
         """
+        print(f">>>> {path} >>>>")
         if isinstance(h5_obj, h5py.Group):
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
@@ -783,7 +784,7 @@ def validate_hdf_group_against(
             path (str, optional): Current HDF5 path.
             filename (str, optional): Name of the file for resolving links.
         """
-        for name in group:
+        for name in sorted(group):
             full_path = f"{path}/{name}".lstrip("/")
             link = group.get(name, getlink=True)
             if isinstance(link, h5py.SoftLink):
