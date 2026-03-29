@@ -30,7 +30,7 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.validation import validate_hdf_group_against
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.ERROR)  # INFO)
 
 
 def _get_def_map(file: str) -> dict[str, str]:

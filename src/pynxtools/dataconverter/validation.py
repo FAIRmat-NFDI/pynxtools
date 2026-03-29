@@ -56,6 +56,8 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
+# from pynxtools.dataconverter.validate_file import logger
+
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
@@ -263,6 +265,7 @@ def validate_hdf_group_against(
         current = copy.copy(node)
 
         if node is None:
+            print(f">>>> {__name__}, node is None")
             return None
 
         children_to_check = [
@@ -271,9 +274,12 @@ def validate_hdf_group_against(
                 nx_class=nx_class, node_type=node_type
             )
         ]
+        print(f"{__name__}, children_to_check")  # {children_to_check}")
         node = best_namefit_of(last_elem, children_to_check, hint)
+        print(f"after best_namefit_of, node {node}")
 
         if node is None:
+            print(f">> node is None")
             # Check that there is no other node with the same name, but a different type
             other_node_types = [nt for nt in possible_node_types if nt != node_type]
 
@@ -298,9 +304,10 @@ def validate_hdf_group_against(
                             f"The type ('{node_type}') of {path} conflicts with another existing concept "
                             f"{other_node.get_path()} (which is of type '{other_node.nx_type}'."
                         )
-
+            print(f">> node is None, return None")
             return None
 
+        print(f"node is not None, return node {node}")
         return node
 
     def update_required_concepts(path: str, node: NexusNode):
@@ -479,6 +486,7 @@ def validate_hdf_group_against(
             group (h5py.Group): The group object.
         """
         full_path = f"{entry_name}/{path}"
+        # print(f"validate, handle_group, {full_path}")
 
         check_reserved_prefix(full_path, appdef_node.name, "group")
 
@@ -533,6 +541,7 @@ def validate_hdf_group_against(
             group (h5py.Group): The NXdata group object.
         """
         full_path = f"{entry_name}/{path}"
+        # print(f"validate, handle_nxdata, {full_path}")
 
         def check_nxdata():
             data_field = group.get(signal)
@@ -609,6 +618,7 @@ def validate_hdf_group_against(
         """
         full_path = f"{entry_name}/{path}"
         key_path = path.replace("@", "")
+        # print(f"validate, handle_field, {full_path}, {key_path}")
 
         if has_breakpoint(key_path):
             # We are inside an NXcollection or a group without NX_class.
@@ -703,6 +713,7 @@ def validate_hdf_group_against(
         """
         for attr_name in sorted(attrs):
             full_path = f"{entry_name}/{path}/@{attr_name}"
+            print(f"{__name__}, {full_path}, {attr_name}")
 
             if attr_name in (
                 "NX_class",
@@ -711,19 +722,24 @@ def validate_hdf_group_against(
                 "custom",
             ) or attr_name.endswith("_custom"):
                 # Ignore special attrs
+                print(f">>>> ignore special attr")
                 continue
 
             key_path = f"{path}/{attr_name}"
 
             if has_breakpoint(key_path):
                 # We are inside an NXcollection or a group without NX_class.
+                print(f">>>> has_breakpoint")
                 continue  # This continues the outer attr_name loop
 
             check_reserved_prefix(full_path, appdef_node.name, "attribute")
+            print(f"check_reserved_prefix")
 
             try:
                 node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
+                print(f"find_node_for {node}")
             except TypeError:
+                print(f">>>> find_node_for {node}")
                 return
 
             if node is None:
@@ -737,20 +753,25 @@ def validate_hdf_group_against(
                     )
                 continue
 
+            print(f"prior remove_from_req_entities {len(required_entities)}")
             remove_from_req_entities(f"{path}/@{attr_name}")
+            print(f"after remove_from_req_entities {len(required_entities)}")
 
             if _check_for_nxcollection_parent(node):
                 # NXcollection found in parents, stop checking
+                print(f">>>> __check_for_nxcollection")
                 return
 
             attr_data = clean_str_attr(attrs.get(attr_name))
 
+            print(f"prior is_valid_data_field")
             is_valid_data_field(
                 attr_data,
                 node.dtype,
                 full_path,
             )
 
+            print(f"prior is_valid_enum")
             is_valid_enum(
                 attr_data,
                 node.items,
@@ -767,7 +788,7 @@ def validate_hdf_group_against(
             path (str): Path to the object.
             h5_obj (Union[h5py.Group, h5py.Dataset]): The HDF5 object to validate.
         """
-        print(f">>>> {path} >>>>")
+        print(f"{__name__}, {path}")
         if isinstance(h5_obj, h5py.Group):
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
@@ -786,8 +807,10 @@ def validate_hdf_group_against(
         """
         for name in sorted(group):
             full_path = f"{path}/{name}".lstrip("/")
+            # print(f"visititems, {__name__}, {full_path}")
             link = group.get(name, getlink=True)
             if isinstance(link, h5py.SoftLink):
+                # print(f"visititems, softlink, {__name__}, {full_path}")
                 target_path = link.path
 
                 if "target" not in group[name].attrs:
@@ -832,6 +855,7 @@ def validate_hdf_group_against(
                             visititems(resolved_obj, full_path, filename)
 
             elif isinstance(link, h5py.ExternalLink):
+                # print(f"visititems, externallink, {__name__}, {full_path}")
                 filename = link.filename
                 target_path = link.path
                 # Open external file and validate
@@ -848,6 +872,8 @@ def validate_hdf_group_against(
 
             elif isinstance(link, h5py.HardLink):
                 # Validate hard links (normal objects)
+                # print(f"visititems, hardlink, {__name__}, {full_path}")
+
                 resolved_obj = group.get(name)
                 validate(full_path, resolved_obj)
                 if isinstance(resolved_obj, h5py.Group):
@@ -862,7 +888,8 @@ def validate_hdf_group_against(
 
     required_groups: set[str] = set()
     required_entities: set[str] = set()
-    update_required_concepts("", tree)
+    update_required_concepts("", tree)#
+    print(f"update_required_concepts, {__name__}, {len(required_groups)}, {len(required_entities)}")
 
     visititems(data, filename=filename)
 
