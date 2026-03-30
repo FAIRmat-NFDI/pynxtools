@@ -46,6 +46,7 @@ from pynxtools.dataconverter.helpers import (
     is_valid_data_field,
     is_valid_data_field_hdf,
     is_valid_enum,
+    is_valid_enum_hdf,
     path_in_data_dict,
     split_class_and_name_of,
 )
@@ -651,8 +652,9 @@ def validate_hdf_group_against(
             node.dtype,
             full_path,
         )
-        is_valid_enum(
-            clean_str_attr(dataset[()]),
+
+        is_valid_enum_hdf(
+            dataset,
             node.items,
             node.open_enum,
             full_path,

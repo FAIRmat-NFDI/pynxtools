@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug validate_nexus (CLI)",
+      "type": "python",
+      "request": "launch",
+      //change the next line to match with the location of your venv
+      "program": "${workspaceFolder}/../.py3.12.3/bin/validate_nexus",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/..",
+      "justMyCode": false,
+      "args": [
+        //"change_me_should_be_your_nexus_file_to_validate_or_debug.nxs",
+      ]
+    }
+  ]
+}

@@ -802,10 +802,10 @@ def is_valid_data_type_hdf(hdf_node: h5py.Dataset, accepted_types: Sequence) -> 
         # standard numeric / fixed dtypes
         return any(np.issubdtype(hdf_node.dtype, t) for t in accepted_types)
 
-    # Handle 'object' dtype separately (for lists from HDF5 files)
+    # handle 'object' dtype separately (for lists from HDF5 files)
     return all(
         isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
-        for v in hdf_node[...].flat
+        for v in np.asarray(hdf_node[...]).flat
     )
 
 
@@ -1046,6 +1046,83 @@ def is_valid_enum(
                         value,
                     )
 
+                elif custom_attr is None:
+                    try:
+                        mapping[custom_path] = True
+                    except ValueError:
+                        # we are in the HDF5 validation, cannot set custom attribute.
+                        pass
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithMissingCustom,
+                        nxdl_enum,
+                        value,
+                        custom_added_auto,
+                    )
+            else:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidEnum, nxdl_enum, value
+                )
+
+
+def is_valid_enum_hdf(
+    hdf_node: h5py.Dataset,
+    nxdl_enum: list,
+    nxdl_enum_open: bool,
+    path: str,
+    mapping: MutableMapping,
+):
+    """Validate a value in hdf_node against an NXDL enumeration and handle custom attributes.
+
+    This function checks whether a given value conforms to the specified NXDL
+    enumeration. If the enumeration is open (`nxdl_enum_open`), it may create or
+    check a corresponding custom attribute in the `mapping`.
+
+    Args:
+        dataset (h5py.Dataset): The HDF5 dataset whose value(s) to validate.
+        nxdl_enum (list): The NXDL enumeration to validate against.
+        nxdl_enum_open (bool): Whether the enumeration is open to custom values.
+        path (str): The path of the value in the dataset.
+        mapping (MutableMapping): The object (dict or HDF5 group) holding custom attributes.
+    """
+
+    if nxdl_enum is not None:
+        value = clean_str_attr(hdf_node[()])
+        if (
+            isinstance(value, np.ndarray)
+            and isinstance(nxdl_enum, list)
+            and isinstance(nxdl_enum[0], list)
+        ):
+            enum_value = list(value)
+        else:
+            enum_value = value
+
+        if enum_value not in nxdl_enum:
+            if nxdl_enum_open:
+                custom_path = get_custom_attr_path(path)
+
+                if isinstance(mapping, h5py.Group):
+                    parent_path, attr_name = custom_path.rsplit("@", 1)
+                    custom_attr = mapping.get(parent_path).attrs.get(attr_name)
+                    custom_added_auto = False
+                else:
+                    custom_attr = mapping.get(custom_path)
+                    custom_added_auto = True
+
+                if custom_attr == True:  # noqa: E712
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCustom,
+                        nxdl_enum,
+                        value,
+                    )
+                elif custom_attr == False:  # noqa: E712
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCustomFalse,
+                        nxdl_enum,
+                        value,
+                    )
                 elif custom_attr is None:
                     try:
                         mapping[custom_path] = True
