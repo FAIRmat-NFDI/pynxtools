@@ -277,6 +277,9 @@ def validate_hdf_group_against(
         print(f"{__name__}, children_to_check")  # {children_to_check}")
         node = best_namefit_of(last_elem, children_to_check, hint)
         print(f"after best_namefit_of, node {node}")
+        if node is not None:
+            if node.name.startswith(("image", "IMAGE")):
+                print(f"---> children_to_check {children_to_check}")
 
         if node is None:
             print(f">> node is None")
@@ -888,7 +891,7 @@ def validate_hdf_group_against(
 
     required_groups: set[str] = set()
     required_entities: set[str] = set()
-    update_required_concepts("", tree)#
+    update_required_concepts("", tree)
     print(f"update_required_concepts, {__name__}, {len(required_groups)}, {len(required_entities)}")
 
     visititems(data, filename=filename)

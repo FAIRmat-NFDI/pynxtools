@@ -266,7 +266,7 @@ class NexusNode(NodeMixin):
                 return child
         return None
 
-    @lru_cache(maxsize=5000)
+    # @lru_cache(maxsize=5000)
     def search_add_child_for(self, name: str) -> Optional["NexusNode"]:
         """
         This searches a child with name `name` in the current node.
