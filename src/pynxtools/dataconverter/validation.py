@@ -207,26 +207,74 @@ def validate_hdf_group_against(
         if not nodes:
             return None
 
+        """
         best_match = None
         best_score = -1
+        """
+
+        # use score as key for the outer dict and inner dict as value with
+        # constraint as key and idx on nodes as value on that inner dict
+        score_board: dict[int, dict[str, list[int]]] = {}
 
         hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
 
-        for node in nodes:
+        for idx, node in enumerate(nodes):
             if not node.variadic:
                 if name == node.name:
                     return node
             else:
                 name_any = node.name_type == "any"
                 name_partial = node.name_type == "partial"
+                if hint and hint_map.get(node.name) != hint:
+                    continue
                 score = get_nx_namefit(name, node.name, name_any, name_partial)
+
+                if score in score_board:
+                    pass
+                else:
+                    score_board[score] = {}
+                    for constraint in ['required', 'recommended', 'optional']:
+                        # instantiate in selection priority
+                        score_board[score][constraint] = []
+                for constraint in ['optional', 'required', 'recommended']:
+                    # in descreasing order of typical occurrance
+                    if node.optionality == constraint:
+                        score_board[score][constraint].append(idx)
+                        break
+
+                """
                 if score > best_score:
+                    # vulnerable in case there are multiple nodes with the same score
                     if hint and hint_map.get(node.name) != hint:
                         continue
                     best_match = node
                     best_score = score
-
+                """
+        # pick from those with highest score
+        if len(score_board) > 0:
+            best_score = max(score_board)
+            if best_score > -1:
+                # remain consistent with the past, only valid scores > -1 participate
+                for constraint in ['required', 'recommended', 'optional']:
+                    # select preferentially for the harder constraint one assuming that
+                    # folks did the implementation correctly
+                    n_matches = len(score_board[best_score][constraint])
+                    if n_matches == 0:
+                        continue
+                    elif n_matches == 1:
+                        best_match = nodes[idx]
+                        return best_match
+                    else:  # multiple nodes have the same score and high constraint level
+                        print(
+                            f"WARNING::Multiple well matching constrained solutions "
+                            f"{score_board[best_score][constraint]} in best_name_fit"
+                        )
+                        first_match = nodes[score_board[best_score][constraint]][0]
+                        return first_match
+        return None
+        """
         return best_match
+        """
 
     # Only cache based on path. That way we retain the nx_class information
     # in the tree
