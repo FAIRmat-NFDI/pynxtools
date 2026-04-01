@@ -20,13 +20,15 @@ DEBUG_VALIDATION = False
 import copy
 import re
 from collections import defaultdict
-from collections.abc import Sequence, Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping, Sequence
 from functools import reduce
 from operator import getitem
 from typing import Any, Literal, Optional, Union
 
 if DEBUG_VALIDATION:
     import debugpy  # will connect to debugger if in debug mode
+import logging
+
 import h5py
 import lxml.etree as ET
 import numpy as np
@@ -56,7 +58,6 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
-import logging
 
 logger = logging.getLogger("validation")
 
