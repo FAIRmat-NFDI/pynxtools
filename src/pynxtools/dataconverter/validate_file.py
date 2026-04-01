@@ -29,7 +29,7 @@ from h5py import File, is_hdf5
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.validation import validate_hdf_group_against
 
-logger = logging.getLogger("validation")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
