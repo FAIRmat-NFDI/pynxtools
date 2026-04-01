@@ -48,7 +48,7 @@ def _get_def_map(file: str) -> dict[str, str]:
     with File(file, "r") as h5file:
         for entry_name, dataset in h5file.items():
             if (
-                helpers.clean_str_attr(dataset.attrs.get("NX_class")) == "NXentry"
+                helpers.decode_if_bytes(dataset.attrs.get("NX_class")) == "NXentry"
                 and f"/{entry_name}/definition" in h5file
             ):
                 def_map.update(

@@ -243,14 +243,14 @@ def test_clean_str_attr(attr, encoding, expected):
     if isinstance(attr, bytes) and encoding == "utf-8" and attr == b"\xff":
         # handled separately for UnicodeDecodeError
         with pytest.raises(UnicodeDecodeError):
-            helpers.clean_str_attr(attr, encoding)
+            helpers.decode_if_bytes(attr, encoding)
     else:
-        assert helpers.clean_str_attr(attr, encoding) == expected
+        assert helpers.decode_if_bytes(attr, encoding) == expected
 
 
 def test_clean_str_attr_invalid_encoding():
     with pytest.raises(UnicodeDecodeError):
-        helpers.clean_str_attr(b"\xff", encoding="utf-8")
+        helpers.decode_if_bytes(b"\xff", encoding="utf-8")
 
 
 def test_get_pynxtools_version():

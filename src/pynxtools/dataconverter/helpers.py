@@ -49,6 +49,8 @@ logger = logging.getLogger("pynxtools")
 
 import importlib.metadata
 
+from pynxtools.dataconverter.chunk import CHUNK_CONFIG_DEFAULT
+
 
 def get_pynxtools_version() -> str:
     """Attempt getting the version of pynxtools at runtime with fallback."""
@@ -821,15 +823,30 @@ def is_positive_int_hdf(hdf_node: h5py.Dataset) -> bool:
     """Checks whether values in hdf_node are all positive."""
     if hdf_node.dtype.kind in "iu":
         if hdf_node.chunks is not None:
+            # chunked storage irrespective if compressed or not
             for chunk in hdf_node.iter_chunks():
-                if np.all(hdf_node[chunk] > 0):
+                if (hdf_node[chunk] > 0).all():
                     continue
                 else:
                     return False
-            return True
         else:
+            # contiguous storage can never be compressed
+            # typically fastest but reading all data at once
             return bool(np.all(hdf_node[...] > 0))
-    return False
+            """
+            # typically slower than the previous line streaming through hyperslabs
+            max_elements_per_hyperslab = (
+                CHUNK_CONFIG_DEFAULT["byte_size"] // hdf_node.dtype.itemsize
+            )
+            row_size = np.prod(hdf_node.shape[1:], dtype=int)
+            block_size = max(1, max_elements_per_hyperslab // row_size)
+            for idx in range(0, hdf_node.shape[0], block_size):
+                if (hdf_node[idx : idx + block_size] > 0).all():
+                    continue
+                else:
+                    return False
+            """
+    return True
 
 
 def convert_str_to_bool_safe(value: str) -> bool | None:
@@ -899,7 +916,7 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
             collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
         if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-            results = ISO8601.search(clean_str_attr(value))
+            results = ISO8601.search(decode_if_bytes(value))
             if results is None:
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidDatetime, value
@@ -951,7 +968,7 @@ def is_valid_data_field_hdf(hdf_node: h5py.Dataset, nxdl_type: str, path: str):
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         if h5py.check_string_dtype(hdf_node.dtype) is not None and hdf_node.shape == ():
-            value = clean_str_attr(hdf_node[()])
+            value = decode_if_bytes(hdf_node[()])
             results = ISO8601.search(value)
             if results is None:
                 collector.collect_and_log(
@@ -1087,7 +1104,7 @@ def is_valid_enum_hdf(
     """
 
     if nxdl_enum is not None:
-        value = clean_str_attr(hdf_node[()])
+        value = decode_if_bytes(hdf_node[()])
         if (
             isinstance(value, np.ndarray)
             and isinstance(nxdl_enum, list)
@@ -1588,20 +1605,20 @@ def nested_dict_to_slash_separated_path(
             flattened_dict[path] = val
 
 
-def clean_str_attr(attr: str | bytes | None, encoding: str = "utf-8") -> str | None:
+def decode_if_bytes(payload: Any, encoding: str = "utf-8") -> Any:
     """
-    Return the attribute as a string.
+    Return the payload (e.g. attribute) as Any except bytes.
 
-    - If `attr` is `bytes`, decode it using the given encoding.
+    - If `payload` is `bytes`, decode it using the given encoding.
     - Otherwise, return it unchanged.
 
     Args:
-        attr: A string, bytes, or any other type.
+        payload: Any type.
         encoding: The character encoding to use when decoding bytes.
 
     Returns:
         The attribute as a string, or None if input was None.
     """
-    if isinstance(attr, bytes):
-        return attr.decode(encoding)
-    return attr
+    if isinstance(payload, bytes):
+        return payload.decode(encoding)
+    return payload

@@ -130,6 +130,8 @@ hdfgroup
 hdfobject
 hfive
 hixu
+hyperslab
+hyperslabs
 hypothes
 idname
 idobj

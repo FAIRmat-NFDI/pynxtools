@@ -40,10 +40,10 @@ from pynxtools.dataconverter.helpers import (
     ValidationProblem,
     check_reserved_prefix,
     check_reserved_suffix,
-    clean_str_attr,
     collector,
     convert_data_dict_path_to_hdf5_path,
     convert_nexus_to_caps,
+    decode_if_bytes,
     get_custom_attr_path,
     is_valid_data_field,
     is_valid_data_field_hdf,
@@ -160,7 +160,7 @@ def is_valid_unit_for_node(
         node_unit_category = node.unit
         log_input = None
 
-    unit = clean_str_attr(unit)
+    unit = decode_if_bytes(unit)
 
     if NXUnitSet.matches(node_unit_category, unit):
         return
@@ -799,7 +799,7 @@ def validate_hdf_group_against(
                 # NXcollection found in parents, stop checking
                 return
 
-            attr_data = clean_str_attr(attrs.get(attr_name))
+            attr_data = decode_if_bytes(attrs.get(attr_name))
 
             is_valid_data_field(
                 attr_data,
