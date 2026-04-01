@@ -3575,8 +3575,6 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
                     "WARNING: Invalid: The entry `my_entry` in file"
                 )
             ]
-            # print(f">>>> {error_messages}")
-            # print(f">>>> >>>> {caplog_records}")
             assert len(caplog_records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog_records):
                 assert expected_message == format_error_message(rec.message)
