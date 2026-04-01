@@ -20,7 +20,7 @@ DEBUG_VALIDATION = False
 import copy
 import re
 from collections import defaultdict
-from collections.abc import Iterable, Mapping, MutableMapping
+from collections.abc import Sequence, Mapping, MutableMapping
 from functools import reduce
 from operator import getitem
 from typing import Any, Literal, Optional, Union
@@ -56,13 +56,17 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
-# from pynxtools.dataconverter.validate_file import logger
+import logging
+
+logger = logging.getLogger("validation")
 
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
     # set break points like this
     # debugpy.breakpoint()
+
+HUNT_DETERMINISM: bool = False
 
 
 def build_nested_dict_from(
@@ -190,7 +194,7 @@ def validate_hdf_group_against(
 
     def best_namefit_of(
         name: str,
-        nodes: Iterable[NexusNode],
+        nodes: Sequence[NexusNode],
         hint: Literal["axis", "signal"] | None = None,
     ) -> NexusNode | None:
         """
@@ -198,7 +202,7 @@ def validate_hdf_group_against(
 
         Args:
             name (str): The name to fit against the nodes.
-            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+            nodes (Sequence[NexusNode]): The nodes to fit `name` against.
             node_type (str): The type (group, field, attribute) that is expected
 
         Returns:
@@ -207,10 +211,8 @@ def validate_hdf_group_against(
         if not nodes:
             return None
 
-        """
-        best_match = None
-        best_score = -1
-        """
+        old_best_match = None
+        old_best_score = -1
 
         # use score as key for the outer dict and inner dict as value with
         # constraint as key and idx on nodes as value on that inner dict
@@ -218,6 +220,8 @@ def validate_hdf_group_against(
 
         hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
 
+        if HUNT_DETERMINISM:
+            print(f"{nodes}")
         for idx, node in enumerate(nodes):
             if not node.variadic:
                 if name == node.name:
@@ -225,52 +229,64 @@ def validate_hdf_group_against(
             else:
                 name_any = node.name_type == "any"
                 name_partial = node.name_type == "partial"
+                score = get_nx_namefit(name, node.name, name_any, name_partial)
                 if hint and hint_map.get(node.name) != hint:
                     continue
-                score = get_nx_namefit(name, node.name, name_any, name_partial)
+
+                # compute the old algorithm alongside but use the new algorithm
+                # to inform developers better when there are more than one
+                # match with highest score
+                if score > old_best_score:
+                    # vulnerable in case there are multiple nodes with the same score
+                    old_best_match = node
+                    old_best_score = score
 
                 if score in score_board:
                     pass
                 else:
-                    score_board[score] = {}
-                    for constraint in ['required', 'recommended', 'optional']:
-                        # instantiate in selection priority
-                        score_board[score][constraint] = []
-                for constraint in ['optional', 'required', 'recommended']:
-                    # in descreasing order of typical occurrance
+                    score_board[score] = {
+                        "required": [],
+                        "recommended": [],
+                        "optional": [],
+                    }
+                for constraint in ["optional", "required", "recommended"]:
+                    # lookup into nodes in decreasing order of typical occurrance to break earlier
                     if node.optionality == constraint:
                         score_board[score][constraint].append(idx)
                         break
 
-                """
-                if score > best_score:
-                    # vulnerable in case there are multiple nodes with the same score
-                    if hint and hint_map.get(node.name) != hint:
-                        continue
-                    best_match = node
-                    best_score = score
-                """
+        if HUNT_DETERMINISM:
+            print(f"score_board {score_board}")
         # pick from those with highest score
         if len(score_board) > 0:
             best_score = max(score_board)
             if best_score > -1:
-                # remain consistent with the past, only valid scores > -1 participate
-                for constraint in ['required', 'recommended', 'optional']:
-                    # select preferentially for the harder constraint one assuming that
-                    # folks did the implementation correctly
+                # remain consistent with the old algorithm, only valid scores > -1 participate
+                for constraint in ["required", "recommended", "optional"]:
+                    # select preferentially for the harder constraint that should be met given that
+                    # we wish to validate compliance with a NeXus definition (appdef or class)
                     n_matches = len(score_board[best_score][constraint])
-                    if n_matches == 0:
-                        continue
-                    elif n_matches == 1:
-                        best_match = nodes[idx]
+                    if n_matches == 1:
+                        jdx = score_board[best_score][constraint][0]
+                        best_match = nodes[jdx]
+                        if old_best_match.name != best_match.name:
+                            logger.debug(
+                                f"old_best_score {old_best_score}, old_best_match {old_best_match}, new_best_match {best_match}"
+                            )
                         return best_match
-                    else:  # multiple nodes have the same score and high constraint level
-                        print(
-                            f"WARNING::Multiple well matching constrained solutions "
-                            f"{score_board[best_score][constraint]} in best_name_fit"
+                    elif n_matches > 1:
+                        jdx = score_board[best_score][constraint][0]
+                        first_match = nodes[jdx]
+                        logger.debug(
+                            f"Multiple solutions with best score {best_score} found {[nodes[jdx] for jdx in score_board[best_score][constraint]]} "
+                            f"may indicate there are issues with nameTyping of specific NeXus classes, returning {first_match}"
                         )
-                        first_match = nodes[score_board[best_score][constraint]][0]
                         return first_match
+
+        if HUNT_DETERMINISM:
+            print(
+                f"old_best_score {old_best_score}, old_best_match {old_best_match}, new_best_match {None}"
+            )
         return None
         """
         return best_match
@@ -279,10 +295,10 @@ def validate_hdf_group_against(
     # Only cache based on path. That way we retain the nx_class information
     # in the tree
     # Allow for 10000 cache entries. This should be enough for most cases
-    # @cached(
-    #     cache=LRUCache(maxsize=10000),
-    #     key=lambda path, node_type=None, nx_class=None, hint=None: hashkey(path),
-    # )
+    @cached(
+        cache=LRUCache(maxsize=10000),
+        key=lambda path, node_type=None, nx_class=None, hint=None: hashkey(path),
+    )
     def find_node_for(
         path: str,
         node_type: Literal["group", "field", "attribute"] | None = None,
@@ -313,7 +329,8 @@ def validate_hdf_group_against(
         current = copy.copy(node)
 
         if node is None:
-            print(f">>>> {__name__}, node is None")
+            if HUNT_DETERMINISM:
+                print(f">>>> {__name__}, node is None")
             return None
 
         children_to_check = [
@@ -322,15 +339,18 @@ def validate_hdf_group_against(
                 nx_class=nx_class, node_type=node_type
             )
         ]
-        print(f"{__name__}, children_to_check")  # {children_to_check}")
+        if HUNT_DETERMINISM:
+            print(f"{__name__}, children_to_check")
         node = best_namefit_of(last_elem, children_to_check, hint)
-        print(f"after best_namefit_of, node {node}")
-        if node is not None:
-            if node.name.startswith(("image", "IMAGE")):
-                print(f"---> children_to_check {children_to_check}")
+        if HUNT_DETERMINISM:
+            print(f"after best_namefit_of, node {node}")
+        # if node is not None:
+        #     if node.name.startswith(("image", "IMAGE")):
+        #         print(f"---> children_to_check {children_to_check}")
 
         if node is None:
-            print(f">> node is None")
+            if HUNT_DETERMINISM:
+                print(f">> node is None")
             # Check that there is no other node with the same name, but a different type
             other_node_types = [nt for nt in possible_node_types if nt != node_type]
 
@@ -355,10 +375,12 @@ def validate_hdf_group_against(
                             f"The type ('{node_type}') of {path} conflicts with another existing concept "
                             f"{other_node.get_path()} (which is of type '{other_node.nx_type}'."
                         )
-            print(f">> node is None, return None")
+            if HUNT_DETERMINISM:
+                print(f">> node is None, return None")
             return None
 
-        print(f"node is not None, return node {node}")
+        if HUNT_DETERMINISM:
+            print(f"node is not None, return node {node}")
         return node
 
     def update_required_concepts(path: str, node: NexusNode):
@@ -537,7 +559,7 @@ def validate_hdf_group_against(
             group (h5py.Group): The group object.
         """
         full_path = f"{entry_name}/{path}"
-        # print(f"validate, handle_group, {full_path}")
+        # if HUNT_DETERMINISM: print(f"validate, handle_group, {full_path}")
 
         check_reserved_prefix(full_path, appdef_node.name, "group")
 
@@ -592,7 +614,7 @@ def validate_hdf_group_against(
             group (h5py.Group): The NXdata group object.
         """
         full_path = f"{entry_name}/{path}"
-        # print(f"validate, handle_nxdata, {full_path}")
+        # if HUNT_DETERMINISM: print(f"validate, handle_nxdata, {full_path}")
 
         def check_nxdata():
             data_field = group.get(signal)
@@ -669,7 +691,7 @@ def validate_hdf_group_against(
         """
         full_path = f"{entry_name}/{path}"
         key_path = path.replace("@", "")
-        # print(f"validate, handle_field, {full_path}, {key_path}")
+        # if HUNT_DETERMINISM: print(f"validate, handle_field, {full_path}, {key_path}")
 
         if has_breakpoint(key_path):
             # We are inside an NXcollection or a group without NX_class.
@@ -764,7 +786,8 @@ def validate_hdf_group_against(
         """
         for attr_name in sorted(attrs):
             full_path = f"{entry_name}/{path}/@{attr_name}"
-            print(f"{__name__}, {full_path}, {attr_name}")
+            if HUNT_DETERMINISM:
+                print(f"{__name__}, {full_path}, {attr_name}")
 
             if attr_name in (
                 "NX_class",
@@ -773,24 +796,29 @@ def validate_hdf_group_against(
                 "custom",
             ) or attr_name.endswith("_custom"):
                 # Ignore special attrs
-                print(f">>>> ignore special attr")
+                if HUNT_DETERMINISM:
+                    print(f">>>> ignore special attr")
                 continue
 
             key_path = f"{path}/{attr_name}"
 
             if has_breakpoint(key_path):
                 # We are inside an NXcollection or a group without NX_class.
-                print(f">>>> has_breakpoint")
+                if HUNT_DETERMINISM:
+                    print(f">>>> has_breakpoint")
                 continue  # This continues the outer attr_name loop
 
             check_reserved_prefix(full_path, appdef_node.name, "attribute")
-            print(f"check_reserved_prefix")
+            if HUNT_DETERMINISM:
+                print(f"check_reserved_prefix")
 
             try:
                 node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
-                print(f"find_node_for {node}")
+                if HUNT_DETERMINISM:
+                    print(f"find_node_for {node}")
             except TypeError:
-                print(f">>>> find_node_for {node}")
+                if HUNT_DETERMINISM:
+                    print(f">>>> find_node_for {node}")
                 return
 
             if node is None:
@@ -804,25 +832,30 @@ def validate_hdf_group_against(
                     )
                 continue
 
-            print(f"prior remove_from_req_entities {len(required_entities)}")
+            if HUNT_DETERMINISM:
+                print(f"prior remove_from_req_entities {len(required_entities)}")
             remove_from_req_entities(f"{path}/@{attr_name}")
-            print(f"after remove_from_req_entities {len(required_entities)}")
+            if HUNT_DETERMINISM:
+                print(f"after remove_from_req_entities {len(required_entities)}")
 
             if _check_for_nxcollection_parent(node):
                 # NXcollection found in parents, stop checking
-                print(f">>>> __check_for_nxcollection")
+                if HUNT_DETERMINISM:
+                    print(f">>>> __check_for_nxcollection")
                 return
 
             attr_data = clean_str_attr(attrs.get(attr_name))
 
-            print(f"prior is_valid_data_field")
+            if HUNT_DETERMINISM:
+                print(f"prior is_valid_data_field")
             is_valid_data_field(
                 attr_data,
                 node.dtype,
                 full_path,
             )
 
-            print(f"prior is_valid_enum")
+            if HUNT_DETERMINISM:
+                print(f"prior is_valid_enum")
             is_valid_enum(
                 attr_data,
                 node.items,
@@ -839,7 +872,8 @@ def validate_hdf_group_against(
             path (str): Path to the object.
             h5_obj (Union[h5py.Group, h5py.Dataset]): The HDF5 object to validate.
         """
-        print(f"{__name__}, {path}")
+        if HUNT_DETERMINISM:
+            print(f"{__name__}, {path}")
         if isinstance(h5_obj, h5py.Group):
             handle_group(path, h5_obj)
         elif isinstance(h5_obj, h5py.Dataset):
@@ -858,10 +892,10 @@ def validate_hdf_group_against(
         """
         for name in sorted(group):
             full_path = f"{path}/{name}".lstrip("/")
-            # print(f"visititems, {__name__}, {full_path}")
+            # if HUNT_DETERMINISM: print(f"visititems, {__name__}, {full_path}")
             link = group.get(name, getlink=True)
             if isinstance(link, h5py.SoftLink):
-                # print(f"visititems, softlink, {__name__}, {full_path}")
+                # if HUNT_DETERMINISM: print(f"visititems, softlink, {__name__}, {full_path}")
                 target_path = link.path
 
                 if "target" not in group[name].attrs:
@@ -906,7 +940,7 @@ def validate_hdf_group_against(
                             visititems(resolved_obj, full_path, filename)
 
             elif isinstance(link, h5py.ExternalLink):
-                # print(f"visititems, externallink, {__name__}, {full_path}")
+                # if HUNT_DETERMINISM: print(f"visititems, externallink, {__name__}, {full_path}")
                 filename = link.filename
                 target_path = link.path
                 # Open external file and validate
@@ -923,7 +957,7 @@ def validate_hdf_group_against(
 
             elif isinstance(link, h5py.HardLink):
                 # Validate hard links (normal objects)
-                # print(f"visititems, hardlink, {__name__}, {full_path}")
+                # if HUNT_DETERMINISM: print(f"visititems, hardlink, {__name__}, {full_path}")
 
                 resolved_obj = group.get(name)
                 validate(full_path, resolved_obj)
@@ -940,7 +974,10 @@ def validate_hdf_group_against(
     required_groups: set[str] = set()
     required_entities: set[str] = set()
     update_required_concepts("", tree)
-    print(f"update_required_concepts, {__name__}, {len(required_groups)}, {len(required_entities)}")
+    if HUNT_DETERMINISM:
+        print(
+            f"update_required_concepts, {__name__}, {len(required_groups)}, {len(required_entities)}"
+        )
 
     visititems(data, filename=filename)
 
@@ -1577,7 +1614,7 @@ def validate_dict_against(
 
     def best_namefit_of(
         name: str,
-        nodes: Iterable[NexusNode],
+        nodes: Sequence[NexusNode],
         expected_types: list[str],
         check_types: bool = False,
     ) -> NexusNode | None:
@@ -1586,7 +1623,7 @@ def validate_dict_against(
 
         Args:
             name (str): The name to fit against the keys.
-            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+            nodes (Sequence[NexusNode]): The nodes to fit `name` against.
 
         Returns:
             Optional[NexusNode]: The best fitting node. None if no fit was found.
