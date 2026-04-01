@@ -29,7 +29,7 @@ from h5py import File, is_hdf5
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.validation import validate_hdf_group_against
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("validation")
 logger.setLevel(logging.INFO)
 
 
@@ -84,7 +84,7 @@ def validate(file: str, ignore_undocumented: bool = False):
         logger.warning(f"Could not find any valid entry in file {file}")
 
     with File(file, "r") as h5file:
-        for entry, nxdl in def_map.items():
+        for entry, nxdl in sorted(def_map.items()):
             is_valid = validate_hdf_group_against(
                 nxdl,
                 h5file[entry],

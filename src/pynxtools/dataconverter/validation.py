@@ -20,13 +20,15 @@ DEBUG_VALIDATION = False
 import copy
 import re
 from collections import defaultdict
-from collections.abc import Iterable, Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping, Sequence
 from functools import reduce
 from operator import getitem
 from typing import Any, Literal, Optional, Union
 
 if DEBUG_VALIDATION:
     import debugpy  # will connect to debugger if in debug mode
+import logging
+
 import h5py
 import lxml.etree as ET
 import numpy as np
@@ -58,6 +60,8 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
+
+logger = logging.getLogger("validation")
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
@@ -190,7 +194,7 @@ def validate_hdf_group_against(
 
     def best_namefit_of(
         name: str,
-        nodes: Iterable[NexusNode],
+        nodes: Sequence[NexusNode],
         hint: Literal["axis", "signal"] | None = None,
     ) -> NexusNode | None:
         """
@@ -198,7 +202,7 @@ def validate_hdf_group_against(
 
         Args:
             name (str): The name to fit against the nodes.
-            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+            nodes (Sequence[NexusNode]): The nodes to fit `name` against.
             node_type (str): The type (group, field, attribute) that is expected
 
         Returns:
@@ -207,12 +211,16 @@ def validate_hdf_group_against(
         if not nodes:
             return None
 
-        best_match = None
-        best_score = -1
+        old_best_match = None
+        old_best_score = -1
+
+        # use score as key for the outer dict and inner dict as value with
+        # constraint as key and idx on nodes as value on that inner dict
+        score_board: dict[int, dict[str, list[int]]] = {}
 
         hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
 
-        for node in nodes:
+        for idx, node in enumerate(nodes):
             if not node.variadic:
                 if name == node.name:
                     return node
@@ -220,13 +228,58 @@ def validate_hdf_group_against(
                 name_any = node.name_type == "any"
                 name_partial = node.name_type == "partial"
                 score = get_nx_namefit(name, node.name, name_any, name_partial)
-                if score > best_score:
-                    if hint and hint_map.get(node.name) != hint:
-                        continue
-                    best_match = node
-                    best_score = score
+                if hint and hint_map.get(node.name) != hint:
+                    continue
 
-        return best_match
+                # compute the old algorithm alongside but use the new algorithm
+                # to inform developers better when there are more than one
+                # match with highest score
+                if score > old_best_score:
+                    # vulnerable in case there are multiple nodes with the same score
+                    old_best_match = node
+                    old_best_score = score
+
+                if score in score_board:
+                    pass
+                else:
+                    score_board[score] = {
+                        "required": [],
+                        "recommended": [],
+                        "optional": [],
+                    }
+                for constraint in ["optional", "required", "recommended"]:
+                    # lookup into nodes in decreasing order of typical occurrence to break earlier
+                    if node.optionality == constraint:
+                        score_board[score][constraint].append(idx)
+                        break
+
+        # pick from those with highest score
+        if len(score_board) > 0:
+            best_score = max(score_board)
+            if best_score > -1:
+                # remain consistent with the old algorithm, only valid scores > -1 participate
+                for constraint in ["required", "recommended", "optional"]:
+                    # select preferentially for the harder constraint that should be met given that
+                    # we wish to validate compliance with a NeXus definition (appdef or class)
+                    n_matches = len(score_board[best_score][constraint])
+                    if n_matches == 1:
+                        jdx = score_board[best_score][constraint][0]
+                        best_match = nodes[jdx]
+                        if old_best_match.name != best_match.name:
+                            logger.debug(
+                                f"old_best_score {old_best_score}, old_best_match {old_best_match}, new_best_match {best_match}"
+                            )
+                        return best_match
+                    elif n_matches > 1:
+                        jdx = score_board[best_score][constraint][0]
+                        first_match = nodes[jdx]
+                        logger.debug(
+                            f"Multiple solutions with best score {best_score} found {[nodes[jdx] for jdx in score_board[best_score][constraint]]} "
+                            f"may indicate there are issues with nameTyping of specific NeXus classes, returning {first_match}"
+                        )
+                        return first_match
+
+        return None
 
     # Only cache based on path. That way we retain the nx_class information
     # in the tree
@@ -704,7 +757,7 @@ def validate_hdf_group_against(
             attrs (h5py.AttributeManager): The attributes collection.
             parent_obj (Union[h5py.Group, h5py.Dataset])): Parent object of these attributes.
         """
-        for attr_name in attrs:
+        for attr_name in sorted(attrs):
             full_path = f"{entry_name}/{path}/@{attr_name}"
 
             if attr_name in (
@@ -786,20 +839,20 @@ def validate_hdf_group_against(
             path (str, optional): Current HDF5 path.
             filename (str, optional): Name of the file for resolving links.
         """
-        for name in group:
-            full_path = f"{path}/{name}".lstrip("/")
-            link = group.get(name, getlink=True)
+        for group_name in sorted(group):
+            full_path = f"{path}/{group_name}".lstrip("/")
+            link = group.get(group_name, getlink=True)
             if isinstance(link, h5py.SoftLink):
                 target_path = link.path
 
-                if "target" not in group[name].attrs:
+                if "target" not in group[group_name].attrs:
                     collector.collect_and_log(
                         f"{entry_name}/{full_path}",
                         ValidationProblem.MissingTargetAttribute,
                         None,
                     )
                 else:
-                    attr_target = group[name].attrs["target"]
+                    attr_target = group[group_name].attrs["target"]
                     if attr_target != target_path:
                         collector.collect_and_log(
                             f"{entry_name}/{full_path}",
@@ -850,7 +903,7 @@ def validate_hdf_group_against(
 
             elif isinstance(link, h5py.HardLink):
                 # Validate hard links (normal objects)
-                resolved_obj = group.get(name)
+                resolved_obj = group.get(group_name)
                 validate(full_path, resolved_obj)
                 if isinstance(resolved_obj, h5py.Group):
                     # recurse into subgroups
@@ -1501,7 +1554,7 @@ def validate_dict_against(
 
     def best_namefit_of(
         name: str,
-        nodes: Iterable[NexusNode],
+        nodes: Sequence[NexusNode],
         expected_types: list[str],
         check_types: bool = False,
     ) -> NexusNode | None:
@@ -1510,7 +1563,7 @@ def validate_dict_against(
 
         Args:
             name (str): The name to fit against the keys.
-            nodes (Iterable[NexusNode]): The nodes to fit `name` against.
+            nodes (Sequence[NexusNode]): The nodes to fit `name` against.
 
         Returns:
             Optional[NexusNode]: The best fitting node. None if no fit was found.
