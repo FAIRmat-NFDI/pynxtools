@@ -251,7 +251,7 @@ def validate_hdf_group_against(
                         "optional": [],
                     }
                 for constraint in ["optional", "required", "recommended"]:
-                    # lookup into nodes in decreasing order of typical occurrance to break earlier
+                    # lookup into nodes in decreasing order of typical occurrence to break earlier
                     if node.optionality == constraint:
                         score_board[score][constraint].append(idx)
                         break
@@ -896,7 +896,6 @@ def validate_hdf_group_against(
             # if HUNT_DETERMINISM: print(f"visititems, {__name__}, {full_path}")
             link = group.get(name, getlink=True)
             if isinstance(link, h5py.SoftLink):
-                # if HUNT_DETERMINISM: print(f"visititems, softlink, {__name__}, {full_path}")
                 target_path = link.path
 
                 if "target" not in group[name].attrs:
@@ -941,7 +940,6 @@ def validate_hdf_group_against(
                             visititems(resolved_obj, full_path, filename)
 
             elif isinstance(link, h5py.ExternalLink):
-                # if HUNT_DETERMINISM: print(f"visititems, externallink, {__name__}, {full_path}")
                 filename = link.filename
                 target_path = link.path
                 # Open external file and validate
@@ -958,8 +956,6 @@ def validate_hdf_group_against(
 
             elif isinstance(link, h5py.HardLink):
                 # Validate hard links (normal objects)
-                # if HUNT_DETERMINISM: print(f"visititems, hardlink, {__name__}, {full_path}")
-
                 resolved_obj = group.get(name)
                 validate(full_path, resolved_obj)
                 if isinstance(resolved_obj, h5py.Group):
