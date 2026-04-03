@@ -154,7 +154,7 @@ def test_overwrite(writer_overwrite, caplog):
 
     with caplog.at_level(logging.INFO):
         observed_infos = [
-            r.getMessage() for r in caplog.records if r.levelno == logging.INFO
+            rec.getMessage() for rec in caplog.records if rec.levelno == logging.INFO
         ]
 
         prefix = "Prevented the overwriting of"
