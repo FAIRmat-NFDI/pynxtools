@@ -80,38 +80,31 @@ def test_validate_file_different_storage_layouts(storage_layout: str, caplog):
 
 def test_validate_file_positive_int(storage_layout: str, positive: bool, dtype, caplog):
     file_path = f"{storage_layout}.nxs"  # prefix
-    n_values = 1000 * 50 * 50
     # FIX
     with h5py.File(file_path, "w", track_order=True) as h5w:
-        trg = "/entry1/measurement/event1/image1/stack_2d"
-        for idx, class_name in enumerate(["ENTRY", "EM_MEASUREMENT", "EM_EVENT_DATA", "IMAGE"]):
+        trg = "/entry/instrument/electronanalyzer/electron_detector/raw_data"
+        for idx, class_name in enumerate(["ENTRY", "INSTRUMENT", "ELECTRONANALYZER", "ELECTRON_DETECTOR"]):
             grp = h5w.create_group(f"{'/'.join(trg.split('/')[0:idx + 2])}")
             grp.attrs["NX_class"] = f"NX{class_name.lower()}"
         grp = h5w.create_group(f"{trg}")
-
-        chunking = (100, 50, 50)
-        axes = ["indices_image", "axis_j", "axis_i"]
-        real = np.asarray(np.ones(size=n_values), dtype)
-        if not positive:
-            real[0:n_values:int(np.prod(chunking))] = -1
-        real.reshape(-1, 50, 50)
-
         grp.attrs["NX_class"] = "NXdata"
         grp.attrs["axes"] = axes
-        grp.attrs["signal"] = "real"
+        grp.attrs["signal"] = "raw"
+
+        axes = ["pixel_y", "pixel_x"]
+        # dst = h5w.create_dataset(f"{trg}/raw", data=np.zeros((1024, 1024), np.float32))
         for idx, axis in enumerate(axes):
-            grp.attrs[f"{axis}_indices"] = np.int32(idx)  # should be NX_UINT
-        if storage_layout == "chunked_uncompressed":
-            dst = h5w.create_dataset(f"{trg}/real", data=real, chunks=chunking)
-        elif storage_layout == "chunked_compressed":
-            dst = h5w.create_dataset(f"{trg}/real", data=real, chunks=chunking, compression="gzip", compression_opts=1)
-        else:  # contiguous
-            dst = h5w.create_dataset(f"{trg}/real", data=real)
-        dst.attrs["long_name"] = "real"
-        for idx, axis in enumerate(axes):
-            dst = h5w.create_dataset(f"{trg}/{axis}", data=np.asarray(np.arange(np.shape(real)[idx]), np.int32))
-            dst.attrs["long_name"] = axis
-        dst = h5w.create_dataset("/entry1/definition", data="NXem")
+            if positive:
+                pixel = np.linspace(0, 1024 - 1, num=1024, endpoint=True, dtype=dtype)
+            else:
+                pixel = np.linspace(-512, 1024 - 1 - 512, num=1024, endpoint=True, dtype=dtype)
+            if storage_layout == "chunked_uncompressed":
+                dst = h5w.create_dataset(f"{trg}/{axis}", data=pixel, chunks=(128,))
+            elif storage_layout == "chunked_compressed":
+                dst = h5w.create_dataset(f"{trg}/{axis}", data=pixel, chunks=(128,), compression="gzip", compression_opts=1)
+            else:  # contiguous
+                dst = h5w.create_dataset(f"{trg}/{axis}", data=pixel)
+        dst = h5w.create_dataset("/entry/definition", data="NXmpes")
 
     assert os.path.isfile(file_path)
 
