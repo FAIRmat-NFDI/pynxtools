@@ -19,6 +19,7 @@
 
 import logging
 import os
+from pathlib import Path
 
 import h5py
 import numpy as np
@@ -26,8 +27,6 @@ import pytest
 
 # import h5py.h5p as h5p
 from pynxtools.dataconverter.validate_file import validate
-from pathlib import Path
-
 
 warnings_storage_layouts = [
     "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@axis_i_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
