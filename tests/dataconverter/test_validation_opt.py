@@ -28,33 +28,37 @@ from pynxtools.dataconverter.validate_file import validate
 from pathlib import Path
 
 
+warnings_storage_layouts = [
+    "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@axis_i_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
+    "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@axis_j_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
+    "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@indices_image_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
+    "WARNING: The required group /entry1/measurement/instrument hasn't been supplied.",
+    "WARNING: The required group /entry1/sampleID hasn't been supplied.",
+    "WARNING: The required attribute /entry1/measurement/event1/image1/stack_2d/@AXISNAME_indices hasn't been supplied.",
+    "WARNING: The required field /entry1/start_time hasn't been supplied.",
+]
+
 @pytest.mark.parametrize(
-    "storage_layout, error_messages",
+    "storage_layout, expected_warnings",
     [
         pytest.param(
             "chunked_uncompressed",
-            [
-                ""
-            ],
+            warnings_storage_layouts,
             id="chunked-uncompressed",
         ),
         pytest.param(
             "chunked_compressed",
-            [
-                ""
-            ],
+            warnings_storage_layouts,
             id="chunked-compressed",
         ),
         pytest.param(
             "contiguous",
-            [
-                ""
-            ],
+            warnings_storage_layouts,
             id="contiguous",
         ),
     ],
 )
-def test_validate_file_storage_layouts(storage_layout, tmp_path, caplog, error_messages):
+def test_validate_file_storage_layouts(storage_layout, tmp_path, caplog, expected_warnings):
     """Test validation of a NeXus/HDF5 with the same content but different storage layout."""
     file_path = tmp_path / f"{storage_layout}.nxs"
     # prng = np.random.default_rng(seed=42)  # deterministic seeding
@@ -97,17 +101,16 @@ def test_validate_file_storage_layouts(storage_layout, tmp_path, caplog, error_m
     validate(file_path)
 
     with caplog.at_level(logging.INFO):
-        observed_infos = [
-            rec.getMessage() for rec in caplog.records if rec.levelno == logging.INFO
+        observed_warnings = [
+            rec.message for rec in caplog.records if rec.levelno == logging.WARNING and not rec.message.startswith("WARNING: Invalid: The entry `entry1` in file")
         ]
-        for rec in observed_infos:
-            print(rec)
+        assert observed_warnings == expected_warnings
 
     os.remove(file_path)
 
 
 @pytest.mark.parametrize(
-    "storage_layout, positive, dtype, error_messages",
+    "storage_layout, positive, data_type, error_messages",
     [
         pytest.param(
             "chunked_uncompressed",
