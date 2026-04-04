@@ -116,10 +116,12 @@ emittance
 execinfo
 fairmat
 fillvalue
+finfo
 flatfield
 fluence
 fourd
 fxcef
+gcpl
 genfromtxt
 getlink
 getroottree
@@ -202,6 +204,7 @@ plottable
 posint
 posteriori
 printoptions
+prng
 punx
 pynxtools
 raman
