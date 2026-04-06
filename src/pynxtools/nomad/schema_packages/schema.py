@@ -686,8 +686,8 @@ def _add_quantity_stats(container: Section, quantity: Quantity):
 
     # no statistics for complex numbers
     for suffix in FIELD_STATISTICS:
-        if suffix != "__mean":  # exclude because for NeXus HDF5 non-scalar iuf datasets
-            # we register in Metainfo with the mean value as its representative
+        if suffix != "__mean":  # exclude because for NeXus/HDF5 non-scalar iuf datasets
+            # we register in Metainfo the mean value as the representative for the field
             dtype = FIELD_STATISTICS[suffix]["type"]
             container.quantities.append(
                 Quantity(

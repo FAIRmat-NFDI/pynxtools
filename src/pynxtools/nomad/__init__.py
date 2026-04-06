@@ -74,7 +74,7 @@ FIELD_STATISTICS: dict[str, dict] = {
         "function": np.ndim,
         "type": np.uint8,
         "mask": False,
-    },  # old value np.int32 unnecessarily exceeds max ndims in HDF5 is 32
+    },  # old value np.int32 unnecessarily exceeds max ndims in HDF5 which is 32
 }
 
 
