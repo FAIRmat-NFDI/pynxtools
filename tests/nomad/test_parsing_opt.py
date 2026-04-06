@@ -183,11 +183,8 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path, caplog
         .stack_2d.m_to_dict()["DATA__field"]["real__field"]["m_value"],
         dtype=data_type,
     ).item()
-    # result of np.float128 mean computation was cast to the target datatype
-    print(
-        f">>>> mean {mean} >>>> parsed {parsed} >>>> mean - parsed >>>> {mean - parsed}"
-    )
 
+    # result of np.float128 mean computation was cast to the target datatype
     # set tolerance to within limits of the original type
     if np.issubdtype(data_type, np.integer):
         assert np.isclose(

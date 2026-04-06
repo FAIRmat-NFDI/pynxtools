@@ -126,57 +126,32 @@ def _to_section(
     return new_section
 
 
-def _get_field_iufc_bytes_string_and_object(hdf_node: h5py.Dataset):
-    """
-    Fetch iufc, bytes, string, and arbitrary object data from an h5py.Dataset.
-    """
-    if hdf_node.dtype.kind in "iufc":
-        return hdf_node[...]
-
-    info = h5py.check_string_dtype(hdf_node.dtype)
-    # utf8 is the implicitly assumed encoding for NeXus
-    # some sort of string
-    if info is not None:
-        # if info.length is None and info.encoding == "utf8":
-        # only support variable length null-terminated UTF8, the current default for h5py
+def _get_field_str(hdf_node: h5py.Dataset):
+    """Get scalar string or stringified string array from an h5py.Dataset."""
+    if h5py.check_string_dtype(hdf_node.dtype) is not None and hdf_node.dtype in (
+        "S",
+        "U",
+        "O",
+    ):
         hdf_value = hdf_node[()]
-        if isinstance(hdf_value, bytes):
-            return hdf_value.decode("utf-8")
-        elif isinstance(hdf_value, str):
-            return hdf_value
 
-        if hdf_value.dtype.kind == "S":
-            return np.char.decode(hdf_value, "utf-8")
-        elif hdf_value.dtype.kind == "O":
-            return np.array(
-                [
-                    value.decode("utf-8") if isinstance(value, bytes) else str(value)
-                    for value in hdf_value
-                ],
-                dtype=str,
-            )
+        if hdf_node.shape == ():
+            if isinstance(hdf_value, bytes):
+                return str(hdf_value.decode("utf-8"))
+            return str(hdf_value)
+        else:
 
-        # already unicode (rare but possible)
-        return hdf_value.astype(str)
-    # arbitrary code, we should really think if we wish to support
-    # these would also include e.g. C/C++ structs dumped into HDF5 objects
-    # which by virtue of design violate the principle in NOMAD to have structure first
-    """
-    if info is None and hdf_node.dtype.kind == "O":
-        def decode_array(arr):
-            # recursion unpack, convert, and flatten
-            result = []
-            for value in arr:
-                if isinstance(value, (np.ndarray, list)):
-                    result.append(decode_array(value))
-                else:
-                    result.append(str(decode_or_not(value)))
-            return result
+            def decode_array(arr):
+                # recursion unpack, convert, and flatten
+                result = []
+                for value in arr:
+                    if isinstance(value, (np.ndarray, list)):
+                        result.append(decode_array(value))
+                    else:
+                        result.append(str(decode_or_not(value)))
+                return result
 
-        return decode_array(hdf_value)
-    # explicitly reporting is really an awkward unsupported type
-    """
-    return None
+            return str(decode_array(hdf_value))
 
 
 def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
@@ -285,7 +260,7 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
     n = np.int64(0)
     sum = np.float64(0.0)
 
-    field = _get_field_iufc_bytes_string_and_object(hdf_node)  # unpacking all data
+    field = hdf_node[...]  # unpacking all data
     mask = np.isfinite(field)
     n_values = np.count_nonzero(mask)
     if n_values > 0:
@@ -506,8 +481,8 @@ class NexusParser(MatchingParser):
                     field = bool(hdf_node[(0,) * hdf_node.ndim])  # just "first" value
                 else:
                     field = bool(hdf_node[()])
-            else:  # string or other arbitrary payload
-                field = _get_field_iufc_bytes_string_and_object(hdf_node)
+            else:  # strings
+                field = _get_field_str(hdf_node)
                 if field is None:
                     self._logger.info(
                         "found data of an unsupported type",
@@ -556,22 +531,22 @@ class NexusParser(MatchingParser):
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
                     name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                if hdf_node.dtype.kind in "iuf":
+                if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
                     for suffix in FIELD_STATISTICS:
-                        # if suffix != "__mean":
-                        concept_basename = get_quantity_base_name(field.name)
-                        instance_name = get_quantity_base_name(data_instance_name)
-                        # ignore mean as for non-scalar iuf datasets
-                        # the mean has already been taken as the representative value
-                        stat_metainfo_def = resolve_variadic_name(
-                            current.m_def.all_quantities, concept_basename + suffix
-                        )
-                        stat = MQuantity.wrap(
-                            field_stats[suffix], instance_name + suffix
-                        )
-                        current.m_set(stat_metainfo_def, stat)
-                        # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                        # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                        if suffix != "__mean":
+                            concept_basename = get_quantity_base_name(field.name)
+                            instance_name = get_quantity_base_name(data_instance_name)
+                            # ignore mean as for non-scalar iuf datasets
+                            # the mean has already been taken as the representative value
+                            stat_metainfo_def = resolve_variadic_name(
+                                current.m_def.all_quantities, concept_basename + suffix
+                            )
+                            stat = MQuantity.wrap(
+                                field_stats[suffix], instance_name + suffix
+                            )
+                            current.m_set(stat_metainfo_def, stat)
+                            # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                            # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
