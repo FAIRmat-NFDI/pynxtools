@@ -53,51 +53,51 @@ warnings = [
 @pytest.mark.parametrize(
     "storage_layout, data_type, expected_warnings",
     [
-        # pytest.param("compressed", "uint8", warnings, id="compressed-uint8"),
-        # pytest.param("compressed", "uint16", warnings, id="compressed-uint16"),
-        # pytest.param("compressed", "uint32", warnings, id="compressed-uint32"),
-        # pytest.param("compressed", "uint64", warnings, id="compressed-uint64"),
-        # pytest.param("compressed", "int8", warnings, id="compressed-int8"),
-        # pytest.param("compressed", "int16", warnings, id="compressed-int16"),
-        # pytest.param("compressed", "int32", warnings, id="compressed-int32"),
-        # pytest.param("compressed", "int64", warnings, id="compressed-int64"),
-        # pytest.param("compressed", "float16", warnings, id="compressed-float16"),
+        pytest.param("compressed", "uint8", warnings, id="compressed-uint8"),
+        pytest.param("compressed", "uint16", warnings, id="compressed-uint16"),
+        pytest.param("compressed", "uint32", warnings, id="compressed-uint32"),
+        pytest.param("compressed", "uint64", warnings, id="compressed-uint64"),
+        pytest.param("compressed", "int8", warnings, id="compressed-int8"),
+        pytest.param("compressed", "int16", warnings, id="compressed-int16"),
+        pytest.param("compressed", "int32", warnings, id="compressed-int32"),
+        pytest.param("compressed", "int64", warnings, id="compressed-int64"),
+        pytest.param("compressed", "float16", warnings, id="compressed-float16"),
         pytest.param("compressed", "float32", warnings, id="compressed-float32"),
-        # pytest.param("compressed", "float64", warnings, id="compressed-float64"),
-        # pytest.param("compressed", "float128", warnings, id="compressed-float128"),
-        ## # pytest.param("compressed", "complex32", warnings, id="compressed-complex32"),
-        ## # pytest.param("compressed", "complex64", warnings, id="compressed-complex64"),
-        ## # pytest.param("compressed", "complex128", warnings, id="compressed-complex128"),
-        # pytest.param("uncompressed", "uint8", warnings, id="uncompressed-uint8"),
-        # pytest.param("uncompressed", "uint16", warnings, id="uncompressed-uint16"),
-        # pytest.param("uncompressed", "uint32", warnings, id="uncompressed-uint32"),
-        # pytest.param("uncompressed", "uint64", warnings, id="uncompressed-uint64"),
-        # pytest.param("uncompressed", "int8", warnings, id="uncompressed-int8"),
-        # pytest.param("uncompressed", "int16", warnings, id="uncompressed-int16"),
-        # pytest.param("uncompressed", "int32", warnings, id="uncompressed-int32"),
-        # pytest.param("uncompressed", "int64", warnings, id="uncompressed-int64"),
-        # pytest.param("uncompressed", "float16", warnings, id="uncompressed-float16"),
+        pytest.param("compressed", "float64", warnings, id="compressed-float64"),
+        ## pytest.param("compressed", "float128", warnings, id="compressed-float128"),
+        ## pytest.param("compressed", "complex32", warnings, id="compressed-complex32"),
+        ## pytest.param("compressed", "complex64", warnings, id="compressed-complex64"),
+        ## pytest.param("compressed", "complex128", warnings, id="compressed-complex128"),
+        pytest.param("uncompressed", "uint8", warnings, id="uncompressed-uint8"),
+        pytest.param("uncompressed", "uint16", warnings, id="uncompressed-uint16"),
+        pytest.param("uncompressed", "uint32", warnings, id="uncompressed-uint32"),
+        pytest.param("uncompressed", "uint64", warnings, id="uncompressed-uint64"),
+        pytest.param("uncompressed", "int8", warnings, id="uncompressed-int8"),
+        pytest.param("uncompressed", "int16", warnings, id="uncompressed-int16"),
+        pytest.param("uncompressed", "int32", warnings, id="uncompressed-int32"),
+        pytest.param("uncompressed", "int64", warnings, id="uncompressed-int64"),
+        pytest.param("uncompressed", "float16", warnings, id="uncompressed-float16"),
         pytest.param("uncompressed", "float32", warnings, id="uncompressed-float32"),
-        # pytest.param("uncompressed", "float64", warnings, id="uncompressed-float64"),
-        # pytest.param("uncompressed", "float128", warnings, id="uncompressed-float128"),
-        ## # pytest.param("uncompressed", "complex32", warnings, id="uncompressed-complex32"),
-        ## # pytest.param("uncompressed", "complex64", warnings, id="uncompressed-complex64"),
-        ## # pytest.param("uncompressed", "complex128", warnings, id="uncompressed-complex128"),
-        # pytest.param("contiguous", "uint8", warnings, id="contiguous-uint8"),
-        # pytest.param("contiguous", "uint16", warnings, id="contiguous-uint16"),
-        # pytest.param("contiguous", "uint32", warnings, id="contiguous-uint32"),
-        # pytest.param("contiguous", "uint64", warnings, id="contiguous-uint64"),
-        # pytest.param("contiguous", "int8", warnings, id="contiguous-int8"),
-        # pytest.param("contiguous", "int16", warnings, id="contiguous-int16"),
-        # pytest.param("contiguous", "int32", warnings, id="contiguous-int32"),
-        # pytest.param("contiguous", "int64", warnings, id="contiguous-int64"),
-        # pytest.param("contiguous", "float16", warnings, id="contiguous-float16"),
+        pytest.param("uncompressed", "float64", warnings, id="uncompressed-float64"),
+        ## pytest.param("uncompressed", "float128", warnings, id="uncompressed-float128"),
+        ## pytest.param("uncompressed", "complex32", warnings, id="uncompressed-complex32"),
+        ## pytest.param("uncompressed", "complex64", warnings, id="uncompressed-complex64"),
+        ## pytest.param("uncompressed", "complex128", warnings, id="uncompressed-complex128"),
+        pytest.param("contiguous", "uint8", warnings, id="contiguous-uint8"),
+        pytest.param("contiguous", "uint16", warnings, id="contiguous-uint16"),
+        pytest.param("contiguous", "uint32", warnings, id="contiguous-uint32"),
+        pytest.param("contiguous", "uint64", warnings, id="contiguous-uint64"),
+        pytest.param("contiguous", "int8", warnings, id="contiguous-int8"),
+        pytest.param("contiguous", "int16", warnings, id="contiguous-int16"),
+        pytest.param("contiguous", "int32", warnings, id="contiguous-int32"),
+        pytest.param("contiguous", "int64", warnings, id="contiguous-int64"),
+        pytest.param("contiguous", "float16", warnings, id="contiguous-float16"),
         pytest.param("contiguous", "float32", warnings, id="contiguous-float32"),
-        # pytest.param("contiguous", "float64", warnings, id="contiguous-float64"),
-        # pytest.param("contiguous", "float128", warnings, id="contiguous-float128"),
-        ## # pytest.param("contiguous", "complex32", warnings, id="contiguous-complex32"),
-        ## # pytest.param("contiguous", "complex64", warnings, id="contiguous-complex64"),
-        ## # pytest.param("contiguous", "complex128", warnings, id="contiguous-complex128"),
+        pytest.param("contiguous", "float64", warnings, id="contiguous-float64"),
+        ## pytest.param("contiguous", "float128", warnings, id="contiguous-float128"),
+        ## pytest.param("contiguous", "complex32", warnings, id="contiguous-complex32"),
+        ## pytest.param("contiguous", "complex64", warnings, id="contiguous-complex64"),
+        ## pytest.param("contiguous", "complex128", warnings, id="contiguous-complex128"),
     ],
 )
 def test_parse_file_array_statistics(
@@ -128,7 +128,9 @@ def test_parse_file_array_statistics(
             dat = prng.integers(
                 0, np.iinfo(data_type).max, size=n_values, dtype=data_type
             ).reshape(-1, 50, 50)
-            mean = np.sum(dat, dtype=np.float128) / np.float128(dat.size)
+            mean = np.asarray(
+                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
+            ).item()
         elif np.issubdtype(data_type, np.integer):
             dat = prng.integers(
                 np.iinfo(data_type).min,
@@ -136,10 +138,14 @@ def test_parse_file_array_statistics(
                 size=n_values,
                 dtype=data_type,
             ).reshape(-1, 50, 50)
-            mean = np.sum(dat, dtype=np.float128) / np.float128(dat.size)
+            mean = np.asarray(
+                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
+            ).item()
         elif np.issubdtype(data_type, np.floating):
             dat = prng.random(size=n_values).astype(data_type).reshape(-1, 50, 50)
-            mean = np.sum(dat, dtype=np.float128) / np.float128(dat.size)
+            mean = np.asarray(
+                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
+            ).item()
         # elif np.issubdtype(data_type, np.complexfloating):
         #     real_dtype = np.empty((), dtype=data_type).real.dtype  # half the itemsize
         #     real = prng.random(size=n_values).astype(real_dtype)
@@ -180,18 +186,33 @@ def test_parse_file_array_statistics(
 
     assert os.path.isfile(file_path)
 
-    print(f">>>> {mean}")
-
     archive = EntryArchive()
     NexusParser().parse(str(file_path), archive, get_logger(__name__))
-    em_obj = archive.data
-    print(
-        f"em_obj {em_obj.ENTRY[0].measurement.eventID[0].imageID[0].stack_2d.real__field}"
-    )
-    # for key, obj in fd.FlatDict(archive.m_to_dict(), delimiter="/").items():
-    #     print(f"{key}, {obj}")
 
-    """
+    parsed = np.asarray(
+        archive.data.ENTRY[0]
+        .measurement.eventID[0]
+        .imageID[0]
+        .stack_2d.m_to_dict()["DATA__field"]["real__field"]["m_value"],
+        dtype=data_type,
+    ).item()
+    # result of np.float128 mean computation was cast to the target datatype
+    print(
+        f">>>> mean {mean} >>>> parsed {parsed} >>>> mean - parsed >>>> {mean - parsed}"
+    )
+
+    # set tolerance to within limits of the original type
+    if np.issubdtype(data_type, np.integer):
+        assert np.isclose(
+            mean,
+            parsed,
+            atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
+            rtol=0.0,
+        )
+    elif np.issubdtype(data_type, np.floating):
+        # atol set like this cuz explicit mean computation using np.float64
+        assert np.isclose(mean, parsed, atol=np.finfo(np.float64).eps, rtol=0.0)
+
     with caplog.at_level(logging.INFO):
         observed_warnings = [
             rec.message
@@ -201,19 +222,7 @@ def test_parse_file_array_statistics(
                 "WARNING: Invalid: The entry `entry1` in file"
             )
         ]
-        assert observed_warnings == expected_warnings
+        for rec in observed_warnings:
+            print(rec)
 
     os.remove(file_path)
-    """
-
-
-"""
-x32 = np.array([1.1, 2.2, 3.3, 4.4], dtype=np.float32)
-x64 = x32.astype(np.float64)
-x128 = x32.astype(np.float128)
-mean64 = np.mean(x64, dtype=np.float64)
-mean128 = np.mean(x128, dtype=np.float128)
-atol = np.finfo(np.float64).eps
-is_close = np.isclose(mean128, mean64, atol=atol, rtol=0.0)
-print(mean128, mean64, is_close)
-"""
