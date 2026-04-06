@@ -161,10 +161,10 @@ def _get_field_iufc_bytes_string_and_object(hdf_node: h5py.Dataset):
     # arbitrary code, we should really think if we wish to support
     # these would also include e.g. C/C++ structs dumped into HDF5 objects
     # which by virtue of design violate the principle in NOMAD to have structure first
+    """
     if info is None and hdf_node.dtype.kind == "O":
-
         def decode_array(arr):
-            """Recursively unpack, convert, and flatten."""
+            # recursion unpack, convert, and flatten
             result = []
             for value in arr:
                 if isinstance(value, (np.ndarray, list)):
@@ -175,6 +175,7 @@ def _get_field_iufc_bytes_string_and_object(hdf_node: h5py.Dataset):
 
         return decode_array(hdf_value)
     # explicitly reporting is really an awkward unsupported type
+    """
     return None
 
 
@@ -482,7 +483,7 @@ class NexusParser(MatchingParser):
                     field = hdf_node[()]
                     if not np.isfinite(field):
                         self._logger.info(
-                            "found non finite iuf scalar",
+                            "found non-finite integer, unsigned, or floating scalar",
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
@@ -496,7 +497,7 @@ class NexusParser(MatchingParser):
                     field = hdf_node[()]
                 if not np.isfinite(field):
                     self._logger.info(
-                        "found non finite c value",
+                        "found non finite complexfloating value",
                         target_name=field_name + "[" + data_instance_name + "]",
                     )
                     return
@@ -555,19 +556,22 @@ class NexusParser(MatchingParser):
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
                     name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                for suffix in FIELD_STATISTICS:
-                    # if suffix != "__mean":
-                    concept_basename = get_quantity_base_name(field.name)
-                    instance_name = get_quantity_base_name(data_instance_name)
-                    # ignore mean as for non-scalar iuf datasets
-                    # the mean has already been taken as the representative value
-                    stat_metainfo_def = resolve_variadic_name(
-                        current.m_def.all_quantities, concept_basename + suffix
-                    )
-                    stat = MQuantity.wrap(field_stats[suffix], instance_name + suffix)
-                    current.m_set(stat_metainfo_def, stat)
-                    # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                    # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                if hdf_node.dtype.kind in "iuf":
+                    for suffix in FIELD_STATISTICS:
+                        # if suffix != "__mean":
+                        concept_basename = get_quantity_base_name(field.name)
+                        instance_name = get_quantity_base_name(data_instance_name)
+                        # ignore mean as for non-scalar iuf datasets
+                        # the mean has already been taken as the representative value
+                        stat_metainfo_def = resolve_variadic_name(
+                            current.m_def.all_quantities, concept_basename + suffix
+                        )
+                        stat = MQuantity.wrap(
+                            field_stats[suffix], instance_name + suffix
+                        )
+                        current.m_set(stat_metainfo_def, stat)
+                        # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                        # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
