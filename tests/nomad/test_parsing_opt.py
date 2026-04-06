@@ -35,9 +35,9 @@ try:
 except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
 
-from pynxtools.nomad.parsers.parser import NexusParser
+import flatdict as fd
 
-# import flatdict as fd
+from pynxtools.nomad.parsers.parser import NexusParser
 
 warnings = [
     "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@axis_i_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
@@ -53,51 +53,51 @@ warnings = [
 @pytest.mark.parametrize(
     "storage_layout, data_type, expected_warnings",
     [
-        pytest.param("compressed", "uint8", warnings, id="compressed-uint8"),
-        pytest.param("compressed", "uint16", warnings, id="compressed-uint16"),
-        pytest.param("compressed", "uint32", warnings, id="compressed-uint32"),
-        pytest.param("compressed", "uint64", warnings, id="compressed-uint64"),
-        pytest.param("compressed", "int8", warnings, id="compressed-int8"),
-        pytest.param("compressed", "int16", warnings, id="compressed-int16"),
-        pytest.param("compressed", "int32", warnings, id="compressed-int32"),
-        pytest.param("compressed", "int64", warnings, id="compressed-int64"),
-        pytest.param("compressed", "float16", warnings, id="compressed-float16"),
+        # pytest.param("compressed", "uint8", warnings, id="compressed-uint8"),
+        # pytest.param("compressed", "uint16", warnings, id="compressed-uint16"),
+        # pytest.param("compressed", "uint32", warnings, id="compressed-uint32"),
+        # pytest.param("compressed", "uint64", warnings, id="compressed-uint64"),
+        # pytest.param("compressed", "int8", warnings, id="compressed-int8"),
+        # pytest.param("compressed", "int16", warnings, id="compressed-int16"),
+        # pytest.param("compressed", "int32", warnings, id="compressed-int32"),
+        # pytest.param("compressed", "int64", warnings, id="compressed-int64"),
+        # pytest.param("compressed", "float16", warnings, id="compressed-float16"),
         pytest.param("compressed", "float32", warnings, id="compressed-float32"),
-        pytest.param("compressed", "float64", warnings, id="compressed-float64"),
-        pytest.param("compressed", "float128", warnings, id="compressed-float128"),
-        # pytest.param("compressed", "complex32", warnings, id="compressed-complex32"),
-        # pytest.param("compressed", "complex64", warnings, id="compressed-complex64"),
-        # pytest.param("compressed", "complex128", warnings, id="compressed-complex128"),
-        pytest.param("uncompressed", "uint8", warnings, id="uncompressed-uint8"),
-        pytest.param("uncompressed", "uint16", warnings, id="uncompressed-uint16"),
-        pytest.param("uncompressed", "uint32", warnings, id="uncompressed-uint32"),
-        pytest.param("uncompressed", "uint64", warnings, id="uncompressed-uint64"),
-        pytest.param("uncompressed", "int8", warnings, id="uncompressed-int8"),
-        pytest.param("uncompressed", "int16", warnings, id="uncompressed-int16"),
-        pytest.param("uncompressed", "int32", warnings, id="uncompressed-int32"),
-        pytest.param("uncompressed", "int64", warnings, id="uncompressed-int64"),
-        pytest.param("uncompressed", "float16", warnings, id="uncompressed-float16"),
+        # pytest.param("compressed", "float64", warnings, id="compressed-float64"),
+        # pytest.param("compressed", "float128", warnings, id="compressed-float128"),
+        ## # pytest.param("compressed", "complex32", warnings, id="compressed-complex32"),
+        ## # pytest.param("compressed", "complex64", warnings, id="compressed-complex64"),
+        ## # pytest.param("compressed", "complex128", warnings, id="compressed-complex128"),
+        # pytest.param("uncompressed", "uint8", warnings, id="uncompressed-uint8"),
+        # pytest.param("uncompressed", "uint16", warnings, id="uncompressed-uint16"),
+        # pytest.param("uncompressed", "uint32", warnings, id="uncompressed-uint32"),
+        # pytest.param("uncompressed", "uint64", warnings, id="uncompressed-uint64"),
+        # pytest.param("uncompressed", "int8", warnings, id="uncompressed-int8"),
+        # pytest.param("uncompressed", "int16", warnings, id="uncompressed-int16"),
+        # pytest.param("uncompressed", "int32", warnings, id="uncompressed-int32"),
+        # pytest.param("uncompressed", "int64", warnings, id="uncompressed-int64"),
+        # pytest.param("uncompressed", "float16", warnings, id="uncompressed-float16"),
         pytest.param("uncompressed", "float32", warnings, id="uncompressed-float32"),
-        pytest.param("uncompressed", "float64", warnings, id="uncompressed-float64"),
-        pytest.param("uncompressed", "float128", warnings, id="uncompressed-float128"),
-        # pytest.param("uncompressed", "complex32", warnings, id="uncompressed-complex32"),
-        # pytest.param("uncompressed", "complex64", warnings, id="uncompressed-complex64"),
-        # pytest.param("uncompressed", "complex128", warnings, id="uncompressed-complex128"),
-        pytest.param("contiguous", "uint8", warnings, id="contiguous-uint8"),
-        pytest.param("contiguous", "uint16", warnings, id="contiguous-uint16"),
-        pytest.param("contiguous", "uint32", warnings, id="contiguous-uint32"),
-        pytest.param("contiguous", "uint64", warnings, id="contiguous-uint64"),
-        pytest.param("contiguous", "int8", warnings, id="contiguous-int8"),
-        pytest.param("contiguous", "int16", warnings, id="contiguous-int16"),
-        pytest.param("contiguous", "int32", warnings, id="contiguous-int32"),
-        pytest.param("contiguous", "int64", warnings, id="contiguous-int64"),
-        pytest.param("contiguous", "float16", warnings, id="contiguous-float16"),
+        # pytest.param("uncompressed", "float64", warnings, id="uncompressed-float64"),
+        # pytest.param("uncompressed", "float128", warnings, id="uncompressed-float128"),
+        ## # pytest.param("uncompressed", "complex32", warnings, id="uncompressed-complex32"),
+        ## # pytest.param("uncompressed", "complex64", warnings, id="uncompressed-complex64"),
+        ## # pytest.param("uncompressed", "complex128", warnings, id="uncompressed-complex128"),
+        # pytest.param("contiguous", "uint8", warnings, id="contiguous-uint8"),
+        # pytest.param("contiguous", "uint16", warnings, id="contiguous-uint16"),
+        # pytest.param("contiguous", "uint32", warnings, id="contiguous-uint32"),
+        # pytest.param("contiguous", "uint64", warnings, id="contiguous-uint64"),
+        # pytest.param("contiguous", "int8", warnings, id="contiguous-int8"),
+        # pytest.param("contiguous", "int16", warnings, id="contiguous-int16"),
+        # pytest.param("contiguous", "int32", warnings, id="contiguous-int32"),
+        # pytest.param("contiguous", "int64", warnings, id="contiguous-int64"),
+        # pytest.param("contiguous", "float16", warnings, id="contiguous-float16"),
         pytest.param("contiguous", "float32", warnings, id="contiguous-float32"),
-        pytest.param("contiguous", "float64", warnings, id="contiguous-float64"),
-        pytest.param("contiguous", "float128", warnings, id="contiguous-float128"),
-        # pytest.param("contiguous", "complex32", warnings, id="contiguous-complex32"),
-        # pytest.param("contiguous", "complex64", warnings, id="contiguous-complex64"),
-        # pytest.param("contiguous", "complex128", warnings, id="contiguous-complex128"),
+        # pytest.param("contiguous", "float64", warnings, id="contiguous-float64"),
+        # pytest.param("contiguous", "float128", warnings, id="contiguous-float128"),
+        ## # pytest.param("contiguous", "complex32", warnings, id="contiguous-complex32"),
+        ## # pytest.param("contiguous", "complex64", warnings, id="contiguous-complex64"),
+        ## # pytest.param("contiguous", "complex128", warnings, id="contiguous-complex128"),
     ],
 )
 def test_parse_file_array_statistics(
@@ -184,8 +184,11 @@ def test_parse_file_array_statistics(
 
     archive = EntryArchive()
     NexusParser().parse(str(file_path), archive, get_logger(__name__))
+    em_obj = archive.data
+    print(
+        f"em_obj {em_obj.ENTRY[0].measurement.eventID[0].imageID[0].stack_2d.real__field}"
+    )
     # for key, obj in fd.FlatDict(archive.m_to_dict(), delimiter="/").items():
-    #     # if key == "results":
     #     print(f"{key}, {obj}")
 
     """

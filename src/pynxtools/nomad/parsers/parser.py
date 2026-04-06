@@ -555,22 +555,19 @@ class NexusParser(MatchingParser):
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
                     name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                if len(field_stats) > 0:
+                for suffix in FIELD_STATISTICS:
+                    # if suffix != "__mean":
                     concept_basename = get_quantity_base_name(field.name)
                     instance_name = get_quantity_base_name(data_instance_name)
-                    for suffix in FIELD_STATISTICS:
-                        # ignore mean as for non-scalar iuf datasets
-                        # the mean has already been taken as the representative value
-                        if suffix != "__mean":
-                            stat_metainfo_def = resolve_variadic_name(
-                                current.m_def.all_quantities, concept_basename + suffix
-                            )
-                            stat = MQuantity.wrap(
-                                field_stats[suffix], instance_name + suffix
-                            )
-                            current.m_set(stat_metainfo_def, stat)
-                            # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                            # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                    # ignore mean as for non-scalar iuf datasets
+                    # the mean has already been taken as the representative value
+                    stat_metainfo_def = resolve_variadic_name(
+                        current.m_def.all_quantities, concept_basename + suffix
+                    )
+                    stat = MQuantity.wrap(field_stats[suffix], instance_name + suffix)
+                    current.m_set(stat_metainfo_def, stat)
+                    # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                    # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
