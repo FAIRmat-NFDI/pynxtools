@@ -35,7 +35,6 @@ try:
 except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
 
-import flatdict as fd
 
 from pynxtools.nomad.parsers.parser import NexusParser
 
