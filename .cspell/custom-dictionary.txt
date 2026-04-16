@@ -117,6 +117,7 @@ flatfield
 fluence
 fourd
 fxcef
+gcpl
 genfromtxt
 getlink
 getroottree
@@ -130,6 +131,8 @@ hdfgroup
 hdfobject
 hfive
 hixu
+hyperslab
+hyperslabs
 hypothes
 idname
 idobj
@@ -169,6 +172,7 @@ myext
 mynxdl
 namefit
 namefitting
+nbstripout
 nbytes
 ndarray
 ndataconverter
@@ -196,8 +200,10 @@ plottable
 posint
 posteriori
 printoptions
+prng
 punx
 pynxtools
+pyupgrade
 raman
 rdcc
 redef
@@ -229,6 +235,7 @@ ureg
 usefixtures
 vamas
 visititems
+vlen
 xarrays
 xaxis
 xdist

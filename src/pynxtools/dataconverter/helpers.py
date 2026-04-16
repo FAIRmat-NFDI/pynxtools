@@ -49,6 +49,8 @@ logger = logging.getLogger("pynxtools")
 
 import importlib.metadata
 
+from pynxtools.dataconverter.chunk import CHUNK_CONFIG_DEFAULT
+
 
 def get_pynxtools_version() -> str:
     """Attempt getting the version of pynxtools at runtime with fallback."""
@@ -796,12 +798,55 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
+def is_valid_data_type_hdf(hdf_node: h5py.Dataset, accepted_types: Sequence) -> bool:
+    """Checks whether the given value or its children are of an accepted type."""
+    if hdf_node.dtype != np.dtype("O"):
+        # standard numeric / fixed dtypes
+        return any(np.issubdtype(hdf_node.dtype, t) for t in accepted_types)
+
+    # handle 'object' dtype separately (for lists from HDF5 files)
+    return all(
+        isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
+        for v in np.asarray(hdf_node[...]).flat
+    )
+
+
 def is_positive_int(value: Any) -> bool:
     """Checks whether the given value or its children are positive."""
 
     if not isinstance(value, np.ndarray):
         value = np.array(value)
     return bool(np.all(value > 0))
+
+
+def is_positive_int_hdf(hdf_node: h5py.Dataset) -> bool:
+    """Checks whether values in hdf_node are all positive."""
+    if hdf_node.dtype.kind in "iu":
+        if hdf_node.chunks is not None:
+            # chunked storage irrespective if compressed or not
+            for chunk in hdf_node.iter_chunks():
+                if (hdf_node[chunk] > 0).all():
+                    continue
+                else:
+                    return False
+        else:
+            # contiguous storage can never be compressed
+            # typically fastest but reading all data at once
+            return bool(np.all(hdf_node[...] > 0))
+            """
+            # typically slower than the previous line streaming through hyperslabs
+            max_elements_per_hyperslab = (
+                CHUNK_CONFIG_DEFAULT["byte_size"] // hdf_node.dtype.itemsize
+            )
+            row_size = np.prod(hdf_node.shape[1:], dtype=int)
+            block_size = max(1, max_elements_per_hyperslab // row_size)
+            for idx in range(0, hdf_node.shape[0], block_size):
+                if (hdf_node[idx : idx + block_size] > 0).all():
+                    continue
+                else:
+                    return False
+            """
+    return True
 
 
 def convert_str_to_bool_safe(value: str) -> bool | None:
@@ -871,7 +916,7 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
             collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
         if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-            results = ISO8601.search(clean_str_attr(value))
+            results = ISO8601.search(decode_if_bytes(value))
             if results is None:
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidDatetime, value
@@ -903,6 +948,32 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
         return value
 
     return validate_data_value(value, nxdl_type, path)
+
+
+def is_valid_data_field_hdf(hdf_node: h5py.Dataset, nxdl_type: str, path: str):
+    """Checks whether value of hdf_node is valid according to the type defined in the NXDL."""
+    # validating i.e. reading only not converting !
+    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+
+    if not is_valid_data_type_hdf(hdf_node, accepted_types):
+        collector.collect_and_log(
+            path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+        )
+
+    # type-specific validation
+    if nxdl_type == "NX_POSINT" and not is_positive_int_hdf(hdf_node):
+        collector.collect_and_log(
+            path, ValidationProblem.IsNotPosInt, hdf_node[(0,) * hdf_node.ndim]
+        )
+
+    if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
+        if h5py.check_string_dtype(hdf_node.dtype) is not None and hdf_node.shape == ():
+            value = decode_if_bytes(hdf_node[()])
+            results = ISO8601.search(value)
+            if results is None:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidDatetime, value
+                )
 
 
 def get_custom_attr_path(path: str) -> str:
@@ -992,6 +1063,83 @@ def is_valid_enum(
                         value,
                     )
 
+                elif custom_attr is None:
+                    try:
+                        mapping[custom_path] = True
+                    except ValueError:
+                        # we are in the HDF5 validation, cannot set custom attribute.
+                        pass
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithMissingCustom,
+                        nxdl_enum,
+                        value,
+                        custom_added_auto,
+                    )
+            else:
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidEnum, nxdl_enum, value
+                )
+
+
+def is_valid_enum_hdf(
+    hdf_node: h5py.Dataset,
+    nxdl_enum: list,
+    nxdl_enum_open: bool,
+    path: str,
+    mapping: MutableMapping,
+):
+    """Validate a value in hdf_node against an NXDL enumeration and handle custom attributes.
+
+    This function checks whether a given value conforms to the specified NXDL
+    enumeration. If the enumeration is open (`nxdl_enum_open`), it may create or
+    check a corresponding custom attribute in the `mapping`.
+
+    Args:
+        dataset (h5py.Dataset): The HDF5 dataset whose value(s) to validate.
+        nxdl_enum (list): The NXDL enumeration to validate against.
+        nxdl_enum_open (bool): Whether the enumeration is open to custom values.
+        path (str): The path of the value in the dataset.
+        mapping (MutableMapping): The object (dict or HDF5 group) holding custom attributes.
+    """
+
+    if nxdl_enum is not None:
+        value = decode_if_bytes(hdf_node[()])
+        if (
+            isinstance(value, np.ndarray)
+            and isinstance(nxdl_enum, list)
+            and isinstance(nxdl_enum[0], list)
+        ):
+            enum_value = list(value)
+        else:
+            enum_value = value
+
+        if enum_value not in nxdl_enum:
+            if nxdl_enum_open:
+                custom_path = get_custom_attr_path(path)
+
+                if isinstance(mapping, h5py.Group):
+                    parent_path, attr_name = custom_path.rsplit("@", 1)
+                    custom_attr = mapping.get(parent_path).attrs.get(attr_name)
+                    custom_added_auto = False
+                else:
+                    custom_attr = mapping.get(custom_path)
+                    custom_added_auto = True
+
+                if custom_attr == True:  # noqa: E712
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCustom,
+                        nxdl_enum,
+                        value,
+                    )
+                elif custom_attr == False:  # noqa: E712
+                    collector.collect_and_log(
+                        path,
+                        ValidationProblem.OpenEnumWithCustomFalse,
+                        nxdl_enum,
+                        value,
+                    )
                 elif custom_attr is None:
                     try:
                         mapping[custom_path] = True
@@ -1457,20 +1605,20 @@ def nested_dict_to_slash_separated_path(
             flattened_dict[path] = val
 
 
-def clean_str_attr(attr: str | bytes | None, encoding: str = "utf-8") -> str | None:
+def decode_if_bytes(payload: Any, encoding: str = "utf-8") -> Any:
     """
-    Return the attribute as a string.
+    Return the payload (e.g. attribute) as Any except bytes.
 
-    - If `attr` is `bytes`, decode it using the given encoding.
+    - If `payload` is `bytes`, decode it using the given encoding.
     - Otherwise, return it unchanged.
 
     Args:
-        attr: A string, bytes, or any other type.
+        payload: Any type.
         encoding: The character encoding to use when decoding bytes.
 
     Returns:
         The attribute as a string, or None if input was None.
     """
-    if isinstance(attr, bytes):
-        return attr.decode(encoding)
-    return attr
+    if isinstance(payload, bytes):
+        return payload.decode(encoding)
+    return payload
