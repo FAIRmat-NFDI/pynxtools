@@ -18,11 +18,11 @@
 
 from typing import Optional
 
+import h5py
 import lxml.etree as ET
 import numpy as np
 
-DEBUG_PYNXTOOLS_WITH_NOMAD = False
-
+DEBUG_PYNXTOOLS_WITH_NOMAD: bool = False
 
 try:
     from ase.data import chemical_symbols
@@ -126,37 +126,167 @@ def _to_section(
     return new_section
 
 
-def _get_value(hdf_node):
-    """
-    Get value from hdf5 node
-    """
+def _get_field_str(hdf_node: h5py.Dataset):
+    """Get scalar string or stringified string array from an h5py.Dataset."""
+    if h5py.check_string_dtype(hdf_node.dtype) is not None and hdf_node.dtype in (
+        "S",
+        "U",
+        "O",
+    ):
+        hdf_value = hdf_node[()]
 
-    hdf_value = hdf_node[...]
-    if str(hdf_value.dtype) == "bool":
-        if len(hdf_value.shape) > 0:
-            return bool(hdf_value.tolist()[0])
-        return bool(hdf_value)
-    if hdf_value.dtype.kind in "iufc":
-        return hdf_value
-    if len(hdf_value.shape) > 0:
-        # Variable-length UTF-8 / object arrays
-        if hdf_value.dtype.kind == "O":
-            # Recursively decode nested lists if needed
+        if hdf_node.shape == ():
+            if isinstance(hdf_value, bytes):
+                return str(hdf_value.decode("utf-8"))
+            return str(hdf_value)
+        else:
+
             def decode_array(arr):
+                # recursion unpack, convert, and flatten
                 result = []
-                for x in arr:
-                    if isinstance(x, (np.ndarray, list)):
-                        result.append(decode_array(x))
+                for value in arr:
+                    if isinstance(value, (np.ndarray, list)):
+                        result.append(decode_array(value))
                     else:
-                        result.append(str(decode_or_not(x)))
+                        result.append(str(decode_or_not(value)))
                 return result
 
-            return decode_array(hdf_value)
+            return str(decode_array(hdf_value))
 
-        # Fallback for other arrays
-        return str([i for i in hdf_value.astype(str)])
 
-    return hdf_node[()].decode()
+def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
+    """
+    Get field stats when hdf_node uses chunked storage layout
+    """
+    stats: dict = {}
+    # using a chunked storage layout does not necessarily demand usage of compression
+    # computing stats using chunks enables an incremental updating of stats
+    # while excellent for reducing the memory consumption a clear disadvantage is that
+    # measures typically implemented under the hood of np.mean and np.std cannot be used
+    # out of the box and expected to yield the best possible numerical robustness
+    # and accuracy given that how chunks stream in and how large they can affect
+    # numerical precision
+    # an alternative in every case is using Welford's algorithm to prevent such
+    # catastrophic cancellation errors, this algorithm is inherently sequential though
+    # and thus even if vectorized (non-trivial implementation) eventual an order of
+    # magnitude more costly than np.mean and np.std which are vectorized
+
+    # passing the mean as the representative of an array for NOMAD Metainfo is a choice
+    # that is also not without debate it is questionable though whether this warrants
+    # to use then one of the most costly algorithms despite it being theoretically the
+    # most precise one
+
+    # the implementation here shows two approaches:
+    # i) classical Welford
+    # ii) vectorized implementation of the naive formula summarizing over chunks
+    # for computing mean and std using np.float64 in the accumulator though
+    # iii) using np.float128 precision would result in software emulation on the hardware
+    # making the computation substantially more costly than for np.float64
+
+    # only one implementation for "iu" and "f" kinds despite "iu" np.mean and np.std
+    # internally promote to float(ing)
+    stats["__min"] = np.float64(+np.inf)
+    stats["__max"] = np.float64(-np.inf)
+    # required inits with use_welford == True
+    n = np.int64(0)
+    mean = np.float64(0.0)
+    # M2 = np.float64(0.0)
+    # required inits with use_welford == False
+    mean_sum = np.float64(0.0)
+
+    # note that np.mean on iu types by default promotes to np.float64
+    # but np.mean on an np.ndarray of dtype=np.float32 does not automatically
+    # do so, therefore we here use an np.float64 accumulator
+    # we could also use a np.float128 accumulator but that would be much slower
+    # as it will be emulated in software
+
+    if not use_welford:
+        for chunk in hdf_node.iter_chunks():
+            slab = hdf_node[chunk]  # decompresses automatically
+            values = slab[np.isfinite(slab)]
+            number_of_values = values.size
+            if number_of_values > 0:
+                stats["__min"] = np.minimum(stats["__min"], values.min())
+                stats["__max"] = np.maximum(stats["__max"], values.max())
+
+                mean_sum += np.sum(values, dtype=np.float64)
+                n += np.int64(number_of_values)
+        mean_result = mean_sum / np.float64(n) if n > 0 else np.float64(np.nan)
+    else:
+        for chunk in hdf_node.iter_chunks():
+            slab = hdf_node[chunk]
+            values = slab[np.isfinite(slab)]
+            # copies ok, because chunks are typically in MB size range
+            # irrespective of the hdf_node total size
+
+            if values.size > 0:
+                stats["__min"] = np.minimum(stats["__min"], values.min())
+                stats["__max"] = np.maximum(stats["__max"], values.max())
+                # true element-wise Welford update more precise but substantially slower
+                # @njit, i.e. numba could make this faster but add third-party deps
+                for x in values:  # inherently sequential Welford algorithm
+                    value = np.float64(x)
+                    n += np.int64(1)
+                    delta = value - mean
+                    mean += delta / np.float64(n)
+                    # delta2 = value - mean
+                    # M2 += delta * delta2
+        mean_result = mean if n > 0 else np.float64(np.nan)
+
+    # need to cast to correct return type
+    if hdf_node.dtype.kind in "iu":
+        stats["__mean"] = np.asarray(mean_result, dtype=hdf_node.dtype).item()
+        stats["__min"] = np.asarray(stats["__min"], dtype=hdf_node.dtype).item()
+        stats["__max"] = np.asarray(stats["__max"], dtype=hdf_node.dtype).item()
+    else:  # f, always return float64
+        stats["__mean"] = mean_result
+        stats["__min"] = np.float64(stats["__min"])
+        stats["__max"] = np.float64(stats["__max"])
+
+    stats["__size"] = np.int64(np.size(hdf_node))
+    stats["__ndim"] = np.uint8(np.ndim(hdf_node))
+
+    return stats
+
+
+def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
+    """
+    Get field stats when hdf_node uses contiguous storage layout
+    """
+    stats: dict = {}
+
+    stats["__min"] = np.float64(+np.inf)
+    stats["__max"] = np.float64(-np.inf)
+    n = np.int64(0)
+    sum = np.float64(0.0)
+
+    field = hdf_node[...]  # unpacking all data
+    mask = np.isfinite(field)
+    n_values = np.count_nonzero(mask)
+    if n_values > 0:
+        stats["__min"] = np.minimum(stats["__min"], np.min(field[mask]))
+        stats["__max"] = np.maximum(stats["__max"], np.max(field[mask]))
+
+        sum = np.sum(field[mask], dtype=np.float64)
+        n += np.int64(n_values)
+        mean_result = sum / np.float64(n) if n > 0 else np.float64(np.nan)
+    else:
+        mean_result = np.float64(np.nan)
+
+    # need to cast to correct return type
+    if hdf_node.dtype.kind in "iu":
+        stats["__mean"] = np.asarray(mean_result, dtype=hdf_node.dtype).item()
+        stats["__min"] = np.asarray(stats["__min"], dtype=hdf_node.dtype).item()
+        stats["__max"] = np.asarray(stats["__max"], dtype=hdf_node.dtype).item()
+    else:  # f, always return float64, possibly promoting
+        stats["__mean"] = mean_result
+        stats["__min"] = np.float64(stats["__min"])
+        stats["__max"] = np.float64(stats["__max"])
+
+    stats["__size"] = np.int64(np.size(hdf_node))
+    stats["__ndim"] = np.uint8(np.ndim(hdf_node))
+
+    return stats
 
 
 class NexusParser(MatchingParser):
@@ -194,8 +324,7 @@ class NexusParser(MatchingParser):
         """
         Populate attributes and fields
         """
-        if attr:
-            # it is an attribute of either field or group
+        if attr:  # it is an attribute of either a field or a group
             nx_root = False
             if nx_path[0] == "/":
                 nx_attr = nx_path[1]
@@ -273,8 +402,6 @@ class NexusParser(MatchingParser):
                         exc_info=e,
                     )
         else:  # it is a field
-            field = _get_value(hdf_node)
-
             # get the corresponding field name
             html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
             data_instance_name = hdf_node.name.split("/")[-1] + "__field"
@@ -292,35 +419,76 @@ class NexusParser(MatchingParser):
                 )
                 return
 
-            # for data arrays only statistics if not all values NINF, Inf, or NaN
-            field_stats = None
-            if hdf_node[...].dtype.kind in "iufc":
-                if isinstance(field, np.ndarray) and field.size > 1:
-                    mask = np.isfinite(field)
-                    if np.any(mask):
-                        field_stats = [
-                            func(field[mask] if is_mask else field)
-                            for func, is_mask in zip(
-                                FIELD_STATISTICS["function"],
-                                FIELD_STATISTICS["mask"],
-                            )
-                        ]
-                        field = field_stats[0]
-                        if not np.isfinite(field):
+            # Metainfo does not support precision higher than i8, u8, f8, c16
+            # is f2 supported ? maybe silently promote to f4 or f8, maybe downcast higher
+            # precision floating and complex to highest supported precision floating and complex respectively
+            if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
+                self._logger.warning(
+                    f"error while setting field {data_instance_name} in {current.m_def} precision {hdf_node.dtype.itemsize} too high for {field_name}"
+                )
+                return
+
+            # Metainfo also does not support unpacked arbitrary objects or struct
+            # also these should be caught
+
+            field_stats: dict = {}  # stats built from finite iuf arrays
+
+            if hdf_node.dtype.kind in "iuf":
+                if hdf_node.shape != ():  # non-scalar, compute stats
+                    if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
+                        field_stats = _get_field_stats_iuf_chunked(hdf_node)
+                    else:  # load entire contiguous storage layout dataset at once
+                        # we suggest to use chunked storage to avoid these costly cases
+                        field_stats = _get_field_stats_iuf_contiguous(hdf_node)
+
+                    for suffix in FIELD_STATISTICS:
+                        if not np.isfinite(field_stats.get(suffix, np.nan)):
                             self._logger.info(
-                                "set NaN for field of an array",
+                                f"found {suffix} non existent or not finite for integer, unsigned, or floating value",
                                 target_name=field_name + "[" + data_instance_name + "]",
                             )
                             return
-                    else:
-                        return
-                else:
-                    if field.size == 1 and not np.isfinite(field):
+
+                    # now we are sure that key "__mean" exists and its value is finite
+                    # take mean as representative "first" value
+                    field = field_stats["__mean"]
+                    # least costly alternative take "first" value
+                    # field = hdf_node[(0,) * hdf_node.ndim]
+                else:  # scalar, no stats
+                    field = hdf_node[()]
+                    if not np.isfinite(field):
                         self._logger.info(
-                            "set NaN for field of a scalar",
+                            "found non-finite integer, unsigned, or floating scalar",
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
+            # for all non iuf data use old approach, no stats for any of these
+            # eventually make a second optimization round for complex numbers
+            # we have not faced though high volume examples with complex numbers yet
+            elif hdf_node.dtype.kind in "c":
+                if hdf_node.shape != ():
+                    field = hdf_node[(0,) * hdf_node.ndim]  # just "first" value
+                else:
+                    field = hdf_node[()]
+                if not np.isfinite(field):
+                    self._logger.info(
+                        "found non finite complexfloating value",
+                        target_name=field_name + "[" + data_instance_name + "]",
+                    )
+                    return
+            elif np.issubdtype(hdf_node.dtype, np.bool_):
+                if hdf_node.shape != ():
+                    field = bool(hdf_node[(0,) * hdf_node.ndim])  # just "first" value
+                else:
+                    field = bool(hdf_node[()])
+            else:  # strings
+                field = _get_field_str(hdf_node)
+                if field is None:
+                    self._logger.info(
+                        "found data of an unsupported type",
+                        target_name=field_name + "[" + data_instance_name + "]",
+                    )
+                    return
 
             # check if unit is given
             unit = hdf_node.attrs.get("units", None)
@@ -333,11 +501,11 @@ class NexusParser(MatchingParser):
                     else:
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
-                    if field_stats is not None:
-                        for i in range(len(field_stats)):
-                            if FIELD_STATISTICS["mask"][i]:
-                                field_stats[i] = ureg.Quantity(
-                                    field_stats[i], pint_unit
+                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
+                        for suffix in FIELD_STATISTICS:
+                            if FIELD_STATISTICS[suffix]["mask"]:
+                                field_stats[suffix] = ureg.Quantity(
+                                    field_stats[suffix], pint_unit
                                 )
 
                 except (ValueError, UndefinedUnitError):
@@ -363,20 +531,22 @@ class NexusParser(MatchingParser):
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
                     name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                if field_stats is not None:
-                    concept_basename = get_quantity_base_name(field.name)
-                    instance_name = get_quantity_base_name(data_instance_name)
-                    for suffix, stat in zip(
-                        FIELD_STATISTICS["suffix"][1:],
-                        field_stats[1:],
-                    ):
-                        stat_metainfo_def = resolve_variadic_name(
-                            current.m_def.all_quantities, concept_basename + suffix
-                        )
-                        stat = MQuantity.wrap(stat, instance_name + suffix)
-                        current.m_set(stat_metainfo_def, stat)
-                        stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                        stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
+                    for suffix in FIELD_STATISTICS:
+                        if suffix != "__mean":
+                            concept_basename = get_quantity_base_name(field.name)
+                            instance_name = get_quantity_base_name(data_instance_name)
+                            # ignore mean as for non-scalar iuf datasets
+                            # the mean has already been taken as the representative value
+                            stat_metainfo_def = resolve_variadic_name(
+                                current.m_def.all_quantities, concept_basename + suffix
+                            )
+                            stat = MQuantity.wrap(
+                                field_stats[suffix], instance_name + suffix
+                            )
+                            current.m_set(stat_metainfo_def, stat)
+                            # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                            # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",

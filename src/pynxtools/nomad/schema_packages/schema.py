@@ -683,20 +683,22 @@ def _add_quantity_stats(container: Section, quantity: Quantity):
         )
     if not_number:
         return
-    for suffix, dtype in zip(
-        FIELD_STATISTICS["suffix"][1:],
-        FIELD_STATISTICS["type"][1:],
-    ):
-        container.quantities.append(
-            Quantity(
-                name=basename + suffix,
-                variable=quantity.variable,
-                shape=[],
-                type=dtype if dtype else quantity.type,
-                description="This is a NeXus template property. "
-                "This quantity holds specific statistics of the NeXus data array.",
+
+    # no statistics for complex numbers
+    for suffix in FIELD_STATISTICS:
+        if suffix != "__mean":  # exclude because for NeXus/HDF5 non-scalar iuf datasets
+            # we register in Metainfo the mean value as the representative for the field
+            dtype = FIELD_STATISTICS[suffix]["type"]
+            container.quantities.append(
+                Quantity(
+                    name=basename + suffix,
+                    variable=quantity.variable,
+                    shape=[],
+                    type=dtype if dtype else quantity.type,
+                    description="This is a NeXus template property. "
+                    "This quantity holds specific statistics of the NeXus data array.",
+                )
             )
-        )
 
 
 def _add_additional_attributes(definition: Definition, container: Section):
