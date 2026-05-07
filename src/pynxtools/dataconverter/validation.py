@@ -53,6 +53,7 @@ from pynxtools.dataconverter.helpers import (
     split_class_and_name_of,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 from pynxtools.nexus.nexus_tree import (
     NexusField,
     NexusGroup,
@@ -170,29 +171,161 @@ def is_valid_unit_for_node(
     )
 
 
-def validate_hdf_group_against(
-    appdef: str,
-    data: h5py.Group,
-    filename: str,
-    ignore_undocumented: bool = False,
-) -> bool:
+class ValidationVisitor(NexusVisitor):
     """
     Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
 
-    Args:
-        appdef (str): The application definition to validate against.
-        data (h5py.Group): The h5py group to validate.
-        filename (str): The filename of the h5py group.
-        ignore_undocumented (bool, optional):
-            Ignore all undocumented items in the verification
-            and just check if the required concepts are properly set.
-            Defaults to False.
+    Implements :class:`~pynxtools.nexus.handler.NexusVisitor` so it can be
+    driven by :class:`~pynxtools.nexus.handler.NexusFileHandler`.
 
-    Returns:
-        bool: True if the group is valid according to `appdef`, False otherwise.
+    Encapsulates all schema resolution and required-concept tracking that was
+    previously implemented as closures inside ``validate_hdf_group_against``.
+
+    Usage::
+
+        visitor = ValidationVisitor(appdef, entry_name, ignore_undocumented)
+        NexusFileHandler(filename).process(visitor)
+        is_valid = not collector.has_validation_problems()
     """
 
-    def best_namefit_of(
+    _POSSIBLE_NODE_TYPES: tuple[str, ...] = ("group", "field", "attribute")
+    _SKIP_ATTRS: frozenset[str] = frozenset({"NX_class", "units", "target", "custom"})
+
+    def __init__(
+        self,
+        appdef: str,
+        entry_name: str,
+        ignore_undocumented: bool = False,
+    ) -> None:
+        """
+        Args:
+            appdef: Application definition name (e.g. ``"NXarpes"``).
+            entry_name: Absolute HDF5 path of the NXentry to validate
+                (e.g. ``"/entry"``).
+            ignore_undocumented: When ``True`` undocumented fields and groups
+                are silently skipped; only required concepts are checked.
+        """
+        collector.clear()
+
+        appdef_node = generate_tree_from(appdef)
+        self._tree: NexusNode = appdef_node.search_add_child_for("ENTRY")
+        self._appdef_node: NexusNode = appdef_node
+        self._entry_name: str = entry_name
+        self._ignore_undocumented: bool = ignore_undocumented
+
+        # Cache keyed by path only (same semantics as the original LRUCache with
+        # key=hashkey(path) — node_type/nx_class/hint are not part of the cache key)
+        self._node_cache: dict[str, NexusNode | None] = {}
+        self._MISSING = object()  # sentinel for "not yet cached"
+
+        self._required_groups: set[str] = set()
+        self._required_entities: set[str] = set()
+        self._update_required_concepts("", self._tree)
+
+        # Set in on_group when the NXentry group is first seen; used by
+        # is_valid_enum for open-enumeration custom-attribute lookups.
+        self._data: h5py.Group | None = None
+
+    # ------------------------------------------------------------------
+    # NexusVisitor interface
+    # ------------------------------------------------------------------
+
+    def on_group(self, hdf_path: str, hdf_node: h5py.Group) -> None:
+        """Validate an HDF5 group and its attributes."""
+        rel = self._entry_relative(hdf_path)
+        if rel is None:
+            return
+        if rel == "":
+            # This IS the NXentry group — store for is_valid_enum lookups.
+            self._data = hdf_node
+            return
+        self._check_soft_link(rel, hdf_node)
+        self._handle_group(rel, hdf_node)
+        self._handle_attributes(rel, hdf_node.attrs, hdf_node)
+
+    def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
+        """Validate an HDF5 dataset (field) and its attributes."""
+        rel = self._entry_relative(hdf_path)
+        if rel is None or rel == "":
+            return
+        self._check_soft_link(rel, hdf_node)
+        self._handle_field(rel, hdf_node)
+        check_reserved_suffix(f"{self._entry_name}/{rel}", hdf_node.parent)
+        self._handle_attributes(rel, hdf_node.attrs, hdf_node)
+
+    def on_attribute(
+        self,
+        hdf_path: str,
+        attr_name: str,
+        attr_value: Any,
+        parent: h5py.Group | h5py.Dataset,
+    ) -> None:
+        # Attributes are handled inside on_group / on_field via
+        # _handle_attributes so that the full attrs dict is available.
+        pass
+
+    def on_complete(self, root: h5py.File) -> None:
+        """Emit validation errors for all required concepts not encountered."""
+        self._report_missing()
+
+    def _entry_relative(self, hdf_path: str) -> str | None:
+        """Return *hdf_path* relative to this entry, or ``None`` if outside.
+
+        Returns ``""`` when *hdf_path* IS the entry itself.
+        """
+        entry_stripped = self._entry_name.lstrip("/")
+        if hdf_path == entry_stripped:
+            return ""
+        if hdf_path.startswith(entry_stripped + "/"):
+            return hdf_path[len(entry_stripped) + 1 :]
+        return None
+
+    def _check_soft_link(
+        self, rel_path: str, hdf_node: h5py.Group | h5py.Dataset
+    ) -> None:
+        """Validate the ``@target`` attribute of a direct soft link within the entry.
+
+        If the immediate parent path of *rel_path* contains a soft link to
+        *rel_path*'s last component, checks that the node has a ``@target``
+        attribute and that it matches the link's target path.
+        """
+        if self._data is None:
+            return
+        parts = rel_path.split("/")
+        child_name = parts[-1]
+        parent_rel = "/".join(parts[:-1]) if len(parts) > 1 else ""
+        parent = self._data if parent_rel == "" else self._data.get(parent_rel)
+        if parent is None or not isinstance(parent, h5py.Group):
+            return
+        link = parent.get(child_name, getlink=True)
+        if not isinstance(link, h5py.SoftLink):
+            return
+        target_path = link.path
+        full_path = f"{self._entry_name}/{rel_path}"
+        if "target" not in hdf_node.attrs:
+            collector.collect_and_log(
+                full_path,
+                ValidationProblem.MissingTargetAttribute,
+                None,
+            )
+        else:
+            attr_target = hdf_node.attrs["target"]
+            if isinstance(attr_target, bytes):
+                attr_target = attr_target.decode()
+            if attr_target != target_path:
+                collector.collect_and_log(
+                    full_path,
+                    ValidationProblem.TargetAttributeMismatch,
+                    attr_target,
+                    target_path,
+                )
+
+    # ------------------------------------------------------------------
+    # Schema resolution
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _best_namefit_of(
         name: str,
         nodes: Sequence[NexusNode],
         hint: Literal["axis", "signal"] | None = None,
@@ -446,12 +579,10 @@ def validate_hdf_group_against(
         if path in required_entities:
             required_entities.remove(path)
         else:
-            # Check if a variadic required node exists
-            for ent in list(required_entities):
-                node_type: Literal["group", "field", "attribute"] = (
+            for ent in list(self._required_entities):
+                node_type: Literal["attribute", "field"] = (
                     "attribute" if "@" in ent else "field"
                 )
-
                 clean_path = (
                     path.rstrip("/@units")
                     if path.endswith("@units") and ent.endswith("@units")
@@ -468,47 +599,68 @@ def validate_hdf_group_against(
                 ):
                     required_entities.remove(ent)
 
-    def _check_for_nxcollection_parent(node: NexusNode):
+    # ------------------------------------------------------------------
+    # HDF5 handlers
+    # ------------------------------------------------------------------
+
+    def _is_canonical_path(self, rel_path: str) -> bool:
+        """Return ``True`` if *rel_path* does not pass through any soft link
+        ancestor.
+
+        When a node is reached via a soft link ancestor, the HDF5 ``.name``
+        property and the logical path are the same (h5py uses the access path).
+        This helper detects link-based paths so that undocumented-node warnings
+        are suppressed for nodes that are only visible through a link — matching
+        the behavior of the old ``_visititems`` implementation.
         """
-        Check if the given node has a parent group of type NXcollection.
+        if self._data is None:
+            return True
+        parts = rel_path.split("/")
+        for depth in range(1, len(parts) + 1):
+            ancestor_path = "/".join(parts[:depth])
+            parent_path = "/".join(parts[: depth - 1]) if depth > 1 else None
+            if parent_path is not None:
+                parent = self._data.get(parent_path)
+            else:
+                parent = self._data
+            if parent is not None and isinstance(parent, h5py.Group):
+                child_name = parts[depth - 1]
+                link = parent.get(child_name, getlink=True)
+                if isinstance(link, h5py.SoftLink):
+                    return False
+        return True
+
+    def _has_breakpoint_at(self, rel_path: str, include_self: bool = False) -> bool:
+        """Return ``True`` if any ancestor of *rel_path* within the NXentry is
+        an NXcollection or lacks an NX_class attribute.
+
+        *rel_path* is a slash-separated path relative to the NXentry, e.g.
+        ``"identified_calibration/identifier_1"``.  Each *ancestor* component
+        (not the leaf itself, unless *include_self* is ``True``) is looked up in
+        ``self._data`` (the NXentry group) so that soft-link paths are walked by
+        their link path, not by the target's actual parent chain.
+
+        Dataset ancestors are skipped (they have no NX_class themselves).
 
         Args:
-            node (NexusNode): The node to check.
-
-        Returns:
-            bool: True if a parent NXcollection group exists.
+            rel_path: Path relative to the NXentry to check.
+            include_self: When ``True``, also check the node at *rel_path*
+                itself (useful for attribute-owner groups).
         """
-        parent = node.parent
-        while parent:
-            if parent.nx_type == "group" and parent.nx_class == "NXcollection":
-                # Found a parent collection group
+        if self._data is None:
+            return False
+        parts = rel_path.split("/")
+        upper = len(parts) + 1 if include_self else len(parts)
+        # Walk from outermost ancestor up to (but not including) the node itself,
+        # or including it when include_self=True.
+        for depth in range(1, upper):
+            ancestor_path = "/".join(parts[:depth])
+            ancestor = self._data.get(ancestor_path)
+            if ancestor is None:
                 return True
-            parent = parent.parent
-
-        return False
-
-    def has_breakpoint(key_path: str) -> bool:
-        """
-        Walk up the path hierarchy and check if a parent is an NXcollection
-        or has no NX_class, indicating we should stop.
-
-        For attributes of datasets, skip the dataset itself and continue with
-        its parent group.
-
-        Args:
-            path (str): HDF5 path to start from (no @attr suffix).
-
-        Returns:
-            bool: True if a breakpoint was found, False otherwise.
-        """
-        while "/" in key_path:
-            key_path = key_path.rsplit("/", 1)[0]
-            parent_data = data.get(key_path)
-            if isinstance(parent_data, h5py.Dataset):
+            if isinstance(ancestor, h5py.Dataset):
                 continue
-            nx_class = (
-                parent_data.attrs.get("NX_class") if parent_data is not None else None
-            )
+            nx_class = ancestor.attrs.get("NX_class")
             if nx_class == "NXcollection" or nx_class is None:
                 return True
         return False
@@ -526,8 +678,7 @@ def validate_hdf_group_against(
         check_reserved_prefix(full_path, appdef_node.name, "group")
 
         if not group.attrs.get("NX_class"):
-            # We ignore additional groups that don't have an NX_class
-            if not ignore_undocumented and full_path == group.name:
+            if not self._ignore_undocumented and self._is_canonical_path(path):
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingNXclass, None
                 )
@@ -540,7 +691,7 @@ def validate_hdf_group_against(
         except TypeError:
             return
         if node is None:
-            if not ignore_undocumented and full_path == group.name:
+            if not self._ignore_undocumented and self._is_canonical_path(path):
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingDocumentation, None
                 )
@@ -639,10 +790,10 @@ def validate_hdf_group_against(
         path: str,
         dataset: h5py.Dataset,
         hint: Literal["axis", "signal"] | None = None,
-    ):
+    ) -> None:
         """
-        Validate a NeXus field (dataset) within the HDF5 structure.
-
+        Validate an HDF5 dataset (NeXus field) against the schema tree.
+        
         Args:
             path (str): Path to the dataset.
             data (h5py.Dataset): Dataset object.
@@ -650,11 +801,9 @@ def validate_hdf_group_against(
                 If the field is in an NXdata group, this is used to figure out
                 if it is an AXISNAME or a DATA.
         """
-        full_path = f"{entry_name}/{path}"
-        key_path = path.replace("@", "")
+        full_path = f"{self._entry_name}/{path}"
 
-        if has_breakpoint(key_path):
-            # We are inside an NXcollection or a group without NX_class.
+        if self._has_breakpoint_at(path):
             return
 
         check_reserved_prefix(full_path, appdef_node.name, "field")
@@ -665,8 +814,7 @@ def validate_hdf_group_against(
             return
 
         if node is None:
-            # Only report undocumented if the group is not linked
-            if not ignore_undocumented and full_path == dataset.name:
+            if not self._ignore_undocumented and self._is_canonical_path(path):
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingDocumentation, None
                 )
@@ -724,8 +872,7 @@ def validate_hdf_group_against(
             is_valid_unit_for_node(node, units, units_path, hints)
 
         elif units is not None:
-            # Only report undocumented if the field is not linked
-            if not ignore_undocumented and full_path == dataset.name:
+            if not self._ignore_undocumented and self._is_canonical_path(path):
                 collector.collect_and_log(
                     units_path,
                     ValidationProblem.UnitWithoutDocumentation,
@@ -757,11 +904,10 @@ def validate_hdf_group_against(
                 # Ignore special attrs
                 continue
 
-            key_path = f"{path}/{attr_name}"
+            full_path = f"{self._entry_name}/{path}/@{attr_name}"
 
-            if has_breakpoint(key_path):
-                # We are inside an NXcollection or a group without NX_class.
-                continue  # This continues the outer attr_name loop
+            if self._has_breakpoint_at(path, include_self=True):
+                continue
 
             check_reserved_prefix(full_path, appdef_node.name, "attribute")
 
@@ -771,9 +917,7 @@ def validate_hdf_group_against(
                 return
 
             if node is None:
-                # Only report undocumented if the parent object is not linked
-                if not ignore_undocumented and full_path.startswith(parent_obj.name):
-                    parent_path = path.strip("/").rsplit("/", 1)[0]
+                if not self._ignore_undocumented and self._is_canonical_path(path):
                     collector.collect_and_log(
                         full_path,
                         ValidationProblem.MissingDocumentation,
@@ -916,25 +1060,51 @@ def validate_hdf_group_against(
 
     for req_concept in sorted(required_entities):
         # Skip if the entire group is missing
-        if any(req_concept.startswith(group) for group in required_groups):
-            continue
-        if "@" in req_concept:
-            # Skip if the entire field is missing
-            if any(
-                req_concept.rsplit("@", -1)[0].startswith(group)
-                for group in required_entities
-            ):
+        for req_concept in sorted(self._required_entities):
+            if any(req_concept.startswith(grp) for grp in self._required_groups):
                 continue
-            collector.collect_and_log(
-                f"{entry_name}/{req_concept}",
-                ValidationProblem.MissingRequiredAttribute,
-                None,
-            )
-            continue
-        collector.collect_and_log(
-            f"{entry_name}/{req_concept}", ValidationProblem.MissingRequiredField, None
-        )
+            if "@" in req_concept:
+                if any(
+                    req_concept.rsplit("@", 1)[0].startswith(ent)
+                    for ent in self._required_entities
+                ):
+                    continue
+                collector.collect_and_log(
+                    f"{self._entry_name}/{req_concept}",
+                    ValidationProblem.MissingRequiredAttribute,
+                    None,
+                )
+            else:
+                collector.collect_and_log(
+                    f"{self._entry_name}/{req_concept}",
+                    ValidationProblem.MissingRequiredField,
+                    None,
+                )
 
+        
+
+
+def validate_hdf_group_against(
+    appdef: str,
+    data: h5py.Group,
+    filename: str,
+    ignore_undocumented: bool = False,
+) -> bool:
+    """
+    Validate an HDF5 group against the NeXus tree for the application definition *appdef*.
+
+    Args:
+        appdef: The application definition name.
+        data: The h5py entry group to validate.
+        filename: Path to the HDF5 file (used for link resolution).
+        ignore_undocumented: If True, skip undocumented concepts and only check
+            that required concepts are present.
+
+    Returns:
+        True if the group is valid, False otherwise.
+    """
+    visitor = ValidationVisitor(appdef, data.name, ignore_undocumented)
+    NexusFileHandler(filename).process(visitor)
     return not collector.has_validation_problems()
 
 
