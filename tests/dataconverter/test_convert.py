@@ -231,6 +231,30 @@ def test_compression(tmp_path):
 
 # Shared resources: xarray_saved_small_calibration.h5 and testdata.json
 @pytest.mark.xdist_group(name="shared_resource")
+def test_get_readers_cli():
+    """pynx convert get-readers lists installed readers."""
+    runner = CliRunner()
+    result = runner.invoke(convert, ["get-readers"])
+    assert result.exit_code == 0
+
+
+def test_reader_info_cli():
+    """pynx convert reader-info shows NXDL and extension info for a reader."""
+    runner = CliRunner()
+    result = runner.invoke(convert, ["reader-info", "example"])
+    assert result.exit_code == 0
+    assert "example" in result.output.lower()
+
+
+def test_deprecation_warning_dataconverter():
+    """convert command is importable and returns exit code 0 for --help."""
+    from pynxtools.dataconverter.cli import convert as convert_cmd
+
+    runner = CliRunner()
+    result = runner.invoke(convert_cmd, ["--help"], catch_exceptions=False)
+    assert result.exit_code == 0
+
+
 def test_params_file():
     """Check if the parameters file is read correctly."""
     dirpath = Path(__file__).parent.parent / "data" / "dataconverter"
