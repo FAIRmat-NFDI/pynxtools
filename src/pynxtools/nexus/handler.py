@@ -51,18 +51,18 @@ compatibility and will be deprecated in a future release.
 from __future__ import annotations
 
 import os
+from abc import ABC, abstractmethod
 from typing import Any, Union
 
 import h5py
 
 
-class NexusVisitor:
+class NexusVisitor(ABC):
     """
-    Base class for NeXus file visitors.
+    Abstract base class for NeXus file visitors.
 
-    All hooks are no-ops by default.  Subclasses override only what they need.
-    Every concrete visitor should implement the same set of methods so that
-    they can be used interchangeably with `NexusFileHandler`.
+    Subclasses must implement all four hooks. Hooks that are not meaningful for
+    a given visitor should be implemented as ``pass``.
 
     Hook call order for each node:
 
@@ -73,6 +73,7 @@ class NexusVisitor:
     After full traversal, ``on_complete`` is called with the open root file.
     """
 
+    @abstractmethod
     def on_group(
         self,
         hdf_path: str,
@@ -80,6 +81,7 @@ class NexusVisitor:
     ) -> None:
         """Called for every HDF5 group, including the root (path ``""``)."""
 
+    @abstractmethod
     def on_field(
         self,
         hdf_path: str,
@@ -87,6 +89,7 @@ class NexusVisitor:
     ) -> None:
         """Called for every HDF5 dataset (field)."""
 
+    @abstractmethod
     def on_attribute(
         self,
         hdf_path: str,
@@ -108,6 +111,7 @@ class NexusVisitor:
             The h5py group or dataset that owns this attribute.
         """
 
+    @abstractmethod
     def on_complete(self, root: h5py.File) -> None:
         """Called once after the full traversal, before the file is closed."""
 

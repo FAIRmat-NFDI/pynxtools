@@ -1,3 +1,4 @@
+
 ARPES
 ATTRIBUTENAME
 AXISNAME
@@ -188,6 +189,7 @@ nbytes
 ncores
 ndarray
 ndataconverter
+ndim
 ndims
 nexpy
 nexusapp
