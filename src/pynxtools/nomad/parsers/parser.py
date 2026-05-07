@@ -22,7 +22,11 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 
-DEBUG_PYNXTOOLS_WITH_NOMAD: bool = False
+DEBUG_PYNXTOOLS_WITH_NOMAD = False
+
+from pynxtools.nexus.handler import NexusVisitor
+from pynxtools.nexus.nexus import get_nxdl_doc
+from pynxtools.nexus.utils import decode_if_string
 
 try:
     from ase.data import chemical_symbols
@@ -265,6 +269,69 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
     stats["__ndim"] = np.uint8(np.ndim(hdf_node))
 
     return stats
+
+
+class NomadVisitor(NexusVisitor):
+    """
+    NexusVisitor that populates the NOMAD archive.
+
+    Invokes *callback* for every HDF5 field and attribute that is
+    documented in the NXDL schema.  The callback receives the same
+    ``params`` dict that ``_nexus_populate`` expects, preserving the
+    legacy interface until ``_to_section`` / ``_populate_data`` are
+    migrated to consume :class:`~pynxtools.nexus.nexus_tree.NexusNode`
+    directly.
+    """
+
+    _SKIP_ATTRS: frozenset = frozenset({"NX_class", "target"})
+
+    def __init__(self, logger, callback) -> None:
+        self._logger = logger
+        self._callback = callback
+
+    def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
+        hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
+        val = (
+            str(decode_if_string(hdf_node[()])).split("\n")
+            if len(hdf_node.shape) <= 1
+            else str(decode_if_string(hdf_node[0])).split("\n")
+        )
+        _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
+        if nxdl_path is None or nxdl_path == "/":
+            return
+        self._callback(
+            {
+                "hdf_info": hdf_info,
+                "nxdef": nxdef,
+                "nxdl_path": nxdl_path,
+                "val": val,
+                "logger": self._logger,
+            }
+        )
+
+    def on_attribute(
+        self,
+        hdf_path: str,
+        attr_name: str,
+        attr_value,
+        parent: h5py.Group | h5py.Dataset,
+    ) -> None:
+        if attr_name in self._SKIP_ATTRS:
+            return
+        hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": parent}
+        val = str(decode_if_string(attr_value)).split("\n")
+        req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False, attr=attr_name)
+        if req_str and "NOT IN SCHEMA" not in req_str and "None" not in req_str:
+            self._callback(
+                {
+                    "hdf_info": hdf_info,
+                    "nxdef": nxdef,
+                    "nxdl_path": nxdl_path,
+                    "val": val,
+                    "logger": self._logger,
+                },
+                attr=attr_name,
+            )
 
 
 class NexusParser(MatchingParser):
