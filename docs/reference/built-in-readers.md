@@ -26,13 +26,13 @@ It accepts any NXDL application definition as long as your config file contains 
 Pass the config file via the `-c` flag:
 
 ```console
-user@box:~$ dataconverter --nxdl NXmynxdl data.json -c my_config.json
+user@box:~$ pynx convert --nxdl NXmynxdl data.json -c my_config.json
 ```
 
-The config file is a JSON (or YAML) file that maps NeXus template paths to values. Use `--generate-template` to get the list of paths for your NXDL:
+The config file is a JSON (or YAML) file that maps NeXus template paths to values. Use `generate-template` to get the list of paths for your NXDL:
 
 ```console
-user@box:~$ dataconverter --nxdl NXmynxdl --generate-template
+user@box:~$ pynx convert generate-template NXmynxdl
 ```
 
 There are four ways to fill the right-hand side of a template key:
@@ -89,7 +89,7 @@ Other token prefixes allow pulling from ELN files or reader attributes:
 #### Basic example
 
 ```console
-user@box:~$ dataconverter --nxdl NXtest data.json -c my_config.json
+user@box:~$ pynx convert --nxdl NXtest data.json -c my_config.json
 ```
 
 #### Example with HDF5 files
