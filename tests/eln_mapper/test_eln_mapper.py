@@ -22,7 +22,7 @@ import os
 import yaml
 from click import testing
 
-from pynxtools.eln_mapper import eln_mapper
+from pynxtools.eln_mapper import cli as eln_mapper
 
 
 def check_keys_from_two_dict(dict1: dict, dict2: dict, path: str = ""):
@@ -81,9 +81,8 @@ def test_reader_eln(tmp_path):
     test_file = os.path.join(tmp_path, "scan.eln_data.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
-        eln_mapper.get_eln,
+        eln_mapper.generate_eln,
         [
-            "--nxdl",
             "NXscan",
             "--skip-top-levels",
             0,
@@ -118,8 +117,8 @@ def test_scheme_eln(tmp_path):
     test_file = os.path.join(tmp_path, "scan.scheme.archive.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
-        eln_mapper.get_eln,
-        ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "schema"],
+        eln_mapper.generate_eln,
+        ["NXscan", "--output-file", test_file, "--eln-type", "schema"],
     )
     with open(ref_file, encoding="utf-8") as ref_f:
         ref_dict = yaml.safe_load(ref_f)

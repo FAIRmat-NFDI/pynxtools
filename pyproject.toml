@@ -109,10 +109,11 @@ nexus_app = "pynxtools.nomad.apps:nexus_app"
 simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
 
 [project.scripts]
-read_nexus = "pynxtools.nexus.nexus:main"
-dataconverter = "pynxtools.dataconverter.convert:main_cli"
-generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
-validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
+pynx           = "pynxtools.cli:pynx"
+read_nexus     = "pynxtools.nexus.cli:read"
+dataconverter  = "pynxtools.dataconverter.cli:convert"
+generate_eln   = "pynxtools.eln_mapper.cli:generate_eln"
+validate_nexus = "pynxtools.dataconverter.cli:validate"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
@@ -175,7 +176,7 @@ strict = false
 ignore_missing_imports = true
 follow_imports = "silent"
 no_strict_optional = true
-disable_error_code = "import, annotation-unchecked"
+disable_error_code = "import, import-untyped, annotation-unchecked"
 exclude = ["src/pynxtools/definitions/*"]
 
 [tool.uv]
