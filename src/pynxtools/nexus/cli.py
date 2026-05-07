@@ -30,12 +30,12 @@ Exposes two commands consumed by the top-level ``pynx`` group:
 """
 
 import logging
-import sys
 from typing import Literal
 
 import click
 
-from pynxtools.nexus.nexus import HandleNexus
+from pynxtools.nexus.annotation import Annotator
+from pynxtools.nexus.handler import NexusFileHandler
 
 
 @click.command()
@@ -80,20 +80,12 @@ def read(nexus_file, documentation, concept):
             "Only one option either documentation (-d) or is_a relation "
             "with a concept (-c) can be requested."
         )
-    logging_format = "%(levelname)s: %(message)s"
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setLevel(logging.DEBUG)
-    logging.basicConfig(
-        level=logging.INFO, format=logging_format, handlers=[stdout_handler]
-    )
     logger = logging.getLogger("pynxtools")
-    logger.addHandler(stdout_handler)
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
-    nexus_helper = HandleNexus(
-        logger, nexus_file, d_inq_nd=documentation, c_inq_nd=concept
+    NexusFileHandler(nexus_file).process(
+        Annotator(logger, documentation=documentation, concept=concept)
     )
-    nexus_helper.process_nexus_master_file(None)
 
 
 @click.command("inspect-appdef")
