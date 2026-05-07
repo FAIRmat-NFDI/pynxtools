@@ -219,8 +219,20 @@ def test_handler_dispatches_attributes():
 
 
 def test_base_visitor_does_not_raise():
-    """NexusVisitor base class no-op methods must not raise."""
+    """A visitor that implements all hooks as pass must not raise."""
+
+    class _NullVisitor(NexusVisitor):
+        def on_group(self, hdf_path, hdf_node) -> None:
+            pass
+
+        def on_field(self, hdf_path, hdf_node) -> None:
+            pass
+
+        def on_attribute(self, hdf_path, attr_name, attr_value, parent) -> None:
+            pass
+
+        def on_complete(self, root) -> None:
+            pass
+
     f = _make_in_memory_file()
-    visitor = NexusVisitor()  # no overrides
-    # Must run without error even though visit_node and on_complete are no-ops
-    NexusFileHandler(f, is_in_memory_file=True).process(visitor)
+    NexusFileHandler(f, is_in_memory_file=True).process(_NullVisitor())
