@@ -39,7 +39,7 @@ Note that you will need to have `pynxtools` installed in a Python environment. L
 
 ## **`pynx validate`**
 
-After installation, you can invoke the help call of the `pynx validate` tool from the command line:
+After installation, you can invoke the `--help` call of the `pynx validate` tool from the command line:
 
 ```bash exec="on" source="material-block" result="ini"
 pynx validate --help
@@ -99,7 +99,7 @@ pynx read src/pynxtools/data/201805_WSe2_arpes.nxs
     pynx read src/pynxtools/data/201805_WSe2_arpes.nxs 
     ```
 
-In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the `ignore-undocumented` flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the `pynx validate`/`pynx read` tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).
+In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the `ignore-undocumented` flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the `pynx validate` or `pynx read` tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).
 
 ### The `-c` option
 

@@ -21,12 +21,12 @@ All pynxtools command-line tools are available under this single entry point::
 
     pynx read NEXUS_FILE              # annotate and inspect a NeXus/HDF5 file
     pynx convert [files...]           # convert data to NeXus
-    pynx convert generate-template    # generate a conversion template
-    pynx convert get-readers          # list installed readers
+    pynx convert generate-template    # generate and display a conversion template dictionary
+    pynx convert get-readers          # lists all installed readers
     pynx convert reader-info          # show reader capabilities
-    pynx validate NEXUS_FILE          # validate a NeXus file against its appdef
+    pynx validate NEXUS_FILE          # validate a NeXus file against its application definition
     pynx generate-eln                 # generate an ELN YAML scaffold
-    pynx inspect-appdef NXDL          # list fields of an application definition
+    pynx inspect-appdef NXDL          # list fields of an application definition with specific presence constraint
 
 Legacy entry points (``read_nexus``, ``dataconverter``, ``generate_eln``,
 ``validate_nexus``) remain installed and emit a deprecation warning.

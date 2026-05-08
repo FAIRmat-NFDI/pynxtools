@@ -1378,7 +1378,7 @@ You can start the `punx` validation by running
     NeXus definitions version: main
     ```
 
-The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file. As you can see, while the output is verbose and comprehensive, `punx` does not actually pick up on the issues that the [`pynxtools` validator finds](validate-nexus-files.md#pynx-validate).
+The output tables "findings" and "summary statistics" can be used to find if errors are present in the NeXus file. While the output is verbose and comprehensive, you can observe that `punx` does not pick up on the issues that the [`pynxtools` validator](validate-nexus-files.md#pynx-validate) finds.
 
 You can just pass one of the logging levels to the `--report` flag to select for a subset of the report:
 
