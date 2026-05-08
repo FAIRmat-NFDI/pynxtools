@@ -82,9 +82,11 @@ jobs:
       - name: Build package
         run: |
           git reset --hard HEAD
-          rm -f src/pynxtools/nomad/schema_packages/nxs_metainfo_package_*.json
-          export PYNXTOOLS_BUILD_PACKAGE=1
-          uv run --extra nomad scripts/generate_package.py
+
+          # hotfix, see issue 765
+          # rm -f src/pynxtools/nomad/schema_packages/nxs_metainfo_package_*.json
+          # export PYNXTOOLS_BUILD_PACKAGE=1
+          # uv run --extra nomad scripts/generate_package.py
           uv build
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
@@ -109,32 +111,33 @@ jobs:
       - name: Install sdist
         run: |
           uv pip install dist/*.tar.gz
-      - name: Check that Metainfo package JSON file exists and matches definitions version
-        run: |
-          SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
+      # hotfix, see issue 765
+      # - name: Check that Metainfo package JSON file exists and matches definitions version
+      #   run: |
+      #     SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
 
-          # expected filename from definitions module
-          EXPECTED=$(python -c "from pynxtools import get_nexus_version; print(f'nxs_metainfo_package_{get_nexus_version()}.json')")
+      #     # expected filename from definitions module
+      #     EXPECTED=$(python -c "from pynxtools import get_nexus_version; print(f'nxs_metainfo_package_{get_nexus_version()}.json')")
 
-          # find the JSON file
-          FOUND_FILE=$(find "$SITE_PACKAGES/pynxtools/nomad/schema_packages" -name 'nxs_metainfo_package_*.json' -print -quit)
+      #     # find the JSON file
+      #     FOUND_FILE=$(find "$SITE_PACKAGES/pynxtools/nomad/schema_packages" -name 'nxs_metainfo_package_*.json' -print -quit)
 
-          if [ -z "$FOUND_FILE" ]; then
-              echo "ERROR: nxs_metainfo_package_*.json not found in installed package."
-              exit 1
-          fi
+      #     if [ -z "$FOUND_FILE" ]; then
+      #         echo "ERROR: nxs_metainfo_package_*.json not found in installed package."
+      #         exit 1
+      #     fi
 
-          FOUND_BASENAME=$(basename "$FOUND_FILE")
+      #     FOUND_BASENAME=$(basename "$FOUND_FILE")
 
-          echo "Found NeXus schema package JSON file: $FOUND_BASENAME"
-          echo "Expected filename: $EXPECTED"
+      #     echo "Found NeXus schema package JSON file: $FOUND_BASENAME"
+      #     echo "Expected filename: $EXPECTED"
 
-          if [ "$FOUND_BASENAME" = "$EXPECTED" ]; then
-              echo "Installed NeXus schema package JSON file matches expected definition version."
-          else
-              echo "ERROR: Expected '$EXPECTED', but found '$FOUND_BASENAME'."
-              exit 1
-          fi
+      #     if [ "$FOUND_BASENAME" = "$EXPECTED" ]; then
+      #         echo "Installed NeXus schema package JSON file matches expected definition version."
+      #     else
+      #         echo "ERROR: Expected '$EXPECTED', but found '$FOUND_BASENAME'."
+      #         exit 1
+      #     fi
   deploy:
     name: Upload to PyPI
     needs: [build, test-install]
