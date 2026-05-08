@@ -2099,7 +2099,7 @@ def format_error_message(msg: str) -> str:
                 {"compress": 2, "filter": "gzip", "strength": 3},
             ),
             [],
-            id="baseclass-compressed-filter-supported-true",
+            id="baseclass-compressed-filter-supported-true-gzip",
         ),
         pytest.param(
             alter_dict(
@@ -2107,9 +2107,18 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
                 {"compress": 2, "filter": "blosc", "strength": 3},
             ),
+            [],
+            id="baseclass-compressed-filter-supported-true-blosc",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": 2, "filter": "zstd", "strength": 3},
+            ),
             [
                 "Compression filter for /ENTRY[my_entry]/SAMPLE[sample1]]/"
-                "changer_position is not any of ['gzip']."
+                "changer_position is not any of ['gzip', 'blosc']."
             ],
             id="baseclass-compressed-filter-supported-false",
         ),
