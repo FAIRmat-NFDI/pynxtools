@@ -480,20 +480,45 @@ class Annotator(NexusVisitor):
     ) -> None:
         """Collect HDF5 paths whose schema IS-A *concept*.
 
-        *concept* must be a slash-separated NXDL path using the class names,
-        e.g. ``NXarpes/NXentry/NXinstrument/analyser``.
+        Two query forms are supported:
+
+        **Bare class name** (e.g. ``NXbeam``):
+            Matches HDF5 *groups* whose ``NX_class`` attribute equals *concept*
+            exactly.  Fields are not matched — a field carries no ``NX_class``
+            attribute and its class membership can only be determined from schema
+            context.  Full IS-A chain traversal for base classes (e.g. querying
+            ``NXobject`` to match all groups) is not yet supported.
+
+        **Appdef path** (e.g. ``NXarpes/NXentry/NXinstrument/analyser``):
+            Matches both groups and fields whose schema concept path (resolved
+            against the file's application definition) includes *concept* in its
+            inheritance chain.  Requires the file to declare an application
+            definition via the ``definition`` field in its NXentry group.
+
+        .. note::
+            Querying fields in base-class-only files (no application definition)
+            is not yet supported.  Only groups can be matched via their
+            ``NX_class`` attribute in that case.
         """
         parts = self.concept.split("@")
         target = parts[0]
         attr = parts[1] if len(parts) > 1 else None
 
-        node = self._find_nexus_node(hdf_path, hdf_node)
-        if node is None:
-            return
-
-        chain = [label for label, _ in node.get_inheritance_concept_paths()]
-        if target not in chain:
-            return
+        # Bare class name (e.g. "NXbeam"): match groups by HDF5 NX_class attribute.
+        # generate_tree_from only supports application definitions, so full IS-A
+        # chain traversal for base classes (e.g. querying "NXobject" to find all
+        # groups) is not yet implemented. Exact class match only.
+        if "/" not in target and isinstance(hdf_node, h5py.Group):
+            nx_class = decode_if_string(hdf_node.attrs.get("NX_class", b""))
+            if nx_class != target:
+                return
+        else:
+            node = self._find_nexus_node(hdf_path, hdf_node)
+            if node is None:
+                return
+            chain = [label for label, _ in node.get_inheritance_concept_paths()]
+            if target not in chain:
+                return
 
         if attr is None:
             self._concept_matches.append(hdf_path)
