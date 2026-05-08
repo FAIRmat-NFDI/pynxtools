@@ -111,19 +111,9 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path, caplog
         chunking = (10, 50, 50)
         axes = ["indices_image", "axis_j", "axis_i"]
         mean = np.float128(np.nan)
-        if np.issubdtype(data_type, np.unsignedinteger):
+        if np.issubdtype(data_type, (np.integer, np.unsignedinteger)):
             dat = prng.integers(
                 0, np.iinfo(data_type).max, size=n_values, dtype=data_type
-            ).reshape(-1, 50, 50)
-            mean = np.asarray(
-                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
-            ).item()
-        elif np.issubdtype(data_type, np.integer):
-            dat = prng.integers(
-                np.iinfo(data_type).min,
-                np.iinfo(data_type).max,
-                size=n_values,
-                dtype=data_type,
             ).reshape(-1, 50, 50)
             mean = np.asarray(
                 np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
