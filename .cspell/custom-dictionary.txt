@@ -204,6 +204,7 @@ posint
 posteriori
 printoptions
 punx
+pynx
 pynxtools
 raman
 rdcc

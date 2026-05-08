@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 from pynxtools.dataconverter import helpers, validation
 
 helpers.validate_data_dict = validation.validate_data_dict  # type: ignore
