@@ -37,15 +37,15 @@ It is also possible to define in the data conversion process whether the data sh
 
 Since the validation is performed during the conversion, it is possible to automatically correct the data: as a convenience feature, any instance data that produces invalid files (e.g., when an HDF5 field would be named the same as a group in the NeXus definitions) are removed before writing the files. In addition, if a mismatch between the data type of the instance and the concept is detected, we convert these values silently if possible. As an example, we convert from int to float or from the string representation of bools (`"true"`/`"false"`) to actual booleans.
 
-## validate_nexus: Validate existing NeXus/HDF5 files
+## `pynx validate`: Validate existing NeXus/HDF5 files
 
-While we encourage NeXus users to convert their data using the `pynxtools` data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, `pynxtools` provides a **standalone validator** (called **`validate_nexus`**). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the [API documentation](../../reference/cli-api.md#validate_nexus).
+While we encourage NeXus users to convert their data using the `pynxtools` data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, `pynxtools` provides a **standalone validator** (`pynx validate`). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the [API documentation](../../reference/cli-api.md#nexus-file-validation).
 
-Validation of existing files is generally more straightforward than validating the `pynxtools` template as the NeXus type (i.e., group/fields/attributes) of instance data is easily detected from the file structure. Therefore, no additional special rules are applied in `validate_nexus` other than those given above.
+Validation of existing files is generally more straightforward than validating the `pynxtools` template as the NeXus type (i.e., group/fields/attributes) of instance data is easily detected from the file structure. Therefore, no additional special rules are applied in `pynx validate` other than those given above.
 
-## read_nexus: NeXus file reader and debugger
+## `pynx read`: NeXus file reader and debugger
 
-In addition to the validation tools mentioned above, there is another utility in `pynxtools` called **`read_nexus`** (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in the [API documentation](../../reference/cli-api.md#nexus-file-validation).
+In addition to the validation tools mentioned above, there is another utility in `pynxtools` called **`pynx read`** (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in the [API documentation](../../reference/cli-api.md#nexus-annotator).
 
 <!-- ??? info "Using a different set of NeXus definitions"
 

@@ -24,9 +24,10 @@ import numpy as np
 import pytest
 from click.testing import CliRunner
 
+from pynxtools.dataconverter.cli import validate as validate_cmd
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.validate_file import validate, validate_cli
+from pynxtools.dataconverter.validate_file import validate
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 
@@ -3662,18 +3663,18 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
         ),
     ],
 )
-def test_validate_cli(caplog, cli_inputs, error_messages):
+def test_validate(caplog, cli_inputs, error_messages):
     """Unit test for the HDF5 validation CLI."""
     runner = CliRunner()
 
     if not error_messages:
         with caplog.at_level(logging.INFO):
-            result = runner.invoke(validate_cli, cli_inputs)
+            result = runner.invoke(validate_cmd, cli_inputs)
         assert result.exit_code == 0
         assert caplog.text == ""
     else:
         with caplog.at_level(logging.INFO):
-            result = runner.invoke(validate_cli, cli_inputs)
+            result = runner.invoke(validate_cmd, cli_inputs)
         assert len(caplog.records) == len(error_messages)
         for expected_message, rec in zip(error_messages, caplog.records):
             assert expected_message == format_error_message(rec.message)

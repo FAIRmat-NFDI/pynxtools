@@ -208,6 +208,7 @@ posteriori
 printoptions
 prng
 punx
+pynx
 pynxtools
 raman
 rdcc

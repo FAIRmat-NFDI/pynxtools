@@ -102,8 +102,7 @@ def _write_definitions_remote_url():
         file.write(remote_repo_url)
 
 
-# pylint: disable=function-redefined
-def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
+def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):  # type: ignore[no-redef]
     """
     PEP 517 compliant build wheel hook.
     This is a wrapper for setuptools and adds a nexus version file and a
@@ -114,8 +113,7 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
     return _orig.build_wheel(wheel_directory, config_settings, metadata_directory)
 
 
-# pylint: disable=function-redefined
-def build_sdist(sdist_directory, config_settings=None):
+def build_sdist(sdist_directory, config_settings=None):  # type: ignore[no-redef]
     """
     PEP 517 compliant build sdist hook.
     This is a wrapper for setuptools and adds a nexus version file and a

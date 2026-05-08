@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0
+    rev: v0.15.8
     hooks:
       - id: ruff-check
         files: ^(src/pynxtools|tests)/.*\.py$
@@ -15,18 +15,18 @@ repos:
           - types-PyYAML
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.1
+    rev: v3.21.2
     hooks:
       - id: pyupgrade
-        args: [--py36-plus]  # modernizes syntax for Python 3.6+
+        args: [--py310-plus]  # modernizes syntax for Python 3.10+
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.9.0
+    rev: 0.9.1
     hooks:
       - id: nbstripout  # removes notebook outputs before committing
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.6.0
+    rev: v9.7.0
     hooks:
       - id: cspell  # spellchecking
         pass_filenames: false
