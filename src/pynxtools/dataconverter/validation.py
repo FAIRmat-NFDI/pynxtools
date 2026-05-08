@@ -381,6 +381,7 @@ def validate_hdf_group_against(
         Returns:
             bool: True if a matching variadic node exists.
         """
+
         def _get_parent_path(path: str) -> str:
             """
             Return the parent path of a given HDF5 path.
@@ -448,7 +449,9 @@ def validate_hdf_group_against(
         else:
             # Check if a variadic required node exists
             for ent in list(required_entities):
-                node_type = "attribute" if "@" in ent else "field"
+                node_type: Literal["group", "field", "attribute"] = (
+                    "attribute" if "@" in ent else "field"
+                )
 
                 clean_path = (
                     path.rstrip("/@units")
