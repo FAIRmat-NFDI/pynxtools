@@ -18,10 +18,12 @@
 
 """Configuration and utilities for customized chunking and compression."""
 
-import importlib.util
 import logging
+import os
 
 import numpy as np
+
+logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
@@ -31,15 +33,38 @@ import numpy as np
 # "gzip" -> deflate, "blosc" -> "zstd"]
 DEFAULT_COMPRESSION_FILTER: str = "gzip"
 DEFAULT_COMPRESSION_STRENGTH: int = 9
+# for gzip
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
 # using strongest compression is space efficient but takes substantially longer than 1
+# for blosc2 specifically zstd
+# integer value 9 means aggressive compression
+# i.e. both compression strengths are strong for both compression algorithms
 
-COMPRESSION_FILTERS: list[str] = (
-    [DEFAULT_COMPRESSION_FILTER, "blosc"]
-    if importlib.util.find_spec("hdf5plugin") is not None
-    and importlib.util.find_spec("blosc2") is not None
-    else [DEFAULT_COMPRESSION_FILTER]
-)
+try:
+    import blosc2
+    import hdf5plugin  # noqa: F401
+
+    BLOSC_NTHREADS = blosc2.set_nthreads(
+        min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
+    )
+    # do not oversubscribe as cpu_count counts Intel hyperthreading cores as real cores
+    # option to go with half also reasonable when used in a NOMAD deployment
+    # for getting maximum performance users should for now deploy from custom branches
+    # until there is a mechanism in NOMAD whereby configurations can be passed
+    # NOMAD plugins
+    COMPRESSION_FILTERS: list[str] = [DEFAULT_COMPRESSION_FILTER, "blosc"]
+
+    logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
+    logger.info(
+        f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
+    )
+    logger.info(blosc2.print_versions())
+except ImportError:
+    logger.warning("blosc2 is not available")
+    BLOSC_NTHREADS = 0
+    COMPRESSION_FILTERS = [DEFAULT_COMPRESSION_FILTER]
+    logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
+
 
 # compressed payload is served as a dict with at least one keyword "compress",
 # "strength" is optional keyword for that dictionary to overwrite

@@ -27,6 +27,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 import h5py
+import hdf5plugin
 import numpy as np
 
 from pynxtools.dataconverter import helpers
@@ -39,29 +40,10 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 from pynxtools.dataconverter.chunk import (
+    BLOSC_NTHREADS,
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_STRENGTH,
 )
-
-try:
-    import blosc2
-    import hdf5plugin
-
-    PYNX_ENABLE_BLOSC_NTHREADS = blosc2.set_nthreads(
-        min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
-    )
-    # do not oversubscribe as cpu_count counts Intel hyperthreading cores as real cores
-    # option to go with half also reasonable when used in a NOMAD deployment
-    # for getting maximum performance users should for now deploy from custom branches
-    # until there is a mechanism in NOMAD whereby configurations can be passed
-    # NOMAD plugins
-    logger.info(
-        f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
-    )
-    logger.info(blosc2.print_versions())
-except ImportError:
-    logger.warning("blosc2 is not available")
-    PYNX_ENABLE_BLOSC_NTHREADS = 0
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -178,7 +160,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
             if (
-                PYNX_ENABLE_BLOSC_NTHREADS > 0
+                BLOSC_NTHREADS > 0
                 and "filter" in data.keys()
                 and data["filter"] == "blosc"
             ):
@@ -203,7 +185,9 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
                             compression_opts=compression_strength,
                         )
                     else:  # by virtue of construction blosc
-                        compression_config = hdf5plugin.Blosc2(cname="zstd", clevel=9)
+                        compression_config = hdf5plugin.Blosc2(
+                            cname="zstd", clevel=DEFAULT_COMPRESSION_STRENGTH
+                        )
                     grp.create_dataset(
                         entry_name,
                         data=data["compress"],
