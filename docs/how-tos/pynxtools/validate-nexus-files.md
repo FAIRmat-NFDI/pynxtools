@@ -10,11 +10,14 @@ In order to validate NeXus data, `pynxtools` comes with its own set of validatio
 
 - **As part of the dataconverter**: During [data conversion](../../learn/pynxtools/dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, the data is first checked against the provided application definition.
 
-- **`read_nexus`**: CLI tool to validate existing NeXus/HDF5 files.
+- **`pynx read`**: CLI tool to annotate and debug existing NeXus/HDF5 files.
 
-- **`validate_nexus`**: Annotator and debugger CLI tool for NeXus/HDF5 files.
+- **`pynx validate`**: CLI tool to validate existing NeXus/HDF5 files.
 
-In this how-to, we will learn how to use the `validate_nexus` and `read_nexus` command line tools.
+In this how-to, we will learn how to use the `pynx validate` and `pynx read` command line tools.
+
+!!! note "Legacy commands"
+    The old entry points `validate_nexus` and `read_nexus` are still installed as deprecated aliases. They continue to work but emit a deprecation warning. Prefer `pynx validate` and `pynx read` for new usage.
 
 <!-- ??? info "Using a different set of NeXus definitions"
 
@@ -34,18 +37,18 @@ In this how-to, we will learn how to use the `validate_nexus` and `read_nexus` c
 
 Note that you will need to have `pynxtools` installed in a Python environment. Learn more about the installation procedure in the [installation tutorial](../../tutorial/installation.md).
 
-## **`validate_nexus`**
+## **`pynx validate`**
 
-After installation, you can invoke the help call of the `validate_nexus` tool from the command line:
+After installation, you can invoke the `--help` call of the `pynx validate` tool from the command line:
 
 ```bash exec="on" source="material-block" result="ini"
-validate_nexus --help
+pynx validate --help
 ```
 
 To see the results on the test file, run:
 
 ```bash exec="on" source="material-block" result="text"
-validate_nexus --ignore-undocumented src/pynxtools/data/201805_WSe2_arpes.nxs
+pynx validate --ignore-undocumented src/pynxtools/data/201805_WSe2_arpes.nxs
 ```
 
 As you can see, the test file has a number of issues that are picked up during validation:
@@ -60,27 +63,27 @@ Note that here we are passing the `--ignore-undocumented` flag to the validation
 
 ??? example "Show output including undocumented concepts"
     ```bash exec="on" source="material-block" result="text"
-    validate_nexus src/pynxtools/data/201805_WSe2_arpes.nxs
+    pynx validate src/pynxtools/data/201805_WSe2_arpes.nxs
     ```
 
-## **`read_nexus`**
+## **`pynx read`**
 
-While `validate_nexus` is used as a tool for _validating_ a NeXus file, `read_nexus` is an _annotator_ tools. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
+While `pynx validate` is used as a tool for _validating_ a NeXus file, `pynx read` is an _annotator_ tool. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
 
-You can invoke the help call of the `read_nexus` tool from the command line:
+You can invoke the help call of the `pynx read` tool from the command line:
 
 ```bash exec="on" source="material-block" result="ini"
-read_nexus --help
+pynx read --help
 ```
 
 ??? info "A note to Windows users"
 
-    If you run `read_nexus` from `git bash`, you need to set the environmental variable
+    If you run `pynx read` from `git bash`, you need to set the environmental variable
     `MSYS_NO_PATHCONV` to avoid the [path translation in Windows Git MSys](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471).
-    The easiest way is to prefix the `read_nexus` call with `MSYS_NO_PATHCONV=1`:
+    The easiest way is to prefix the `pynx read` call with `MSYS_NO_PATHCONV=1`:
 
     ```
-    MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyzer
+    MSYS_NO_PATHCONV=1 pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyzer
     ```
 
     This workaround was tested with Windows 11, but should very likely also work with Windows 10 and lower.
@@ -88,42 +91,42 @@ read_nexus --help
 To see the results on the test file, run:
 
 ```bash
-read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs 
+pynx read src/pynxtools/data/201805_WSe2_arpes.nxs 
 ```
 
 ??? example "Show full output"
     ```bash exec="on" source="material-block" result="text"
-    read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs 
+    pynx read src/pynxtools/data/201805_WSe2_arpes.nxs 
     ```
 
-In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the `ignore-undocumented` flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the `validate_nexus`/`read_nexus` tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).
+In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the `ignore-undocumented` flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the `pynx validate` or `pynx read` tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).
 
 ### The `-c` option
 
-Aside from producing the full annotator log for the NeXus file, `read_nexus` can also be used with the `-c` (or `--concept` option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
+Aside from producing the full annotator log for the NeXus file, `pynx read` can also be used with the `-c` (or `--concept` option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the `analyser` group within `/NXarpes/ENTRY/INSTRUMENT`, you can run:
 
 ```bash
-read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyser
+pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyser
 ```
 
 ??? example "Show output"
     ```bash exec="on" source="material-block" result="text"
-    read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyser
+    pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyser
     ```
 
 ### The `-d` option
 
-Additionally, `read_nexus` can also be used with the `-d` (or `--documentation` option). Here, the input is the path in the HDF file.
+Additionally, `pynx read` can also be used with the `-d` (or `--documentation` option). Here, the input is the path in the HDF file.
 
 This helps you to find the NeXus definition for a given path in the HDF5 file. If you want to understand which NeXus concept the HDF5 group `/entry/instrument/analyser` corresponds to and how it is documented, you can run:
 
 ```bash
-read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
+pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
 ```
 
 ??? example "Show output"
     ```bash exec="on" source="material-block" result="text"
-    read_nexus -f src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
+    pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
     ```
 
 If you run this call, you get a smaller subset of the full annotation log that helps you to understand which NeXus concept a given HDF5 object corresponds to.

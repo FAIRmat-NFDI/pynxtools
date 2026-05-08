@@ -98,7 +98,14 @@ Example for a template entry:
 For a given NXDL schema, you can generate an empty template with the command
 
 ```console
-user@box:~$ dataconverter generate-template --nxdl NXmynxdl
+user@box:~$ pynx convert generate-template NXmynxdl
+```
+
+To get a quick overview of which fields the definition requires or recommends without generating the full template, use `pynx inspect-appdef`:
+
+```console
+user@box:~$ pynx inspect-appdef NXmynxdl
+user@box:~$ pynx inspect-appdef NXmynxdl --level optional
 ```
 
 #### Naming of groups
@@ -152,20 +159,20 @@ You can find an extensive how-to guide to build off the `MultiFormatReader` [her
 
 ## Calling the reader from the command line
 
-The dataconverter can be executed using:
+The `pynx convert` command can be executed using:
 
 ```console
-dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to_output.nxs
+pynx convert --reader mydatareader --nxdl NXmynxdl --output path_to_output.nxs
 ```
 
 Here, the ``--reader`` flag must match the reader name defined in `[project.entry-points."pynxtools.reader"]` in the pyproject.toml file. The NXDL name passed to ``--nxdl``must be a valid NeXus NXDL/XML file in `pynxtools.definitions`.
 
 Aside from this default structure, there are many more flags that can be passed to the
-dataconverter call. Here is its API:
+`pynx convert` call. Here is its API:
 ::: mkdocs-click
-    :module: pynxtools.dataconverter.convert
-    :command: convert_cli
-    :prog_name: dataconverter
+    :module: pynxtools.dataconverter.cli
+    :command: convert
+    :prog_name: pynx convert
     :depth: 2
     :style: table
     :list_subcommands: True

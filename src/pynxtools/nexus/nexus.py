@@ -7,7 +7,6 @@ import sys
 from functools import cache, lru_cache
 from typing import Any, Optional, Union
 
-import click
 import h5py
 import lxml.etree as ET
 import numpy as np
@@ -860,60 +859,7 @@ class HandleNexus:
             get_inherited_hdf_nodes.cache_clear()
 
 
-@click.command()
-@click.option(
-    "-f",
-    "--nexus-file",
-    required=False,
-    default=None,
-    help=("NeXus file with extension .nxs."),
-)
-@click.option(
-    "-d",
-    "--documentation",
-    required=False,
-    default=None,
-    help=(
-        "Definition path in nexus output (.nxs) file. Returns debug "
-        "log relevant with that definition path. Example input: /entry/data/delays"
-    ),
-)
-@click.option(
-    "-c",
-    "--concept",
-    required=False,
-    default=None,
-    help=(
-        "Concept path from application definition file (.nxdl.xml). Finds out "
-        "all the available concept definition (IS-A relation) for a given "
-        "concept path. Example input: /NXarpes/ENTRY/INSTRUMENT/analyser"
-    ),
-)
-def main(nexus_file, documentation, concept):
-    """
-    Functionality to extract documentation and concept definition
-    information about the individual parts of a NeXus/HDF5 file."""
-
-    logging_format = "%(levelname)s: %(message)s"
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setLevel(logging.DEBUG)
-    logging.basicConfig(
-        level=logging.INFO, format=logging_format, handlers=[stdout_handler]
-    )
-    logger = logging.getLogger("pynxtools")
-    logger.addHandler(stdout_handler)
-    logger.setLevel(logging.DEBUG)
-    logger.propagate = False
-    if documentation and concept:
-        raise ValueError(
-            "Only one option either documentation (-d) or is_a relation "
-            "with a concept (-c) can be requested."
-        )
-    nexus_helper = HandleNexus(
-        logger, nexus_file, d_inq_nd=documentation, c_inq_nd=concept
-    )
-    nexus_helper.process_nexus_master_file(None)
-
-
 if __name__ == "__main__":
-    main()  # pylint: disable=no-value-for-parameter
+    from pynxtools.nexus.cli import read
+
+    read()  # type: ignore[has-type]

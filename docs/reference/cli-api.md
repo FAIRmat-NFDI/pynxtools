@@ -1,25 +1,38 @@
 # API for command line tools
 
-`pynxtools` supports a number of command line applications. This page provides documentation for their current API.
+`pynxtools` provides a unified `pynx` entry point with subcommands for all CLI operations. This page documents the current API.
+
+The legacy entry points (`dataconverter`, `validate_nexus`, `read_nexus`, `generate_eln`) are still installed as deprecated aliases — they continue to work but emit a deprecation warning.
 
 ## Data conversion
 
-Note that simply calling `dataconverter` defaults to `dataconverter convert`.
+::: mkdocs-click
+    :module: pynxtools.dataconverter.cli
+    :command: run
+    :prog_name: pynx convert
+    :depth: 1
+    :style: table
+
+### Sub-commands
 
 ::: mkdocs-click
-    :module: pynxtools.dataconverter.convert
-    :command: main_cli
-    :prog_name: dataconverter
+    :module: pynxtools.dataconverter.cli
+    :command: convert
+    :prog_name: pynx convert
     :depth: 2
     :style: table
     :list_subcommands: True
 
+!!! info
+
+    Note that simply calling `pynx convert` defaults to `pynx convert run`.
+
 ## NeXus file validation
 
 ::: mkdocs-click
-    :module: pynxtools.dataconverter.validate_file
-    :command: validate_cli
-    :prog_name: validate_nexus
+    :module: pynxtools.dataconverter.cli
+    :command: validate
+    :prog_name: pynx validate
     :depth: 2
     :style: table
     :list_subcommands: True
@@ -27,21 +40,28 @@ Note that simply calling `dataconverter` defaults to `dataconverter convert`.
 ## NeXus annotator
 
 ::: mkdocs-click
-    :module: pynxtools.nexus.nexus
-    :command: main
-    :prog_name: read_nexus
+    :module: pynxtools.nexus.cli
+    :command: read
+    :prog_name: pynx read
     :depth: 2
     :style: table
     :list_subcommands: True
-
-NOTE: Only one option from (`-d` and `-c`) is acceptable.
 
 ## ELN generation
 
 ::: mkdocs-click
-    :module: pynxtools.eln_mapper.eln_mapper
-    :command: get_eln
-    :prog_name: generate_eln
+    :module: pynxtools.eln_mapper.cli
+    :command: generate_eln
+    :prog_name: pynx generate-eln
     :depth: 2
     :style: table
     :list_subcommands: True
+
+## Application definition inspector
+
+::: mkdocs-click
+    :module: pynxtools.nexus.cli
+    :command: inspect_appdef
+    :prog_name: pynx inspect-appdef
+    :depth: 1
+    :style: table
