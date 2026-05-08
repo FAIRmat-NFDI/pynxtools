@@ -51,10 +51,18 @@ Three operating modes:
 
 - **Default**: annotate all nodes and print the default-plottable summary.
 - **`-d` (documentation)**: annotate the single node at a given HDF5 path.
-- **`-c` (concept)**: find all HDF5 nodes that implement a given NXDL concept path.
+- **`-c` (concept)**: find all HDF5 nodes that satisfy an IS-A relation with a given NXDL concept. Two query forms are supported:
+    - **Bare class name** (e.g. `NXbeam`): matches HDF5 *groups* whose `NX_class` attribute equals the given class exactly. Fields are not matched.
+    - **Appdef path** (e.g. `NXarpes/NXentry/NXinstrument/analyser`): matches both groups and fields resolved against the file's application definition. Requires the file to declare an appdef via `definition` in its NXentry.
 
 !!! note
     Only one of `-d` and `-c` is accepted at a time.
+
+!!! note "Known limitations of `-c`"
+    - Bare class queries match by exact `NX_class` attribute. Full IS-A chain traversal
+      (e.g. querying `NXobject` to match all groups) is not yet supported.
+    - Fields in base-class-only files (no application definition) cannot be matched.
+      Only groups can be found via their `NX_class` attribute in that case.
 
 ::: mkdocs-click
     :module: pynxtools.nexus.cli

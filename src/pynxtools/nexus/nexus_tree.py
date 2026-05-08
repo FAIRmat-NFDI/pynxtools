@@ -912,7 +912,7 @@ class NexusNode(NodeMixin):
                 optionality=default_optionality,
                 target=xml_elem.attrib.get("target"),
                 nxdl_base=xml_elem.base,
-            )            
+            )
         else:
             # TODO: Tags: link
             # We don't know the tag, skip processing children of it
@@ -959,6 +959,7 @@ class NexusNode(NodeMixin):
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
 
+
 class NexusChoice(NexusNode):
     """
     A representation of a NeXus choice.
@@ -990,6 +991,7 @@ class NexusChoice(NexusNode):
             )
             if elem is not None:
                 self.inheritance.append(elem)
+
 
 class NexusLink(NexusNode):
     """
@@ -1024,6 +1026,7 @@ class NexusLink(NexusNode):
             )
             if elem is not None:
                 self.inheritance.append(elem)
+
 
 class NexusGroup(NexusNode):
     """
@@ -1150,6 +1153,7 @@ class NexusGroup(NexusNode):
         self._set_occurrence_limits()
         self._set_optionality()
         self._check_sibling_namefit()
+
 
 class NexusEntity(NexusNode):
     """
