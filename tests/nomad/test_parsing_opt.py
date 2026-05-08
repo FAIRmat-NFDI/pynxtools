@@ -17,20 +17,16 @@
 #
 """Test cases for the Writer class used by the DataConverter"""
 
-import logging
 import os
-from pathlib import Path
 
 import h5py
 import numpy as np
 import pytest
 
 # import h5py.h5p as h5p
-from pynxtools.dataconverter.validate_file import validate
 
 try:
     from nomad.datamodel import EntryArchive
-    from nomad.units import ureg
     from nomad.utils import get_logger
 except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
@@ -89,7 +85,7 @@ from pynxtools.nomad.parsers.parser import NexusParser
         ## pytest.param("contiguous", "complex128", id="contiguous-complex128"),
     ],
 )
-def test_parse_file_array_statistics(storage_layout, data_type, tmp_path, caplog):
+def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
     """Test validation of a NeXus/HDF5 with the same content but different storage layout."""
     file_path = tmp_path / f"{storage_layout}.{data_type}.nxs"
     prng = np.random.default_rng(seed=42)  # deterministic seeding
@@ -111,7 +107,17 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path, caplog
         chunking = (10, 50, 50)
         axes = ["indices_image", "axis_j", "axis_i"]
         mean = np.float128(np.nan)
-        if np.issubdtype(data_type, (np.integer, np.unsignedinteger)):
+        if np.issubdtype(data_type, np.unsignedinteger):
+            dat = prng.integers(
+                0, np.iinfo(data_type).max, size=n_values, dtype=data_type
+            ).reshape(-1, 50, 50)
+            mean = np.asarray(
+                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
+            ).item()
+        elif np.issubdtype(data_type, np.integer):
+            # duplicate functionality as converting 'np.integer' or 'np.signedinteger'
+            # to a dtype is not allowed when using
+            # np.issubdtype with (np.integer, np.unsignedinteger)
             dat = prng.integers(
                 0, np.iinfo(data_type).max, size=n_values, dtype=data_type
             ).reshape(-1, 50, 50)

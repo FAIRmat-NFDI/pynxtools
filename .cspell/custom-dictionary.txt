@@ -221,6 +221,7 @@ setpoint
 sherjeelshabih
 showgrid
 showlegend
+signedinteger
 skiprows
 straße
 submoduled
