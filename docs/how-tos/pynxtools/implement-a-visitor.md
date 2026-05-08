@@ -2,7 +2,7 @@
 
 !!! info "This guide assumes familiarity with the visitor pattern in pynxtools. Read [pynxtools architecture](../../learn/pynxtools/architecture.md) first."
 
-`NexusFileHandler` accepts any `NexusVisitor`, making it straightforward to add new HDF5 processing modes without modifying pynxtools internals. This guide walks through implementing a minimal custom visitor.
+`NexusFileHandler` accepts any `NexusVisitor`, making it straightforward to add new HDF5 processing modes without modifying `pynxtools` internals. This guide walks through implementing a minimal custom visitor.
 
 ## When to write a custom visitor
 
