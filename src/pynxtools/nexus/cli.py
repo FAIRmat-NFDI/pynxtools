@@ -56,9 +56,9 @@ from pynxtools.nexus.handler import NexusFileHandler
     required=False,
     default=None,
     help=(
-        "Concept path from application definition file (.nxdl.xml). Finds out "
-        "all the available concept definition (IS-A relation) for a given "
-        "concept path. Example input: /NXarpes/ENTRY/INSTRUMENT/analyser"
+        "NXDL concept path. Finds all HDF5 nodes in the file that satisfy "
+        "an IS-A relation with the given concept. "
+        "Example input: NXarpes/NXentry/NXinstrument/analyser. "
     ),
 )
 def read(nexus_file, documentation, concept):

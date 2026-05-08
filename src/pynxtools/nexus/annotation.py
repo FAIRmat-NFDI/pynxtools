@@ -257,7 +257,7 @@ class Annotator(NexusVisitor):
         parent_node = self._find_nexus_node(hdf_path, parent_hdf)
         if parent_node is None:
             return None
-        return parent_node.search_add_child_for(attr_name)
+        return parent_node.best_child_for(attr_name, node_type="attribute")
 
     # ------------------------------------------------------------------
     # Display helpers
@@ -478,41 +478,28 @@ class Annotator(NexusVisitor):
         hdf_path: str,
         hdf_node: h5py.Group | h5py.Dataset,
     ) -> None:
-        """Collect HDF5 paths that satisfy IS-A relation with *concept*."""
-        from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nxdl_child
-        from pynxtools.nexus.nexus import get_all_is_a_rel_from_hdf_node
+        """Collect HDF5 paths whose schema IS-A *concept*.
 
-        attributed_concept = self.concept.split("@")
-        attr = attributed_concept[1] if len(attributed_concept) > 1 else None
+        *concept* must be a slash-separated NXDL path using the class names,
+        e.g. ``NXarpes/NXentry/NXinstrument/analyser``.
+        """
+        parts = self.concept.split("@")
+        target = parts[0]
+        attr = parts[1] if len(parts) > 1 else None
 
-        elist = get_all_is_a_rel_from_hdf_node(hdf_node, "/" + hdf_path)
-        if elist is None:
+        node = self._find_nexus_node(hdf_path, hdf_node)
+        if node is None:
             return
 
-        fnd_superclass = False
-        fnd_superclass_attr = False
+        chain = [label for label, _ in node.get_inheritance_concept_paths()]
+        if target not in chain:
+            return
 
-        for elem in reversed(elist):
-            tmp_path = elem.get("nxdlbase").split(".nxdl")[0]
-            con_path = "/NX" + tmp_path.split("NX")[-1] + elem.get("nxdlpath")
+        if attr is None:
+            self._concept_matches.append(hdf_path)
+            return
 
-            if fnd_superclass or con_path == attributed_concept[0]:
-                fnd_superclass = True
-
-                if attr is None:
-                    self._concept_matches.append(hdf_path)
-                    break
-
-                for attribute in hdf_node.attrs.keys():
-                    attr_concept = get_nxdl_child(
-                        elem, attribute, nexus_type="attribute", go_base=False
-                    )
-                    if attr_concept is not None and attr_concept.get(
-                        "nxdlpath"
-                    ).endswith(attr):
-                        fnd_superclass_attr = True
-                        self._concept_matches.append(hdf_path + "@" + attribute)
-                        break
-
-            if fnd_superclass_attr:
-                break
+        for attribute in hdf_node.attrs.keys():
+            attr_node = self._find_attr_node(hdf_path, str(attribute), hdf_node)
+            if attr_node is not None and attr_node.name == attr:
+                self._concept_matches.append(hdf_path + "@" + str(attribute))
