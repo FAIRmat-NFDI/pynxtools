@@ -39,12 +39,11 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 from pynxtools.dataconverter.chunk import (
-    COMPRESSION_FILTER,
-    COMPRESSION_STRENGTH,
-    PYNX_ENABLE_BLOSC,
+    DEFAULT_COMPRESSION_FILTER,
+    DEFAULT_COMPRESSION_STRENGTH,
 )
 
-if PYNX_ENABLE_BLOSC:
+try:
     import blosc2
     import hdf5plugin
 
@@ -60,7 +59,8 @@ if PYNX_ENABLE_BLOSC:
         f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
     )
     logger.info(blosc2.print_versions())
-else:
+except ImportError:
+    logger.warning("blosc2 is not available")
     PYNX_ENABLE_BLOSC_NTHREADS = 0
 
 
@@ -178,13 +178,13 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
             if (
-                PYNX_ENABLE_BLOSC
+                PYNX_ENABLE_BLOSC_NTHREADS > 0
                 and "filter" in data.keys()
                 and data["filter"] == "blosc"
             ):
                 compression_filter = "blosc"
             else:  # fall-back to default
-                compression_filter = COMPRESSION_FILTER
+                compression_filter = DEFAULT_COMPRESSION_FILTER
 
             if (
                 ("strength" in data.keys())
@@ -193,7 +193,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             ):
                 compression_strength = data["strength"]
             else:
-                compression_strength = COMPRESSION_STRENGTH
+                compression_strength = DEFAULT_COMPRESSION_STRENGTH
 
             if entry_name not in grp:
                 try:
