@@ -20,7 +20,9 @@
 Exposes two commands consumed by the top-level ``pynx`` group:
 
 ``read``
-    Annotate and inspect a NeXus/HDF5 file (``pynx read NEXUS_FILE``).
+    Inspect a NeXus/HDF5 file, resolve NXDL schema matches, and report
+    information about groups, fields, and attributes.
+    (``pynx read NEXUS_FILE``).
 
 ``inspect_appdef``
     List fields of a NeXus application definition by optionality level
@@ -60,7 +62,13 @@ from pynxtools.nexus.nexus import HandleNexus
     ),
 )
 def read(nexus_file, documentation, concept):
-    """Annotate a NeXus/HDF5 file with NXDL schema documentation and concept paths."""
+    """Annotate each group, field, and attribute in a NeXus/HDF5 file with the
+    matching NXDL concept path, optionality, and documentation string.
+
+    Without options, the full annotation log for the file is printed.
+    Use -d to restrict output to a single HDF5 path, or -c to find all
+    instances in the file that correspond to a given NXDL concept path.
+    """
     ctx = click.get_current_context()
     if ctx.info_name == "read_nexus":
         click.echo(
@@ -100,7 +108,13 @@ def read(nexus_file, documentation, concept):
 def inspect_appdef(
     nxdl: str, level: Literal["required", "recommended", "optional"] = "required"
 ):
-    """List fields of a NeXus application definition.
+    """List the concept paths defined in a NeXus application definition.
+
+    Prints all paths at or above the requested optionality level (required,
+    recommended, or optional). Useful for understanding what data must be
+    provided before converting with ``pynx convert``, or as a lightweight
+    alternative to ``pynx convert generate-template`` when you only need
+    the field names rather than a fillable JSON skeleton.
 
     NXDL: application definition name, e.g. NXmpes
     """

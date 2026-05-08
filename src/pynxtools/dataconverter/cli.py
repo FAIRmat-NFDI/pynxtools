@@ -33,6 +33,7 @@ import logging
 import os
 import sys
 from gettext import gettext
+from pathlib import Path
 from typing import Literal
 
 import click
@@ -131,6 +132,14 @@ def convert():
     help="Allows to pass a .yaml file with all the parameters the converter supports.",
 )
 @click.option(
+    "--append",
+    is_flag=True,
+    default=False,
+    help="Appends instance data to the given <output> file if the file already exists."
+    "Will prevent an overwriting of existent data and adding of new NXentry instances."
+    "If True, will skip the validation whatever irrespective if --skip-verify is passed.",
+)
+@click.option(
     "--ignore-undocumented",
     is_flag=True,
     default=False,
@@ -146,7 +155,9 @@ def convert():
     "--skip-verify",
     is_flag=True,
     default=False,
-    help="Skips the verification routine during conversion.",
+    help="Skips the verification routine during conversion. "
+    "When --append is used the verification is always skipped "
+    "irrespective if --skip-verify is used or not.",
 )
 @click.option(
     "--mapping",
@@ -171,6 +182,7 @@ def run(
     nxdl: str,
     output: str,
     params_file: str,
+    append: bool,
     ignore_undocumented: bool,
     skip_verify: bool,
     config_file: str,
@@ -206,8 +218,6 @@ def run(
     file_list = []
     for file in files:
         if os.path.isdir(file):
-            from pathlib import Path
-
             p = Path(file)
             for f in p.rglob("*"):
                 if f.is_file():
@@ -227,6 +237,7 @@ def run(
             nxdl,
             output,
             skip_verify,
+            append=append,
             ignore_undocumented=ignore_undocumented,
             fail=fail,
             **kwargs,

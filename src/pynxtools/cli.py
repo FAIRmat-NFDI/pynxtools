@@ -25,7 +25,7 @@ All pynxtools command-line tools are available under this single entry point::
     pynx convert get-readers          # lists all installed readers
     pynx convert reader-info          # show reader capabilities
     pynx validate NEXUS_FILE          # validate a NeXus file against its application definition
-    pynx generate-eln                 # generate an ELN YAML scaffold
+    pynx generate-eln                 # generate a reader or NOMAD ELN
     pynx inspect-appdef NXDL          # list fields of an application definition with specific presence constraint
 
 Legacy entry points (``read_nexus``, ``dataconverter``, ``generate_eln``,
