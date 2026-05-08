@@ -1939,10 +1939,10 @@
 <p>It accepts any NXDL application definition as long as your config file contains all the required fields.</p>
 <h3 id="the-config-file">The config file<a class="headerlink" href="#the-config-file" title="Permanent link">&para;</a></h3>
 <p>Pass the config file via the <code>-c</code> flag:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>data.json<span class="w"> </span>-c<span class="w"> </span>my_config.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">user@box:~$ </span>pynx<span class="w"> </span>convert<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>data.json<span class="w"> </span>-c<span class="w"> </span>my_config.json
 </code></pre></div>
-<p>The config file is a JSON (or YAML) file that maps NeXus template paths to values. Use <code>--generate-template</code> to get the list of paths for your NXDL:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXmynxdl<span class="w"> </span>--generate-template
+<p>The config file is a JSON (or YAML) file that maps NeXus template paths to values. Use <code>generate-template</code> to get the list of paths for your NXDL:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gp">user@box:~$ </span>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXmynxdl
 </code></pre></div>
 <p>There are four ways to fill the right-hand side of a template key:</p>
 <h4 id="1-data-path-data-token">1. Data path (<code>@data:</code> token)<a class="headerlink" href="#1-data-path-data-token" title="Permanent link">&para;</a></h4>
@@ -1973,7 +1973,7 @@
 </code></pre></div>
 <h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
 <h4 id="basic-example">Basic example<a class="headerlink" href="#basic-example" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>NXtest<span class="w"> </span>data.json<span class="w"> </span>-c<span class="w"> </span>my_config.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="gp">user@box:~$ </span>pynx<span class="w"> </span>convert<span class="w"> </span>--nxdl<span class="w"> </span>NXtest<span class="w"> </span>data.json<span class="w"> </span>-c<span class="w"> </span>my_config.json
 </code></pre></div>
 <h4 id="example-with-hdf5-files">Example with HDF5 files<a class="headerlink" href="#example-with-hdf5-files" title="Permanent link">&para;</a></h4>
 <p>You can find example data files for using the config with HDF5 files at <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/examples/json_map/"><code>examples/json_map</code></a>.</p>

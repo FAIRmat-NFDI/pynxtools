@@ -3090,7 +3090,7 @@
 </div>
 </div>
 </div>
-<p>The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file. As you can see, while the output is verbose and comprehensive, <code>punx</code> does not actually pick up on the issues that the <a href="validate-nexus-files.html#validate_nexus"><code>pynxtools</code> validator finds</a>.</p>
+<p>The output tables "findings" and "summary statistics" can be used to find if errors are present in the NeXus file. While the output is verbose and comprehensive, you can observe that <code>punx</code> does not pick up on the issues that the <a href="validate-nexus-files.html#pynx-validate"><code>pynxtools</code> validator</a> finds.</p>
 <p>You can just pass one of the logging levels to the <code>--report</code> flag to select for a subset of the report:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Source</label><label for="__tabbed_7_2">Result</label></div>
 <div class="tabbed-content">
@@ -3677,7 +3677,7 @@
 </div>
 </div>
 <h2 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h2>
-<p>We strongly recommend to use the <a href="validate-nexus-files.html#validate_nexus"><code>validate_nexus</code></a> tool that is shipped with our <code>pynxtools</code> software, as it is likely to be the most complete and up-to-date solution around. However, if you want to use another tool to cross-check, the <code>nxvalidate</code> tool seems to be a good solution, as it picks up on all the issues that <code>validate_nexus</code> detects as well.</p>
+<p>We strongly recommend to use the <a href="validate-nexus-files.html#pynx-validate"><code>pynx validate</code></a> tool that is shipped with our <code>pynxtools</code> software, as it is likely to be the most complete and up-to-date solution around. However, if you want to use another tool to cross-check, the <code>nxvalidate</code> tool seems to be a good solution, as it picks up on all the issues that <code>pynx validate</code> detects as well.</p>
 
 
 

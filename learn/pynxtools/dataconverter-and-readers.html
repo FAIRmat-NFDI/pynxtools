@@ -1214,6 +1214,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#discover-installed-readers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discover installed readers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspect-an-application-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect an application definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use-with-multiple-input-files" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1681,6 +1703,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#discover-installed-readers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discover installed readers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspect-an-application-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect an application definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use-with-multiple-input-files" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1748,7 +1792,7 @@
 
 <h1 id="data-conversion-in-pynxtools">Data conversion in pynxtools<a class="headerlink" href="#data-conversion-in-pynxtools" title="Permanent link">&para;</a></h1>
 <p>One of the main motivations for pynxtools is to develop a tool for combining various instrument output formats and electronic lab notebook (ELN) into a file according to <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/index.html">NeXus application definitions</a>. </p>
-<p>The <code>dataconverter</code> API in pynxtools provides exactly that: it converts experimental as well as simulation data, together with the results from analysis of such data, to NeXus files based on any provided <a href="https://manual.nexusformat.org/nxdl.html#index-1">NXDL schemas</a>. Here, we are using <a href="https://support.hdfgroup.org/HDF5/">HDF5</a> as the serialization format.</p>
+<p>The <code>pynx convert</code> command in pynxtools provides exactly that: it converts experimental as well as simulation data, together with the results from analysis of such data, to NeXus files based on any provided <a href="https://manual.nexusformat.org/nxdl.html#index-1">NXDL schemas</a>. Here, we are using <a href="https://support.hdfgroup.org/HDF5/">HDF5</a> as the serialization format.</p>
 <p>The dataconverter currently has essentially three functionalities:</p>
 <ol>
 <li>Read in experimental data using <code>readers</code></li>
@@ -1769,15 +1813,28 @@
 <li><a href="../../tutorial/installation.html">Installation</a></li>
 </ul>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>See <a href="../../reference/cli-api.html#data-conversion">here</a> for the documentation of the <code>dataconverter</code> API.</p>
+<p>See <a href="../../reference/cli-api.html#data-conversion">here</a> for the documentation of the <code>pynx convert</code> API.</p>
+<h3 id="discover-installed-readers">Discover installed readers<a class="headerlink" href="#discover-installed-readers" title="Permanent link">&para;</a></h3>
+<p>Before converting data, you need to know which readers are available in your environment. Use <code>pynx convert get-readers</code> to list them:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pynx convert get-readers</span>
+</code></pre></div>
+<p>Once you know which reader to use, <code>pynx convert reader-info</code> shows the NXDL application definitions and file extensions it supports:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">pynx convert reader-info &lt;reader-name&gt;</span>
+</code></pre></div>
+<h3 id="inspect-an-application-definition">Inspect an application definition<a class="headerlink" href="#inspect-an-application-definition" title="Permanent link">&para;</a></h3>
+<p>To understand what fields a given NXDL application definition requires before converting your data, use <code>pynx inspect-appdef</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">pynx inspect-appdef NXmynxdl</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="go">pynx inspect-appdef NXmynxdl --level optional</span>
+</code></pre></div>
+<p>The <code>--level</code> flag controls how much of the definition is shown: <code>required</code> (default), <code>recommended</code>, or <code>optional</code>. For the full list of paths suitable for filling in directly, use <code>pynx convert generate-template</code> instead.</p>
 <h3 id="use-with-multiple-input-files">Use with multiple input files<a class="headerlink" href="#use-with-multiple-input-files" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">dataconverter metadata data.raw otherfile --nxdl nxdl --reader &lt;reader-name&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">pynx convert metadata data.raw otherfile --nxdl nxdl --reader &lt;reader-name&gt;</span>
 </code></pre></div>
 <h3 id="merge-partial-nexus-files-into-one">Merge partial NeXus files into one<a class="headerlink" href="#merge-partial-nexus-files-into-one" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">dataconverter --nxdl nxdl partial1.nxs partial2.nxs</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">pynx convert --nxdl nxdl partial1.nxs partial2.nxs</span>
 </code></pre></div>
 <h3 id="map-an-hdf5-filejson-file">Map an HDF5 file/JSON file<a class="headerlink" href="#map-an-hdf5-filejson-file" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">pynx convert --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json</span>
 </code></pre></div>
 <p>You can find actual examples with data files at <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/"><code>examples/json_map</code></a>.</p>
 <h2 id="example-data-for-testing-and-development-purposes">Example data for testing and development purposes<a class="headerlink" href="#example-data-for-testing-and-development-purposes" title="Permanent link">&para;</a></h2>

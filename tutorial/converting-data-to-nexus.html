@@ -1770,8 +1770,8 @@ For a more detailed description on the general principles of NeXus we recommend 
 </div>
 </li>
 <li>
-<p>Verify you can run the <code>dataconverter</code> in a terminal window. Open a terminal with the Python environment where you installed <code>pynxtools</code>. Then type the following:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">dataconverter --help</span>
+<p>Verify you can run <code>pynx</code> in a terminal window. Open a terminal with the Python environment where you installed <code>pynxtools</code>. Then type the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">pynx convert --help</span>
 </code></pre></div>
 </li>
 </ol>
@@ -1784,7 +1784,7 @@ For a more detailed description on the general principles of NeXus we recommend 
 </code></pre></div>
 <p>The <code>eln_data_sle.yaml</code> YAML file is another data file containing additional information (e.g., information about the experimenter) that is not provided in the main data file.</p>
 <p>Next, you will run the conversion routine from your Python environment:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">dataconverter --params-file params.yaml</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">pynx convert --params-file params.yaml</span>
 </code></pre></div>
 <p>Here we use a <code>params.yaml</code> parameter file to configure the converter.  This will create a file called <code>Au_25_mbar_O2_no_align.nxs</code> in your current directory.</p>
 <p><strong>Congrats! You now have a FAIR NeXus file!</strong></p>

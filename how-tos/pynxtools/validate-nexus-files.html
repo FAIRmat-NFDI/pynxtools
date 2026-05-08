@@ -876,10 +876,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#validate_nexus" class="md-nav__link">
+  <a href="#pynx-validate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        validate_nexus
+        pynx validate
       
     </span>
   </a>
@@ -887,15 +887,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#read_nexus" class="md-nav__link">
+  <a href="#pynx-read" class="md-nav__link">
     <span class="md-ellipsis">
       
-        read_nexus
+        pynx read
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="read_nexus">
+    <nav class="md-nav" aria-label="pynx read">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1625,10 +1625,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#validate_nexus" class="md-nav__link">
+  <a href="#pynx-validate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        validate_nexus
+        pynx validate
       
     </span>
   </a>
@@ -1636,15 +1636,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#read_nexus" class="md-nav__link">
+  <a href="#pynx-read" class="md-nav__link">
     <span class="md-ellipsis">
       
-        read_nexus
+        pynx read
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="read_nexus">
+    <nav class="md-nav" aria-label="pynx read">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1715,13 +1715,17 @@ files from experimental data.</p>
 <p><strong>As part of the dataconverter</strong>: During <a href="../../learn/pynxtools/dataconverter-and-readers.html">data conversion</a> within <code>pynxtools</code>, before writing the HDF5 file, the data is first checked against the provided application definition.</p>
 </li>
 <li>
-<p><strong><code>read_nexus</code></strong>: CLI tool to validate existing NeXus/HDF5 files.</p>
+<p><strong><code>pynx read</code></strong>: CLI tool to annotate and debug existing NeXus/HDF5 files.</p>
 </li>
 <li>
-<p><strong><code>validate_nexus</code></strong>: Annotator and debugger CLI tool for NeXus/HDF5 files.</p>
+<p><strong><code>pynx validate</code></strong>: CLI tool to validate existing NeXus/HDF5 files.</p>
 </li>
 </ul>
-<p>In this how-to, we will learn how to use the <code>validate_nexus</code> and <code>read_nexus</code> command line tools.</p>
+<p>In this how-to, we will learn how to use the <code>pynx validate</code> and <code>pynx read</code> command line tools.</p>
+<div class="admonition note">
+<p class="admonition-title">Legacy commands</p>
+<p>The old entry points <code>validate_nexus</code> and <code>read_nexus</code> are still installed as deprecated aliases. They continue to work but emit a deprecation warning. Prefer <code>pynx validate</code> and <code>pynx read</code> for new usage.</p>
+</div>
 <!-- ??? info "Using a different set of NeXus definitions"
 
     The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
@@ -1738,24 +1742,22 @@ files from experimental data.</p>
 <p>This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the <a href="https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes"><code>NXarpes</code></a> application definition.</p>
 </div>
 <p>Note that you will need to have <code>pynxtools</code> installed in a Python environment. Learn more about the installation procedure in the <a href="../../tutorial/installation.html">installation tutorial</a>.</p>
-<h2 id="validate_nexus"><strong><code>validate_nexus</code></strong><a class="headerlink" href="#validate_nexus" title="Permanent link">&para;</a></h2>
-<p>After installation, you can invoke the help call of the <code>validate_nexus</code> tool from the command line:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>validate_nexus<span class="w"> </span>--help
+<h2 id="pynx-validate"><strong><code>pynx validate</code></strong><a class="headerlink" href="#pynx-validate" title="Permanent link">&para;</a></h2>
+<p>After installation, you can invoke the <code>--help</code> call of the <code>pynx validate</code> tool from the command line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>validate<span class="w"> </span>--help
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="na">Usage</span><span class="o">:</span><span class="w"> </span><span class="s">validate_nexus [OPTIONS] FILE</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="na">Usage</span><span class="o">:</span><span class="w"> </span><span class="s">pynx validate [OPTIONS] FILE</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="na">Validates a NeXus HDF5 file.</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="na">Validate a NeXus HDF5 file against its application definition.</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="na">FILE</span><span class="o">:</span><span class="w"> </span><span class="s">The path to the NeXus file to validate.</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="na">Options</span><span class="o">:</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="na">--ignore-undocumented  Ignore all undocumented concepts during validation.</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="na">--help                 Show this message and exit.</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="na">Options</span><span class="o">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="na">--ignore-undocumented  Ignore all undocumented concepts during validation.</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="na">--help                 Show this message and exit.</span>
 </code></pre></div>
 </div>
 <p>To see the results on the test file, run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>validate_nexus<span class="w"> </span>--ignore-undocumented<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>validate<span class="w"> </span>--ignore-undocumented<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>WARNING: The unit &#39;1/Å&#39; at /entry/instrument/analyser/angles/@units does not match with the unit category NX_ANGLE of &#39;angles&#39;.
@@ -1778,7 +1780,7 @@ files from experimental data.</p>
 <p>Note that here we are passing the <code>--ignore-undocumented</code> flag to the validation tool to ignore all additional content in the file which is not defined in the application definitions. We encourage you to test out the same call without the <code>--ignore-undocumented</code> flag to see the difference.</p>
 <details class="example">
 <summary>Show output including undocumented concepts</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>validate_nexus<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>validate<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>The unit /entry/data/data/@units = counts has no documentation.
@@ -1852,45 +1854,48 @@ files from experimental data.</p>
 </code></pre></div>
 </div>
 </details>
-<h2 id="read_nexus"><strong><code>read_nexus</code></strong><a class="headerlink" href="#read_nexus" title="Permanent link">&para;</a></h2>
-<p>While <code>validate_nexus</code> is used as a tool for <em>validating</em> a NeXus file, <code>read_nexus</code> is an <em>annotator</em> tools. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.</p>
-<p>You can invoke the help call of the <code>read_nexus</code> tool from the command line:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>read_nexus<span class="w"> </span>--help
+<h2 id="pynx-read"><strong><code>pynx read</code></strong><a class="headerlink" href="#pynx-read" title="Permanent link">&para;</a></h2>
+<p>While <code>pynx validate</code> is used as a tool for <em>validating</em> a NeXus file, <code>pynx read</code> is an <em>annotator</em> tool. It outputs a debug log for a given NeXus file by annotating the data and metadata entries with the definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.</p>
+<p>You can invoke the help call of the <code>pynx read</code> tool from the command line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>--help
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="na">Usage</span><span class="o">:</span><span class="w"> </span><span class="s">read_nexus [OPTIONS]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="na">Usage</span><span class="o">:</span><span class="w"> </span><span class="s">pynx read [OPTIONS] NEXUS_FILE</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="na">Functionality to extract documentation and concept definition information</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="na">about the individual parts of a NeXus/HDF5 file.</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="na">Annotate each group, field, and attribute in a NeXus/HDF5 file with the</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="na">matching NXDL concept path, optionality, and documentation string.</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="na">Options</span><span class="o">:</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="na">-f, --nexus-file TEXT     NeXus file with extension .nxs.</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="na">-d, --documentation TEXT  Definition path in nexus output (.nxs) file.</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">                            </span><span class="na">Returns debug log relevant with that definition</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">                            </span><span class="na">path. Example input</span><span class="o">:</span><span class="w"> </span><span class="s">/entry/data/delays</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="na">-c, --concept TEXT        Concept path from application definition file</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">                            </span><span class="na">(.nxdl.xml). Finds out all the available concept</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">                            </span><span class="na">definition (IS-A relation) for a given concept</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">                            </span><span class="na">path. Example input</span><span class="o">:</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">                            </span><span class="na">/NXarpes/ENTRY/INSTRUMENT/analyser</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span><span class="na">--help                    Show this message and exit.</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="na">Without options, the full annotation log for the file is printed. Use -d to</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="na">restrict output to a single HDF5 path, or -c to find all instances in the</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="na">file that correspond to a given NXDL concept path.</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="na">Options</span><span class="o">:</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="na">-d, --documentation TEXT  Definition path in nexus output (.nxs) file.</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">                            </span><span class="na">Returns debug log relevant with that definition</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">                            </span><span class="na">path. Example input</span><span class="o">:</span><span class="w"> </span><span class="s">/entry/data/delays</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="na">-c, --concept TEXT        Concept path from application definition file</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">                            </span><span class="na">(.nxdl.xml). Finds out all the available concept</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">                            </span><span class="na">definition (IS-A relation) for a given concept</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">                            </span><span class="na">path. Example input</span><span class="o">:</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">                            </span><span class="na">/NXarpes/ENTRY/INSTRUMENT/analyser</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">  </span><span class="na">--help                    Show this message and exit.</span>
 </code></pre></div>
 </div>
 <details class="info">
 <summary>A note to Windows users</summary>
-<p>If you run <code>read_nexus</code> from <code>git bash</code>, you need to set the environmental variable
+<p>If you run <code>pynx read</code> from <code>git bash</code>, you need to set the environmental variable
 <code>MSYS_NO_PATHCONV</code> to avoid the <a href="https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471">path translation in Windows Git MSys</a>.
-The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO_PATHCONV=1</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyzer
+The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_PATHCONV=1</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MSYS_NO_PATHCONV=1 pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -c /NXarpes/ENTRY/INSTRUMENT/analyzer
 </code></pre></div>
 <p>This workaround was tested with Windows 11, but should very likely also work with Windows 10 and lower.</p>
 </details>
 <p>To see the results on the test file, run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>
 </code></pre></div>
 <details class="example">
 <summary>Show full output</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>===== GROUP (// [NO NXentry found::]): &lt;HDF5 file &quot;201805_WSe2_arpes.nxs&quot; (mode r)&gt;
@@ -6352,14 +6357,14 @@ The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO
 </code></pre></div>
 </div>
 </details>
-<p>In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the <code>ignore-undocumented</code> flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the <code>validate_nexus</code>/<code>read_nexus</code> tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).</p>
+<p>In the output, several concepts are reported as "NOT IN SCHEMA". These are exactly those fields that we ignored with the <code>ignore-undocumented</code> flag about. NeXus allows to add additional groups/fields/attributes to NeXus files. However, such reports from the <code>pynx validate</code> or <code>pynx read</code> tools can also be indicators that a given part of the file is not compliant with the application definition as expected (e.g., because its name does not fit with the name of the intended NeXus concept).</p>
 <h3 id="the-c-option">The <code>-c</code> option<a class="headerlink" href="#the-c-option" title="Permanent link">&para;</a></h3>
-<p>Aside from producing the full annotator log for the NeXus file, <code>read_nexus</code> can also be used with the <code>-c</code> (or <code>--concept</code> option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the <code>analyser</code> group within <code>/NXarpes/ENTRY/INSTRUMENT</code>, you can run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-c<span class="w"> </span>/NXarpes/ENTRY/INSTRUMENT/analyser
+<p>Aside from producing the full annotator log for the NeXus file, <code>pynx read</code> can also be used with the <code>-c</code> (or <code>--concept</code> option). This helps you to find out all instances in the file that correspond to a given concept path. If you want to find all groups in the file that implement the <code>analyser</code> group within <code>/NXarpes/ENTRY/INSTRUMENT</code>, you can run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-c<span class="w"> </span>/NXarpes/ENTRY/INSTRUMENT/analyser
 </code></pre></div>
 <details class="example">
 <summary>Show output</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-c<span class="w"> </span>/NXarpes/ENTRY/INSTRUMENT/analyser
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-c<span class="w"> </span>/NXarpes/ENTRY/INSTRUMENT/analyser
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>entry/instrument/analyser
@@ -6368,13 +6373,13 @@ The easiest way is to prefix the <code>read_nexus</code> call with <code>MSYS_NO
 </div>
 </details>
 <h3 id="the-d-option">The <code>-d</code> option<a class="headerlink" href="#the-d-option" title="Permanent link">&para;</a></h3>
-<p>Additionally, <code>read_nexus</code> can also be used with the <code>-d</code> (or <code>--documentation</code> option). Here, the input is the path in the HDF file.</p>
+<p>Additionally, <code>pynx read</code> can also be used with the <code>-d</code> (or <code>--documentation</code> option). Here, the input is the path in the HDF file.</p>
 <p>This helps you to find the NeXus definition for a given path in the HDF5 file. If you want to understand which NeXus concept the HDF5 group <code>/entry/instrument/analyser</code> corresponds to and how it is documented, you can run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-d<span class="w"> </span>/entry/instrument/analyser
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-d<span class="w"> </span>/entry/instrument/analyser
 </code></pre></div>
 <details class="example">
 <summary>Show output</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>read_nexus<span class="w"> </span>-f<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-d<span class="w"> </span>/entry/instrument/analyser
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span><span class="nb">read</span><span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs<span class="w"> </span>-d<span class="w"> </span>/entry/instrument/analyser
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>===== GROUP (//entry/instrument/analyser [NXarpes::/NXentry/NXinstrument/NXdetector]): &lt;HDF5 group &quot;/entry/instrument/analyser&quot; (25 members)&gt;
