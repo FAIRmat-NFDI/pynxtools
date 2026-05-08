@@ -428,7 +428,6 @@ class Writer:
                                         f"Prevented the overwriting of dataset {path}"
                                     )
                     else:
-                        # scalar data
                         if not np.isscalar(data):
                             dataset = grp.create_dataset(
                                 entry_name, chunks=True, data=data
