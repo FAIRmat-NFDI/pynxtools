@@ -286,7 +286,7 @@ def test_c_option(tmp_path):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    NexusFileHandler(None).process(Annotator(logger, concept="/NXbeam"))
+    NexusFileHandler(None).process(Annotator(logger, concept="NXbeam"))
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
@@ -299,7 +299,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    NexusFileHandler(None).process(Annotator(logger, concept="/NXdetector/data"))
+    NexusFileHandler(None).process(Annotator(logger, concept="NXdetector/data"))
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()
@@ -311,7 +311,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    NexusFileHandler(None).process(Annotator(logger, concept="/NXdata@signal"))
+    NexusFileHandler(None).process(Annotator(logger, concept="NXdata@signal"))
 
     with open(tmp_file, encoding="utf-8") as tmp_f:
         tmp = tmp_f.readlines()

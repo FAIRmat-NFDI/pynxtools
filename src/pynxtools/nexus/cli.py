@@ -30,6 +30,7 @@ Exposes two commands consumed by the top-level ``pynx`` group:
 """
 
 import logging
+import sys
 from typing import Literal
 
 import click
@@ -81,6 +82,8 @@ def read(nexus_file, documentation, concept):
             "with a concept (-c) can be requested."
         )
     logger = logging.getLogger("pynxtools")
+    for handler in logger.handlers:
+        handler.stream = sys.stdout
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
     NexusFileHandler(nexus_file).process(

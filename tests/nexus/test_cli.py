@@ -50,9 +50,10 @@ class TestRead:
 
     def test_concept_option(self, runner):
         result = runner.invoke(
-            read, [ARPES_FILE, "-c", "/NXarpes/ENTRY/INSTRUMENT/analyser"]
+            read, [ARPES_FILE, "-c", "NXarpes/NXentry/NXinstrument/analyser"]
         )
         assert result.exit_code == 0
+        assert "entry/instrument/analyser" in result.output
 
     def test_mutual_exclusion_raises(self, runner):
         result = runner.invoke(
