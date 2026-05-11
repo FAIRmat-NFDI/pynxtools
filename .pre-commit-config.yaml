@@ -33,7 +33,6 @@ repos:
         args:
           - --config
           - cspell.json
-          # - --verbose
           - README.md
           - CITATION.cff
           - docs/**/*
