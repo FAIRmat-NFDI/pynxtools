@@ -20,8 +20,11 @@
 import glob
 import logging
 import os
+import tempfile
 import xml.etree.ElementTree as ET
 
+import h5py
+import numpy as np
 import pytest
 from _pytest.mark.structures import ParameterSet
 
@@ -169,3 +172,36 @@ def test_json_map_reader_mapping_json_emits_deprecation_warning():
                 os.path.join(_JSON_MAP_DIR, "data.mapping.json"),
             ),
         )
+
+
+def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only():
+    """HDF5 text bytes are decoded to str while numeric data remains numeric."""
+    from pynxtools.dataconverter.readers.json_map.reader import (
+        unpack_hdf_dataset_for_json_map,
+    )
+
+    with tempfile.NamedTemporaryFile(suffix=".h5") as tmp:
+        with h5py.File(tmp.name, "w") as h5f:
+            h5f.create_dataset("text_scalar", data=b"hello")
+            h5f.create_dataset("text_array", data=np.array([b"a", b"b"]))
+            h5f.create_dataset("int_scalar", data=7)
+            h5f.create_dataset("float_array", data=np.array([1.0, 2.0]))
+
+        with h5py.File(tmp.name, "r") as h5f:
+            text_scalar = unpack_hdf_dataset_for_json_map(h5f["text_scalar"])
+            text_array = unpack_hdf_dataset_for_json_map(h5f["text_array"])
+            int_scalar = unpack_hdf_dataset_for_json_map(h5f["int_scalar"])
+            float_array = unpack_hdf_dataset_for_json_map(h5f["float_array"])
+
+        assert isinstance(text_scalar, str)
+        assert text_scalar == "hello"
+
+        assert isinstance(text_array, np.ndarray)
+        assert text_array.dtype.kind == "U"
+        assert np.array_equal(text_array, np.array(["a", "b"]))
+
+        assert int_scalar == 7
+        assert np.issubdtype(type(int_scalar), np.integer)
+
+        assert isinstance(float_array, np.ndarray)
+        assert np.issubdtype(float_array.dtype, np.floating)

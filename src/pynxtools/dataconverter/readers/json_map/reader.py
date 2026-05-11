@@ -55,6 +55,38 @@ from pynxtools.dataconverter.template import Template
 logger = logging.getLogger("pynxtools")
 
 
+def _decode_hdf_bytes(value: Any) -> Any:
+    """Recursively decode text-like bytes to Python strings.
+
+    Numeric arrays and non-text scalar values are returned unchanged.
+    """
+    if isinstance(value, bytes | np.bytes_):
+        return value.decode("utf-8")
+
+    if isinstance(value, np.ndarray):
+        if value.dtype.kind == "S":
+            return np.char.decode(value, "utf-8")
+        if value.dtype.kind == "O":
+            return np.vectorize(_decode_hdf_bytes, otypes=[object])(value)
+        return value
+
+    if isinstance(value, list):
+        return [_decode_hdf_bytes(item) for item in value]
+
+    if isinstance(value, tuple):
+        return tuple(_decode_hdf_bytes(item) for item in value)
+
+    if isinstance(value, dict):
+        return {k: _decode_hdf_bytes(v) for k, v in value.items()}
+
+    return value
+
+
+def unpack_hdf_dataset_for_json_map(item) -> Any:
+    """Unpack HDF5 datasets and normalize byte-strings to ``str`` values."""
+    return _decode_hdf_bytes(hdfdict.unpack_dataset(item))
+
+
 def parse_slice(slice_string):
     """Converts slice strings to actual tuple sets of slices for index syntax."""
     slices = slice_string.split(",")
@@ -249,9 +281,10 @@ class JsonMapReader(MultiFormatReader):
         return {}
 
     def _handle_hdf5_file(self, file_path: str) -> dict[str, Any]:
-        hdf = hdfdict.load(file_path)
-        hdf.unlazy()
-        merge(self.data, dict(hdf))
+        hdf = hdfdict.load(
+            file_path, lazy=False, unpacker=unpack_hdf_dataset_for_json_map
+        )
+        merge(self.data, hdf)
         if "entry@" in self.data and "partial" in self.data["entry@"]:
             self.partials.extend(self.data["entry@"]["partial"])
         return {}

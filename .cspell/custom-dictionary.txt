@@ -265,3 +265,4 @@ ylabel
 zaxis
 zenodo
 zstd
+otypes
