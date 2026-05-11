@@ -118,7 +118,7 @@ performance critical processing demands. We have configured `blosc` such that it
 This custom compression filter has a multithreaded and vectorized implementation, two key optimizations over `deflate` that make it an fast alternative
 for users with demands for processing large data volume. By default, the usage of `blosc` is switched off as `deflate` is the default in `pynxtools`.
 
-Users should be aware though that custom compression filters, like `blosc2` are not typically included in the default compilation pipelines of HDF5.
+Users should be aware though that custom compression filters, like `blosc2`, are not typically included in the default compilation pipelines of HDF5.
 This means that NeXus/HDF5 files with datasets that use these filters will have content that is typically not readable in C, C++, Fortran, or Matlab applications,
 unless the filter also gets specifically compiled and linked into the respective installation of the HDF5 library.
 Standalone HDF5 file viewers may not display `blosc2` compressed content out-of-the-box. Newer versions of [`HDFView`](https://www.hdfgroup.org/download-hdfview/) though are capable of displaying such content. As for every compressed dataset in HDF5, using a chunked storage layout is mandatory. Chunks will be decompressed prior displaying any content by internal calls

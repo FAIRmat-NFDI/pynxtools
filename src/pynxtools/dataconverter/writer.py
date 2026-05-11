@@ -389,9 +389,9 @@ class Writer:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
                                 )
-                        else:  # not compressed but chunked
-                            # yields fast retrieval and reduces large malloc calls via
-                            # enabling iterating over chunks (nomad/parsers/parser.py)
+                        else:  # use chunk-based storage layout also for data that are
+                            # not compressed as it enables more memory efficient
+                            # iterating over chunks e.g. in nomad/parsers/parser.py
                             if entry_name not in grp:
                                 try:
                                     if not np.isscalar(data):

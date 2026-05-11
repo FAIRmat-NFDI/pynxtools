@@ -47,11 +47,12 @@ try:
     BLOSC_NTHREADS = blosc2.set_nthreads(
         min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
     )
-    # do not oversubscribe as cpu_count counts Intel hyperthreading cores as real cores
-    # option to go with half also reasonable when used in a NOMAD deployment
-    # for getting maximum performance users should for now deploy from custom branches
-    # until there is a mechanism in NOMAD whereby configurations can be passed
-    # NOMAD plugins
+    # do not oversubscribe, cpu_count counts Intel hyperthreading cores as real cores
+    # although these share specific resources, going with at most half the available
+    # is also reasonable when inside a NOMAD deployment
+    # to get maximum performance users should for now deploy from custom branches
+    # until there is a mechanism in NOMAD whereby such configurations can be passed
+    # to the NOMAD plugins directly
     COMPRESSION_FILTERS: list[str] = [DEFAULT_COMPRESSION_FILTER, "blosc"]
 
     logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
@@ -60,10 +61,10 @@ try:
     )
     logger.info(blosc2.print_versions())
 except ImportError:
+    logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
     logger.warning("blosc2 is not available")
     BLOSC_NTHREADS = 0
     COMPRESSION_FILTERS = [DEFAULT_COMPRESSION_FILTER]
-    logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
 
 
 # compressed payload is served as a dict with at least one keyword "compress",
