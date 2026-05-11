@@ -757,7 +757,7 @@ def validate_hdf_group_against(
             attrs (h5py.AttributeManager): The attributes collection.
             parent_obj (Union[h5py.Group, h5py.Dataset])): Parent object of these attributes.
         """
-        for attr_name in sorted(attrs):
+        for attr_name in attrs:
             full_path = f"{entry_name}/{path}/@{attr_name}"
 
             if attr_name in (
@@ -839,7 +839,7 @@ def validate_hdf_group_against(
             path (str, optional): Current HDF5 path.
             filename (str, optional): Name of the file for resolving links.
         """
-        for group_name in sorted(group):
+        for group_name in group:
             full_path = f"{path}/{group_name}".lstrip("/")
             link = group.get(group_name, getlink=True)
             if isinstance(link, h5py.SoftLink):

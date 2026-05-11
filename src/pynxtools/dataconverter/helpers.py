@@ -829,24 +829,12 @@ def is_positive_int_hdf(hdf_node: h5py.Dataset) -> bool:
                     continue
                 else:
                     return False
+            return True
         else:
             # contiguous storage can never be compressed
             # typically fastest but reading all data at once
             return bool(np.all(hdf_node[...] > 0))
-            """
-            # typically slower than the previous line streaming through hyperslabs
-            max_elements_per_hyperslab = (
-                CHUNK_CONFIG_DEFAULT["byte_size"] // hdf_node.dtype.itemsize
-            )
-            row_size = np.prod(hdf_node.shape[1:], dtype=int)
-            block_size = max(1, max_elements_per_hyperslab // row_size)
-            for idx in range(0, hdf_node.shape[0], block_size):
-                if (hdf_node[idx : idx + block_size] > 0).all():
-                    continue
-                else:
-                    return False
-            """
-    return True
+    return False
 
 
 def convert_str_to_bool_safe(value: str) -> bool | None:
