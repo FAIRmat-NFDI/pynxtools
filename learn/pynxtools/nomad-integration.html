@@ -17,7 +17,7 @@
         <link rel="prev" href="versioning.html">
       
       
-        <link rel="next" href="../../reference/definitions.html">
+        <link rel="next" href="numerics.html">
       
       
         
@@ -1450,6 +1450,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="numerics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computing statistics for chunked arrays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1874,7 +1902,8 @@ developed within the FAIRmat consortium. It covers the <em>findable</em> and <em
 </tr>
 </tbody>
 </table>
-<p>Note that for all NeXus/HDF5 datasets with non-scalar content, i.e. arrays, the contents are not copied into the NOMAD archive JSON. Instead, the value of the Metainfo <code>Quantity</code> in the <code>DATA</code> tab for this NeXus field is the mean value of the array.</p>
+<p>Note that for all NeXus/HDF5 datasets with non-scalar content, i.e. arrays, the contents are not copied into the NOMAD archive JSON. Instead, the value of the Metainfo <code>Quantity</code> in the <code>DATA</code> tab for this NeXus field is the mean value of the array. In addition, the minimum and the maximum value of each array is copied. HDF5 can store data using different storage layouts such as contiguous or chunked layouts. With versions newer than <code>v0.13.2</code>, <code>pynxtools</code> favors the chunked layout over the contiguous. This enables to iterate through chunks when reading and writing data, enabling a processing of substantially larger arrays without having the host to offer as much main memory as the size of these datasets. Using a chunked storage layout has implications though for processing statistics.
+You can find more details about this technicality here <a href="numerics.html">Learn → pynxtools → Chunked storage and numerics</a>.</p>
 <p>The key quantities indexed by the NeXus normalizer depend on the application definition: common entries include technique name (<code>definition</code>), sample identifiers, start time, and instrument names.</p>
 <hr />
 <h2 id="metainfo-nexus-definitions-as-a-nomad-schema">Metainfo: NeXus definitions as a NOMAD schema<a class="headerlink" href="#metainfo-nexus-definitions-as-a-nomad-schema" title="Permanent link">&para;</a></h2>
@@ -1994,13 +2023,13 @@ optional dependencies in <code>pyproject.toml</code>:</p>
         
         
           
-          <a href="../../reference/definitions.html" class="md-footer__link md-footer__link--next" aria-label="Next: NeXus definitions">
+          <a href="numerics.html" class="md-footer__link md-footer__link--next" aria-label="Next: Computing statistics for chunked arrays">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                NeXus definitions
+                Computing statistics for chunked arrays
               </div>
             </div>
             <div class="md-footer__button md-icon">
