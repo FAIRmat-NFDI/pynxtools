@@ -241,6 +241,7 @@ unsignedinteger
 ureg
 usefixtures
 vamas
+vectorizable
 visititems
 xarrays
 xaxis

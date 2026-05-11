@@ -62,7 +62,7 @@ def _to_group_name(nx_node: ET._Element):
 def _to_section(
     hdf_name: str | None,
     nx_def: str,
-    nx_node: Optional[ET.Element],  # noqa: UP045
+    nx_node: ET.Element | None,  # noqa: UP045
     current: MSection,
     nx_root,
 ) -> MSection:
@@ -159,32 +159,16 @@ def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
     Get field stats when hdf_node uses chunked storage layout
     """
     stats: dict = {}
-    # using a chunked storage layout does not necessarily demand usage of compression
-    # computing stats using chunks enables an incremental updating of stats
-    # while excellent for reducing the memory consumption a clear disadvantage is that
-    # measures typically implemented under the hood of np.mean and np.std cannot be used
-    # out of the box and expected to yield the best possible numerical robustness
-    # and accuracy given that how chunks stream in and how large they can affect
-    # numerical precision
-    # an alternative in every case is using Welford's algorithm to prevent such
-    # catastrophic cancellation errors, this algorithm is inherently sequential though
-    # and thus even if vectorized (non-trivial implementation) eventual an order of
-    # magnitude more costly than np.mean and np.std which are vectorized
+    # with chunked-based storage summary statistics cannot be computed anymore with single
+    # numpy calls, instead chunks are iterated over and here two approaches shown
+    # i) double-precision naive mean (default, can face numerical robustness issues)
+    # ii) Welford's algorithm which theoretically is more accurate but also much slower
 
-    # passing the mean as the representative of an array for NOMAD Metainfo is a choice
-    # that is also not without debate it is questionable though whether this warrants
-    # to use then one of the most costly algorithms despite it being theoretically the
-    # most precise one
-
-    # the implementation here shows two approaches:
-    # i) classical Welford
-    # ii) vectorized implementation of the naive formula summarizing over chunks
-    # for computing mean and std using np.float64 in the accumulator though
-    # iii) using np.float128 precision would result in software emulation on the hardware
-    # making the computation substantially more costly than for np.float64
-
-    # only one implementation for "iu" and "f" kinds despite "iu" np.mean and np.std
-    # internally promote to float(ing)
+    # np.mean and np.std internally promote to float(ing) when fed with "iu" typed data
+    # but not so e.g. when fed dtype=np.float32 typed data, therefore here we use double
+    # precision accumulators explicitly
+    # we could also use a np.float128 accumulator to counter robustness issues
+    # but that would make the code slower as float128 and beyond is emulated in software
     stats["__min"] = np.float64(+np.inf)
     stats["__max"] = np.float64(-np.inf)
     # required inits with use_welford == True
@@ -194,13 +178,7 @@ def _get_field_stats_iuf_chunked(hdf_node, use_welford: bool = False) -> dict:
     # required inits with use_welford == False
     mean_sum = np.float64(0.0)
 
-    # note that np.mean on iu types by default promotes to np.float64
-    # but np.mean on an np.ndarray of dtype=np.float32 does not automatically
-    # do so, therefore we here use an np.float64 accumulator
-    # we could also use a np.float128 accumulator but that would be much slower
-    # as it will be emulated in software
-
-    if not use_welford:
+    if not use_welford:  # naive route the default because is faster than Welford
         for chunk in hdf_node.iter_chunks():
             slab = hdf_node[chunk]  # decompresses automatically
             values = slab[np.isfinite(slab)]
