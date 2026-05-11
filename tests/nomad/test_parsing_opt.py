@@ -18,6 +18,7 @@
 """Test cases for the Writer class used by the DataConverter"""
 
 import os
+from typing import Any
 
 import h5py
 import numpy as np
@@ -106,14 +107,10 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
 
         chunking = (10, 50, 50)
         axes = ["indices_image", "axis_j", "axis_i"]
-        mean = np.float128(np.nan)
         if np.issubdtype(data_type, np.unsignedinteger):
             dat = prng.integers(
                 0, np.iinfo(data_type).max, size=n_values, dtype=data_type
             ).reshape(-1, 50, 50)
-            mean = np.asarray(
-                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
-            ).item()
         elif np.issubdtype(data_type, np.integer):
             # duplicate functionality as converting 'np.integer' or 'np.signedinteger'
             # to a dtype is not allowed when using
@@ -121,14 +118,8 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
             dat = prng.integers(
                 0, np.iinfo(data_type).max, size=n_values, dtype=data_type
             ).reshape(-1, 50, 50)
-            mean = np.asarray(
-                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
-            ).item()
         elif np.issubdtype(data_type, np.floating):
             dat = prng.random(size=n_values).astype(data_type).reshape(-1, 50, 50)
-            mean = np.asarray(
-                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
-            ).item()
         # elif np.issubdtype(data_type, np.complexfloating):
         #     real_dtype = np.empty((), dtype=data_type).real.dtype  # half the itemsize
         #     real = prng.random(size=n_values).astype(real_dtype)
@@ -137,6 +128,16 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
         #     # no stats for complex
         else:
             raise TypeError(f"Unsupported dtype: {data_type}")
+
+        ground_truth: dict[str, Any] = {
+            "mean": np.asarray(
+                np.sum(dat, dtype=np.float128) / np.float128(dat.size), dtype=data_type
+            ).item(),
+            "min": np.asarray(np.min(dat), dtype=data_type).item(),
+            "max": np.asarray(np.max(dat), dtype=data_type).item(),
+            "size": n_values,
+            "ndim": dat.ndim,
+        }
 
         grp.attrs["NX_class"] = "NXdata"
         grp.attrs["axes"] = axes
@@ -172,25 +173,53 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
     archive = EntryArchive()
     NexusParser().parse(str(file_path), archive, get_logger(__name__))
 
-    parsed = np.asarray(
-        archive.data.ENTRY[0]
-        .measurement.eventID[0]
-        .imageID[0]
-        .stack_2d.m_to_dict()["DATA__field"]["real__field"]["m_value"],
-        dtype=data_type,
-    ).item()
+    for stat in ("mean", "min", "max"):
+        if stat == "mean":
+            parsed = np.asarray(
+                archive.data.ENTRY[0]
+                .measurement.eventID[0]
+                .imageID[0]
+                .stack_2d.m_to_dict()["DATA__field"]["real__field"]["m_value"],
+                dtype=data_type,
+            ).item()
+        else:
+            parsed = np.asarray(
+                archive.data.ENTRY[0]
+                .measurement.eventID[0]
+                .imageID[0]
+                .stack_2d.m_to_dict()[f"real__{stat}"][f"real__{stat}"]["m_value"],
+                dtype=data_type,
+            ).item()
 
-    # result of np.float128 mean computation was cast to the target datatype
-    # set tolerance to within limits of the original type
-    if np.issubdtype(data_type, np.integer):
-        assert np.isclose(
-            mean,
-            parsed,
-            atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
-            rtol=0.0,
+        # result of np.float128 mean computation was cast to the target datatype
+        # set tolerance to within limits of the original type
+        if np.issubdtype(data_type, np.unsignedinteger):
+            assert np.isclose(
+                ground_truth[stat],
+                parsed,
+                atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
+                rtol=0.0,
+            )
+        elif np.issubdtype(data_type, np.integer):
+            assert np.isclose(
+                ground_truth[stat],
+                parsed,
+                atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
+                rtol=0.0,
+            )
+        elif np.issubdtype(data_type, np.floating):
+            # atol set like this cuz explicit mean computation using np.float64
+            assert np.isclose(
+                ground_truth[stat], parsed, atol=np.finfo(np.float64).eps, rtol=0.0
+            )
+
+    for stat in ("ndim", "size"):
+        assert (
+            ground_truth[stat]
+            == archive.data.ENTRY[0]
+            .measurement.eventID[0]
+            .imageID[0]
+            .stack_2d.m_to_dict()[f"real__{stat}"][f"real__{stat}"]["m_value"]
         )
-    elif np.issubdtype(data_type, np.floating):
-        # atol set like this cuz explicit mean computation using np.float64
-        assert np.isclose(mean, parsed, atol=np.finfo(np.float64).eps, rtol=0.0)
 
     os.remove(file_path)
