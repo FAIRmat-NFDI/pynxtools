@@ -20,11 +20,14 @@
 # pylint: disable=R0912
 
 import copy
+import importlib.util
 import logging
+import os
 import sys
 import xml.etree.ElementTree as ET
 
 import h5py
+import hdf5plugin
 import numpy as np
 
 from pynxtools.dataconverter import helpers
@@ -36,7 +39,11 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS, COMPRESSION_STRENGTH
+from pynxtools.dataconverter.chunk import (
+    BLOSC_NTHREADS,
+    DEFAULT_COMPRESSION_FILTER,
+    DEFAULT_COMPRESSION_STRENGTH,
+)
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -152,10 +159,14 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            if ("filter" in data.keys()) and (data["filter"] in COMPRESSION_FILTERS):
-                compression_filter = data["filter"]
+            if (
+                BLOSC_NTHREADS > 0
+                and "filter" in data.keys()
+                and data["filter"] == "blosc"
+            ):
+                compression_filter = "blosc"
             else:  # fall-back to default
-                compression_filter = COMPRESSION_FILTERS[0]
+                compression_filter = DEFAULT_COMPRESSION_FILTER
 
             if (
                 ("strength" in data.keys())
@@ -164,16 +175,24 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
             ):
                 compression_strength = data["strength"]
             else:
-                compression_strength = COMPRESSION_STRENGTH
+                compression_strength = DEFAULT_COMPRESSION_STRENGTH
 
             if entry_name not in grp:
                 try:
+                    if compression_filter == "gzip":
+                        compression_config = dict(
+                            compression=compression_filter,
+                            compression_opts=compression_strength,
+                        )
+                    else:  # by virtue of construction blosc
+                        compression_config = hdf5plugin.Blosc2(
+                            cname="zstd", clevel=DEFAULT_COMPRESSION_STRENGTH
+                        )
                     grp.create_dataset(
                         entry_name,
                         data=data["compress"],
-                        compression=compression_filter,
                         chunks=chunking_strategy(data),
-                        compression_opts=compression_strength,
+                        **compression_config,
                     )
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")
@@ -183,7 +202,12 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
         else:
             if entry_name not in grp:
                 try:
-                    grp.create_dataset(entry_name, data=data["compress"])
+                    if not np.isscalar(data["compress"]):
+                        grp.create_dataset(
+                            entry_name, chunks=True, data=data["compress"]
+                        )
+                    else:
+                        grp.create_dataset(entry_name, data=data["compress"])
                 except ValueError:
                     logger.warning(f"ValueError caught upon creating_dataset {path}")
             else:
@@ -365,10 +389,19 @@ class Writer:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
                                 )
-                        else:
+                        else:  # use chunk-based storage layout also for data that are
+                            # not compressed as it enables more memory efficient
+                            # iterating over chunks e.g. in nomad/parsers/parser.py
                             if entry_name not in grp:
                                 try:
-                                    dataset = grp.create_dataset(entry_name, data=data)
+                                    if not np.isscalar(data):
+                                        dataset = grp.create_dataset(
+                                            entry_name, chunks=True, data=data
+                                        )
+                                    else:
+                                        dataset = grp.create_dataset(
+                                            entry_name, data=data
+                                        )
                                 except ValueError:
                                     logger.warning(
                                         f"ValueError caught upon create_dataset {path}"
@@ -379,8 +412,12 @@ class Writer:
                                         f"Prevented the overwriting of dataset {path}"
                                     )
                     else:
-                        # contiguous data storage layout
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        if not np.isscalar(data):
+                            dataset = grp.create_dataset(
+                                entry_name, chunks=True, data=data
+                            )
+                        else:
+                            dataset = grp.create_dataset(entry_name, data=data)
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding children"
                         )
