@@ -80,7 +80,8 @@ After parsing, your NeXus data is available in NOMAD as:
 | **Search index** | All Metainfo quantities that NOMAD has indexed for cross-dataset comparison |
 | **API** | Raw archive JSON accessible via the REST API |
 
-Note that for all NeXus/HDF5 datasets with non-scalar content, i.e. arrays, the contents are not copied into the NOMAD archive JSON. Instead, the value of the Metainfo `Quantity` in the `DATA` tab for this NeXus field is the mean value of the array.
+Note that for all NeXus/HDF5 datasets with non-scalar content, i.e. arrays, the contents are not copied into the NOMAD archive JSON. Instead, the value of the Metainfo `Quantity` in the `DATA` tab for this NeXus field is the mean value of the array. In addition, the minimum and the maximum value of each array is copied. HDF5 can store data using different storage layouts such as contiguous or chunked layouts. With versions newer than `v0.13.2`, `pynxtools` favors the chunked layout over the contiguous. This enables to iterate through chunks when reading and writing data, enabling a processing of substantially larger arrays without having the host to offer as much main memory as the size of these datasets. Using a chunked storage layout has implications though for processing statistics.
+You can find more details about this technicality here [Learn → pynxtools → Chunked storage and numerics](numerics.md).
 
 The key quantities indexed by the NeXus normalizer depend on the application definition: common entries include technique name (`definition`), sample identifiers, start time, and instrument names.
 
