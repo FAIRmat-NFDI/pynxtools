@@ -1357,6 +1357,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#judicious-choices-when-using-custom-compression-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Judicious choices when using custom compression filters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#judicious-choices-when-using-multithreaded-compression-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Judicious choices when using multithreaded compression filters
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1695,6 +1717,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#judicious-choices-when-using-custom-compression-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Judicious choices when using custom compression filters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#judicious-choices-when-using-multithreaded-compression-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Judicious choices when using multithreaded compression filters
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1785,6 +1829,24 @@ on different file systems used for deploying NOMAD. By default, we follow the de
 performance compromise that is tailored towards single storage operations like on servers and laptops.</p>
 <p>Developers that customize for Lustre or GPFS based hardware and NOMAD deployments can use the chunk_cache settings to explore further
 optimization routes to make the most out of their NeXus/HDF5-file-based RDM pipeline in NOMAD.</p>
+<h2 id="judicious-choices-when-using-custom-compression-filters">Judicious choices when using custom compression filters<a class="headerlink" href="#judicious-choices-when-using-custom-compression-filters" title="Permanent link">&para;</a></h2>
+<p>To maximize the reusability of all NeXus/HDF5 files, we have intentionally chosen to use <code>deflate</code> as the default compression algorithm and respective HDF5 compression filter (<code>gzip</code> in <code>h5py</code>) in <code>pynxtools</code>. The HDF5 library integrates and links the source code of this widely supported algorithm naturally
+during its compilation step for important programming languages like Fortran, C, C++, Matlab, and Python. Through its <code>compression="gzip"</code> parameter, the algorithm is straightforward to use with <code>h5py</code>. Also <code>pynxtools</code> uses this approach in its <code>src/pynxtools/dataconverter/writer.py</code> backend.</p>
+<p>An important practical issue, though, of the <code>deflate</code> compression filter is that currently no multithreaded implementation of this filter exists in the HDF5 library. We have observed that this de facto enforced sequentialization of the compression step becomes a substantial performance bottleneck in batch processing scenarios
+and for data ingestion campaigns with research data management systems like NOMAD. Therefore, users should always judge if using
+compression yields relevant and measurable benefits such as reduced storage costs. While compression may reduce storage costs, it is important to mention that working with compressed content incurs overhead that is paid whenever compressed content needs processing and displaying. Therefore, <code>pynxtools</code> offers users to combine different optimizations like compression, different compression filters, all optionally usable at the individual dataset level, to cope with a variety of use cases.</p>
+<p>Consequently, the feature of <code>pynxtools</code> to support also filters from the <a href="https://blosc.org/"><code>blosc2</code></a>
+project and compression library via the <a href="https://pypi.org/project/hdf5plugin/"><code>hdf5plugin</code></a> is an offering to our users with
+performance critical processing demands. We have configured <code>blosc</code> such that it uses the <code>zstd</code> compression algorithm.
+This custom compression filter has a multithreaded and vectorized implementation, two key optimizations over <code>deflate</code> that make it an fast alternative
+for users with demands for processing large data volume. By default, the usage of <code>blosc</code> is switched off as <code>deflate</code> is the default in <code>pynxtools</code>.</p>
+<p>Users should be aware though that custom compression filters, like <code>blosc2</code>, are not typically included in the default compilation pipelines of HDF5.
+This means that NeXus/HDF5 files with datasets that use these filters will have content that is typically not readable in C, C++, Fortran, or Matlab applications,
+unless the filter also gets specifically compiled and linked into the respective installation of the HDF5 library.
+Standalone HDF5 file viewers may not display <code>blosc2</code> compressed content out-of-the-box. Newer versions of <a href="https://www.hdfgroup.org/download-hdfview/"><code>HDFView</code></a> though are capable of displaying such content. As for every compressed dataset in HDF5, using a chunked storage layout is mandatory. Chunks will be decompressed prior displaying any content by internal calls
+which <code>H5Web</code> and <code>h5py</code> perform automatically.</p>
+<h2 id="judicious-choices-when-using-multithreaded-compression-filters">Judicious choices when using multithreaded compression filters<a class="headerlink" href="#judicious-choices-when-using-multithreaded-compression-filters" title="Permanent link">&para;</a></h2>
+<p>Another consideration to make when using multithreaded compression filters is to set the maximum number of threads which the filter is allowed to use. Currently, <code>pynxtools</code> makes a conservative choice in that it takes half of the available hardware cores on the system. For Intel based CPUs this counts hyperthreading cores in. Users can customize settings related to multithreading by configuring the respective <code>PYNX_ENABLE_BLOSC_NTHREADS</code> global in <code>src/pynxtools/dataconverter/writer.py</code>. Increasing the number of threads often increases the speed with which compression filters work. Again, informed decisions are required, though, as using multiple threads may result in situations where these threads compete with other threads and processes when they request for resources on the host.</p>
 
 
 
