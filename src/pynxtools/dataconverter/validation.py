@@ -258,7 +258,7 @@ def validate_hdf_group_against(
                     if len(score_board[alternative_best_score][constraint]) > 1:
                         jdx = score_board[alternative_best_score][constraint][0]
                         first_best_match = nodes[jdx]
-                        logger.warning(
+                        logger.debug(
                             f"Multiple best fitting with score {alternative_best_score} found "
                             f"{[nodes[jdx] for jdx in score_board[alternative_best_score][constraint]]} "
                             f"constrained by {constraint}; indicates possible issues with nameTyping of "
