@@ -20,7 +20,7 @@
 import glob
 import logging
 import os
-import tempfile
+import shutil
 import xml.etree.ElementTree as ET
 
 import h5py
@@ -174,34 +174,53 @@ def test_json_map_reader_mapping_json_emits_deprecation_warning():
         )
 
 
-def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only():
-    """HDF5 text bytes are decoded to str while numeric data remains numeric."""
+def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only(tmp_path):
+    """HDF5 text bytes are decoded to str while numeric data remains numeric.
+
+    Uses a copy of the real arpes.nxs file which already contains naturally
+    byte-string datasets (dtype=object, value=bytes).  A byte-string array
+    dataset is added to the copy to cover the array decoding path.
+    """
     from pynxtools.dataconverter.readers.json_map.reader import (
         unpack_hdf_dataset_for_json_map,
     )
 
-    with tempfile.NamedTemporaryFile(suffix=".h5") as tmp:
-        with h5py.File(tmp.name, "w") as h5f:
-            h5f.create_dataset("text_scalar", data=b"hello")
-            h5f.create_dataset("text_array", data=np.array([b"a", b"b"]))
-            h5f.create_dataset("int_scalar", data=7)
-            h5f.create_dataset("float_array", data=np.array([1.0, 2.0]))
+    src = os.path.join("src", "pynxtools", "data", "201805_WSe2_arpes.nxs")
+    nxs_copy = tmp_path / "arpes_bytes_test.nxs"
+    shutil.copy(src, nxs_copy)
 
-        with h5py.File(tmp.name, "r") as h5f:
-            text_scalar = unpack_hdf_dataset_for_json_map(h5f["text_scalar"])
-            text_array = unpack_hdf_dataset_for_json_map(h5f["text_array"])
-            int_scalar = unpack_hdf_dataset_for_json_map(h5f["int_scalar"])
-            float_array = unpack_hdf_dataset_for_json_map(h5f["float_array"])
+    # Add a byte-string array dataset that does not exist in the original file.
+    with h5py.File(nxs_copy, "a") as h5f:
+        h5f.create_dataset("entry/probe_labels", data=np.array([b"x-ray", b"uv"]))
 
-        assert isinstance(text_scalar, str)
-        assert text_scalar == "hello"
+    with h5py.File(nxs_copy, "r") as h5f:
+        # Naturally byte-string scalar field (dtype=object, raw value is bytes)
+        text_scalar = unpack_hdf_dataset_for_json_map(h5f["entry/definition"])
+        # Naturally byte-string scalar used as a date string
+        text_date = unpack_hdf_dataset_for_json_map(h5f["entry/end_time"])
+        # Byte-string array we added above
+        text_array = unpack_hdf_dataset_for_json_map(h5f["entry/probe_labels"])
+        # Native integer scalar — must not be coerced
+        int_scalar = unpack_hdf_dataset_for_json_map(h5f["entry/collection_time"])
+        # Native float64 array — must not be coerced
+        float_array = unpack_hdf_dataset_for_json_map(h5f["entry/data/energies"])
 
-        assert isinstance(text_array, np.ndarray)
-        assert text_array.dtype.kind == "U"
-        assert np.array_equal(text_array, np.array(["a", "b"]))
+    # Byte scalars become plain Python str
+    assert isinstance(text_scalar, str)
+    assert text_scalar == "NXarpes"
 
-        assert int_scalar == 7
-        assert np.issubdtype(type(int_scalar), np.integer)
+    assert isinstance(text_date, str)
+    assert text_date == "2018-05-01T09:22:00+02:00"
 
-        assert isinstance(float_array, np.ndarray)
-        assert np.issubdtype(float_array.dtype, np.floating)
+    # Byte arrays become unicode ndarray
+    assert isinstance(text_array, np.ndarray)
+    assert text_array.dtype.kind == "U"
+    assert np.array_equal(text_array, np.array(["x-ray", "uv"]))
+
+    # Integer data unchanged
+    assert int_scalar == 7200
+    assert np.issubdtype(type(int_scalar), np.integer)
+
+    # Float array unchanged
+    assert isinstance(float_array, np.ndarray)
+    assert np.issubdtype(float_array.dtype, np.floating)
