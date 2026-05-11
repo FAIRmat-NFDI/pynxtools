@@ -192,12 +192,15 @@ def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only(tmp_path):
     # Add a byte-string array dataset that does not exist in the original file.
     with h5py.File(nxs_copy, "a") as h5f:
         h5f.create_dataset("entry/probe_labels", data=np.array([b"x-ray", b"uv"]))
+        ds = h5f["entry/start_time"]
+        ds[()] = np.bytes_("2018-05-01T08:00:00+02:00")  # Another byte-string scalar
 
     with h5py.File(nxs_copy, "r") as h5f:
         # Naturally byte-string scalar field (dtype=object, raw value is bytes)
         text_scalar = unpack_hdf_dataset_for_json_map(h5f["entry/definition"])
         # Naturally byte-string scalar used as a date string
         text_date = unpack_hdf_dataset_for_json_map(h5f["entry/end_time"])
+        text_start_time = unpack_hdf_dataset_for_json_map(h5f["entry/start_time"])
         # Byte-string array we added above
         text_array = unpack_hdf_dataset_for_json_map(h5f["entry/probe_labels"])
         # Native integer scalar — must not be coerced
@@ -208,6 +211,9 @@ def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only(tmp_path):
     # Byte scalars become plain Python str
     assert isinstance(text_scalar, str)
     assert text_scalar == "NXarpes"
+
+    assert isinstance(text_start_time, str)
+    assert text_start_time == "2018-05-01T08:00:00+02:00"
 
     assert isinstance(text_date, str)
     assert text_date == "2018-05-01T09:22:00+02:00"
