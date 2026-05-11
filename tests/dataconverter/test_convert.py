@@ -26,6 +26,7 @@ import pytest
 from click.testing import CliRunner
 
 import pynxtools.dataconverter.convert as dataconverter
+from pynxtools.dataconverter.cli import convert, run
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 
@@ -85,7 +86,7 @@ def test_find_nxdl(cli_inputs):
     cli_inputs.extend(["--reader", "example"])
 
     runner = CliRunner()
-    result = runner.invoke(dataconverter.convert_cli, cli_inputs)
+    result = runner.invoke(run, cli_inputs)
     if "NXdoesnotexist" in cli_inputs:
         assert result.exit_code == 2
         assert result.output.endswith(
@@ -111,7 +112,7 @@ def test_get_names_of_all_readers():
 @pytest.mark.parametrize(
     "cli_inputs",
     [
-        pytest.param(["generate-template", "--nxdl", "NXtest"], id="generate-template"),
+        pytest.param(["generate-template", "NXtest"], id="generate-template"),
         pytest.param([], id="nxdl-not-provided"),
         pytest.param(
             ["--nxdl", "NXtest", "--input-file", "test_input"], id="input-file"
@@ -121,7 +122,7 @@ def test_get_names_of_all_readers():
 def test_cli(caplog, cli_inputs):
     """A test for the convert CLI."""
     runner = CliRunner()
-    result = runner.invoke(dataconverter.main_cli, cli_inputs)
+    result = runner.invoke(convert, cli_inputs)
     if "generate-template" in cli_inputs:
         assert result.exit_code == 0
         assert (
@@ -146,7 +147,7 @@ def test_links_and_virtual_datasets(tmp_path):
     )
     runner = CliRunner()
     result = runner.invoke(
-        dataconverter.convert_cli,
+        run,
         [
             "--nxdl",
             "NXtest",
@@ -230,6 +231,30 @@ def test_compression(tmp_path):
 
 # Shared resources: xarray_saved_small_calibration.h5 and testdata.json
 @pytest.mark.xdist_group(name="shared_resource")
+def test_get_readers_cli():
+    """pynx convert get-readers lists installed readers."""
+    runner = CliRunner()
+    result = runner.invoke(convert, ["get-readers"])
+    assert result.exit_code == 0
+
+
+def test_reader_info_cli():
+    """pynx convert reader-info shows NXDL and extension info for a reader."""
+    runner = CliRunner()
+    result = runner.invoke(convert, ["reader-info", "example"])
+    assert result.exit_code == 0
+    assert "example" in result.output.lower()
+
+
+def test_deprecation_warning_dataconverter():
+    """convert command is importable and returns exit code 0 for --help."""
+    from pynxtools.dataconverter.cli import convert as convert_cmd
+
+    runner = CliRunner()
+    result = runner.invoke(convert_cmd, ["--help"], catch_exceptions=False)
+    assert result.exit_code == 0
+
+
 def test_params_file():
     """Check if the parameters file is read correctly."""
     dirpath = Path(__file__).parent.parent / "data" / "dataconverter"
@@ -237,7 +262,7 @@ def test_params_file():
     os.chdir(dirpath)
     runner = CliRunner()
     result = runner.invoke(
-        dataconverter.convert_cli,
+        run,
         ["--params-file", dirpath / "test_params.yaml"],
     )
     os.chdir(current_workdir)

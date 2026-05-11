@@ -102,23 +102,3 @@ def validate(file: str, ignore_undocumented: bool = False):
                     f"Invalid: The entry `{entry}` in file `{file}` is NOT valid"
                     f" according to the `{nxdl}` application definition.",
                 )
-
-
-@click.command()
-@click.argument(
-    "file",
-    type=click.Path(exists=True),
-)
-@click.option(
-    "--ignore-undocumented",
-    is_flag=True,
-    default=False,
-    help="Ignore all undocumented concepts during validation.",
-)
-def validate_cli(file: str, ignore_undocumented: bool = False):
-    """
-    Validates a NeXus HDF5 file.
-
-    FILE: The path to the NeXus file to validate.
-    """
-    validate(file, ignore_undocumented)

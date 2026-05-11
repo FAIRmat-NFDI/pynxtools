@@ -43,6 +43,7 @@ nav:
       - learn/pynxtools/compression.md
       - learn/pynxtools/versioning.md
       - learn/pynxtools/nomad-integration.md
+      - learn/pynxtools/numerics.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md

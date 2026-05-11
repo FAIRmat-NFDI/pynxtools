@@ -50,10 +50,10 @@ We will use the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xp
         pip install pynxtools[xps]
         ```
 
-4. Verify you can run the ```dataconverter``` in a terminal window. Open a terminal with the Python environment where you installed `pynxtools`. Then type the following:
+4. Verify you can run `pynx` in a terminal window. Open a terminal with the Python environment where you installed `pynxtools`. Then type the following:
 
     ```console
-    dataconverter --help
+    pynx convert --help
     ```
 
 ## Converting the example files
@@ -72,7 +72,7 @@ The ```eln_data_sle.yaml``` YAML file is another data file containing additional
 Next, you will run the conversion routine from your Python environment:
 
 ```console
-dataconverter --params-file params.yaml
+pynx convert --params-file params.yaml
 ```
 
 Here we use a `params.yaml` parameter file to configure the converter.  This will create a file called `Au_25_mbar_O2_no_align.nxs` in your current directory.

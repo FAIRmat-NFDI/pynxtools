@@ -40,6 +40,7 @@ Márquez
 NFDI
 NIAC
 NINF
+NTHREADS
 NXDL
 Namefits
 Namefitting
@@ -47,6 +48,7 @@ OPCPA
 ORCID
 PATHCONV
 PDBX
+PYNX
 PYNXTOOLS
 Pielsticker
 Pincelli
@@ -67,6 +69,8 @@ Uniquifies
 VAMAS
 Vamas
 Walid
+Welford
+Welford's
 Xclass
 Zenodo
 allclose
@@ -94,13 +98,16 @@ blosc
 bulletpoint
 callspec
 caplog
+clevel
 cnxvalidate
 complexfloating
 dataarrays
 dataconverter
 datamodel
+ddof
 defaultdicts
 docstrings
+downstreams
 dtype
 edgeitems
 ekey
@@ -113,6 +120,8 @@ emittance
 execinfo
 fairmat
 fillvalue
+finfo
+flatdict
 flatfield
 fluence
 fourd
@@ -133,10 +142,12 @@ hfive
 hixu
 hyperslab
 hyperslabs
+hyperthreading
 hypothes
 idname
 idobj
 igorpy
+iinfo
 imagej
 infile
 instancename
@@ -174,16 +185,19 @@ namefit
 namefitting
 nbstripout
 nbytes
+ncores
 ndarray
 ndataconverter
 ndims
 nexpy
 nexusapp
 nexusformat
+njit
 nodemixin
 nonvariadic
 nslots
 nsmap
+nthreads
 nxcollection
 nxdata
 nxdl
@@ -202,6 +216,7 @@ posteriori
 printoptions
 prng
 punx
+pynx
 pynxtools
 pyupgrade
 raman
@@ -211,10 +226,12 @@ renamable
 reqs
 requiredness
 rtol
+sequentialization
 setpoint
 sherjeelshabih
 showgrid
 showlegend
+signedinteger
 skiprows
 straße
 submoduled
@@ -234,6 +251,7 @@ unsignedinteger
 ureg
 usefixtures
 vamas
+vectorizable
 visititems
 vlen
 xarrays
@@ -246,3 +264,4 @@ yaxis
 ylabel
 zaxis
 zenodo
+zstd

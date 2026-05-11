@@ -17,72 +17,23 @@
 #
 
 from pathlib import Path
-from typing import Optional, Union
-
-import click
 
 from pynxtools.eln_mapper.reader_eln import ReaderElnGenerator
 from pynxtools.eln_mapper.schema_eln import NomadElnGenerator
 
 
-@click.command()
-@click.option(
-    "--nxdl",
-    required=True,
-    help="Name of NeXus definition without extension (.nxdl.xml).",
-)
-@click.option(
-    "--skip-top-levels",
-    default=0,
-    required=False,
-    type=int,
-    show_default=True,
-    help=(
-        "To skip the level of parent hierarchy level. For example, by default the part "
-        "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skipped."
-    ),
-)
-@click.option(
-    "--output-file",
-    required=False,
-    default=None,
-    help=("Name of file that is needed to generated output file."),
-)
-@click.option(
-    "--eln-type",
-    required=True,
-    type=click.Choice(["reader", "schema"], case_sensitive=False),
-    default="eln",
-    help=("Choose a type of ELN output (reader or schema)."),
-)
-@click.option(
-    "--optionality",
-    required=False,
-    type=click.Choice(["required", "recommended", "optional"], case_sensitive=False),
-    default="required",
-    help=(
-        "Level of requiredness to generate. If any of ('required', 'recommended', 'optional', "
-        "only those concepts matching this requiredness level are created."
-    ),
-)
-@click.option(
-    "--filter-file",
-    required=False,
-    default=None,
-    help=(
-        "JSON configuration file to filter NeXus concepts (based on the presence of the '@eln' keyword). "
-        "This is a positive filter, i.e., all concepts in the filter file will be included in the ELN."
-    ),
-)
-def get_eln(
+def _generate_eln(
     nxdl: str,
     skip_top_levels: int,
     output_file: str | None,
     eln_type: str,
     optionality: str | None,
     filter_file: str | Path | None,
-):
-    """Helper tool for generating ELN files in YAML format."""
+) -> None:
+    """Generate an ELN YAML file from a NeXus application definition.
+
+    This is the pure logic function; the CLI wrapper lives in eln_mapper.cli.
+    """
     filter = None
     if filter_file:
         filter = []
@@ -116,4 +67,6 @@ def get_eln(
 
 
 if __name__ == "__main__":
-    get_eln().parse()  # pylint: disable=no-value-for-parameter
+    from pynxtools.eln_mapper.cli import generate_eln
+
+    generate_eln()  # type: ignore[has-type]  # pylint: disable=no-value-for-parameter

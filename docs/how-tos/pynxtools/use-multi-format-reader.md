@@ -412,7 +412,7 @@ READER = MyDataReader
 We can call our reader using the following command
 
 ```console
-dataconverter mock_data.h5 eln_data.yaml -c config_file.json --reader mydatareader --nxdl NXsimple --output output.nxs
+pynx convert mock_data.h5 eln_data.yaml -c config_file.json --reader mydatareader --nxdl NXsimple --output output.nxs
 ```
 
 The final `output.nxs` file gets automatically validated against `NXsimple`, so we can be sure that it is compliant with that application definition. Here is a look at our final NeXus file:

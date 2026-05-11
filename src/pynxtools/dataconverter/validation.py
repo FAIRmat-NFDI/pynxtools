@@ -381,7 +381,9 @@ def validate_hdf_group_against(
         required_entities.update(required_sub_entities)
 
     def _variadic_node_exists_for(
-        path: str, variadic_name: str, node_type: str | None = None
+        path: str,
+        variadic_name: str,
+        node_type: Literal["group", "field", "attribute"] | None = None,
     ):
         """
         Check if a variadic node exists that matches a given path and node type.
@@ -462,7 +464,9 @@ def validate_hdf_group_against(
         else:
             # Check if a variadic required node exists
             for ent in list(required_entities):
-                node_type = "attribute" if "@" in ent else "field"
+                node_type: Literal["group", "field", "attribute"] = (
+                    "attribute" if "@" in ent else "field"
+                )
 
                 clean_path = (
                     path.rstrip("/@units")

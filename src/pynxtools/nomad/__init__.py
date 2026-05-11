@@ -59,11 +59,22 @@ NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
     "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
 }
 
-FIELD_STATISTICS: dict[str, list] = {
-    "suffix": ["__mean", "__std", "__min", "__max", "__size", "__ndim"],
-    "function": [np.mean, np.std, np.min, np.max, np.size, np.ndim],
-    "type": [np.float64, np.float64, None, None, np.int32, np.int32],
-    "mask": [True, True, True, True, False, False],
+
+FIELD_STATISTICS: dict[str, dict] = {
+    "__mean": {"function": np.mean, "type": np.float64, "mask": True},
+    # "__std": {"function": np.std, "type": np.float64, "mask": True},
+    "__min": {"function": np.min, "type": None, "mask": True},
+    "__max": {"function": np.max, "type": None, "mask": True},
+    "__size": {
+        "function": np.size,
+        "type": np.int64,
+        "mask": False,
+    },  # old value np.int32 could have overflown if array values are larger than 2**32
+    "__ndim": {
+        "function": np.ndim,
+        "type": np.uint8,
+        "mask": False,
+    },  # old value np.int32 unnecessarily exceeds max ndims in HDF5 which is 32
 }
 
 

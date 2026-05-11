@@ -24,9 +24,10 @@ import numpy as np
 import pytest
 from click.testing import CliRunner
 
+from pynxtools.dataconverter.cli import validate as validate_cmd
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.validate_file import validate, validate_cli
+from pynxtools.dataconverter.validate_file import validate
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 
@@ -2099,7 +2100,7 @@ def format_error_message(msg: str) -> str:
                 {"compress": 2, "filter": "gzip", "strength": 3},
             ),
             [],
-            id="baseclass-compressed-filter-supported-true",
+            id="baseclass-compressed-filter-supported-true-gzip",
         ),
         pytest.param(
             alter_dict(
@@ -2107,9 +2108,18 @@ def format_error_message(msg: str) -> str:
                 "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
                 {"compress": 2, "filter": "blosc", "strength": 3},
             ),
+            [],
+            id="baseclass-compressed-filter-supported-true-blosc",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/SAMPLE[sample1]]/changer_position",
+                {"compress": 2, "filter": "zstd", "strength": 3},
+            ),
             [
                 "Compression filter for /ENTRY[my_entry]/SAMPLE[sample1]]/"
-                "changer_position is not any of ['gzip']."
+                "changer_position is not any of ['gzip', 'blosc']."
             ],
             id="baseclass-compressed-filter-supported-false",
         ),
@@ -3682,18 +3692,18 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
         ),
     ],
 )
-def test_validate_cli(caplog, cli_inputs, error_messages):
+def test_validate(caplog, cli_inputs, error_messages):
     """Unit test for the HDF5 validation CLI."""
     runner = CliRunner()
 
     if not error_messages:
         with caplog.at_level(logging.INFO):
-            result = runner.invoke(validate_cli, cli_inputs)
+            result = runner.invoke(validate_cmd, cli_inputs)
         assert result.exit_code == 0
         assert caplog.text == ""
     else:
         with caplog.at_level(logging.INFO):
-            result = runner.invoke(validate_cli, cli_inputs)
+            result = runner.invoke(validate_cmd, cli_inputs)
         assert len(caplog.records) == len(error_messages)
         for expected_message, rec in zip(error_messages, caplog.records):
             assert expected_message == format_error_message(rec.message)
