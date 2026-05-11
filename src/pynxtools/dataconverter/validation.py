@@ -211,8 +211,8 @@ def validate_hdf_group_against(
         if not nodes:
             return None
 
-        old_best_match = None
-        old_best_score = -1
+        best_match = None
+        best_score = -1
 
         # use score as key for the outer dict and inner dict as value with
         # constraint as key and idx on nodes as value on that inner dict
@@ -228,16 +228,11 @@ def validate_hdf_group_against(
                 name_any = node.name_type == "any"
                 name_partial = node.name_type == "partial"
                 score = get_nx_namefit(name, node.name, name_any, name_partial)
-                if hint and hint_map.get(node.name) != hint:
-                    continue
-
-                # compute the old algorithm alongside but use the new algorithm
-                # to inform developers better when there are more than one
-                # match with highest score
-                if score > old_best_score:
-                    # vulnerable in case there are multiple nodes with the same score
-                    old_best_match = node
-                    old_best_score = score
+                if score > best_score:
+                    if hint and hint_map.get(node.name) != hint:
+                        continue
+                    best_match = node
+                    best_score = score
 
                 if score in score_board:
                     pass
@@ -253,33 +248,24 @@ def validate_hdf_group_against(
                         score_board[score][constraint].append(idx)
                         break
 
-        # pick from those with highest score
+        # analyze and warn if more than one concept fits best, return always though the first found
         if len(score_board) > 0:
-            best_score = max(score_board)
-            if best_score > -1:
-                # remain consistent with the old algorithm, only valid scores > -1 participate
+            alternative_best_score = max(score_board)
+            if alternative_best_score > -1:
                 for constraint in ["required", "recommended", "optional"]:
                     # select preferentially for the harder constraint that should be met given that
                     # we wish to validate compliance with a NeXus definition (appdef or class)
-                    n_matches = len(score_board[best_score][constraint])
-                    if n_matches == 1:
-                        jdx = score_board[best_score][constraint][0]
-                        best_match = nodes[jdx]
-                        if old_best_match.name != best_match.name:
-                            logger.debug(
-                                f"old_best_score {old_best_score}, old_best_match {old_best_match}, new_best_match {best_match}"
-                            )
-                        return best_match
-                    elif n_matches > 1:
-                        jdx = score_board[best_score][constraint][0]
-                        first_match = nodes[jdx]
-                        logger.debug(
-                            f"Multiple solutions with best score {best_score} found {[nodes[jdx] for jdx in score_board[best_score][constraint]]} "
-                            f"may indicate there are issues with nameTyping of specific NeXus classes, returning {first_match}"
+                    if len(score_board[alternative_best_score][constraint]) > 1:
+                        jdx = score_board[alternative_best_score][constraint][0]
+                        first_best_match = nodes[jdx]
+                        logger.warning(
+                            f"Multiple best fitting with score {alternative_best_score} found "
+                            f"{[nodes[jdx] for jdx in score_board[alternative_best_score][constraint]]} "
+                            f"constrained by {constraint}; indicates possible issues with nameTyping of "
+                            f"specific NeXus classes/concepts"
                         )
-                        return first_match
 
-        return None
+        return best_match
 
     # Only cache based on path. That way we retain the nx_class information
     # in the tree
