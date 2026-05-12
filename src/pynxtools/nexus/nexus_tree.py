@@ -121,7 +121,14 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
         parent = current.getparent()
         if parent is None:
             break
-        name = current.attrib.get("name") or current.attrib.get("type", "")
+        fixed_name = current.attrib.get("name")
+        if fixed_name:
+            name = fixed_name
+        else:
+            nx_type = current.attrib.get("type", "")
+            # Variadic groups have no explicit name; use the NXDL template convention:
+            # strip the leading "NX" prefix and uppercase (NXentry → ENTRY).
+            name = nx_type[2:].upper() if nx_type.startswith("NX") else nx_type
         if name:
             parts.append(name)
         if remove_namespace_from_tag(parent.tag) == "definition":

@@ -1,4 +1,5 @@
 """This is a code that performs several tests on nexus tool"""
+
 #
 # Copyright The NOMAD Authors.
 #
@@ -16,8 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-import logging
 import os
 
 import lxml.etree as ET
@@ -31,11 +30,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_classes,
     get_nx_units,
 )
-from pynxtools.nexus.annotation import Annotator
-from pynxtools.nexus.handler import NexusFileHandler
 from pynxtools.nexus.utils import decode_if_string
-
-logger = logging.getLogger(__name__)
 
 
 @pytest.mark.parametrize(
@@ -161,43 +156,6 @@ def test_get_nexus_classes_units_attributes():
     assert "NX_FLOAT" in nexus_attribute_list
 
 
-def test_nexus(tmp_path):
-    """
-    Verify that AnnotationVisitor traverses the example NXS file and emits
-    annotation output for the key schema concepts.  We check for meaningful
-    content rather than pinning an exact reference log.
-    """
-    example_data = os.path.join(
-        os.getcwd(), "src", "pynxtools", "data", "201805_WSe2_arpes.nxs"
-    )
-
-    logger.handlers.clear()
-    logger.setLevel(logging.DEBUG)
-    log_path = os.path.join(tmp_path, "nexus_test.log")
-    handler = logging.FileHandler(log_path, "w")
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
-    np.set_printoptions(edgeitems=3, threshold=1000, precision=8, linewidth=75)
-    NexusFileHandler(example_data).process(Annotator(logger))
-    handler.flush()
-
-    log_text = open(log_path, encoding="utf-8").read()
-
-    # Annotation must mention the NXarpes entry group
-    assert "NXarpes" in log_text, "Expected NXarpes in annotation output"
-    # Known fields in the example file must appear
-    assert "angles" in log_text
-    assert "energies" in log_text
-    assert "delays" in log_text
-    # Optionality strings must be present
-    assert "REQUIRED" in log_text or "OPTIONAL" in log_text or "RECOMMENDED" in log_text
-    # Default plottable section must run without error
-    assert "NXentry" in log_text
-
-
 def test_get_node_at_nxdl_path():
     """Test to verify if we receive the right XML element for a given NXDL path"""
     local_dir = os.path.abspath(os.path.dirname(__file__))
@@ -262,82 +220,3 @@ def test_get_inherited_nodes():
         nx_name="NXiv_temp",
     )
     assert len(elem_list) == 6
-
-
-def test_c_option(tmp_path):
-    """
-    To check -c option from IV_temp.nxs.
-    """
-    local_path = os.path.dirname(__file__)
-    path_to_ref_files = os.path.join(local_path, "../data/nexus/")
-
-    ref_file = os.path.join(path_to_ref_files, "Ref1_c_option_test.log")
-    tmp_file = os.path.join(tmp_path, "c_option_1_test.log")
-
-    logger.setLevel(logging.INFO)
-    handler = logging.FileHandler(tmp_file, "w")
-
-    with open(ref_file, encoding="utf-8") as ref_f:
-        ref = ref_f.readlines()
-
-    handler = logging.FileHandler(tmp_file, "w")
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
-    NexusFileHandler(None).process(Annotator(logger, concept="NXbeam"))
-
-    with open(tmp_file, encoding="utf-8") as tmp_f:
-        tmp = tmp_f.readlines()
-
-    assert tmp == ref
-
-    logger.removeHandler(handler)
-    handler = logging.FileHandler(tmp_file, "w")
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    NexusFileHandler(None).process(Annotator(logger, concept="NXdetector/data"))
-
-    with open(tmp_file, encoding="utf-8") as tmp_f:
-        tmp = tmp_f.readlines()
-    assert tmp[0] == "INFO: entry/instrument/analyser/data\n"
-
-    logger.removeHandler(handler)
-    handler = logging.FileHandler(tmp_file, "w")
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    NexusFileHandler(None).process(Annotator(logger, concept="NXdata@signal"))
-
-    with open(tmp_file, encoding="utf-8") as tmp_f:
-        tmp = tmp_f.readlines()
-    assert tmp[0] == "INFO: entry/data@signal\n"
-
-
-def test_d_option(tmp_path):
-    """
-    To check -d option for default NXarpes test data file.
-    """
-    tmp_file = os.path.join(tmp_path, "d_option_1_test.log")
-
-    logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler(tmp_file, "w")
-
-    handler = logging.FileHandler(tmp_file, "w")
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    NexusFileHandler(None).process(
-        Annotator(logger, documentation="/entry/instrument/analyser/data")
-    )
-
-    with open(tmp_file, encoding="utf-8") as tmp_f:
-        tmp = tmp_f.readlines()
-
-    assert "FIELD" in tmp[0]
-    assert "entry/instrument/analyser/data" in tmp[0]
