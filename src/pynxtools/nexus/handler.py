@@ -27,19 +27,19 @@ Visitor interface
 -----------------
 Every visitor implements the same set of typed hooks:
 
-* ``on_group(hdf_path, hdf_node)`` – called for every HDF5 group, including the
+* ``on_group(hdf_path, hdf_node)`` - called for every HDF5 group, including the
   root (whose *hdf_path* is an empty string ``""``).
-* ``on_field(hdf_path, hdf_node)`` – called for every HDF5 dataset.
-* ``on_attribute(hdf_path, attr_name, attr_value, parent)`` – called for every
+* ``on_field(hdf_path, hdf_node)`` - called for every HDF5 dataset.
+* ``on_attribute(hdf_path, attr_name, attr_value, parent)`` - called for every
   attribute of every group and dataset, **after** the node itself has been
   dispatched.
-* ``on_complete(root)`` – called once after the full traversal.
+* ``on_complete(root)`` - called once after the full traversal.
 
 Supported visitor use-cases:
 
-* **Annotation** – `nexus.annotation.Annotator`
-* **Validation** – `dataconverter.validation.ValidationVisitor`
-* **NOMAD parsing** – `nomad.parser.NomadVisitor`
+* **Annotation** - `nexus.annotation.Annotator`
+* **Validation** - `dataconverter.validation.ValidationVisitor`
+* **NOMAD parsing** - `nomad.parser.NomadVisitor`
 
 Migration note
 --------------
@@ -132,13 +132,13 @@ class NexusFileHandler:
 
     def __init__(
         self,
-        nexus_file: str | list | h5py.File,
+        nxs_file: str | list | h5py.File,
         is_in_memory_file: bool = False,
     ) -> None:
-        if nexus_file is None:
+        if nxs_file is None:
             local_dir = os.path.abspath(os.path.dirname(__file__))
-            nexus_file = os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
-        self._nexus_file = nexus_file
+            nxs_file = os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
+        self._nxs_file = nxs_file
         self._is_in_memory = is_in_memory_file
 
     def process(self, visitor: NexusVisitor) -> None:
@@ -155,13 +155,13 @@ class NexusFileHandler:
         from pynxtools.nexus.nexus import _get_inherited_hdf_nodes
 
         if self._is_in_memory:
-            root = self._nexus_file
+            root = self._nxs_file
             self._traverse(root, visitor)
         else:
             file_path = (
-                self._nexus_file[0]
-                if isinstance(self._nexus_file, list)
-                else self._nexus_file
+                self._nxs_file[0]
+                if isinstance(self._nxs_file, list)
+                else self._nxs_file
             )
             root = h5py.File(file_path, "r")
             try:

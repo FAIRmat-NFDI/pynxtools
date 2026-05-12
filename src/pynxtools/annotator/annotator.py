@@ -1,7 +1,7 @@
 #
-# Copyright The pynxtools Authors.
+# Copyright The NOMAD Authors.
 #
-# This file is part of pynxtools.
+# This file is part of NOMAD.
 # See https://github.com/FAIRmat-NFDI/pynxtools for further info.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,10 +44,10 @@ from typing import Any, Optional, Union
 
 import h5py
 
+from pynxtools.annotator.nxdata import chk_nxdata_axis
 from pynxtools.nexus.handler import NexusVisitor
 from pynxtools.nexus.nexus import get_default_plottable
 from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
-from pynxtools.nexus.nxdata import chk_nxdata_axis
 from pynxtools.nexus.utils import decode_if_string
 
 
@@ -281,7 +281,7 @@ class Annotator(NexusVisitor):
         """Emit a structured inheritance block with inline docs.
 
         Each level shows a precise concept path (e.g. ``NXinstrument/energy``
-        for a field, ``NXinstrument`` for a base-class root).  The bare NXobject
+        for a field, ``NXdetector`` for a base-class root).  The bare NXobject
         root is suppressed; named NXobject entries are shown.
         """
         levels = node.get_inheritance_concept_paths()
@@ -421,6 +421,20 @@ class Annotator(NexusVisitor):
         if in_schema:
             opt_label = attr_node.optionality.upper()
             schema_tag = f"  [{opt_label}]" if opt_label else ""
+        elif attr_name == "units" and isinstance(parent, h5py.Dataset):
+            # @units on a field is valid whenever the field carries a unit category
+            # in NXDL (e.g. NX_ENERGY). No explicit <attribute name="units"> child
+            # exists in the schema XML — the constraint is expressed as the field
+            # element's "units" XML attribute (e.g. units="NX_ENERGY").
+            parent_node = self._find_nexus_node(hdf_path, parent)
+            unit_cat = (
+                getattr(parent_node, "unit", "") if parent_node is not None else ""
+            )
+            if unit_cat:
+                schema_tag = f"  [UNIT: {unit_cat}]"
+                in_schema = True
+            else:
+                schema_tag = "  [NOT IN SCHEMA]"
         else:
             schema_tag = "  [NOT IN SCHEMA]"
 
@@ -489,7 +503,7 @@ class Annotator(NexusVisitor):
             context.  Full IS-A chain traversal for base classes (e.g. querying
             ``NXobject`` to match all groups) is not yet supported.
 
-        **Appdef path** (e.g. ``NXarpes/NXentry/NXinstrument/analyser``):
+        **Appdef path** (e.g. ``NXarpes/ENTRY/INSTRUMENT/analyser``):
             Matches both groups and fields whose schema concept path (resolved
             against the file's application definition) includes *concept* in its
             inheritance chain.  Requires the file to declare an application

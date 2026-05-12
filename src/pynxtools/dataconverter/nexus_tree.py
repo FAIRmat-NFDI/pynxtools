@@ -21,6 +21,10 @@ Re-export shim for backward compatibility.
 
 The canonical location for `NexusNode` and friends is now
 `pynxtools.nexus.nexus_tree`.  Import from there in new code.
+
+TODO: This shim exists only to avoid breaking external callers that import from
+`pynxtools.dataconverter.nexus_tree`.  It should be removed in future versions
+of the package.
 """
 
 # ruff: noqa: F401

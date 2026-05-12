@@ -1,5 +1,12 @@
 # pylint: disable=too-many-lines
-"""Read files from different format and print it in a standard NeXus format"""
+"""Utility functions for inspecting NeXus NXDL files.
+
+TODO: All functions in this module are currently used only by the NOMAD parser
+(NomadParser/HandleNexus) via the legacy `get_nxdl_doc` / `get_nxdl_entry`
+interface.  Once a dedicated NomadVisitor (implementing NexusVisitor) is
+implemented, these functions can be removed entirely.  The Annotator no longer
+depends on anything here except `get_default_plottable`.
+"""
 
 import logging
 import os
@@ -11,6 +18,18 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 
+from pynxtools.annotator.nxdata import (
+    axis_helper,
+    chk_nxdata_axis,
+    chk_nxdata_axis_v2,
+    entry_helper,
+    find_attrib_axis_actual_dim_num,
+    get_single_or_multiple_axes,
+    logger_auxiliary_signal,
+    nxdata_helper,
+    print_default_plottable_header,
+    signal_helper,
+)
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
     check_attr_name_nxdl,
@@ -27,18 +46,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     try_find_units,
     walk_elist,
     write_doc_string,
-)
-from pynxtools.nexus.nxdata import (
-    axis_helper,
-    chk_nxdata_axis,
-    chk_nxdata_axis_v2,
-    entry_helper,
-    find_attrib_axis_actual_dim_num,
-    get_single_or_multiple_axes,
-    logger_auxiliary_signal,
-    nxdata_helper,
-    print_default_plottable_header,
-    signal_helper,
 )
 from pynxtools.nexus.utils import decode_if_string
 
@@ -501,6 +508,8 @@ class HandleNexus:
         in a future release.
     """
 
+    # TODO: remove this in future releases
+
     def __init__(
         self,
         logger,
@@ -539,6 +548,8 @@ class HandleNexus:
 
 
 if __name__ == "__main__":
-    from pynxtools.nexus.cli import read
+    from pynxtools.annotator.cli import read
+
+    # TODO: this is deprecated, should be removed in the future
 
     read()  # type: ignore[has-type]

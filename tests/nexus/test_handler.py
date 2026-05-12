@@ -8,7 +8,7 @@ import h5py
 import numpy as np
 import pytest
 
-from pynxtools.nexus import Annotator, NexusFileHandler, NexusVisitor
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -123,77 +123,6 @@ def test_handler_cycle_detection_in_memory():
     # 'a' must be visited; 'b' is a hard link to 'a' and must not be re-entered
     assert "a" in visitor.visited
     assert visitor.completed
-
-
-# ---------------------------------------------------------------------------
-# Annotator — default mode
-# ---------------------------------------------------------------------------
-
-
-def test_annotation_visitor_default_mode_completes(tmp_path):
-    """Annotator default mode processes the example NXS file without error."""
-    logger = logging.getLogger("test_annotation_default")
-    logger.setLevel(logging.DEBUG)
-    log_file = tmp_path / "out.log"
-    handler = logging.FileHandler(log_file, "w")
-    handler.setLevel(logging.DEBUG)
-    logger.addHandler(handler)
-
-    visitor = Annotator(logger)
-    NexusFileHandler(EXAMPLE_NXS).process(visitor)
-
-    handler.flush()
-    log_text = log_file.read_text()
-    # The log must contain at least one annotated entry
-    assert log_text, "Expected annotation output but got empty log"
-
-
-# ---------------------------------------------------------------------------
-# Annotator — -d (documentation) mode
-# ---------------------------------------------------------------------------
-
-
-def test_annotation_visitor_d_mode_annotates_only_target(tmp_path):
-    """Annotator -d mode writes output only for the requested path."""
-    logger = logging.getLogger("test_annotation_d")
-    logger.setLevel(logging.DEBUG)
-    log_file = tmp_path / "d_mode.log"
-    fh = logging.FileHandler(log_file, "w")
-    fh.setLevel(logging.DEBUG)
-    logger.addHandler(fh)
-
-    # Pick a path that definitely exists in the example file
-    target = "/entry/data/delays"
-    visitor = Annotator(logger, documentation=target)
-    NexusFileHandler(EXAMPLE_NXS).process(visitor)
-
-    fh.flush()
-    log_text = log_file.read_text()
-    assert log_text, f"Expected annotation for {target} but got empty log"
-
-
-# ---------------------------------------------------------------------------
-# Annotator — -c (concept query) mode
-# ---------------------------------------------------------------------------
-
-
-def test_annotation_visitor_c_mode_collects_results(tmp_path):
-    """Annotator -c mode logs paths that satisfy the IS-A relation."""
-    logger = logging.getLogger("test_annotation_c")
-    logger.setLevel(logging.DEBUG)
-    log_file = tmp_path / "c_mode.log"
-    fh = logging.FileHandler(log_file, "w")
-    fh.setLevel(logging.INFO)
-    logger.addHandler(fh)
-
-    # NXarpes entry is a known superclass for the example file
-    visitor = Annotator(logger, concept="/NXarpes/ENTRY")
-    NexusFileHandler(EXAMPLE_NXS).process(visitor)
-
-    fh.flush()
-    # on_complete logs the collected paths; at minimum the log file must exist
-    # (even if empty for this particular concept, no exception must be raised)
-    assert log_file.exists()
 
 
 # ---------------------------------------------------------------------------

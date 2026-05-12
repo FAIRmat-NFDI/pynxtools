@@ -93,7 +93,7 @@ class NexusVisitor(ABC):
 
 | Visitor | Module | CLI tool | Purpose |
 |---|---|---|---|
-| `Annotator` | `pynxtools.nexus.annotation` | `pynx read` | Logs NXDL documentation for every node in a NeXus file |
+| `Annotator` | `pynxtools.annotator.annotator` | `pynx read` | Logs NXDL documentation for every node in a NeXus file |
 | `NomadVisitor` | `pynxtools.nomad.parsers.parser` | `nomad parse` | Populates the NOMAD archive from a NeXus file |
 
 All built-in visitors are interchangeable in `NexusFileHandler`. Switching the visitor changes what happens to each node; the traversal is identical.

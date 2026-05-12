@@ -45,7 +45,7 @@ See [Learn > pynxtools > Validation of NeXus files](../learn/pynxtools/nexus-val
 
 ## NeXus file annotator — `pynx read`
 
-Annotates every node in a NeXus/HDF5 file with NXDL documentation, optionality, data types, unit categories, and inheritance paths. Backed by `Annotator` in `pynxtools.nexus.annotation`.
+Annotates every node in a NeXus/HDF5 file with NXDL documentation, optionality, data types, unit categories, and inheritance paths. Backed by `Annotator` in `pynxtools.annotator.annotator`.
 
 Three operating modes:
 

@@ -16,21 +16,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""NXdata axis/signal inspection helpers.
+"""NXdata axis/signal inspection helpers (annotation-specific).
 
 These utilities detect whether a dataset participates in an NXdata
 group as a signal or axis, implementing the NeXus Data Plotting
 Standard (v2 from ~2004 and v3 from 2014).  They also provide helpers
 for walking the NXentry → NXdata → signal chain.
 
-None of these functions import from other pynxtools sub-modules aside
-from `nexus.utils`, so they can be imported at any level without risk
-of circular imports.
+TODO: The pure detection logic (chk_nxdata_axis, chk_nxdata_axis_v2,
+entry_helper, nxdata_helper, signal_helper, axis_helper and friends)
+should eventually be refactored into a standalone ``nexus/nxdata.py``
+module that carries no logging dependency and can be reused by the
+validator (see issue #519).  The annotation-specific logging wrappers
+(logger_auxiliary_signal, print_default_plottable_header) should remain
+here.
 """
 
 from __future__ import annotations
 
 import logging
+import numbers
 
 import h5py
 import numpy as np
@@ -42,63 +47,89 @@ _logger = logging.getLogger("pynxtools")
 
 def chk_nxdata_axis_v2(hdf_node: h5py.Dataset, name: str) -> None:
     """Check if *hdf_node* is referenced as an axis under the older NXdata conventions (v2)."""
-    own_signal = hdf_node.attrs.get("signal")  # check for being a Signal
-    if own_signal is str and own_signal == "1":
+    own_signal = hdf_node.attrs.get("signal")  # check for being a signal
+    if isinstance(own_signal, str) and own_signal == "1":
         _logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
+
     own_axes = hdf_node.attrs.get("axes")  # check for being an axis
-    if own_axes is str:
+    if isinstance(own_axes, str):
         axes = own_axes.split(":")
-        for i in range(len(axes)):
-            if axes[i] and name == axes[i]:
+        for i, axis in enumerate(axes):
+            if axis and name == axis:
                 _logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
-                return None
+                return
+
     own_primary_axis = hdf_node.attrs.get("primary")
     own_axis = hdf_node.attrs.get("axis")
-    if own_axis is int:
+
+    if isinstance(own_axis, int):
         # also convention v1
-        if own_primary_axis is int and own_primary_axis == 1:
-            _logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
+        if isinstance(own_primary_axis, int) and own_primary_axis == 1:
+            _logger.debug(
+                "Dataset referenced (v2) as NXdata AXIS #%d",
+                own_axis - 1,
+            )
         else:
             _logger.debug(
                 "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d",
                 own_axis - 1,
             )
-    return None
 
 
 def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> None:
     """Check if *hdf_node* is referenced as a signal or axis in an NXdata group.
 
-    Implements the NeXus Data Plotting Standard v3 (2014).  Falls back to v2
+    Implements the NeXus Data Plotting Standard v3 (2014). Falls back to v2
     conventions via :func:`chk_nxdata_axis_v2`.
     """
     if not isinstance(hdf_node, h5py.Dataset):
-        return None
+        return
+
     parent = hdf_node.parent
-    if not parent or (parent and not parent.attrs.get("NX_class") == "NXdata"):
-        return None
-    signal = parent.attrs.get("signal")  # check for Signal
+    if not parent or parent.attrs.get("NX_class") != "NXdata":
+        return
+
+    signal = parent.attrs.get("signal")
     if signal and name == signal:
         _logger.debug("Dataset referenced as NXdata SIGNAL")
-        return None
-    axes = parent.attrs.get("axes")  # check for default Axes
-    if axes is str:
+        return
+
+    axes = parent.attrs.get("axes")
+
+    # single axis name
+    if isinstance(axes, str):
         if name == axes:
             _logger.debug("Dataset referenced as NXdata AXIS")
-            return None
+            return
+
+    # multiple axis names
     elif axes is not None:
-        for i, j in enumerate(axes):
-            if name == j:
-                indices = parent.attrs.get(j + "_indices")
-                if indices is int:
-                    _logger.debug(f"Dataset referenced as NXdata AXIS #{indices}")
+        for i, axis_name in enumerate(axes):
+            if name == axis_name:
+                indices = parent.attrs.get(f"{axis_name}_indices")
+
+                if isinstance(indices, numbers.Integral):
+                    _logger.debug(
+                        "Dataset referenced as NXdata AXIS #%d",
+                        int(indices),
+                    )
                 else:
-                    _logger.debug(f"Dataset referenced as NXdata AXIS #{i}")
-                return None
-    indices = parent.attrs.get(name + "_indices")  # check for alternative Axes
-    if indices is int:
-        _logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
-    return chk_nxdata_axis_v2(hdf_node, name)  # check for older conventions
+                    _logger.debug(
+                        "Dataset referenced as NXdata AXIS #%d",
+                        i,
+                    )
+                return
+
+    # alternative axes
+    indices = parent.attrs.get(f"{name}_indices")
+
+    if isinstance(indices, numbers.Integral):
+        _logger.debug(
+            "Dataset referenced as NXdata alternative AXIS #%d",
+            int(indices),
+        )
+
+    chk_nxdata_axis_v2(hdf_node, name)
 
 
 def logger_auxiliary_signal(nxdata: h5py.Group) -> None:
