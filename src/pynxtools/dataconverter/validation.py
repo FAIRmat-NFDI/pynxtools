@@ -61,7 +61,7 @@ from pynxtools.dataconverter.nexus_tree import (
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
 
-logger = logging.getLogger("validation")
+logger = logging.getLogger("pynxtools")
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
