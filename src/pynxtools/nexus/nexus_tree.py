@@ -123,11 +123,15 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
             break
         fixed_name = current.attrib.get("name")
         if fixed_name:
+            # Any explicit name in NXDL is the concept path segment directly.
+            # This covers nameType="specified" (e.g. "analyser"),
+            # nameType="partial" (e.g. "backgroundBACKGROUND"),
+            # and nameType="any" with an explicit template name (e.g. "INSTRUMENT").
             name = fixed_name
         else:
+            # No explicit name → nameType is implicitly "any"; derive the template
+            # name from the NX type by stripping the "NX" prefix and make uppercase.
             nx_type = current.attrib.get("type", "")
-            # Variadic groups have no explicit name; use the NXDL template convention:
-            # strip the leading "NX" prefix and uppercase (NXentry → ENTRY).
             name = nx_type[2:].upper() if nx_type.startswith("NX") else nx_type
         if name:
             parts.append(name)
@@ -358,7 +362,7 @@ class NexusNode(NodeMixin):
         nx_class: str | None = None,
         depth: int | None = None,
         only_appdef: bool = False,
-    ) -> set[str]:
+    ) -> list[str]:
         """
         Get all children names of the current node up to a certain depth.
         Only `field`, `group` `choice` or `attribute` are considered as children.
@@ -388,7 +392,8 @@ class NexusNode(NodeMixin):
             ValueError: If depth is not int or negative.
 
         Returns:
-            set[str]: A set of children names.
+            list[str]: Children names in NXDL definition order (insertion-order
+            stable; deeper inheritance layers append after the appdef layer).
         """
 
         if depth is not None and (not isinstance(depth, int) or depth < 0):
@@ -407,18 +412,19 @@ class NexusNode(NodeMixin):
                 r"or self::nx:link]"
             )
 
-        names = set()
+        # Use dict keys for deduplication while preserving insertion order.
+        names: dict[str, None] = {}
         for elem in self.inheritance[:depth]:
             if only_appdef and not is_appdef(elem):
                 break
 
             for sub_elems in elem.xpath(search_tags, namespaces=namespaces):
                 if "name" in sub_elems.attrib:
-                    names.add(sub_elems.attrib["name"])
+                    names[sub_elems.attrib["name"]] = None
                 elif "type" in sub_elems.attrib:
-                    names.add(sub_elems.attrib["type"][2:].upper())
+                    names[sub_elems.attrib["type"][2:].upper()] = None
 
-        return names
+        return list(names.keys())
 
     def required_groups(
         self,

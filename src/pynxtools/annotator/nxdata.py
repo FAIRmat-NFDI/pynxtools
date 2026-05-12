@@ -45,11 +45,15 @@ from pynxtools.nexus.utils import decode_if_string
 _logger = logging.getLogger("pynxtools")
 
 
-def chk_nxdata_axis_v2(hdf_node: h5py.Dataset, name: str) -> None:
-    """Check if *hdf_node* is referenced as an axis under the older NXdata conventions (v2)."""
+def chk_nxdata_axis_v2(hdf_node: h5py.Dataset, name: str) -> str | None:
+    """Check if *hdf_node* is referenced as an axis under the older NXdata conventions (v2).
+
+    Returns ``'signal'``, ``'axis'``, or ``None``.
+    """
     own_signal = hdf_node.attrs.get("signal")  # check for being a signal
     if isinstance(own_signal, str) and own_signal == "1":
         _logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
+        return "signal"
 
     own_axes = hdf_node.attrs.get("axes")  # check for being an axis
     if isinstance(own_axes, str):
@@ -57,7 +61,7 @@ def chk_nxdata_axis_v2(hdf_node: h5py.Dataset, name: str) -> None:
         for i, axis in enumerate(axes):
             if axis and name == axis:
                 _logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
-                return
+                return "axis"
 
     own_primary_axis = hdf_node.attrs.get("primary")
     own_axis = hdf_node.attrs.get("axis")
@@ -74,25 +78,34 @@ def chk_nxdata_axis_v2(hdf_node: h5py.Dataset, name: str) -> None:
                 "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d",
                 own_axis - 1,
             )
+        return "axis"
+    return None
 
 
-def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> None:
+def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> str | None:
     """Check if *hdf_node* is referenced as a signal or axis in an NXdata group.
 
     Implements the NeXus Data Plotting Standard v3 (2014). Falls back to v2
     conventions via :func:`chk_nxdata_axis_v2`.
+
+    Returns ``'signal'``, ``'axis'``, or ``None``.  The return value can be
+    passed as the *hint* argument to
+    :meth:`~pynxtools.annotator.annotator.Annotator._find_nexus_node` so that
+    the ambiguity between NXdata ``DATA`` (signal) and ``AXISNAME`` (axis)
+    concept nodes is resolved from the HDF5 file content rather than by
+    arbitrary dict-iteration order.
     """
     if not isinstance(hdf_node, h5py.Dataset):
-        return
+        return None
 
     parent = hdf_node.parent
     if not parent or parent.attrs.get("NX_class") != "NXdata":
-        return
+        return None
 
     signal = parent.attrs.get("signal")
     if signal and name == signal:
         _logger.debug("Dataset referenced as NXdata SIGNAL")
-        return
+        return "signal"
 
     axes = parent.attrs.get("axes")
 
@@ -100,7 +113,7 @@ def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> None:
     if isinstance(axes, str):
         if name == axes:
             _logger.debug("Dataset referenced as NXdata AXIS")
-            return
+            return "axis"
 
     # multiple axis names
     elif axes is not None:
@@ -118,7 +131,7 @@ def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> None:
                         "Dataset referenced as NXdata AXIS #%d",
                         i,
                     )
-                return
+                return "axis"
 
     # alternative axes
     indices = parent.attrs.get(f"{name}_indices")
@@ -128,8 +141,9 @@ def chk_nxdata_axis(hdf_node: h5py.Dataset, name: str) -> None:
             "Dataset referenced as NXdata alternative AXIS #%d",
             int(indices),
         )
+        return "axis"
 
-    chk_nxdata_axis_v2(hdf_node, name)
+    return chk_nxdata_axis_v2(hdf_node, name)
 
 
 def logger_auxiliary_signal(nxdata: h5py.Group) -> None:
