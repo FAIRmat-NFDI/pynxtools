@@ -562,7 +562,7 @@ class HandleNexus:
 
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes."""
-        from pynxtools.nexus.annotation import Annotator
+        from pynxtools.annotator.annotator import Annotator
 
         visitor = Annotator(
             self.logger,

@@ -267,47 +267,6 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
     return stats
 
 
-class NomadParser:
-    """
-    Thin wrapper around :class:`~pynxtools.nexus.handler.NexusFileHandler` for NOMAD archive
-    population.
-
-    Encapsulates HDF5 traversal via ``NexusFileHandler`` and dispatches each documented
-    node to ``Annotator``, which invokes *callback* for fields and attributes that are
-    present in the NXDL schema.
-
-    Usage::
-
-        parser = NomadParser(mainfile, logger)
-        parser.process(callback)
-    """
-
-    def __init__(self, mainfile: str, logger=None) -> None:
-        self._mainfile = mainfile
-        self._logger = logger
-
-    def process(self, callback) -> None:
-        """
-        Walk the NeXus file and invoke *callback* for each documented node.
-
-        Args:
-            callback: A callable with the signature ``(params: dict, attr=None) -> None``.
-                ``params`` contains ``hdf_info``, ``nxdef``, ``nxdl_path``, ``val``,
-                and ``logger`` keys, matching the ``_nexus_populate`` interface.
-
-        Note:
-            The ``nxdl_path`` value in *params* is still a ``list[ET.Element]``
-            produced by ``get_nxdl_doc``.  A future migration will replace this
-            with a typed ``NexusNode`` once ``_to_section`` / ``_populate_data``
-            in the NOMAD parser are updated to consume ``NexusNode`` directly.
-        """
-        from pynxtools.nexus.annotation import Annotator
-        from pynxtools.nexus.handler import NexusFileHandler
-
-        visitor = Annotator(self._logger, parser=callback)
-        NexusFileHandler(self._mainfile).process(visitor)
-
-
 class NexusParser(MatchingParser):
     """
     NexusParser doc
@@ -742,7 +701,8 @@ class NexusParser(MatchingParser):
         # if filename does not follow the pattern
         # .volumes/fs/<upload type>/<upload 2char>/<upload>/<raw/arch>/[subdirs?]/<filename>
         self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
-        NomadParser(mainfile, logger).process(self._nexus_populate)
+        nexus_helper = HandleNexus(logger, mainfile)
+        nexus_helper.process_nexus_master_file(self._nexus_populate)
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:
