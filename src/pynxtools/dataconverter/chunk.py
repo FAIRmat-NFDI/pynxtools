@@ -36,6 +36,8 @@ DEFAULT_COMPRESSION_STRENGTH: int = 9
 # for gzip
 # integer values from 0 (effectively no), 1, ..., to at most 9 (strongest compression)
 # using strongest compression is space efficient but takes substantially longer than 1
+
+PERFORMANT_COMPRESSION_FILTER = "blosc"
 # for blosc2 specifically zstd
 # integer value 9 means aggressive compression
 # i.e. both compression strengths are strong for both compression algorithms
@@ -53,16 +55,12 @@ try:
     # to get maximum performance users should for now deploy from custom branches
     # until there is a mechanism in NOMAD whereby such configurations can be passed
     # to the NOMAD plugins directly
-    COMPRESSION_FILTERS: list[str] = [DEFAULT_COMPRESSION_FILTER, "blosc"]
 
-    logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
-    logger.info(
-        f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
-    )
-    logger.info(blosc2.print_versions())
+    COMPRESSION_FILTERS: list[str] = [
+        DEFAULT_COMPRESSION_FILTER,
+        PERFORMANT_COMPRESSION_FILTER,
+    ]
 except ImportError:
-    logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
-    logger.warning("blosc2 is not available")
     BLOSC_NTHREADS = 0
     COMPRESSION_FILTERS = [DEFAULT_COMPRESSION_FILTER]
 
@@ -111,7 +109,7 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
 
 CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
 
 def prioritized_axes_heuristic(
