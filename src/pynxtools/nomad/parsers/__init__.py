@@ -36,4 +36,7 @@ nexus_parser = NexusParserEntryPoint(
     description="A parser for nexus files.",
     mainfile_name_re=r".*\.nxs",
     mainfile_mime_re="application/x-hdf*",
+    aliases=[
+        "pynxtools.nomad.entrypoints:nexus_parser",
+    ],
 )
