@@ -27,7 +27,7 @@ def _get_log(
 
     Logger setup mirrors pynxtools.annotator.cli.read().
     """
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger(__file__)
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False

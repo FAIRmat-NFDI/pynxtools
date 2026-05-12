@@ -145,7 +145,7 @@ nexusformat_version : 0.5.2
       @axes = ['angles' 'energies' 'delays']  [OPTIONAL]
       @signal = data  [OPTIONAL]
       FIELD /entry/data/angles  shape=(80,)  dtype=float64
-Dataset referenced as NXdata AXIS #0
+        Dataset referenced as NXdata AXIS #0
         Value     : [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031...
         Concept   : NXdata/ENTRY/DATA/AXISNAME  [OPTIONAL]
         Inheritance:
@@ -163,7 +163,7 @@ Dataset referenced as NXdata AXIS #0
                         names, an array of NX_CHAR can be provided.
         @units = 1/Å  [OPTIONAL]
       FIELD /entry/data/data  shape=(80, 146, 195)  dtype=float32
-Dataset referenced as NXdata SIGNAL
+        Dataset referenced as NXdata SIGNAL
         Value     : [[0. 0. 0. ... 0. 0. 0.]...
         Concept   : NXdata/ENTRY/DATA/DATA  [OPTIONAL]
         Inheritance:
@@ -189,7 +189,7 @@ Dataset referenced as NXdata SIGNAL
                         names, an array of NX_CHAR can be provided.
         @units = counts  [OPTIONAL]
       FIELD /entry/data/delays  shape=(195,)  dtype=float64
-Dataset referenced as NXdata AXIS #2
+        Dataset referenced as NXdata AXIS #2
         Value     : [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186...
         Concept   : NXdata/ENTRY/DATA/AXISNAME  [OPTIONAL]
         Inheritance:
@@ -207,7 +207,7 @@ Dataset referenced as NXdata AXIS #2
                         names, an array of NX_CHAR can be provided.
         @units = fs  [OPTIONAL]
       FIELD /entry/data/energies  shape=(146,)  dtype=float64
-Dataset referenced as NXdata AXIS #1
+        Dataset referenced as NXdata AXIS #1
         Value     : [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041...
         Concept   : NXdata/ENTRY/DATA/AXISNAME  [OPTIONAL]
         Inheritance:
@@ -1001,22 +1001,8 @@ Dataset referenced as NXdata AXIS #1
 NXentry has been identified: /entry
 
 NXdata group has been identified: /entry/data
-===== GROUP (//entry/data [NXarpes::/NXentry/NXdata]): <HDF5 group "/entry/data" (4 members)>
-===== ATTRS (//entry/data@NX_class)
-value: NXdata 
-===== ATTRS (//entry/data@axes)
-value: ['angles' 'energies' 'delays'] 
-===== ATTRS (//entry/data@signal)
-value: data 
 
 Signal has been identified: /entry/data/data
-===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-value: [[0. 0. 0. ... 0. 0. 0.] ...
-Dataset referenced as NXdata SIGNAL
-===== ATTRS (//entry/data/data@target)
-value: /entry/instrument/analyser/data 
-===== ATTRS (//entry/data/data@units)
-value: counts 
 
 For Axis #0, 1 axes have been identified: [<HDF5 dataset "angles": shape (80,), type "<f8">]
 

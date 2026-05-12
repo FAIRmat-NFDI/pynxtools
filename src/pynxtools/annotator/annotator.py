@@ -37,6 +37,8 @@ Three operating modes (controlled by constructor arguments):
 
 from __future__ import annotations
 
+import contextlib
+import logging
 import re
 import textwrap
 from collections.abc import Callable
@@ -127,7 +129,7 @@ class Annotator(NexusVisitor):
             return
 
         if self.documentation is None and self.parser is None:
-            get_default_plottable(root)
+            get_default_plottable(root, self.logger)
 
     # ------------------------------------------------------------------
     # Schema resolution — NexusNode-based
@@ -366,8 +368,9 @@ class Annotator(NexusVisitor):
             f"{ind}FIELD /{hdf_path}  shape={hdf_node.shape}  dtype={hdf_node.dtype}"
         )
 
-        # NXdata axis/signal annotation — also returns a hint for schema lookup
-        nxdata_hint = chk_nxdata_axis(hdf_node, name)
+        # NXdata axis/signal annotation — also returns a hint for schema lookup.
+        # Pass self.logger so the debug messages appear in the caller's log.
+        nxdata_hint = chk_nxdata_axis(hdf_node, name, indent=det, logger=self.logger)
 
         val = (
             str(decode_if_string(hdf_node[()])).split("\n")
