@@ -59,7 +59,7 @@ try:
     logger.info(
         f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
     )
-    logger.info(blosc2.print_versions())
+    # logger.info(blosc2.print_versions())
 except ImportError:
     logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
     logger.warning("blosc2 is not available")
