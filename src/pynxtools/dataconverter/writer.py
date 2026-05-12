@@ -496,7 +496,6 @@ class Writer:
     def write(self):
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
         compression = self.has_content_cued_for_compression()
-        print(f">>>>>>>> {compression}")
         if compression in COMPRESSION_FILTERS:
             logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
         if compression == PERFORMANT_COMPRESSION_FILTER:
