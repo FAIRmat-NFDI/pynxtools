@@ -79,7 +79,7 @@ def read(nexus_file, documentation, concept):
             "Only one option either documentation (-d) or is_a relation "
             "with a concept (-c) can be requested."
         )
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger(__file__)
     logger.handlers.clear()
     sh = logging.StreamHandler(sys.stdout)
     sh.setLevel(logging.DEBUG)

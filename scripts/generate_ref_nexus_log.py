@@ -15,7 +15,7 @@ REF_PATH = ROOT / "tests" / "data" / "nexus" / "Ref_nexus_test.log"
 
 def generate_ref_log():
     np.set_printoptions(edgeitems=3, threshold=1000, precision=8, linewidth=75)
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger(__file__)
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
