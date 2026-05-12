@@ -156,6 +156,7 @@ issubdtype
 itemsize
 iufc
 iupac
+keepends
 keystring
 keyval
 kfra
@@ -233,6 +234,7 @@ submoduled
 superproject
 threed
 tnxdl
+tofile
 tommaso
 tracebacklimit
 twod

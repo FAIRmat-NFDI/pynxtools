@@ -180,7 +180,10 @@ class Annotator(NexusVisitor):
         return self._tree_cache[appdef]
 
     def _find_nexus_node(
-        self, hdf_path: str, hdf_node: h5py.Group | h5py.Dataset
+        self,
+        hdf_path: str,
+        hdf_node: h5py.Group | h5py.Dataset,
+        hint: str | None = None,
     ) -> NexusNode | None:
         """Return the NexusNode for *hdf_path*, or ``None`` if not in schema.
 
@@ -190,6 +193,11 @@ class Annotator(NexusVisitor):
         that variadic schema groups (e.g. ``DETECTOR[NXdetector]``,
         ``DATA[NXdata]``, ``COLLECTION[NXcollection]``) are disambiguated
         deterministically instead of relying on ``set`` iteration order.
+
+        The *hint* (``'signal'`` or ``'axis'``) is forwarded to
+        ``best_child_for`` for the **last** path segment so that the
+        NXdata ambiguity between the ``DATA`` (signal) and ``AXISNAME``
+        (axis) concept nodes is resolved from the HDF5 file content.
         """
         if not hdf_path:
             return None
@@ -219,11 +227,11 @@ class Annotator(NexusVisitor):
             is_last = i == len(segments) - 1
             seg_node_type = node_type if is_last else "group"
 
-            # Look up the real NX_class of the intermediate HDF5 group so we
-            # can pin the schema child selection to the correct NX class and
+            # Look up the real NX_class of HDF5 groups (both intermediate AND last)
+            # so we can pin the schema child selection to the correct NX class and
             # avoid the non-determinism from equally-scoring variadic nodes.
             nx_class: str | None = None
-            if not is_last:
+            if seg_node_type == "group":
                 try:
                     h5_grp = h5file["/" + "/".join(segments[: i + 1])]
                     if isinstance(h5_grp, h5py.Group):
@@ -232,13 +240,16 @@ class Annotator(NexusVisitor):
                 except KeyError:
                     pass
 
+            seg_hint = hint if is_last else None
             child = current.best_child_for(
-                seg, node_type=seg_node_type, nx_class=nx_class
+                seg, node_type=seg_node_type, nx_class=nx_class, hint=seg_hint
             )
             # Fall back to unconstrained search if the class-constrained one
             # finds nothing (e.g. the group has no NX_class attribute).
             if child is None and nx_class is not None:
-                child = current.best_child_for(seg, node_type=seg_node_type)
+                child = current.best_child_for(
+                    seg, node_type=seg_node_type, hint=seg_hint
+                )
 
             self._node_cache[cache_key] = child
             if child is None:
@@ -355,8 +366,8 @@ class Annotator(NexusVisitor):
             f"{ind}FIELD /{hdf_path}  shape={hdf_node.shape}  dtype={hdf_node.dtype}"
         )
 
-        # NXdata axis/signal annotation (pure HDF5, no schema)
-        chk_nxdata_axis(hdf_node, name)
+        # NXdata axis/signal annotation — also returns a hint for schema lookup
+        nxdata_hint = chk_nxdata_axis(hdf_node, name)
 
         val = (
             str(decode_if_string(hdf_node[()])).split("\n")
@@ -367,7 +378,7 @@ class Annotator(NexusVisitor):
             det, "Value", f"{val[0]}{'...' if len(val) > 1 else ''}", level=10
         )  # DEBUG
 
-        node = self._find_nexus_node(hdf_path, hdf_node)
+        node = self._find_nexus_node(hdf_path, hdf_node, hint=nxdata_hint)
 
         if node is None:
             self.logger.info(f"{det}<NOT IN SCHEMA>")

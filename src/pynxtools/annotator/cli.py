@@ -80,8 +80,10 @@ def read(nexus_file, documentation, concept):
             "with a concept (-c) can be requested."
         )
     logger = logging.getLogger("pynxtools")
-    for handler in logger.handlers:
-        handler.stream = sys.stdout
+    logger.handlers.clear()
+    sh = logging.StreamHandler(sys.stdout)
+    sh.setLevel(logging.DEBUG)
+    logger.addHandler(sh)
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
     NexusFileHandler(nexus_file).process(

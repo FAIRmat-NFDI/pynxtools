@@ -50,9 +50,7 @@ def get_log_file(nxs_file, log_file, tmp_path):
     logger.propagate = False
     log_file = os.path.join(tmp_path, log_file)
     handler = logging.FileHandler(log_file, "w")
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setLevel(logging.DEBUG)
-    handler.setFormatter(formatter)
     logger.addHandler(handler)
     NexusFileHandler(nxs_file).process(Annotator(logger))
     return log_file
