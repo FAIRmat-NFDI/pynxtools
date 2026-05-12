@@ -994,6 +994,7 @@ nexusformat_version : 0.5.2
         NXarpes/ENTRY/title
         NXentry/title
           Doc       : Extended title for entry
+
 ========================
 === Default Plottable ===
 ========================
