@@ -3715,8 +3715,6 @@ def test_validate(caplog, cli_inputs, error_messages):
 
 
 warnings_storage_layouts_alternative = [
-    "WARNING: Validating of HDF5 object data types is currently not supported",
-    "WARNING: The value at /entry1/definition should be one of the following Python types: (<class 'str'>, <class 'numpy.character'>), as defined in the NXDL as NX_CHAR.",
     "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@axis_i_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
     "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@axis_j_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
     "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@indices_image_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
@@ -3728,8 +3726,6 @@ warnings_storage_layouts_alternative = [
 
 
 warnings_storage_layouts_legacy = [
-    "WARNING: Validating of HDF5 object data types is currently not supported",
-    "WARNING: The value at /entry1/definition should be one of the following Python types: (<class 'str'>, <class 'numpy.character'>), as defined in the NXDL as NX_CHAR.",
     "WARNING: The required group /entry1/measurement/instrument hasn't been supplied.",
     "WARNING: The required group /entry1/sampleID hasn't been supplied.",
     "WARNING: The required field /entry1/start_time hasn't been supplied.",

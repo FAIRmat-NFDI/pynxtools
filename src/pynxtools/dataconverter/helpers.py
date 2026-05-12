@@ -805,8 +805,10 @@ def is_valid_data_type_hdf(hdf_node: h5py.Dataset, accepted_types: Sequence) -> 
         return any(np.issubdtype(hdf_node.dtype, t) for t in accepted_types)
 
     # handle 'object' dtype separately (for lists from HDF5 files)
-    logger.warning("Validating of HDF5 object data types is currently not supported")
-    return False
+    return all(
+        isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
+        for v in np.asarray(hdf_node[...].flat)
+    )
 
 
 def is_positive_int(value: Any) -> bool:

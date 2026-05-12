@@ -258,7 +258,7 @@ def validate_hdf_group_against(
                     if len(score_board[alternative_best_score][constraint]) > 1:
                         logger.debug(
                             f"Multiple best fitting with score {alternative_best_score} found "
-                            f"{[nodes[index] for index in score_board[alternative_best_score][constraint]]} "
+                            f"{[nodes[idx] for idx in score_board[alternative_best_score][constraint]]} "
                             f"constrained by {constraint}; indicates possible issues with nameTyping of "
                             f"specific NeXus classes/concepts"
                         )
