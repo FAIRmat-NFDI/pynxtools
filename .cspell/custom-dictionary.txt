@@ -183,6 +183,7 @@ myext
 mynxdl
 namefit
 namefitting
+nbstripout
 nbytes
 ncores
 ndarray
@@ -217,6 +218,7 @@ prng
 punx
 pynx
 pynxtools
+pyupgrade
 raman
 rdcc
 redef
@@ -224,8 +226,8 @@ renamable
 reqs
 requiredness
 rtol
-setpoint
 sequentialization
+setpoint
 sherjeelshabih
 showgrid
 showlegend
@@ -251,6 +253,7 @@ usefixtures
 vamas
 vectorizable
 visititems
+vlen
 xarrays
 xaxis
 xdist
