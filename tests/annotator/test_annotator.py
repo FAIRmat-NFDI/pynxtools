@@ -17,7 +17,7 @@ EXAMPLE_NXS = str(
     / "data"
     / "201805_WSe2_arpes.nxs"
 )
-REF_DIR = Path(__file__).parent.parent / "data" / "nexus"
+REF_DIR = Path(__file__).parent.parent / "data" / "annotator"
 
 
 def _get_log(
@@ -36,13 +36,11 @@ def _get_log(
     handler.setLevel(handler_level)
     logger.addHandler(handler)
     NexusFileHandler(nxs_file).process(Annotator(logger, **annotator_kwargs))
-    handler.flush()
-    logger.removeHandler(handler)
-    handler.close()
+
     return log_path.read_text(encoding="utf-8").splitlines(keepends=True)
 
 
-def _compare_logs(actual, reference, *, skip_startswith=()):
+def _compare_logs(gen_lines: list[str], ref_lines: list[str], *, skip_startswith=()):
     """Fail with a unified diff if logs differ (after optional line filtering)."""
 
     def _filter(lines):
@@ -50,13 +48,45 @@ def _compare_logs(actual, reference, *, skip_startswith=()):
             ln for ln in lines if not any(ln.startswith(p) for p in skip_startswith)
         ]
 
-    actual_f = _filter(actual)
-    ref_f = _filter(reference)
-    if actual_f != ref_f:
-        diff = "".join(
-            difflib.unified_diff(ref_f, actual_f, fromfile="reference", tofile="actual")
+    def _extra_lines(lines1: list[str], lines2: list[str]) -> list[str | None]:
+        """Return lines in lines1 but not in lines2, with line numbers, and ignoring
+        specified lines."""
+        diffs: list[str | None] = []
+        for ind, line in enumerate(lines1):
+            if line not in lines2:
+                diffs.append(f"{line.strip()} (line: {ind})")
+        return diffs
+
+    gen_lines = _filter(gen_lines)
+    ref_lines = _filter(ref_lines)
+
+    # Case 1: line counts differ
+    if len(gen_lines) != len(ref_lines):
+        diffs_gen = _extra_lines(gen_lines, ref_lines)
+        diffs_ref = _extra_lines(ref_lines, gen_lines)
+
+        fail_msg = (
+            f"Log files are different: mismatched line counts. "
+            f"Generated file has {len(gen_lines)} lines, "
+            f"while reference file has {len(ref_lines)} lines."
         )
-        pytest.fail(f"Log does not match reference:\n{diff}")
+        if diffs_gen:
+            fail_msg += "\n\nExtra lines in generated:\n" + "\n".join(diffs_gen)
+        if diffs_ref:
+            fail_msg += "\n\nExtra lines in reference:\n" + "\n".join(diffs_ref)
+
+        raise pytest.fail(fail_msg)
+
+    # Case 2: same line counts, check for diffs
+    diffs = []
+
+    for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
+        if gen_l != ref_l:
+            diffs.append(
+                f"Log files are different at line {ind}:\n  generated: {gen_l}\n  reference: {ref_l}"
+            )
+    if diffs:
+        pytest.fail("\n".join(diffs))
 
 
 def test_nexus(tmp_path):
