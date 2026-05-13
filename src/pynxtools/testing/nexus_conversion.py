@@ -32,13 +32,13 @@ except ImportError:
     NOMAD_AVAILABLE = False
 
 
+from pynxtools.annotator.annotator import Annotator
 from pynxtools.dataconverter.convert import convert, get_reader
 from pynxtools.dataconverter.helpers import (
     add_default_root_attributes,
     get_nxdl_root_and_path,
 )
 from pynxtools.dataconverter.validate_file import validate
-from pynxtools.nexus.annotation import Annotator
 from pynxtools.nexus.handler import NexusFileHandler
 
 
