@@ -1,23 +1,18 @@
-
 ARPES
-ARPESATTRIBUTENAME
 ATTRIBUTENAME
 AXISNAME
 Aeschlimann
-Appdef
 BASECLASS
 BASESECTIONS
-BLOSC
-Blosc
 Brockhauser
 Carola
-DATACONVERTER
 DECTRIS
 Dataconverter
 Dobener
+Downsample
+Downsampled
 Draxl
 ELECTRONANALYZER
-Ellipsometry
 Emminger
 Florian
 Forschungsgemeinschaft
@@ -44,6 +39,7 @@ Mozumder
 Márquez
 NFDI
 NIAC
+NINF
 NTHREADS
 NXDL
 Namefits
@@ -95,6 +91,7 @@ asstr
 atleast
 atomutils
 attribs
+backgroundcolor
 baseclass
 basesections
 blosc
@@ -107,8 +104,10 @@ complexfloating
 dataarrays
 dataconverter
 datamodel
+ddof
 defaultdicts
 docstrings
+downstreams
 dtype
 edgeitems
 ekey
@@ -122,6 +121,7 @@ execinfo
 fairmat
 fillvalue
 finfo
+flatdict
 flatfield
 fluence
 fourd
@@ -140,6 +140,7 @@ hdfgroup
 hdfobject
 hfive
 hixu
+hyperslab
 hyperslabs
 hyperthreading
 hypothes
@@ -154,6 +155,7 @@ isdt
 isscalar
 issubdtype
 itemsize
+itemsizing
 iufc
 iupac
 keepends
@@ -165,6 +167,7 @@ ldic
 levelname
 levelno
 libversion
+lineterm
 listified
 listify
 loadgroup
@@ -178,6 +181,7 @@ monoclinic
 mpes
 mydatareader
 myext
+mynxdl
 namefit
 namefitting
 nbstripout
@@ -190,7 +194,6 @@ ndims
 nexpy
 nexusapp
 nexusformat
-nfdi
 njit
 nodemixin
 nonvariadic
@@ -211,6 +214,7 @@ oxidising
 pathtovalidate
 plottable
 posint
+posteriori
 printoptions
 prng
 punx
@@ -227,6 +231,8 @@ rtol
 sequentialization
 setpoint
 sherjeelshabih
+showgrid
+showlegend
 signedinteger
 skiprows
 straße
@@ -250,12 +256,14 @@ vamas
 vectorizable
 visititems
 vlen
-welford
 xarrays
+xaxis
 xdist
 xfbaa
 xlabel
 xraylens
+yaxis
 ylabel
+zaxis
 zenodo
 zstd
