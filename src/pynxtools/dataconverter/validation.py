@@ -18,11 +18,13 @@
 #
 DEBUG_VALIDATION = False
 import copy
+import os
 import re
 from collections import defaultdict
 from collections.abc import Mapping, MutableMapping, Sequence
 from functools import reduce
 from operator import getitem
+from os import path
 from typing import Any, Literal, Optional, Union
 
 if DEBUG_VALIDATION:
@@ -1237,7 +1239,9 @@ def validate_dict_against(
             not_visited.remove(path)
         return path
 
-    def _follow_link(keys: Mapping[str, Any] | None, prev_path: str) -> Any | None:
+    def _follow_link(
+        keys: Mapping[str, Any] | None, prev_path: str, node: NexusNode | None = None
+    ) -> Any | None:
         """
         Resolves internal dictionary "links" by replacing any keys containing a
         {"link": "/path/to/target"} structure with the actual referenced content.
@@ -1269,17 +1273,56 @@ def validate_dict_against(
         resolved_keys = copy.deepcopy(keys)
         for key, value in keys.copy().items():
             if isinstance(value, dict) and "link" in value:
+                link_key = None  # Track is linked path exists
+
+                if ":" in value["link"]:
+                    file_path, link_path = value["link"].split(":", 1)
+                else:
+                    link_path = value["link"]
+
+                # Allow link path with and without /
+                link_path = (
+                    value["link"][1:]
+                    if value["link"].startswith("/")
+                    else f"{value['link']}"
+                )
+
                 key_path = f"{prev_path}/{key}" if prev_path else key
-                current_keys = nested_keys
-                link_key = None
-                for path_elem in value["link"][1:].split("/"):
-                    link_key = None
-                    for dict_path_elem in current_keys:
-                        _, hdf_name = split_class_and_name_of(dict_path_elem)
-                        if hdf_name == path_elem:
-                            link_key = hdf_name
-                            current_keys = current_keys[dict_path_elem]
-                            break
+                # External link resolution (file_path:link_path)
+                if ":" in value["link"]:
+
+                    def get_node(name, obj):
+                        if name == link_path:
+                            return obj
+
+                    if not os.path.isfile(file_path):
+                        collector.collect_and_log(
+                            key_path,
+                            ValidationProblem.ExternalLinkedFileNotFound,
+                            file_path,
+                        )
+                    else:
+                        link_key = link_path  # activate flag
+                        with h5py.File(file_path, "r") as hdf_file:
+                            node = hdf_file.visit(get_node)
+
+                            if node is not None:
+                                if isinstance(node, h5py.Dataset) and node is not None:
+                                    dataset = node[()]
+                                    is_valid_data_field(dataset, node.dtype, key)
+                            # For groups no need to check the external Group type and content
+
+                # Internal link resolution
+                else:
+                    current_keys = nested_keys
+                    for path_elem in link_path.split("/"):
+                        link_key = None
+                        for dict_path_elem in current_keys:
+                            _, hdf_name = split_class_and_name_of(dict_path_elem)
+                            if hdf_name == path_elem:
+                                link_key = hdf_name
+                                current_keys = current_keys[dict_path_elem]
+                                break
 
                 if link_key is None:
                     collector.collect_and_log(
@@ -1467,7 +1510,7 @@ def validate_dict_against(
                     is_valid_unit_for_node(node, unit, unit_path, hints)
 
             field_attributes = get_field_attributes(variant, keys)
-            field_attributes = _follow_link(field_attributes, variant_path)
+            field_attributes = _follow_link(field_attributes, variant_path, node=node)
 
             recurse_tree(
                 node,

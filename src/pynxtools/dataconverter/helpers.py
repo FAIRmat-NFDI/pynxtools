@@ -135,6 +135,7 @@ class ValidationProblem(Enum):
     InvalidCompressionStrength = auto()
     CompressionStrengthZero = auto()
     MissingNXclass = auto()
+    ExternalLinkedFileNotFound = auto()
 
 
 class Collector:
@@ -303,6 +304,8 @@ class Collector:
             logger.info(
                 f"Group '{path}' does not have an NX_class attribute and will therefore not be validated."
             )
+        elif log_type == ValidationProblem.ExternalLinkedFileNotFound:
+            logger.warning(f"External linked file '{value}' for {path} was not found.")
 
     def collect_and_log(
         self,
