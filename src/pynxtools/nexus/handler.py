@@ -327,10 +327,7 @@ class NexusFileHandler:
                     self._traverse_external(full_name, link, visitor)
 
                 else:  # HardLink (or any future link type)
-<<<<<<< HEAD
-=======
                     child = hdf_node[ch_name]
->>>>>>> 2778d996 (allow handling of external and soft links)
                     if self._not_yet_visited(root, full_name):
                         self._full_visit(root, child, full_name, visitor)
 >>>>>>> 65db1f12 (allow handling of external and soft links)
