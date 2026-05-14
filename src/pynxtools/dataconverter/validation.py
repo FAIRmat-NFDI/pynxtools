@@ -176,10 +176,21 @@ class ValidationVisitor(NexusVisitor):
     Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
 
     Implements :class:`~pynxtools.nexus.handler.NexusVisitor` so it can be
-    driven by :class:`~pynxtools.nexus.handler.NexusFileHandler`.
+    driven by :class:`~pynxtools.nexus.handler.NexusFileHandler`.  File
+    traversal (including link resolution) is fully delegated to the handler;
+    this class only contains schema-resolution and problem-collection logic.
 
-    Encapsulates all schema resolution and required-concept tracking that was
-    previously implemented as closures inside ``validate_hdf_group_against``.
+    Hook responsibilities:
+
+    * ``on_group`` - validates the group's NX_class and required child concepts;
+      skips nodes outside the target entry.
+    * ``on_field`` - validates type, unit, enum, and NXdata constraints.
+    * ``on_attribute`` - validates attribute type and enum membership.
+    * ``on_complete`` - emits ``MissingRequired*`` problems for every required
+      concept not encountered during traversal.
+    * ``on_broken_link`` - emits a ``BrokenLink`` problem for soft or external
+      links whose target cannot be resolved.  The link type (``h5py.SoftLink``
+      vs ``h5py.ExternalLink``) is available via the *link* argument.
 
     Usage::
 
@@ -267,6 +278,18 @@ class ValidationVisitor(NexusVisitor):
     def on_complete(self, root: h5py.File) -> None:
         """Emit validation errors for all required concepts not encountered."""
         self._report_missing()
+
+    def on_broken_link(self, hdf_path: str, link) -> None:
+        """Log a broken soft or external link as a validation problem."""
+        rel = self._entry_relative(hdf_path)
+        if rel is None:
+            return
+        target = getattr(link, "path", str(link))
+        collector.collect_and_log(
+            f"{self._entry_name}/{rel}",
+            ValidationProblem.BrokenLink,
+            target,
+        )
 
     def _entry_relative(self, hdf_path: str) -> str | None:
         """Return *hdf_path* relative to this entry, or ``None`` if outside.
@@ -498,6 +521,7 @@ class ValidationVisitor(NexusVisitor):
         required_entities.update(required_sub_entities)
 
     def _variadic_node_exists_for(
+        self,
         path: str,
         variadic_name: str,
         node_type: Literal["group", "field", "attribute"] | None = None,
@@ -604,14 +628,9 @@ class ValidationVisitor(NexusVisitor):
     # ------------------------------------------------------------------
 
     def _is_canonical_path(self, rel_path: str) -> bool:
-        """Return ``True`` if *rel_path* does not pass through any soft link
-        ancestor.
+        """Return ``True`` if *rel_path* does not pass through any soft link ancestor.
 
-        When a node is reached via a soft link ancestor, the HDF5 ``.name``
-        property and the logical path are the same (h5py uses the access path).
-        This helper detects link-based paths so that undocumented-node warnings
-        are suppressed for nodes that are only visible through a link — matching
-        the behavior of the old ``_visititems`` implementation.
+        Suppresses undocumented-node warnings for nodes reachable only via a link.
         """
         if self._data is None:
             return True
@@ -935,102 +954,8 @@ class ValidationVisitor(NexusVisitor):
                 node.items,
                 node.open_enum,
                 full_path,
-                data,
+                parent_obj,
             )
-
-    def validate(path: str, h5_obj: h5py.Group | h5py.Dataset):
-        """
-        Dispatch validation for either groups or fields based on object type.
-
-        Args:
-            path (str): Path to the object.
-            h5_obj (Union[h5py.Group, h5py.Dataset]): The HDF5 object to validate.
-        """
-        if isinstance(h5_obj, h5py.Group):
-            handle_group(path, h5_obj)
-        elif isinstance(h5_obj, h5py.Dataset):
-            handle_field(path, h5_obj)
-            check_reserved_suffix(f"{entry_name}/{path}", h5_obj.parent)
-        handle_attributes(path, h5_obj.attrs, h5_obj)
-
-    def visititems(group: h5py.Group, path: str = "", filename: str = ""):
-        """
-        Recursively visit all items in a group and apply validation.
-
-        Args:
-            group (h5py.Group): The group to walk.
-            path (str, optional): Current HDF5 path.
-            filename (str, optional): Name of the file for resolving links.
-        """
-        for group_name in group:
-            full_path = f"{path}/{group_name}".lstrip("/")
-            link = group.get(group_name, getlink=True)
-            if isinstance(link, h5py.SoftLink):
-                target_path = link.path
-
-                if "target" not in group[group_name].attrs:
-                    collector.collect_and_log(
-                        f"{entry_name}/{full_path}",
-                        ValidationProblem.MissingTargetAttribute,
-                        None,
-                    )
-                else:
-                    attr_target = group[group_name].attrs["target"]
-                    if attr_target != target_path:
-                        collector.collect_and_log(
-                            f"{entry_name}/{full_path}",
-                            ValidationProblem.TargetAttributeMismatch,
-                            attr_target,
-                            target_path,
-                        )
-
-                # Resolve target relative to the link location
-                if target_path.startswith(entry_name):
-                    if target_path not in data:
-                        collector.collect_and_log(
-                            path, ValidationProblem.BrokenLink, target_path
-                        )
-                        continue
-                    resolved_obj = data[target_path]
-                    validate(full_path, resolved_obj)
-                    if isinstance(resolved_obj, h5py.Group):
-                        # recurse into subgroups
-                        visititems(resolved_obj, full_path, filename)
-                else:
-                    with h5py.File(filename, "r") as h5file:
-                        if target_path not in h5file:
-                            collector.collect_and_log(
-                                path, ValidationProblem.BrokenLink, target_path
-                            )
-                            continue
-                        resolved_obj = h5file[target_path]
-                        validate(full_path, resolved_obj)
-                        if isinstance(resolved_obj, h5py.Group):
-                            # recurse into subgroups
-                            visititems(resolved_obj, full_path, filename)
-
-            elif isinstance(link, h5py.ExternalLink):
-                filename = link.filename
-                target_path = link.path
-                # Open external file and validate
-                with h5py.File(filename, "r") as ext_file:
-                    if target_path not in ext_file:
-                        collector.collect_and_log(
-                            path, ValidationProblem.BrokenLink, target_path
-                        )
-                    resolved_obj = ext_file[target_path]
-                    validate(full_path, resolved_obj)
-                    if isinstance(resolved_obj, h5py.Group):
-                        # recurse into subgroups
-                        visititems(resolved_obj, full_path, filename)
-
-            elif isinstance(link, h5py.HardLink):
-                # Validate hard links (normal objects)
-                resolved_obj = group.get(group_name)
-                validate(full_path, resolved_obj)
-                if isinstance(resolved_obj, h5py.Group):
-                    # recurse into subgroups
-                    visititems(resolved_obj, full_path, filename)
 
     collector.clear()
 
