@@ -27,7 +27,10 @@ from pynxtools.dataconverter.cli import validate as validate_cmd
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validate_file import validate
-from pynxtools.dataconverter.validation import validate_dict_against
+from pynxtools.dataconverter.validation import (
+    validate_dict_against,
+    validate_hdf_group_against,
+)
 from pynxtools.dataconverter.writer import Writer
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
@@ -4043,3 +4046,94 @@ def test_validate_file_positive_int(
         assert observed_warnings == expected_warnings
 
     os.remove(file_path)
+
+
+# ---------------------------------------------------------------------------
+# Link validation tests
+# ---------------------------------------------------------------------------
+
+
+def _minimal_entry(h5w: h5py.File) -> None:
+    """Write a bare-minimum NXentry to *h5w* so validate_hdf_group_against has an entry."""
+    entry = h5w.create_group("entry")
+    entry.attrs["NX_class"] = "NXentry"
+
+
+def test_validate_broken_soft_link(tmp_path, caplog):
+    """A broken soft link inside the entry is reported as a BrokenLink problem."""
+    fpath = tmp_path / "broken_soft.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/missing"] = h5py.SoftLink("/nonexistent")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert len(broken_msgs) == 1
+    assert "/entry/missing" in broken_msgs[0]
+    assert "/nonexistent" in broken_msgs[0]
+
+
+def test_validate_broken_external_link_missing_file(tmp_path, caplog):
+    """A broken external link (file missing) is reported as a BrokenLink problem."""
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/ext"] = h5py.ExternalLink("nonexistent_file.h5", "/data")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert len(broken_msgs) == 1
+    assert "/entry/ext" in broken_msgs[0]
+
+
+def test_validate_broken_external_link_missing_path(tmp_path, caplog):
+    """A broken external link (file exists, path absent) is reported as a BrokenLink problem."""
+    ext_file = tmp_path / "ext.h5"
+    with h5py.File(ext_file, "w") as h5w:
+        h5w.create_dataset("existing", data=1.0)
+
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/ext"] = h5py.ExternalLink(str(ext_file), "/nonexistent_path")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert len(broken_msgs) == 1
+    assert "/entry/ext" in broken_msgs[0]
+
+
+def test_validate_valid_external_link(tmp_path, caplog):
+    """A resolvable external link produces no BrokenLink warning."""
+    ext_file = tmp_path / "ext.h5"
+    with h5py.File(ext_file, "w") as h5w:
+        h5w.create_dataset("value", data=42.0)
+
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/ext"] = h5py.ExternalLink(str(ext_file), "/value")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert broken_msgs == []
