@@ -1031,9 +1031,12 @@ def is_valid_enum(
             if nxdl_enum_open:
                 custom_path = get_custom_attr_path(path)
 
-                if isinstance(mapping, h5py.Group):
-                    parent_path, attr_name = custom_path.rsplit("@", 1)
-                    custom_attr = mapping.get(parent_path).attrs.get(attr_name)
+                if isinstance(mapping, (h5py.Group, h5py.Dataset)):
+                    # HDF5 object passed directly — the custom attr lives on its own attrs.
+                    # custom_path is like "/entry/field/@attr_custom" or "/entry/field/@custom";
+                    # only the last component (after the final "@") matters.
+                    attr_name = custom_path.rsplit("@", 1)[-1]
+                    custom_attr = decode_if_bytes(mapping.attrs.get(attr_name))
                     custom_added_auto = False
                 else:
                     custom_attr = mapping.get(custom_path)
@@ -1057,8 +1060,9 @@ def is_valid_enum(
                 elif custom_attr is None:
                     try:
                         mapping[custom_path] = True
-                    except ValueError:
-                        # we are in the HDF5 validation, cannot set custom attribute.
+                    except (ValueError, TypeError):
+                        # HDF5 objects are read-only during validation.
+                        # Custom attribute cannot be set.
                         pass
                     collector.collect_and_log(
                         path,
