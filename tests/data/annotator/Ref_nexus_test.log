@@ -142,6 +142,7 @@ GROUP /entry [NXentry]  (12 members)
                     float[10,20,30] x: float[10] z: float[30] data1_errors: float[10,20,30]
                     data2_errors: float[10,20,30] data3_errors: float[10,20,30] x_errors: float[10]
                     z_errors: float[30]
+    NXdata    : [v3] signal=data, 3 axis dataset(s)
     @axes = ['angles' 'energies' 'delays']  [OPTIONAL]
     @signal = data  [OPTIONAL]
     FIELD /entry/data/angles  shape=(80,)  dtype=float64

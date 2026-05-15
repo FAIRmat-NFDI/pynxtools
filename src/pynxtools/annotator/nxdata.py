@@ -15,23 +15,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""NXdata annotation helpers — logging wrappers around ``nexus.nxdata``.
+"""NXdata axis/signal helpers re-exported from ``nexus.nxdata`` for backward compat.
 
 Pure detection logic lives in :mod:`pynxtools.nexus.nxdata`. This module
-exposes logging-aware wrappers used by the annotator and re-exports the
-shared helpers for backward compatibility.
+re-exports the legacy helpers still imported by :mod:`pynxtools.nexus.nexus`.
 """
 
 from __future__ import annotations
 
 import logging
-import numbers
-from typing import Literal
 
 import h5py
 import numpy as np
 
-from pynxtools.nexus.nxdata import classify_field as _classify_field
 from pynxtools.nexus.nxdata import (
     entry_helper,
     find_attrib_axis_actual_dim_num,
@@ -44,10 +40,6 @@ _logger = logging.getLogger(__file__)
 
 # Re-export helpers that callers may import from this module
 __all__ = [
-    "chk_nxdata_axis_v2",
-    "chk_nxdata_axis",
-    "logger_auxiliary_signal",
-    "print_default_plottable_header",
     "entry_helper",
     "nxdata_helper",
     "signal_helper",
@@ -55,122 +47,6 @@ __all__ = [
     "get_single_or_multiple_axes",
     "axis_helper",
 ]
-
-
-def chk_nxdata_axis_v2(
-    hdf_node: h5py.Dataset,
-    name: str,
-    indent: str = "",
-    logger: logging.Logger | None = None,
-) -> Literal["axis", "signal"] | None:
-    """Check if *hdf_node* is referenced as an axis under the older NXdata conventions (v2).
-
-    Delegates detection to :func:`~pynxtools.nexus.nxdata.classify_field`.
-    Returns ``'signal'``, ``'axis'``, or ``None``.
-    """
-    logger = logger or _logger
-    result = _classify_field(hdf_node, name)
-    if result == "signal":
-        logger.debug(f"{indent}Dataset referenced (v2) as NXdata SIGNAL")
-    elif result == "axis":
-        own_axis = hdf_node.attrs.get("axis")
-        own_primary = hdf_node.attrs.get("primary")
-        if isinstance(own_axis, int):
-            if isinstance(own_primary, int) and own_primary == 1:
-                logger.debug(
-                    f"{indent}Dataset referenced (v2) as NXdata AXIS #%d",
-                    own_axis - 1,
-                )
-            else:
-                logger.debug(
-                    f"{indent}Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d",
-                    own_axis - 1,
-                )
-        else:
-            logger.debug(f"{indent}Dataset referenced (v2) as NXdata AXIS")
-    return result
-
-
-def chk_nxdata_axis(
-    hdf_node: h5py.Dataset,
-    name: str,
-    indent: str = "",
-    logger: logging.Logger | None = None,
-) -> Literal["axis", "signal"] | None:
-    """Check if *hdf_node* is referenced as a signal or axis in an NXdata group.
-
-    Implements v3 (NIAC2014) first, falling back to v2/v1 via
-    :func:`~pynxtools.nexus.nxdata.classify_field`.
-    Returns ``'signal'``, ``'axis'``, or ``None``.
-    """
-    logger = logger or _logger
-
-    if not isinstance(hdf_node, h5py.Dataset):
-        return None
-    parent = hdf_node.parent
-    if not parent or parent.attrs.get("NX_class") != "NXdata":
-        return None
-
-    result = _classify_field(hdf_node, name)
-    if result == "signal":
-        logger.debug(f"{indent}Dataset referenced as NXdata SIGNAL")
-    elif result == "axis":
-        # Preserve index-number in the log message where we can derive it
-        parent_signal = decode_if_string(parent.attrs.get("signal"))
-        axes = parent.attrs.get("axes")
-        indices_key = f"{name}_indices"
-        if isinstance(axes, str):
-            logger.debug(f"{indent}Dataset referenced as NXdata AXIS")
-        elif axes is not None:
-            matched = False
-            for i, axis_name in enumerate(axes):
-                if name == decode_if_string(axis_name):
-                    indices = parent.attrs.get(f"{decode_if_string(axis_name)}_indices")
-                    if isinstance(indices, numbers.Integral):
-                        logger.debug(
-                            f"{indent}Dataset referenced as NXdata AXIS #%d",
-                            int(indices),
-                        )
-                    else:
-                        logger.debug(
-                            f"{indent}Dataset referenced as NXdata AXIS #%d",
-                            i,
-                        )
-                    matched = True
-                    break
-            if not matched:
-                logger.debug(f"{indent}Dataset referenced as NXdata AXIS")
-        elif isinstance(parent.attrs.get(indices_key), numbers.Integral):
-            logger.debug(
-                f"{indent}Dataset referenced as NXdata alternative AXIS #%d",
-                int(parent.attrs[indices_key]),
-            )
-        else:
-            # v2/v1 fallback — let chk_nxdata_axis_v2 log the appropriate message
-            return chk_nxdata_axis_v2(hdf_node, name, indent=indent, logger=logger)
-    return result
-
-
-def logger_auxiliary_signal(
-    nxdata: h5py.Group, logger: logging.Logger | None = None
-) -> None:
-    """Log any auxiliary signals declared in *nxdata*."""
-    logger = logger or _logger
-    aux = decode_if_string(nxdata.attrs.get("auxiliary_signals"))
-    if aux is not None:
-        if isinstance(aux, str):
-            aux = [aux]
-        for aux_sig in aux:
-            logger.debug(f"Further auxiliary signal has been identified: {aux_sig}")
-
-
-def print_default_plottable_header(logger: logging.Logger | None = None) -> None:
-    """Print a three-line header for the default plottable section."""
-    logger = logger or _logger
-    logger.debug("")
-    logger.debug("========================")
-    logger.debug("=== Default Plottable ===")
-    logger.debug("========================")
 
 
 def get_single_or_multiple_axes(
