@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-from typing import Optional
-
 import h5py
 import lxml.etree as ET
 import numpy as np
@@ -35,7 +33,7 @@ try:
     from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
     from nomad.metainfo import MEnum, MSection
-    from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
+    from nomad.metainfo.util import MQuantity, resolve_variadic_name
     from nomad.parsing import MatchingParser
     from nomad.utils import get_logger
     from pint.errors import UndefinedUnitError
@@ -46,7 +44,6 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema_packages.schema as nexus_schema
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import decode_or_not
-from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad import FIELD_STATISTICS, REPLACEMENT_FOR_NX, get_quantity_base_name
 from pynxtools.nomad import _rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.units import ureg
@@ -273,41 +270,90 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
 
 class NomadVisitor(NexusVisitor):
     """
-    NexusVisitor that populates the NOMAD archive.
+    NexusVisitor that populates a NOMAD archive from a NeXus/HDF5 file.
 
-    Invokes *callback* for every HDF5 field and attribute that is
-    documented in the NXDL schema.  The callback receives the same
-    ``params`` dict that ``_nexus_populate`` expects, preserving the
-    legacy interface until ``_to_section`` / ``_populate_data`` are
-    migrated to consume :class:`~pynxtools.nexus.nexus_tree.NexusNode`
-    directly.
+    Implements the full visitor interface, maintaining a ``_sections`` cache
+    (``hdf_path → MSection``) that is populated in ``on_group``.  ``on_field``
+    and ``on_attribute`` look up their parent section from the cache rather than
+    re-walking the full HDF5 path on every callback.
+
+    ``_populate_data`` (previously on ``NexusParser``) lives here so that all
+    archive-population logic is co-located with the traversal state.
     """
 
     _SKIP_ATTRS: frozenset = frozenset({"NX_class", "target"})
 
-    def __init__(self, logger, callback) -> None:
+    def __init__(self, nx_root: MSection, nxs_fname: str, logger) -> None:
+        self._nx_root = nx_root
+        self._nxs_fname = nxs_fname
         self._logger = logger
-        self._callback = callback
+        # hdf_path (no leading "/") → MSection for that HDF5 group
+        self._sections: dict[str, MSection] = {}
+        self.sample_class_refs: dict[str, list] = {
+            "NXsample": [],
+            "NXsubstance": [],
+            "NXsample_component": [],
+        }
 
-    def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
+    # ------------------------------------------------------------------
+    # NexusVisitor interface
+    # ------------------------------------------------------------------
+
+    def on_group(self, hdf_path: str, hdf_node: h5py.Group) -> None:
+        """Navigate to (or create) the NOMAD section for this HDF5 group."""
+        if hdf_path == "":
+            # Root group — anchor the nx_root section
+            self._nx_root.m_set_section_attribute("m_nx_data_path", "/")
+            self._nx_root.m_set_section_attribute("m_nx_data_file", self._nxs_fname)
+            self._sections[""] = self._nx_root
+            return
+
         hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
-        val = (
-            str(decode_if_string(hdf_node[()])).split("\n")
-            if len(hdf_node.shape) <= 1
-            else str(decode_if_string(hdf_node[0])).split("\n")
-        )
         _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
         if nxdl_path is None or nxdl_path == "/":
             return
-        self._callback(
-            {
-                "hdf_info": hdf_info,
-                "nxdef": nxdef,
-                "nxdl_path": nxdl_path,
-                "val": val,
-                "logger": self._logger,
-            }
+
+        nxdef_nomad = rename_nx_for_nomad(nxdef) if nxdef else None
+        parent_path = hdf_path.rsplit("/", 1)[0] if "/" in hdf_path else ""
+        parent_section = self._sections.get(parent_path)
+        if parent_section is None:
+            # Parent group was undocumented; skip this subtree
+            return
+
+        group_name = hdf_path.rsplit("/", 1)[-1]
+        # depth = 1-indexed position of this group within the nxdl_path list
+        depth = len(hdf_path.split("/"))
+        nx_node = (
+            nxdl_path[depth]
+            if isinstance(nxdl_path, list) and depth < len(nxdl_path)
+            else group_name
         )
+
+        section = _to_section(
+            group_name, nxdef_nomad, nx_node, parent_section, self._nx_root
+        )
+        self._collect_class(section)
+        section.m_set_section_attribute("m_nx_data_path", "/" + hdf_path)
+        section.m_set_section_attribute("m_nx_data_file", self._nxs_fname)
+        self._sections[hdf_path] = section
+
+    def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
+        """Populate the NOMAD quantity for this HDF5 dataset."""
+        hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
+        _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
+        if nxdl_path is None or nxdl_path == "/":
+            return
+
+        nxdef_nomad = rename_nx_for_nomad(nxdef) if nxdef else None
+        parent_path = hdf_path.rsplit("/", 1)[0] if "/" in hdf_path else ""
+        current = self._sections.get(parent_path)
+        if current is None:
+            return
+
+        # depth after a full _nexus_populate walk of this field's path:
+        # one past the field name itself (matches post-loop depth in _nexus_populate)
+        depth = len(hdf_path.split("/")) + 1
+        self._populate_data(depth, nxdl_path, nxdef_nomad, hdf_node, current, attr=None)
 
     def on_attribute(
         self,
@@ -316,58 +362,53 @@ class NomadVisitor(NexusVisitor):
         attr_value,
         parent: h5py.Group | h5py.Dataset,
     ) -> None:
+        """Populate the NOMAD quantity attribute for this HDF5 attribute."""
         if attr_name in self._SKIP_ATTRS:
             return
+
         hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": parent}
-        val = str(decode_if_string(attr_value)).split("\n")
         req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False, attr=attr_name)
-        if req_str and "NOT IN SCHEMA" not in req_str and "None" not in req_str:
-            self._callback(
-                {
-                    "hdf_info": hdf_info,
-                    "nxdef": nxdef,
-                    "nxdl_path": nxdl_path,
-                    "val": val,
-                    "logger": self._logger,
-                },
-                attr=attr_name,
-            )
+        if not req_str or "NOT IN SCHEMA" in req_str or "None" in req_str:
+            return
 
+        nxdef_nomad = rename_nx_for_nomad(nxdef) if nxdef else None
 
-class NexusParser(MatchingParser):
-    """
-    NexusParser doc
-    """
+        # For a group attribute, the MSection is the group itself.
+        # For a field attribute, the MSection is the group that contains the field
+        # (_to_section returns current unchanged for non-group NXDL nodes).
+        if isinstance(parent, h5py.Group):
+            current = self._sections.get(hdf_path)
+        else:
+            parent_path = hdf_path.rsplit("/", 1)[0] if "/" in hdf_path else ""
+            current = self._sections.get(parent_path)
+        if current is None:
+            return
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.archive: EntryArchive | None = None
-        self.nx_root = None
-        self._logger = None
-        self.nxs_fname: str = ""
-        self._sample_class_refs = {
-            "NXsample": [],
-            "NXsubstance": [],
-            "NXsample_component": [],
-        }
+        depth = len(hdf_path.split("/")) + 1
+        self._populate_data(
+            depth, nxdl_path, nxdef_nomad, parent, current, attr=attr_name
+        )
 
-    def _clear_class_refs(self):
-        for key in self._sample_class_refs:
-            self._sample_class_refs[key] = []
+    def on_complete(self, root: h5py.File) -> None:
+        pass
 
-    def _collect_class(self, current: MSection):
+    # ------------------------------------------------------------------
+    # Internal helpers (previously on NexusParser)
+    # ------------------------------------------------------------------
+
+    def _collect_class(self, current: MSection) -> None:
         class_name = current.m_def.more.get("nx_type")
         if (
-            class_name in self._sample_class_refs
-            and current not in self._sample_class_refs[class_name]
+            class_name in self.sample_class_refs
+            and current not in self.sample_class_refs[class_name]
         ):
-            self._sample_class_refs[class_name].append(current)
+            self.sample_class_refs[class_name].append(current)
 
     def _populate_data(
         self, depth: int, nx_path: list, nx_def: str, hdf_node, current: MSection, attr
     ):
         """
-        Populate attributes and fields
+        Populate attributes and fields into the NOMAD archive.
         """
         if attr:  # it is an attribute of either a field or a group
             nx_root = False
@@ -390,7 +431,9 @@ class NexusParser(MatchingParser):
 
                 attr_name = nx_attr.get("name")  # could be 1D array, float or int
                 attr_value = hdf_node.attrs[attr_name]
-                current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
+                current = _to_section(
+                    attr_name, nx_def, nx_attr, current, self._nx_root
+                )
                 try:
                     if nx_root or nx_parent.tag.endswith("group"):
                         parent_html_name = ""
@@ -439,7 +482,7 @@ class NexusParser(MatchingParser):
                     current.m_set(metainfo_def, attribute)
                     # if attributes are set before setting the quantity, a bug can cause them being set under a wrong variadic name
                     attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
-                    attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                    attribute.m_set_attribute("m_nx_data_file", self._nxs_fname)
                 except Exception as e:
                     self._logger.warning(
                         f"error while setting attribute {data_instance_name} in {current.m_def} as {metainfo_def}",
@@ -465,16 +508,11 @@ class NexusParser(MatchingParser):
                 return
 
             # Metainfo does not support precision higher than i8, u8, f8, c16
-            # is f2 supported ? maybe silently promote to f4 or f8, maybe downcast higher
-            # precision floating and complex to highest supported precision floating and complex respectively
             if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
                 self._logger.warning(
                     f"error while setting field {data_instance_name} in {current.m_def} precision {hdf_node.dtype.itemsize} too high for {field_name}"
                 )
                 return
-
-            # Metainfo also does not support unpacked arbitrary objects or struct
-            # also these should be caught
 
             field_stats: dict = {}  # stats built from finite iuf arrays
 
@@ -483,7 +521,6 @@ class NexusParser(MatchingParser):
                     if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
                         field_stats = _get_field_stats_iuf_chunked(hdf_node)
                     else:  # load entire contiguous storage layout dataset at once
-                        # we suggest to use chunked storage to avoid these costly cases
                         field_stats = _get_field_stats_iuf_contiguous(hdf_node)
 
                     for suffix in FIELD_STATISTICS:
@@ -494,11 +531,7 @@ class NexusParser(MatchingParser):
                             )
                             return
 
-                    # now we are sure that key "__mean" exists and its value is finite
-                    # take mean as representative "first" value
                     field = field_stats["__mean"]
-                    # least costly alternative take "first" value
-                    # field = hdf_node[(0,) * hdf_node.ndim]
                 else:  # scalar, no stats
                     field = hdf_node[()]
                     if not np.isfinite(field):
@@ -507,12 +540,9 @@ class NexusParser(MatchingParser):
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
-            # for all non iuf data use old approach, no stats for any of these
-            # eventually make a second optimization round for complex numbers
-            # we have not faced though high volume examples with complex numbers yet
             elif hdf_node.dtype.kind in "c":
                 if hdf_node.shape != ():
-                    field = hdf_node[(0,) * hdf_node.ndim]  # just "first" value
+                    field = hdf_node[(0,) * hdf_node.ndim]
                 else:
                     field = hdf_node[()]
                 if not np.isfinite(field):
@@ -523,7 +553,7 @@ class NexusParser(MatchingParser):
                     return
             elif np.issubdtype(hdf_node.dtype, np.bool_):
                 if hdf_node.shape != ():
-                    field = bool(hdf_node[(0,) * hdf_node.ndim])  # just "first" value
+                    field = bool(hdf_node[(0,) * hdf_node.ndim])
                 else:
                     field = bool(hdf_node[()])
             else:  # strings
@@ -561,11 +591,10 @@ class NexusParser(MatchingParser):
             elif metainfo_def.unit is None and pint_unit is not None:
                 metainfo_def.unit = pint_unit
 
-            # may need to check if the given unit is in the allowable list
             try:
                 current.m_set(metainfo_def, field)
                 field.m_set_attribute("m_nx_data_path", hdf_node.name)
-                field.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                field.m_set_attribute("m_nx_data_file", self._nxs_fname)
                 if is_variadic:
                     concept_basename = get_quantity_base_name(field.name)
                     instance_name = get_quantity_base_name(data_instance_name)
@@ -575,14 +604,12 @@ class NexusParser(MatchingParser):
                     name_value = MQuantity.wrap(instance_name, instance_name + "__name")
                     current.m_set(name_metainfo_def, name_value)
                     name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
-                    name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                    name_value.m_set_attribute("m_nx_data_file", self._nxs_fname)
                 if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
                     for suffix in FIELD_STATISTICS:
                         if suffix != "__mean":
                             concept_basename = get_quantity_base_name(field.name)
                             instance_name = get_quantity_base_name(data_instance_name)
-                            # ignore mean as for non-scalar iuf datasets
-                            # the mean has already been taken as the representative value
                             stat_metainfo_def = resolve_variadic_name(
                                 current.m_def.all_quantities, concept_basename + suffix
                             )
@@ -590,8 +617,6 @@ class NexusParser(MatchingParser):
                                 field_stats[suffix], instance_name + suffix
                             )
                             current.m_set(stat_metainfo_def, stat)
-                            # stat.m_set_attribute("m_nx_data_path", hdf_node.name)
-                            # stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
@@ -599,87 +624,34 @@ class NexusParser(MatchingParser):
                     exc_info=e,
                 )
 
-    def _nexus_populate(self, params: dict, attr=None):  # pylint: disable=W0613
-        """
-        Walks through name_list and generate nxdl nodes
-        (hdf_info, nx_def, nx_path, val, logger) = params
-        """
 
-        hdf_info: dict = params["hdf_info"]
-        nx_def: str = params["nxdef"]
-        nx_path: list = params["nxdl_path"]
+class NexusParser(MatchingParser):
+    """
+    NexusParser doc
+    """
 
-        hdf_path: str = hdf_info["hdf_path"]
-        hdf_node = hdf_info["hdf_node"]
-        if nx_def is not None:
-            nx_def = rename_nx_for_nomad(nx_def)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.archive: EntryArchive | None = None
+        self.nx_root = None
+        self._logger = None
+        self.nxs_fname: str = ""
 
-        if nx_path is None or nx_path == "/":
-            return
-
-        # current: MSection = _to_section(None, nx_def, None, self.nx_root)
-        current = self.nx_root
-        current.m_set_section_attribute("m_nx_data_path", "/")
-        current.m_set_section_attribute("m_nx_data_file", self.nxs_fname)
-        depth: int = 1
-        current_hdf_path = ""
-        for name in hdf_path.split("/")[1:]:
-            nx_node = nx_path[depth] if depth < len(nx_path) else name
-            current = _to_section(name, nx_def, nx_node, current, self.nx_root)
-            self._collect_class(current)
-            depth += 1
-            if depth < len(nx_path):
-                current_hdf_path = current_hdf_path + ("/" + name)
-            if nx_node is not None and isinstance(nx_node, ET._Element):
-                if nx_node.tag.endswith("group"):
-                    current.m_set_section_attribute("m_nx_data_path", current_hdf_path)
-                    current.m_set_section_attribute("m_nx_data_file", self.nxs_fname)
-        self._populate_data(depth, nx_path, nx_def, hdf_node, current, attr)
-
-    def get_sub_element_names(self, elem: MSection):
-        return elem.m_def.all_aliases.keys()
-
-    def get_sub_elements(self, elem: MSection, type_filter: str = None):
-        e_list = self.get_sub_element_names(elem)
-        filtered = []
-        for elem_name in e_list:
-            sub_elem = getattr(elem, elem_name, None)
-            if sub_elem is None:
-                continue
-            if type_filter:
-                if not (isinstance(sub_elem, MSection | MSubSectionList)):
-                    continue
-                if isinstance(sub_elem, list):
-                    if len(sub_elem) > 0:
-                        nx_type = sub_elem[0].m_def.nx_type
-                    else:
-                        continue
-                else:
-                    nx_type = sub_elem.m_def.nx_type
-                if nx_type != type_filter:
-                    continue
-            if not isinstance(sub_elem, list):
-                sub_elem = [sub_elem]
-            for individual in sub_elem:
-                filtered.append(individual)
-        return filtered
-
-    def _get_chemical_formulas(self) -> tuple[set[str], set[str]]:
+    def _get_chemical_formulas(
+        self, sample_class_refs: dict
+    ) -> tuple[set[str], set[str]]:
         """
         Parses the descriptive chemical formula and a set of elements from a NeXus entry.
         """
         element_set: set[str] = set()
         chemical_formulas: set[str] = set()
 
-        for sample in self._sample_class_refs["NXsample"]:
+        for sample in sample_class_refs["NXsample"]:
             if sample.get("atom_types__field") is not None:
                 atom_types = sample.atom_types__field
                 if isinstance(atom_types, list):
                     for symbol in atom_types:
                         if symbol in chemical_symbols[1:]:
-                            # chemical_symbol from ase.data is ['X', 'H', 'He', ...]
-                            # but 'X' is not a valid chemical symbol just trick to
-                            # have array indices matching element number
                             element_set.add(symbol)
                         else:
                             self._logger.warn(
@@ -693,18 +665,14 @@ class NexusParser(MatchingParser):
                             self._logger.warn(
                                 f"Ignoring {symbol} as it is not for an element from the periodic table"
                             )
-                # given that the element list will be overwritten
-                # in case a single chemical formula is found we do not add
-                # a chemical formula here as this anyway be correct only
-                # if len(materials.element) == 1 !
             if sample.get("chemical_formula__field") is not None:
                 chemical_formulas.add(sample.chemical_formula__field)
 
-        for section in self._sample_class_refs["NXsample_component"]:
+        for section in sample_class_refs["NXsample_component"]:
             if section.get("chemical_formula__field") is not None:
                 chemical_formulas.add(section.chemical_formula__field)
 
-        for substance in self._sample_class_refs["NXsubstance"]:
+        for substance in sample_class_refs["NXsubstance"]:
             if substance.get("molecular_formula_hill__field") is not None:
                 chemical_formulas.add(substance.molecular_formula_hill__field)
 
@@ -755,28 +723,24 @@ class NexusParser(MatchingParser):
             import debugpy  # will connect to debugger if in debug mode
 
             debugpy.debug_this_thread()
-            # now one can anywhere place a manual breakpoint like e.g. so
-            # debugpy.breakpoint()
 
         self.archive = archive
         self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member
-
         self.archive.data = self.nx_root
         self._logger = logger if logger else get_logger(__name__)
-        self._clear_class_refs()
 
         # if filename does not follow the pattern
         # .volumes/fs/<upload type>/<upload 2char>/<upload>/<raw/arch>/[subdirs?]/<filename>
         self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
-        nexus_helper = HandleNexus(logger, mainfile)
-        nexus_helper.process_nexus_master_file(self._nexus_populate)
+
+        visitor = NomadVisitor(self.nx_root, self.nxs_fname, self._logger)
+        NexusFileHandler(mainfile).process(visitor)
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:
             archive.metadata = EntryMetadata()
 
         # Normalize experiment type
-        # app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
         app_def_list = set()
         try:
             app_entries = getattr(self.nx_root, "ENTRY")
@@ -806,7 +770,9 @@ class NexusParser(MatchingParser):
             archive.results = Results()
         results = archive.results
 
-        chemical_formulas, element_set = self._get_chemical_formulas()
+        chemical_formulas, element_set = self._get_chemical_formulas(
+            visitor.sample_class_refs
+        )
 
         if element_set:
             if results.material is None:
