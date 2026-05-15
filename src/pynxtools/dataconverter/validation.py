@@ -24,8 +24,7 @@ from collections import defaultdict
 from collections.abc import Mapping, MutableMapping, Sequence
 from functools import reduce
 from operator import getitem
-from os import path
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 if DEBUG_VALIDATION:
     import debugpy  # will connect to debugger if in debug mode
@@ -1111,7 +1110,7 @@ def validate_dict_against(
                         index,
                     )
 
-        keys = _follow_link(keys, prev_path)
+        keys = _follow_link(keys, prev_path, node)
         signal = keys.get("@signal")
         aux_signals = keys.get("@auxiliary_signals", [])
         axes = keys.get("@axes", [])
@@ -1130,7 +1129,7 @@ def validate_dict_against(
             for x in keys
             if x not in [signal, *axes, *indices, *errors, *aux_signals]
         }
-        remaining_keys = _follow_link(remaining_keys, prev_path)
+        remaining_keys = _follow_link(remaining_keys, prev_path, node)
         recurse_tree(
             node,
             remaining_keys,
@@ -1231,7 +1230,7 @@ def validate_dict_against(
             if node.nx_class == "NXcollection":
                 return
             else:
-                variant_keys = _follow_link(keys[variant], variant_path)
+                variant_keys = _follow_link(keys[variant], variant_path, node)
                 recurse_tree(node, variant_keys, prev_path=variant_path)
 
     def remove_from_not_visited(path: str) -> str:
@@ -1274,25 +1273,23 @@ def validate_dict_against(
         for key, value in keys.copy().items():
             if isinstance(value, dict) and "link" in value:
                 link_key = None  # Track is linked path exists
-
-                if ":" in value["link"]:
-                    file_path, link_path = value["link"].split(":", 1)
+                file_path = None
+                if re_groups := re.match(
+                    r"^(.+\.(?:nxs|h5|hdf5)):(.+)$", value["link"]
+                ):
+                    file_path, link_path = re_groups.groups()[0:2]
                 else:
                     link_path = value["link"]
 
-                # Allow link path with and without /
-                link_path = (
-                    value["link"][1:]
-                    if value["link"].startswith("/")
-                    else f"{value['link']}"
-                )
+                # Allow link path with and without leading /
+                link_path = link_path[1:] if link_path.startswith("/") else link_path
 
                 key_path = f"{prev_path}/{key}" if prev_path else key
                 # External link resolution (file_path:link_path)
                 if ":" in value["link"]:
 
-                    def get_node(name, obj):
-                        if name == link_path:
+                    def get_node(_, obj):
+                        if obj.name[1:] == link_path:
                             return obj
 
                     if not os.path.isfile(file_path):
@@ -1304,12 +1301,32 @@ def validate_dict_against(
                     else:
                         link_key = link_path  # activate flag
                         with h5py.File(file_path, "r") as hdf_file:
-                            node = hdf_file.visit(get_node)
+                            ext_node = hdf_file.visititems(get_node)
 
-                            if node is not None:
-                                if isinstance(node, h5py.Dataset) and node is not None:
-                                    dataset = node[()]
-                                    is_valid_data_field(dataset, node.dtype, key)
+                            if ext_node is not None and isinstance(
+                                ext_node, h5py.Dataset
+                            ):
+                                dataset = clean_str_attr(ext_node[()])
+
+                                # Resolve external field links to the dataset value so field
+                                # validation does not treat link dicts as groups.
+                                resolved_keys[key] = dataset
+
+                                if node is not None:
+                                    if node.nx_type in (
+                                        "field",
+                                        "attribute",
+                                    ):
+                                        is_valid_data_field(dataset, node.dtype, key)
+                                    elif (
+                                        node.nx_type == "group"
+                                        and node.nx_class == "NXdata"
+                                    ):
+                                        child = node.get_child_by_name(key)
+                                        is_valid_data_field(dataset, child.dtype, key)
+                            else:
+                                link_key = None  # Clean up keys
+
                             # For groups no need to check the external Group type and content
 
                 # Internal link resolution
@@ -1337,7 +1354,8 @@ def validate_dict_against(
                     keys_to_remove.append(f"{key_path}/@target")
                     del resolved_keys[key]
                 else:
-                    resolved_keys[key] = current_keys
+                    if not file_path:  # exclude external link
+                        resolved_keys[key] = current_keys
 
                     if f"{key_path}/@target" not in mapping:
                         # Target attribute added automatically
@@ -1373,10 +1391,22 @@ def validate_dict_against(
         for variant in variants:
             variant_path = remove_from_not_visited(f"{prev_path}/{variant}")
 
+            variant_value = keys[variant]
+            if isinstance(variant_value, Mapping) and "link" in variant_value:
+                resolved_link = _follow_link(
+                    {variant: variant_value}, prev_path, node=node
+                )
+                if (
+                    not isinstance(resolved_link, Mapping)
+                    or variant not in resolved_link
+                ):
+                    continue
+                variant_value = resolved_link[variant]
+
             if (
-                isinstance(keys[variant], Mapping)
-                and not all(k.startswith("@") for k in keys[variant])
-                and "compress" not in list(keys[variant].keys())
+                isinstance(variant_value, Mapping)
+                and not all(k.startswith("@") for k in variant_value)
+                and "compress" not in list(variant_value.keys())
             ):
                 # A field should not have a dict of keys that are _not_ all attributes,
                 # i.e. there should be no sub-fields or sub-groups.
@@ -1423,10 +1453,10 @@ def validate_dict_against(
 
                 continue
 
-            if node.optionality == "required" and isinstance(keys[variant], Mapping):
+            if node.optionality == "required" and isinstance(variant_value, Mapping):
                 # Check if all fields in the dict are actual attributes (startswith @)
                 all_attrs = True
-                for entry in keys[variant]:
+                for entry in variant_value:
                     if not entry.startswith("@"):
                         all_attrs = False
                         break
@@ -1465,7 +1495,7 @@ def validate_dict_against(
 
             # Check general validity
             mapping[variant_path] = is_valid_data_field(
-                keys[variant],
+                variant_value,
                 node.dtype,
                 variant_path,
             )
@@ -1742,7 +1772,7 @@ def validate_dict_against(
             return True
 
         if isinstance(mapping[key], Mapping) and "link" in mapping[key]:
-            resolved_link = _follow_link({key: mapping[key]}, "")
+            resolved_link = _follow_link({key: mapping[key]}, "", node=node)
 
             if key not in resolved_link:
                 # Link is broken and key will be removed; no need to check further
