@@ -39,13 +39,13 @@ Since the validation is performed during the conversion, it is possible to autom
 
 ## `pynx validate`: Validate existing NeXus/HDF5 files
 
-While we encourage NeXus users to convert their data using the `pynxtools` data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, `pynxtools` provides a **standalone validator** (`pynx validate`). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the [API documentation](../../reference/cli-api.md#nexus-file-validation).
+While we encourage NeXus users to convert their data using the `pynxtools` data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, `pynxtools` provides a **standalone validator** (`pynx validate`). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the [API documentation](../../reference/cli-api.md#nexus-file-validation-pynx-validate).
 
 Validation of existing files is generally more straightforward than validating the `pynxtools` template as the NeXus type (i.e., group/fields/attributes) of instance data is easily detected from the file structure. Therefore, no additional special rules are applied in `pynx validate` other than those given above.
 
 ## `pynx read`: NeXus file reader and debugger
 
-In addition to the validation tools mentioned above, there is another utility in `pynxtools` called **`pynx read`** (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in the [API documentation](../../reference/cli-api.md#nexus-annotator).
+In addition to the validation tools mentioned above, there is another utility in `pynxtools` called **`pynx read`** (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in [Reference > API for command line tools > pynx read](../../reference/cli-api.md#nexus-file-annotator-pynx-read).
 
 <!-- ??? info "Using a different set of NeXus definitions"
 
