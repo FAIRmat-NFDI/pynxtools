@@ -433,70 +433,46 @@ def get_default_plottable(
 ):
     """Walk *root* to identify and log the default plottable signal and axes.
 
-    .. deprecated::
-        Depends on :func:`_process_node` / :func:`get_nxdl_doc`, the legacy
-        XML traversal stack.  Called from :meth:`.annotation.Annotator.on_complete`;
-        should be replaced by a pure NXdata inspection that uses the NexusNode tree.
+    Implements the three NeXus Data Plotting Standard conventions (v3→v2→v1)
+    via :func:`~pynxtools.nexus.nxdata.find_default_nxdata` and
+    :func:`~pynxtools.nexus.nxdata.inspect_nxdata`.
     """
-    logger = logger or _logger
+    from pynxtools.nexus.nxdata import (
+        find_default_nxdata,
+        find_default_nxentry,
+        inspect_nxdata,
+    )
 
+    logger = logger or _logger
     print_default_plottable_header(logger)
-    # v3 from 2014
-    # nxentry
-    nxentry = None
-    default_nxentry_group_name = decode_if_string(root.attrs.get("default"))
-    if default_nxentry_group_name:
-        try:
-            nxentry = root[default_nxentry_group_name]
-        except KeyError:
-            nxentry = None
-    if not nxentry:
-        nxentry = entry_helper(root)
+
+    nxentry = find_default_nxentry(root)
     if not nxentry:
         logger.debug("No NXentry has been found")
         return
     logger.debug("")
     logger.debug("NXentry has been identified: " + nxentry.name)
-    # nxdata
-    nxdata = None
-    nxgroup = nxentry
-    default_group_name = decode_if_string(nxgroup.attrs.get("default"))
-    while default_group_name:
-        try:
-            nxgroup = nxgroup[default_group_name]
-            default_group_name = decode_if_string(nxgroup.attrs.get("default"))
-        except KeyError:
-            logger.debug(f"""No default group with a name
-                         {default_group_name} for {nxgroup} has been found.""")
-            break
 
-    if nxgroup == nxentry:
-        nxdata = nxdata_helper(nxentry)
-    else:
-        nxdata = nxgroup
+    nxdata = find_default_nxdata(root)
     if not nxdata:
         logger.debug("No NXdata group has been found")
         return
     logger.debug("")
     logger.debug("NXdata group has been identified: " + nxdata.name)
-    # signal
-    signal = None
-    signal_dataset_name = decode_if_string(nxdata.attrs.get("signal"))
-    try:
-        signal = nxdata[signal_dataset_name]
-    except (TypeError, KeyError):
-        signal = None
-    if not signal:
-        signal = signal_helper(nxdata)
-    if not signal:
+
+    info = inspect_nxdata(nxdata)
+    if info.signal is None:
         logger.debug("No Signal has been found")
         return
     logger.debug("")
-    logger.debug("Signal has been identified: " + signal.name)
-    logger_auxiliary_signal(nxdata, logger)  # check auxiliary_signals
-    dim = len(signal.shape)
-    axes: list = []  # axes
-    axis_helper(dim, nxdata, signal, axes, logger)
+    logger.debug("Signal has been identified: " + info.signal.name)
+    logger_auxiliary_signal(nxdata, logger)
+
+    for a_item, ax_list in enumerate(info.axes):
+        logger.debug("")
+        logger.debug(
+            f"For Axis #{a_item}, {len(ax_list)} axes have been identified: {ax_list!s}"
+        )
 
 
 #: Backward-compatibility alias — new code should use ``_get_inherited_hdf_nodes``.
