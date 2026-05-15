@@ -65,7 +65,7 @@ Three operating modes:
       Only groups can be found via their `NX_class` attribute in that case.
 
 ::: mkdocs-click
-    :module: pynxtools.nexus.cli
+    :module: pynxtools.annotator.cli
     :command: read
     :prog_name: pynx read
     :depth: 2
