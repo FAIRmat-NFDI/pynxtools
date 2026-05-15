@@ -24,6 +24,8 @@ import re
 
 from pynxtools.dataconverter import helpers
 
+__all__ = ["Template"]
+
 logger = logging.getLogger("pynxtools")
 
 

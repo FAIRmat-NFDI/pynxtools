@@ -20,6 +20,8 @@
 import re
 from typing import Union
 
+__all__ = ["NomadElnGenerator"]
+
 from pynxtools.eln_mapper.eln import ElnGenerator
 from pynxtools.nexus.nexus_tree import (
     NexusField,

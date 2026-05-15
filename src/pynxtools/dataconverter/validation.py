@@ -15,6 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+__all__ = [
+    "validate_hdf_group_against",
+    "validate_dict_against",
+]
+
 DEBUG_VALIDATION = False
 import copy
 import os

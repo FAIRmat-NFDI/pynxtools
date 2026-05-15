@@ -17,6 +17,8 @@
 #
 """Helper functions commonly used by the convert routine."""
 
+__all__ = ["generate_template_from_nxdl"]
+
 import json
 import logging
 import os

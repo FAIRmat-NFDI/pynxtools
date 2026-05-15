@@ -24,6 +24,12 @@ from datetime import datetime
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 
+__all__ = [
+    "get_nexus_version",
+    "get_nexus_version_hash",
+    "get_definitions_url",
+]
+
 LOGGER_LEVELS_TO_HIGHLIGHT = (logging.WARNING, logging.ERROR)
 
 MAIN_BRANCH_NAME = "fairmat"

@@ -53,6 +53,8 @@ from pynxtools.dataconverter.readers.multi.reader import (
 )
 from pynxtools.dataconverter.template import Template
 
+__all__ = ["JsonMapReader"]
+
 logger = logging.getLogger("pynxtools")
 
 

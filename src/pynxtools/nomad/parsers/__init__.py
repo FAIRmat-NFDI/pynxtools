@@ -15,6 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""
+Public API for ``pynxtools.nomad.parsers``.
+
+Requires ``nomad-lab`` to be installed.
+
+NomadVisitor
+    NexusVisitor implementation that populates a NOMAD EntryArchive from a
+    NeXus/HDF5 file.  Used internally by NexusParser.
+NexusParser
+    NOMAD MatchingParser that parses ``.nxs`` files and writes NeXus data
+    into a NOMAD archive.
+"""
 
 try:
     from nomad.config.models.plugins import ParserEntryPoint
@@ -23,6 +35,9 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+__all__ = ["NomadVisitor", "NexusParser"]
+
+from pynxtools.nomad.parsers.parser import NexusParser, NomadVisitor
 
 class NexusParserEntryPoint(ParserEntryPoint):
     def load(self):

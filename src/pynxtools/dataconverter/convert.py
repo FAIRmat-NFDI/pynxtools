@@ -37,6 +37,13 @@ logger = logging.getLogger("pynxtools")
 
 from importlib.metadata import entry_points
 
+__all__ = [
+    "ValidationFailed",
+    "get_reader",
+    "get_names_of_all_readers",
+    "convert",
+]
+
 
 class ValidationFailed(Exception):
     pass

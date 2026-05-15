@@ -31,6 +31,18 @@ import logging
 from functools import lru_cache, reduce
 from typing import Any, Literal, Optional
 
+__all__ = [
+    "NexusType",
+    "NexusUnitCategory",
+    "NexusNode",
+    "NexusChoice",
+    "NexusLink",
+    "NexusGroup",
+    "NexusEntity",
+    "generate_tree_from",
+    "populate_tree_from_parents",
+]
+
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 

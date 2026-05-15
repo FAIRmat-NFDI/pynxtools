@@ -45,6 +45,8 @@ from typing import Any, Literal
 
 import h5py
 
+__all__ = ["Annotator"]
+
 from pynxtools.nexus.handler import NexusVisitor
 from pynxtools.nexus.nexus_tree import NexusField, NexusNode, generate_tree_from
 from pynxtools.nexus.nxdata import (

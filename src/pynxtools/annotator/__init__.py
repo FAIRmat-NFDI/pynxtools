@@ -15,3 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""
+Public API for the ``pynxtools.annotator`` sub-package.
+
+Annotator
+    NexusVisitor implementation that annotates every node in an HDF5/NeXus
+    file with NXDL documentation, optionality, data types, unit categories,
+    and inheritance paths.  Used by the ``pynx read`` CLI command.
+"""
+
+from pynxtools.annotator.annotator import Annotator
+
+__all__ = ["Annotator"]

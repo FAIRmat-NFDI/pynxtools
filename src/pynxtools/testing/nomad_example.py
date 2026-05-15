@@ -17,6 +17,12 @@
 #
 """Test for NOMAD examples in reader plugins."""
 
+__all__ = [
+    "get_file_parameter",
+    "parse_nomad_examples",
+    "example_upload_entry_point_valid",
+]
+
 import os
 import tempfile
 from typing import Any

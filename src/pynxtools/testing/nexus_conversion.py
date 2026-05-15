@@ -17,6 +17,8 @@
 #
 """Generic test for reader plugins."""
 
+__all__ = ["ReaderTest"]
+
 import logging
 import os
 from glob import glob

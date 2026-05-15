@@ -22,6 +22,8 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 
+__all__ = ["NomadVisitor", "NexusParser"]
+
 DEBUG_PYNXTOOLS_WITH_NOMAD = False
 
 from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor

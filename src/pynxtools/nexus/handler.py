@@ -80,7 +80,11 @@ from typing import Any, Union
 
 import h5py
 
+<<<<<<< HEAD
 logger = logging.getLogger("pynxtools")
+=======
+__all__ = ["NexusVisitor", "NexusFileHandler"]
+>>>>>>> 7c1e849d (define stable public API: __all__, __init__.py re-exports, mkdocstrings docs)
 
 
 class NexusVisitor(ABC):
