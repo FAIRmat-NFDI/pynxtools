@@ -10,7 +10,7 @@ from pynxtools.nexus.handler import NexusFileHandler
 
 ROOT = Path(__file__).parent.parent
 EXAMPLE_NXS = str(ROOT / "src" / "pynxtools" / "data" / "201805_WSe2_arpes.nxs")
-REF_PATH = ROOT / "tests" / "data" / "nexus" / "Ref_nexus_test.log"
+REF_PATH = ROOT / "tests" / "data" / "annotator" / "Ref_nexus_test.log"
 
 
 def generate_ref_log():
