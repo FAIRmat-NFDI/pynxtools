@@ -1,6 +1,5 @@
 ════════════════════════════════════════════════════════════
 NeXus file          : 201805_WSe2_arpes.nxs
-Path                : /home/lukaspie/fairmat/nomad-distro-dev/packages/pynxtools/.worktrees/nexus-inheritance-concept-paths/src/pynxtools/data/201805_WSe2_arpes.nxs
 file_time           : 2020-06-04T19:19:48.464472
 HDF5_Version        : 1.10.5
 h5py_version        : 2.10.0
