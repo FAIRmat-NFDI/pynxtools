@@ -318,8 +318,8 @@ class Annotator(NexusVisitor):
             for src, values in node.get_inheritance_enums():
                 self._detail(det, "Enums", f"[{src}] {', '.join(values)}")
 
-    # Structural HDF5 attributes that carry no annotation value
-    _SKIP_ATTRS: frozenset = frozenset({"NX_class", "target"})
+    # Structural HDF5 attributes that carry no annotation value.
+    _SKIP_ATTRS: frozenset = frozenset({"NX_class"})
 
     def _annotate_attribute(
         self,
@@ -335,6 +335,14 @@ class Annotator(NexusVisitor):
         depth = self._depth(hdf_path)
         ind = "  " * depth
         det = ind + "  "
+
+        # @target is a blanket NeXus link convention (not per-concept in NXDL) —
+        # always annotate it as a link regardless of whether a schema node exists.
+        if attr_name == "target":
+            val = str(decode_if_string(attr_value)).split("\n")
+            val_str = val[0] + ("..." if len(val) > 1 else "")
+            self.logger.debug(f"{det}@target = {val_str}  [NeXus link]")
+            return
 
         attr_node = self._resolver.attr_node_for(hdf_path, attr_name, parent)
         in_schema = attr_node is not None

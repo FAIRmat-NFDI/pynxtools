@@ -28,4 +28,5 @@
                         follow the order of scan points, detector pixels, then time-of-flight (i.e.
                         spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
                         shown here are merely illustrative of coordination between related datasets.
+        @target = /entry/instrument/analyser/data  [NeXus link]
         @units = counts  [UNIT: NX_ANY]
