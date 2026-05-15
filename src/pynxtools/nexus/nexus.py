@@ -1,11 +1,12 @@
 # pylint: disable=too-many-lines
-"""Utility functions for inspecting NeXus NXDL files.
+"""Legacy XML-element utilities for NeXus NXDL inspection.
 
-TODO: All functions in this module are currently used only by the NOMAD parser
-(NomadParser/HandleNexus) via the legacy `get_nxdl_doc` / `get_nxdl_entry`
-interface.  Once a dedicated NomadVisitor (implementing NexusVisitor) is
-implemented, these functions can be removed entirely.  The Annotator no longer
-depends on anything here except `get_default_plottable`.
+.. deprecated::
+    All public functions in this module are used solely by the NOMAD parser
+    (``HandleNexus`` / ``get_nxdl_doc``) via the legacy XML-element traversal
+    interface.  Once a dedicated ``NomadVisitor`` (implementing ``NexusVisitor``)
+    is implemented, this entire module can be removed.  No other pynxtools code
+    depends on it.
 """
 
 import logging
@@ -18,15 +19,7 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 
-# TODO: remove these imports when NomadVisitor is implemented
-from pynxtools.annotator.nxdata import (
-    axis_helper,
-    entry_helper,
-    find_attrib_axis_actual_dim_num,
-    get_single_or_multiple_axes,
-    nxdata_helper,
-    signal_helper,
-)
+# TODO: this module is marked for deprecated, remove when NomadVisitor exists
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
     check_attr_name_nxdl,
@@ -50,7 +43,10 @@ _logger = logging.getLogger(__file__)
 
 
 def get_nxdl_entry(hdf_info):
-    """Get the nxdl application definition for an HDF5 node"""
+    """Get the nxdl application definition for an HDF5 node.
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     entry = hdf_info
     if (
         "NX_class" in entry["hdf_node"].attrs.keys()
@@ -73,8 +69,10 @@ def get_nxdl_entry(hdf_info):
 
 
 def get_nx_class_path(hdf_info):
-    """Get the full path of an HDF5 node using nexus classes
-    in case of a field, end with the field name"""
+    """Get the full path of an HDF5 node using nexus classes; end with the field name.
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     hdf_node = hdf_info["hdf_node"]
     if hdf_node.name == "/":
         return ""
@@ -100,7 +98,10 @@ def get_nx_class_path(hdf_info):
 def _check_deprecation_enum_axis(
     variables, doc, elem_list, attr, hdf_node, logger: logging.Logger | None = None
 ):
-    """Check for several attributes. - deprecation - enums - nxdata_axis"""
+    """Check for several attributes. - deprecation - enums - nxdata_axis
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     logger = logger or _logger
 
     elem, path = variables
@@ -139,7 +140,10 @@ def _get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
     hdf_info,
     logger: logging.Logger | None = None,
 ):
-    """Get nxdl documentation for an attribute"""
+    """Get nxdl documentation for an attribute.
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     logger = logger or _logger
 
     new_elem = []
@@ -275,7 +279,10 @@ def get_nxdl_doc(hdf_info, doc, attr=False, logger: logging.Logger | None = None
 
 
 def _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
-    """find the best fitting name in all children"""
+    """find the best fitting name in all children.
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     hdf_path, hdf_node, hdf_class_path = hdf_info2
     hdf_name = hdf_path[path_index]
     hdf_class_name = hdf_class_path[path_index]
@@ -299,7 +306,10 @@ def _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
 
 
 def _get_hdf_path(hdf_info):
-    """Get the hdf_path from an hdf_info"""
+    """Get the hdf_path from an hdf_info
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     if "hdf_path" in hdf_info:
         return hdf_info["hdf_path"].split("/")[1:]
     return hdf_info["hdf_node"].name.split("/")[1:]
@@ -314,7 +324,10 @@ def _get_inherited_hdf_nodes(
     hdf_root=None,
     attr=False,
 ):
-    """Returns a list of ET._Element for the given path."""
+    """Returns a list of ET._Element for the given path.
+
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    """
     # let us start with the given definition file
     if hdf_node is None:
         raise ValueError("hdf_node must not be None")
@@ -360,89 +373,9 @@ def _get_inherited_hdf_nodes(
     return (class_path, nxdl_elem_path, elem_list)
 
 
-def _process_node(
-    hdf_node, hdf_path, parser, doc=True, logger: logging.Logger | None = None
-):
-    """Processes an hdf5 node.
-    - it logs the node found and also checks for its attributes
-    - retrieves the corresponding nxdl documentation
-    TODO:
-    - follow variants
-    - NOMAD parser: store in NOMAD"""
-    logger = logger or _logger
-
-    hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
-    if isinstance(hdf_node, h5py.Dataset):
-        logger.debug(f"===== FIELD (/{hdf_path}): {hdf_node}")
-        val = (
-            str(decode_if_string(hdf_node[()])).split("\n")
-            if len(hdf_node.shape) <= 1
-            else str(decode_if_string(hdf_node[0])).split("\n")
-        )
-        logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
-    else:
-        logger.debug(
-            f"===== GROUP (/{hdf_path} "
-            f"[{get_nxdl_entry(hdf_info)}"
-            f"::{get_nx_class_path(hdf_info)}]): {hdf_node}"
-        )
-    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, doc)
-    if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser(
-            {
-                "hdf_info": hdf_info,
-                "nxdef": nxdef,
-                "nxdl_path": nxdl_path,
-                "val": val,
-                "logger": logger,
-            }
-        )
-    for key, value in hdf_node.attrs.items():
-        logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
-        val = str(decode_if_string(value)).split("\n")
-        logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
-        (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, doc, attr=key)
-        if (
-            parser is not None
-            and req_str is not None
-            and "NOT IN SCHEMA" not in req_str
-            and "None" not in req_str
-        ):
-            parser(
-                {
-                    "hdf_info": hdf_info,
-                    "nxdef": nxdef,
-                    "nxdl_path": nxdl_path,
-                    "val": val,
-                    "logger": logger,
-                },
-                attr=key,
-            )
-
-
 #: Backward-compatibility alias — new code should use ``_get_inherited_hdf_nodes``.
 # TODO: remove when NomadVisitor exists
 get_inherited_hdf_nodes = _get_inherited_hdf_nodes
-
-
-def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
-    """Return list of nxdl concept paths for a nxdl element which corresponds to
-    hdf node.
-
-    .. deprecated::
-        This function uses the legacy XML-element traversal approach.
-        The ``-c`` / concept-query code path in :class:`~.annotation.Annotator`
-        is the only first-party caller and should be migrated to use
-        :class:`~.nexus_tree.NexusNode` directly.
-    """
-    hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
-    (_, _, elem_list) = _get_inherited_hdf_nodes(
-        nx_name=get_nxdl_entry(hdf_info),
-        hdf_node=hdf_node,
-        hdf_path=hdf_info["hdf_path"] if "hdf_path" in hdf_info else None,
-        hdf_root=hdf_info["hdf_root"] if "hdf_root" in hdf_info else None,
-    )
-    return elem_list
 
 
 class HandleNexus:

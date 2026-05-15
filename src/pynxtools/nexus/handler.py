@@ -210,8 +210,10 @@ class NexusFileHandler:
         every node and attribute, and finally calls ``on_complete`` before
         closing the file.
 
-        The ``_get_inherited_hdf_nodes`` LRU cache is cleared after processing
-        to avoid unbounded memory growth across successive calls.
+        The ``_get_inherited_hdf_nodes`` LRU cache (legacy XML-element lookup,
+        used only by the NOMAD parser callback path) is cleared after processing
+        to avoid unbounded memory growth across successive calls.  This import
+        and ``cache_clear`` call will be removed when NomadVisitor is implemented.
         """
         from pynxtools.nexus.nexus import _get_inherited_hdf_nodes
 
