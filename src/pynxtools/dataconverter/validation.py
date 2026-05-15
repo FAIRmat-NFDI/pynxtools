@@ -2,7 +2,14 @@
 #
 # This file is part of pynxtools.
 #
+<<<<<<< HEAD
 # SPDX-License-Identifier: Apache-2.0
+=======
+__all__ = [
+    "validate_hdf_group_against",
+    "validate_dict_against",
+]
+>>>>>>> 57e2a8bb (define stable public API: __all__, __init__.py re-exports, mkdocstrings docs)
 
 DEBUG_VALIDATION = False
 import copy

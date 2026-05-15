@@ -28,6 +28,8 @@ from typing import Any
 import lxml.etree as ET
 import numpy as np
 
+__all__ = ["decode_if_string"]
+
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     decode_or_not,
     find_definition_file,

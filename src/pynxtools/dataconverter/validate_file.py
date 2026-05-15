@@ -6,6 +6,8 @@
 
 """Verifies a nxs file"""
 
+__all__ = ["validate"]
+
 import logging
 import os
 import sys
