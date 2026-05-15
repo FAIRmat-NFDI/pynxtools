@@ -40,13 +40,8 @@ def _get_log(
     return log_path.read_text(encoding="utf-8").splitlines(keepends=True)
 
 
-def _compare_logs(gen_lines: list[str], ref_lines: list[str], *, skip_startswith=()):
+def _compare_logs(gen_lines: list[str], ref_lines: list[str]):
     """Fail with a unified diff if logs differ (after optional line filtering)."""
-
-    def _filter(lines):
-        return [
-            ln for ln in lines if not any(ln.startswith(p) for p in skip_startswith)
-        ]
 
     def _extra_lines(lines1: list[str], lines2: list[str]) -> list[str | None]:
         """Return lines in lines1 but not in lines2, with line numbers, and ignoring
@@ -56,9 +51,6 @@ def _compare_logs(gen_lines: list[str], ref_lines: list[str], *, skip_startswith
             if line not in lines2:
                 diffs.append(f"{line.strip()} (line: {ind})")
         return diffs
-
-    gen_lines = _filter(gen_lines)
-    ref_lines = _filter(ref_lines)
 
     # Case 1: line counts differ
     if len(gen_lines) != len(ref_lines):
@@ -99,7 +91,7 @@ def test_nexus(tmp_path):
         .splitlines(keepends=True)
     )
     # "Path" lines contain machine-specific absolute filesystem paths
-    _compare_logs(actual, reference, skip_startswith=("Path",))
+    _compare_logs(actual, reference)
 
 
 def test_d_option(tmp_path):

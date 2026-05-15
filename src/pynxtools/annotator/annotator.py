@@ -506,7 +506,6 @@ class Annotator(NexusVisitor):
         fname = root.file.filename if hasattr(root, "file") else ""
         if fname:
             self.logger.info(f"{'NeXus file':<20}: {os.path.basename(fname)}")
-            self.logger.info(f"{'Path':<20}: {fname}")
         for key in ("file_time", "HDF5_Version", "h5py_version", "nexusformat_version"):
             val = root.attrs.get(key)
             if val is not None:
