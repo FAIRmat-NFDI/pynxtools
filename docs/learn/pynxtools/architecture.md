@@ -190,6 +190,8 @@ Key methods:
 
 `pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`.  The annotator holds a `NexusSchemaResolver` and uses it on every `on_field` / `on_attribute` callback to look up the matching `NexusNode`, then emits documentation, optionality, enumeration values, and inheritance information.
 
+When an `NXdata` group is encountered, the annotator calls `inspect_nxdata` (from `pynxtools.nexus.nxdata`) once at the group level to detect the primary signal, axis datasets, and convention (v3/v2/v1). The result is cached and used to annotate each field in that group with its NXdata role (`SIGNAL` / `AXIS #N`). After the full traversal, the default-plottable chain is also logged via `get_default_plottable`.
+
 Three operating modes are supported:
 
 - **Default**: annotate every node and print the default-plottable summary.
@@ -236,6 +238,28 @@ NexusFileHandler.process(visitor)
 ## Extending pynxtools with a custom visitor
 
 Because `NexusFileHandler` accepts any `NexusVisitor`, it is straightforward to add new processing modes without modifying pynxtools internals. See the [how-to guide on implementing a custom visitor](../../how-tos/pynxtools/implement-a-visitor.md) for a worked example.
+
+## Shared NXdata detection: `pynxtools.nexus.nxdata`
+
+The [NeXus Data Plotting Standard](https://manual.nexusformat.org/examples/python/plotting/index.html) defines three conventions — v3 (NIAC2014), v2 (~2004), and v1 (oldest) — for identifying the plottable signal and its axes in an `NXdata` group. Rather than duplicating this logic in the annotator and the validator, pynxtools centralizes it in `pynxtools.nexus.nxdata` with no logging dependency.
+
+### Public API
+
+| Symbol | Description |
+|--------|-------------|
+| `NXdataInfo` | Dataclass: `signal`, `signal_name`, `axes` (per-dimension lists), `aux_signals`, `convention` |
+| `classify_field(hdf_node, name)` | Returns `'signal'`, `'axis'`, or `None` for a dataset within its NXdata parent |
+| `inspect_nxdata(group)` | Returns `NXdataInfo` by trying v3 → v2 → v1 |
+| `find_default_nxdata(root)` | Walks the `@default` chain to locate the default plottable `NXdata` group |
+| `find_default_nxentry(root)` | Returns the default `NXentry` group |
+
+### Convention detection order
+
+1. **v3 (NIAC2014)**: signal named by `@signal` group attribute; axes named by `@axes` or `AXISNAME_indices` group attributes.
+2. **v2 (~2004)**: signal has own `@signal="1"` field attribute; axes have own `@axis=N` or colon-separated `@axes` on the signal.
+3. **v1 (oldest)**: single dataset in the group — treated as the signal.
+
+Both `Annotator` and `ValidationVisitor` call `inspect_nxdata` at the group level (once per NXdata group) and use the returned `NXdataInfo` for per-field role annotation and dimensionality validation respectively.
 
 ## Relationship to the dataconverter
 

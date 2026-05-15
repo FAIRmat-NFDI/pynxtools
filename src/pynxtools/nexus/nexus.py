@@ -21,14 +21,10 @@ import numpy as np
 # TODO: remove these imports when NomadVisitor is implemented
 from pynxtools.annotator.nxdata import (
     axis_helper,
-    chk_nxdata_axis,
-    chk_nxdata_axis_v2,
     entry_helper,
     find_attrib_axis_actual_dim_num,
     get_single_or_multiple_axes,
-    logger_auxiliary_signal,
     nxdata_helper,
-    print_default_plottable_header,
     signal_helper,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -123,9 +119,6 @@ def _check_deprecation_enum_axis(
                 if get_local_name_from_xml(item) == "item":
                     if doc:
                         logger.debug("-> " + item.attrib["value"])
-    chk_nxdata_axis(
-        hdf_node, path.split("/")[-1]
-    )  # look for NXdata reference (axes/signal)
     for base_elem in elem_list if not attr else [elem]:  # check for doc
         s_doc = get_nxdl_child(base_elem, "doc", go_base=False)
         if doc:
@@ -425,54 +418,6 @@ def _process_node(
                 },
                 attr=key,
             )
-
-
-def get_default_plottable(
-    root,
-    logger: logging.Logger | None = None,
-):
-    """Walk *root* to identify and log the default plottable signal and axes.
-
-    Implements the three NeXus Data Plotting Standard conventions (v3→v2→v1)
-    via :func:`~pynxtools.nexus.nxdata.find_default_nxdata` and
-    :func:`~pynxtools.nexus.nxdata.inspect_nxdata`.
-    """
-    from pynxtools.nexus.nxdata import (
-        find_default_nxdata,
-        find_default_nxentry,
-        inspect_nxdata,
-    )
-
-    logger = logger or _logger
-    print_default_plottable_header(logger)
-
-    nxentry = find_default_nxentry(root)
-    if not nxentry:
-        logger.debug("No NXentry has been found")
-        return
-    logger.debug("")
-    logger.debug("NXentry has been identified: " + nxentry.name)
-
-    nxdata = find_default_nxdata(root)
-    if not nxdata:
-        logger.debug("No NXdata group has been found")
-        return
-    logger.debug("")
-    logger.debug("NXdata group has been identified: " + nxdata.name)
-
-    info = inspect_nxdata(nxdata)
-    if info.signal is None:
-        logger.debug("No Signal has been found")
-        return
-    logger.debug("")
-    logger.debug("Signal has been identified: " + info.signal.name)
-    logger_auxiliary_signal(nxdata, logger)
-
-    for a_item, ax_list in enumerate(info.axes):
-        logger.debug("")
-        logger.debug(
-            f"For Axis #{a_item}, {len(ax_list)} axes have been identified: {ax_list!s}"
-        )
 
 
 #: Backward-compatibility alias — new code should use ``_get_inherited_hdf_nodes``.
