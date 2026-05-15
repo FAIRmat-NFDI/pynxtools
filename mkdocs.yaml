@@ -50,6 +50,7 @@ nav:
       - learn/pynxtools/numerics.md
       # - learn/pynxtools/nexus-metainfo-generation.md
   - Reference:
+    - reference/api.md
     - reference/definitions.md
     - reference/cli-api.md
     - reference/built-in-readers.md
@@ -60,6 +61,25 @@ plugins:
   - markdown-exec
   - macros:
       module_name: src/pynxtools/mkdocs
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_root_full_path: false
+            show_source: false
+            show_bases: true
+            show_inheritance_diagram: false
+            members_order: source
+            inherited_members: false
+            filters: ["!^_"]
+            docstring_style: google
+            docstring_section_style: table
+            show_if_no_docstring: false
+            separate_signature: true
+            show_signature_annotations: true
 
 theme:
   name: material

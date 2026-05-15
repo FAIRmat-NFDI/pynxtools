@@ -13,6 +13,8 @@ import re
 from collections.abc import Callable
 from typing import Any, Union
 
+__all__ = ["MultiFormatReader"]
+
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import (
     is_boolean,

@@ -6,6 +6,8 @@
 
 """A unit registry for NeXus units"""
 
+__all__ = ["NXUnitSet"]
+
 import os
 from typing import Any, Optional
 
