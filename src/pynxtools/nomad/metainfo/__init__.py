@@ -16,17 +16,32 @@
 # limitations under the License.
 #
 """
-Public API for pynxtools NeXus NOMAD metainfo.
+NeXus NOMAD metainfo: public API and schema package entry points.
+
+Programmatic use
+----------------
+::
 
     from pynxtools.nomad.metainfo import build_package, all_sections
 
-build_package() — assemble and return the SchemaPackage containing all
-                   NeXus base class section definitions.
-all_sections()  — return a list of all generated Section definitions.
+build_package()  — assemble and return the SchemaPackage of all NeXus base
+                   class Section definitions.
+all_sections()   — shorthand: return the list of Section definitions directly.
+
+NOMAD entry points
+------------------
+All SchemaPackageEntryPoint objects for schema packages defined under
+pynxtools.nomad.metainfo are declared here.
+Add new ones in the same pattern as the existing entry points below.
+
+nexus_base_classes — Python-native Section classes for all ~142 NeXus base
+                     classes, generated from the NXDL definitions bundled
+                     with pynxtools.
 """
 
 from __future__ import annotations
 
+from nomad.config.models.plugins import SchemaPackageEntryPoint
 from nomad.metainfo import SchemaPackage
 
 
@@ -39,5 +54,20 @@ def build_package() -> SchemaPackage:
 
 def all_sections() -> list:
     """Return all Section definitions in the NeXus base classes package."""
-    pkg = build_package()
-    return list(pkg.section_definitions)
+    return list(build_package().section_definitions)
+
+
+class NexusBaseClassesEntryPoint(SchemaPackageEntryPoint):
+    def load(self):
+        from pynxtools.nomad.metainfo._package import build_package
+
+        return build_package()
+
+
+nexus_base_classes = NexusBaseClassesEntryPoint(
+    name="NeXus Base Classes",
+    description=(
+        "Python-native NOMAD metainfo Section classes for all NeXus base classes, "
+        "generated from the NXDL definitions bundled with pynxtools."
+    ),
+)
