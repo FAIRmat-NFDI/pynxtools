@@ -1,3 +1,21 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nx-class {{ nx_name }}` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
@@ -17,11 +35,16 @@ from nomad.metainfo import (
 from nomad.metainfo.data_type import Bytes, Datetime
 from {{ base_import }} import {{ base_class }}
 
+{% for mod, cls in concept_imports %}
+from {{ mod }} import {{ cls }}
+{% endfor %}
 from pynxtools.nomad.annotations import NeXusGroup, NeXusQuantity
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
     from structlog.stdlib import BoundLogger
+
+__all__ = ["{{ class_name }}"]
 
 
 class {{ class_name }}({{ base_class }}):
@@ -45,15 +68,7 @@ class {{ class_name }}({{ base_class }}):
     {{ ss.python_name }} = SubSection(
         section_def="{{ ss.section_fqn }}",
         repeats={{ ss.repeats }},
-        a_nexus_group=NeXusGroup(
-            nx_class="{{ ss.node.nx_class }}",
-            name={{ ss.nx_name_literal }},
-            name_type="{{ ss.node.name_type or 'specified' }}",
-            optionality="{{ ss.node.optionality }}",
-            {% if ss.node.occurrence_limits[0] is not none %}min_occurs={{ ss.node.occurrence_limits[0] }},{% endif %}
-            {% if ss.node.occurrence_limits[1] is not none %}max_occurs={{ ss.node.occurrence_limits[1] }},{% endif %}
-            {% if ss.node.deprecated %}deprecated="{{ ss.node.deprecated }}",{% endif %}
-        ),
+        {% if ss.variable %}variable=True,{% endif %}
     )
     {% endfor %}
 
@@ -62,6 +77,7 @@ class {{ class_name }}({{ base_class }}):
         type={{ qty.python_type }},
         {% if qty.dimensionality %}dimensionality="{{ qty.dimensionality }}",{% endif %}
         {% if qty.shape %}shape={{ qty.shape }},{% endif %}
+        {% if qty.description %}description="{{ qty.description }}",{% endif %}
         a_nexus_quantity=NeXusQuantity(
             kind="{{ qty.node.nx_type }}",
             name="{{ qty.node.name }}",
@@ -81,3 +97,58 @@ class {{ class_name }}({{ base_class }}):
 
     def normalize(self, archive: "EntryArchive", logger: "BoundLogger") -> None:
         super().normalize(archive, logger)
+
+{% if named_concepts %}
+
+# =============================================================================
+# Named concept groups — one Section class per group defined in {{ nx_name }}.
+# These are referenced by the SubSections above via string FQNs and resolved
+# lazily by NOMAD at __init_metainfo__() time.
+# =============================================================================
+{% for concept in named_concepts %}
+
+
+class {{ concept.class_name }}({{ concept.base_class_name }}):
+    {% if concept.docstring %}
+    "{{ concept.docstring }}"
+    {% endif %}
+    m_def = Section(
+        {% if concept.variable %}
+        variable=True,
+        {% endif %}
+        a_nexus_group=NeXusGroup(
+            nx_class="{{ concept.node.nx_class }}",
+            name={{ concept.nx_name_literal }},
+            name_type="{{ concept.node.name_type or 'specified' }}",
+            optionality="{{ concept.node.optionality }}",
+            {% if concept.node.occurrence_limits[0] is not none %}min_occurs={{ concept.node.occurrence_limits[0] }},{% endif %}
+            {% if concept.node.occurrence_limits[1] is not none %}max_occurs={{ concept.node.occurrence_limits[1] }},{% endif %}
+            {% if concept.node.deprecated %}deprecated="{{ concept.node.deprecated }}",{% endif %}
+        ),
+    )
+
+    {% for qty in concept.quantities %}
+    {{ qty.python_name }} = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.dimensionality %}dimensionality="{{ qty.dimensionality }}",{% endif %}
+        {% if qty.shape %}shape={{ qty.shape }},{% endif %}
+        {% if qty.description %}description="{{ qty.description }}",{% endif %}
+        a_nexus_quantity=NeXusQuantity(
+            kind="{{ qty.node.nx_type }}",
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.node.unit %}units="{{ qty.node.unit }}",{% endif %}
+            {% if qty.node.items %}enumeration={{ qty.node.items }},{% endif %}
+            {% if qty.node.open_enum %}open_enum=True,{% endif %}
+            {% if qty.parent_field %}parent_field="{{ qty.parent_field }}",{% endif %}
+            {% if qty.node.interpretation %}interpretation="{{ qty.node.interpretation }}",{% endif %}
+            {% if qty.node.long_name %}long_name="{{ qty.node.long_name }}",{% endif %}
+            {% if qty.node.deprecated %}deprecated="{{ qty.node.deprecated }}",{% endif %}
+        ),
+    )
+    {% endfor %}
+
+{% endfor %}
+{% endif %}
