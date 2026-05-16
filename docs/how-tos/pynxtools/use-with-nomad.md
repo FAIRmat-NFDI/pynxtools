@@ -157,7 +157,7 @@ If NOMAD reports a parsing error or your entry shows no data:
 
 1. **Validate the file locally first:**
    ```bash
-   validate_nexus my_data.nxs
+   pynx validate my_data.nxs
    ```
    Fix any errors or missing required fields before re-uploading.
 
