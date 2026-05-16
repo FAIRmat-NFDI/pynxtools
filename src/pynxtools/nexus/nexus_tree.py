@@ -197,6 +197,7 @@ class NexusNode(NodeMixin):
     is_a: list["NexusNode"]
     parent_of: list["NexusNode"]
     nxdl_base: str
+    deprecated: str | None = None
     occurrence_limits: tuple[
         # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
         int | None,
@@ -207,6 +208,31 @@ class NexusNode(NodeMixin):
         "recommended": ("recommended", "required"),
         "optional": ("optional", "recommended", "required"),
     }
+
+    def _set_deprecated(self) -> None:
+        """Set deprecated string from the primary XML element."""
+        if self.inheritance:
+            self.deprecated = self.inheritance[0].attrib.get("deprecated") or None
+
+    def populate_direct_children(self) -> None:
+        """Add all field/group/attribute/link children from the primary XML element.
+
+        Only one level deep — does not recurse into groups. Safe to call on a node
+        that already has children (skips tags that have already been added by name).
+        """
+        if not self.inheritance:
+            return
+        existing = {c.name for c in self.children}
+        for child_xml in self.inheritance[0]:
+            tag = remove_namespace_from_tag(child_xml.tag)
+            if tag not in ("field", "group", "attribute", "link"):
+                continue
+            child_name = child_xml.attrib.get("name")
+            if not child_name:
+                child_name = child_xml.attrib.get("type", "")[2:].upper()
+            if child_name and child_name in existing:
+                continue
+            self.add_node_from(child_xml)
 
     def _set_optionality(self):
         """
@@ -259,6 +285,7 @@ class NexusNode(NodeMixin):
         self.parent = parent
         self.is_a = []
         self.parent_of = []
+        self._set_deprecated()
 
     def get_path(self) -> str:
         """
@@ -1057,6 +1084,42 @@ class NexusGroup(NexusNode):
         int | None,
         int | None,
     ] = (None, None)
+    category: str = "base"
+    restricts: bool = False
+    ignore_extra_groups: bool = False
+    ignore_extra_fields: bool = False
+    ignore_extra_attributes: bool = False
+    symbols: dict[str, str] | None = None
+
+    def _set_definition_attrs(self) -> None:
+        """Set NXDL definition-level attributes from the root XML element."""
+        if not self.inheritance:
+            return
+        xml_root = self.inheritance[0]
+        category = xml_root.attrib.get("category", "base")
+        self.category = (
+            category if category in ("base", "application", "contributed") else "base"
+        )
+        self.restricts = xml_root.attrib.get("restricts", "false").lower() == "true"
+        self.ignore_extra_groups = (
+            xml_root.attrib.get("ignoreExtraGroups", "false").lower() == "true"
+        )
+        self.ignore_extra_fields = (
+            xml_root.attrib.get("ignoreExtraFields", "false").lower() == "true"
+        )
+        self.ignore_extra_attributes = (
+            xml_root.attrib.get("ignoreExtraAttributes", "false").lower() == "true"
+        )
+        symbols_elem = xml_root.find("nx:symbols", namespaces=namespaces)
+        if symbols_elem is not None:
+            self.symbols = {
+                sym.attrib["name"]: (
+                    sym.find("nx:doc", namespaces=namespaces).text or ""
+                ).strip()
+                if sym.find("nx:doc", namespaces=namespaces) is not None
+                else ""
+                for sym in symbols_elem.findall("nx:symbol", namespaces=namespaces)
+            } or None
 
     def _check_sibling_namefit(self):
         """
@@ -1161,6 +1224,7 @@ class NexusGroup(NexusNode):
         self._set_occurrence_limits()
         self._set_optionality()
         self._check_sibling_namefit()
+        self._set_definition_attrs()
 
 
 class NexusEntity(NexusNode):
@@ -1209,6 +1273,18 @@ class NexusEntity(NexusNode):
     items: list[str] | None = None
     open_enum: bool = False
     shape: tuple[int | None, ...] | None = None
+    interpretation: str | None = None
+    long_name: str | None = None
+
+    def _set_field_attrs(self) -> None:
+        """Set field-specific NXDL attributes from the primary XML element."""
+        if not self.inheritance:
+            return
+        xml_elem = self.inheritance[0]
+        self.interpretation = xml_elem.attrib.get("interpretation") or None
+        long_name_elem = xml_elem.find("nx:long_name", namespaces=namespaces)
+        if long_name_elem is not None and long_name_elem.text:
+            self.long_name = long_name_elem.text.strip() or None
 
     def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
         """Check compatibility of this node with an XML element from the (possible) inheritance"""
@@ -1447,6 +1523,7 @@ class NexusEntity(NexusNode):
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
+        self._set_field_attrs()
 
 
 def populate_tree_from_parents(node: NexusNode):
@@ -1534,3 +1611,51 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         populate_tree_from_parents(tree)
 
     return tree
+
+
+def build_base_class_node(nx_name: str) -> NexusGroup:
+    """Build a NexusGroup root node for a NeXus base class.
+
+    Unlike ``generate_tree_from``, which is application-definition-specific, this
+    function works purely on base class NXDL files and does not recurse into children.
+    Only one level of direct children (fields, groups, attributes, links) is populated,
+    and for each field child its own direct children (field-level attributes) are also
+    populated.
+
+    Args:
+        nx_name: NeXus base class name, e.g. ``"NXentry"`` or ``"NXsample"``.
+
+    Returns:
+        A :class:`NexusGroup` root with ``populate_direct_children()`` already called.
+    """
+    xml_root, _ = get_nxdl_root_and_path(nx_name)
+
+    global namespaces
+    namespaces = {"nx": xml_root.nsmap[None]}
+
+    inheritance_chain = [xml_root] + get_all_parents_for(xml_root)
+
+    root = NexusGroup(
+        name=nx_name,
+        nx_class=nx_name,
+        nx_type="group",
+        name_type="specified",
+        optionality="optional",
+        variadic=False,
+        parent=None,
+        inheritance=inheritance_chain,
+        nxdl_base=xml_root.base,
+    )
+
+    root.populate_direct_children()
+
+    for child in root.children:
+        if child.nx_type in ("field", "group"):
+            child.populate_direct_children()
+        if child.nx_type == "field":
+            # Also populate field-level attribute children.
+            for attr in child.children:
+                if attr.nx_type == "attribute":
+                    attr.populate_direct_children()
+
+    return root

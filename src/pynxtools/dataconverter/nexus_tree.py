@@ -34,6 +34,7 @@ from pynxtools.nexus.nexus_tree import (
     NexusNode,
     NexusType,
     NexusUnitCategory,
+    build_base_class_node,
     generate_tree_from,
     populate_tree_from_parents,
 )
