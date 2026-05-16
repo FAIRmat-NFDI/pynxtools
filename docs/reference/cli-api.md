@@ -94,3 +94,15 @@ Lists the concept paths defined in a NeXus application.
     :prog_name: pynx inspect-appdef
     :depth: 1
     :style: table
+
+## NOMAD integration
+
+Generates the NOMAD metainfo schemas as Python classes.
+
+::: mkdocs-click
+    :module: pynxtools.cli
+    :command: nomad
+    :prog_name: pynx nomad
+    :depth: 2
+    :style: table
+    :list_subcommands: True
