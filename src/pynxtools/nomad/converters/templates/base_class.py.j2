@@ -95,7 +95,7 @@ class {{ class_name }}({{ base_class }}):
     )
     {% endfor %}
 
-    def normalize(self, archive: "EntryArchive", logger: "BoundLogger") -> None:
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 {% if named_concepts %}
