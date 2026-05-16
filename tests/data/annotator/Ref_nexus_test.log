@@ -324,6 +324,7 @@ GROUP /entry [NXentry]  (12 members)
       FIELD /entry/instrument/analyser/data  shape=(80, 146, 195)  dtype=float32
         Value     : [[0. 0. 0. ... 0. 0. 0.]...
         Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/data  [REQUIRED]
+        Dims      : nP × i × j × tof
         Inheritance:
           NXarpes/ENTRY/INSTRUMENT/analyser/data
           NXdetector/data
@@ -427,12 +428,14 @@ GROUP /entry [NXentry]  (12 members)
       FIELD /entry/instrument/analyser/region_origin  shape=(2,)  dtype=int64
         Value     : [0 0]
         Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/region_origin  [REQUIRED]
+        Dims      : 2
         Inheritance:
           NXarpes/ENTRY/INSTRUMENT/analyser/region_origin
             Doc       : origin of rectangular region selected for readout
       FIELD /entry/instrument/analyser/region_size  shape=(2,)  dtype=int64
         Value     : [ 80 146]
         Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/region_size  [REQUIRED]
+        Dims      : 2
         Inheritance:
           NXarpes/ENTRY/INSTRUMENT/analyser/region_size
             Doc       : size of rectangular region selected for readout
@@ -442,6 +445,7 @@ GROUP /entry [NXentry]  (12 members)
       FIELD /entry/instrument/analyser/sensor_size  shape=(2,)  dtype=int64
         Value     : [ 80 146]
         Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/sensor_size  [REQUIRED]
+        Dims      : 2
         Inheritance:
           NXarpes/ENTRY/INSTRUMENT/analyser/sensor_size
             Doc       : number of raw active elements in each dimension
@@ -950,6 +954,7 @@ GROUP /entry [NXentry]  (12 members)
     FIELD /entry/sample/pressure  shape=()  dtype=float64
       Value     : 3.27e-10
       Concept   : NXsample/ENTRY/SAMPLE/pressure  [OPTIONAL]
+      Dims      : n_pField
       Inheritance:
         NXsample/pressure
           Doc       : Applied pressure

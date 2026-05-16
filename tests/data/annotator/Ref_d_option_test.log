@@ -1,6 +1,7 @@
       FIELD /entry/instrument/analyser/data  shape=(80, 146, 195)  dtype=float32
         Value     : [[0. 0. 0. ... 0. 0. 0.]...
         Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/data  [REQUIRED]
+        Dims      : nP × i × j × tof
         Inheritance:
           NXarpes/ENTRY/INSTRUMENT/analyser/data
           NXdetector/data
