@@ -174,6 +174,18 @@ def convert():
     default=None,
     help="A json config file for the reader",
 )
+@click.option(
+    "--write-docs",
+    is_flag=True,
+    default=False,
+    help="Write NeXus concept docstrings as HDF5 @docs attributes on each group/field.",
+)
+@click.option(
+    "--docs-format",
+    type=click.Choice(["default", "html", "html5", "xml", "pseudoxml"]),
+    default=None,
+    help="Format for docstrings (requires --write-docs). Defaults to plain RST text.",
+)
 # pylint: disable=too-many-arguments
 def run(
     files: tuple[str, ...],
@@ -188,6 +200,8 @@ def run(
     config_file: str,
     fail: bool,
     mapping: str | None,
+    write_docs: bool,
+    docs_format: str | None,
     **kwargs,
 ):
     """Convert input files to a NeXus HDF5 file."""
@@ -214,6 +228,13 @@ def run(
 
     if config_file:
         kwargs["config_file"] = config_file
+
+    if docs_format is not None and not write_docs:
+        raise click.UsageError("--docs-format can only be used with --write-docs.")
+
+    if write_docs:
+        kwargs["write_docs"] = True
+        kwargs["docs_format"] = docs_format or "default"
 
     file_list = []
     for file in files:

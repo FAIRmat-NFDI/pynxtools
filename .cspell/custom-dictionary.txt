@@ -221,6 +221,7 @@ posint
 posteriori
 printoptions
 prng
+pseudoxml
 punx
 pynx
 pynxtools
