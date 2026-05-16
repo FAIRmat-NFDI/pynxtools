@@ -387,7 +387,7 @@ dataconverter generate-template --nxdl NXdouble_slit
 Write a minimal HDF5 test file filling all required fields, then validate:
 
 ```bash
-validate_nexus my_test_file.nxs
+pynx validate my_test_file.nxs
 ```
 
 See [How-tos > pynxtools > Validate NeXus files](../how-tos/pynxtools/validate-nexus-files.md) for details on interpreting the output.
