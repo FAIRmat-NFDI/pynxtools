@@ -46,6 +46,7 @@ nav:
       - learn/pynxtools/versioning.md
       - learn/pynxtools/nomad-integration.md
       - learn/pynxtools/numerics.md
+      # - learn/pynxtools/nexus-metainfo-generation.md
   - Reference:
     - reference/definitions.md
     - reference/cli-api.md
