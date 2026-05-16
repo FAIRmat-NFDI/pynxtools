@@ -553,8 +553,19 @@ def render(context: dict) -> str:
     raw = template.render(**context)
     try:
         result = subprocess.run(
-            ["ruff", "format", "-"],
+            ["ruff", "check", "--", "fix"],
             input=raw,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        checked = result.stdout
+    except Exception:
+        checked = raw
+    try:
+        result = subprocess.run(
+            ["ruff", "format", "-"],
+            input=checked,
             capture_output=True,
             text=True,
             check=True,
