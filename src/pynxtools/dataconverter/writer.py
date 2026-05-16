@@ -21,15 +21,19 @@
 
 import copy
 import importlib.util
+import io
 import logging
 import os
 import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
+from typing import Optional
 
 import blosc2
 import h5py
 import hdf5plugin
 import numpy as np
+from docutils.core import publish_string
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.chunk import (
@@ -46,6 +50,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
 )
+from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
@@ -234,6 +239,25 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
         return None
 
 
+def _format_doc(text: str, fmt: str) -> str:
+    """Format a NeXus RST docstring.
+
+    With ``fmt='default'`` returns plain RST text as-is (best for h5web).
+    Other values are passed to docutils ``publish_string`` as the writer name.
+    """
+    if fmt == "default":
+        return text.strip()
+    return (
+        publish_string(
+            text,
+            writer_name=fmt,
+            settings_overrides={"warning_stream": io.StringIO()},
+        )
+        .decode("utf-8")
+        .strip()
+    )
+
+
 class Writer:
     """The writer class for writing a NeXus file in accordance with a given NXDL.
 
@@ -277,6 +301,9 @@ class Writer:
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
         self.append = append
+        self.write_docs: bool = False
+        self.docs_format: str = "default"
+        self._nexus_tree: NexusNode | None = None
 
     def has_content_cued_for_compression(self) -> str:
         """Check if template has some data that require blosc storage."""
@@ -291,6 +318,72 @@ class Writer:
                     else:
                         return DEFAULT_COMPRESSION_FILTER
         return "no_compression"
+
+    def _get_nexus_tree(self) -> NexusNode | None:
+        """Return (and lazily build) the NexusNode tree for the current appdef."""
+        if self._nexus_tree is None:
+            appdef = Path(self.nxdl_f_path).name.split(".")[0]
+            try:
+                self._nexus_tree = generate_tree_from(appdef)
+            except Exception:
+                self._nexus_tree = None
+        return self._nexus_tree
+
+    def __nxdl_docs(self, path: str) -> str | None:
+        """Return formatted NeXus docstring for the concept at *path*, or None.
+
+        Uses the same inheritance logic as the Annotator: iterates ALL levels of
+        the NexusNode inheritance chain via ``get_inheritance_concept_paths()`` and
+        collects every level that carries a non-None doc, labeled by its concept path.
+        """
+        if not self.write_docs:
+            return None
+
+        nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
+        tree = self._get_nexus_tree()
+        if tree is None:
+            return None
+
+        last_segment = nxdl_path.split("/")[-1]
+
+        if "@" in last_segment:
+            # Attribute path: e.g. /ENTRY/definition/@version or /ENTRY/definition@version
+            parent_nxdl, attr_name = nxdl_path.rsplit("@", 1)
+            parent_rel = parent_nxdl.strip("/") or None
+            parent_node = tree.find_node_at_path(parent_rel) if parent_rel else tree
+            node = (
+                parent_node.best_child_for(attr_name, node_type="attribute")
+                if parent_node is not None
+                else None
+            )
+            extra_pairs: list[tuple[str, str]] = []
+        else:
+            rel_path = nxdl_path.lstrip("/")
+            node = tree.find_node_at_path(rel_path) if rel_path else tree
+            # For the top-level ENTRY group, also include the appdef root doc
+            extra_pairs = []
+            if nxdl_path == "/ENTRY":
+                extra_pairs = [
+                    (src, doc) for src, doc in tree.get_inheritance_docs() if doc
+                ]
+
+        if node is None and not extra_pairs:
+            return None
+
+        concept_doc_pairs: list[tuple[str, str]] = list(extra_pairs)
+        if node is not None:
+            for concept_label, doc_text in node.get_inheritance_concept_paths():
+                if doc_text:
+                    concept_doc_pairs.append((concept_label, doc_text))
+
+        if not concept_doc_pairs:
+            return None
+
+        sections = [
+            f"{label}\n{_format_doc(doc, self.docs_format)}"
+            for label, doc in concept_doc_pairs
+        ]
+        return "\n\n".join(sections)
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -353,6 +446,11 @@ class Writer:
                             logger.error(
                                 f"No attribute 'NX_class' could be written for {parent_path}."
                             )
+
+                    docs = self.__nxdl_docs(parent_path)
+                    if docs:
+                        grp.attrs["docs"] = docs
+
                     return grp
                 else:
                     if self.append:
@@ -405,6 +503,10 @@ class Writer:
                                     path,
                                     append=self.append,
                                 )
+                                if dataset is not None:
+                                    docs = self.__nxdl_docs(path)
+                                    if docs:
+                                        dataset.attrs["docs"] = docs
                             else:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
@@ -422,6 +524,9 @@ class Writer:
                                         dataset = grp.create_dataset(
                                             entry_name, data=data
                                         )
+                                    docs = self.__nxdl_docs(path)
+                                    if docs:
+                                        dataset.attrs["docs"] = docs
                                 except ValueError:
                                     logger.warning(
                                         f"ValueError caught upon create_dataset {path}"
@@ -477,13 +582,17 @@ class Writer:
                         path, self.data.undocumented.keys()
                     )
                     if isinstance(dataset_or_group, (h5py.Group, h5py.Dataset)):
-                        if entry_name[1:] not in dataset_or_group.attrs:
-                            dataset_or_group.attrs[entry_name[1:]] = data
+                        attr_name = entry_name[1:]
+                        if attr_name not in dataset_or_group.attrs:
+                            dataset_or_group.attrs[attr_name] = data
                         else:
                             if self.append:
                                 logger.info(
                                     f"Prevented the overwriting of attribute {path}"
                                 )
+                        docs = self.__nxdl_docs(path)
+                        if docs:
+                            dataset_or_group.attrs[f"{attr_name}_docs"] = docs
                     else:
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding attribute to dataset_or_group"
@@ -495,8 +604,16 @@ class Writer:
                     f"with the following message: {str(exc)}"
                 ) from exc
 
-    def write(self):
-        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+    def write(self, write_docs: bool = False, docs_format: str = "default") -> None:
+        """Writes the NeXus file with previously validated data from the reader with NXDL attrs.
+
+        Args:
+            write_docs: When True, embed NeXus concept docstrings as ``@docs`` attributes on
+                each HDF5 group/field, and as ``@<attr>_docs`` attributes alongside HDF5 attrs.
+            docs_format: Docutils writer name for formatting (``"default"`` keeps raw RST).
+        """
+        self.write_docs = write_docs
+        self.docs_format = docs_format
         compression = self.has_content_cued_for_compression()
         if compression in COMPRESSION_FILTERS:
             logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
