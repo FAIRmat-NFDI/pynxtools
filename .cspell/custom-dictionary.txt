@@ -228,6 +228,7 @@ renamable
 reqs
 requiredness
 rtol
+saxs
 sequentialization
 setpoint
 sherjeelshabih
@@ -256,6 +257,7 @@ vamas
 vectorizable
 visititems
 vlen
+waxs
 xarrays
 xaxis
 xdist
