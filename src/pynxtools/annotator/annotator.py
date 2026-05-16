@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import os
 import re
 import textwrap
 from collections.abc import Callable
@@ -180,7 +181,7 @@ class Annotator(NexusVisitor):
                 self.logger.info(hdf_path)
             return
 
-        if self.documentation is None and self.parser is None:
+        if self.documentation is None:
             get_default_plottable(root, self.logger)
 
     # ------------------------------------------------------------------
@@ -340,8 +341,6 @@ class Annotator(NexusVisitor):
 
     def _detail(self, det: str, label: str, value: str, level: int = 20) -> None:
         """Emit one labelled detail line at the given log level."""
-        import logging
-
         self.logger.log(level, f"{det}{label:<{self._LW}}: {value}")
 
     def _emit_inheritance(self, det: str, node: NexusNode) -> None:
@@ -458,8 +457,6 @@ class Annotator(NexusVisitor):
         parent: h5py.Group | h5py.Dataset,
     ) -> None:
         """Emit a DEBUG line for an attribute; skip structural HDF5 attributes."""
-        import logging
-
         if not hdf_path or attr_name in self._SKIP_ATTRS:
             return
 
@@ -499,8 +496,6 @@ class Annotator(NexusVisitor):
 
     def _emit_file_header(self, root: h5py.Group) -> None:
         """Log a structured file-level header from HDF5 root attributes."""
-        import os
-
         sep = "═" * 60
         self.logger.info(sep)
         fname = root.file.filename if hasattr(root, "file") else ""
