@@ -262,6 +262,7 @@ class NexusNode(NodeMixin):
     is_a: list["NexusNode"]
     parent_of: list["NexusNode"]
     nxdl_base: str
+    deprecated: str | None = None
     occurrence_limits: tuple[
         # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
         int | None,
@@ -272,6 +273,11 @@ class NexusNode(NodeMixin):
         "recommended": ("recommended", "required"),
         "optional": ("optional", "recommended", "required"),
     }
+
+    def _set_deprecated(self) -> None:
+        """Set deprecated string from the primary XML element."""
+        if self.inheritance:
+            self.deprecated = self.inheritance[0].attrib.get("deprecated") or None
 
     def _set_optionality(self):
         """
@@ -324,6 +330,7 @@ class NexusNode(NodeMixin):
         self.parent = parent
         self.is_a = []
         self.parent_of = []
+        self._set_deprecated()
 
     def get_path(self) -> str:
         """
@@ -1025,6 +1032,7 @@ class NexusDefinition(NexusNode):
 
     def __init__(self, **data) -> None:
         super().__init__(nx_type=self.nx_type, **data)
+        self.symbols = {}
         self._set_definition_attrs()
 
 
@@ -1275,6 +1283,18 @@ class _NexusEntityBase(NexusNode):
     open_enum: bool = False
     shape: tuple[int | None, ...] | None = None
     dim_symbols: tuple[str | None, ...] | None = None
+    interpretation: str | None = None
+    long_name: str | None = None
+
+    def _set_field_attrs(self) -> None:
+        """Set field-specific NXDL attributes from the primary XML element."""
+        if not self.inheritance:
+            return
+        xml_elem = self.inheritance[0]
+        self.interpretation = xml_elem.attrib.get("interpretation") or None
+        long_name_elem = xml_elem.find("nx:long_name", namespaces=namespaces)
+        if long_name_elem is not None and long_name_elem.text:
+            self.long_name = long_name_elem.text.strip() or None
 
     def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
         """Check compatibility of this node with an XML element from the (possible) inheritance."""
@@ -1503,6 +1523,7 @@ class _NexusEntityBase(NexusNode):
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
+        self._set_field_attrs()
 
 
 class NexusAttribute(_NexusEntityBase):

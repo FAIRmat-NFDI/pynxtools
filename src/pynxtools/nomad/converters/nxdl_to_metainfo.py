@@ -81,6 +81,7 @@ class QuantityContext:
     dimensionality: str | None  # NXUnitSet.get_dimensionality(node.unit)
     shape: list[int | str] | None  # _shape_from_node(node): tuple → list with "*"
     parent_field: str | None  # parent field name (set for attribute-of-field)
+    description: str | None  # stripped <doc> text from the primary NXDL element
     # The originating NexusEntity node — all other info is read via node.*
     node: NexusEntity
 
@@ -91,8 +92,30 @@ class SubSectionContext:
     python_name: str  # nxdl_to_subsection_name(…)
     section_fqn: str  # fully-qualified string proxy for SubSection.section_def
     repeats: bool  # computed from occurrence_limits + variadic + name_type
-    nx_name_literal: str  # Python source literal: '"name"' or 'None'
+    variable: bool  # True when name_type="any"/"partial" (user-named at runtime)
     # The originating NexusGroup node — all other info is read via node.*
+    node: NXTreeGroup
+
+
+@dataclass
+class NamedConceptContext:
+    """Represents a standalone Section class generated for one group occurrence.
+
+    Every group child of a NXDL base class becomes its own Python class (e.g.,
+    ``ObjectParameters``, ``SampleTemperatureLog``).  This class inherits from the
+    generic class for the group's nx_type and carries:
+    - An ``m_def`` with occurrence-specific ``NeXusGroup`` metadata.
+    - Its own ``Quantity`` members for any fields/attributes defined inside the
+      group element in the NXDL file (overrides / extensions beyond the base class).
+    """
+
+    class_name: str  # "ObjectParameters"
+    base_class_name: str  # "Parameters"
+    base_module: str  # "parameters" (file stem — used to build import)
+    nx_name_literal: str  # 'None' or '"temperature_log"'
+    variable: bool  # Section(variable=True) when name_type="any"/"partial"
+    docstring: str | None
+    quantities: list[QuantityContext]  # own fields defined inside the group XML
     node: NXTreeGroup
 
 
@@ -177,6 +200,49 @@ def _section_fqn(nx_class: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Concept description helper
+# ---------------------------------------------------------------------------
+
+
+def _concept_description(node) -> str | None:
+    """Extract the primary <doc> text from a NexusNode, normalized to one line."""
+    docs = node.get_docstring(depth=1)
+    raw = (next(iter(docs.values()), None) or "").strip()
+    if not raw:
+        return None
+    import re
+
+    # Collapse runs of whitespace (tabs/newlines from XML indentation) into spaces.
+    collapsed = re.sub(r"\s+", " ", raw)
+    # Escape backslashes first (RST markup, math, etc.), then double quotes.
+    # This ensures no invalid escape sequences appear inside the generated string literal.
+    return collapsed.replace("\\", "\\\\").replace('"', '\\"')
+
+
+# ---------------------------------------------------------------------------
+# Named concept class naming helper
+# ---------------------------------------------------------------------------
+
+
+def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
+    """Return the Python class name for a named concept class.
+
+    For variadic groups (name_type="any") the generic class name is used as the
+    suffix, e.g. ``ObjectLog`` for any NXlog inside NXobject.
+    For fixed-name or partial groups the group name is used in CamelCase, e.g.
+    ``SampleTemperatureLog`` for temperature_log inside NXsample.
+    """
+    if node.name_type == "any":
+        child_suffix = nxdl_to_class_name(node.nx_class)
+    else:
+        # specified or partial — convert "temperature_log" → "TemperatureLog"
+        child_suffix = "".join(
+            p.capitalize() for p in node.name.lower().replace("-", "_").split("_") if p
+        )
+    return parent_class_name + child_suffix
+
+
+# ---------------------------------------------------------------------------
 # Build quantity context from a NexusEntity node
 # ---------------------------------------------------------------------------
 
@@ -213,6 +279,7 @@ def _build_quantity_from_node(
         dimensionality=dimensionality,
         shape=shape,
         parent_field=parent_field,
+        description=_concept_description(node),
         node=node,
     )
 
@@ -222,11 +289,14 @@ def _build_quantity_from_node(
 # ---------------------------------------------------------------------------
 
 
-def _build_subsection_from_node(node: NXTreeGroup) -> SubSectionContext:
+def _build_subsection_from_node(
+    node: NXTreeGroup,
+    section_fqn: str,
+) -> SubSectionContext:
     """Build a SubSectionContext from a NexusGroup (group) node.
 
-    Only the few values that require a non-trivial transformation are stored
-    on SubSectionContext itself.  Everything else is accessed through the node.
+    ``section_fqn`` is the fully-qualified name of the *concept class* that this
+    subsection points to (not the generic class for the nx_type).
     """
     nx_name_type = node.name_type or "specified"
     _, max_occurs = node.occurrence_limits
@@ -237,24 +307,87 @@ def _build_subsection_from_node(node: NXTreeGroup) -> SubSectionContext:
         or max_occurs is None
         or (isinstance(max_occurs, int) and max_occurs > 1)
     )
+    variable = nx_name_type in ("any", "partial")
 
-    if node.variadic or nx_name_type in ("any", "partial"):
+    if node.variadic or variable:
         stem = (
             node.nx_class[2:].lower()
             if node.nx_class.startswith("NX")
             else node.nx_class.lower()
         )
         python_name = nxdl_to_subsection_name(stem)
-        nx_name_literal = "None"
     else:
         python_name = nxdl_to_subsection_name(node.name)
-        nx_name_literal = f'"{node.name}"'
 
     return SubSectionContext(
         python_name=python_name,
-        section_fqn=_section_fqn(node.nx_class),
+        section_fqn=section_fqn,
         repeats=repeats,
+        variable=variable,
+        node=node,
+    )
+
+
+def _build_named_concept(
+    parent_class_name: str,
+    parent_module: str,
+    concept_class_name: str,
+    node: NXTreeGroup,
+) -> NamedConceptContext:
+    """Build a NamedConceptContext for a group occurrence.
+
+    Collects the fields/attributes defined *inside* the group XML element
+    (one level deep) as own Quantities of the concept class.
+    """
+    nx_name_type = node.name_type or "specified"
+    variable = nx_name_type in ("any", "partial")
+
+    if variable or node.variadic:
+        nx_name_literal = "None"
+    else:
+        nx_name_literal = f'"{node.name}"'
+
+    base_class_name = nxdl_to_class_name(node.nx_class)
+    base_module = _class_module_name(node.nx_class)
+
+    # Own quantities: fields and attributes defined inside the group in NXDL.
+    own_quantities: list[QuantityContext] = []
+    seen: set[str] = set()
+    for child in node.children:
+        if child.nx_type not in ("field", "attribute") or not isinstance(
+            child, NexusEntity
+        ):
+            continue
+        qty = _build_quantity_from_node(child)
+        if qty.python_name in seen:
+            continue
+        seen.add(qty.python_name)
+        own_quantities.append(qty)
+        # Field-level attribute children.
+        if child.nx_type == "field":
+            for attr in child.children:
+                if attr.nx_type != "attribute" or not isinstance(attr, NexusEntity):
+                    continue
+                attr_key = f"{qty.python_name}__{nxdl_to_quantity_name(attr.name)}"
+                if attr_key in seen:
+                    continue
+                seen.add(attr_key)
+                own_quantities.append(
+                    _build_quantity_from_node(
+                        attr,
+                        parent_field=qty.node.name,
+                        python_name_override=attr_key,
+                    )
+                )
+
+    return NamedConceptContext(
+        class_name=concept_class_name,
+        base_class_name=base_class_name,
+        base_module=base_module,
         nx_name_literal=nx_name_literal,
+        variable=variable,
+        docstring=_concept_description(node),
+        quantities=own_quantities,
         node=node,
     )
 
@@ -277,6 +410,7 @@ def build_context(nx_name: str) -> dict:
     is_base_class = nx_category == "base"
 
     class_name = nxdl_to_class_name(nx_name)
+    parent_module = _class_module_name(nx_name)
     base_class, base_import = get_base_section(nx_name)
 
     # Docstring: use get_docstring(depth=1) to read only from the primary
@@ -289,8 +423,12 @@ def build_context(nx_name: str) -> dict:
 
     quantities: list[QuantityContext] = []
     subsections: list[SubSectionContext] = []
+    named_concepts: list[NamedConceptContext] = []
     seen_qty: set[str] = set()
     seen_ss: set[str] = set()
+    seen_concept: set[str] = set()
+    # (module_path, class_name) pairs for concept base imports at file top.
+    concept_imports: list[tuple[str, str]] = []
 
     for child in root_node.children:
         if child.nx_type == "attribute":
@@ -309,9 +447,9 @@ def build_context(nx_name: str) -> dict:
 
             # Field-level attribute sub-children pre-populated by build_base_class_node.
             for attr_child in child.children:
-                if attr_child.nx_type != "attribute":
-                    continue
-                if not isinstance(attr_child, NexusEntity):
+                if attr_child.nx_type != "attribute" or not isinstance(
+                    attr_child, NexusEntity
+                ):
                     continue
                 attr_key = (
                     f"{qty.python_name}__{nxdl_to_quantity_name(attr_child.name)}"
@@ -319,15 +457,51 @@ def build_context(nx_name: str) -> dict:
                 if attr_key in seen_qty:
                     continue
                 seen_qty.add(attr_key)
-                attr_qty = _build_quantity_from_node(
-                    attr_child,
-                    parent_field=qty.node.name,
-                    python_name_override=attr_key,
+                quantities.append(
+                    _build_quantity_from_node(
+                        attr_child,
+                        parent_field=qty.node.name,
+                        python_name_override=attr_key,
+                    )
                 )
-                quantities.append(attr_qty)
 
         elif child.nx_type == "group":
-            ss = _build_subsection_from_node(child)
+            # Each group becomes a named concept class defined in this same file.
+            concept_name = _concept_class_name(class_name, child)
+            if concept_name in seen_concept:
+                # Collision: two groups mapping to the same concept name.
+                # Fall back to full group name regardless of name_type.
+                child_suffix = "".join(
+                    p.capitalize()
+                    for p in child.name.lower().replace("-", "_").split("_")
+                    if p
+                )
+                concept_name = class_name + child_suffix
+                if concept_name in seen_concept:
+                    continue  # Still a collision — skip (rare)
+            seen_concept.add(concept_name)
+
+            concept_fqn = (
+                f"pynxtools.nomad.metainfo.base_classes.{parent_module}.{concept_name}"
+            )
+
+            concept = _build_named_concept(
+                class_name, parent_module, concept_name, child
+            )
+            named_concepts.append(concept)
+
+            # Track import for concept base class (skip self-imports).
+            base_mod = concept.base_module
+            base_cls = concept.base_class_name
+            if base_mod != parent_module:
+                import_entry = (
+                    f"pynxtools.nomad.metainfo.base_classes.{base_mod}",
+                    base_cls,
+                )
+                if import_entry not in concept_imports:
+                    concept_imports.append(import_entry)
+
+            ss = _build_subsection_from_node(child, section_fqn=concept_fqn)
             if ss.python_name in seen_ss:
                 # Two named groups with the same class — disambiguate by name.
                 if not child.variadic:
@@ -341,7 +515,10 @@ def build_context(nx_name: str) -> dict:
         # links and choices are skipped in Phase 1
 
     nx_optionality = "optional" if is_base_class else "required"
-    needs_m_enum = any(q.python_type.startswith("MEnum") for q in quantities)
+    needs_m_enum = any(
+        q.python_type.startswith("MEnum")
+        for q in quantities + [q for c in named_concepts for q in c.quantities]
+    )
 
     return {
         "class_name": class_name,
@@ -359,6 +536,8 @@ def build_context(nx_name: str) -> dict:
         "docstring": docstring,
         "quantities": quantities,
         "subsections": subsections,
+        "named_concepts": named_concepts,
+        "concept_imports": concept_imports,
         "needs_m_enum": needs_m_enum,
     }
 
