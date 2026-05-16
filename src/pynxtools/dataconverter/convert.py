@@ -223,12 +223,15 @@ def convert(
         filename=os.path.basename(output),
         append=kwargs.get("append", False),
     )
+
+    write_docs = kwargs.pop("write_docs", False)
+    docs_format = kwargs.pop("docs_format", "default")
     Writer(
         data=data,
         nxdl_f_path=nxdl_f_path,
         output_path=output,
         append=kwargs.get("append", False),
-    ).write()
+    ).write(write_docs=write_docs, docs_format=docs_format)
 
     logger.info(f"The output file generated: {output}.")
 

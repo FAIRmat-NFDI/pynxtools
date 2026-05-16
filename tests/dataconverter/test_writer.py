@@ -196,3 +196,43 @@ def test_overwrite(writer_overwrite, caplog):
         assert sorted(observed_infos) == sorted(expected_infos)  # order does not matter
 
     os.remove(writer_overwrite.output_path)
+
+
+def test_write_docs(writer):
+    """Docs are written as HDF5 @docs attributes when write_docs=True."""
+    writer.write(write_docs=True)
+    with h5py.File(writer.output_path, "r") as f:
+        # Appdef root doc ("NXtest") appears on the top-level ENTRY group via special case
+        assert "docs" in f["/my_entry"].attrs
+        assert (
+            "This is a dummy NXDL to test out the dataconverter."
+            in f["/my_entry"].attrs["docs"]
+        )
+
+        # Field with its own doc in NXtest
+        assert "docs" in f["/my_entry/definition"].attrs
+        assert (
+            "This is a dummy NXDL to test out the dataconverter."
+            in f["/my_entry/definition"].attrs["docs"]
+        )
+
+        # Attribute doc uses single-underscore convention: <attr>_docs
+        assert "version_docs" in f["/my_entry/definition"].attrs
+        assert (
+            "This is the version of the definition."
+            in f["/my_entry/definition"].attrs["version_docs"]
+        )
+
+        # NXODD_name field with its own doc
+        assert "docs" in f["/my_entry/nxodd_name/int_value"].attrs
+        assert (
+            "A dummy entry for an int value."
+            in f["/my_entry/nxodd_name/int_value"].attrs["docs"]
+        )
+
+        # Required group doc
+        assert "docs" in f["/my_entry/required_group"].attrs
+        assert (
+            "This is a required yet empty group."
+            in f["/my_entry/required_group"].attrs["docs"]
+        )
