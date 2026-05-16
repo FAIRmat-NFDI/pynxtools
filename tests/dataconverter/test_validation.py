@@ -265,6 +265,9 @@ TEMPLATE["lone_groups"] = [
     "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
 ]
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
+# symbol_group: two fields sharing NXDL symbol "n" — consistent sizes by default
+TEMPLATE["optional"]["/ENTRY[my_entry]/symbol_group/field_a"] = np.zeros(10)
+TEMPLATE["optional"]["/ENTRY[my_entry]/symbol_group/field_b"] = np.ones(10)
 # keys not registered in appdef
 TEMPLATE["required"]["/ENTRY[my_entry]/duration"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/duration/@units"] = "s"  # pylint: disable=E1126
@@ -2214,6 +2217,19 @@ def format_error_message(msg: str) -> str:
             ],
             id="baseclass-compressed-filter-supported-false",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/symbol_group/field_b",
+                np.ones(8),  # field_a has 10, field_b has 8 — symbol "n" mismatch
+            ),
+            [
+                "Inconsistent sizes for NXDL symbol 'n' in group "
+                "'/ENTRY[my_entry]/symbol_group': "
+                "fields disagree on dimension size: {8, 10}."
+            ],
+            id="symbol-size-mismatch",
+        ),
     ],
 )
 def test_validate_data_dict(data_dict, error_messages, caplog, request):
@@ -3628,6 +3644,18 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "NXDL as NX_INT."
             ],
             id="baseclass-compressed-wrong-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/symbol_group/field_b",
+                np.ones(8),  # field_a has 10, field_b has 8 — symbol "n" mismatch
+            ),
+            [
+                "Inconsistent sizes for NXDL symbol 'n' in group '/my_entry/symbol_group': "
+                "fields disagree on dimension size: {8, 10}."
+            ],
+            id="symbol-size-mismatch",
         ),
     ],
 )

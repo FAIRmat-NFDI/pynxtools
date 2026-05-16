@@ -131,6 +131,7 @@ class ValidationProblem(Enum):
     CompressionStrengthZero = auto()
     MissingNXclass = auto()
     ExternalLinkedFileNotFound = auto()
+    SymbolSizeMismatch = auto()
 
 
 class Collector:
@@ -301,6 +302,11 @@ class Collector:
             )
         elif log_type == ValidationProblem.ExternalLinkedFileNotFound:
             logger.warning(f"Linked external file '{value}' for {path} was not found.")
+        elif log_type == ValidationProblem.SymbolSizeMismatch:
+            logger.warning(
+                f"Inconsistent sizes for NXDL symbol '{value}' in group '{path}': "
+                f"fields disagree on dimension size: {args[0]}."
+            )
 
     def collect_and_log(
         self,

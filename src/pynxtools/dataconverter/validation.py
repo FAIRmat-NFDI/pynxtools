@@ -744,6 +744,30 @@ class ValidationVisitor(NexusVisitor):
                     units,
                 )
 
+        # Record actual dimension sizes for any NXDL symbols on this field so
+        # that cross-field consistency can be checked in on_complete.
+        if node.dim_symbols is not None and len(node.dim_symbols) == dataset.ndim:
+            group_path = path.rsplit("/", 1)[0] if "/" in path else ""
+            sym_map = self._symbol_registry.setdefault(group_path, {})
+            for dim_idx, sym in enumerate(node.dim_symbols):
+                if sym is not None:
+                    sym_map.setdefault(sym, []).append(dataset.shape[dim_idx])
+
+    def _check_symbol_consistency(self) -> None:
+        """Warn when fields in the same group disagree on a shared NXDL symbol size."""
+        for group_path, sym_map in self._symbol_registry.items():
+            for sym_name, sizes in sym_map.items():
+                unique_sizes = set(sizes)
+                if len(unique_sizes) > 1:
+                    collector.collect_and_log(
+                        f"{self._entry_name}/{group_path}"
+                        if group_path
+                        else self._entry_name,
+                        ValidationProblem.SymbolSizeMismatch,
+                        sym_name,
+                        unique_sizes,
+                    )
+
     def _handle_attributes(
         self,
         path: str,
@@ -1461,6 +1485,18 @@ def validate_dict_against(
                 prev_path=variant_path,
             )
 
+            # Record dimension sizes for NXDL symbol consistency checks.
+            value = keys.get(variant)
+            if (
+                node.dim_symbols is not None
+                and isinstance(value, np.ndarray)
+                and value.ndim == len(node.dim_symbols)
+            ):
+                sym_map = dict_symbol_registry.setdefault(prev_path, {})
+                for dim_idx, sym in enumerate(node.dim_symbols):
+                    if sym is not None:
+                        sym_map.setdefault(sym, []).append(value.shape[dim_idx])
+
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = f"{prev_path}/@{node.name}"
         variants = get_variations_of(node, keys)
@@ -1937,6 +1973,9 @@ def validate_dict_against(
     }
 
     keys_to_remove: list[str] = []
+    # Accumulates {group_path: {symbol_name: [observed_sizes]}} as fields
+    # with NXDL symbolic dimensions are processed.  Checked after recurse_tree.
+    dict_symbol_registry: dict[str, dict[str, list[int]]] = {}
 
     tree = generate_tree_from(appdef)
     collector.clear()
@@ -1945,6 +1984,17 @@ def validate_dict_against(
     not_visited = list(mapping)
     keys = _follow_link(nested_keys, "")
     recurse_tree(tree, nested_keys)
+
+    for group_path, sym_map in dict_symbol_registry.items():
+        for sym_name, sizes in sym_map.items():
+            unique_sizes = set(sizes)
+            if len(unique_sizes) > 1:
+                collector.collect_and_log(
+                    group_path,
+                    ValidationProblem.SymbolSizeMismatch,
+                    sym_name,
+                    unique_sizes,
+                )
 
     for not_visited_key in not_visited:
         if mapping.get(not_visited_key) is None:
