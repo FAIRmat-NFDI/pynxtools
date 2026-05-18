@@ -5,6 +5,7 @@ Naming utilities for converting NXDL names to Python / NOMAD conventions.
 from __future__ import annotations
 
 # Abbreviations that stay ALL-CAPS when converting NXDL names to CamelCase.
+# TODO: do we really want to have this additional naming restriction?
 ABBREVIATIONS: frozenset[str] = frozenset(
     {
         "xrd",
@@ -34,6 +35,7 @@ ABBREVIATIONS: frozenset[str] = frozenset(
 
 # NOMAD BaseSection quantity names that conflict with NXDL field names.
 # Fields with these names get a `_field` suffix to avoid shadowing.
+# TODO: is this a good idea??
 _RESERVED_QUANTITY_NAMES: frozenset[str] = frozenset(
     {"name", "datetime", "lab_id", "description"}
 )
@@ -96,6 +98,7 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
 # Base section mapping
 # ---------------------------------------------------------------------------
 
+# TODO: this should eventually be removed!
 # Maps NXDL top-level class name → (Python class name, dotted import path)
 BASESECTIONS_MAP: dict[str, tuple[str, str]] = {
     "NXobject": ("BaseSection", "nomad.datamodel.metainfo.basesections"),
