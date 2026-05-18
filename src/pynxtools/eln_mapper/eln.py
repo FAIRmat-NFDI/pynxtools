@@ -26,9 +26,10 @@ import yaml
 
 from pynxtools.dataconverter.helpers import convert_data_converter_dict_to_nxdl_path
 from pynxtools.nexus.nexus_tree import (
-    NexusEntity,
+    NexusField,
     NexusGroup,
     NexusNode,
+    _NexusEntityBase,
     generate_tree_from,
 )
 
@@ -142,7 +143,7 @@ class ElnGenerator(ABC):
 
     @abstractmethod
     def _construct_entity_structure(
-        self, node: NexusEntity, recursive_dict: dict, recursion_level: int
+        self, node: _NexusEntityBase, recursive_dict: dict, recursion_level: int
     ) -> bool:
         """Handle NeXus field or attribute.
 

@@ -158,13 +158,10 @@ class NexusNode(NodeMixin):
     Args:
         name (str):
             The name of the node. This is the part of the concept name at
-<<<<<<< HEAD
-           the respective level in the NeXus hierarchy.
-        nx_type (Literal["group", "field", "attribute", "choice", "link"]):
-=======
             the respective level in the NeXus hierarchy.
         nx_type (Literal["definition", "group", "field", "attribute", "choice", "link"]):
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
+            The name of the node.
+        nx_type (Literal["definition", "group", "field", "attribute", "choice", "link"]):
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
             The nameType of the node.
@@ -204,7 +201,7 @@ class NexusNode(NodeMixin):
     """
 
     name: str
-    nx_type: Literal["group", "field", "attribute", "choice", "link"]
+    nx_type: Literal["definition", "group", "field", "attribute", "choice", "link"]
     name_type: Literal["specified", "any", "partial"] | None = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
@@ -250,7 +247,7 @@ class NexusNode(NodeMixin):
     def __init__(
         self,
         name: str,
-        nx_type: Literal["group", "field", "attribute", "choice", "link"],
+        nx_type: Literal["definition", "group", "field", "attribute", "choice", "link"],
         name_type: Literal["specified", "any", "partial"] | None = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: bool | None = None,
@@ -522,7 +519,7 @@ class NexusNode(NodeMixin):
                 continue
             elif child.nx_type == "field":
                 req_children.append(f"{prev_path}/{child.name}")
-                if isinstance(child, NexusEntity) and child.unit is not None:
+                if isinstance(child, NexusField) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
             elif child.nx_type == "attribute":
                 req_children.append(f"{prev_path}/@{child.name}")
@@ -861,12 +858,12 @@ class NexusNode(NodeMixin):
 
         if tag in ("field", "attribute"):
             name = xml_elem.attrib.get("name")
+            cls = NexusField if tag == "field" else NexusAttribute
 
-            current_elem = NexusEntity(
+            current_elem = cls(
                 parent=self,
                 name=name,
                 name_type=name_type,
-                nx_type=tag,
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
                 inheritance=[xml_elem],
@@ -956,8 +953,6 @@ class NexusNode(NodeMixin):
         return next((c for c in self.children if c.name == name), None)
 
 
-<<<<<<< HEAD
-=======
 class NexusDefinition(NexusNode):
     """
     Root node representing a complete NXDL definition file (``definitionType`` in ``nxdl.xsd``).
@@ -1016,13 +1011,8 @@ class NexusDefinition(NexusNode):
     def __init__(self, **data) -> None:
         super().__init__(nx_type=self.nx_type, **data)
         self._set_definition_attrs()
-    def __repr__(self) -> str:
-        if self.nx_type == "attribute":
-            return f"@{self.name} ({self.optionality[:3]})"
-        return f"{self.name} ({self.optionality[:3]})"
 
 
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
 class NexusChoice(NexusNode):
     """
     A representation of a NeXus choice.
@@ -1062,7 +1052,7 @@ class NexusLink(NexusNode):
     It just collects the suggested target value.
 
     Args:
-        nx_type (Literal["choice"]):
+        nx_type (Literal["link"]):
             Just ties this node to the link tag in the nxdl file.
             Should and cannot be manually altered.
             Defaults to "link".
@@ -1218,84 +1208,59 @@ class NexusGroup(NexusNode):
         self._check_sibling_namefit()
 
 
-class NexusEntity(NexusNode):
+class _NexusEntityBase(NexusNode):
     """
-    A NexusEntity represents a field or an attribute in the NeXus tree.
+    Shared base for NexusField and NexusAttribute.
+
+    Holds only what both ``fieldType`` and ``attributeType`` define in ``nxdl.xsd``:
+    data type, enumeration items, and shape/dimension information.  Not part of
+    the public API — import ``NexusField`` or ``NexusAttribute`` directly.
 
     Args:
         nx_type (Literal["field", "attribute"]):
             The type of the entity is restricted to either a `field` or an `attribute`.
-<<<<<<< HEAD
-        unit (Optional[NexusUnitCategory]):
-            The unit of the entity.
-            This is set automatically on init based on the values found in the nxdl file.
-            Also the base classes of these entities are considered.
-            Defaults to None.
-        dtype (NexusType):
-            The nxdl datatype of the entity.
-            This is set automatically on init based on the values found in the nxdl file.
-=======
             Should not be manually altered.
         dtype (NexusType):
             The NXDL data type.
             This is set automatically on init based on the values found in the NXDL file.
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             Also the base classes of these entities are considered.
             If it is not present in any of the xml nodes, it will be set to `NX_CHAR`.
             Defaults to "NX_CHAR".
         items (Optional[list[str]]):
-<<<<<<< HEAD
-            This is a restriction of the field value to a list of items.
-            Only applies to nodes of dtype `NX_CHAR`.
-            This is set automatically on init based on the values found in the nxdl file.
-=======
             This is a restriction of the value to a list of items.
             This is set automatically on init based on the values found in the NXDL file.
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             Also the base classes of these entities are considered.
             If there is no restriction this is set to None.
             Defaults to None.
         open_enum (bool):
-<<<<<<< HEAD
-            If enumerations are used, the enumeration can be open (i.e., the value is not limited
-            to the enumeration items) or closed (i.e., the value must exactly match one of the
-            enumeration items). This is controlled by the open_enum boolean. By default, it is closed.
-        shape (Optional[tuple[Optional[int], ...]]):
-            The shape of the entity as given by the dimensions tag.
-=======
             ``True`` when the enumeration carries ``open="true"``.
             If enumerations are used, the enumeration can be open (i.e., the value is 
             not limited to the enumeration items) or closed (i.e., the value must exactly
             match one of the enumeration items). By default, enumerations are closed.
         shape (Optional[tuple[Optional[int], ...]]):
             The shape of the entity as given by the ``<dimensions>`` tag.
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             This is set automatically on init based on the values found in the nxdl file.
             Also the base classes of these entities are considered.
             If there is no dimension present in any of the xml nodes, it will be set to None.
             Contains None for unbounded dimensions.
             Symbols in either the `rank` or `value` attribute are not considered
             and result in an unbounded shape.
-<<<<<<< HEAD
             Defaults to None.
-=======
-            Defaults to None.     
         dim_symbols (Optional[tuple[Optional[str], ...]]):
             Parallel to ``shape``.  Stores the NXDL symbol name (e.g. ``"nP"``)
             for dimensions defined by a symbol rather than a literal integer.
             ``None`` when no ``<dimensions>`` element is present at all.
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
     """
 
     nx_type: Literal["field", "attribute"]
-    unit: NexusUnitCategory | None = None
     dtype: NexusType = "NX_CHAR"
     items: list[str] | None = None
     open_enum: bool = False
     shape: tuple[int | None, ...] | None = None
+    dim_symbols: tuple[str | None, ...] | None = None
 
     def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
-        """Check compatibility of this node with an XML element from the (possible) inheritance"""
+        """Check compatibility of this node with an XML element from the (possible) inheritance."""
 
         def _check_name_fit(xml_elem: ET._Element) -> bool:
             elem_name = xml_elem.attrib.get("name")
@@ -1316,10 +1281,12 @@ class NexusEntity(NexusNode):
             return True
 
         def _check_units_fit(xml_elem: ET._Element) -> bool:
+            # unit is field-only; attributes pass this check unconditionally.
+            unit = getattr(self, "unit", None)
             elem_units = xml_elem.attrib.get("units")
-            if elem_units and elem_units != "NX_ANY":
-                if elem_units != self.unit:
-                    if not elem_units == "NX_TRANSFORMATION" and self.unit in [
+            if elem_units and elem_units != "NX_ANY" and unit is not None:
+                if elem_units != unit:
+                    if not elem_units == "NX_TRANSFORMATION" and unit in [
                         "NX_LENGTH",
                         "NX_ANGLE",
                         "NX_UNITLESS",
@@ -1421,9 +1388,7 @@ class NexusEntity(NexusNode):
         return True
 
     def _construct_inheritance_chain_from_parent(self):
-        """
-        Builds the inheritance chain of the current node based on the parent node.
-        """
+        """Build the inheritance chain of the current node from the parent's XML elements."""
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
@@ -1434,10 +1399,7 @@ class NexusEntity(NexusNode):
                         self.inheritance.append(elem)
 
     def _set_type(self):
-        """
-        Sets the dtype of the current entity based on the values in the inheritance chain.
-        The first value found is used.
-        """
+        """Set dtype from the first ``type`` attribute found in the inheritance chain."""
         for elem in self.inheritance:
             if "type" in elem.attrib:
                 self.dtype = elem.attrib["type"]
@@ -1452,16 +1414,9 @@ class NexusEntity(NexusNode):
             if "units" in elem.attrib:
                 self.unit = elem.attrib["units"]
                 return
-<<<<<<< HEAD
 
-=======
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
     def _set_items_and_enum_type(self):
-        """
-        Sets the enumeration items of the current entity
-        based on the values in the inheritance chain.
-        The first value found is used.
-        """
+        """Set items and open_enum from the first ``<enumeration>`` in the inheritance chain."""
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
 
@@ -1485,10 +1440,7 @@ class NexusEntity(NexusNode):
                 return
 
     def _set_shape(self):
-        """
-        Sets the shape of the current entity based on the values in the inheritance chain.
-        The first value found is used.
-        """
+        """Set shape and dim_symbols from the first ``<dimensions>`` in the inheritance chain."""
         for elem in self.inheritance:
             dimension = elem.find(f"nx:dimensions", namespaces=namespaces)
             if dimension is not None:
@@ -1501,11 +1453,12 @@ class NexusEntity(NexusNode):
             try:
                 int(rank)
             except ValueError:
-                # TODO: Handling of symbols
+                # rank itself is a symbol — cannot determine dimensionality
                 return
         xml_dim = dimension.findall("nx:dim", namespaces=namespaces)
         rank = rank if rank is not None else len(xml_dim)
         dims: list[int | None] = [None] * int(rank)
+        syms: list[str | None] = [None] * int(rank)
         for dim in xml_dim:
             idx = int(dim.attrib["index"])
             if "value" not in dim.attrib:
@@ -1515,30 +1468,145 @@ class NexusEntity(NexusNode):
                 value = int(dim.attrib["value"])
                 dims[idx - 1] = value
             except ValueError:
-                # TODO: Handling of symbols
-                pass
+                # dim value is a symbol name (or expression like "tof+1") — store it
+                syms[idx - 1] = dim.attrib["value"]
 
         self.shape = tuple(dims)
-<<<<<<< HEAD
-=======
         self.dim_symbols = tuple(syms)
-        self.shape = tuple(dims)
->>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
-        self._set_unit()
         self._set_type()
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
         self._construct_inheritance_chain_from_parent()
-        # Set all parameters again based on the acquired inheritance
-        self._set_unit()
+        # Repeat after the inheritance chain is extended
         self._set_type()
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
+
+
+class NexusAttribute(_NexusEntityBase):
+    """
+    A NeXus attribute node — models ``attributeType`` from ``nxdl.xsd``.
+
+    Attributes (``<attribute>`` tags) share dtype, enumeration, and dimension
+    information with fields, but carry no unit, interpretation, or signal/axis
+    metadata.  Those are field-only concepts; see ``NexusField``.
+
+    Args:
+        nx_type (Literal["attribute"]):
+            Fixed to ``"attribute"`` — should and cannot be manually altered.
+    """
+
+    nx_type: Literal["attribute"] = "attribute"
+
+    def __init__(self, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+
+
+class NexusField(_NexusEntityBase):
+    """
+    A NeXus field node — models ``fieldType`` from ``nxdl.xsd`` completely.
+
+    In addition to the shared type/enum/shape information from
+    ``_NexusEntityBase``, a field can carry:
+
+    * a unit category (``units`` XML attribute → ``unit``),
+    * display metadata (``long_name``, ``interpretation``),
+    * deprecated plotting hints (``signal``, ``axis``, ``axes``, ``primary``),
+    * rarely-used array access offsets (``stride``, ``data_offset``).
+
+    The plotting-hint attributes are deprecated in modern NeXus (superseded by
+    group-level HDF5 ``@signal``/``@axes`` attributes on ``NXdata`` groups) but
+    are modelled here because they still appear in existing application
+    definitions.
+
+    Args:
+        nx_type (Literal["field"]):
+            Fixed to ``"field"`` — should and cannot be manually altered.
+        unit (Optional[NexusUnitCategory]):
+            Unit category.  Set automatically from the ``units`` XML attribute
+            in the inheritance chain.
+        long_name (Optional[str]):
+            Human-readable field name.
+        interpretation (Optional[str]):
+            How the consumer should interpret the last dimensions
+            (e.g. ``"spectrum"``, ``"image"``).
+        signal (Optional[int]):
+            Deprecated ordinate marker.
+        axis (Optional[int]):
+            Deprecated abscissa marker.
+        axes (Optional[str]):
+            Deprecated colon-separated axis list.
+        primary (Optional[int]):
+            Deprecated axis-selection priority.
+        stride (Optional[str]):
+            Comma-separated stride list (rarely used in practice).
+        data_offset (Optional[str]):
+            Comma-separated starting coordinates (rarely used in practice).
+    """
+
+    nx_type: Literal["field"] = "field"
+    unit: NexusUnitCategory | None = None
+    long_name: str | None = None
+    interpretation: (
+        Literal[
+            "scalar",
+            "spectrum",
+            "image",
+            "rgba-image",
+            "hsla-image",
+            "hsl-image",
+            "binary",
+            "rgb-image",
+            "cmyk-image",
+        ]
+        | None
+    ) = None
+    signal: int | None = None
+    axis: int | None = None
+    axes: str | None = None
+    primary: int | None = None
+    stride: str | None = None
+    data_offset: str | None = None
+
+    def _set_unit(self):
+        """Set unit from the first ``units`` attribute found in the inheritance chain."""
+        for elem in self.inheritance:
+            if "units" in elem.attrib:
+                self.unit = elem.attrib["units"]
+                return
+
+    def _set_field_attrs(self):
+        """Read long_name, interpretation, and deprecated field attrs in one inheritance pass."""
+        for elem in self.inheritance:
+            if self.long_name is None:
+                self.long_name = elem.attrib.get("long_name")
+            if self.interpretation is None:
+                self.interpretation = elem.attrib.get("interpretation")
+            if self.signal is None and (v := elem.attrib.get("signal")):
+                self.signal = int(v)
+            if self.axis is None and (v := elem.attrib.get("axis")):
+                self.axis = int(v)
+            if self.axes is None:
+                self.axes = elem.attrib.get("axes")
+            if self.primary is None and (v := elem.attrib.get("primary")):
+                self.primary = int(v)
+            if self.stride is None:
+                self.stride = elem.attrib.get("stride")
+            if self.data_offset is None:
+                self.data_offset = elem.attrib.get("data_offset")
+
+    def __init__(self, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+        self._set_unit()
+        self._set_field_attrs()
+        # Repeat after the inheritance chain is extended by the base __init__
+        self._set_unit()
+        self._set_field_attrs()
 
 
 def populate_tree_from_parents(node: NexusNode):
@@ -1554,18 +1622,22 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
+def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinition":
     """
-    Generates a NexusNode tree from an application definition.
-    NexusNode is based on anytree nodes and anytree's functions can be used
-    for displaying and traversal of the tree.
+    Generate a NexusNode tree from a NeXus application definition.
+
+    The root of the returned tree is a :class:`NexusDefinition` node whose
+    ``category``, ``symbols``, and ``ignore_extra_*`` attributes reflect the
+    metadata declared in the NXDL file.  Children of the root are
+    :class:`NexusGroup`, :class:`NexusField`, :class:`NexusAttribute`,
+    :class:`NexusLink`, and :class:`NexusChoice` nodes as appropriate.
 
     Args:
-        appdef (str): The application definition name to generate the NexusNode tree from.
-        set_root_attr (bool): Whether or not to set the root attributes.
+        appdef (str): The application definition name (e.g. ``"NXarpes"``).
+        set_root_attr (bool): Whether to attach NXroot-level attributes to the root.
 
     Returns:
-        NexusNode: The tree representing the application definition.
+        NexusDefinition: The root node of the tree.
     """
 
     def add_children_to(parent: NexusNode, xml_elem: ET._Element) -> None:
@@ -1599,10 +1671,8 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     appdef_inheritance_chain = [appdef_xml_root]
     appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
 
-    tree = NexusGroup(
+    tree = NexusDefinition(
         name=appdef_xml_root.attrib["name"],
-        nx_class="NXroot",
-        nx_type="group",
         name_type="specified",
         optionality="required",
         variadic=False,
@@ -1626,8 +1696,3 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         populate_tree_from_parents(tree)
 
     return tree
-<<<<<<< HEAD
-========
->>>>>>>> 00f35095 (`NexusVisitor` and `Annotator` architecture (#777)):src/pynxtools/dataconverter/nexus_tree.py
-=======
->>>>>>> 00f35095 (`NexusVisitor` and `Annotator` architecture (#777))
