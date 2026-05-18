@@ -1361,17 +1361,17 @@ def format_error_message(msg: str) -> str:
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
                 {
-                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_filed.nxs:/my_entry/nxodd_two_name/posint_value"
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs:/my_entry/nxodd_two_name/posint_value"
                 },
             ),
             [
                 (
-                    f"External linked file '{VALIDATION_TEST_DATA_DIR}/NXtest_filed.nxs' "
+                    f"External linked file '{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs' "
                     "for /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value was not found."
                 ),
                 (
                     "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value "
-                    f"to {VALIDATION_TEST_DATA_DIR}/NXtest_filed.nxs:/my_entry/nxodd_two_name/posint_value."
+                    f"to {VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs:/my_entry/nxodd_two_name/posint_value."
                 ),
                 "The key /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value will not be written.",
                 "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value hasn't been supplied.",

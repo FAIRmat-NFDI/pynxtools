@@ -1306,7 +1306,7 @@ def validate_dict_against(
                             if ext_node is not None and isinstance(
                                 ext_node, h5py.Dataset
                             ):
-                                dataset = clean_str_attr(ext_node[()])
+                                dataset = decode_if_bytes(ext_node[()])
 
                                 # Resolve external field links to the dataset value so field
                                 # validation does not treat link dicts as groups.
