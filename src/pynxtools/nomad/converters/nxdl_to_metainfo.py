@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import ast
 import subprocess
+import textwrap
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -204,35 +205,7 @@ def _section_fqn(nx_class: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-import textwrap
-
 _DOC_WIDTH = 75  # target line width for wrapped doc text
-
-
-def _concept_description(node) -> str | None:
-    """Extract <doc> text as ``# ...`` comment blocks.
-
-    Reserved for future use: rendering source-level comments above Quantity
-    definitions.  Not used by the template at this time.
-    """
-    docs = node.get_docstring(depth=1)
-    raw = (next(iter(docs.values()), None) or "").strip()
-    if not raw:
-        return None
-    cleaned = textwrap.dedent(raw).strip()
-    wrapped_blocks: list[str] = []
-    for paragraph in cleaned.split("\n\n"):
-        paragraph = " ".join(paragraph.split())
-        wrapped = textwrap.fill(
-            paragraph,
-            width=88,
-            initial_indent="# ",
-            subsequent_indent="# ",
-            break_long_words=False,
-            break_on_hyphens=False,
-        )
-        wrapped_blocks.append(wrapped)
-    return "\n#\n".join(wrapped_blocks)
 
 
 def _plain_description(node) -> str | None:
@@ -485,8 +458,8 @@ def build_context(nx_name: str) -> dict:
     quantities: list[QuantityContext] = []
     subsections: list[SubSectionContext] = []
     named_concepts: list[NamedConceptContext] = []
-    seen_qty: set[str] = set()
-    seen_ss: set[str] = set()
+    seen_quantities: set[str] = set()
+    seen_subsections: set[str] = set()
     seen_concept: set[str] = set()
     # (module_path, class_name) pairs for concept base imports at file top.
     concept_imports: list[tuple[str, str]] = []
@@ -503,16 +476,16 @@ def build_context(nx_name: str) -> dict:
 
         if child.nx_type == "attribute":
             qty = _build_quantity_from_node(child)
-            if qty.python_name in seen_qty:
+            if qty.python_name in seen_quantities:
                 continue
-            seen_qty.add(qty.python_name)
+            seen_quantities.add(qty.python_name)
             quantities.append(qty)
 
         elif child.nx_type == "field":
             qty = _build_quantity_from_node(child)
-            if qty.python_name in seen_qty:
+            if qty.python_name in seen_quantities:
                 continue
-            seen_qty.add(qty.python_name)
+            seen_quantities.add(qty.python_name)
             quantities.append(qty)
 
             # Field-level attribute sub-children pre-populated by build_base_class_node.
@@ -524,9 +497,9 @@ def build_context(nx_name: str) -> dict:
                 attr_key = (
                     f"{qty.python_name}__{nxdl_to_quantity_name(attr_child.name)}"
                 )
-                if attr_key in seen_qty:
+                if attr_key in seen_quantities:
                     continue
-                seen_qty.add(attr_key)
+                seen_quantities.add(attr_key)
                 quantities.append(
                     _build_quantity_from_node(
                         attr_child,
@@ -572,7 +545,7 @@ def build_context(nx_name: str) -> dict:
                     concept_imports.append(import_entry)
 
             ss = _build_subsection_from_node(child, section_fqn=concept_fqn)
-            if ss.python_name in seen_ss:
+            if ss.python_name in seen_subsections:
                 # Two named groups with the same class — disambiguate by name.
                 if not child.variadic:
                     ss.python_name = nxdl_to_subsection_name(
@@ -580,7 +553,7 @@ def build_context(nx_name: str) -> dict:
                     )
                 else:
                     continue
-            seen_ss.add(ss.python_name)
+            seen_subsections.add(ss.python_name)
             subsections.append(ss)
         # links and choices are skipped in Phase 1
 
@@ -607,7 +580,7 @@ def build_context(nx_name: str) -> dict:
         "quantities": quantities,
         "subsections": subsections,
         "named_concepts": named_concepts,
-        "concept_imports": concept_imports,
+        "concept_imports": sorted(concept_imports),
         "needs_m_enum": needs_m_enum,
     }
 
@@ -623,13 +596,13 @@ def render(context: dict) -> str:
     raw = template.render(**context)
     try:
         result = subprocess.run(
-            ["ruff", "check", "--", "fix"],
+            ["ruff", "check", "--fix", "--stdin-filename", "generated.py", "-"],
             input=raw,
             capture_output=True,
             text=True,
-            check=True,
+            check=False,
         )
-        checked = result.stdout
+        checked = result.stdout if result.stdout else raw
     except Exception:
         checked = raw
     try:
@@ -642,7 +615,7 @@ def render(context: dict) -> str:
         )
         return result.stdout
     except Exception:
-        return raw
+        return checked
 
 
 # ---------------------------------------------------------------------------
