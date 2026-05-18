@@ -33,7 +33,7 @@ Converts experimental data to NeXus/HDF5 files. Internally uses the reader pipel
 
 Validates an existing HDF5/NeXus file against the NeXus application definition it declares in `NXentry/definition`.
 
-See [Learn > pynxtools > Validation of NeXus files](../learn/pynxtools/nexus-validation.md) for a conceptual explanation, and the [how-to guide](../how-tos/pynxtools/validate-nexus-files.md) for usage examples.
+See [Learn > pynxtools > Validation of NeXus files](../learn/pynxtools/nexus-validation.md) for a conceptual explanation and the [how-to guide](../how-tos/pynxtools/validate-nexus-files.md) for usage examples.
 
 ::: mkdocs-click
     :module: pynxtools.dataconverter.cli

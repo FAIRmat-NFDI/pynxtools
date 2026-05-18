@@ -15,7 +15,7 @@ Write a custom visitor when you need to process every node of a NeXus file in a 
 
 ## The visitor interface
 
-`NexusVisitor` is an ABC. Concrete subclasses must implement all four hooks; implement hooks that are not needed as `pass`:
+`NexusVisitor` is an abstract base class. Concrete subclasses must implement all four hooks; implement hooks that are not needed as `pass`:
 
 ```python
 from pynxtools.nexus.handler import NexusVisitor

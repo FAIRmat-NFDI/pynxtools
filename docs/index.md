@@ -69,7 +69,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 #### pynxtools
 
-- [pynxtools architecture](learn/pynxtools/architecture.md)
+- [`pynxtools` architecture](learn/pynxtools/architecture.md)
 - [NeXus definitions in `pynxtools`](learn/pynxtools/nexus-definitions.md)
 - [Data conversion in `pynxtools`](learn/pynxtools/dataconverter-and-readers.md)
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)

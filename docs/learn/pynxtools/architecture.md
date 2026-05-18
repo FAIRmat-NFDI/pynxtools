@@ -21,7 +21,7 @@ The separation is deliberate: traversal and I/O live in `NexusFileHandler`; all 
 ### What `NexusNode` provides
 
 - **Optionality**: whether a concept is `required`, `recommended`, or `optional`.
-- **Type information**: Nexus type (e.g. `NX_FLOAT`) and Unit category (e.g. `NX_ENERGY`).
+- **Type information**: NeXus type (e.g. `NX_FLOAT`) and NeXus Unit category (e.g. `NX_ENERGY`).
 - **Enumeration values**: closed vs. open enumerations.
 - **Inheritance chain traversal**: `get_inheritance_docs()`, `get_inheritance_enums()`, and `get_inheritance_concept_paths()` walk the full NeXus inheritance chain and return documentation and constraints from every contributing base class, most-specific first.
 - **Name resolution**: `best_child_for(name, node_type, nx_class)` selects the best-matching schema child for a given HDF5 instance name, applying NeXus name-fitting rules.
@@ -102,7 +102,7 @@ All built-in visitors are interchangeable in `NexusFileHandler`. Switching the v
 
 ### `pynx read` — the annotator
 
-`pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`. The annotator resolves the application definition from the file's `NXentry/definition` field, builds a `NexusNode` tree for it, and on each `on_field` / `on_attribute` callback looks up the matching `NexusNode` to emit documentation, optionality, enumeration values, and inheritance information.
+`pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`. The annotator resolves the application definition from the file's `NXentry/definition` field, builds a `NexusNode` tree for it. Thereafter, the annotator looks up on each `on_field` / `on_attribute` callback the matching `NexusNode` to emit documentation, optionality, enumeration values, and inheritance information.
 
 Three operating modes are supported:
 
