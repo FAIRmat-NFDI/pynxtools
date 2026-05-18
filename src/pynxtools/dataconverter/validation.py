@@ -1110,7 +1110,7 @@ def validate_dict_against(
                         index,
                     )
 
-        keys = _follow_link(keys, prev_path, node)
+        keys = _follow_link(keys, prev_path)
         signal = keys.get("@signal")
         aux_signals = keys.get("@auxiliary_signals", [])
         axes = keys.get("@axes", [])
@@ -1129,7 +1129,7 @@ def validate_dict_against(
             for x in keys
             if x not in [signal, *axes, *indices, *errors, *aux_signals]
         }
-        remaining_keys = _follow_link(remaining_keys, prev_path, node)
+        remaining_keys = _follow_link(remaining_keys, prev_path)
         recurse_tree(
             node,
             remaining_keys,
@@ -1230,7 +1230,7 @@ def validate_dict_against(
             if node.nx_class == "NXcollection":
                 return
             else:
-                variant_keys = _follow_link(keys[variant], variant_path, node)
+                variant_keys = _follow_link(keys[variant], variant_path)
                 recurse_tree(node, variant_keys, prev_path=variant_path)
 
     def remove_from_not_visited(path: str) -> str:
@@ -1238,9 +1238,7 @@ def validate_dict_against(
             not_visited.remove(path)
         return path
 
-    def _follow_link(
-        keys: Mapping[str, Any] | None, prev_path: str, node: NexusNode | None = None
-    ) -> Any | None:
+    def _follow_link(keys: Mapping[str, Any] | None, prev_path: str) -> Any | None:
         """
         Resolves internal dictionary "links" by replacing any keys containing a
         {"link": "/path/to/target"} structure with the actual referenced content.
@@ -1258,8 +1256,6 @@ def validate_dict_against(
                 May be None or a non-dict value, in which case it's returned as-is.
             prev_path (str): The path leading up to the current `keys` context, used
                 for logging and error reporting.
-            node (Optional[NexusNode]): The current node of the NeXus tree that represents
-                the dataset or group in source link path.
 
         Returns:
             Optional[Any]: A dictionary with resolved links, the original value if
@@ -1383,9 +1379,7 @@ def validate_dict_against(
 
             variant_value = keys[variant]
             if isinstance(variant_value, Mapping) and "link" in variant_value:
-                resolved_link = _follow_link(
-                    {variant: variant_value}, prev_path, node=node
-                )
+                resolved_link = _follow_link({variant: variant_value}, prev_path)
                 if (
                     not isinstance(resolved_link, Mapping)
                     or variant not in resolved_link
@@ -1530,7 +1524,7 @@ def validate_dict_against(
                     is_valid_unit_for_node(node, unit, unit_path, hints)
 
             field_attributes = get_field_attributes(variant, keys)
-            field_attributes = _follow_link(field_attributes, variant_path, node=node)
+            field_attributes = _follow_link(field_attributes, variant_path)
 
             recurse_tree(
                 node,
@@ -1762,7 +1756,7 @@ def validate_dict_against(
             return True
 
         if isinstance(mapping[key], Mapping) and "link" in mapping[key]:
-            resolved_link = _follow_link({key: mapping[key]}, "", node=node)
+            resolved_link = _follow_link({key: mapping[key]}, "")
 
             if key not in resolved_link:
                 # Link is broken and key will be removed; no need to check further
