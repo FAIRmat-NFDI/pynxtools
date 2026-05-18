@@ -19,16 +19,17 @@
 `NexusNode` and its subclasses are a tree implementation based on anytree.
 They are used to represent the structure of a NeXus application definition.
 
-The `NexusNode` representation is typically sparse, i.e., it only contains
-everything present in the application definition.
-However, all necessary parameters are added from the inheritance chain
-on the fly when the tree is generated.
+The `NexusNode` representation only contains everything present in NXDL
+file where it is defined. However, all inherited parameters are added from
+the inheritance chain on the fly when the tree is generated.
 
-It also allows for adding further nodes from the inheritance chain on the fly.
+Using anytree enables the addition of further NexusNode instances
+to the tree on the fly.
 """
 
+import logging
 from functools import lru_cache, reduce
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
@@ -46,6 +47,8 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
+
+logger = logging.getLogger(__file__)
 
 NexusType = Literal[
     "NX_BINARY",
@@ -105,6 +108,12 @@ NexusUnitCategory = Literal[
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
+# TODO: this could be generalized across the repo
+def _strip_nx_prefix(nx_type: str) -> str:
+    """Convert NeXus type names like 'NXentry' to 'ENTRY'."""
+    return nx_type.removeprefix("NX").upper()
+
+
 def _xml_path_in_nxdl(elem: ET._Element) -> str:
     """Return the path of *elem* within its NXDL file.
 
@@ -131,7 +140,7 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
             # No explicit name → nameType is implicitly "any"; derive the template
             # name from the NX type by stripping the "NX" prefix and make uppercase.
             nx_type = current.attrib.get("type", "")
-            name = nx_type[2:].upper() if nx_type.startswith("NX") else nx_type
+            name = _strip_nx_prefix(nx_type) if nx_type.startswith("NX") else nx_type
         if name:
             parts.append(name)
         if remove_namespace_from_tag(parent.tag) == "definition":
@@ -148,7 +157,8 @@ class NexusNode(NodeMixin):
 
     Args:
         name (str):
-            The name of the node.
+            The name of the node. This is the part of the concept name at
+           the respective level in the NeXus hierarchy.
         nx_type (Literal["group", "field", "attribute", "choice", "link"]):
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
@@ -202,7 +212,7 @@ class NexusNode(NodeMixin):
         int | None,
         int | None,
     ] = (None, None)
-    lvl_map: dict[str,  tuple[str, ...]] = {
+    lvl_map: dict[str, tuple[str, ...]] = {
         "required": ("required",),
         "recommended": ("recommended", "required"),
         "optional": ("optional", "recommended", "required"),
@@ -421,7 +431,7 @@ class NexusNode(NodeMixin):
                 if "name" in sub_elems.attrib:
                     names[sub_elems.attrib["name"]] = None
                 elif "type" in sub_elems.attrib:
-                    names[sub_elems.attrib["type"][2:].upper()] = None
+                    names[_strip_nx_prefix(sub_elems.attrib["type"])] = None
 
         return list(names.keys())
 
@@ -439,11 +449,11 @@ class NexusNode(NodeMixin):
                 The path prefix to attach to the names found at this node. Defaults to "".
             level (Literal["required", "recommended", "optional"], optional):
                 Denotes which level of requiredness should be returned.
-                Setting this to `required` will return only required fields and attributes.
+                Setting this to `required` will return only required groups.
                 Setting this to `recommended` will return
-                both required and recommended fields and attributes.
-                Setting this to "optional" will return all fields and attributes
-                directly present in the application definition but no fields
+                both required and recommended groups.
+                Setting this to "optional" will return all groups
+                directly present in the NXDL definition of the node but no groups
                 inherited from the base classes.
                 Defaults to "required".
             recurse_children (bool):
@@ -451,7 +461,7 @@ class NexusNode(NodeMixin):
                 Default to True.
 
         Returns:
-            list[str]: A list of required fields and attributes names.
+            list[str]: A list of required group names.
         """
 
         req_children = []
@@ -489,7 +499,7 @@ class NexusNode(NodeMixin):
                 Setting this to `recommended` will return
                 both required and recommended fields and attributes.
                 Setting this to "optional" will return all fields and attributes
-                directly present in the application definition but no fields
+                directly present in the NXDL definition of the node but no fields
                 inherited from the base classes.
                 Defaults to "required".
             recurse_children (bool):
@@ -505,16 +515,14 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
-            if child.nx_type == "attribute":
-                req_children.append(f"{prev_path}/@{child.name}")
-                continue
-
-            if child.nx_type == "field":
+            elif child.nx_type == "field":
                 req_children.append(f"{prev_path}/{child.name}")
                 if isinstance(child, NexusEntity) and child.unit is not None:
                     req_children.append(f"{prev_path}/{child.name}/@units")
-
-            if child.nx_type == "link":
+            elif child.nx_type == "attribute":
+                req_children.append(f"{prev_path}/@{child.name}")
+                continue
+            elif child.nx_type == "link":
                 req_children.append(f"{prev_path}/{child.name}")
                 continue
 
@@ -571,7 +579,9 @@ class NexusNode(NodeMixin):
         ]
         best_match: NexusNode | None = None
         best_score = -1
-        for node in children:
+        score_board: dict[int, dict[str, list[int]]] = {}
+
+        for idx, node in enumerate(children):
             if node is None:
                 continue
             if not node.variadic:
@@ -586,59 +596,35 @@ class NexusNode(NodeMixin):
                         continue
                     best_match = node
                     best_score = score
+
+                if score not in score_board:
+                    score_board[score] = {
+                        "required": [],
+                        "recommended": [],
+                        "optional": [],
+                    }
+                for constraint in ["optional", "required", "recommended"]:
+                    # lookup into nodes in decreasing order of typical occurrence to break earlier
+                    if node.optionality == constraint:
+                        score_board[score][constraint].append(idx)
+                        break
+
+        # analyze and warn if more than one concept fits best, return always though the first found
+        if len(score_board) > 0:
+            alternative_best_score = max(score_board)
+            if alternative_best_score > -1:
+                for constraint in ["required", "recommended", "optional"]:
+                    # select preferentially for the harder constraint that should be met given that
+                    # we wish to validate compliance with a NeXus definition (appdef or class)
+                    if len(score_board[alternative_best_score][constraint]) > 1:
+                        logger.debug(
+                            f"Multiple best fitting with score {alternative_best_score} found "
+                            f"{[children[idx] for idx in score_board[alternative_best_score][constraint]]} "
+                            f"constrained by {constraint}; indicates possible issues with nameTyping of "
+                            f"specific NeXus classes/concepts"
+                        )
+
         return best_match
-
-    def find_node_at_path(
-        self,
-        path: str,
-        node_type: str | None = None,
-        nx_class: str | None = None,
-        hint: str | None = None,
-        _cache: dict | None = None,
-    ) -> Optional["NexusNode"]:
-        """Walk the tree from *self* to *path* and return the matching node.
-
-        Unlike :meth:`search_add_child_for`, this method resolves a full
-        slash-separated *path* (relative to *self*) using the same name-fit
-        logic as :meth:`best_child_for`.
-
-        Args:
-            path: Slash-separated HDF5 path relative to this node (no leading ``/``).
-            node_type: Node type filter for the **final** path element only.
-                Intermediate path segments are always resolved as groups.
-            nx_class: NX_class filter for the **final** path element (groups only).
-            hint: ``'axis'`` or ``'signal'`` hint for NXdata disambiguation.
-            _cache: Optional dict used as a simple path→node lookup
-                    Pass the same dict across calls for best performance.
-
-        Returns:
-            The matching :class:`NexusNode`, or ``None`` if not found.
-        """
-        if _cache is not None and path in _cache:
-            return _cache[path]
-
-        if path == "":
-            result = self
-        else:
-            *prev_parts, last_elem = path.rsplit("/", 1)
-            # Intermediate path elements are always HDF5 groups — constrain
-            # the search so that a schema field with the same name is never
-            # selected in place of the required parent group.
-            parent = (
-                self.find_node_at_path(prev_parts[0], node_type="group", _cache=_cache)
-                if prev_parts
-                else self
-            )
-            if parent is None:
-                result = None
-            else:
-                result = parent.best_child_for(
-                    last_elem, node_type=node_type, nx_class=nx_class, hint=hint
-                )
-
-        if _cache is not None:
-            _cache[path] = result
-        return result
 
     def get_docstring(self, depth: int | None = None) -> dict[str, str]:
         """
@@ -647,7 +633,8 @@ class NexusNode(NodeMixin):
         Args:
             depth (Optional[int], optional):
                 The depth up to which to retrieve the docstrings.
-                If this is None all docstrings of all parents are returned.
+                If this is None all docstrings of all parents are returned, i.e. iterating up
+                to the root NXobject.
                 Defaults to None.
 
         Raises:
@@ -663,11 +650,13 @@ class NexusNode(NodeMixin):
         for elem in self.inheritance[:depth][::-1]:
             doc = elem.find("nx:doc", namespaces=namespaces)
 
-            if doc is not None:
-                name = elem.attrib.get("name")
-                if not name:
-                    name = elem.attrib["type"][2:].upper()
-                docstrings[name] = doc.text
+            if doc is None or doc.text is None:
+                continue
+
+            name = elem.attrib.get("name")
+            if not name:
+                name = _strip_nx_prefix(elem.attrib["type"])
+            docstrings[name] = doc.text
 
         return docstrings
 
@@ -683,20 +672,6 @@ class NexusNode(NodeMixin):
         base = (self.nxdl_base or "").split("/")[-1].split(".nxdl.xml")[0]
         path = self.get_path()
         return f"{base}{path}" if base else path
-
-    def get_inheritance_docs(self) -> list[tuple[str, str]]:
-        """Return ``[(nxdl_source, doc_text), ...]`` for elements with non-empty docs.
-
-        Most specific first (appdef before base class).  *nxdl_source* is the
-        NXDL file stem, e.g. ``"NXarpes"`` or ``"NXentry"``.
-        """
-        results: list[tuple[str, str]] = []
-        for elem in self.inheritance:
-            doc = elem.find("nx:doc", namespaces=namespaces)
-            if doc is not None and doc.text and doc.text.strip():
-                src = (elem.base or "").split("/")[-1].split(".nxdl.xml")[0]
-                results.append((src, doc.text.strip()))
-        return results
 
     def get_inheritance_concept_paths(self) -> list[tuple[str, str | None]]:
         """Return ``[(concept_label, doc_text_or_None), ...]``, most-specific first.
@@ -827,7 +802,7 @@ class NexusNode(NodeMixin):
                     group_name = (
                         group.attrib.get("name")
                         if "name" in group.attrib
-                        else group.attrib["type"][2:].upper()
+                        else _strip_nx_prefix(group.attrib["type"])
                     )
 
                     if "name" in group.attrib:
@@ -894,7 +869,7 @@ class NexusNode(NodeMixin):
         elif tag == "group":
             name = xml_elem.attrib.get("name")
             if not name:
-                name = xml_elem.attrib["type"][2:].upper()
+                name = _strip_nx_prefix(xml_elem.attrib["type"])
                 name_type = "any"
 
             inheritance_chain = self._build_inheritance_chain(xml_elem)
@@ -1086,7 +1061,7 @@ class NexusGroup(NexusNode):
                 sibling_name = (
                     sibling.attrib.get("name")
                     if "name" in sibling.attrib
-                    else sibling.attrib["type"][2:].upper()
+                    else _strip_nx_prefix(sibling.attrib["type"])
                 )
 
                 if "name" in sibling.attrib:

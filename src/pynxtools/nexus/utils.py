@@ -52,11 +52,9 @@ def decode_if_string(
     Raises:
         ValueError: If decoding fails on bytes or numpy array elements.
     """
-    # Early return if decoding is disabled
     if not decode:
         return elem
 
-    # Handle numpy arrays of bytes or strings
     if isinstance(elem, np.ndarray):
         if elem.size == 0:
             return elem  # Return the empty array unchanged

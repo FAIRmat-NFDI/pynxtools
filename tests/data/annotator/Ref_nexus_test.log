@@ -669,14 +669,7 @@ GROUP / [NXroot]
           @units = eV  [UNIT: NX_ENERGY]
 
         GROUP /entry/instrument/monochromator/slit [NXslit]  (1 members)
-          Concept   : NXmonochromator/ENTRY/INSTRUMENT/monochromator/GRATING  [OPTIONAL]
-          Inheritance:
-            NXmonochromator/GRATING
-              Doc       : For diffraction grating based monochromators
-            NXgrating
-              Doc       : A diffraction grating, as could be used in a soft X-ray monochromator
-            NXcomponent
-              Doc       : Base class for components of an instrument - real ones or simulated ones.
+          <NOT IN SCHEMA>
           FIELD /entry/instrument/monochromator/slit/y_gap  shape=()  dtype=float64
             Value     : 2000.04833984375
             <NOT IN SCHEMA>

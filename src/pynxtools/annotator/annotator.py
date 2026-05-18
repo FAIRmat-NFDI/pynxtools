@@ -50,7 +50,8 @@ import h5py
 from pynxtools.annotator.nxdata import chk_nxdata_axis
 from pynxtools.nexus.handler import NexusVisitor
 from pynxtools.nexus.nexus import get_default_plottable
-from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
+from pynxtools.nexus.nexus_tree import NexusNode
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nexus.utils import decode_if_string
 
 
@@ -89,9 +90,7 @@ class Annotator(NexusVisitor):
         self.concept = concept
         self.parser = parser
         self._concept_matches: list[str] = []
-        # Per-appdef NexusNode tree cache and path→node lookup cache
-        self._tree_cache: dict[str, NexusNode | None] = {}
-        self._node_cache: dict[str, NexusNode | None] = {}
+        self._resolver = NexusSchemaResolver()
 
     # ------------------------------------------------------------------
     # NexusVisitor interface
@@ -146,7 +145,7 @@ class Annotator(NexusVisitor):
             self._annotate_attribute(hdf_path, attr_name, attr_value, parent)
 
         elif self.parser is not None:
-            attr_node = self._find_attr_node(hdf_path, attr_name, parent)
+            attr_node = self._resolver.attr_node_for(hdf_path, attr_name, parent)
             in_schema = attr_node is not None
             if in_schema:
                 val = str(decode_if_string(attr_value)).split("\n")
@@ -185,7 +184,7 @@ class Annotator(NexusVisitor):
             get_default_plottable(root, self.logger)
 
     # ------------------------------------------------------------------
-    # Schema resolution — NexusNode-based
+    # Dispatch documentation (``-d``) and concept (``-c``) mode
     # ------------------------------------------------------------------
 
     def _should_annotate(self, hdf_path: str) -> bool:
@@ -200,132 +199,6 @@ class Annotator(NexusVisitor):
         ):
             return True
         return False
-
-    @staticmethod
-    def _appdef_for(hdf_node: h5py.Group | h5py.Dataset) -> str:
-        """Walk up the HDF5 path to find the NXentry and return its ``definition`` attribute."""
-        h5file = hdf_node.file
-        parts = [p for p in hdf_node.name.split("/") if p]
-        for i in range(len(parts), 0, -1):
-            path = "/" + "/".join(parts[:i])
-            try:
-                candidate = h5file[path]
-            except KeyError:
-                continue
-            if not isinstance(candidate, h5py.Group):
-                continue
-            if decode_if_string(candidate.attrs.get("NX_class", b"")) == "NXentry":
-                try:
-                    definition = candidate["definition"][()]
-                    raw = (
-                        definition.decode()
-                        if isinstance(definition, bytes)
-                        else str(definition)
-                    )
-                    return raw.strip()
-                except (KeyError, AttributeError):
-                    return "NXroot"
-        return "NO NXentry found"
-
-    def _get_tree(self, appdef: str) -> NexusNode | None:
-        """Return (and cache) the NexusNode tree for *appdef*."""
-        if appdef not in self._tree_cache:
-            try:
-                self._tree_cache[appdef] = generate_tree_from(appdef)
-            except Exception:
-                self._tree_cache[appdef] = None
-        return self._tree_cache[appdef]
-
-    def _find_nexus_node(
-        self,
-        hdf_path: str,
-        hdf_node: h5py.Group | h5py.Dataset,
-        hint: str | None = None,
-    ) -> NexusNode | None:
-        """Return the NexusNode for *hdf_path*, or ``None`` if not in schema.
-
-        Path segments are resolved one at a time.  For each intermediate group
-        we read the actual ``NX_class`` attribute from the HDF5 file and pass
-        it to :meth:`~pynxtools.nexus.nexus_tree.NexusNode.best_child_for` so
-        that variadic schema groups (e.g. ``DETECTOR[NXdetector]``,
-        ``DATA[NXdata]``, ``COLLECTION[NXcollection]``) are disambiguated
-        deterministically instead of relying on ``set`` iteration order.
-
-        The *hint* (``'signal'`` or ``'axis'``) is forwarded to
-        ``best_child_for`` for the **last** path segment so that the
-        NXdata ambiguity between the ``DATA`` (signal) and ``AXISNAME``
-        (axis) concept nodes is resolved from the HDF5 file content.
-        """
-        if not hdf_path:
-            return None
-        if hdf_path in self._node_cache:
-            return self._node_cache[hdf_path]
-        appdef = self._appdef_for(hdf_node)
-        if appdef in ("NO NXentry found",):
-            return None
-        tree = self._get_tree(appdef)
-        if tree is None:
-            return None
-        node_type = "field" if isinstance(hdf_node, h5py.Dataset) else "group"
-
-        h5file = hdf_node.file
-        segments = [s for s in hdf_path.split("/") if s]
-        current: NexusNode = tree
-
-        for i, seg in enumerate(segments):
-            cache_key = "/".join(segments[: i + 1])
-            if cache_key in self._node_cache:
-                cached = self._node_cache[cache_key]
-                if cached is None:
-                    return None
-                current = cached
-                continue
-
-            is_last = i == len(segments) - 1
-            seg_node_type = node_type if is_last else "group"
-
-            # Look up the real NX_class of HDF5 groups (both intermediate AND last)
-            # so we can pin the schema child selection to the correct NX class and
-            # avoid the non-determinism from equally-scoring variadic nodes.
-            nx_class: str | None = None
-            if seg_node_type == "group":
-                try:
-                    h5_grp = h5file["/" + "/".join(segments[: i + 1])]
-                    if isinstance(h5_grp, h5py.Group):
-                        raw = h5_grp.attrs.get("NX_class", b"")
-                        nx_class = decode_if_string(raw) or None
-                except KeyError:
-                    pass
-
-            seg_hint = hint if is_last else None
-            child = current.best_child_for(
-                seg, node_type=seg_node_type, nx_class=nx_class, hint=seg_hint
-            )
-            # Fall back to unconstrained search if the class-constrained one
-            # finds nothing (e.g. the group has no NX_class attribute).
-            if child is None and nx_class is not None:
-                child = current.best_child_for(
-                    seg, node_type=seg_node_type, hint=seg_hint
-                )
-
-            self._node_cache[cache_key] = child
-            if child is None:
-                return None
-            current = child
-
-        return current
-
-    def _find_attr_node(
-        self,
-        hdf_path: str,
-        attr_name: str,
-        parent_hdf: h5py.Group | h5py.Dataset,
-    ) -> NexusNode | None:
-        """Return the NexusNode for attribute *attr_name* on the node at *hdf_path*."""
-        parent_node = self._find_nexus_node(hdf_path, parent_hdf)
-        if parent_node is None:
-            return None
-        return parent_node.best_child_for(attr_name, node_type="attribute")
 
     # ------------------------------------------------------------------
     # Display helpers
@@ -397,7 +270,7 @@ class Annotator(NexusVisitor):
         self.logger.info("")
         self.logger.info(f"{ind}GROUP /{hdf_path}{class_tag}  ({n_members} members)")
 
-        node = self._find_nexus_node(hdf_path, hdf_node)
+        node = self._resolver.node_for(hdf_path, hdf_node)
 
         if node is None:
             self.logger.info(f"{det}<NOT IN SCHEMA>")
@@ -434,7 +307,7 @@ class Annotator(NexusVisitor):
             det, "Value", f"{val[0]}{'...' if len(val) > 1 else ''}", level=10
         )  # DEBUG
 
-        node = self._find_nexus_node(hdf_path, hdf_node, hint=nxdata_hint)
+        node = self._resolver.node_for(hdf_path, hdf_node, hint=nxdata_hint)
 
         if node is None:
             self.logger.info(f"{det}<NOT IN SCHEMA>")
@@ -464,7 +337,7 @@ class Annotator(NexusVisitor):
         ind = "  " * depth
         det = ind + "  "
 
-        attr_node = self._find_attr_node(hdf_path, attr_name, parent)
+        attr_node = self._resolver.attr_node_for(hdf_path, attr_name, parent)
         in_schema = attr_node is not None
         if in_schema:
             opt_label = attr_node.optionality.upper()
@@ -474,7 +347,7 @@ class Annotator(NexusVisitor):
             # in NXDL (e.g. NX_ENERGY). No explicit <attribute name="units"> child
             # exists in the schema XML — the constraint is expressed as the field
             # element's "units" XML attribute (e.g. units="NX_ENERGY").
-            parent_node = self._find_nexus_node(hdf_path, parent)
+            parent_node = self._resolver.node_for(hdf_path, parent)
             unit_cat = (
                 getattr(parent_node, "unit", "") if parent_node is not None else ""
             )
@@ -509,7 +382,7 @@ class Annotator(NexusVisitor):
             self._detail("", "NeXus file", os.path.basename(fname))
         self.logger.info("")
         self.logger.info("GROUP / [NXroot]")
-        nxroot_tree = self._get_tree("NXroot")
+        nxroot_tree = self._resolver.tree_for("NXroot")
         for attr_name, attr_value in root.attrs.items():
             if attr_name in self._SKIP_ATTRS:
                 continue
@@ -572,7 +445,7 @@ class Annotator(NexusVisitor):
             if nx_class != target:
                 return
         else:
-            node = self._find_nexus_node(hdf_path, hdf_node)
+            node = self._resolver.node_for(hdf_path, hdf_node)
             if node is None:
                 return
             chain = [label for label, _ in node.get_inheritance_concept_paths()]
@@ -584,6 +457,6 @@ class Annotator(NexusVisitor):
             return
 
         for attribute in hdf_node.attrs.keys():
-            attr_node = self._find_attr_node(hdf_path, str(attribute), hdf_node)
+            attr_node = self._resolver.attr_node_for(hdf_path, str(attribute), hdf_node)
             if attr_node is not None and attr_node.name == attr:
                 self._concept_matches.append(hdf_path + "@" + str(attribute))

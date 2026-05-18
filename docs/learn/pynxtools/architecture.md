@@ -23,9 +23,8 @@ The separation is deliberate: traversal and I/O live in `NexusFileHandler`; all 
 - **Optionality**: whether a concept is `required`, `recommended`, or `optional`.
 - **Type information**: NeXus type (e.g. `NX_FLOAT`) and NeXus Unit category (e.g. `NX_ENERGY`).
 - **Enumeration values**: closed vs. open enumerations.
-- **Inheritance chain traversal**: `get_inheritance_docs()`, `get_inheritance_enums()`, and `get_inheritance_concept_paths()` walk the full NeXus inheritance chain and return documentation and constraints from every contributing base class, most-specific first.
-- **Name resolution**: `best_child_for(name, node_type, nx_class)` selects the best-matching schema child for a given HDF5 instance name, applying NeXus name-fitting rules.
-- **Full-path lookup**: `find_node_at_path(path, ...)` traverses the tree from a root, with an optional dict cache to amortize repeated lookups.
+- **Inheritance chain traversal**: `get_inheritance_enums()` and `get_inheritance_concept_paths()` walk the full NeXus inheritance chain and return constraints from every contributing parent class, ordered from the concrete subclass to the most general base class.
+- **Name resolution**: `best_child_for(name, node_type, nx_class)` selects the best-matching schema child for a given HDF5 instance name, applying NeXus name-fitting rules. Always returns the first of multiple equally-scoring matches.
 - **Collection parent detection**: `has_nxcollection_parent()` checks whether a node lives inside an `NXcollection` group (which exempts it from required-field checks).
 
 ### Generating a tree
@@ -98,11 +97,59 @@ class NexusVisitor(ABC):
 
 All built-in visitors are interchangeable in `NexusFileHandler`. Switching the visitor changes what happens to each node; the traversal is identical.
 
+## Schema resolution: `NexusSchemaResolver` and `resolve_path`
+
+Mapping a live HDF5 path to its schema `NexusNode` is a cross-cutting concern needed by every visitor.  `pynxtools.nexus.schema_resolver` provides the shared infrastructure so visitors do not each reimplement it.
+
+### `resolve_path`
+
+`resolve_path(root, path, node_type, *, nx_class_for, hint, _cache)` walks a `NexusNode` tree segment by segment, calling `best_child_for` at each step.  It is h5py-free: callers supply an optional `nx_class_for` callable that reads the `NX_class` HDF5 attribute for intermediate group segments, enabling deterministic disambiguation of variadic schema groups (e.g. `DETECTOR[NXdetector]`).
+
+```python
+from pynxtools.nexus.schema_resolver import resolve_path
+from pynxtools.nexus.nexus_tree import generate_tree_from
+
+tree = generate_tree_from("NXarpes")
+node = resolve_path(tree, "ENTRY/INSTRUMENT/analyser", node_type="group")
+```
+
+### `NexusSchemaResolver`
+
+`NexusSchemaResolver` is a visitor-agnostic helper class that wraps `resolve_path` with HDF5-aware appdef discovery and per-instance caching.  Any `NexusVisitor` implementation should hold one instead of re-implementing lookup logic.
+
+```python
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver
+
+class MyVisitor(NexusVisitor):
+    def __init__(self):
+        self._resolver = NexusSchemaResolver()
+
+    def on_field(self, hdf_path, hdf_node):
+        node = self._resolver.node_for(hdf_path, hdf_node)
+        ...
+```
+
+Key methods:
+
+| Method | Purpose |
+|---|---|
+| `appdef_for(hdf_node)` | Walk up the HDF5 tree to find the `NXentry/definition` governing this node |
+| `tree_for(appdef)` | Return (and cache) the `NexusNode` tree for a named application definition |
+| `node_for(hdf_path, hdf_node, hint)` | Return the schema `NexusNode` for an HDF5 path, or `None` if not in schema |
+| `attr_node_for(hdf_path, attr_name, parent_hdf)` | Return the schema `NexusNode` for an attribute |
+
+### Caching
+
+`NexusSchemaResolver` maintains two caches per instance:
+
+- **`_tree_cache: dict[str, NexusNode | None]`** — maps application definition name (e.g. `"NXarpes"`) to its fully-resolved tree.  Building a tree requires parsing NXDL XML and walking the full inheritance chain; the cache ensures this is done at most once per appdef per file traversal.
+- **`_node_cache: dict[str, NexusNode | None]`** — maps HDF5 path string to the corresponding schema `NexusNode` (or `None` for a confirmed miss).  Intermediate path segments are cached alongside final results, so paths sharing a common prefix (e.g. `/entry/instrument/detector/field1` and `.../field2`) avoid redundant tree traversals.
+
 ## How the CLI tools are built
 
 ### `pynx read` — the annotator
 
-`pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`. The annotator resolves the application definition from the file's `NXentry/definition` field, builds a `NexusNode` tree for it. Thereafter, the annotator looks up on each `on_field` / `on_attribute` callback the matching `NexusNode` to emit documentation, optionality, enumeration values, and inheritance information.
+`pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`.  The annotator holds a `NexusSchemaResolver` and uses it on every `on_field` / `on_attribute` callback to look up the matching `NexusNode`, then emits documentation, optionality, enumeration values, and inheritance information.
 
 Three operating modes are supported:
 
@@ -123,10 +170,13 @@ NexusFileHandler.process(visitor)
     ├─ on_attribute ───────┤  (Annotator / NomadVisitor / custom)
     └─ on_complete ────────┘
               │
-              │  NexusNode lookup (per node)
+              │  node_for(hdf_path, hdf_node)
               ▼
-         NexusNode tree
-         (built from NXDL via generate_tree_from)
+    NexusSchemaResolver
+    ├─ appdef_for(hdf_node) ──► NXentry/definition
+    ├─ tree_for(appdef)  ─────► NexusNode tree (cached)
+    │                           (built from NXDL via generate_tree_from)
+    └─ resolve_path(tree, ...) ► NexusNode (cached per path)
 ```
 
 ## Extending pynxtools with a custom visitor

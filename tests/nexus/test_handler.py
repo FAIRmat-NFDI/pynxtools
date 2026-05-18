@@ -62,7 +62,7 @@ def test_handler_traverses_all_nodes_in_memory():
     """NexusFileHandler visits every node in a simple in-memory file."""
     f = _make_in_memory_file()
     visitor = _RecordingVisitor()
-    handler = NexusFileHandler(f, is_in_memory_file=True)
+    handler = NexusFileHandler(f, is_open=True)
     handler.process(visitor)
 
     # Root (""), entry, entry/data, entry/data/signal
@@ -77,7 +77,7 @@ def test_handler_visits_root_node():
     """The empty-string root node is always visited."""
     f = _make_in_memory_file()
     visitor = _RecordingVisitor()
-    NexusFileHandler(f, is_in_memory_file=True).process(visitor)
+    NexusFileHandler(f, is_open=True).process(visitor)
     assert visitor.visited[0] == ""
 
 
@@ -119,7 +119,7 @@ def test_handler_cycle_detection_in_memory():
     f["b"] = f["a"]
 
     visitor = _RecordingVisitor()
-    NexusFileHandler(f, is_in_memory_file=True).process(visitor)
+    NexusFileHandler(f, is_open=True).process(visitor)
     # 'a' must be visited; 'b' is a hard link to 'a' and must not be re-entered
     assert "a" in visitor.visited
     assert visitor.completed
@@ -134,7 +134,7 @@ def test_handler_dispatches_attributes():
     """on_attribute is called for every attribute of every node."""
     f = _make_in_memory_file()
     visitor = _RecordingVisitor()
-    NexusFileHandler(f, is_in_memory_file=True).process(visitor)
+    NexusFileHandler(f, is_open=True).process(visitor)
 
     # Root has NX_class="NXroot"; entry has NX_class="NXentry"; data has NX_class="NXdata"
     attr_paths = {path for path, _ in visitor.attributes}
@@ -164,4 +164,4 @@ def test_base_visitor_does_not_raise():
             pass
 
     f = _make_in_memory_file()
-    NexusFileHandler(f, is_in_memory_file=True).process(_NullVisitor())
+    NexusFileHandler(f, is_open=True).process(_NullVisitor())

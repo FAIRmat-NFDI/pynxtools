@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import logging
 import numbers
+from typing import Literal
 
 import h5py
 import numpy as np
@@ -49,7 +50,7 @@ def chk_nxdata_axis_v2(
     name: str,
     indent: str = "",
     logger: logging.Logger | None = None,
-) -> str | None:
+) -> Literal["axis", "signal"] | None:
     """Check if *hdf_node* is referenced as an axis under the older NXdata conventions (v2).
 
     Returns ``'signal'``, ``'axis'``, or ``None``.
@@ -96,7 +97,7 @@ def chk_nxdata_axis(
     name: str,
     indent: str = "",
     logger: logging.Logger | None = None,
-) -> str | None:
+) -> Literal["axis", "signal"] | None:
     """Check if *hdf_node* is referenced as a signal or axis in an NXdata group.
 
     Implements the NeXus Data Plotting Standard v3 (2014). Falls back to v2

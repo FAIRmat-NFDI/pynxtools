@@ -1638,7 +1638,7 @@ def decode_if_bytes(value: Any, encoding: str = "utf-8") -> Any:
 
 
 def validate_data_dict(*args, **kwargs):
-    """Backwards-compat shim — delegates to validation.validate_data_dict.
+    """Backwards-compatibility shim.
 
     Defined here (rather than via the __init__.py monkey-patch) to break a circular
     import that arises when nexus.nexus_tree moved out of the dataconverter package:

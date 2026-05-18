@@ -205,6 +205,8 @@ nxdata
 nxdl
 nxdls
 nxentry
+nxroot
+nxtest
 nyaml
 oned
 optionalities

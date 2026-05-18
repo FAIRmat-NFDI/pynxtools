@@ -226,10 +226,22 @@ class ReaderTest:
         # must be added by each plugin via the ``ignore_lines`` parameter.
         IGNORE_LINES: list[str] = reader_ignore_lines + [
             "NeXus file",  # file path: gen goes to tmp_path, ref is committed
+            "@NeXus_release",  # differs due to submodule checkout in tests
+            "@NeXus_repository",  # differs due to submodule checkout in tests
             "@file_name",  # original filename: <filename>.nxs vs ref name
             "@file_time",  # creation timestamp: always differs
             "@file_update_time",  # update timestamp: always differs
+            "@creator_version",  # differs due to checkout in tests
         ]
+
+        IGNORE_SECTIONS: dict[str, list[str]] = {
+            **reader_ignore_sections,
+            "ATTRS (//@HDF5_Version)": ["DEBUG - value:"],
+            "ATTRS (//@file_name)": ["DEBUG - value:"],
+            "ATTRS (//@file_time)": ["DEBUG - value:"],
+            "ATTRS (//@file_update_time)": ["DEBUG - value:"],
+            "ATTRS (//@h5py_version)": ["DEBUG - value:"],
+        }
 
         # Section headers: a stripped line starting with one of these prefixes
         # begins a new section; section-specific ignores then apply until the next.

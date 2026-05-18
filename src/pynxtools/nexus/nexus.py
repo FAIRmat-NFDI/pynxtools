@@ -50,7 +50,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 from pynxtools.nexus.utils import decode_if_string
 
-_logger = logging.Logger(__file__)
+_logger = logging.getLogger(__file__)
 
 
 def get_nxdl_entry(hdf_info):
@@ -542,7 +542,7 @@ class HandleNexus:
         nexus_file,
         documentation=None,
         concept=None,
-        is_in_memory_file=False,
+        is_open=False,
     ):
         import warnings
 
@@ -556,9 +556,7 @@ class HandleNexus:
         self.logger = logger
         self.documentation = documentation
         self.concept = concept
-        self._handler = NexusFileHandler(
-            nexus_file, is_in_memory_file=is_in_memory_file
-        )
+        self._handler = NexusFileHandler(nexus_file, is_open=is_open)
 
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes."""

@@ -51,6 +51,7 @@ from __future__ import annotations
 
 import os
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, Union
 
 import h5py
@@ -121,24 +122,24 @@ class NexusFileHandler:
 
     Parameters
     ----------
-    nexus_file:
+    nxs_file:
         Path to the NeXus file, a list whose first element is the path, or
-        an already-open `h5py.File` (in which case set *is_in_memory_file*).
-    is_in_memory_file:
-        When ``True``, *nexus_file* is treated as an already-open
+        an already-open `h5py.File` (in which case set *is_open*).
+    is_open:
+        When ``True``, *nxs_file* is treated as an already-open
         `h5py.File` object (or compatible) rather than a file path.
     """
 
     def __init__(
         self,
-        nxs_file: str | list | h5py.File,
-        is_in_memory_file: bool = False,
+        nxs_file: str | h5py.File | Path,
+        is_open: bool = False,
     ) -> None:
         if nxs_file is None:
             local_dir = os.path.abspath(os.path.dirname(__file__))
             nxs_file = os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
         self._nxs_file = nxs_file
-        self._is_in_memory = is_in_memory_file
+        self._is_in_memory = is_open
 
     def process(self, visitor: NexusVisitor) -> None:
         """Walk the NeXus file and dispatch each node to *visitor*.
@@ -182,7 +183,7 @@ class NexusFileHandler:
         """
         parts = name.split("/")
         for idx in range(1, len(parts)):
-            ancestor = "/".join(parts[:i])
+            ancestor = "/".join(parts[:idx])
             if root["/" + ancestor] == root["/" + name]:
                 return False
         return True
