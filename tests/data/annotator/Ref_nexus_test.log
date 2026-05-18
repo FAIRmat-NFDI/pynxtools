@@ -1,9 +1,12 @@
 ════════════════════════════════════════════════════════════
-NeXus file          : 201805_WSe2_arpes.nxs
-file_time           : 2020-06-04T19:19:48.464472
-HDF5_Version        : 1.10.5
-h5py_version        : 2.10.0
-nexusformat_version : 0.5.2
+NeXus file: 201805_WSe2_arpes.nxs
+
+GROUP / [NXroot]
+  @HDF5_Version = 1.10.5  [OPTIONAL]
+  @file_name = /home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs  [OPTIONAL]
+  @file_time = 2020-06-04T19:19:48.464472  [OPTIONAL]
+  @h5py_version = 2.10.0  [OPTIONAL]
+  @nexusformat_version = 0.5.2  [NOT IN SCHEMA]
 ════════════════════════════════════════════════════════════
 
   GROUP /entry [NXentry]  (12 members)

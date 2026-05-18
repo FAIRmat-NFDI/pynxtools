@@ -495,16 +495,37 @@ class Annotator(NexusVisitor):
     # ------------------------------------------------------------------
 
     def _emit_file_header(self, root: h5py.Group) -> None:
-        """Log a structured file-level header from HDF5 root attributes."""
+        """Log a structured file-level header with the filename and all NXroot attributes.
+
+        Each root attribute is annotated with its optionality from the NXroot base
+        class schema, matching the format used for all other attributes in the output.
+        """
         sep = "═" * 60
+        # depth-0 detail indent: matches what _annotate_attribute uses for root-level nodes
+        det = "  "
         self.logger.info(sep)
         fname = root.file.filename if hasattr(root, "file") else ""
         if fname:
-            self.logger.info(f"{'NeXus file':<20}: {os.path.basename(fname)}")
-        for key in ("file_time", "HDF5_Version", "h5py_version", "nexusformat_version"):
-            val = root.attrs.get(key)
-            if val is not None:
-                self.logger.info(f"{key:<20}: {decode_if_string(val)}")
+            self._detail("", "NeXus file", os.path.basename(fname))
+        self.logger.info("")
+        self.logger.info("GROUP / [NXroot]")
+        nxroot_tree = self._get_tree("NXroot")
+        for attr_name, attr_value in root.attrs.items():
+            if attr_name in self._SKIP_ATTRS:
+                continue
+            val_str = str(decode_if_string(attr_value)).split("\n")[0]
+            attr_node = (
+                nxroot_tree.best_child_for(attr_name, node_type="attribute")
+                if nxroot_tree is not None
+                else None
+            )
+            schema_tag = (
+                f"  [{attr_node.optionality.upper()}]"
+                if attr_node is not None
+                else "  [NOT IN SCHEMA]"
+            )
+            self.logger.info(f"{det}@{attr_name} = {val_str}{schema_tag}")
+
         self.logger.info(sep)
 
     # ------------------------------------------------------------------
