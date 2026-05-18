@@ -42,6 +42,7 @@ dependencies = [
     "cachetools",
     "structlog",
     "orjson",
+    "Jinja2",
 ]
 
 [project.urls]
@@ -49,7 +50,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
-nomad = ["nomad-lab >= 1.4.0"]
+nomad = ["nomad-lab >= 1.4.0", "ruff>=0.15.0"]
 docs = [
     "mkdocs",
     "markdown-exec[ansi]",
@@ -61,7 +62,6 @@ docs = [
 ]
 dev = [
     "mypy",
-    "ruff>=0.15.0",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
@@ -133,7 +133,7 @@ version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
 
 [tool.ruff]
-include = ["src/*.py", "tests/*.py"]
+include = ["src/**/*.py", "tests/**/*.py"]
 exclude = ["src/pynxtools/definitions"]
 line-length = 88
 indent-width = 4
