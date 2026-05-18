@@ -29,8 +29,6 @@ import pytest
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 
-DATACONVERTER_DIR = os.path.dirname(__file__)
-
 
 def alter_dict(data_dict: Template, key: str, value: object):
     """Helper function to alter a single entry in dict for parametrize."""

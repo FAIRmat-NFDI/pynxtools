@@ -733,6 +733,7 @@ class NexusNode(NodeMixin):
         return f"{self.name} ({self.optionality[:3]})"
 
     def get_child_by_name(self, name: str) -> Optional["NexusNode"]:
+        """Get a child node by its name."""
         return next((c for c in self.children if c.name == name), None)
 
 

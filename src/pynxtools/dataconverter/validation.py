@@ -1258,6 +1258,8 @@ def validate_dict_against(
                 May be None or a non-dict value, in which case it's returned as-is.
             prev_path (str): The path leading up to the current `keys` context, used
                 for logging and error reporting.
+            node (Optional[NexusNode]): The current node of the NeXus tree that represents
+                the dataset or group in source link path.
 
         Returns:
             Optional[Any]: A dictionary with resolved links, the original value if
@@ -1291,6 +1293,7 @@ def validate_dict_against(
                     def get_node(_, obj):
                         if obj.name[1:] == link_path:
                             return obj
+                        return None
 
                     if not os.path.isfile(file_path):
                         collector.collect_and_log(
@@ -1311,19 +1314,6 @@ def validate_dict_against(
                                 # Resolve external field links to the dataset value so field
                                 # validation does not treat link dicts as groups.
                                 resolved_keys[key] = dataset
-
-                                if node is not None:
-                                    if node.nx_type in (
-                                        "field",
-                                        "attribute",
-                                    ):
-                                        is_valid_data_field(dataset, node.dtype, key)
-                                    elif (
-                                        node.nx_type == "group"
-                                        and node.nx_class == "NXdata"
-                                    ):
-                                        child = node.get_child_by_name(key)
-                                        is_valid_data_field(dataset, child.dtype, key)
                             else:
                                 link_key = None  # Clean up keys
 

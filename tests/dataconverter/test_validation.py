@@ -42,7 +42,9 @@ if np.lib.NumpyVersion(np.__version__) >= "2.0.0":
 else:
     np_bool = "numpy.bool_"
 
-VALIDATION_TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "validation")
+VALIDATION_TEST_DATA_DIR = os.path.join(
+    os.path.dirname(__file__), "..", "data", "validation"
+)
 
 
 def set_to_none_in_dict(data_dict: Template | None, key: str, optionality: str):
@@ -1343,7 +1345,6 @@ def format_error_message(msg: str) -> str:
             id="invalid-nxlink-type",
         ),
         # External links tests
-        # TODO: File is in place
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -1365,7 +1366,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 (
-                    f"External linked file '{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs' "
+                    f"Linked external file '{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs' "
                     "for /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value was not found."
                 ),
                 (
@@ -1404,10 +1405,6 @@ def format_error_message(msg: str) -> str:
                 },
             ),
             [
-                (
-                    "The value at posint_value should be one of the following Python types: "
-                    "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_POSINT."
-                ),
                 (
                     "The value at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value should be one of the following Python types: "
                     "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_POSINT."
@@ -3648,7 +3645,7 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
         with caplog.at_level(logging.WARNING):
             _ = validate(str(hdf_file_path))
         assert caplog.text == ""
-    elif request.node.callspec.id.startswith("external_links"):
+    else:
         if request.node.callspec.id in (
             "field-with-illegal-unit",
             "baseclass-field-with-illegal-unit",
