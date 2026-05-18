@@ -305,7 +305,7 @@ class Collector:
                 f"Group '{path}' does not have an NX_class attribute and will therefore not be validated."
             )
         elif log_type == ValidationProblem.ExternalLinkedFileNotFound:
-            logger.warning(f"External linked file '{value}' for {path} was not found.")
+            logger.warning(f"Linked external file '{value}' for {path} was not found.")
 
     def collect_and_log(
         self,
