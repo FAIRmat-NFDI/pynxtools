@@ -42,8 +42,7 @@ if np.lib.NumpyVersion(np.__version__) >= "2.0.0":
 else:
     np_bool = "numpy.bool_"
 
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
-VALIDATION_TEST_DATA_DIR = os.path.join(TEST_DATA_DIR, "validation")
+VALIDATION_TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "validation")
 
 
 def set_to_none_in_dict(data_dict: Template | None, key: str, optionality: str):
