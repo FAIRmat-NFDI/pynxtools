@@ -49,12 +49,13 @@ __all__ = ["Entry"]
 
 
 class Entry(Measurement):
-    """(**required**) :ref:`NXentry` describes the measurement.
+    """
+    (**required**) :ref:`NXentry` describes the measurement.
 
     The top-level NeXus group which contains all the data and associated
-    information that comprise a single measurement.
-    It is mandatory that there is at least one
-    group of this type in the NeXus file."""
+    information that comprise a single measurement. It is mandatory that there
+    is at least one group of this type in the NeXus file.
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -72,11 +73,6 @@ class Entry(Measurement):
     experiment_documentation = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryExperimentDocumentation",
         repeats=True,
-    )
-    note = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryNote",
-        repeats=True,
-        variable=True,
     )
     notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryNotes",
@@ -129,7 +125,17 @@ class Entry(Measurement):
 
     default = Quantity(
         type=str,
-        description=".. index:: find the default plottable data .. index:: plotting .. index:: default attribute value Declares which :ref:`NXdata` group contains the data to be shown by default. It is used to resolve ambiguity when one :ref:`NXdata` group exists. The value :ref:`names <validItemName>` a child group. If that group itself has a ``default`` attribute, continue this chain until an :ref:`NXdata` group is reached. For more information about how NeXus identifies the default plottable data, see the :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>` section.",
+        description=(
+            ".. index:: find the default plottable data .. index:: plotting .. "
+            "index:: default attribute value Declares which :ref:`NXdata` group "
+            "contains the data to be shown by default. It is used to resolve "
+            "ambiguity when one :ref:`NXdata` group exists. The value "
+            ":ref:`names <validItemName>` a child group. If that group itself "
+            "has a ``default`` attribute, continue this chain until an "
+            ":ref:`NXdata` group is reached. For more information about how "
+            "NeXus identifies the default plottable data, see the :ref:`Find "
+            "Plottable Data, v3 <Find-Plottable-Data-v3>` section."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="default",
@@ -140,7 +146,7 @@ class Entry(Measurement):
     )
     IDF_Version = Quantity(
         type=str,
-        description="ISIS Muon IDF_Version",
+        description=("ISIS Muon IDF_Version"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="IDF_Version",
@@ -151,7 +157,7 @@ class Entry(Measurement):
     )
     title = Quantity(
         type=str,
-        description="Extended title for entry",
+        description=("Extended title for entry"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="title",
@@ -162,7 +168,10 @@ class Entry(Measurement):
     )
     experiment_identifier = Quantity(
         type=str,
-        description="Unique identifier for the experiment, defined by the facility, possibly linked to the proposals",
+        description=(
+            "Unique identifier for the experiment, defined by the facility, "
+            "possibly linked to the proposals"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_identifier",
@@ -173,7 +182,7 @@ class Entry(Measurement):
     )
     experiment_description = Quantity(
         type=str,
-        description="Brief summary of the experiment, including key objectives.",
+        description=("Brief summary of the experiment, including key objectives."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_description",
@@ -184,7 +193,9 @@ class Entry(Measurement):
     )
     collection_identifier = Quantity(
         type=str,
-        description="User or Data Acquisition defined group of NeXus files or NXentry",
+        description=(
+            "User or Data Acquisition defined group of NeXus files or NXentry"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="collection_identifier",
@@ -195,7 +206,7 @@ class Entry(Measurement):
     )
     collection_description = Quantity(
         type=str,
-        description="Brief summary of the collection, including grouping criteria.",
+        description=("Brief summary of the collection, including grouping criteria."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="collection_description",
@@ -206,7 +217,7 @@ class Entry(Measurement):
     )
     entry_identifier = Quantity(
         type=str,
-        description="Unique identifier for the measurement, defined by the facility.",
+        description=("Unique identifier for the measurement, defined by the facility."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="entry_identifier",
@@ -217,7 +228,7 @@ class Entry(Measurement):
     )
     entry_identifier_uuid = Quantity(
         type=str,
-        description="UUID identifier for the measurement.",
+        description=("UUID identifier for the measurement."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="entry_identifier_uuid",
@@ -228,7 +239,7 @@ class Entry(Measurement):
     )
     entry_identifier_uuid__version = Quantity(
         type=str,
-        description="Version of UUID used",
+        description=("Version of UUID used"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="version",
@@ -240,7 +251,7 @@ class Entry(Measurement):
     )
     experiment_location = Quantity(
         type=str,
-        description="City and country where the experiment took place",
+        description=("City and country where the experiment took place"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_location",
@@ -251,7 +262,10 @@ class Entry(Measurement):
     )
     experiment_start_date = Quantity(
         type=Datetime,
-        description="Start time of experimental run that includes the current measurement, for example a beam time.",
+        description=(
+            "Start time of experimental run that includes the current "
+            "measurement, for example a beam time."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_start_date",
@@ -262,7 +276,10 @@ class Entry(Measurement):
     )
     experiment_end_date = Quantity(
         type=Datetime,
-        description="End time of experimental run that includes the current measurement, for example a beam time.",
+        description=(
+            "End time of experimental run that includes the current measurement, "
+            "for example a beam time."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_end_date",
@@ -273,7 +290,7 @@ class Entry(Measurement):
     )
     experiment_institution = Quantity(
         type=str,
-        description="Name of the institution hosting the facility",
+        description=("Name of the institution hosting the facility"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_institution",
@@ -284,7 +301,7 @@ class Entry(Measurement):
     )
     experiment_facility = Quantity(
         type=str,
-        description="Name of the experimental facility",
+        description=("Name of the experimental facility"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_facility",
@@ -295,7 +312,7 @@ class Entry(Measurement):
     )
     experiment_laboratory = Quantity(
         type=str,
-        description="Name of the laboratory or beamline",
+        description=("Name of the laboratory or beamline"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="experiment_laboratory",
@@ -306,7 +323,10 @@ class Entry(Measurement):
     )
     features = Quantity(
         type=str,
-        description="Reserved for future use by NIAC. See https://github.com/nexusformat/definitions/issues/382",
+        description=(
+            "Reserved for future use by NIAC. See "
+            "https://github.com/nexusformat/definitions/issues/382"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="features",
@@ -317,7 +337,18 @@ class Entry(Measurement):
     )
     definition = Quantity(
         type=str,
-        description="(alternate use: see same field in :ref:`NXsubentry` for preferred) Official NeXus NXDL schema to which this entry conforms which must be the name of the NXDL file (case sensitive without the file extension) that the NXDL schema is defined in. For example the ``definition`` field for a file that conformed to the *NXarpes.nxdl.xml* definition must contain the string **NXarpes**. This field is provided so that :ref:`NXentry` can be the overlay position in a NeXus data file for an application definition and its set of groups, fields, and attributes. *It is advised* to use :ref:`NXsubentry`, instead, as the overlay position.",
+        description=(
+            "(alternate use: see same field in :ref:`NXsubentry` for preferred) "
+            "Official NeXus NXDL schema to which this entry conforms which must "
+            "be the name of the NXDL file (case sensitive without the file "
+            "extension) that the NXDL schema is defined in. For example the "
+            "``definition`` field for a file that conformed to the "
+            "*NXarpes.nxdl.xml* definition must contain the string **NXarpes**. "
+            "This field is provided so that :ref:`NXentry` can be the overlay "
+            "position in a NeXus data file for an application definition and its "
+            "set of groups, fields, and attributes. *It is advised* to use "
+            ":ref:`NXsubentry`, instead, as the overlay position."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="definition",
@@ -328,7 +359,7 @@ class Entry(Measurement):
     )
     definition__version = Quantity(
         type=str,
-        description="NXDL version number",
+        description=("NXDL version number"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="version",
@@ -340,7 +371,7 @@ class Entry(Measurement):
     )
     definition__URL = Quantity(
         type=str,
-        description="URL of NXDL file",
+        description=("URL of NXDL file"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="URL",
@@ -352,7 +383,11 @@ class Entry(Measurement):
     )
     definition_local = Quantity(
         type=str,
-        description="Local NXDL schema extended from the entry specified in the ``definition`` field. This contains any locally-defined, additional fields in the entry.",
+        description=(
+            "Local NXDL schema extended from the entry specified in the "
+            "``definition`` field. This contains any locally-defined, additional "
+            "fields in the entry."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="definition_local",
@@ -364,7 +399,7 @@ class Entry(Measurement):
     )
     definition_local__version = Quantity(
         type=str,
-        description="NXDL version number",
+        description=("NXDL version number"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="version",
@@ -376,7 +411,7 @@ class Entry(Measurement):
     )
     definition_local__URL = Quantity(
         type=str,
-        description="URL of NXDL file",
+        description=("URL of NXDL file"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="URL",
@@ -388,7 +423,7 @@ class Entry(Measurement):
     )
     start_time = Quantity(
         type=Datetime,
-        description="Starting time of measurement",
+        description=("Starting time of measurement"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="start_time",
@@ -399,7 +434,7 @@ class Entry(Measurement):
     )
     end_time = Quantity(
         type=Datetime,
-        description="Ending time of measurement",
+        description=("Ending time of measurement"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="end_time",
@@ -411,7 +446,7 @@ class Entry(Measurement):
     duration = Quantity(
         type=np.int64,
         dimensionality="[time]",
-        description="Duration of measurement",
+        description=("Duration of measurement"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="duration",
@@ -424,7 +459,10 @@ class Entry(Measurement):
     collection_time = Quantity(
         type=np.float64,
         dimensionality="[time]",
-        description="Time transpired actually collecting data i.e. taking out time when collection was suspended due to e.g. temperature out of range",
+        description=(
+            "Time transpired actually collecting data i.e. taking out time when "
+            "collection was suspended due to e.g. temperature out of range"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="collection_time",
@@ -436,7 +474,10 @@ class Entry(Measurement):
     )
     run_cycle = Quantity(
         type=str,
-        description='Such as "2007-3". Some user facilities organize their beam time into run cycles.',
+        description=(
+            'Such as "2007-3". Some user facilities organize their beam time '
+            "into run cycles."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="run_cycle",
@@ -447,7 +488,7 @@ class Entry(Measurement):
     )
     program_name = Quantity(
         type=str,
-        description="Name of program used to generate this file",
+        description=("Name of program used to generate this file"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="program_name",
@@ -458,7 +499,7 @@ class Entry(Measurement):
     )
     program_name__version = Quantity(
         type=str,
-        description="Program version number",
+        description=("Program version number"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="version",
@@ -470,7 +511,7 @@ class Entry(Measurement):
     )
     program_name__configuration = Quantity(
         type=str,
-        description="configuration of the program",
+        description=("configuration of the program"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="configuration",
@@ -482,7 +523,10 @@ class Entry(Measurement):
     )
     revision = Quantity(
         type=str,
-        description="Revision id of the file due to re-calibration, reprocessing, new analysis, new instrument definition format, ...",
+        description=(
+            "Revision id of the file due to re-calibration, reprocessing, new "
+            "analysis, new instrument definition format, ..."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="revision",
@@ -505,7 +549,14 @@ class Entry(Measurement):
     pre_sample_flightpath = Quantity(
         type=np.float64,
         dimensionality="[length]",
-        description="This is the flightpath before the sample position. This can be determined by a chopper, by the moderator or the source itself. In other words: it the distance to the component which gives the T0 signal to the detector electronics. If another component in the NXinstrument hierarchy provides this information, this should be a link.",
+        description=(
+            "This is the flightpath before the sample position. This can be "
+            "determined by a chopper, by the moderator or the source itself. In "
+            "other words: it the distance to the component which gives the T0 "
+            "signal to the detector electronics. If another component in the "
+            "NXinstrument hierarchy provides this information, this should be a "
+            "link."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="pre_sample_flightpath",
@@ -528,7 +579,28 @@ class Entry(Measurement):
 
 
 class EntryData(Data):
-    "The data group .. note:: Before the NIAC2016 meeting [#]_, at least one :ref:`NXdata` group was required in each :ref:`NXentry` group. At the NIAC2016 meeting, it was decided to make :ref:`NXdata` an optional group in :ref:`NXentry` groups for data files that do not use an application definition. It is recommended strongly that all NeXus data files provide a NXdata group. It is permissible to omit the NXdata group only when defining the default plot is not practical or possible from the available data. For example, neutron event data may not have anything that makes a useful plot without extensive processing. Certain application definitions override this decision and require an :ref:`NXdata` group in the :ref:`NXentry` group. The ``minOccurs=0`` attribute in the application definition will indicate the :ref:`NXdata` group is optional, otherwise, it is required. .. [#] NIAC2016: https://www.nexusformat.org/NIAC2016.html, https://github.com/nexusformat/NIAC/issues/16"
+    """
+    The data group
+
+    .. note:: Before the NIAC2016 meeting [#]_, at least one :ref:`NXdata`
+    group was required in each :ref:`NXentry` group. At the NIAC2016 meeting,
+    it was decided to make :ref:`NXdata` an optional group in :ref:`NXentry`
+    groups for data files that do not use an application definition. It is
+    recommended strongly that all NeXus data files provide a NXdata group. It
+    is permissible to omit the NXdata group only when defining the default plot
+    is not practical or possible from the available data.
+
+    For example, neutron event data may not have anything that makes a useful
+    plot without extensive processing.
+
+    Certain application definitions override this decision and require an
+    :ref:`NXdata` group in the :ref:`NXentry` group. The ``minOccurs=0``
+    attribute in the application definition will indicate the :ref:`NXdata`
+    group is optional, otherwise, it is required.
+
+    .. [#] NIAC2016: https://www.nexusformat.org/NIAC2016.html,
+    https://github.com/nexusformat/NIAC/issues/16
+    """
 
     m_def = Section(
         variable=True,
@@ -542,7 +614,9 @@ class EntryData(Data):
 
 
 class EntryExperimentDocumentation(Note):
-    "Description of the full experiment (document in pdf, latex, ...)"
+    """
+    Description of the full experiment (document in pdf, latex, ...)
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -554,21 +628,10 @@ class EntryExperimentDocumentation(Note):
     )
 
 
-class EntryNote(Note):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
 class EntryNotes(Note):
-    "Notes describing entry"
+    """
+    Notes describing entry
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -581,7 +644,11 @@ class EntryNotes(Note):
 
 
 class EntryThumbnail(Note):
-    "A small image that is representative of the entry. An example of this is a 640x480 jpeg image automatically produced by a low resolution plot of the NXdata."
+    """
+    A small image that is representative of the entry. An example of this is a
+    640x480 jpeg image automatically produced by a low resolution plot of the
+    NXdata.
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -594,7 +661,7 @@ class EntryThumbnail(Note):
 
     type = Quantity(
         type=MEnum(["image/*"]),
-        description="The mime type should be an ``image/*``",
+        description=("The mime type should be an ``image/*``"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="type",

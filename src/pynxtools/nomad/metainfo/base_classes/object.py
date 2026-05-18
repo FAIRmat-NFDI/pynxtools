@@ -44,12 +44,14 @@ __all__ = ["Object"]
 
 
 class Object(BaseSection):
-    """This is the base object of NeXus. The groups and fields contained
-    within this file are allowed to be present in any derived base class.
+    """
+    This is the base object of NeXus. The groups and fields contained within
+    this file are allowed to be present in any derived base class.
 
-    If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
-    can be replaced by the name of any object (field or group,
-    respectively) that exists within the same group."""
+    If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME) can
+    be replaced by the name of any object (field or group, respectively) that
+    exists within the same group.
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -87,7 +89,7 @@ class Object(BaseSection):
 
     FIELDNAME_set = Quantity(
         type=np.float64,
-        description="Target values of FIELDNAME.",
+        description=("Target values of FIELDNAME."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="FIELDNAME_set",
@@ -98,7 +100,7 @@ class Object(BaseSection):
     )
     FIELDNAME_errors = Quantity(
         type=np.float64,
-        description="Uncertainties of FIELDNAME values.",
+        description=("Uncertainties of FIELDNAME values."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="FIELDNAME_errors",
@@ -109,7 +111,7 @@ class Object(BaseSection):
     )
     FIELDNAME_weights = Quantity(
         type=np.float64,
-        description="Weights of FIELDNAME values.",
+        description=("Weights of FIELDNAME values."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="FIELDNAME_weights",
@@ -120,7 +122,9 @@ class Object(BaseSection):
     )
     FIELDNAME_mask = Quantity(
         type=bool,
-        description="Boolean mask of FIELDNAME values. The value is masked if set to 1.",
+        description=(
+            "Boolean mask of FIELDNAME values. The value is masked if set to 1."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="FIELDNAME_mask",
@@ -131,7 +135,16 @@ class Object(BaseSection):
     )
     identifierNAME = Quantity(
         type=str,
-        description="An identifier for a (persistent) resource. An identifier, provided by some authority, that has been assigned to an object described by this ``NXobject``. To be useful, the identifier must not be reassigned to a different real-world object. It is typical for there to be some mechanism to resolve an identifier, obtaining metadata about the object. Identifiers for which some guarantees exist regarding this resolution process are called persistent identifiers. Persistent identifiers are also known as PIDs.",
+        description=(
+            "An identifier for a (persistent) resource. An identifier, provided "
+            "by some authority, that has been assigned to an object described by "
+            "this ``NXobject``. To be useful, the identifier must not be "
+            "reassigned to a different real-world object. It is typical for "
+            "there to be some mechanism to resolve an identifier, obtaining "
+            "metadata about the object. Identifiers for which some guarantees "
+            "exist regarding this resolution process are called persistent "
+            "identifiers. Persistent identifiers are also known as PIDs."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="identifierNAME",
@@ -142,7 +155,14 @@ class Object(BaseSection):
     )
     identifierNAME__type = Quantity(
         type=str,
-        description="The type of identifier used. It is recommended to use the most specific type when describing the identifier. For example, all IGSNs (see below) are DOIs and all DOIs are Handles; however, an IGSN should have type IGSN (and not DOI or Hdl). Similarly, an ARK, Purl, ORCID and ROR identifiers should have their corresponding types and should not use the more generic URL identifier.",
+        description=(
+            "The type of identifier used. It is recommended to use the most "
+            "specific type when describing the identifier. For example, all "
+            "IGSNs (see below) are DOIs and all DOIs are Handles; however, an "
+            "IGSN should have type IGSN (and not DOI or Hdl). Similarly, an ARK, "
+            "Purl, ORCID and ROR identifiers should have their corresponding "
+            "types and should not use the more generic URL identifier."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="type",
@@ -169,7 +189,15 @@ class Object(BaseSection):
     )
     default = Quantity(
         type=str,
-        description=".. index:: plotting Declares which child group contains a path leading to a :ref:`NXdata` group or a group using a base class extending :ref:`NXdata`. It is recommended (as of NIAC2014) to use this attribute to help define the path to the default dataset to be plotted. See https://www.nexusformat.org/2014_How_to_find_default_data.html for a summary of the discussion.",
+        description=(
+            ".. index:: plotting Declares which child group contains a path "
+            "leading to a :ref:`NXdata` group or a group using a base class "
+            "extending :ref:`NXdata`. It is recommended (as of NIAC2014) to use "
+            "this attribute to help define the path to the default dataset to be "
+            "plotted. See "
+            "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
+            "a summary of the discussion."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="default",
@@ -256,7 +284,9 @@ class ObjectParameters(Parameters):
 
 
 class ObjectGroupnameLog(Log):
-    "NXlog group containing logged values of GROUPNAME."
+    """
+    NXlog group containing logged values of GROUPNAME.
+    """
 
     m_def = Section(
         variable=True,
