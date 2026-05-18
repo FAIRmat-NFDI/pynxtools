@@ -95,6 +95,12 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/links/ext_link"] = {
         "link": f"{tmp_path}/xarray_saved_small_calibration.h5:/axes/ax3"
     }
+    template["/ENTRY[my_entry]/links/ext_link2"] = {
+        "link": "/xarray_saved_small_calibration.h5:/axes/ax3"
+    }
+    template["/ENTRY[my_entry]/links/ext_link3"] = {
+        "link": "xarray_saved_small_calibration.h5:/axes/ax3"
+    }
     return template
 
 

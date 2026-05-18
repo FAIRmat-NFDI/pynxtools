@@ -18,12 +18,13 @@
 #
 DEBUG_VALIDATION = False
 import copy
+import os
 import re
 from collections import defaultdict
 from collections.abc import Mapping, MutableMapping, Sequence
 from functools import reduce
 from operator import getitem
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 if DEBUG_VALIDATION:
     import debugpy  # will connect to debugger if in debug mode
@@ -1269,17 +1270,62 @@ def validate_dict_against(
         resolved_keys = copy.deepcopy(keys)
         for key, value in keys.copy().items():
             if isinstance(value, dict) and "link" in value:
+                link_key = None  # Track is linked path exists
+                file_path = None
+                if re_groups := re.match(
+                    r"^(.+\.(?:nxs|h5|hdf5)):(.+)$", value["link"]
+                ):
+                    file_path, link_path = re_groups.groups()[0:2]
+                else:
+                    link_path = value["link"]
+
+                # Allow link path with and without leading /
+                link_path = link_path[1:] if link_path.startswith("/") else link_path
+
                 key_path = f"{prev_path}/{key}" if prev_path else key
-                current_keys = nested_keys
-                link_key = None
-                for path_elem in value["link"][1:].split("/"):
-                    link_key = None
-                    for dict_path_elem in current_keys:
-                        _, hdf_name = split_class_and_name_of(dict_path_elem)
-                        if hdf_name == path_elem:
-                            link_key = hdf_name
-                            current_keys = current_keys[dict_path_elem]
-                            break
+                # External link resolution (file_path:link_path)
+                if ":" in value["link"]:
+
+                    def get_node(_, obj):
+                        if obj.name[1:] == link_path:
+                            return obj
+                        return None
+
+                    if not os.path.isfile(file_path):
+                        collector.collect_and_log(
+                            key_path,
+                            ValidationProblem.ExternalLinkedFileNotFound,
+                            file_path,
+                        )
+                    else:
+                        link_key = link_path  # activate flag
+                        with h5py.File(file_path, "r") as hdf_file:
+                            ext_node = hdf_file.visititems(get_node)
+
+                            if ext_node is not None and isinstance(
+                                ext_node, h5py.Dataset
+                            ):
+                                dataset = decode_if_bytes(ext_node[()])
+
+                                # Resolve external field links to the dataset value so field
+                                # validation does not treat link dicts as groups.
+                                resolved_keys[key] = dataset
+                            else:
+                                link_key = None  # Clean up keys
+
+                            # For groups no need to check the external Group type and content
+
+                # Internal link resolution
+                else:
+                    current_keys = nested_keys
+                    for path_elem in link_path.split("/"):
+                        link_key = None
+                        for dict_path_elem in current_keys:
+                            _, hdf_name = split_class_and_name_of(dict_path_elem)
+                            if hdf_name == path_elem:
+                                link_key = hdf_name
+                                current_keys = current_keys[dict_path_elem]
+                                break
 
                 if link_key is None:
                     collector.collect_and_log(
@@ -1294,7 +1340,8 @@ def validate_dict_against(
                     keys_to_remove.append(f"{key_path}/@target")
                     del resolved_keys[key]
                 else:
-                    resolved_keys[key] = current_keys
+                    if not file_path:  # exclude external link
+                        resolved_keys[key] = current_keys
 
                     if f"{key_path}/@target" not in mapping:
                         # Target attribute added automatically
@@ -1330,10 +1377,20 @@ def validate_dict_against(
         for variant in variants:
             variant_path = remove_from_not_visited(f"{prev_path}/{variant}")
 
+            variant_value = keys[variant]
+            if isinstance(variant_value, Mapping) and "link" in variant_value:
+                resolved_link = _follow_link({variant: variant_value}, prev_path)
+                if (
+                    not isinstance(resolved_link, Mapping)
+                    or variant not in resolved_link
+                ):
+                    continue
+                variant_value = resolved_link[variant]
+
             if (
-                isinstance(keys[variant], Mapping)
-                and not all(k.startswith("@") for k in keys[variant])
-                and "compress" not in list(keys[variant].keys())
+                isinstance(variant_value, Mapping)
+                and not all(k.startswith("@") for k in variant_value)
+                and "compress" not in list(variant_value.keys())
             ):
                 # A field should not have a dict of keys that are _not_ all attributes,
                 # i.e. there should be no sub-fields or sub-groups.
@@ -1380,10 +1437,10 @@ def validate_dict_against(
 
                 continue
 
-            if node.optionality == "required" and isinstance(keys[variant], Mapping):
+            if node.optionality == "required" and isinstance(variant_value, Mapping):
                 # Check if all fields in the dict are actual attributes (startswith @)
                 all_attrs = True
-                for entry in keys[variant]:
+                for entry in variant_value:
                     if not entry.startswith("@"):
                         all_attrs = False
                         break
@@ -1422,7 +1479,7 @@ def validate_dict_against(
 
             # Check general validity
             mapping[variant_path] = is_valid_data_field(
-                keys[variant],
+                variant_value,
                 node.dtype,
                 variant_path,
             )

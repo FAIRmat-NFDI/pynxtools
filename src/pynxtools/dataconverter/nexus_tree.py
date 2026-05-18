@@ -29,7 +29,7 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import lru_cache, reduce
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
@@ -731,6 +731,10 @@ class NexusNode(NodeMixin):
         if self.nx_type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
+
+    def get_child_by_name(self, name: str) -> Optional["NexusNode"]:
+        """Get a child node by its name."""
+        return next((c for c in self.children if c.name == name), None)
 
 
 class NexusChoice(NexusNode):

@@ -18,8 +18,6 @@
 #
 import logging
 import os
-from pathlib import Path
-from typing import Optional
 
 import h5py
 import numpy as np
@@ -43,6 +41,10 @@ if np.lib.NumpyVersion(np.__version__) >= "2.0.0":
     np_bool = "numpy.bool"
 else:
     np_bool = "numpy.bool_"
+
+VALIDATION_TEST_DATA_DIR = os.path.join(
+    os.path.dirname(__file__), "..", "data", "validation"
+)
 
 
 def set_to_none_in_dict(data_dict: Template | None, key: str, optionality: str):
@@ -1110,6 +1112,7 @@ def format_error_message(msg: str) -> str:
             ],
             id="field-instead-of-named-group",
         ),
+        # Internal links tests
         pytest.param(
             alter_dict(
                 alter_dict(
@@ -1340,6 +1343,87 @@ def format_error_message(msg: str) -> str:
                 "The key /ENTRY[my_entry]/my_link will not be written.",
             ],
             id="invalid-nxlink-type",
+        ),
+        # External links tests
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/posint_value"
+                },
+            ),
+            [],
+            id="external_link-valid-external-link",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs:/my_entry/nxodd_two_name/posint_value"
+                },
+            ),
+            [
+                (
+                    f"Linked external file '{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs' "
+                    "for /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value was not found."
+                ),
+                (
+                    "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value "
+                    f"to {VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs:/my_entry/nxodd_two_name/posint_value."
+                ),
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value will not be written.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value hasn't been supplied.",
+            ],
+            id="external_link-invalid-file-link",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/non_existent_field"
+                },
+            ),
+            [
+                (
+                    "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value "
+                    f"to {VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/non_existent_field."
+                ),
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value will not be written.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value hasn't been supplied.",
+            ],
+            id="external_link-non-existent-target-link",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/bool_value"
+                },
+            ),
+            [
+                (
+                    "The value at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value should be one of the following Python types: "
+                    "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_POSINT."
+                ),
+            ],
+            id="external_link-invalid-data-type-nxdata",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/my_instrument/my_source/type",
+                },
+            ),
+            [
+                "The value at /ENTRY[my_entry]/duration should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ],
+            id="external_link-invalid-data-type-field",
         ),
         pytest.param(
             alter_dict(

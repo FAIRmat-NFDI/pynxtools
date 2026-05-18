@@ -75,6 +75,25 @@ def test_write_link(writer):
     assert isinstance(test_nxs["/my_entry/links/ext_link"], h5py.Dataset)
 
 
+def test_if_h5web_can_read_external_links(writer):
+    """Test for the Writer's write function.
+
+    Checks whether entries given above get written out when a dictionary containing a link is
+    given in the template dictionary. This test is specifically to check if the links are written
+    in a way that h5web can read them.
+    """
+    # The target_file of linked path is copied to pytest temp path
+    writer.write()
+
+    with h5py.File(writer.output_path, "r") as test_nxs:
+        assert isinstance(test_nxs["/my_entry/links/ext_link2"][()], np.ndarray), (
+            "External link data can not be read by h5web"
+        )  # h5py ExternalLink is read as a numpy array by h5web
+        assert isinstance(test_nxs["/my_entry/links/ext_link3"][()], np.ndarray), (
+            "External link data can not be read by h5web"
+        )
+
+
 @pytest.mark.usefixtures("filled_test_data")
 def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
     """Tests if the writer correctly fails when a wrong dictionary is provided"""
