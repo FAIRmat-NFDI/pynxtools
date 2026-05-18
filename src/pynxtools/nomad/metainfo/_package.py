@@ -88,3 +88,6 @@ def build_package() -> Package:
         )
     _m_package = m_package
     return m_package
+
+
+build_package()

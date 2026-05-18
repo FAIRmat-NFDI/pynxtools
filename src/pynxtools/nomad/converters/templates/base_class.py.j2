@@ -48,7 +48,9 @@ __all__ = ["{{ class_name }}"]
 
 
 class {{ class_name }}({{ base_class }}):
-    """{{ docstring }}"""
+    """
+    {{ docstring | indent(4) }}
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -64,20 +66,30 @@ class {{ class_name }}({{ base_class }}):
         ),
     )
 
-    {% for ss in subsections %}
-    {{ ss.python_name }} = SubSection(
-        section_def="{{ ss.section_fqn }}",
-        repeats={{ ss.repeats }},
-        {% if ss.variable %}variable=True,{% endif %}
+    {% for sub_sec in subsections %}
+    {{ sub_sec.python_name }} = SubSection(
+        section_def="{{ sub_sec.section_fqn }}",
+        repeats={{ sub_sec.repeats }},
+        {% if sub_sec.variable %}
+        variable=True,
+        {% endif %}
     )
     {% endfor %}
 
     {% for qty in quantities %}
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
-        {% if qty.dimensionality %}dimensionality="{{ qty.dimensionality }}",{% endif %}
-        {% if qty.shape %}shape={{ qty.shape }},{% endif %}
-        {% if qty.description %}description="{{ qty.description }}",{% endif %}
+        {% if qty.dimensionality %}
+        dimensionality="{{ qty.dimensionality }}",
+        {% endif %}
+        {% if qty.shape %}
+        shape={{ qty.shape }},
+        {% endif %}
+        {% if qty.description %}
+        description=(
+            {{ qty.description }}
+        ),
+        {% endif %}
         a_nexus_quantity=NeXusQuantity(
             kind="{{ qty.node.nx_type }}",
             name="{{ qty.node.name }}",
@@ -110,7 +122,9 @@ class {{ class_name }}({{ base_class }}):
 
 class {{ concept.class_name }}({{ concept.base_class_name }}):
     {% if concept.docstring %}
-    "{{ concept.docstring }}"
+    """
+    {{ concept.docstring | indent(4) }}
+    """
     {% endif %}
     m_def = Section(
         {% if concept.variable %}
@@ -130,9 +144,17 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
     {% for qty in concept.quantities %}
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
-        {% if qty.dimensionality %}dimensionality="{{ qty.dimensionality }}",{% endif %}
-        {% if qty.shape %}shape={{ qty.shape }},{% endif %}
-        {% if qty.description %}description="{{ qty.description }}",{% endif %}
+        {% if qty.dimensionality %}
+        dimensionality="{{ qty.dimensionality }}",
+        {% endif %}
+        {% if qty.shape %}
+        shape={{ qty.shape }},
+        {% endif %}
+        {% if qty.description %}
+        description=(
+            {{ qty.description }}
+        ),
+        {% endif %}
         a_nexus_quantity=NeXusQuantity(
             kind="{{ qty.node.nx_type }}",
             name="{{ qty.node.name }}",

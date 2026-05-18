@@ -200,23 +200,88 @@ def _section_fqn(nx_class: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Concept description helper
+# Description helpers
 # ---------------------------------------------------------------------------
 
 
+import textwrap
+
+_DOC_WIDTH = 75  # target line width for wrapped doc text
+
+
 def _concept_description(node) -> str | None:
-    """Extract the primary <doc> text from a NexusNode, normalized to one line."""
+    """Extract <doc> text as ``# ...`` comment blocks.
+
+    Reserved for future use: rendering source-level comments above Quantity
+    definitions.  Not used by the template at this time.
+    """
     docs = node.get_docstring(depth=1)
     raw = (next(iter(docs.values()), None) or "").strip()
     if not raw:
         return None
-    import re
+    cleaned = textwrap.dedent(raw).strip()
+    wrapped_blocks: list[str] = []
+    for paragraph in cleaned.split("\n\n"):
+        paragraph = " ".join(paragraph.split())
+        wrapped = textwrap.fill(
+            paragraph,
+            width=88,
+            initial_indent="# ",
+            subsequent_indent="# ",
+            break_long_words=False,
+            break_on_hyphens=False,
+        )
+        wrapped_blocks.append(wrapped)
+    return "\n#\n".join(wrapped_blocks)
 
-    # Collapse runs of whitespace (tabs/newlines from XML indentation) into spaces.
-    collapsed = re.sub(r"\s+", " ", raw)
-    # Escape backslashes first (RST markup, math, etc.), then double quotes.
-    # This ensures no invalid escape sequences appear inside the generated string literal.
-    return collapsed.replace("\\", "\\\\").replace('"', '\\"')
+
+def _plain_description(node) -> str | None:
+    """Extract <doc> text as plain wrapped text (no comment prefix).
+
+    Used for class and concept-class docstrings.  Paragraphs are separated
+    by blank lines; each paragraph is word-wrapped to _DOC_WIDTH characters.
+    """
+    docs = node.get_docstring(depth=1)
+    raw = (next(iter(docs.values()), None) or "").strip()
+    if not raw:
+        return None
+    cleaned = textwrap.dedent(raw).strip()
+    wrapped_blocks: list[str] = []
+    for paragraph in cleaned.split("\n\n"):
+        paragraph = " ".join(paragraph.split())
+        wrapped = textwrap.fill(
+            paragraph,
+            width=_DOC_WIDTH,
+            break_long_words=False,
+            break_on_hyphens=False,
+        )
+        wrapped_blocks.append(wrapped)
+    return "\n\n".join(wrapped_blocks)
+
+
+def _description_string(node) -> str | None:
+    """Format <doc> text as pre-rendered Python string literal(s) for ``description=``.
+
+    Single-line: returns ``'"text"'``.
+    Multi-line: returns implicit string concatenation with each continuation
+    line indented by 12 spaces (matching the Quantity arg indent in the template).
+    """
+    docs = node.get_docstring(depth=1)
+    raw = (next(iter(docs.values()), None) or "").strip()
+    if not raw:
+        return None
+    collapsed = " ".join(textwrap.dedent(raw).split())
+    escaped = collapsed.replace("\\", "\\\\").replace('"', '\\"')
+    # Wrap to (79 - 12 col indent) = 67 chars
+    wrapped = textwrap.fill(
+        escaped, width=67, break_long_words=False, break_on_hyphens=False
+    )
+    lines = wrapped.split("\n")
+    if len(lines) == 1:
+        return f'"{escaped}"'
+    pad = " " * 12
+    parts = [f'"{line} "' for line in lines[:-1]] + [f'"{lines[-1]}"']
+    return ("\n" + pad).join(parts)
 
 
 # ---------------------------------------------------------------------------
@@ -279,7 +344,7 @@ def _build_quantity_from_node(
         dimensionality=dimensionality,
         shape=shape,
         parent_field=parent_field,
-        description=_concept_description(node),
+        description=_description_string(node),
         node=node,
     )
 
@@ -386,7 +451,7 @@ def _build_named_concept(
         base_module=base_module,
         nx_name_literal=nx_name_literal,
         variable=variable,
-        docstring=_concept_description(node),
+        docstring=_plain_description(node),
         quantities=own_quantities,
         node=node,
     )
@@ -413,13 +478,9 @@ def build_context(nx_name: str) -> dict:
     parent_module = _class_module_name(nx_name)
     base_class, base_import = get_base_section(nx_name)
 
-    # Docstring: use get_docstring(depth=1) to read only from the primary
-    # definition element (not parent classes).
-    docs = root_node.get_docstring(depth=1)
-    raw_doc = (next(iter(docs.values()), None) or "").strip()
-    docstring = raw_doc or f"NOMAD metainfo class for NeXus {nx_name}."
-    if len(docstring) > 500:
-        docstring = docstring[:497] + "..."
+    docstring = (
+        _plain_description(root_node) or f"NOMAD metainfo class for NeXus {nx_name}."
+    )
 
     quantities: list[QuantityContext] = []
     subsections: list[SubSectionContext] = []
@@ -430,7 +491,16 @@ def build_context(nx_name: str) -> dict:
     # (module_path, class_name) pairs for concept base imports at file top.
     concept_imports: list[tuple[str, str]] = []
 
+    # Only process children directly defined in this NXDL file.
+    # _check_sibling_namefit adds inherited variadic groups (e.g. NOTE from
+    # NXobject) as siblings during NexusGroup.__init__; those are already
+    # covered by the Python base class and must not be re-declared here.
+    primary_nxdl = root_node.nxdl_base
+
     for child in root_node.children:
+        if child.nx_type == "group" and child.nxdl_base != primary_nxdl:
+            continue
+
         if child.nx_type == "attribute":
             qty = _build_quantity_from_node(child)
             if qty.python_name in seen_qty:
