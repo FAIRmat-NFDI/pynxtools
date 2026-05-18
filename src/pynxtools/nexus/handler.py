@@ -19,7 +19,7 @@
 Unified NeXus file handler.
 
 `NexusFileHandler` walks an HDF5/NeXus file and dispatches each node to a
-`NexusVisitor` implementation.  Callers choose *what to do* per node by
+`NexusVisitor` implementation. Callers choose *what to do* per node by
 supplying the right visitor; the handler owns only traversal and file I/O.
 
 Visitor interface
@@ -181,7 +181,7 @@ class NexusFileHandler:
         Detects HDF5 hard links that would otherwise cause infinite recursion.
         """
         parts = name.split("/")
-        for i in range(1, len(parts)):
+        for idx in range(1, len(parts)):
             ancestor = "/".join(parts[:i])
             if root["/" + ancestor] == root["/" + name]:
                 return False

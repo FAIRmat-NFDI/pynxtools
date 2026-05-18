@@ -17,9 +17,9 @@
 #
 """
 `NexusNode` and its subclasses are a tree implementation based on anytree.
-They are used to represent the structure of an NeXus application definition.
+They are used to represent the structure of a NeXus application definition.
 
-The `NexusNode` representation is typically spares, i.e., it only contains
+The `NexusNode` representation is typically sparse, i.e., it only contains
 everything present in the application definition.
 However, all necessary parameters are added from the inheritance chain
 on the fly when the tree is generated.
@@ -167,7 +167,7 @@ class NexusNode(NodeMixin):
         inheritance (list[InstanceOf[ET._Element]]):
             The inheritance chain of the node.
             The first element of the list is the xml representation of this node.
-            All following elements are the xml nodes of the node if these are
+            All following elements are the xml ancestor nodes of the node if these are
             present in parent classes.
             Defaults to [].
         parent: (Optional[NexusNode]):
@@ -185,7 +185,7 @@ class NexusNode(NodeMixin):
             The inverse of the above `is_a`. In the example case
             `DATA` `parent_of` `my_data`.
         nxdl_base: str
-            Base of the NXDL file where the XML element for this node is  defined
+            Base of the NXDL file where the XML element for this node is defined
     """
 
     name: str
@@ -202,7 +202,7 @@ class NexusNode(NodeMixin):
         int | None,
         int | None,
     ] = (None, None)
-    lvl_map = {
+    lvl_map: dict[str,  tuple[str, ...]] = {
         "required": ("required",),
         "recommended": ("recommended", "required"),
         "optional": ("optional", "recommended", "required"),
@@ -364,13 +364,13 @@ class NexusNode(NodeMixin):
     ) -> list[str]:
         """
         Get all children names of the current node up to a certain depth.
-        Only `field`, `group` `choice` or `attribute` are considered as children.
+        Only `field`, `group`, `choice`, or `attribute` are considered as children.
 
         Args:
             node_type (Optional[str], optional):
                 The tags of the children to consider.
-                This should either be "field", "group", "choice" or "attribute".
-                If None all tags are considered.
+                This should either be "field", "group", "choice", or "attribute".
+                If None, all tags are considered.
                 Defaults to None.
             nx_class (Optional[str], optional):
                 The NeXus class of the group to consider.
@@ -432,7 +432,7 @@ class NexusNode(NodeMixin):
         recurse_children: bool = True,
     ) -> list[str]:
         """
-        Gets all required groups names of the current node and its children.
+        Gets all required group names of the current node and its children.
 
         Args:
             prev_path (str, optional):
@@ -608,7 +608,7 @@ class NexusNode(NodeMixin):
                 Intermediate path segments are always resolved as groups.
             nx_class: NX_class filter for the **final** path element (groups only).
             hint: ``'axis'`` or ``'signal'`` hint for NXdata disambiguation.
-            _cache: Optional dict used as a simple path→node memoisation store.
+            _cache: Optional dict used as a simple path→node lookup
                     Pass the same dict across calls for best performance.
 
         Returns:
