@@ -48,11 +48,13 @@ __all__ = ["Sample"]
 
 
 class Sample(CompositeSystem):
-    """Any information on the sample.
+    """
+    Any information on the sample.
 
-    This could include scanned variables that
-    are associated with one of the data dimensions, e.g. the magnetic field, or
-    logged data, e.g. monitored temperature vs elapsed time."""
+    This could include scanned variables that are associated with one of the
+    data dimensions, e.g. the magnetic field, or logged data, e.g. monitored
+    temperature vs elapsed time.
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -88,19 +90,9 @@ class Sample(CompositeSystem):
         section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleTransmission",
         repeats=True,
     )
-    data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleData",
-        repeats=True,
-        variable=True,
-    )
     temperature_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleTemperatureLog",
         repeats=True,
-    )
-    log = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleLog",
-        repeats=True,
-        variable=True,
     )
     temperature_env = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleTemperatureEnv",
@@ -144,7 +136,7 @@ class Sample(CompositeSystem):
 
     name_field = Quantity(
         type=str,
-        description="Descriptive name of sample",
+        description=("Descriptive name of sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="name",
@@ -155,7 +147,24 @@ class Sample(CompositeSystem):
     )
     chemical_formula = Quantity(
         type=str,
-        description="The chemical formula specified using CIF conventions. Abbreviated version of CIF standard: * Only recognized element symbols may be used. * Each element symbol is followed by a 'count' number. A count of '1' may be omitted. * A space or parenthesis must separate each cluster of (element symbol + count). * Where a group of elements is enclosed in parentheses, the multiplier for the group must follow the closing parentheses. That is, all element and group multipliers are assumed to be printed as subscripted numbers. * Unless the elements are ordered in a manner that corresponds to their chemical structure, the order of the elements within any group or moiety depends on whether or not carbon is present. * If carbon is present, the order should be: - C, then H, then the other elements in alphabetical order of their symbol. - If carbon is not present, the elements are listed purely in alphabetic order of their symbol. * This is the *Hill* system used by Chemical Abstracts.",
+        description=(
+            "The chemical formula specified using CIF conventions. Abbreviated "
+            "version of CIF standard: * Only recognized element symbols may be "
+            "used. * Each element symbol is followed by a 'count' number. A "
+            "count of '1' may be omitted. * A space or parenthesis must separate "
+            "each cluster of (element symbol + count). * Where a group of "
+            "elements is enclosed in parentheses, the multiplier for the group "
+            "must follow the closing parentheses. That is, all element and group "
+            "multipliers are assumed to be printed as subscripted numbers. * "
+            "Unless the elements are ordered in a manner that corresponds to "
+            "their chemical structure, the order of the elements within any "
+            "group or moiety depends on whether or not carbon is present. * If "
+            "carbon is present, the order should be: - C, then H, then the other "
+            "elements in alphabetical order of their symbol. - If carbon is not "
+            "present, the elements are listed purely in alphabetic order of "
+            "their symbol. * This is the *Hill* system used by Chemical "
+            "Abstracts."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="chemical_formula",
@@ -167,7 +176,7 @@ class Sample(CompositeSystem):
     temperature = Quantity(
         type=np.float64,
         dimensionality="[temperature]",
-        description="Sample temperature. This could be a scanned variable",
+        description=("Sample temperature. This could be a scanned variable"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="temperature",
@@ -181,7 +190,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         shape=["*"],
-        description="Applied electric field",
+        description=("Applied electric field"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="electric_field",
@@ -206,7 +215,7 @@ class Sample(CompositeSystem):
     magnetic_field = Quantity(
         type=np.float64,
         shape=["*"],
-        description="Applied magnetic field",
+        description=("Applied magnetic field"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="magnetic_field",
@@ -231,7 +240,7 @@ class Sample(CompositeSystem):
     stress_field = Quantity(
         type=np.float64,
         shape=["*"],
-        description="Applied external stress field",
+        description=("Applied external stress field"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="stress_field",
@@ -257,7 +266,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[mass] / [length] / [time] ** 2",
         shape=["*"],
-        description="Applied pressure",
+        description=("Applied pressure"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="pressure",
@@ -270,7 +279,7 @@ class Sample(CompositeSystem):
     changer_position = Quantity(
         type=np.int64,
         dimensionality="dimensionless",
-        description="Sample changer position",
+        description=("Sample changer position"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="changer_position",
@@ -284,7 +293,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[length]",
         shape=[3],
-        description="Crystallography unit cell parameters a, b, and c",
+        description=("Crystallography unit cell parameters a, b, and c"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="unit_cell_abc",
@@ -298,7 +307,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[angle]",
         shape=[3],
-        description="Crystallography unit cell parameters alpha, beta, and gamma",
+        description=("Crystallography unit cell parameters alpha, beta, and gamma"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="unit_cell_alphabetagamma",
@@ -312,7 +321,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[length]",
         shape=["*", 6],
-        description="Unit cell parameters (lengths and angles)",
+        description=("Unit cell parameters (lengths and angles)"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="unit_cell",
@@ -326,7 +335,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[length] ** 3",
         shape=["*"],
-        description="Volume of the unit cell",
+        description=("Volume of the unit cell"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="unit_cell_volume",
@@ -340,7 +349,10 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[angle]",
         shape=[3],
-        description="This will follow the Busing-Levy convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464",
+        description=(
+            "This will follow the Busing-Levy convention: W. R. Busing and H. A. "
+            "Levy (1967). Acta Cryst. 22, 457-464"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="sample_orientation",
@@ -353,7 +365,11 @@ class Sample(CompositeSystem):
     orientation_matrix = Quantity(
         type=np.float64,
         shape=["*", 3, 3],
-        description="Orientation matrix of single crystal sample using Busing-Levy convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464",
+        description=(
+            "Orientation matrix of single crystal sample using Busing-Levy "
+            "convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, "
+            "457-464"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="orientation_matrix",
@@ -365,7 +381,12 @@ class Sample(CompositeSystem):
     ub_matrix = Quantity(
         type=np.float64,
         shape=["*", 3, 3],
-        description="UB matrix of single crystal sample using Busing-Levy convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464. This is the multiplication of the orientation_matrix, given above, with the :math:`B` matrix which can be derived from the lattice constants.",
+        description=(
+            "UB matrix of single crystal sample using Busing-Levy convention: W. "
+            "R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464. This is "
+            "the multiplication of the orientation_matrix, given above, with the "
+            ":math:`B` matrix which can be derived from the lattice constants."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="ub_matrix",
@@ -378,7 +399,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[mass]",
         shape=["*"],
-        description="Mass of sample",
+        description=("Mass of sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="mass",
@@ -392,7 +413,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[mass] / [length] ** 3",
         shape=["*"],
-        description="Density of sample",
+        description=("Density of sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="density",
@@ -406,7 +427,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[mass]",
         shape=["*"],
-        description="Relative Molecular Mass of sample",
+        description=("Relative Molecular Mass of sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="relative_molecular_mass",
@@ -463,7 +484,11 @@ class Sample(CompositeSystem):
                 "other",
             ]
         ),
-        description="The atmosphere will be one of the components, which is where its details will be stored; the relevant components will be indicated by the entry in the sample_component member.",
+        description=(
+            "The atmosphere will be one of the components, which is where its "
+            "details will be stored; the relevant components will be indicated "
+            "by the entry in the sample_component member."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="situation",
@@ -483,7 +508,7 @@ class Sample(CompositeSystem):
     )
     description_field = Quantity(
         type=str,
-        description="Description of the sample",
+        description=("Description of the sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="description",
@@ -494,7 +519,7 @@ class Sample(CompositeSystem):
     )
     preparation_date = Quantity(
         type=Datetime,
-        description="Date of preparation of the sample",
+        description=("Date of preparation of the sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="preparation_date",
@@ -506,7 +531,7 @@ class Sample(CompositeSystem):
     component = Quantity(
         type=str,
         shape=["*"],
-        description="Details of the component of the sample and/or can",
+        description=("Details of the component of the sample and/or can"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="component",
@@ -518,7 +543,7 @@ class Sample(CompositeSystem):
     sample_component = Quantity(
         type=MEnum(["sample", "can", "atmosphere", "kit"]),
         shape=["*"],
-        description="Type of component",
+        description=("Type of component"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="sample_component",
@@ -532,7 +557,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="[mass] / [length] ** 3",
         shape=["*"],
-        description="Concentration of each component",
+        description=("Concentration of each component"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="concentration",
@@ -545,7 +570,7 @@ class Sample(CompositeSystem):
     volume_fraction = Quantity(
         type=np.float64,
         shape=["*"],
-        description="Volume fraction of each component",
+        description=("Volume fraction of each component"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="volume_fraction",
@@ -558,7 +583,7 @@ class Sample(CompositeSystem):
         type=np.float64,
         dimensionality="1 / [length] ** 2",
         shape=["*"],
-        description="Scattering length density of each component",
+        description=("Scattering length density of each component"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="scattering_length_density",
@@ -580,7 +605,7 @@ class Sample(CompositeSystem):
                 "cubic",
             ]
         ),
-        description="In case it is all we know and we want to record/document it",
+        description=("In case it is all we know and we want to record/document it"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="unit_cell_class",
@@ -601,7 +626,7 @@ class Sample(CompositeSystem):
     space_group = Quantity(
         type=str,
         shape=["*"],
-        description="Crystallographic space group",
+        description=("Crystallographic space group"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="space_group",
@@ -613,7 +638,7 @@ class Sample(CompositeSystem):
     point_group = Quantity(
         type=str,
         shape=["*"],
-        description="Crystallographic point group, deprecated if space_group present",
+        description=("Crystallographic point group, deprecated if space_group present"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="point_group",
@@ -625,7 +650,10 @@ class Sample(CompositeSystem):
     path_length = Quantity(
         type=np.float64,
         dimensionality="[length]",
-        description="Path length through sample/can for simple case when it does not vary with scattering direction",
+        description=(
+            "Path length through sample/can for simple case when it does not "
+            "vary with scattering direction"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="path_length",
@@ -638,7 +666,10 @@ class Sample(CompositeSystem):
     path_length_window = Quantity(
         type=np.float64,
         dimensionality="[length]",
-        description="Thickness of a beam entry/exit window on the can (mm) - assumed same for entry and exit",
+        description=(
+            "Thickness of a beam entry/exit window on the can (mm) - assumed "
+            "same for entry and exit"
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="path_length_window",
@@ -651,7 +682,7 @@ class Sample(CompositeSystem):
     thickness = Quantity(
         type=np.float64,
         dimensionality="[length]",
-        description="sample thickness",
+        description=("sample thickness"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="thickness",
@@ -663,7 +694,7 @@ class Sample(CompositeSystem):
     )
     external_DAC = Quantity(
         type=np.float64,
-        description="value sent to user's sample setup",
+        description=("value sent to user's sample setup"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="external_DAC",
@@ -675,7 +706,7 @@ class Sample(CompositeSystem):
     )
     short_title = Quantity(
         type=str,
-        description="20 character fixed length sample description for legends",
+        description=("20 character fixed length sample description for legends"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="short_title",
@@ -687,7 +718,12 @@ class Sample(CompositeSystem):
     rotation_angle = Quantity(
         type=np.float64,
         dimensionality="[angle]",
-        description="Optional rotation angle for the case when the powder diagram has been obtained through an omega-2theta scan like from a traditional single detector powder diffractometer. Note, it is recommended to use NXtransformations instead.",
+        description=(
+            "Optional rotation angle for the case when the powder diagram has "
+            "been obtained through an omega-2theta scan like from a traditional "
+            "single detector powder diffractometer. Note, it is recommended to "
+            "use NXtransformations instead."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="rotation_angle",
@@ -700,7 +736,11 @@ class Sample(CompositeSystem):
     x_translation = Quantity(
         type=np.float64,
         dimensionality="[length]",
-        description="Translation of the sample along the X-direction of the laboratory coordinate system Note, it is recommended to use NXtransformations instead.",
+        description=(
+            "Translation of the sample along the X-direction of the laboratory "
+            "coordinate system Note, it is recommended to use NXtransformations "
+            "instead."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="x_translation",
@@ -713,7 +753,11 @@ class Sample(CompositeSystem):
     distance = Quantity(
         type=np.float64,
         dimensionality="[length]",
-        description="Translation of the sample along the Z-direction of the laboratory coordinate system. Note, it is recommended to use NXtransformations instead.",
+        description=(
+            "Translation of the sample along the Z-direction of the laboratory "
+            "coordinate system. Note, it is recommended to use NXtransformations "
+            "instead."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="distance",
@@ -725,7 +769,11 @@ class Sample(CompositeSystem):
     )
     physical_form = Quantity(
         type=str,
-        description="Physical form of the sample material. Examples include single crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, amorphous.",
+        description=(
+            "Physical form of the sample material. Examples include single "
+            "crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, "
+            "amorphous."
+        ),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="physical_form",
@@ -747,7 +795,9 @@ class Sample(CompositeSystem):
 
 
 class SampleGeometry(Geometry):
-    "The position and orientation of the center of mass of the sample"
+    """
+    The position and orientation of the center of mass of the sample
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -761,7 +811,10 @@ class SampleGeometry(Geometry):
 
 
 class SampleBeam(Beam):
-    "Details of beam incident on sample - used to calculate sample/beam interaction point"
+    """
+    Details of beam incident on sample - used to calculate sample/beam
+    interaction point
+    """
 
     m_def = Section(
         variable=True,
@@ -775,7 +828,10 @@ class SampleBeam(Beam):
 
 
 class SampleSampleComponent(SampleComponent):
-    "One group per sample component This is the preferred way of recording per component information over the n_comp arrays"
+    """
+    One group per sample component This is the preferred way of recording per
+    component information over the n_comp arrays
+    """
 
     m_def = Section(
         variable=True,
@@ -789,7 +845,9 @@ class SampleSampleComponent(SampleComponent):
 
 
 class SampleTransmission(Data):
-    "As a function of Wavelength"
+    """
+    As a function of Wavelength
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -801,21 +859,11 @@ class SampleTransmission(Data):
     )
 
 
-class SampleData(Data):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
 class SampleTemperatureLog(Log):
-    "temperature_log.value is a link to e.g. temperature_env.sensor1.value_log.value"
+    """
+    temperature_log.value is a link to e.g.
+    temperature_env.sensor1.value_log.value
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -828,21 +876,10 @@ class SampleTemperatureLog(Log):
     )
 
 
-class SampleLog(Log):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
 class SampleTemperatureEnv(Environment):
-    "Additional sample temperature environment information"
+    """
+    Additional sample temperature environment information
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -855,7 +892,9 @@ class SampleTemperatureEnv(Environment):
 
 
 class SampleMagneticField(Log):
-    "magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value"
+    """
+    magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -868,7 +907,10 @@ class SampleMagneticField(Log):
 
 
 class SampleMagneticFieldLog(Log):
-    "magnetic_field_log.value is a link to e.g. magnetic_field_env.sensor1.value_log.value"
+    """
+    magnetic_field_log.value is a link to e.g.
+    magnetic_field_env.sensor1.value_log.value
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -882,7 +924,9 @@ class SampleMagneticFieldLog(Log):
 
 
 class SampleMagneticFieldEnv(Environment):
-    "Additional sample magnetic environment information"
+    """
+    Additional sample magnetic environment information
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -895,7 +939,9 @@ class SampleMagneticFieldEnv(Environment):
 
 
 class SampleExternalAdc(Log):
-    "logged value (or logic state) read from user's setup"
+    """
+    logged value (or logic state) read from user's setup
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
@@ -908,7 +954,9 @@ class SampleExternalAdc(Log):
 
 
 class SamplePositioner(Positioner):
-    "Any positioner (motor, PZT, ...) used to locate the sample"
+    """
+    Any positioner (motor, PZT, ...) used to locate the sample
+    """
 
     m_def = Section(
         variable=True,
@@ -922,7 +970,9 @@ class SamplePositioner(Positioner):
 
 
 class SampleOffGeometry(OffGeometry):
-    "This group describes the shape of the sample"
+    """
+    This group describes the shape of the sample
+    """
 
     m_def = Section(
         variable=True,
@@ -937,7 +987,11 @@ class SampleOffGeometry(OffGeometry):
 
 
 class SampleEnvironment(Environment):
-    "Any environmental or external stimuli/measurements. These can include, among others: applied pressure, surrounding gas phase and gas pressure, external electric/magnetic/mechanical fields, temperature, ..."
+    """
+    Any environmental or external stimuli/measurements. These can include,
+    among others: applied pressure, surrounding gas phase and gas pressure,
+    external electric/magnetic/mechanical fields, temperature, ...
+    """
 
     m_def = Section(
         variable=True,
@@ -951,7 +1005,10 @@ class SampleEnvironment(Environment):
 
 
 class SampleHistory(History):
-    "A set of physical processes that occurred to the sample prior/during experiment."
+    """
+    A set of physical processes that occurred to the sample prior/during
+    experiment.
+    """
 
     m_def = Section(
         a_nexus_group=NeXusGroup(
