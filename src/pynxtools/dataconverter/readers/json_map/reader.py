@@ -46,6 +46,7 @@ import yaml
 from mergedeep import merge
 
 from pynxtools.dataconverter import hdfdict
+from pynxtools.dataconverter.helpers import decode_if_bytes
 from pynxtools.dataconverter.readers.multi.reader import (
     MultiFormatReader,
     fill_from_config,
@@ -55,36 +56,9 @@ from pynxtools.dataconverter.template import Template
 logger = logging.getLogger("pynxtools")
 
 
-def _decode_hdf_bytes(value: Any) -> Any:
-    """Recursively decode text-like bytes to Python strings.
-
-    Numeric arrays and non-text scalar values are returned unchanged.
-    """
-    if isinstance(value, bytes | np.bytes_):
-        return value.decode("utf-8")
-
-    elif isinstance(value, np.ndarray):
-        if value.dtype.kind == "S":
-            return np.char.decode(value, "utf-8")
-        elif value.dtype.kind == "O":
-            return np.vectorize(_decode_hdf_bytes, otypes=[object])(value)
-        return value
-
-    elif isinstance(value, list):
-        return [_decode_hdf_bytes(item) for item in value]
-
-    elif isinstance(value, tuple):
-        return tuple(_decode_hdf_bytes(item) for item in value)
-
-    elif isinstance(value, dict):
-        return {k: _decode_hdf_bytes(v) for k, v in value.items()}
-
-    return value
-
-
 def unpack_hdf_dataset_for_json_map(item) -> Any:
     """Unpack HDF5 datasets and normalize byte-strings to ``str`` values."""
-    return _decode_hdf_bytes(hdfdict.unpack_dataset(item))
+    return decode_if_bytes(hdfdict.unpack_dataset(item))
 
 
 def parse_slice(slice_string):

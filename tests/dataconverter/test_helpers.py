@@ -241,7 +241,7 @@ def test_warning_on_definition_changed_by_reader(caplog):
         ("", "utf-8", ""),  # empty string
         (b"", "utf-8", ""),  # empty bytes
         (123, "utf-8", 123),  # unexpected type int
-        ([b"test"], "utf-8", [b"test"]),  # unexpected type list
+        ([b"test"], "utf-8", ["test"]),  # unexpected type list
         ({"a": 1}, "utf-8", {"a": 1}),  # unexpected type dict
     ],
 )

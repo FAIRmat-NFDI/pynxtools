@@ -1596,20 +1596,47 @@ def nested_dict_to_slash_separated_path(
             flattened_dict[path] = val
 
 
-def decode_if_bytes(payload: Any, encoding: str = "utf-8") -> Any:
+# def decode_if_bytes(payload: Any, encoding: str = "utf-8") -> Any:
+#     """
+#     Return the payload (e.g. attribute) as Any except bytes.
+
+#     - If `payload` is `bytes`, decode it using the given encoding.
+#     - Otherwise, return it unchanged.
+
+#     Args:
+#         payload: Any type.
+#         encoding: The character encoding to use when decoding bytes.
+
+#     Returns:
+#         The attribute as a string, or None if input was None.
+#     """
+#     if isinstance(payload, bytes):
+#         return payload.decode(encoding)
+#     return payload
+
+
+def decode_if_bytes(value: Any, encoding: str = "utf-8") -> Any:
+    """Recursively decode text-like bytes to Python strings.
+
+    Numeric arrays and non-text scalar values are returned unchanged.
     """
-    Return the payload (e.g. attribute) as Any except bytes.
+    if isinstance(value, bytes | np.bytes_):
+        return value.decode(encoding)
 
-    - If `payload` is `bytes`, decode it using the given encoding.
-    - Otherwise, return it unchanged.
+    elif isinstance(value, np.ndarray):
+        if value.dtype.kind == "S":
+            return np.char.decode(value, encoding)
+        elif value.dtype.kind == "O":
+            return np.vectorize(decode_if_bytes, otypes=[object])(value)
+        return value
 
-    Args:
-        payload: Any type.
-        encoding: The character encoding to use when decoding bytes.
+    elif isinstance(value, list):
+        return [decode_if_bytes(item, encoding) for item in value]
 
-    Returns:
-        The attribute as a string, or None if input was None.
-    """
-    if isinstance(payload, bytes):
-        return payload.decode(encoding)
-    return payload
+    elif isinstance(value, tuple):
+        return tuple(decode_if_bytes(item, encoding) for item in value)
+
+    elif isinstance(value, dict):
+        return {k: decode_if_bytes(v, encoding) for k, v in value.items()}
+
+    return value
