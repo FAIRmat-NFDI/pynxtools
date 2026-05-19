@@ -22,6 +22,7 @@ from typing import Union
 
 from pynxtools.eln_mapper.eln import ElnGenerator
 from pynxtools.nexus.nexus_tree import NexusEntity, NexusGroup, NexusNode
+from pynxtools.nexus.nexus_tree import NexusEntity, NexusGroup, NexusNode
 
 NEXUS_TO_NOMAD_QUANTITY: dict[str, tuple[str, str]] = {
     "NX_BINARY": ("bytes", "NumberEditQuantity"),

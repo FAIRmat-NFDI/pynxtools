@@ -158,8 +158,13 @@ class NexusNode(NodeMixin):
     Args:
         name (str):
             The name of the node. This is the part of the concept name at
+<<<<<<< HEAD
            the respective level in the NeXus hierarchy.
         nx_type (Literal["group", "field", "attribute", "choice", "link"]):
+=======
+            the respective level in the NeXus hierarchy.
+        nx_type (Literal["definition", "group", "field", "attribute", "choice", "link"]):
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
             The nameType of the node.
@@ -951,6 +956,73 @@ class NexusNode(NodeMixin):
         return next((c for c in self.children if c.name == name), None)
 
 
+<<<<<<< HEAD
+=======
+class NexusDefinition(NexusNode):
+    """
+    Root node representing a complete NXDL definition file (``definitionType`` in ``nxdl.xsd``).
+
+    A definition is semantically distinct from a nested group (``NexusGroup``): it
+    carries the category, symbol table, and validation-control flags that belong to
+    the NXDL file as a whole.  It never appears as a nested element in HDF5 files.
+
+    Args:
+        nx_type (Literal["definition"]):
+            Fixed to ``"definition"`` — should and cannot be manually altered.
+        category (Optional[Literal["base", "application"]]):
+            NXDL class category.  ``None`` only when the root XML element is not
+            a ``<definition>`` tag (should not occur for well-formed NXDL files).
+        symbols (dict[str, str]):
+            Maps symbol names (e.g. ``"nP"``) to their documentation strings as
+            declared in the ``<symbols>`` block of the definition.  Empty dict when
+            no symbols are declared.
+        ignore_extra_groups (bool):
+            When ``True``, unknown groups in HDF5 files are not reported as errors.
+        ignore_extra_fields (bool):
+            When ``True``, unknown fields are not reported as errors.
+        ignore_extra_attributes (bool):
+            When ``True``, unknown attributes are not reported as errors.
+    """
+
+    nx_type: Literal["definition"] = "definition"
+    category: Literal["base", "application"] | None = None
+    symbols: dict[str, str] = {}
+    ignore_extra_groups: bool = False
+    ignore_extra_fields: bool = False
+    ignore_extra_attributes: bool = False
+
+    def _set_definition_attrs(self) -> None:
+        """Read category, symbols, and ignoreExtra* flags from the definition XML element."""
+        for elem in self.inheritance:
+            tag = elem.tag.split("}")[-1] if "}" in elem.tag else elem.tag
+            if tag != "definition":
+                continue
+            self.category = elem.attrib.get("category")
+            self.ignore_extra_groups = (
+                elem.attrib.get("ignoreExtraGroups", "false") == "true"
+            )
+            self.ignore_extra_fields = (
+                elem.attrib.get("ignoreExtraFields", "false") == "true"
+            )
+            self.ignore_extra_attributes = (
+                elem.attrib.get("ignoreExtraAttributes", "false") == "true"
+            )
+            for sym in elem.findall("nx:symbols/nx:symbol", namespaces=namespaces):
+                sym_name = sym.attrib.get("name", "")
+                doc = (sym.findtext("nx:doc", namespaces=namespaces) or "").strip()
+                self.symbols[sym_name] = doc
+            break
+
+    def __init__(self, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+        self._set_definition_attrs()
+    def __repr__(self) -> str:
+        if self.nx_type == "attribute":
+            return f"@{self.name} ({self.optionality[:3]})"
+        return f"{self.name} ({self.optionality[:3]})"
+
+
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
 class NexusChoice(NexusNode):
     """
     A representation of a NeXus choice.
@@ -1153,6 +1225,7 @@ class NexusEntity(NexusNode):
     Args:
         nx_type (Literal["field", "attribute"]):
             The type of the entity is restricted to either a `field` or an `attribute`.
+<<<<<<< HEAD
         unit (Optional[NexusUnitCategory]):
             The unit of the entity.
             This is set automatically on init based on the values found in the nxdl file.
@@ -1161,29 +1234,57 @@ class NexusEntity(NexusNode):
         dtype (NexusType):
             The nxdl datatype of the entity.
             This is set automatically on init based on the values found in the nxdl file.
+=======
+            Should not be manually altered.
+        dtype (NexusType):
+            The NXDL data type.
+            This is set automatically on init based on the values found in the NXDL file.
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             Also the base classes of these entities are considered.
             If it is not present in any of the xml nodes, it will be set to `NX_CHAR`.
             Defaults to "NX_CHAR".
         items (Optional[list[str]]):
+<<<<<<< HEAD
             This is a restriction of the field value to a list of items.
             Only applies to nodes of dtype `NX_CHAR`.
             This is set automatically on init based on the values found in the nxdl file.
+=======
+            This is a restriction of the value to a list of items.
+            This is set automatically on init based on the values found in the NXDL file.
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             Also the base classes of these entities are considered.
             If there is no restriction this is set to None.
             Defaults to None.
         open_enum (bool):
+<<<<<<< HEAD
             If enumerations are used, the enumeration can be open (i.e., the value is not limited
             to the enumeration items) or closed (i.e., the value must exactly match one of the
             enumeration items). This is controlled by the open_enum boolean. By default, it is closed.
         shape (Optional[tuple[Optional[int], ...]]):
             The shape of the entity as given by the dimensions tag.
+=======
+            ``True`` when the enumeration carries ``open="true"``.
+            If enumerations are used, the enumeration can be open (i.e., the value is 
+            not limited to the enumeration items) or closed (i.e., the value must exactly
+            match one of the enumeration items). By default, enumerations are closed.
+        shape (Optional[tuple[Optional[int], ...]]):
+            The shape of the entity as given by the ``<dimensions>`` tag.
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
             This is set automatically on init based on the values found in the nxdl file.
             Also the base classes of these entities are considered.
             If there is no dimension present in any of the xml nodes, it will be set to None.
             Contains None for unbounded dimensions.
             Symbols in either the `rank` or `value` attribute are not considered
             and result in an unbounded shape.
+<<<<<<< HEAD
             Defaults to None.
+=======
+            Defaults to None.     
+        dim_symbols (Optional[tuple[Optional[str], ...]]):
+            Parallel to ``shape``.  Stores the NXDL symbol name (e.g. ``"nP"``)
+            for dimensions defined by a symbol rather than a literal integer.
+            ``None`` when no ``<dimensions>`` element is present at all.
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
     """
 
     nx_type: Literal["field", "attribute"]
@@ -1351,7 +1452,10 @@ class NexusEntity(NexusNode):
             if "units" in elem.attrib:
                 self.unit = elem.attrib["units"]
                 return
+<<<<<<< HEAD
 
+=======
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
     def _set_items_and_enum_type(self):
         """
         Sets the enumeration items of the current entity
@@ -1415,6 +1519,11 @@ class NexusEntity(NexusNode):
                 pass
 
         self.shape = tuple(dims)
+<<<<<<< HEAD
+=======
+        self.dim_symbols = tuple(syms)
+        self.shape = tuple(dims)
+>>>>>>> e82ad1a9 (`NexusVisitor` and `Annotator` architecture (#777))
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
@@ -1517,3 +1626,8 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         populate_tree_from_parents(tree)
 
     return tree
+<<<<<<< HEAD
+========
+>>>>>>>> 00f35095 (`NexusVisitor` and `Annotator` architecture (#777)):src/pynxtools/dataconverter/nexus_tree.py
+=======
+>>>>>>> 00f35095 (`NexusVisitor` and `Annotator` architecture (#777))
