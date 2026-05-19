@@ -331,6 +331,11 @@ class Annotator(NexusVisitor):
         """Emit a DEBUG line for an attribute; skip structural HDF5 attributes."""
         if not hdf_path or attr_name in self._SKIP_ATTRS:
             return
+        # Skip pynxtools-generated docs attributes (@docs, @docs_url, @<attr>_docs, @<attr>_docs_url)
+        if attr_name in ("docs", "docs_url") or attr_name.endswith(
+            ("_docs", "_docs_url")
+        ):
+            return
 
         depth = self._depth(hdf_path)
         ind = "  " * depth

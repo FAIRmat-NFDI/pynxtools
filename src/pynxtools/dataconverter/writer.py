@@ -355,20 +355,23 @@ class Writer:
                 self._nexus_tree = None
         return self._nexus_tree
 
-    def __nxdl_docs(self, path: str) -> str | None:
-        """Return formatted NeXus docstring for the concept at *path*, or None.
+    def __nxdl_docs(self, path: str) -> tuple[str | None, str | None]:
+        """Return ``(doc_text, docs_url)`` for the NeXus concept at *path*.
 
-        Uses the same inheritance logic as the Annotator: iterates ALL levels of
-        the NexusNode inheritance chain via ``get_inheritance_concept_paths()`` and
-        collects every level that carries a non-None doc, labeled by its concept path.
+        Uses the same inheritance logic as the Annotator: collects all levels of
+        the NexusNode inheritance chain that carry a non-None doc.  The URL is
+        taken from ``node.get_link()`` and points to the online NeXus manual entry
+        for the most specific concept that defines this node.
+
+        Returns ``(None, None)`` when docs are disabled or the node cannot be resolved.
         """
         if not self.write_docs:
-            return None
+            return None, None
 
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
         tree = self._get_nexus_tree()
         if tree is None:
-            return None
+            return None, None
 
         last_segment = nxdl_path.split("/")[-1]
 
@@ -396,7 +399,7 @@ class Writer:
                 ]
 
         if node is None and not extra_pairs:
-            return None
+            return None, None
 
         concept_doc_pairs: list[tuple[str, str]] = list(extra_pairs)
         if node is not None:
@@ -405,7 +408,12 @@ class Writer:
                     concept_doc_pairs.append((concept_label, doc_text))
 
         if not concept_doc_pairs:
-            return None
+            return None, None
+
+        try:
+            url: str | None = node.get_link() if node is not None else None
+        except Exception:
+            url = None
 
         if self.docs_format == "plain":
             # h5web renders \n literally — use inline separators instead
@@ -413,12 +421,12 @@ class Writer:
                 f"{label}: {_format_doc(doc, self.docs_format)}"
                 for label, doc in concept_doc_pairs
             ]
-            return " | ".join(sections)
+            return " | ".join(sections), url
         sections = [
             f"{label}\n{_format_doc(doc, self.docs_format)}"
             for label, doc in concept_doc_pairs
         ]
-        return "\n\n".join(sections)
+        return "\n\n".join(sections), url
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -482,9 +490,11 @@ class Writer:
                                 f"No attribute 'NX_class' could be written for {parent_path}."
                             )
 
-                    docs = self.__nxdl_docs(parent_path)
+                    docs, docs_url = self.__nxdl_docs(parent_path)
                     if docs:
                         grp.attrs["docs"] = docs
+                    if docs_url:
+                        grp.attrs["docs_url"] = docs_url
 
                     return grp
                 else:
@@ -539,9 +549,11 @@ class Writer:
                                     append=self.append,
                                 )
                                 if dataset is not None:
-                                    docs = self.__nxdl_docs(path)
+                                    docs, docs_url = self.__nxdl_docs(path)
                                     if docs:
                                         dataset.attrs["docs"] = docs
+                                    if docs_url:
+                                        dataset.attrs["docs_url"] = docs_url
                             else:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
@@ -559,9 +571,11 @@ class Writer:
                                         dataset = grp.create_dataset(
                                             entry_name, data=data
                                         )
-                                    docs = self.__nxdl_docs(path)
+                                    docs, docs_url = self.__nxdl_docs(path)
                                     if docs:
                                         dataset.attrs["docs"] = docs
+                                    if docs_url:
+                                        dataset.attrs["docs_url"] = docs_url
                                 except ValueError:
                                     logger.warning(
                                         f"ValueError caught upon create_dataset {path}"
@@ -625,9 +639,11 @@ class Writer:
                                 logger.info(
                                     f"Prevented the overwriting of attribute {path}"
                                 )
-                        docs = self.__nxdl_docs(path)
+                        docs, docs_url = self.__nxdl_docs(path)
                         if docs:
                             dataset_or_group.attrs[f"{attr_name}_docs"] = docs
+                        if docs_url:
+                            dataset_or_group.attrs[f"{attr_name}_docs_url"] = docs_url
                     else:
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding attribute to dataset_or_group"
