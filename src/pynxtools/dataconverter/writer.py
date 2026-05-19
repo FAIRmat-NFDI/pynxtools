@@ -51,6 +51,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_node_at_nxdl_path,
 )
 from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
+from pynxtools.nexus.schema_resolver import resolve_path
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
@@ -350,7 +351,7 @@ class Writer:
             # Attribute path: e.g. /ENTRY/definition/@version or /ENTRY/definition@version
             parent_nxdl, attr_name = nxdl_path.rsplit("@", 1)
             parent_rel = parent_nxdl.strip("/") or None
-            parent_node = tree.find_node_at_path(parent_rel) if parent_rel else tree
+            parent_node = resolve_path(tree, parent_rel) if parent_rel else tree
             node = (
                 parent_node.best_child_for(attr_name, node_type="attribute")
                 if parent_node is not None
@@ -359,12 +360,14 @@ class Writer:
             extra_pairs: list[tuple[str, str]] = []
         else:
             rel_path = nxdl_path.lstrip("/")
-            node = tree.find_node_at_path(rel_path) if rel_path else tree
+            node = resolve_path(tree, rel_path) if rel_path else tree
             # For the top-level ENTRY group, also include the appdef root doc
             extra_pairs = []
             if nxdl_path == "/ENTRY":
                 extra_pairs = [
-                    (src, doc) for src, doc in tree.get_inheritance_docs() if doc
+                    (src, doc)
+                    for src, doc in tree.get_inheritance_concept_paths()
+                    if doc
                 ]
 
         if node is None and not extra_pairs:
