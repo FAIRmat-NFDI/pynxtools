@@ -16,23 +16,52 @@ The separation is deliberate: traversal and I/O live in `NexusFileHandler`; all 
 
 ## The schema layer: `NexusNode`
 
-`NexusNode` (in `pynxtools.nexus.nexus_tree`) is an in-memory tree that mirrors an NXDL application definition. Each node corresponds to one group, field, or attribute defined in the XML schema.
+`NexusNode` (in `pynxtools.nexus.nexus_tree`) is an in-memory tree that mirrors an NXDL application definition. Each node corresponds to one element defined in the XML schema: a definition root, a group, a field, an attribute, a choice, or a link.
+
+### Node type hierarchy
+
+| Class | `nx_type` | XSD type | Represents |
+|---|---|---|---|
+| `NexusDefinition` | `"definition"` | `definitionType` | NXDL file root — carries `category`, `symbols`, `ignore_extra_*` |
+| `NexusGroup` | `"group"` | `groupType` | An HDF5 group / NeXus class instance |
+| `NexusField` | `"field"` | `fieldType` | A dataset — carries `unit`, `long_name`, `interpretation`, and deprecated plotting hints |
+| `NexusAttribute` | `"attribute"` | `attributeType` | An HDF5 attribute — type and enumeration only, no unit |
+| `NexusChoice` | `"choice"` | `choiceType` | A `<choice>` element |
+| `NexusLink` | `"link"` | — | A `<link>` element |
+
+`NexusField` and `NexusAttribute` share a private base `_NexusEntityBase` for dtype, enumeration, and shape information.  The distinction matters because `unit` is a field-only concept in the NeXus XSD (`fieldType` has a `units` attribute; `attributeType` does not).
+
+`NexusEntity` is a backward-compatible alias for `NexusField`.  Existing code importing `NexusEntity` continues to work; new code should import `NexusField` or `NexusAttribute` directly.
 
 ### What `NexusNode` provides
 
 - **Optionality**: whether a concept is `required`, `recommended`, or `optional`.
-- **Type information**: NeXus type (e.g. `NX_FLOAT`) and NeXus Unit category (e.g. `NX_ENERGY`).
+- **Type information**: NeXus type (e.g. `NX_FLOAT`) and, for fields, the unit category (e.g. `NX_ENERGY`).
 - **Enumeration values**: closed vs. open enumerations.
 - **Inheritance chain traversal**: `get_inheritance_enums()` and `get_inheritance_concept_paths()` walk the full NeXus inheritance chain and return constraints from every contributing parent class, ordered from the concrete subclass to the most general base class.
 - **Name resolution**: `best_child_for(name, node_type, nx_class)` selects the best-matching schema child for a given HDF5 instance name, applying NeXus name-fitting rules. Always returns the first of multiple equally-scoring matches.
 - **Collection parent detection**: `has_nxcollection_parent()` checks whether a node lives inside an `NXcollection` group (which exempts it from required-field checks).
 
+### `NexusDefinition` — the tree root
+
+`generate_tree_from` returns a `NexusDefinition` node (not a generic `NexusGroup`).  It exposes the metadata declared at the top of every NXDL file:
+
+| Attribute | Type | Source |
+|---|---|---|
+| `category` | `"base"` or `"application"` | `<definition category="...">` |
+| `symbols` | `dict[str, str]` | `<symbols>/<symbol>` block |
+| `ignore_extra_groups` | `bool` | `ignoreExtraGroups="true"` |
+| `ignore_extra_fields` | `bool` | `ignoreExtraFields="true"` |
+| `ignore_extra_attributes` | `bool` | `ignoreExtraAttributes="true"` |
+
 ### Generating a tree
 
 ```python
-from pynxtools.nexus.nexus_tree import generate_tree_from
+from pynxtools.nexus.nexus_tree import NexusDefinition, generate_tree_from
 
-root: NexusNode = generate_tree_from("NXarpes")
+root: NexusDefinition = generate_tree_from("NXarpes")
+print(root.category)   # "application"
+print(root.symbols)    # {"nP": "...", ...}
 ```
 
 `generate_tree_from` resolves the full inheritance chain at build time, so every child node already contains the merged constraints from all contributing base classes.
@@ -133,7 +162,7 @@ Key methods:
 
 | Method | Purpose |
 |---|---|
-| `appdef_for(hdf_node)` | Walk up the HDF5 tree to find the `NXentry/definition` governing this node |
+| `appdef_for(hdf_node)` | Walk up the HDF5 tree to find the `NXentry/definition` value; returns `str` or `None` if no `NXentry` ancestor exists |
 | `tree_for(appdef)` | Return (and cache) the `NexusNode` tree for a named application definition |
 | `node_for(hdf_path, hdf_node, hint)` | Return the schema `NexusNode` for an HDF5 path, or `None` if not in schema |
 | `attr_node_for(hdf_path, attr_name, parent_hdf)` | Return the schema `NexusNode` for an attribute |
@@ -173,8 +202,8 @@ NexusFileHandler.process(visitor)
               │  node_for(hdf_path, hdf_node)
               ▼
     NexusSchemaResolver
-    ├─ appdef_for(hdf_node) ──► NXentry/definition
-    ├─ tree_for(appdef)  ─────► NexusNode tree (cached)
+    ├─ appdef_for(hdf_node) ──► NXentry/definition (str | None)
+    ├─ tree_for(appdef)  ─────► NexusDefinition root (cached)
     │                           (built from NXDL via generate_tree_from)
     └─ resolve_path(tree, ...) ► NexusNode (cached per path)
 ```
