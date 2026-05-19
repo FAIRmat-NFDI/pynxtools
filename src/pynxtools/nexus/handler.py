@@ -49,12 +49,15 @@ compatibility and will be deprecated in a future release.
 
 from __future__ import annotations
 
+import logging
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Union
 
 import h5py
+
+logger = logging.getLogger("pynxtools")
 
 
 class NexusVisitor(ABC):
@@ -138,6 +141,10 @@ class NexusFileHandler:
         if nxs_file is None:
             local_dir = os.path.abspath(os.path.dirname(__file__))
             nxs_file = os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
+            logger.info(
+                "No NeXus file provided; using bundled ARPES example file: %s",
+                Path(nxs_file).name,
+            )
         self._nxs_file = nxs_file
         self._is_in_memory = is_open
 

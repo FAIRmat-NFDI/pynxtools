@@ -151,12 +151,12 @@ class NexusSchemaResolver:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def appdef_for(hdf_node: h5py.Group | h5py.Dataset) -> str:
+    def appdef_for(hdf_node: h5py.Group | h5py.Dataset) -> str | None:
         """Walk up the HDF5 tree to find the governing application definition.
 
         Returns the ``definition`` field value of the nearest ``NXentry`` ancestor,
         ``"NXroot"`` if no ``definition`` field is present, or
-        ``"NO NXentry found"`` if no ``NXentry`` ancestor exists.
+        ``None`` if no ``NXentry`` ancestor exists.
         """
         h5file = hdf_node.file
         parts = [p for p in hdf_node.name.split("/") if p]
@@ -179,7 +179,7 @@ class NexusSchemaResolver:
                     return raw.strip()
                 except (KeyError, AttributeError):
                     return "NXroot"
-        return "NO NXentry found"
+        return None
 
     # ------------------------------------------------------------------
     # Tree cache
@@ -230,7 +230,7 @@ class NexusSchemaResolver:
             return self._node_cache[hdf_path]
 
         appdef = self.appdef_for(hdf_node)
-        if appdef == "NO NXentry found":
+        if appdef is None:
             return None
         tree = self.tree_for(appdef)
         if tree is None:

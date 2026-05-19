@@ -166,18 +166,18 @@ class TestAppdefFor:
         assert NexusSchemaResolver.appdef_for(f["ENTRY"]) == "NXroot"
         f.close()
 
-    def test_no_nxentry_ancestor_returns_sentinel(self):
+    def test_no_nxentry_ancestor_returns_none(self):
         f = h5py.File("__no_entry__", "w", driver="core", backing_store=False)
         data = f.create_group("data")
         data.attrs["NX_class"] = "NXdata"
-        assert NexusSchemaResolver.appdef_for(f["data"]) == "NO NXentry found"
+        assert NexusSchemaResolver.appdef_for(f["data"]) is None
         f.close()
 
     def test_works_on_group_node(self, nxtest_h5):
         assert NexusSchemaResolver.appdef_for(nxtest_h5["ENTRY/NXODD_name"]) == "NXtest"
 
     def test_works_on_root_group(self, nxtest_h5):
-        assert NexusSchemaResolver.appdef_for(nxtest_h5["/"]) == "NO NXentry found"
+        assert NexusSchemaResolver.appdef_for(nxtest_h5["/"]) is None
 
 
 # ---------------------------------------------------------------------------
