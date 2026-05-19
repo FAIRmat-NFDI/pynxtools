@@ -149,6 +149,66 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
     return "/" + "/".join(reversed(parts)) if parts else ""
 
 
+def _select_best_namefit(
+    name: str,
+    nodes: list["NexusNode"],
+    hint: str | None = None,
+) -> Optional["NexusNode"]:
+    """Select the best-fitting variadic NexusNode for an HDF5 node named *name*.
+
+    Scores each node in *nodes* with :func:`get_nx_namefit` and returns the
+    highest-scoring match.  Logs a debug warning when multiple nodes share the
+    top score under the same optionality constraint, which indicates a schema
+    ambiguity (e.g. two variadic concepts with the same name pattern).
+
+    Args:
+        name: HDF5 node name to fit against the candidates.
+        nodes: Pre-filtered list of variadic :class:`NexusNode` candidates.
+        hint: ``"signal"`` or ``"axis"`` — used to skip ``DATA`` / ``AXISNAME``
+            nodes that don't match the intended role inside an NXdata group.
+
+    Returns:
+        The best-matching :class:`NexusNode`, or ``None`` if no candidate scores
+        above ``-1``.
+    """
+    hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
+    best_match: NexusNode | None = None
+    best_score = -1
+    score_board: dict[int, dict[str, list[int]]] = {}
+
+    for idx, node in enumerate(nodes):
+        name_any = node.name_type == "any"
+        name_partial = node.name_type == "partial"
+        score = get_nx_namefit(name, node.name, name_any, name_partial)
+
+        if score > best_score:
+            if hint and hint_map.get(node.name) != hint:
+                continue
+            best_match = node
+            best_score = score
+
+        if score not in score_board:
+            score_board[score] = {"required": [], "recommended": [], "optional": []}
+        for constraint in ("optional", "required", "recommended"):
+            if node.optionality == constraint:
+                score_board[score][constraint].append(idx)
+                break
+
+    if score_board:
+        alternative_best_score = max(score_board)
+        if alternative_best_score > -1:
+            for constraint in ("required", "recommended", "optional"):
+                if len(score_board[alternative_best_score][constraint]) > 1:
+                    logger.debug(
+                        f"Multiple best fitting with score {alternative_best_score} found "
+                        f"{[nodes[i].concept_path for i in score_board[alternative_best_score][constraint]]} "
+                        f"constrained by {constraint}; indicates possible issues with nameTyping of "
+                        f"specific NeXus classes/concepts"
+                    )
+
+    return best_match
+
+
 class NexusNode(NodeMixin):
     """
     A NexusNode represents one node in the NeXus tree.
@@ -517,7 +577,11 @@ class NexusNode(NodeMixin):
                 continue
             elif child.nx_type == "field":
                 req_children.append(f"{prev_path}/{child.name}")
-                if isinstance(child, NexusField) and child.unit is not None:
+                if (
+                    isinstance(child, NexusField)
+                    and child.unit is not None
+                    and child.unit != "NX_UNITLESS"
+                ):
                     req_children.append(f"{prev_path}/{child.name}/@units")
             elif child.nx_type == "attribute":
                 req_children.append(f"{prev_path}/@{child.name}")
@@ -570,61 +634,19 @@ class NexusNode(NodeMixin):
         Returns:
             The matching :class:`NexusNode`, or ``None``.
         """
-        hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
         children = [
             self.search_add_child_for(child)
             for child in self.get_all_direct_children_names(
                 nx_class=nx_class, node_type=node_type
             )
         ]
-        best_match: NexusNode | None = None
-        best_score = -1
-        score_board: dict[int, dict[str, list[int]]] = {}
 
-        for idx, node in enumerate(children):
-            if node is None:
-                continue
-            if not node.variadic:
-                if name == node.name:
-                    return node
-            else:
-                name_any = node.name_type == "any"
-                name_partial = node.name_type == "partial"
-                score = get_nx_namefit(name, node.name, name_any, name_partial)
-                if score > best_score:
-                    if hint and hint_map.get(node.name) != hint:
-                        continue
-                    best_match = node
-                    best_score = score
+        for node in children:
+            if node is not None and not node.variadic and name == node.name:
+                return node
 
-                if score not in score_board:
-                    score_board[score] = {
-                        "required": [],
-                        "recommended": [],
-                        "optional": [],
-                    }
-                for constraint in ["optional", "required", "recommended"]:
-                    # lookup into nodes in decreasing order of typical occurrence to break earlier
-                    if node.optionality == constraint:
-                        score_board[score][constraint].append(idx)
-                        break
-
-        # analyze and warn if more than one concept fits best, return always though the first found
-        if len(score_board) > 0:
-            alternative_best_score = max(score_board)
-            if alternative_best_score > -1:
-                for constraint in ["required", "recommended", "optional"]:
-                    # select preferentially for the harder constraint that should be met given that
-                    # we wish to validate compliance with a NeXus definition (appdef or class)
-                    if len(score_board[alternative_best_score][constraint]) > 1:
-                        logger.debug(
-                            f"Multiple best fitting with score {alternative_best_score} found "
-                            f"{[children[idx].concept_path for idx in score_board[alternative_best_score][constraint]]} "
-                            f"constrained by {constraint}; indicates possible issues with nameTyping of "
-                            f"specific NeXus classes/concepts"
-                        )
-
-        return best_match
+        variadic = [n for n in children if n is not None and n.variadic]
+        return _select_best_namefit(name, variadic, hint)
 
     def get_docstring(self, depth: int | None = None) -> dict[str, str]:
         """

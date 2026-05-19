@@ -36,7 +36,7 @@ from pynxtools.nexus.utils import decode_if_string
 def resolve_path(
     root: NexusNode,
     path: str,
-    node_type: Literal["group", "field"] | None = None,
+    node_type: Literal["group", "field", "attribute"] | None = None,
     *,
     h5file: h5py.File | None = None,
     hint: Literal["axis", "signal"] | None = None,
@@ -259,3 +259,68 @@ class NexusSchemaResolver:
         if parent_node is None:
             return None
         return parent_node.best_child_for(attr_name, node_type="attribute")
+
+    def node_for_path(
+        self,
+        tree: NexusNode,
+        path: str,
+        node_type: Literal["group", "field", "attribute"] | None = None,
+        nx_class: str | None = None,
+        hint: Literal["axis", "signal"] | None = None,
+    ) -> NexusNode | None:
+        """Resolve *path* within *tree* without HDF5 file access.
+
+        Resolves the parent chain via :func:`resolve_path` (which fills the
+        shared node cache for every intermediate segment), then selects the last
+        segment via :meth:`~pynxtools.nexus.nexus_tree.NexusNode.best_child_for`.
+
+        Suitable for validation use cases where the application definition and
+        tree root are already known and NX_class disambiguation is provided
+        explicitly rather than read from an HDF5 file.
+
+        Parameters
+        ----------
+        tree:
+            Root of the NexusNode tree to resolve against (e.g. the ``NXentry``
+            node when validating entry-relative paths).
+        path:
+            Path without a leading slash (e.g. ``"instrument/detector"``).
+            An empty string returns *tree* itself.
+        node_type:
+            Type of the last segment: ``"group"``, ``"field"``, or
+            ``"attribute"``.
+        nx_class:
+            Optional NX class of the last segment (only meaningful for groups).
+            When given, forwarded to ``best_child_for`` for deterministic
+            variadic-group disambiguation without reading the HDF5 file.
+        hint:
+            ``"signal"`` or ``"axis"`` — forwarded to the last segment to
+            resolve the NXdata signal / axis ambiguity.
+
+        Returns
+        -------
+        NexusNode | None
+            The matching node, or ``None`` if any segment has no schema match.
+        """
+        if not path:
+            return tree
+        if path in self._node_cache:
+            return self._node_cache[path]
+
+        *parent_parts, last_seg = path.rsplit("/", 1)
+        parent_path = parent_parts[0] if parent_parts else ""
+
+        parent = (
+            resolve_path(tree, parent_path, _cache=self._node_cache)
+            if parent_path
+            else tree
+        )
+        if parent is None:
+            self._node_cache[path] = None
+            return None
+
+        node = parent.best_child_for(
+            last_seg, node_type=node_type, nx_class=nx_class, hint=hint
+        )
+        self._node_cache[path] = node
+        return node

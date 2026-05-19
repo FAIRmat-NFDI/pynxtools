@@ -32,8 +32,6 @@ import logging
 import h5py
 import lxml.etree as ET
 import numpy as np
-from cachetools import LRUCache, cached
-from cachetools.keys import hashkey
 
 from pynxtools.dataconverter.helpers import (
     Collector,
@@ -58,8 +56,10 @@ from pynxtools.nexus.nexus_tree import (
     NexusField,
     NexusGroup,
     NexusNode,
+    _select_best_namefit,
     generate_tree_from,
 )
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver, resolve_path
 from pynxtools.units import NXUnitSet, ureg
 
 logger = logging.getLogger("pynxtools")
@@ -218,16 +218,12 @@ class ValidationVisitor(NexusVisitor):
         """
         collector.clear()
 
-        appdef_node = generate_tree_from(appdef)
+        self._resolver = NexusSchemaResolver()
+        appdef_node = self._resolver.tree_for(appdef)
         self._tree: NexusNode = appdef_node.search_add_child_for("ENTRY")
         self._appdef_node: NexusNode = appdef_node
         self._entry_name: str = entry_name
         self._ignore_undocumented: bool = ignore_undocumented
-
-        # Cache keyed by path only (same semantics as the original LRUCache with
-        # key=hashkey(path) — node_type/nx_class/hint are not part of the cache key)
-        self._node_cache: dict[str, NexusNode | None] = {}
-        self._MISSING = object()  # sentinel for "not yet cached"
 
         self._required_groups: set[str] = set()
         self._required_entities: set[str] = set()
@@ -347,80 +343,6 @@ class ValidationVisitor(NexusVisitor):
     # Schema resolution
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _best_namefit_of(
-        name: str,
-        nodes: Sequence[NexusNode],
-        hint: Literal["axis", "signal"] | None = None,
-    ) -> NexusNode | None:
-        """
-        Get the best namefit of `name` in `nodes`.
-
-        Args:
-            name (str): The name to fit against the nodes.
-            nodes (Sequence[NexusNode]): The nodes to fit `name` against.
-            node_type (str): The type (group, field, attribute) that is expected
-
-        Returns:
-            Optional[NexusNode]: The best fitting node. None if no fit was found.
-        """
-        if not nodes:
-            return None
-
-        best_match: NexusNode | None = None
-        best_score = -1
-
-        # use score as key for the outer dict and inner dict as value with
-        # constraint as key and idx on nodes as value on that inner dict
-        score_board: dict[int, dict[str, list[int]]] = {}
-
-        hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
-
-        for idx, node in enumerate(nodes):
-            if not node.variadic:
-                if name == node.name:
-                    return node
-            else:
-                name_any = node.name_type == "any"
-                name_partial = node.name_type == "partial"
-                score = get_nx_namefit(name, node.name, name_any, name_partial)
-                if score > best_score:
-                    if hint and hint_map.get(node.name) != hint:
-                        continue
-                    best_match = node
-                    best_score = score
-
-                if score in score_board:
-                    pass
-                else:
-                    score_board[score] = {
-                        "required": [],
-                        "recommended": [],
-                        "optional": [],
-                    }
-                for constraint in ["optional", "required", "recommended"]:
-                    # lookup into nodes in decreasing order of typical occurrence to break earlier
-                    if node.optionality == constraint:
-                        score_board[score][constraint].append(idx)
-                        break
-
-        # analyze and warn if more than one concept fits best, return always though the first found
-        if len(score_board) > 0:
-            alternative_best_score = max(score_board)
-            if alternative_best_score > -1:
-                for constraint in ["required", "recommended", "optional"]:
-                    # select preferentially for the harder constraint that should be met given that
-                    # we wish to validate compliance with a NeXus definition (appdef or class)
-                    if len(score_board[alternative_best_score][constraint]) > 1:
-                        logger.debug(
-                            f"Multiple best fitting with score {alternative_best_score} found "
-                            f"{[nodes[idx] for idx in score_board[alternative_best_score][constraint]]} "
-                            f"constrained by {constraint}; indicates possible issues with nameTyping of "
-                            f"specific NeXus classes/concepts"
-                        )
-
-        return best_match
-
     def _find_node_for(
         self,
         path: str,
@@ -428,64 +350,48 @@ class ValidationVisitor(NexusVisitor):
         nx_class: str | None = None,
         hint: Literal["axis", "signal"] | None = None,
     ) -> NexusNode | None:
-        """
-        Find the NexusNode for *path*, cached by path only.
+        """Find the NexusNode for *path*, delegating to the schema resolver.
+
+        Uses :meth:`~pynxtools.nexus.schema_resolver.NexusSchemaResolver.node_for_path`
+        for resolution and caching, then adds type-conflict detection on top: if the
+        path matches a concept of a different type (e.g. a field path that refers to a
+        group concept), a validation problem is logged and ``TypeError`` is raised.
 
         Raises:
             TypeError: If the path matches a concept of a conflicting type.
         """
-        cached = self._node_cache.get(path, self._MISSING)
-        if cached is not self._MISSING:
-            return cached  # type: ignore[return-value]
-
-        if path == "":
+        if not path:
             return self._tree
 
-        *prev_parts, last_elem = path.rsplit("/", 1)
-        parent = (
-            self._find_node_for(prev_parts[0], hint=hint) if prev_parts else self._tree
+        node = self._resolver.node_for_path(
+            self._tree, path, node_type=node_type, nx_class=nx_class, hint=hint
         )
-        parent_copy = copy.copy(parent)
-
-        if parent is None:
-            self._node_cache[path] = None
-            return None
-
-        children_to_check = [
-            parent.search_add_child_for(child)
-            for child in parent.get_all_direct_children_names(
-                nx_class=nx_class, node_type=node_type
-            )
-        ]
-        node = self._best_namefit_of(last_elem, children_to_check, hint)
 
         if node is None:
-            other_node_types = [
-                nt for nt in self._POSSIBLE_NODE_TYPES if nt != node_type
-            ]
-            for other_node_type in other_node_types:
-                other_children = [
-                    parent_copy.search_add_child_for(child)
-                    for child in parent_copy.get_all_direct_children_names(
-                        node_type=other_node_type, nx_class=nx_class
-                    )
-                ]
-                other_node = self._best_namefit_of(last_elem, other_children)
-                if other_node is not None and not other_node.variadic:
-                    collector.collect_and_log(
-                        path,
-                        ValidationProblem.InvalidNexusTypeForNamedConcept,
-                        other_node,
-                        node_type,
-                    )
-                    raise TypeError(
-                        f"The type ('{node_type}') of {path} conflicts with another existing "
-                        f"concept {other_node.get_path()} (which is of type '{other_node.nx_type}')."
-                    )
-            self._node_cache[path] = None
-            return None
+            *parent_parts, last_seg = path.rsplit("/", 1)
+            parent_path = parent_parts[0] if parent_parts else ""
+            parent_node = (
+                self._resolver.node_for_path(self._tree, parent_path)
+                if parent_path
+                else self._tree
+            )
+            if parent_node is not None:
+                for other_type in self._POSSIBLE_NODE_TYPES:
+                    if other_type == node_type:
+                        continue
+                    other = parent_node.best_child_for(last_seg, node_type=other_type)
+                    if other is not None and not other.variadic:
+                        collector.collect_and_log(
+                            path,
+                            ValidationProblem.InvalidNexusTypeForNamedConcept,
+                            other,
+                            node_type,
+                        )
+                        raise TypeError(
+                            f"The type ('{node_type}') of {path} conflicts with another existing "
+                            f"concept {other.get_path()} (which is of type '{other.nx_type}')."
+                        )
 
-        self._node_cache[path] = node
         return node
 
     # ------------------------------------------------------------------
@@ -516,38 +422,38 @@ class ValidationVisitor(NexusVisitor):
         path: str,
         variadic_name: str,
         node_type: Literal["group", "field", "attribute"] | None = None,
-    ):
+    ) -> bool:
+        """Check if a required NXDL concept path *variadic_name* is satisfied by *path*.
+
+        *variadic_name* is a schema-level concept path (e.g. ``"instrument/DETECTOR"``);
+        *path* is the actual HDF5 instance path visited (e.g. ``"instrument/detector_1"``).
+        Returns ``True`` when the concept at *variadic_name* is variadic and the last
+        segment of *path* namefits it.
+
+        Uses :func:`~pynxtools.nexus.schema_resolver.resolve_path` directly on the schema
+        tree — deliberately bypassing the resolver cache to avoid mixing NXDL concept
+        paths with HDF5 instance paths in the shared cache.
         """
-        Check if a variadic node exists that matches a given path and node type.
 
-        Args:
-            path (str): Path to check.
-            variadic_name (str): Variadic name to compare.
-            node_type (Optional[str]): Type of node to restrict search.
-
-        Returns:
-            bool: True if a matching variadic node exists.
-        """
-
-        def _parent_of(path: str) -> str:
-            if "/" not in path.strip("/"):
-                return ""
-            return path.rstrip("/").rsplit("/", 1)[0]
+        def _parent_of(p: str) -> str:
+            return p.rstrip("/").rsplit("/", 1)[0] if "/" in p.strip("/") else ""
 
         if _parent_of(variadic_name) != _parent_of(path):
             return False
 
-        node = self._find_node_for(variadic_name, node_type=node_type)
-        if node is not None and node.variadic:
-            score = get_nx_namefit(
+        concept_node = resolve_path(self._tree, variadic_name, node_type=node_type)
+        if concept_node is None or not concept_node.variadic:
+            return False
+
+        return (
+            get_nx_namefit(
                 path.rsplit("/", 1)[-1],
-                node.name,
-                node.name_type == "any",
-                node.name_type == "partial",
+                concept_node.name,
+                concept_node.name_type == "any",
+                concept_node.name_type == "partial",
             )
-            if score > -1:
-                return True
-        return False
+            >= 0
+        )
 
     def _remove_from_req_groups(self, path: str) -> None:
         """
@@ -1634,8 +1540,6 @@ def validate_dict_against(
 
         concept_name, instance_name = split_class_and_name_of(name)
 
-        best_match = None
-
         for node in nodes:
             if not node.variadic:
                 if instance_name == node.name:
@@ -1678,21 +1582,14 @@ def validate_dict_against(
                                 )
                             return None
                     return node
-            else:
-                if concept_name and concept_name == node.name:
-                    if instance_name == node.name:
-                        return node
-
-                    name_any = node.name_type == "any"
-                    name_partial = node.name_type == "partial"
-
-                    score = get_nx_namefit(
-                        instance_name, node.name, name_any, name_partial
-                    )
-                    if score > -1:
-                        best_match = node
-
-        return best_match
+        # Variadic branch: filter to candidates whose concept name matches, then
+        # use the shared scoreboard selection (same logic as NexusNode.best_child_for).
+        variadic_candidates = [
+            n
+            for n in nodes
+            if n.variadic and (not concept_name or n.name == concept_name)
+        ]
+        return _select_best_namefit(instance_name, variadic_candidates)
 
     def add_best_matches_for(
         key: str, node: NexusNode, check_types: bool = False
