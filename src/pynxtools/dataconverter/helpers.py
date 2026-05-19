@@ -1648,3 +1648,15 @@ def validate_data_dict(*args, **kwargs):
 
     return _impl(*args, **kwargs)
     return _decode_bytes_recursive(value, encoding)
+
+
+def validate_data_dict(*args, **kwargs):
+    """Backwards-compatibility shim.
+
+    Defined here (rather than via the __init__.py monkey-patch) to break a circular
+    import that arises when nexus.nexus_tree moved out of the dataconverter package:
+      nexus.nexus_tree → dataconverter.helpers → dataconverter.__init__ → validation → nexus.nexus_tree
+    """
+    from pynxtools.dataconverter.validation import validate_data_dict as _impl
+
+    return _impl(*args, **kwargs)

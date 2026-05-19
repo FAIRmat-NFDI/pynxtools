@@ -191,8 +191,11 @@ class NexusFileHandler:
         parts = name.split("/")
         for idx in range(1, len(parts)):
             ancestor = "/".join(parts[:idx])
-            if root["/" + ancestor] == root["/" + name]:
-                return False
+            try:
+                if root["/" + ancestor] == root["/" + name]:
+                    return False
+            except (KeyError, ValueError):
+                pass
         return True
 
     def _full_visit(
