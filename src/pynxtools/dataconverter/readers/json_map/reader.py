@@ -63,20 +63,20 @@ def _decode_hdf_bytes(value: Any) -> Any:
     if isinstance(value, bytes | np.bytes_):
         return value.decode("utf-8")
 
-    if isinstance(value, np.ndarray):
+    elif isinstance(value, np.ndarray):
         if value.dtype.kind == "S":
             return np.char.decode(value, "utf-8")
-        if value.dtype.kind == "O":
+        elif value.dtype.kind == "O":
             return np.vectorize(_decode_hdf_bytes, otypes=[object])(value)
         return value
 
-    if isinstance(value, list):
+    elif isinstance(value, list):
         return [_decode_hdf_bytes(item) for item in value]
 
-    if isinstance(value, tuple):
+    elif isinstance(value, tuple):
         return tuple(_decode_hdf_bytes(item) for item in value)
 
-    if isinstance(value, dict):
+    elif isinstance(value, dict):
         return {k: _decode_hdf_bytes(v) for k, v in value.items()}
 
     return value
