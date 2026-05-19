@@ -41,7 +41,7 @@ import logging
 import os
 import re
 import textwrap
-from typing import Any
+from typing import Any, Literal
 
 import h5py
 
@@ -54,6 +54,7 @@ from pynxtools.nexus.nxdata import (
     find_default_nxentry,
     inspect_nxdata,
 )
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nexus.utils import decode_if_string
 
 
@@ -349,7 +350,7 @@ class Annotator(NexusVisitor):
 
     def _nxdata_role(
         self, hdf_node: h5py.Dataset, name: str, indent: str
-    ) -> str | None:
+    ) -> Literal["axis", "signal"] | None:
         """Return ``'signal'``, ``'axis'``, or ``None`` for *hdf_node* within its NXdata group.
 
         Uses the ``NXdataInfo`` cached by ``_annotate_group``; falls back to ``None``
