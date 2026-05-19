@@ -243,7 +243,6 @@ posteriori
 prescan
 printoptions
 prng
-pseudoxml
 punx
 pynx
 pynxtools
