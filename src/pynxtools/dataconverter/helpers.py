@@ -1596,47 +1596,42 @@ def nested_dict_to_slash_separated_path(
             flattened_dict[path] = val
 
 
-# def decode_if_bytes(payload: Any, encoding: str = "utf-8") -> Any:
-#     """
-#     Return the payload (e.g. attribute) as Any except bytes.
+def _decode_bytes_scalar(value: Any, encoding: str) -> Any:
+    """Decode scalar byte-like values and keep all other scalars unchanged."""
+    if isinstance(value, (bytes, np.bytes_)):
+        return value.decode(encoding)
+    return value
 
-#     - If `payload` is `bytes`, decode it using the given encoding.
-#     - Otherwise, return it unchanged.
 
-#     Args:
-#         payload: Any type.
-#         encoding: The character encoding to use when decoding bytes.
+def _decode_bytes_recursive(value: Any, encoding: str) -> Any:
+    """Recursively decode byte-like values in nested containers."""
+    if isinstance(value, list):
+        # TODO: For very large nested payloads this recursion can be expensive.
+        # Revisit with a lower-overhead iterative/container-specialized path.
+        return [_decode_bytes_recursive(item, encoding) for item in value]
 
-#     Returns:
-#         The attribute as a string, or None if input was None.
-#     """
-#     if isinstance(payload, bytes):
-#         return payload.decode(encoding)
-#     return payload
+    if isinstance(value, tuple):
+        return tuple(_decode_bytes_recursive(item, encoding) for item in value)
+
+    if isinstance(value, dict):
+        return {k: _decode_bytes_recursive(v, encoding) for k, v in value.items()}
+
+    return _decode_bytes_scalar(value, encoding)
 
 
 def decode_if_bytes(value: Any, encoding: str = "utf-8") -> Any:
-    """Recursively decode text-like bytes to Python strings.
+    """Decode text-like bytes to Python strings while preserving numeric types.
 
-    Numeric arrays and non-text scalar values are returned unchanged.
+    This function is optimized for common scalar/ndarray paths and falls back to
+    recursive decoding for nested Python containers.
     """
-    if isinstance(value, bytes | np.bytes_):
-        return value.decode(encoding)
-
-    elif isinstance(value, np.ndarray):
+    if isinstance(value, np.ndarray):
         if value.dtype.kind == "S":
             return np.char.decode(value, encoding)
-        elif value.dtype.kind == "O":
-            return np.vectorize(decode_if_bytes, otypes=[object])(value)
+        if value.dtype.kind == "O":
+            return np.vectorize(_decode_bytes_recursive, otypes=[object])(
+                value, encoding
+            )
         return value
 
-    elif isinstance(value, list):
-        return [decode_if_bytes(item, encoding) for item in value]
-
-    elif isinstance(value, tuple):
-        return tuple(decode_if_bytes(item, encoding) for item in value)
-
-    elif isinstance(value, dict):
-        return {k: decode_if_bytes(v, encoding) for k, v in value.items()}
-
-    return value
+    return _decode_bytes_recursive(value, encoding)
