@@ -1192,21 +1192,26 @@ def validate_dict_against(
         resolved_keys = copy.deepcopy(keys)
         for key, value in keys.copy().items():
             if isinstance(value, dict) and "link" in value:
+                link_value = value["link"]
+                key_path = f"{prev_path}/{key}" if prev_path else key
+
+                # Virtual datasets: link is a list of "filepath:hdfpath" sources.
+                # The VDS assembly is performed by the writer; nothing to resolve here.
+                if isinstance(link_value, list):
+                    continue
+
                 link_key = None  # Track is linked path exists
                 file_path = None
-                if re_groups := re.match(
-                    r"^(.+\.(?:nxs|h5|hdf5)):(.+)$", value["link"]
-                ):
+                if re_groups := re.match(r"^(.+\.(?:nxs|h5|hdf5)):(.+)$", link_value):
                     file_path, link_path = re_groups.groups()[0:2]
                 else:
-                    link_path = value["link"]
+                    link_path = link_value
 
                 # Allow link path with and without leading /
                 link_path = link_path[1:] if link_path.startswith("/") else link_path
 
-                key_path = f"{prev_path}/{key}" if prev_path else key
                 # External link resolution (file_path:link_path)
-                if ":" in value["link"]:
+                if ":" in link_value:
 
                     def get_node(_, obj):
                         if obj.name[1:] == link_path:
@@ -1582,12 +1587,11 @@ def validate_dict_against(
                                 )
                             return None
                     return node
-        # Variadic branch: filter to candidates whose concept name matches, then
-        # use the shared scoreboard selection (same logic as NexusNode.best_child_for).
+        # Variadic branch: a concept-name prefix is required to identify which
+        # variadic schema node to match against.  Keys without a prefix (e.g. plain
+        # "internal_link") must not match variadic schema nodes.
         variadic_candidates = [
-            n
-            for n in nodes
-            if n.variadic and (not concept_name or n.name == concept_name)
+            n for n in nodes if n.variadic and concept_name and n.name == concept_name
         ]
         return _select_best_namefit(instance_name, variadic_candidates)
 
