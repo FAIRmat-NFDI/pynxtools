@@ -207,7 +207,7 @@ class Annotator(NexusVisitor):
     @staticmethod
     def _depth(hdf_path: str) -> int:
         """Return nesting depth: 0=root, 1=/entry, 2=/entry/data, ..."""
-        return 0 if not hdf_path else hdf_path.count("/") + 1
+        return 0 if not hdf_path else hdf_path.count("/")
 
     # Label width for detail lines — keeps the colon column aligned within a block.
     _LW = 10
