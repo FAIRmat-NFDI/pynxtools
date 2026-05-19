@@ -200,9 +200,12 @@ def list_keys(file_path: str, output: str = None):
 )
 @click.option(
     "--docs-format",
-    type=click.Choice(["default", "html", "html5", "xml", "pseudoxml"]),
+    type=click.Choice(["default", "plain"]),
     default=None,
-    help="Format for docstrings (requires --write-docs). Defaults to plain RST text.",
+    help=(
+        "Format for docstrings (requires --write-docs). "
+        "'default' keeps raw RST; 'plain' strips markup to clean prose."
+    ),
 )
 # pylint: disable=too-many-arguments
 def run(
