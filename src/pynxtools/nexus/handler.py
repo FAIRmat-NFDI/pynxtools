@@ -248,8 +248,11 @@ class NexusFileHandler:
         parts = name.split("/")
         for idx in range(1, len(parts)):
             ancestor = "/".join(parts[:idx])
-            if root["/" + ancestor] == root["/" + name]:
-                return False
+            try:
+                if root["/" + ancestor] == root["/" + name]:
+                    return False
+            except (KeyError, ValueError):
+                pass
         return True
 
     def _traverse_external(
@@ -308,10 +311,6 @@ class NexusFileHandler:
         if isinstance(hdf_node, h5py.Group):
             for ch_name in hdf_node:
                 full_name = ch_name if not name else f"{name}/{ch_name}"
-<<<<<<< HEAD
-                if self._not_yet_visited(root, full_name):
-                    self._full_visit(root, child, full_name, visitor)
-=======
                 link = hdf_node.get(ch_name, getlink=True)
 
                 if isinstance(link, h5py.SoftLink):
@@ -330,4 +329,3 @@ class NexusFileHandler:
                     child = hdf_node[ch_name]
                     if self._not_yet_visited(root, full_name):
                         self._full_visit(root, child, full_name, visitor)
->>>>>>> 65db1f12 (allow handling of external and soft links)

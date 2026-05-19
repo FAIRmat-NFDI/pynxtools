@@ -217,12 +217,14 @@ HDF5 file
     ▼
 NexusFileHandler.process(visitor)
     │
-    ├─ on_group  ─────────┐
-    ├─ on_field  ──────────┤ NexusVisitor
-    ├─ on_attribute ───────┤  (Annotator / NomadVisitor / custom)
-    └─ on_complete ────────┘
+    ├─ on_group  ───────────┐
+    ├─ on_field  ───────────┤ NexusVisitor
+    ├─ on_attribute ────────┤  (Annotator / NomadVisitor / custom)
+    ├─ on_broken_link ──────┤  (optional — default no-op)
+    ├─ on_external_link ────┤  (optional — default no-op)
+    └─ on_complete ─────────┘
               │
-              │  node_for(hdf_path, hdf_node)
+              │  node_for(hdf_path, hdf_node) ──► NexusNode lookup (per node)
               ▼
     NexusSchemaResolver
     ├─ appdef_for(hdf_node) ──► NXentry/definition (str | None)
