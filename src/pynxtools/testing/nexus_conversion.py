@@ -234,6 +234,9 @@ class ReaderTest:
             "@file_time",  # creation timestamp: always differs
             "@file_update_time",  # update timestamp: always differs,
             "@h5py_version",  # differs depending on installation
+            # These are the URL and version on NXentry/definition
+            "@URL = https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
+            "@version = v",
         ]
 
         # Section headers: a stripped line starting with one of these prefixes
