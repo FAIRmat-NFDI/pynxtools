@@ -1633,7 +1633,7 @@ def decode_if_bytes(value: Any, encoding: str = "utf-8") -> Any:
                 value, encoding
             )
         return value
-
+    
     return _decode_bytes_recursive(value, encoding)
 
 
@@ -1647,3 +1647,4 @@ def validate_data_dict(*args, **kwargs):
     from pynxtools.dataconverter.validation import validate_data_dict as _impl
 
     return _impl(*args, **kwargs)
+    return _decode_bytes_recursive(value, encoding)
