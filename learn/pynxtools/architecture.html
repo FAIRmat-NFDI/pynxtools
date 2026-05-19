@@ -14,10 +14,10 @@
       
       
       
-        <link rel="prev" href="architecture.html">
+        <link rel="prev" href="../nexus/nexus-rules.html">
       
       
-        <link rel="next" href="dataconverter-and-readers.html">
+        <link rel="next" href="nexus-definitions.html">
       
       
         
@@ -28,7 +28,7 @@
     
     
       
-        <title>NeXus definitions in pynxtools - Documentation</title>
+        <title>pynxtools architecture - Documentation</title>
       
     
     
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#nexus-definitions-in-pynxtools" class="md-skip">
+        <a href="#pynxtools-architecture" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              NeXus definitions in pynxtools
+              pynxtools architecture
             
           </span>
         </div>
@@ -1117,34 +1117,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="architecture.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    pynxtools architecture
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1164,7 +1136,7 @@
   <span class="md-ellipsis">
     
   
-    NeXus definitions in pynxtools
+    pynxtools architecture
   
 
     
@@ -1175,14 +1147,14 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="nexus-definitions.html" class="md-nav__link md-nav__link--active">
+      <a href="architecture.html" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    NeXus definitions in pynxtools
+    pynxtools architecture
   
 
     
@@ -1219,55 +1191,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-nexus-definitions-are" class="md-nav__link">
+  <a href="#the-schema-layer-nexusnode" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What the NeXus definitions are
+        The schema layer: NexusNode
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#role-of-the-definitions-in-pynxtools" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role of the definitions in pynxtools
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-a-git-submodule-is-used" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why a Git submodule is used
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#managing-the-definitions-submodule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Managing the definitions submodule
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Managing the definitions submodule">
+    <nav class="md-nav" aria-label="The schema layer: NexusNode">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#commands" class="md-nav__link">
+  <a href="#what-nexusnode-provides" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commands
+        What NexusNode provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-a-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating a tree
       
     </span>
   </a>
@@ -1280,10 +1230,166 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
+  <a href="#the-traversal-layer-nexusfilehandler" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary
+        The traversal layer: NexusFileHandler
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The traversal layer: NexusFileHandler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dispatch-order-per-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dispatch order per node
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-processing-layer-nexusvisitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The processing layer: NexusVisitor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The processing layer: NexusVisitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-visitor-implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in visitor implementations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-resolution-nexusschemaresolver-and-resolve_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema resolution: NexusSchemaResolver and resolve_path
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schema resolution: NexusSchemaResolver and resolve_path">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolve_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resolve_path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusschemaresolver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusSchemaResolver
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caching
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-cli-tools-are-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the CLI tools are built
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How the CLI tools are built">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pynx-read-the-annotator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pynx read — the annotator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-flow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data flow summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extending-pynxtools-with-a-custom-visitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extending pynxtools with a custom visitor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-the-dataconverter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to the dataconverter
       
     </span>
   </a>
@@ -1294,6 +1400,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="nexus-definitions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1742,55 +1876,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-nexus-definitions-are" class="md-nav__link">
+  <a href="#the-schema-layer-nexusnode" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What the NeXus definitions are
+        The schema layer: NexusNode
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#role-of-the-definitions-in-pynxtools" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role of the definitions in pynxtools
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-a-git-submodule-is-used" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why a Git submodule is used
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#managing-the-definitions-submodule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Managing the definitions submodule
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Managing the definitions submodule">
+    <nav class="md-nav" aria-label="The schema layer: NexusNode">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#commands" class="md-nav__link">
+  <a href="#what-nexusnode-provides" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commands
+        What NexusNode provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-a-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating a tree
       
     </span>
   </a>
@@ -1803,10 +1915,166 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
+  <a href="#the-traversal-layer-nexusfilehandler" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary
+        The traversal layer: NexusFileHandler
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The traversal layer: NexusFileHandler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dispatch-order-per-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dispatch order per node
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-processing-layer-nexusvisitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The processing layer: NexusVisitor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The processing layer: NexusVisitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-visitor-implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in visitor implementations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-resolution-nexusschemaresolver-and-resolve_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema resolution: NexusSchemaResolver and resolve_path
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schema resolution: NexusSchemaResolver and resolve_path">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolve_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resolve_path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusschemaresolver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusSchemaResolver
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caching
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-cli-tools-are-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the CLI tools are built
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How the CLI tools are built">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pynx-read-the-annotator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pynx read — the annotator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-flow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data flow summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extending-pynxtools-with-a-custom-visitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extending pynxtools with a custom visitor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-the-dataconverter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to the dataconverter
       
     </span>
   </a>
@@ -1830,128 +2098,208 @@
 
 
 
-<h1 id="nexus-definitions-in-pynxtools">NeXus definitions in pynxtools<a class="headerlink" href="#nexus-definitions-in-pynxtools" title="Permanent link">&para;</a></h1>
+<h1 id="pynxtools-architecture">pynxtools architecture<a class="headerlink" href="#pynxtools-architecture" title="Permanent link">&para;</a></h1>
+<p>This page explains the internal design of <code>pynxtools</code>. It is intended for developers who want to extend <code>pynxtools</code>, implement custom processing pipelines, or understand how the built-in tools work.</p>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p><code>pynxtools</code> converts experimental data into the NeXus format and validates the resulting HDF5 files against NeXus application definitions. These definitions formally describe how experimental data and metadata must be structured in a NeXus file.</p>
-<p>The NeXus definitions themselves are not part of the pynxtools source code. Instead, they are maintained in a dedicated repository and included in pynxtools as a Git submodule:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/pynxtools/definitions
-</code></pre></div>
-<p>This page explains:</p>
-<ul>
-<li>
-<p>what the definitions repository contains,</p>
-</li>
-<li>
-<p>why it is included as a submodule,</p>
-</li>
-<li>
-<p>how it is used inside <code>pynxtools</code>,</p>
-</li>
-<li>
-<p>and how to manage it using the provided helper script.</p>
-</li>
-</ul>
-<h2 id="what-the-nexus-definitions-are">What the NeXus definitions are<a class="headerlink" href="#what-the-nexus-definitions-are" title="Permanent link">&para;</a></h2>
-<p>NeXus defines a standardized structure for scientific data. The structure is defined in XML files written in the NeXus Definition Language (NXDL). These XML files define:</p>
-<ul>
-<li>base classes (common structural components and respective semantic concepts),</li>
-<li>application definitions (experiment-specific schemas),</li>
-<li>contributed definitions from the community. These can be base classes or application definitions.</li>
-</ul>
-<p>These definitions specify naming, hierarchy, constraints on the requiredness of individual concepts, and allowed metadata for NeXus files.</p>
-<p>In practice, they serve as:</p>
-<ul>
-<li>the schema against which data is validated,</li>
-<li>the reference for generating templates and mappings,</li>
-<li>the source of truth for how experimental data must be organized.</li>
-</ul>
-<p>Validation and interoperability depend directly on the exact version of these definitions.</p>
-<div class="admonition info">
-<p class="admonition-title">To learn more about the different versions of the NeXus definitions, see <a href="../../reference/definitions.html">Reference &gt; NeXus definitions</a>.</p>
-</div>
-<h2 id="role-of-the-definitions-in-pynxtools">Role of the definitions in <code>pynxtools</code><a class="headerlink" href="#role-of-the-definitions-in-pynxtools" title="Permanent link">&para;</a></h2>
-<p><code>pynxtools</code> relies on a fixed, versioned set of NeXus definitions to ensure reproducibility and consistency across data conversions.</p>
-<p>Specifically, the definitions are used to:</p>
-<ul>
-<li>generate internal representations of application definitions,</li>
-<li>validate generated NeXus files,</li>
-<li>ensure consistent interpretation of metadata across plugins,</li>
-<li>make conversions reproducible by tying results to a specific definitions version.</li>
-</ul>
-<p>Because definitions evolve independently from <code>pynxtools</code>, the repository is included as a submodule rather than copied into the code base.</p>
-<p>This has several advantages:</p>
-<ul>
-<li>updates can be performed independently of <code>pynxtools</code> releases,</li>
-<li>the exact definitions commit used for conversion is tracked,</li>
-<li>different branches or commits can be tested when developing new application definitions.</li>
-</ul>
-<p>The version currently in use is written to <code>nexus-version.txt</code>, allowing downstream users or workflows to reconstruct which definitions were used.</p>
-<h2 id="why-a-git-submodule-is-used">Why a Git submodule is used<a class="headerlink" href="#why-a-git-submodule-is-used" title="Permanent link">&para;</a></h2>
-<p>The definitions repository is large and changes independently from the Python code. Using a submodule ensures that:</p>
-<ul>
-<li>Every <code>pynxtools</code> commit references an exact definitions commit.</li>
-<li>Users obtain reproducible behavior when cloning the repository.</li>
-<li>Developers can temporarily test newer or experimental definitions without changing the recorded version.</li>
-</ul>
-<p>The superproject (<code>pynxtools</code>) therefore defines the authoritative version of the definitions.</p>
-<h2 id="managing-the-definitions-submodule">Managing the definitions submodule<a class="headerlink" href="#managing-the-definitions-submodule" title="Permanent link">&para;</a></h2>
-<p>The submodule should be managed through <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/scripts/definitions.sh">a dedicated script</a>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>scripts/definitions.sh
-</code></pre></div>
-<p>The script provides a small abstraction over common Git submodule operations and ensures that:</p>
-<ul>
-<li>the correct definitions version is checked out,</li>
-<li><code>.gitmodules</code> remains consistent,</li>
-<li><code>nexus-version.txt</code> is updated automatically.</li>
-</ul>
-<h3 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h3>
-<ul>
-<li>
-<p><strong>Update to the tracked branch</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>./scripts/definitions.sh<span class="w"> </span>update
-</code></pre></div>
-<p>Updates the definitions submodule to the latest commit of the tracked branch (if configured). Internally this runs: <code>git submodule update --remote</code>. Use this when you intentionally want to move to a newer definitions version.</p>
-</li>
-<li>
-<p><strong>Reset to the recorded version</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./scripts/definitions.sh<span class="w"> </span>reset
-</code></pre></div>
-<p>Resets the submodule to the exact commit recorded in the <code>pynxtools</code> repository.
-This is the safe operation when you want to switch branches, discard local experiments,
-or restore a clean state.</p>
-<p>Importantly, this does not update to the latest definitions version. It restores the version pinned by the current <code>pynxtools</code> commit.</p>
-</li>
-<li>
-<p><strong>Checkout a specific revision</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./scripts/definitions.sh<span class="w"> </span>checkout<span class="w"> </span>&lt;REV&gt;
-</code></pre></div>
-<p><code>&lt;REV&gt;</code> can be any Git reference that is resolvable by <code>git rev-parse</code> (e.g., a commit hash, a tag, or a branch name).
-The behavior depends on the type:</p>
+<p><code>pynxtools</code> organizes its HDF5/NeXus processing around three collaborating layers:</p>
 <table>
 <thead>
 <tr>
-<th>Revision type</th>
-<th>Result</th>
+<th>Layer</th>
+<th>Key type</th>
+<th>Role</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>commit or tag</td>
-<td>submodule in detached HEAD</td>
+<td><strong>Schema</strong></td>
+<td><code>NexusNode</code></td>
+<td>In-memory representation of an NXDL application definition</td>
 </tr>
 <tr>
-<td>branch</td>
-<td>branch is checked out and tracked</td>
+<td><strong>Traversal</strong></td>
+<td><code>NexusFileHandler</code></td>
+<td>Walks every node of an HDF5 file in order</td>
+</tr>
+<tr>
+<td><strong>Processing</strong></td>
+<td><code>NexusVisitor</code></td>
+<td>Receives node events and implements the actual logic</td>
 </tr>
 </tbody>
 </table>
-<p>If a branch is checked out, the script updates <code>.gitmodules</code> so that future update calls follow that branch. If a commit or tag is used, branch tracking is removed.</p>
-<p>This allows temporary testing of definitions changes without permanently modifying the repository state.</p>
-</li>
+<p>The separation is deliberate: traversal and I/O live in <code>NexusFileHandler</code>; all domain-specific behavior (annotation, validation, NOMAD parsing) lives in <code>NexusVisitor</code> implementations. This makes every processing mode independently testable and composable.</p>
+<h2 id="the-schema-layer-nexusnode">The schema layer: <code>NexusNode</code><a class="headerlink" href="#the-schema-layer-nexusnode" title="Permanent link">&para;</a></h2>
+<p><code>NexusNode</code> (in <code>pynxtools.nexus.nexus_tree</code>) is an in-memory tree that mirrors an NXDL application definition. Each node corresponds to one group, field, or attribute defined in the XML schema.</p>
+<h3 id="what-nexusnode-provides">What <code>NexusNode</code> provides<a class="headerlink" href="#what-nexusnode-provides" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Optionality</strong>: whether a concept is <code>required</code>, <code>recommended</code>, or <code>optional</code>.</li>
+<li><strong>Type information</strong>: NeXus type (e.g. <code>NX_FLOAT</code>) and NeXus Unit category (e.g. <code>NX_ENERGY</code>).</li>
+<li><strong>Enumeration values</strong>: closed vs. open enumerations.</li>
+<li><strong>Inheritance chain traversal</strong>: <code>get_inheritance_enums()</code> and <code>get_inheritance_concept_paths()</code> walk the full NeXus inheritance chain and return constraints from every contributing parent class, ordered from the concrete subclass to the most general base class.</li>
+<li><strong>Name resolution</strong>: <code>best_child_for(name, node_type, nx_class)</code> selects the best-matching schema child for a given HDF5 instance name, applying NeXus name-fitting rules. Always returns the first of multiple equally-scoring matches.</li>
+<li><strong>Collection parent detection</strong>: <code>has_nxcollection_parent()</code> checks whether a node lives inside an <code>NXcollection</code> group (which exempts it from required-field checks).</li>
 </ul>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>The definitions submodule provides the schema layer that enables <code>pynxtools</code> to generate and validate NeXus-compliant data. By pinning a specific definitions commit, <code>pynxtools</code> guarantees reproducibility while still allowing developers to test newer or experimental definitions when required.</p>
-<p>The helper script exists to make these operations explicit and safe, avoiding common pitfalls of manual submodule handling while keeping the underlying Git behavior transparent.</p>
+<h3 id="generating-a-tree">Generating a tree<a class="headerlink" href="#generating-a-tree" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.nexus_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_tree_from</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">root</span><span class="p">:</span> <span class="n">NexusNode</span> <span class="o">=</span> <span class="n">generate_tree_from</span><span class="p">(</span><span class="s2">&quot;NXarpes&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><code>generate_tree_from</code> resolves the full inheritance chain at build time, so every child node already contains the merged constraints from all contributing base classes.</p>
+<h2 id="the-traversal-layer-nexusfilehandler">The traversal layer: <code>NexusFileHandler</code><a class="headerlink" href="#the-traversal-layer-nexusfilehandler" title="Permanent link">&para;</a></h2>
+<p><code>NexusFileHandler</code> (in <code>pynxtools.nexus.handler</code>) opens a NeXus/HDF5 file and performs a depth-first walk, dispatching each node to a <code>NexusVisitor</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">NexusFileHandler</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">NexusFileHandler</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+</code></pre></div>
+<p>The handler owns file I/O and traversal order. It knows nothing about what to <em>do</em> with each node — that is entirely the visitor's responsibility.</p>
+<h3 id="dispatch-order-per-node">Dispatch order per node<a class="headerlink" href="#dispatch-order-per-node" title="Permanent link">&para;</a></h3>
+<p>For every node encountered during traversal:</p>
+<ol>
+<li><code>visitor.on_group(hdf_path, hdf_node)</code> <strong>or</strong> <code>visitor.on_field(hdf_path, hdf_node)</code></li>
+<li><code>visitor.on_attribute(hdf_path, attr_name, attr_value, parent)</code> for every attribute of that node</li>
+</ol>
+<p>After the full walk:</p>
+<ol>
+<li><code>visitor.on_complete(root)</code> — called once, with the open HDF5 file root</li>
+</ol>
+<p>The root group itself is dispatched as a group with <code>hdf_path = ""</code>.</p>
+<h2 id="the-processing-layer-nexusvisitor">The processing layer: <code>NexusVisitor</code><a class="headerlink" href="#the-processing-layer-nexusvisitor" title="Permanent link">&para;</a></h2>
+<p><code>NexusVisitor</code> (in <code>pynxtools.nexus.handler</code>) is the extension point. It is an abstract base class (<code>ABC</code>) that declares four hooks. All four must be implemented by concrete subclasses; hooks that are not meaningful for a particular visitor should be implemented as <code>pass</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">NexusVisitor</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">class</span><span class="w"> </span><span class="nc">NexusVisitor</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hdf_node</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hdf_node</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_attribute</span><span class="p">(</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">hdf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="n">attr_value</span><span class="p">,</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">parent</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span> <span class="o">|</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<h3 id="built-in-visitor-implementations">Built-in visitor implementations<a class="headerlink" href="#built-in-visitor-implementations" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Visitor</th>
+<th>Module</th>
+<th>CLI tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Annotator</code></td>
+<td><code>pynxtools.annotator.annotator</code></td>
+<td><code>pynx read</code></td>
+<td>Logs NXDL documentation for every node in a NeXus file</td>
+</tr>
+<tr>
+<td><code>NomadVisitor</code></td>
+<td><code>pynxtools.nomad.parsers.parser</code></td>
+<td><code>nomad parse</code></td>
+<td>Populates the NOMAD archive from a NeXus file</td>
+</tr>
+</tbody>
+</table>
+<p>All built-in visitors are interchangeable in <code>NexusFileHandler</code>. Switching the visitor changes what happens to each node; the traversal is identical.</p>
+<h2 id="schema-resolution-nexusschemaresolver-and-resolve_path">Schema resolution: <code>NexusSchemaResolver</code> and <code>resolve_path</code><a class="headerlink" href="#schema-resolution-nexusschemaresolver-and-resolve_path" title="Permanent link">&para;</a></h2>
+<p>Mapping a live HDF5 path to its schema <code>NexusNode</code> is a cross-cutting concern needed by every visitor.  <code>pynxtools.nexus.schema_resolver</code> provides the shared infrastructure so visitors do not each reimplement it.</p>
+<h3 id="resolve_path"><code>resolve_path</code><a class="headerlink" href="#resolve_path" title="Permanent link">&para;</a></h3>
+<p><code>resolve_path(root, path, node_type, *, nx_class_for, hint, _cache)</code> walks a <code>NexusNode</code> tree segment by segment, calling <code>best_child_for</code> at each step.  It is h5py-free: callers supply an optional <code>nx_class_for</code> callable that reads the <code>NX_class</code> HDF5 attribute for intermediate group segments, enabling deterministic disambiguation of variadic schema groups (e.g. <code>DETECTOR[NXdetector]</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.schema_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_path</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.nexus_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_tree_from</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">tree</span> <span class="o">=</span> <span class="n">generate_tree_from</span><span class="p">(</span><span class="s2">&quot;NXarpes&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">node</span> <span class="o">=</span> <span class="n">resolve_path</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;ENTRY/INSTRUMENT/analyser&quot;</span><span class="p">,</span> <span class="n">node_type</span><span class="o">=</span><span class="s2">&quot;group&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="nexusschemaresolver"><code>NexusSchemaResolver</code><a class="headerlink" href="#nexusschemaresolver" title="Permanent link">&para;</a></h3>
+<p><code>NexusSchemaResolver</code> is a visitor-agnostic helper class that wraps <code>resolve_path</code> with HDF5-aware appdef discovery and per-instance caching.  Any <code>NexusVisitor</code> implementation should hold one instead of re-implementing lookup logic.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.schema_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">NexusSchemaResolver</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyVisitor</span><span class="p">(</span><span class="n">NexusVisitor</span><span class="p">):</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_resolver</span> <span class="o">=</span> <span class="n">NexusSchemaResolver</span><span class="p">()</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf_path</span><span class="p">,</span> <span class="n">hdf_node</span><span class="p">):</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolver</span><span class="o">.</span><span class="n">node_for</span><span class="p">(</span><span class="n">hdf_path</span><span class="p">,</span> <span class="n">hdf_node</span><span class="p">)</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        <span class="o">...</span>
+</code></pre></div>
+<p>Key methods:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appdef_for(hdf_node)</code></td>
+<td>Walk up the HDF5 tree to find the <code>NXentry/definition</code> governing this node</td>
+</tr>
+<tr>
+<td><code>tree_for(appdef)</code></td>
+<td>Return (and cache) the <code>NexusNode</code> tree for a named application definition</td>
+</tr>
+<tr>
+<td><code>node_for(hdf_path, hdf_node, hint)</code></td>
+<td>Return the schema <code>NexusNode</code> for an HDF5 path, or <code>None</code> if not in schema</td>
+</tr>
+<tr>
+<td><code>attr_node_for(hdf_path, attr_name, parent_hdf)</code></td>
+<td>Return the schema <code>NexusNode</code> for an attribute</td>
+</tr>
+</tbody>
+</table>
+<h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
+<p><code>NexusSchemaResolver</code> maintains two caches per instance:</p>
+<ul>
+<li><strong><code>_tree_cache: dict[str, NexusNode | None]</code></strong> — maps application definition name (e.g. <code>"NXarpes"</code>) to its fully-resolved tree.  Building a tree requires parsing NXDL XML and walking the full inheritance chain; the cache ensures this is done at most once per appdef per file traversal.</li>
+<li><strong><code>_node_cache: dict[str, NexusNode | None]</code></strong> — maps HDF5 path string to the corresponding schema <code>NexusNode</code> (or <code>None</code> for a confirmed miss).  Intermediate path segments are cached alongside final results, so paths sharing a common prefix (e.g. <code>/entry/instrument/detector/field1</code> and <code>.../field2</code>) avoid redundant tree traversals.</li>
+</ul>
+<h2 id="how-the-cli-tools-are-built">How the CLI tools are built<a class="headerlink" href="#how-the-cli-tools-are-built" title="Permanent link">&para;</a></h2>
+<h3 id="pynx-read-the-annotator"><code>pynx read</code> — the annotator<a class="headerlink" href="#pynx-read-the-annotator" title="Permanent link">&para;</a></h3>
+<p><code>pynx read</code> creates an <code>Annotator</code> visitor and passes it to <code>NexusFileHandler</code>.  The annotator holds a <code>NexusSchemaResolver</code> and uses it on every <code>on_field</code> / <code>on_attribute</code> callback to look up the matching <code>NexusNode</code>, then emits documentation, optionality, enumeration values, and inheritance information.</p>
+<p>Three operating modes are supported:</p>
+<ul>
+<li><strong>Default</strong>: annotate every node and print the default-plottable summary.</li>
+<li><strong><code>-d</code> (documentation)</strong>: annotate only the single node at a given HDF5 path.</li>
+<li><strong><code>-c</code> (concept)</strong>: find all HDF5 nodes that implement a given NXDL concept path.</li>
+</ul>
+<h2 id="data-flow-summary">Data flow summary<a class="headerlink" href="#data-flow-summary" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>HDF5 file
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    │
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    ▼
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>NexusFileHandler.process(visitor)
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    │
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    ├─ on_group  ─────────┐
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    ├─ on_field  ──────────┤ NexusVisitor
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    ├─ on_attribute ───────┤  (Annotator / NomadVisitor / custom)
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    └─ on_complete ────────┘
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>              │
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>              │  node_for(hdf_path, hdf_node)
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>              ▼
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    NexusSchemaResolver
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    ├─ appdef_for(hdf_node) ──► NXentry/definition
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    ├─ tree_for(appdef)  ─────► NexusNode tree (cached)
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    │                           (built from NXDL via generate_tree_from)
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    └─ resolve_path(tree, ...) ► NexusNode (cached per path)
+</code></pre></div>
+<h2 id="extending-pynxtools-with-a-custom-visitor">Extending pynxtools with a custom visitor<a class="headerlink" href="#extending-pynxtools-with-a-custom-visitor" title="Permanent link">&para;</a></h2>
+<p>Because <code>NexusFileHandler</code> accepts any <code>NexusVisitor</code>, it is straightforward to add new processing modes without modifying pynxtools internals. See the <a href="../../how-tos/pynxtools/implement-a-visitor.html">how-to guide on implementing a custom visitor</a> for a worked example.</p>
+<h2 id="relationship-to-the-dataconverter">Relationship to the dataconverter<a class="headerlink" href="#relationship-to-the-dataconverter" title="Permanent link">&para;</a></h2>
+<p>The dataconverter (write path) is independent of <code>NexusFileHandler</code> (read path). Readers produce a <code>Template</code> dictionary; the dataconverter validates the template against an NXDL tree (also built from <code>NexusNode</code>) and writes the HDF5 file.</p>
+<p>See <a href="dataconverter-and-readers.html">Data conversion in pynxtools</a> for the write-path architecture.</p>
 
 
 
@@ -1981,7 +2329,7 @@ The behavior depends on the type:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="architecture.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: pynxtools architecture">
+          <a href="../nexus/nexus-rules.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Rules for storing data in NeXus">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1991,20 +2339,20 @@ The behavior depends on the type:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                pynxtools architecture
+                Rules for storing data in NeXus
               </div>
             </div>
           </a>
         
         
           
-          <a href="dataconverter-and-readers.html" class="md-footer__link md-footer__link--next" aria-label="Next: Data conversion in pynxtools">
+          <a href="nexus-definitions.html" class="md-footer__link md-footer__link--next" aria-label="Next: NeXus definitions in pynxtools">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Data conversion in pynxtools
+                NeXus definitions in pynxtools
               </div>
             </div>
             <div class="md-footer__button md-icon">

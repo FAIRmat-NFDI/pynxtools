@@ -728,6 +728,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implement a custom NexusVisitor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../how-tos/pynxtools/using-pynxtools-test-framework.html" class="md-nav__link">
         
   
@@ -1084,6 +1112,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1809,10 +1865,10 @@
 <p>It is also possible to define in the data conversion process whether the data shall be <a href="https://docs.hdfgroup.org/archive/support/HDF5/faq/compression.html">compressed in the HDF5 file</a>. Warnings are logged if the given compression strength (which must be between 0 and 9) is incorrect.</p>
 <p>Since the validation is performed during the conversion, it is possible to automatically correct the data: as a convenience feature, any instance data that produces invalid files (e.g., when an HDF5 field would be named the same as a group in the NeXus definitions) are removed before writing the files. In addition, if a mismatch between the data type of the instance and the concept is detected, we convert these values silently if possible. As an example, we convert from int to float or from the string representation of bools (<code>"true"</code>/<code>"false"</code>) to actual booleans.</p>
 <h2 id="pynx-validate-validate-existing-nexushdf5-files"><code>pynx validate</code>: Validate existing NeXus/HDF5 files<a class="headerlink" href="#pynx-validate-validate-existing-nexushdf5-files" title="Permanent link">&para;</a></h2>
-<p>While we encourage NeXus users to convert their data using the <code>pynxtools</code> data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, <code>pynxtools</code> provides a <strong>standalone validator</strong> (<code>pynx validate</code>). This CLI tool can be used to validate <em>existing</em> HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the <a href="../../reference/cli-api.html#nexus-file-validation">API documentation</a>.</p>
+<p>While we encourage NeXus users to convert their data using the <code>pynxtools</code> data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, <code>pynxtools</code> provides a <strong>standalone validator</strong> (<code>pynx validate</code>). This CLI tool can be used to validate <em>existing</em> HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the <a href="../../reference/cli-api.html#nexus-file-validation-pynx-validate">API documentation</a>.</p>
 <p>Validation of existing files is generally more straightforward than validating the <code>pynxtools</code> template as the NeXus type (i.e., group/fields/attributes) of instance data is easily detected from the file structure. Therefore, no additional special rules are applied in <code>pynx validate</code> other than those given above.</p>
 <h2 id="pynx-read-nexus-file-reader-and-debugger"><code>pynx read</code>: NeXus file reader and debugger<a class="headerlink" href="#pynx-read-nexus-file-reader-and-debugger" title="Permanent link">&para;</a></h2>
-<p>In addition to the validation tools mentioned above, there is another utility in <code>pynxtools</code> called <strong><code>pynx read</code></strong> (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in the <a href="../../reference/cli-api.html#nexus-annotator">API documentation</a>.</p>
+<p>In addition to the validation tools mentioned above, there is another utility in <code>pynxtools</code> called <strong><code>pynx read</code></strong> (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in <a href="../../reference/cli-api.html#nexus-file-annotator-pynx-read">Reference &gt; API for command line tools &gt; pynx read</a>.</p>
 <!-- ??? info "Using a different set of NeXus definitions"
 
     The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
