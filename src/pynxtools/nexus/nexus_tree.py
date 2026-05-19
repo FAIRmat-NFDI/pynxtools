@@ -160,8 +160,6 @@ class NexusNode(NodeMixin):
             The name of the node. This is the part of the concept name at
             the respective level in the NeXus hierarchy.
         nx_type (Literal["definition", "group", "field", "attribute", "choice", "link"]):
-            The name of the node.
-        nx_type (Literal["definition", "group", "field", "attribute", "choice", "link"]):
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
             The nameType of the node.
@@ -948,10 +946,6 @@ class NexusNode(NodeMixin):
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
 
-    def get_child_by_name(self, name: str) -> Optional["NexusNode"]:
-        """Get a child node by its name."""
-        return next((c for c in self.children if c.name == name), None)
-
 
 class NexusDefinition(NexusNode):
     """
@@ -1234,7 +1228,7 @@ class _NexusEntityBase(NexusNode):
             Defaults to None.
         open_enum (bool):
             ``True`` when the enumeration carries ``open="true"``.
-            If enumerations are used, the enumeration can be open (i.e., the value is 
+            If enumerations are used, the enumeration can be open (i.e., the value is
             not limited to the enumeration items) or closed (i.e., the value must exactly
             match one of the enumeration items). By default, enumerations are closed.
         shape (Optional[tuple[Optional[int], ...]]):
