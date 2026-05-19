@@ -940,7 +940,7 @@ class NexusNode(NodeMixin):
     def get_child_by_name(self, name: str) -> Optional["NexusNode"]:
         """Get a child node by its name."""
         return next((c for c in self.children if c.name == name), None)
-    
+
     def __repr__(self) -> str:
         if self.nx_type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
