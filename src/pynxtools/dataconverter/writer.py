@@ -21,9 +21,9 @@
 
 import copy
 import importlib.util
-import io
 import logging
 import os
+import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -33,7 +33,6 @@ import blosc2
 import h5py
 import hdf5plugin
 import numpy as np
-from docutils.core import publish_string
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.chunk import (
@@ -240,23 +239,49 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
         return None
 
 
-def _format_doc(text: str, fmt: str) -> str:
-    """Format a NeXus RST docstring.
+_RST_ROLE = re.compile(r":\w+:`([^`]+)`")  # :ref:`target` → target
+_RST_CODE = re.compile(r"``([^`]+)``")  # ``code`` → code
+_RST_LINK = re.compile(r"`([^`]+)\s*<[^>]+>`__?")  # `text <url>`_ → text
+_RST_REF = re.compile(r"`([^`]+)`__?")  # `text`_ → text
+_RST_BOLD = re.compile(r"\*\*([^*]+)\*\*")  # **bold** → bold
+_RST_ITALIC = re.compile(r"\*([^*]+)\*")  # *italic* → italic
+_RST_DIRECTIVE = re.compile(r"^\.\. \S[^\n]*$", re.MULTILINE)  # .. directive:: args
+_RST_UNDERLINE = re.compile(r"^[=\-~^#*+]{3,}\s*$", re.MULTILINE)  # heading underlines
 
-    With ``fmt='default'`` returns plain RST text as-is (best for h5web).
-    Other values are passed to docutils ``publish_string`` as the writer name.
+
+def _strip_rst(text: str) -> str:
+    """Strip RST markup and reflow to a single-line plain prose string.
+
+    Designed for h5web, which renders newlines as literal \\n.
+    Paragraphs are joined with a single space so the result is one
+    continuous string with no embedded newlines.
     """
-    if fmt == "default":
-        return text.strip()
-    return (
-        publish_string(
-            text,
-            writer_name=fmt,
-            settings_overrides={"warning_stream": io.StringIO()},
-        )
-        .decode("utf-8")
-        .strip()
-    )
+    text = _RST_DIRECTIVE.sub("", text)
+    text = _RST_UNDERLINE.sub("", text)
+    text = _RST_ROLE.sub(r"\1", text)
+    text = _RST_CODE.sub(r"\1", text)
+    text = _RST_LINK.sub(r"\1", text)
+    text = _RST_REF.sub(r"\1", text)
+    text = _RST_BOLD.sub(r"\1", text)
+    text = _RST_ITALIC.sub(r"\1", text)
+    # Reflow: each paragraph becomes one line; paragraphs joined with a space
+    paragraphs = re.split(r"\n{2,}", text)
+    reflowed = [
+        " ".join(line.strip() for line in para.splitlines() if line.strip())
+        for para in paragraphs
+    ]
+    return " ".join(p for p in reflowed if p).strip()
+
+
+def _format_doc(text: str, fmt: str) -> str:
+    """Format a NeXus RST docstring for storage as an HDF5 string attribute.
+
+    ``'default'`` keeps raw RST (most compact, readable in h5web).
+    ``'plain'`` strips RST markup to clean prose.
+    """
+    if fmt == "plain":
+        return _strip_rst(text)
+    return text.strip()
 
 
 class Writer:
@@ -382,6 +407,13 @@ class Writer:
         if not concept_doc_pairs:
             return None
 
+        if self.docs_format == "plain":
+            # h5web renders \n literally — use inline separators instead
+            sections = [
+                f"{label}: {_format_doc(doc, self.docs_format)}"
+                for label, doc in concept_doc_pairs
+            ]
+            return " | ".join(sections)
         sections = [
             f"{label}\n{_format_doc(doc, self.docs_format)}"
             for label, doc in concept_doc_pairs
@@ -613,7 +645,7 @@ class Writer:
         Args:
             write_docs: When True, embed NeXus concept docstrings as ``@docs`` attributes on
                 each HDF5 group/field, and as ``@<attr>_docs`` attributes alongside HDF5 attrs.
-            docs_format: Docutils writer name for formatting (``"default"`` keeps raw RST).
+            docs_format: ``"default"`` keeps raw RST; ``"plain"`` strips markup to clean prose.
         """
         self.write_docs = write_docs
         self.docs_format = docs_format

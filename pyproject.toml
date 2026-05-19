@@ -37,7 +37,6 @@ dependencies = [
     "lxml>=4.9.1",
     "toposort>=1.10.0",
     "anytree",
-    "docutils",
     "pint",
     "cachetools",
     "structlog",
