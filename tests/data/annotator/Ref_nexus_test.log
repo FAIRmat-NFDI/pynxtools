@@ -1,0 +1,1000 @@
+════════════════════════════════════════════════════════════
+NeXus file: 201805_WSe2_arpes.nxs
+
+GROUP / [NXroot]
+  @HDF5_Version = 1.10.5  [OPTIONAL]
+  @file_name = /home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs  [OPTIONAL]
+  @file_time = 2020-06-04T19:19:48.464472  [OPTIONAL]
+  @h5py_version = 2.10.0  [OPTIONAL]
+  @nexusformat_version = 0.5.2  [NOT IN SCHEMA]
+════════════════════════════════════════════════════════════
+
+GROUP /entry [NXentry]  (12 members)
+  Concept   : NXarpes/ENTRY  [REQUIRED]
+  Inheritance:
+    NXarpes/ENTRY
+    NXentry
+      Doc       : (**required**) :ref:`NXentry` describes the measurement. The top-level NeXus group
+                  which contains all the data and associated information that comprise a single
+                  measurement. It is mandatory that there is at least one group of this type in the
+                  NeXus file.
+  FIELD /entry/collection_time  shape=()  dtype=int64
+    Value     : 7200
+    Concept   : NXentry/ENTRY/collection_time  [OPTIONAL]
+    Inheritance:
+      NXentry/collection_time
+        Doc       : Time transpired actually collecting data i.e. taking out time when collection
+                    was suspended due to e.g. temperature out of range
+    @units = s  [UNIT: NX_TIME]
+
+  GROUP /entry/data [NXdata]  (4 members)
+    Concept   : NXarpes/ENTRY/DATA  [REQUIRED]
+    Inheritance:
+      NXarpes/ENTRY/DATA
+      NXentry/DATA
+        Doc       : The data group .. note:: Before the NIAC2016 meeting [#]_, at least one
+                    :ref:`NXdata` group was required in each :ref:`NXentry` group. At the NIAC2016
+                    meeting, it was decided to make :ref:`NXdata` an optional group in
+                    :ref:`NXentry` groups for data files that do not use an application definition.
+                    It is recommended strongly that all NeXus data files provide a NXdata group. It
+                    is permissible to omit the NXdata group only when defining the default plot is
+                    not practical or possible from the available data. For example, neutron event
+                    data may not have anything that makes a useful plot without extensive
+                    processing. Certain application definitions override this decision and require
+                    an :ref:`NXdata` group in the :ref:`NXentry` group. The ``minOccurs=0``
+                    attribute in the application definition will indicate the :ref:`NXdata` group is
+                    optional, otherwise, it is required. .. [#] NIAC2016:
+                    https://www.nexusformat.org/NIAC2016.html,
+                    https://github.com/nexusformat/NIAC/issues/16
+      NXobject/DATA
+      NXdata
+        Doc       : The :ref:`NXdata` class is designed to encapsulate all the information required
+                    for a set of data to be plotted. NXdata groups contain plottable data (also
+                    referred to as *signals* or *dependent variables*) and their associated axis
+                    coordinates (also referred to as *axes* or *independent variables*). The actual
+                    names of the :ref:`DATA </NXdata/DATA-field>` and :ref:`AXISNAME
+                    </NXdata/AXISNAME-field>` fields can be chosen :ref:`freely <validItemName>`, as
+                    indicated by the upper case (this is a common convention in all NeXus classes).
+                    .. note:: ``NXdata`` provides data and coordinates to be plotted but does not
+                    describe how the data is to be plotted or even the dimensionality of the plot.
+                    https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute ..
+                    include:: data/index.rst :start-line: 1 .. admonition:: Example of a simple
+                    curve plot .. code-block:: data:NXdata @signal = "data" @axes = ["x"] data:
+                    float[100] x: float[100] More complex cases are supported * histogram data:
+                    ``x`` has one more value than ``data``. * alternative axes: instead of a single
+                    ``x`` axis you can have several axes, one of which being the default. * signals
+                    with more than one dimension: ``data`` could be 2D with axes ``x`` and ``y``
+                    along each dimension. * axes with more than one dimension: ``data`` could be 2D
+                    with axes ``x`` and ``y`` also being 2D, providing a unique ``(x, y)``
+                    coordinate for each ``data`` point. **Signals:** .. index:: plotting ..
+                    admonition:: Defined by * :ref:`DATA </NXdata/DATA-field>` fields * the
+                    :ref:`signal </NXdata@signal-attribute>` attribute * the
+                    :ref:`auxiliary_signals</NXdata@auxiliary_signals-attribute>` attribute The
+                    :ref:`DATA </NXdata/DATA-field>` fields contain the signal values to be plotted.
+                    The name of the field to be used as the *default plot signal* is provided by the
+                    :ref:`signal </NXdata@signal-attribute>` attribute. The names of the fields to
+                    be used as *secondary plot signals* are provided by the
+                    :ref:`auxiliary_signals</NXdata@auxiliary_signals-attribute>` attribute. ..
+                    admonition:: An example with three signals, one of which being the default ..
+                    code-block:: data:NXdata @signal = "data1" @auxiliary_signals = ["data2",
+                    "data3"] data1: float[10,20,30] # the default signal data2: float[10,20,30]
+                    data3: float[10,20,30] **Axes:** .. index:: axes (attribute) .. index::
+                    coordinates .. admonition:: Defined by * :ref:`AXISNAME </NXdata/AXISNAME-
+                    field>` fields * the :ref:`axes </NXdata@axes-attribute>` attribute *
+                    :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes The
+                    fields and attributes are defined as follows 1. The :ref:`AXISNAME
+                    </NXdata/AXISNAME-field>` fields contain the axis coordinates associated with
+                    the signal values. 2. The :ref:`axes </NXdata@axes-attribute>` attribute
+                    provides the names of the :ref:`AXISNAME </NXdata/AXISNAME-field>` fields to be
+                    used as the `default axis` for each dimension of the :ref:`DATA </NXdata/DATA-
+                    field>` fields. 3. The :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-
+                    attribute>` attributes describe the :ref:`DATA </NXdata/DATA-field>` dimensions
+                    spanned by the corresponding :ref:`AXISNAME </NXdata/AXISNAME-field>` fields.
+                    The fields and attributes have the following constraints 1. The length of the
+                    :ref:`axes </NXdata@axes-attribute>` attribute must be equal to the rank of the
+                    :ref:`DATA </NXdata/DATA-field>` fields. When a particular dimension has no
+                    default axis, the string “.” is used in that position. 2. The number of values
+                    in :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` must be equal to
+                    the rank of the corresponding :ref:`AXISNAME </NXdata/AXISNAME-field>` field. 3.
+                    When :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` is missing for
+                    a given :ref:`AXISNAME </NXdata/AXISNAME-field>` field, the positions of the
+                    :ref:`AXISNAME </NXdata/AXISNAME-field>` field name in the :ref:`axes
+                    </NXdata@axes-attribute>` attribute are used. 4. When :ref:`AXISNAME_indices
+                    </NXdata@AXISNAME_indices-attribute>` is the same as the indices of "AXISNAME"
+                    in the :ref:`axes </NXdata@axes-attribute>` attribute, there is no need to
+                    provide :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>`. 5. The
+                    indices of "AXISNAME" in the :ref:`axes </NXdata@axes-attribute>` attribute must
+                    be a subset of :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>`. 6.
+                    The shape of an :ref:`AXISNAME </NXdata/AXISNAME-field>` field must correspond
+                    to the shape of the :ref:`DATA </NXdata/DATA-field>` dimensions it spans. This
+                    means that for each dimension ``i`` in ``[0, AXISNAME.ndim)`` spanned by axis
+                    field :ref:`AXISNAME </NXdata/AXISNAME-field>`, the number of axis values
+                    ``AXISNAME.shape[i]`` along dimension ``i`` must be equal to the number of data
+                    points ``DATA.shape[AXISNAME_indices[i]]`` along dimension ``i`` or one more
+                    than the number of data points ``DATA.shape[AXISNAME_indices[i]]+1`` in case the
+                    :ref:`AXISNAME </NXdata/AXISNAME-field>` field contains histogram bin edges
+                    along dimension ``i``. Highlight consequences of these constraints 1. An
+                    :ref:`AXISNAME </NXdata/AXISNAME-field>` field can have more than one dimension
+                    and can therefore span more than one :ref:`DATA </NXdata/DATA-field>` dimension.
+                    Conversely, one :ref:`DATA </NXdata/DATA-field>` dimension can be spanned by
+                    more than one :ref:`AXISNAME </NXdata/AXISNAME-field>` field. The default axis
+                    name (if any) of each dimension can be found in the :ref:`axes </NXdata@axes-
+                    attribute>` attribute. 2. A list of all available axes is not provided directly.
+                    All strings in the :ref:`axes </NXdata@axes-attribute>` attribute (excluding the
+                    “.” string) are axis field names. In addition the prefix of an attribute ending
+                    with the string "_indices" is also an axis field name. .. admonition:: The
+                    following example covers all axes features supported (see
+                    :ref:`sphx_glr_classes_base_classes_data_plot_fscan2d.py`) .. code-block::
+                    data:NXdata @signal = "data" @axes = ["x_set", "y_set", "."] # default axes for
+                    all three dimensions @x_encoder_indices = [0, 1] @y_encoder_indices = 1 # or [1]
+                    data: float[10,7,1024] x_encoder: float[11,7] # coordinates along the first and
+                    second dimensions y_encoder: float[7] # coordinates along the second dimension
+                    x_set: float[10] # default coordinates along the first dimension y_set: float[7]
+                    # default coordinates along the second dimension **Uncertainties:** ..
+                    admonition:: Defined by * :ref:`FIELDNAME_errors </NXdata/FIELDNAME_errors-
+                    field>` fields Standard deviations on data values as well as coordinates can be
+                    provided by :ref:`FIELDNAME_errors </NXdata/FIELDNAME_errors-field>` fields
+                    where ``FIELDNAME`` is the name of a :ref:`DATA </NXdata/DATA-field>` field or
+                    an :ref:`AXISNAME </NXdata/AXISNAME-field>` field. .. admonition:: An example of
+                    uncertainties on the signal, auxiliary signals and axis coordinates .. code-
+                    block:: data:NXdata @signal = "data1" @auxiliary_signals = ["data2", "data3"]
+                    @axes = ["x", ".", "z"] data1: float[10,20,30] data2: float[10,20,30] data3:
+                    float[10,20,30] x: float[10] z: float[30] data1_errors: float[10,20,30]
+                    data2_errors: float[10,20,30] data3_errors: float[10,20,30] x_errors: float[10]
+                    z_errors: float[30]
+    @axes = ['angles' 'energies' 'delays']  [OPTIONAL]
+    @signal = data  [OPTIONAL]
+    FIELD /entry/data/angles  shape=(80,)  dtype=float64
+      Dataset referenced as NXdata AXIS #0
+      Value     : [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031...
+      Concept   : NXdata/ENTRY/DATA/AXISNAME  [OPTIONAL]
+      Inheritance:
+        NXdata/AXISNAME
+          Doc       : Coordinate values along one or more :ref:`DATA </NXdata/DATA-field>`
+                      dimensions. The shape of an ``AXISNAME`` field must correspond to the shape of
+                      the :ref:`DATA </NXdata/DATA-field>` dimensions it spans. This means that for
+                      each ``i`` in ``[0, AXISNAME.ndim)`` the number of data points
+                      ``DATA.shape[AXISNAME_indices[i]]`` must be equal to the number of coordinates
+                      ``AXISNAME.shape[i]`` or the number of bin edges ``AXISNAME.shape[i]+1`` in
+                      case of histogram data. As the upper case ``AXISNAME`` indicates, the names of
+                      the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`. Most
+                      ``AXISNAME`` fields will be sequences of numbers but if an axis is better
+                      represented using names, such as channel names, an array of NX_CHAR can be
+                      provided.
+      @units = 1/Å  [OPTIONAL]
+    FIELD /entry/data/data  shape=(80, 146, 195)  dtype=float32
+      Dataset referenced as NXdata SIGNAL
+      Value     : [[0. 0. 0. ... 0. 0. 0.]...
+      Concept   : NXdata/ENTRY/DATA/DATA  [OPTIONAL]
+      Inheritance:
+        NXdata/DATA
+          Doc       : .. index:: plotting Data values to be used as the NeXus *plottable data*. As
+                      the upper case ``DATA`` indicates, the names of the ``DATA`` fields can be
+                      chosen :ref:`freely <validItemName>`. The :ref:`signal attribute
+                      </NXdata@signal-attribute>` and :ref:`auxiliary_signals
+                      attribute</NXdata@auxiliary_signals-attribute>` can be used to find all
+                      datasets in the ``NXdata`` that contain data values. The maximum rank is
+                      ``32`` for compatibility with backend file formats.
+        NXdata/AXISNAME
+          Doc       : Coordinate values along one or more :ref:`DATA </NXdata/DATA-field>`
+                      dimensions. The shape of an ``AXISNAME`` field must correspond to the shape of
+                      the :ref:`DATA </NXdata/DATA-field>` dimensions it spans. This means that for
+                      each ``i`` in ``[0, AXISNAME.ndim)`` the number of data points
+                      ``DATA.shape[AXISNAME_indices[i]]`` must be equal to the number of coordinates
+                      ``AXISNAME.shape[i]`` or the number of bin edges ``AXISNAME.shape[i]+1`` in
+                      case of histogram data. As the upper case ``AXISNAME`` indicates, the names of
+                      the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`. Most
+                      ``AXISNAME`` fields will be sequences of numbers but if an axis is better
+                      represented using names, such as channel names, an array of NX_CHAR can be
+                      provided.
+      @units = counts  [OPTIONAL]
+    FIELD /entry/data/delays  shape=(195,)  dtype=float64
+      Dataset referenced as NXdata AXIS #2
+      Value     : [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186...
+      Concept   : NXdata/ENTRY/DATA/AXISNAME  [OPTIONAL]
+      Inheritance:
+        NXdata/AXISNAME
+          Doc       : Coordinate values along one or more :ref:`DATA </NXdata/DATA-field>`
+                      dimensions. The shape of an ``AXISNAME`` field must correspond to the shape of
+                      the :ref:`DATA </NXdata/DATA-field>` dimensions it spans. This means that for
+                      each ``i`` in ``[0, AXISNAME.ndim)`` the number of data points
+                      ``DATA.shape[AXISNAME_indices[i]]`` must be equal to the number of coordinates
+                      ``AXISNAME.shape[i]`` or the number of bin edges ``AXISNAME.shape[i]+1`` in
+                      case of histogram data. As the upper case ``AXISNAME`` indicates, the names of
+                      the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`. Most
+                      ``AXISNAME`` fields will be sequences of numbers but if an axis is better
+                      represented using names, such as channel names, an array of NX_CHAR can be
+                      provided.
+      @units = fs  [OPTIONAL]
+    FIELD /entry/data/energies  shape=(146,)  dtype=float64
+      Dataset referenced as NXdata AXIS #1
+      Value     : [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041...
+      Concept   : NXdata/ENTRY/DATA/AXISNAME  [OPTIONAL]
+      Inheritance:
+        NXdata/AXISNAME
+          Doc       : Coordinate values along one or more :ref:`DATA </NXdata/DATA-field>`
+                      dimensions. The shape of an ``AXISNAME`` field must correspond to the shape of
+                      the :ref:`DATA </NXdata/DATA-field>` dimensions it spans. This means that for
+                      each ``i`` in ``[0, AXISNAME.ndim)`` the number of data points
+                      ``DATA.shape[AXISNAME_indices[i]]`` must be equal to the number of coordinates
+                      ``AXISNAME.shape[i]`` or the number of bin edges ``AXISNAME.shape[i]+1`` in
+                      case of histogram data. As the upper case ``AXISNAME`` indicates, the names of
+                      the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`. Most
+                      ``AXISNAME`` fields will be sequences of numbers but if an axis is better
+                      represented using names, such as channel names, an array of NX_CHAR can be
+                      provided.
+      @units = eV  [OPTIONAL]
+  FIELD /entry/definition  shape=()  dtype=object
+    Value     : NXarpes
+    Concept   : NXarpes/ENTRY/definition  [REQUIRED]
+    Inheritance:
+      NXarpes/ENTRY/definition
+        Doc       : Official NeXus NXDL schema to which this file conforms.
+      NXentry/definition
+        Doc       : (alternate use: see same field in :ref:`NXsubentry` for preferred) Official
+                    NeXus NXDL schema to which this entry conforms which must be the name of the
+                    NXDL file (case sensitive without the file extension) that the NXDL schema is
+                    defined in. For example the ``definition`` field for a file that conformed to
+                    the *NXarpes.nxdl.xml* definition must contain the string **NXarpes**. This
+                    field is provided so that :ref:`NXentry` can be the overlay position in a NeXus
+                    data file for an application definition and its set of groups, fields, and
+                    attributes. *It is advised* to use :ref:`NXsubentry`, instead, as the overlay
+                    position.
+    Enums     : [NXarpes] NXarpes
+    Enums     : [NXarpes] NXarpes
+  FIELD /entry/duration  shape=()  dtype=int64
+    Value     : 7200
+    Concept   : NXentry/ENTRY/duration  [OPTIONAL]
+    Inheritance:
+      NXentry/duration
+        Doc       : Duration of measurement
+    @units = s  [UNIT: NX_TIME]
+  FIELD /entry/end_time  shape=()  dtype=object
+    Value     : 2018-05-01T09:22:00+02:00
+    Concept   : NXentry/ENTRY/end_time  [OPTIONAL]
+    Inheritance:
+      NXentry/end_time
+        Doc       : Ending time of measurement
+  FIELD /entry/entry_identifier  shape=()  dtype=object
+    Value     : Run 22118
+    Concept   : NXentry/ENTRY/entry_identifier  [OPTIONAL]
+    Inheritance:
+      NXentry/entry_identifier
+        Doc       : Unique identifier for the measurement, defined by the facility.
+  FIELD /entry/experiment_identifier  shape=()  dtype=object
+    Value     : F-20170538
+    Concept   : NXentry/ENTRY/experiment_identifier  [OPTIONAL]
+    Inheritance:
+      NXentry/experiment_identifier
+        Doc       : Unique identifier for the experiment, defined by the facility, possibly linked
+                    to the proposals
+
+  GROUP /entry/instrument [NXinstrument]  (11 members)
+    Concept   : NXarpes/ENTRY/INSTRUMENT  [REQUIRED]
+    Inheritance:
+      NXarpes/ENTRY/INSTRUMENT
+      NXentry/INSTRUMENT
+      NXinstrument
+        Doc       : Collection of the components of the instrument or beamline. Template of
+                    instrument descriptions comprising various beamline components. Each component
+                    will also be a NeXus group defined by its distance from the sample. Negative
+                    distances represent beamline components that are before the sample while
+                    positive distances represent components that are after the sample. This device
+                    allows the unique identification of beamline components in a way that is valid
+                    for both reactor and pulsed instrumentation.
+
+    GROUP /entry/instrument/analyser [NXdetector]  (25 members)
+      Concept   : NXarpes/ENTRY/INSTRUMENT/analyser  [REQUIRED]
+      Inheritance:
+        NXarpes/ENTRY/INSTRUMENT/analyser
+        NXinstrument/DETECTOR
+        NXdetector
+          Doc       : A detector, detector bank, or multidetector.
+        NXcomponent
+          Doc       : Base class for components of an instrument - real ones or simulated ones.
+      FIELD /entry/instrument/analyser/acquisition_mode  shape=()  dtype=object
+        Value     : fixed
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/acquisition_mode  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/acquisition_mode
+          NXdetector/acquisition_mode
+            Doc       : The acquisition mode of the detector.
+        Enums     : [NXarpes] swept, fixed
+        Enums     : [NXarpes] swept, fixed
+        Enums     : [NXdetector] gated, triggered, summed, event, histogrammed, decimated, pulse counting
+      FIELD /entry/instrument/analyser/amplifier_type  shape=()  dtype=object
+        Value     : MCP
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/angles  shape=(80,)  dtype=float64
+        Value     : [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031...
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/angles  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/angles
+            Doc       : Angular axis of the analyser data which dimension the axis applies to is
+                        defined using the normal NXdata methods.
+        @units = 1/Å  [UNIT: NX_ANGLE]
+      FIELD /entry/instrument/analyser/contrast_aperture  shape=()  dtype=object
+        Value     : Out
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/data  shape=(80, 146, 195)  dtype=float32
+        Value     : [[0. 0. 0. ... 0. 0. 0.]...
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/data  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/data
+          NXdetector/data
+            Doc       : Data values from the detector. The rank and dimension ordering should follow
+                        a principle of slowest to fastest measurement axes and may be explicitly
+                        specified in application definitions. Mechanical scanning of objects (e.g.
+                        sample position/angle, incident beam energy, etc) tends to be the slowest
+                        part of an experiment and so any such scan axes should be allocated to the
+                        first dimensions of the array. Note that in some cases it may be useful to
+                        represent a 2D set of scan points as a single scan-axis in the data array,
+                        especially if the scan pattern doesn't fit a rectangular array nicely.
+                        Repetition of an experiment in a time series tends to be used similar to a
+                        slow scan axis and so will often be in the first dimension of the data
+                        array. The next fastest axes are typically the readout of the detector. A
+                        point detector will not add any dimensions (as it is just a single value per
+                        scan point) to the data array, a strip detector will add one dimension, an
+                        imaging detector will add two dimensions (e.g. X, Y axes) and detectors
+                        outputting higher dimensional data will add the corresponding number of
+                        dimensions. Note that the detector dimensions don't necessarily have to be
+                        written in order of the actual readout speeds - the slowest to fastest rule
+                        principle is only a guide. Finally, detectors that operate in a time-of-
+                        flight mode, such as a neutron spectrometer or a silicon drift detector
+                        (used for X-ray fluorescence) tend to have their dimension(s) added to the
+                        last dimensions in the data array. The type of each dimension should should
+                        follow the order of scan points, detector pixels, then time-of-flight (i.e.
+                        spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+                        shown here are merely illustrative of coordination between related datasets.
+        @units = counts  [UNIT: NX_ANY]
+      FIELD /entry/instrument/analyser/delays  shape=(195,)  dtype=float64
+        Value     : [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186...
+        <NOT IN SCHEMA>
+        @units = fs  [NOT IN SCHEMA]
+      FIELD /entry/instrument/analyser/detector_type  shape=()  dtype=object
+        Value     : DLD
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/dispersion_scheme  shape=()  dtype=object
+        Value     : Time of flight
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/energies  shape=(146,)  dtype=float64
+        Value     : [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041...
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/energies  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/energies
+            Doc       : Energy axis of the analyser data which dimension the axis applies to is
+                        defined using the normal NXdata methods.
+        @units = eV  [UNIT: NX_ENERGY]
+      FIELD /entry/instrument/analyser/entrance_slit_setting  shape=()  dtype=int64
+        Value     : 0
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/entrance_slit_setting  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/entrance_slit_setting
+            Doc       : dial setting of the entrance slit
+      FIELD /entry/instrument/analyser/entrance_slit_shape  shape=()  dtype=object
+        Value     : straight
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/entrance_slit_shape  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/entrance_slit_shape
+        Enums     : [NXarpes] curved, straight
+        Enums     : [NXarpes] curved, straight
+      FIELD /entry/instrument/analyser/entrance_slit_size  shape=()  dtype=int64
+        Value     : 750
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/entrance_slit_size  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/entrance_slit_size
+            Doc       : size of the entrance slit
+        @units = um  [UNIT: NX_LENGTH]
+      FIELD /entry/instrument/analyser/extractor_voltage  shape=()  dtype=int64
+        Value     : 6030
+        <NOT IN SCHEMA>
+        @units = V  [NOT IN SCHEMA]
+      FIELD /entry/instrument/analyser/field_aperture_x  shape=()  dtype=float64
+        Value     : -0.2
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/analyser/field_aperture_y  shape=()  dtype=float64
+        Value     : 5.35
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/analyser/lens_mode  shape=()  dtype=object
+        Value     : 20180430_KPEEM_M_-2.5_FoV6.2_rezAA_20ToF_focused.sav
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/lens_mode  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/lens_mode
+            Doc       : setting for the electron analyser lens
+      FIELD /entry/instrument/analyser/magnification  shape=()  dtype=float64
+        Value     : -1.5
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/pass_energy  shape=()  dtype=int64
+        Value     : 20
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/pass_energy  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/pass_energy
+            Doc       : energy of the electrons on the mean path of the analyser
+        @units = eV  [UNIT: NX_ENERGY]
+      FIELD /entry/instrument/analyser/projection  shape=()  dtype=object
+        Value     : reciprocal
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/region_origin  shape=(2,)  dtype=int64
+        Value     : [0 0]
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/region_origin  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/region_origin
+            Doc       : origin of rectangular region selected for readout
+      FIELD /entry/instrument/analyser/region_size  shape=(2,)  dtype=int64
+        Value     : [ 80 146]
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/region_size  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/region_size
+            Doc       : size of rectangular region selected for readout
+      FIELD /entry/instrument/analyser/sensor_count  shape=()  dtype=int64
+        Value     : 4
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/analyser/sensor_size  shape=(2,)  dtype=int64
+        Value     : [ 80 146]
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/sensor_size  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/sensor_size
+            Doc       : number of raw active elements in each dimension
+      FIELD /entry/instrument/analyser/time_per_channel  shape=()  dtype=int64
+        Value     : 7200
+        Concept   : NXarpes/ENTRY/INSTRUMENT/analyser/time_per_channel  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/analyser/time_per_channel
+            Doc       : todo: define more clearly
+        @units = s  [UNIT: NX_TIME]
+      FIELD /entry/instrument/analyser/working_distance  shape=()  dtype=int64
+        Value     : 4
+        <NOT IN SCHEMA>
+        @units = mm  [NOT IN SCHEMA]
+
+    GROUP /entry/instrument/beam_probe_0 [NXbeam]  (7 members)
+      Concept   : NXinstrument/ENTRY/INSTRUMENT/BEAM  [OPTIONAL]
+      Inheritance:
+        NXinstrument/BEAM
+        NXbeam
+          Doc       : Properties of the neutron or X-ray beam at a given location. This group is
+                      intended to be referenced by beamline component groups within the
+                      :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
+                      especially valuable in storing the results of instrument simulations in which
+                      it is useful to specify the beam profile, time distribution etc. at each
+                      beamline component. Otherwise, its most likely use is in the :ref:`NXsample`
+                      group in which it defines the results of the neutron scattering by the sample,
+                      e.g., energy transfer, polarizations. Finally, There are cases where the beam
+                      is considered as a beamline component and this group may be defined as a
+                      subgroup directly inside :ref:`NXinstrument`, in which case it is recommended
+                      that the position of the beam is specified by an :ref:`NXtransformations`
+                      group, unless the beam is at the origin (which is the sample). Note that
+                      ``incident_wavelength``, ``incident_energy``, and related fields can be a
+                      scalar values or arrays, depending on the use case. To support these use
+                      cases, the explicit dimensionality of these fields is not specified, but it
+                      can be inferred by the presence of and shape of accompanying fields, such as
+                      incident_wavelength_weights for a polychromatic beam.
+      FIELD /entry/instrument/beam_probe_0/distance  shape=()  dtype=int64
+        Value     : 0
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/distance  [OPTIONAL]
+        Inheritance:
+          NXbeam/distance
+            Doc       : Distance from sample. Note, it is recommended to use NXtransformations
+                        instead.
+        @units = cm  [UNIT: NX_LENGTH]
+      FIELD /entry/instrument/beam_probe_0/photon_energy  shape=()  dtype=float64
+        Value     : 36.49699020385742
+        <NOT IN SCHEMA>
+        @units = eV  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_probe_0/polarization_angle  shape=()  dtype=float64
+        Value     : 0.0
+        <NOT IN SCHEMA>
+        @units = deg  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_probe_0/polarization_ellipticity  shape=()  dtype=float64
+        Value     : 0.0
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/beam_probe_0/pulse_duration  shape=()  dtype=int64
+        Value     : 70
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/pulse_duration  [OPTIONAL]
+        Inheritance:
+          NXbeam/pulse_duration
+            Doc       : FWHM duration of the pulses at the given location.
+        @units = fs  [UNIT: NX_TIME]
+      FIELD /entry/instrument/beam_probe_0/size_x  shape=()  dtype=int64
+        Value     : 500
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_probe_0/size_y  shape=()  dtype=int64
+        Value     : 200
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+
+    GROUP /entry/instrument/beam_pump_0 [NXbeam]  (11 members)
+      Concept   : NXinstrument/ENTRY/INSTRUMENT/BEAM  [OPTIONAL]
+      Inheritance:
+        NXinstrument/BEAM
+        NXbeam
+          Doc       : Properties of the neutron or X-ray beam at a given location. This group is
+                      intended to be referenced by beamline component groups within the
+                      :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
+                      especially valuable in storing the results of instrument simulations in which
+                      it is useful to specify the beam profile, time distribution etc. at each
+                      beamline component. Otherwise, its most likely use is in the :ref:`NXsample`
+                      group in which it defines the results of the neutron scattering by the sample,
+                      e.g., energy transfer, polarizations. Finally, There are cases where the beam
+                      is considered as a beamline component and this group may be defined as a
+                      subgroup directly inside :ref:`NXinstrument`, in which case it is recommended
+                      that the position of the beam is specified by an :ref:`NXtransformations`
+                      group, unless the beam is at the origin (which is the sample). Note that
+                      ``incident_wavelength``, ``incident_energy``, and related fields can be a
+                      scalar values or arrays, depending on the use case. To support these use
+                      cases, the explicit dimensionality of these fields is not specified, but it
+                      can be inferred by the presence of and shape of accompanying fields, such as
+                      incident_wavelength_weights for a polychromatic beam.
+      FIELD /entry/instrument/beam_pump_0/average_power  shape=()  dtype=float64
+        Value     : 6.21289
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/average_power  [OPTIONAL]
+        Inheritance:
+          NXbeam/average_power
+            Doc       : Average power at the at the given location.
+        @units = uW  [UNIT: NX_POWER]
+      FIELD /entry/instrument/beam_pump_0/center_wavelength  shape=()  dtype=int64
+        Value     : 800
+        <NOT IN SCHEMA>
+        @units = nm  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_pump_0/distance  shape=()  dtype=int64
+        Value     : 0
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/distance  [OPTIONAL]
+        Inheritance:
+          NXbeam/distance
+            Doc       : Distance from sample. Note, it is recommended to use NXtransformations
+                        instead.
+        @units = cm  [UNIT: NX_LENGTH]
+      FIELD /entry/instrument/beam_pump_0/fluence  shape=()  dtype=int64
+        Value     : 5
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/fluence  [OPTIONAL]
+        Inheritance:
+          NXbeam/fluence
+            Doc       : Incident energy fluence at the given location.
+        @units = mJ/cm^2  [UNIT: mJ/cm^2]
+      FIELD /entry/instrument/beam_pump_0/photon_energy  shape=()  dtype=float64
+        Value     : 1.55
+        <NOT IN SCHEMA>
+        @units = eV  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_pump_0/polarization_angle  shape=()  dtype=float64
+        Value     : nan
+        <NOT IN SCHEMA>
+        @units = deg  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_pump_0/polarization_ellipticity  shape=()  dtype=float64
+        Value     : -1.0
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/beam_pump_0/pulse_duration  shape=()  dtype=int64
+        Value     : 50
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/pulse_duration  [OPTIONAL]
+        Inheritance:
+          NXbeam/pulse_duration
+            Doc       : FWHM duration of the pulses at the given location.
+        @units = fs  [UNIT: NX_TIME]
+      FIELD /entry/instrument/beam_pump_0/pulse_energy  shape=()  dtype=float64
+        Value     : 1.24258
+        Concept   : NXbeam/ENTRY/INSTRUMENT/BEAM/pulse_energy  [OPTIONAL]
+        Inheritance:
+          NXbeam/pulse_energy
+            Doc       : Energy of a single pulse at the given location.
+        @units = nJ  [UNIT: NX_ENERGY]
+      FIELD /entry/instrument/beam_pump_0/size_x  shape=()  dtype=int64
+        Value     : 500
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/beam_pump_0/size_y  shape=()  dtype=int64
+        Value     : 200
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+    FIELD /entry/instrument/energy_resolution  shape=()  dtype=int64
+      Value     : 100
+      <NOT IN SCHEMA>
+      @units = meV  [NOT IN SCHEMA]
+
+    GROUP /entry/instrument/manipulator [NXpositioner]  (9 members)
+      Concept   : NXinstrument/ENTRY/INSTRUMENT/POSITIONER  [OPTIONAL]
+      Inheritance:
+        NXinstrument/POSITIONER
+        NXpositioner
+          Doc       : A generic positioner such as a motor or piezo-electric transducer.
+        NXcomponent
+          Doc       : Base class for components of an instrument - real ones or simulated ones.
+      FIELD /entry/instrument/manipulator/pos_x1  shape=()  dtype=float64
+        Value     : 11.3
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/pos_x2  shape=()  dtype=float64
+        Value     : 11.3
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/pos_y  shape=()  dtype=float64
+        Value     : 7.2
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/pos_z1  shape=()  dtype=float64
+        Value     : 20.77
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/pos_z2  shape=()  dtype=float64
+        Value     : 21.2
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/pos_z3  shape=()  dtype=float64
+        Value     : 20.22
+        <NOT IN SCHEMA>
+        @units = um  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/sample_bias  shape=()  dtype=int64
+        Value     : 29
+        <NOT IN SCHEMA>
+        @units = V  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/sample_temperature  shape=()  dtype=int64
+        Value     : 300
+        <NOT IN SCHEMA>
+        @units = K  [NOT IN SCHEMA]
+      FIELD /entry/instrument/manipulator/type  shape=()  dtype=object
+        Value     : Hexapod
+        <NOT IN SCHEMA>
+
+    GROUP /entry/instrument/monochromator [NXmonochromator]  (3 members)
+      Concept   : NXarpes/ENTRY/INSTRUMENT/monochromator  [REQUIRED]
+      Inheritance:
+        NXarpes/ENTRY/INSTRUMENT/monochromator
+        NXinstrument/MONOCHROMATOR
+        NXmonochromator
+          Doc       : A wavelength defining device. This is a base class for everything which
+                      selects a wavelength or energy, be it a monochromator crystal, a velocity
+                      selector, an undulator or whatever. The expected units are: * wavelength:
+                      angstrom * energy: eV
+        NXcomponent
+          Doc       : Base class for components of an instrument - real ones or simulated ones.
+      FIELD /entry/instrument/monochromator/energy  shape=()  dtype=float64
+        Value     : 36.49699020385742
+        Concept   : NXarpes/ENTRY/INSTRUMENT/monochromator/energy  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/monochromator/energy
+        @units = eV  [UNIT: NX_ENERGY]
+      FIELD /entry/instrument/monochromator/energy_error  shape=()  dtype=float64
+        Value     : 0.21867309510707855
+        Concept   : NXmonochromator/ENTRY/INSTRUMENT/monochromator/energy_error  [OPTIONAL]
+        Inheritance:
+          NXmonochromator/energy_error
+            Doc       : energy standard deviation
+        @units = eV  [UNIT: NX_ENERGY]
+
+      GROUP /entry/instrument/monochromator/slit [NXslit]  (1 members)
+        <NOT IN SCHEMA>
+        FIELD /entry/instrument/monochromator/slit/y_gap  shape=()  dtype=float64
+          Value     : 2000.04833984375
+          <NOT IN SCHEMA>
+          @units = um  [NOT IN SCHEMA]
+    FIELD /entry/instrument/name  shape=()  dtype=object
+      Value     : HEXTOF @ PG-2, Flash
+      Concept   : NXinstrument/ENTRY/INSTRUMENT/name  [OPTIONAL]
+      Inheritance:
+        NXinstrument/name
+          Doc       : Name of instrument
+
+    GROUP /entry/instrument/source [NXsource]  (16 members)
+      Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE  [REQUIRED]
+      Inheritance:
+        NXarpes/ENTRY/INSTRUMENT/SOURCE
+        NXinstrument/SOURCE
+        NXsource
+          Doc       : Radiation source emitting a beam. Examples include particle sources
+                      (electrons, neutrons, protons) or sources for electromagnetic radiation
+                      (photons). This base class can also be used to describe neutron or x-ray
+                      storage ring/facilities.
+        NXcomponent
+          Doc       : Base class for components of an instrument - real ones or simulated ones.
+      FIELD /entry/instrument/source/bunch_distance  shape=()  dtype=int64
+        Value     : 1
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/bunch_distance  [OPTIONAL]
+        Inheritance:
+          NXsource/bunch_distance
+            Doc       : For storage rings, time between bunches
+        @units = us  [UNIT: NX_TIME]
+      FIELD /entry/instrument/source/bunch_length  shape=()  dtype=int64
+        Value     : 100
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/bunch_length  [OPTIONAL]
+        Inheritance:
+          NXsource/bunch_length
+            Doc       : For storage rings, temporal length of the bunch
+        @units = fs  [UNIT: NX_TIME]
+      FIELD /entry/instrument/source/burst_distance  shape=()  dtype=float64
+        Value     : 199.5
+        <NOT IN SCHEMA>
+        @units = ms  [NOT IN SCHEMA]
+      FIELD /entry/instrument/source/burst_length  shape=()  dtype=int64
+        Value     : 500
+        <NOT IN SCHEMA>
+        @units = us  [NOT IN SCHEMA]
+      FIELD /entry/instrument/source/burst_number_end  shape=()  dtype=int64
+        Value     : 102680129
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/source/burst_number_start  shape=()  dtype=int64
+        Value     : 102644001
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/source/current  shape=()  dtype=int64
+        Value     : 1
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/current  [OPTIONAL]
+        Inheritance:
+          NXsource/current
+            Doc       : Accelerator, X-ray tube, or storage ring current
+        @units = uA  [UNIT: NX_CURRENT]
+      FIELD /entry/instrument/source/energy  shape=()  dtype=int64
+        Value     : 427
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/energy  [OPTIONAL]
+        Inheritance:
+          NXsource/energy
+            Doc       : Source energy. Typically, this would be the energy of the emitted beam. For
+                        storage rings, this would be the particle beam energy.
+        @units = MeV  [UNIT: NX_ENERGY]
+      FIELD /entry/instrument/source/frequency  shape=()  dtype=int64
+        Value     : 10
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/frequency  [OPTIONAL]
+        Inheritance:
+          NXsource/frequency
+            Doc       : Frequency of pulsed source
+        @units = Hz  [UNIT: NX_FREQUENCY]
+      FIELD /entry/instrument/source/mode  shape=()  dtype=object
+        Value     : Burst
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/mode  [OPTIONAL]
+        Inheritance:
+          NXsource/mode
+            Doc       : source operating mode
+        Enums     : [NXsource] Single Bunch, Multi Bunch
+        Enums     : [NXsource] Single Bunch, Multi Bunch
+      FIELD /entry/instrument/source/name  shape=()  dtype=object
+        Value     : FLASH
+        Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE/name  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/SOURCE/name
+          NXsource/name
+            Doc       : Name of source
+          NXcomponent/name
+            Doc       : Name of the component.
+      FIELD /entry/instrument/source/number_of_bunches  shape=()  dtype=int64
+        Value     : 500
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/number_of_bunches  [OPTIONAL]
+        Inheritance:
+          NXsource/number_of_bunches
+            Doc       : For storage rings, the number of bunches in use.
+      FIELD /entry/instrument/source/number_of_bursts  shape=()  dtype=int64
+        Value     : 1
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/source/probe  shape=()  dtype=object
+        Value     : x-ray
+        Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE/probe  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/SOURCE/probe
+          NXsource/probe
+            Doc       : type of radiation probe (pick one from the enumerated list and spell
+                        exactly)
+        Enums     : [NXarpes] x-ray
+        Enums     : [NXarpes] x-ray
+        Enums     : [NXsource] neutron, photon, x-ray, muon, electron, ultraviolet, visible light, positron, proton
+      FIELD /entry/instrument/source/top_up  shape=()  dtype=bool
+        Value     : True
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/top_up  [OPTIONAL]
+        Inheritance:
+          NXsource/top_up
+            Doc       : Is the synchrotron operating in top_up mode?
+      FIELD /entry/instrument/source/type  shape=()  dtype=object
+        Value     : Free Electron Laser
+        Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE/type  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/SOURCE/type
+          NXsource/type
+            Doc       : type of radiation source (pick one from the enumerated list and spell
+                        exactly)
+        Enums     : [NXsource] Spallation Neutron Source, Pulsed Reactor Neutron Source, Reactor Neutron Source, Synchrotron X-ray Source, Pulsed Muon Source, Rotating Anode X-ray, Fixed Tube X-ray, UV Laser, Free-Electron Laser, Optical Laser, Ion Source, UV Plasma Source, Metal Jet X-ray, Laser, Dye Laser, Broadband Tunable Light Source, Halogen Lamp, LED, Mercury Cadmium Telluride Lamp, Deuterium Lamp, Xenon Lamp, Globar
+
+    GROUP /entry/instrument/source_pump [NXsource]  (12 members)
+      Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE  [REQUIRED]
+      Inheritance:
+        NXarpes/ENTRY/INSTRUMENT/SOURCE
+        NXinstrument/SOURCE
+        NXsource
+          Doc       : Radiation source emitting a beam. Examples include particle sources
+                      (electrons, neutrons, protons) or sources for electromagnetic radiation
+                      (photons). This base class can also be used to describe neutron or x-ray
+                      storage ring/facilities.
+        NXcomponent
+          Doc       : Base class for components of an instrument - real ones or simulated ones.
+      FIELD /entry/instrument/source_pump/bunch_distance  shape=()  dtype=int64
+        Value     : 1
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/bunch_distance  [OPTIONAL]
+        Inheritance:
+          NXsource/bunch_distance
+            Doc       : For storage rings, time between bunches
+        @units = us  [UNIT: NX_TIME]
+      FIELD /entry/instrument/source_pump/bunch_length  shape=()  dtype=int64
+        Value     : 50
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/bunch_length  [OPTIONAL]
+        Inheritance:
+          NXsource/bunch_length
+            Doc       : For storage rings, temporal length of the bunch
+        @units = fs  [UNIT: NX_TIME]
+      FIELD /entry/instrument/source_pump/burst_distance  shape=()  dtype=float64
+        Value     : 199.6
+        <NOT IN SCHEMA>
+        @units = ms  [NOT IN SCHEMA]
+      FIELD /entry/instrument/source_pump/burst_length  shape=()  dtype=int64
+        Value     : 400
+        <NOT IN SCHEMA>
+        @units = us  [NOT IN SCHEMA]
+      FIELD /entry/instrument/source_pump/frequency  shape=()  dtype=int64
+        Value     : 10
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/frequency  [OPTIONAL]
+        Inheritance:
+          NXsource/frequency
+            Doc       : Frequency of pulsed source
+        @units = Hz  [UNIT: NX_FREQUENCY]
+      FIELD /entry/instrument/source_pump/mode  shape=()  dtype=object
+        Value     : Burst
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/mode  [OPTIONAL]
+        Inheritance:
+          NXsource/mode
+            Doc       : source operating mode
+        Enums     : [NXsource] Single Bunch, Multi Bunch
+        Enums     : [NXsource] Single Bunch, Multi Bunch
+      FIELD /entry/instrument/source_pump/name  shape=()  dtype=object
+        Value     : User Laser @ FLASH
+        Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE/name  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/SOURCE/name
+          NXsource/name
+            Doc       : Name of source
+          NXcomponent/name
+            Doc       : Name of the component.
+      FIELD /entry/instrument/source_pump/number_of_bunches  shape=()  dtype=int64
+        Value     : 400
+        Concept   : NXsource/ENTRY/INSTRUMENT/SOURCE/number_of_bunches  [OPTIONAL]
+        Inheritance:
+          NXsource/number_of_bunches
+            Doc       : For storage rings, the number of bunches in use.
+      FIELD /entry/instrument/source_pump/number_of_bursts  shape=()  dtype=int64
+        Value     : 1
+        <NOT IN SCHEMA>
+      FIELD /entry/instrument/source_pump/probe  shape=()  dtype=object
+        Value     : NIR
+        Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE/probe  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/SOURCE/probe
+          NXsource/probe
+            Doc       : type of radiation probe (pick one from the enumerated list and spell
+                        exactly)
+        Enums     : [NXarpes] x-ray
+        Enums     : [NXarpes] x-ray
+        Enums     : [NXsource] neutron, photon, x-ray, muon, electron, ultraviolet, visible light, positron, proton
+      FIELD /entry/instrument/source_pump/rms_jitter  shape=()  dtype=float64
+        Value     : 204.68816194453154
+        <NOT IN SCHEMA>
+        @units = fs  [NOT IN SCHEMA]
+      FIELD /entry/instrument/source_pump/type  shape=()  dtype=object
+        Value     : OPCPA
+        Concept   : NXarpes/ENTRY/INSTRUMENT/SOURCE/type  [REQUIRED]
+        Inheritance:
+          NXarpes/ENTRY/INSTRUMENT/SOURCE/type
+          NXsource/type
+            Doc       : type of radiation source (pick one from the enumerated list and spell
+                        exactly)
+        Enums     : [NXsource] Spallation Neutron Source, Pulsed Reactor Neutron Source, Reactor Neutron Source, Synchrotron X-ray Source, Pulsed Muon Source, Rotating Anode X-ray, Fixed Tube X-ray, UV Laser, Free-Electron Laser, Optical Laser, Ion Source, UV Plasma Source, Metal Jet X-ray, Laser, Dye Laser, Broadband Tunable Light Source, Halogen Lamp, LED, Mercury Cadmium Telluride Lamp, Deuterium Lamp, Xenon Lamp, Globar
+    FIELD /entry/instrument/spatial_resolution  shape=()  dtype=int64
+      Value     : 500
+      <NOT IN SCHEMA>
+      @units = um  [NOT IN SCHEMA]
+    FIELD /entry/instrument/temporal_resolution  shape=()  dtype=int64
+      Value     : 100
+      <NOT IN SCHEMA>
+      @units = fs  [NOT IN SCHEMA]
+  FIELD /entry/run_cycle  shape=()  dtype=object
+    Value     : 2018 User Run Block 2
+    Concept   : NXentry/ENTRY/run_cycle  [OPTIONAL]
+    Inheritance:
+      NXentry/run_cycle
+        Doc       : Such as "2007-3". Some user facilities organize their beam time into run cycles.
+
+  GROUP /entry/sample [NXsample]  (14 members)
+    Concept   : NXarpes/ENTRY/SAMPLE  [REQUIRED]
+    Inheritance:
+      NXarpes/ENTRY/SAMPLE
+      NXentry/SAMPLE
+      NXsample
+        Doc       : Any information on the sample. This could include scanned variables that are
+                    associated with one of the data dimensions, e.g. the magnetic field, or logged
+                    data, e.g. monitored temperature vs elapsed time.
+      NXcomponent
+        Doc       : Base class for components of an instrument - real ones or simulated ones.
+    FIELD /entry/sample/bias  shape=()  dtype=int64
+      Value     : 29
+      <NOT IN SCHEMA>
+      @units = V  [NOT IN SCHEMA]
+    FIELD /entry/sample/chem_id_cas  shape=()  dtype=object
+      Value     : 12067-46-8
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/chemical_name  shape=()  dtype=object
+      Value     : Tungsten diselenide
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/growth_method  shape=()  dtype=object
+      Value     : Chemical Vapor Deposition
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/layer  shape=()  dtype=object
+      Value     : bulk
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/name  shape=()  dtype=object
+      Value     : WSe2
+      Concept   : NXarpes/ENTRY/SAMPLE/name  [REQUIRED]
+      Inheritance:
+        NXarpes/ENTRY/SAMPLE/name
+          Doc       : Descriptive name of sample
+        NXsample/name
+          Doc       : Descriptive name of sample
+        NXcomponent/name
+          Doc       : Name of the component.
+    FIELD /entry/sample/preparation_method  shape=()  dtype=object
+      Value     : in-vacuum cleave
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/pressure  shape=()  dtype=float64
+      Value     : 3.27e-10
+      Concept   : NXsample/ENTRY/SAMPLE/pressure  [OPTIONAL]
+      Inheritance:
+        NXsample/pressure
+          Doc       : Applied pressure
+      @units = mbar  [UNIT: NX_PRESSURE]
+    FIELD /entry/sample/purity  shape=()  dtype=float64
+      Value     : 0.999
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/state  shape=()  dtype=object
+      Value     : monocrystalline solid
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/surface_orientation  shape=()  dtype=object
+      Value     : 0001
+      <NOT IN SCHEMA>
+    FIELD /entry/sample/temperature  shape=()  dtype=int64
+      Value     : 300
+      Concept   : NXarpes/ENTRY/SAMPLE/temperature  [REQUIRED]
+      Inheritance:
+        NXarpes/ENTRY/SAMPLE/temperature
+      @units = K  [UNIT: NX_TEMPERATURE]
+    FIELD /entry/sample/thickness  shape=()  dtype=float64
+      Value     : 0.5
+      Concept   : NXsample/ENTRY/SAMPLE/thickness  [OPTIONAL]
+      Inheritance:
+        NXsample/thickness
+          Doc       : sample thickness
+      @units = mm  [UNIT: NX_LENGTH]
+    FIELD /entry/sample/vendor  shape=()  dtype=object
+      Value     : HQ Graphene
+      <NOT IN SCHEMA>
+  FIELD /entry/start_time  shape=()  dtype=object
+    Value     : 2018-05-01T07:22:00+02:00
+    Concept   : NXarpes/ENTRY/start_time  [REQUIRED]
+    Inheritance:
+      NXarpes/ENTRY/start_time
+      NXentry/start_time
+        Doc       : Starting time of measurement
+  FIELD /entry/title  shape=()  dtype=object
+    Value     : Excited-state dynamics of WSe2 in the Valence Band and Core-Levels
+    Concept   : NXarpes/ENTRY/title  [REQUIRED]
+    Inheritance:
+      NXarpes/ENTRY/title
+      NXentry/title
+        Doc       : Extended title for entry
+
+========================
+=== Default Plottable ===
+========================
+
+NXentry has been identified: /entry
+
+NXdata group has been identified: /entry/data
+
+Signal has been identified: /entry/data/data
+
+For Axis #0, 1 axes have been identified: [<HDF5 dataset "angles": shape (80,), type "<f8">]
+
+For Axis #1, 1 axes have been identified: [<HDF5 dataset "energies": shape (146,), type "<f8">]
+
+For Axis #2, 1 axes have been identified: [<HDF5 dataset "delays": shape (195,), type "<f8">]

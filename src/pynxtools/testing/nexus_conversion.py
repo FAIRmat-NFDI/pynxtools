@@ -32,29 +32,28 @@ except ImportError:
     NOMAD_AVAILABLE = False
 
 
+from pynxtools.annotator.annotator import Annotator
 from pynxtools.dataconverter.convert import convert, get_reader
 from pynxtools.dataconverter.helpers import (
     add_default_root_attributes,
     get_nxdl_root_and_path,
 )
 from pynxtools.dataconverter.validate_file import validate
-from pynxtools.nexus.nexus import HandleNexus
+from pynxtools.nexus.handler import NexusFileHandler
 
 
 def get_log_file(nxs_file, log_file, tmp_path):
     """Get log file for the nexus file with read_nexus tools."""
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger(__file__)
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
     log_file = os.path.join(tmp_path, log_file)
     handler = logging.FileHandler(log_file, "w")
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setLevel(logging.DEBUG)
-    handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = HandleNexus(logger, nxs_file, None, None)
-    nexus_helper.process_nexus_master_file(None)
+    NexusFileHandler(nxs_file).process(Annotator(logger))
+
     return log_file
 
 
@@ -187,44 +186,75 @@ class ReaderTest:
             parse(self.created_nexus, **kwargs)
 
     def check_reproducibility_of_nexus(self, **kwargs):
-        """Reproducibility test for the generated nexus file."""
+        """Reproducibility test for the generated nexus file.
+
+        Compares the annotator log produced from the generated NeXus file against
+        the log from the reference file, ignoring lines that are expected to differ
+        between runs (file paths, timestamps, library versions).
+
+        Keyword Args
+        ------------
+        ignore_lines : list[str]
+            Additional line prefixes to ignore.  Each pattern is matched against
+            the *stripped* line, so indentation does not need to be included.
+            Use this to suppress reader-specific entries that always differ
+            (e.g. ``["@creator_version"]``).
+        ignore_sections : dict[str, list[str]]
+            Section-specific line prefixes to ignore.  A new section begins
+            whenever a stripped log line starts with ``"FIELD "`` or ``"GROUP "``.
+            Keys are matched via ``startswith`` against the stripped section-header
+            line; values are additional ignore prefixes applied to subsequent lines
+            within that section.
+
+            Example — ignore the ``Value`` detail line for a specific field::
+
+                ignore_sections = {
+                    "FIELD /Ag__002__VB/start_time ": ["Value"],
+                }
+
+            A trailing space in the key is useful to avoid matching longer paths
+            that share the same prefix (the header line continues with
+            ``shape=... dtype=...`` after a space).
+        """
         reader_ignore_lines: list[str] = kwargs.get("ignore_lines", [])
         reader_ignore_sections: dict[str, list[str]] = kwargs.get("ignore_sections", {})
 
+        # Lines whose stripped form starts with any of these prefixes are ignored.
+        # Only entries that are *structurally guaranteed* to differ between any
+        # generated file and any reference file belong here.  Environment-specific
+        # differences (library versions, definitions commit hashes, pynxtools version)
+        # must be added by each plugin via the ``ignore_lines`` parameter.
         IGNORE_LINES: list[str] = reader_ignore_lines + [
-            "DEBUG - value: v",
-            "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
-            "DEBUG - ===== GROUP (// [NXroot::]):",
+            "NeXus file",  # file path: gen goes to tmp_path, ref is committed
+            "@HDF5_Version",  # differs depending on installation
+            "@NeXus_release",  # differs due to submodule checkout in tests
+            "@NeXus_repository",  # differs due to submodule checkout in tests
+            "@creator_version",  # differs due to checkout in tests
+            "@file_name",  # original filename: <filename>.nxs vs ref name
+            "@file_time",  # creation timestamp: always differs
+            "@file_update_time",  # update timestamp: always differs,
+            "@h5py_version",  # differs depending on installation
+            # These are the URL and version on NXentry/definition
+            "@URL = https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
+            "@version = v",
         ]
-        IGNORE_SECTIONS: dict[str, list[str]] = {
-            **reader_ignore_sections,
-            "ATTRS (//@HDF5_Version)": ["DEBUG - value:"],
-            "ATTRS (//@file_name)": ["DEBUG - value:"],
-            "ATTRS (//@file_time)": ["DEBUG - value:"],
-            "ATTRS (//@file_update_time)": ["DEBUG - value:"],
-            "ATTRS (//@h5py_version)": ["DEBUG - value:"],
-        }
 
-        SECTION_SEPARATOR = "DEBUG - ===== "
+        # Section headers: a stripped line starting with one of these prefixes
+        # begins a new section; section-specific ignores then apply until the next.
+        _SECTION_PREFIXES = ("FIELD ", "GROUP ")
+        IGNORE_SECTIONS: dict[str, list[str]] = reader_ignore_sections
+
+        def get_section_ignores(stripped_line: str) -> list[str]:
+            """Return section-specific ignore prefixes for the given header line."""
+            for key, patterns in IGNORE_SECTIONS.items():
+                if stripped_line.startswith(key):
+                    return patterns
+            return []
 
         def should_skip_line(*lines: str, ignore_lines: list[str]) -> bool:
-            """
-            Check if all given lines start with any ignored prefix.
-
-            Parameters
-            ----------
-            *lines : str
-                One or more lines to check.
-            ignore_lines : list[str]
-                List of prefixes to ignore.
-
-            Returns
-            -------
-            bool
-                True if all lines start with any of the ignored prefixes.
-            """
+            """Return True if all lines match any ignored prefix (after stripping)."""
             return any(
-                all(line.startswith(ignore) for line in lines)
+                all(line.strip().startswith(ignore) for line in lines)
                 for ignore in ignore_lines
             )
 
@@ -239,29 +269,20 @@ class ReaderTest:
                 return gen.readlines(), ref.readlines()
 
         def compare_logs(gen_lines: list[str], ref_lines: list[str]) -> None:
-            """Compare log lines, ignoring specific differences."""
+            """Compare log lines, ignoring lines listed in IGNORE_LINES."""
 
-            def get_section_ignore_lines(line: str) -> list[str]:
-                """Return ignore lines for a section if the line starts with the section."""
-                section = line.rsplit(SECTION_SEPARATOR, 1)[-1].strip()
-                for key, ignore_lines in IGNORE_SECTIONS.items():
-                    if section.startswith(key):
-                        return ignore_lines
-
-                return []
-
-            def extra_lines(lines1: list[str], lines2: list[str]) -> list[str | None]:
-                """Return lines in lines1 but not in lines2, with line numbers, and ignoring
-                specified lines."""
-                diffs: list[str | None] = []
-                section_ignore_lines = []
+            def extra_lines(lines1: list[str], lines2: list[str]) -> list[str]:
+                """Return lines present in lines1 but absent in lines2 (non-ignored)."""
+                diffs: list[str] = []
+                section_ignores: list[str] = []
                 for ind, line in enumerate(lines1):
-                    if line.startswith(SECTION_SEPARATOR):
-                        section_ignore_lines = get_section_ignore_lines(line)
+                    stripped = line.strip()
+                    if any(stripped.startswith(p) for p in _SECTION_PREFIXES):
+                        section_ignores = get_section_ignores(stripped)
                     if line not in lines2 and not should_skip_line(
-                        line, ignore_lines=IGNORE_LINES + section_ignore_lines
+                        line, ignore_lines=IGNORE_LINES + section_ignores
                     ):
-                        diffs.append(f"{line.strip()} (line: {ind})")
+                        diffs.append(f"{stripped} (line: {ind})")
                 return diffs
 
             # Case 1: line counts differ
@@ -285,20 +306,19 @@ class ReaderTest:
 
                 raise AssertionError(error_msg)
 
-            # Case 2: same line counts, check for diffs
-            diffs = []
-            section_ignore_lines = []
-
+            # Case 2: same line counts, check for diffs line by line
+            diffs: list[str] = []
+            section_ignores: list[str] = []
             for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
-                if gen_l.startswith(SECTION_SEPARATOR) and ref_l.startswith(
-                    SECTION_SEPARATOR
-                ):
-                    section_ignore_lines = get_section_ignore_lines(gen_l)
+                gen_stripped = gen_l.strip()
+                if any(gen_stripped.startswith(p) for p in _SECTION_PREFIXES):
+                    section_ignores = get_section_ignores(gen_stripped)
                 if gen_l != ref_l and not should_skip_line(
-                    gen_l, ref_l, ignore_lines=IGNORE_LINES + section_ignore_lines
+                    gen_l, ref_l, ignore_lines=IGNORE_LINES + section_ignores
                 ):
                     diffs.append(
-                        f"Log files are different at line {ind}:\n  generated: {gen_l}\n  reference: {ref_l}"
+                        f"Log files are different at line {ind}:\n"
+                        f"  generated: {gen_l}  reference: {ref_l}"
                     )
             if diffs:
                 raise AssertionError("\n".join(diffs))

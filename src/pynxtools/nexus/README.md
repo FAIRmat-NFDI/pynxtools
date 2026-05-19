@@ -1,8 +1,8 @@
-# NeXus file reader and debugger
+# NeXus schema and file processing
 
-This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to.
+Core of pynxtools: the in-memory NXDL schema tree (`NexusNode`), the HDF5 file walker (`NexusFileHandler` / `NexusVisitor`), and the schema resolution layer (`NexusSchemaResolver`).
 
-Here you can find more information about the tool:
+For more information:
 
-- [Usage guide](https://fairmat-nfdi.github.io/pynxtools/learn/pynxtools/nexus-validation.html#read_nexus-nexus-file-reader-and-debugger)
-- [API documentation](https://fairmat-nfdi.github.io/pynxtools/reference/cli-api.html#read-nexus)
+- [Architecture overview](https://fairmat-nfdi.github.io/pynxtools/learn/pynxtools/architecture.html)
+- [API documentation](https://fairmat-nfdi.github.io/pynxtools/reference/api-reference.html)

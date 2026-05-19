@@ -29,7 +29,7 @@ You should start by installing `pynxtools` and (if needed) one or more of its su
 
 ## Usage
 
-See [here](../../reference/cli-api.md#data-conversion) for the documentation of the `pynx convert` API.
+See [Reference > API for command line tools > pynx convert](../../reference/cli-api.md#data-conversion-pynx-convert) for the documentation of the `pynx convert` API.
 
 ### Discover installed readers
 

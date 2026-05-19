@@ -1,8 +1,7 @@
 #
-# Copyright The pynxtools Authors.
+# Copyright The NOMAD Authors.
 #
-# This file is part of pynxtools.
-# See https://github.com/FAIRmat-NFDI/pynxtools for further info.
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,13 +52,13 @@ from pynxtools.dataconverter.helpers import (
     path_in_data_dict,
     split_class_and_name_of,
 )
-from pynxtools.dataconverter.nexus_tree import (
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.nexus.nexus_tree import (
     NexusEntity,
     NexusGroup,
     NexusNode,
     generate_tree_from,
 )
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
 
 logger = logging.getLogger("pynxtools")

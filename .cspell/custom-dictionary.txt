@@ -158,6 +158,7 @@ itemsize
 itemsizing
 iufc
 iupac
+keepends
 keystring
 keyval
 kfra
@@ -188,6 +189,7 @@ nbytes
 ncores
 ndarray
 ndataconverter
+ndim
 ndims
 nexpy
 nexusapp
@@ -203,6 +205,8 @@ nxdata
 nxdl
 nxdls
 nxentry
+nxroot
+nxtest
 nyaml
 oned
 optionalities

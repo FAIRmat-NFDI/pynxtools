@@ -30,6 +30,7 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
+from pynxtools.nexus.nexus_tree import generate_tree_from
 
 logger = logging.getLogger("pynxtools")
 

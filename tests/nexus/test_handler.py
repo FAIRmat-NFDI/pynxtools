@@ -1,0 +1,167 @@
+"""Tests for nexus.handler.NexusFileHandler and nexus.annotation.Annotator."""
+
+import logging
+import os
+from typing import Union
+
+import h5py
+import numpy as np
+import pytest
+
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+EXAMPLE_NXS = os.path.join(
+    os.path.dirname(__file__),
+    "../../src/pynxtools/data/201805_WSe2_arpes.nxs",
+)
+
+
+def _make_in_memory_file() -> h5py.File:
+    """Return a minimal in-memory HDF5 file with two groups and one dataset."""
+    f = h5py.File("__test__", "w", driver="core", backing_store=False)
+    f.attrs["NX_class"] = "NXroot"
+    entry = f.create_group("entry")
+    entry.attrs["NX_class"] = "NXentry"
+    data = entry.create_group("data")
+    data.attrs["NX_class"] = "NXdata"
+    data.create_dataset("signal", data=np.arange(10))
+    return f
+
+
+# ---------------------------------------------------------------------------
+# NexusFileHandler + custom NexusVisitor
+# ---------------------------------------------------------------------------
+
+
+class _RecordingVisitor(NexusVisitor):
+    """Visitor that records every visited path and whether on_complete was called."""
+
+    def __init__(self):
+        self.visited: list[str] = []
+        self.attributes: list[tuple[str, str]] = []
+        self.completed = False
+
+    def on_group(self, hdf_path: str, hdf_node: h5py.Group) -> None:
+        self.visited.append(hdf_path)
+
+    def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
+        self.visited.append(hdf_path)
+
+    def on_attribute(self, hdf_path: str, attr_name: str, attr_value, parent) -> None:
+        self.attributes.append((hdf_path, attr_name))
+
+    def on_complete(self, root: h5py.File) -> None:
+        self.completed = True
+
+
+def test_handler_traverses_all_nodes_in_memory():
+    """NexusFileHandler visits every node in a simple in-memory file."""
+    f = _make_in_memory_file()
+    visitor = _RecordingVisitor()
+    handler = NexusFileHandler(f, is_open=True)
+    handler.process(visitor)
+
+    # Root (""), entry, entry/data, entry/data/signal
+    assert "" in visitor.visited
+    assert "entry" in visitor.visited
+    assert "entry/data" in visitor.visited
+    assert "entry/data/signal" in visitor.visited
+    assert visitor.completed
+
+
+def test_handler_visits_root_node():
+    """The empty-string root node is always visited."""
+    f = _make_in_memory_file()
+    visitor = _RecordingVisitor()
+    NexusFileHandler(f, is_open=True).process(visitor)
+    assert visitor.visited[0] == ""
+
+
+def test_handler_traverses_file_on_disk(tmp_path):
+    """NexusFileHandler opens a file from disk and traverses it without error."""
+    # Create a minimal file on disk
+    fpath = tmp_path / "test.nxs"
+    with h5py.File(fpath, "w") as f:
+        f.attrs["NX_class"] = "NXroot"
+        e = f.create_group("entry")
+        e.attrs["NX_class"] = "NXentry"
+        e.create_dataset("value", data=42.0)
+
+    visitor = _RecordingVisitor()
+    NexusFileHandler(str(fpath)).process(visitor)
+    assert "entry" in visitor.visited
+    assert "entry/value" in visitor.visited
+    assert visitor.completed
+
+
+def test_handler_accepts_list_path(tmp_path):
+    """NexusFileHandler accepts [path, ...] list as the nexus_file argument."""
+    fpath = tmp_path / "test.nxs"
+    with h5py.File(fpath, "w") as f:
+        f.attrs["NX_class"] = "NXroot"
+
+    visitor = _RecordingVisitor()
+    NexusFileHandler([str(fpath)]).process(visitor)
+    assert visitor.completed
+
+
+def test_handler_cycle_detection_in_memory():
+    """NexusFileHandler does not infinite-loop on hard-linked groups."""
+    f = h5py.File("__test_cycle__", "w", driver="core", backing_store=False)
+    f.attrs["NX_class"] = "NXroot"
+    grp = f.create_group("a")
+    grp.attrs["NX_class"] = "NXentry"
+    # Hard-link: 'b' points to the same object as 'a' — cycle-detection must prevent recursion
+    f["b"] = f["a"]
+
+    visitor = _RecordingVisitor()
+    NexusFileHandler(f, is_open=True).process(visitor)
+    # 'a' must be visited; 'b' is a hard link to 'a' and must not be re-entered
+    assert "a" in visitor.visited
+    assert visitor.completed
+
+
+# ---------------------------------------------------------------------------
+# NexusVisitor default no-op base class
+# ---------------------------------------------------------------------------
+
+
+def test_handler_dispatches_attributes():
+    """on_attribute is called for every attribute of every node."""
+    f = _make_in_memory_file()
+    visitor = _RecordingVisitor()
+    NexusFileHandler(f, is_open=True).process(visitor)
+
+    # Root has NX_class="NXroot"; entry has NX_class="NXentry"; data has NX_class="NXdata"
+    attr_paths = {path for path, _ in visitor.attributes}
+    assert "" in attr_paths  # root attributes
+    assert "entry" in attr_paths
+    assert "entry/data" in attr_paths
+
+    attr_names = {(path, name) for path, name in visitor.attributes}
+    assert ("", "NX_class") in attr_names
+    assert ("entry", "NX_class") in attr_names
+
+
+def test_base_visitor_does_not_raise():
+    """A visitor that implements all hooks as pass must not raise."""
+
+    class _NullVisitor(NexusVisitor):
+        def on_group(self, hdf_path, hdf_node) -> None:
+            pass
+
+        def on_field(self, hdf_path, hdf_node) -> None:
+            pass
+
+        def on_attribute(self, hdf_path, attr_name, attr_value, parent) -> None:
+            pass
+
+        def on_complete(self, root) -> None:
+            pass
+
+    f = _make_in_memory_file()
+    NexusFileHandler(f, is_open=True).process(_NullVisitor())
