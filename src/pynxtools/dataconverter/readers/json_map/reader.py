@@ -46,6 +46,7 @@ import yaml
 from mergedeep import merge
 
 from pynxtools.dataconverter import hdfdict
+from pynxtools.dataconverter.helpers import decode_if_bytes
 from pynxtools.dataconverter.readers.multi.reader import (
     MultiFormatReader,
     fill_from_config,
@@ -53,6 +54,11 @@ from pynxtools.dataconverter.readers.multi.reader import (
 from pynxtools.dataconverter.template import Template
 
 logger = logging.getLogger("pynxtools")
+
+
+def unpack_hdf_dataset_for_json_map(item) -> Any:
+    """Unpack HDF5 datasets and normalize byte-strings to ``str`` values."""
+    return decode_if_bytes(hdfdict.unpack_dataset(item))
 
 
 def parse_slice(slice_string):
@@ -249,9 +255,10 @@ class JsonMapReader(MultiFormatReader):
         return {}
 
     def _handle_hdf5_file(self, file_path: str) -> dict[str, Any]:
-        hdf = hdfdict.load(file_path)
-        hdf.unlazy()
-        merge(self.data, dict(hdf))
+        hdf = hdfdict.load(
+            file_path, lazy=False, unpacker=unpack_hdf_dataset_for_json_map
+        )
+        merge(self.data, hdf)
         if "entry@" in self.data and "partial" in self.data["entry@"]:
             self.partials.extend(self.data["entry@"]["partial"])
         return {}
