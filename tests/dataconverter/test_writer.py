@@ -198,11 +198,15 @@ def test_overwrite(writer_overwrite, caplog):
     os.remove(writer_overwrite.output_path)
 
 
-def test_write_docs(writer):
-    """Docs are written as HDF5 @docs attributes when write_docs=True."""
-    writer.write(write_docs=True)
+@pytest.mark.parametrize("docs_format", ["default", "plain"])
+def test_write_docs(writer, docs_format):
+    """Docs are written as HDF5 @docs attributes when write_docs=True.
+
+    Checks both ``'default'`` (raw RST) and ``'plain'`` (single-line stripped prose).
+    """
+    writer.write(write_docs=True, docs_format=docs_format)
     with h5py.File(writer.output_path, "r") as f:
-        # Appdef root doc ("NXtest") appears on the top-level ENTRY group via special case
+        # Appdef root doc ("NXtest") on top-level ENTRY group via special case
         assert "docs" in f["/my_entry"].attrs
         assert (
             "This is a dummy NXDL to test out the dataconverter."
@@ -236,3 +240,15 @@ def test_write_docs(writer):
             "This is a required yet empty group."
             in f["/my_entry/required_group"].attrs["docs"]
         )
+
+        if docs_format == "plain":
+            # plain format produces single-line strings — no embedded newlines
+            plain_attrs = [
+                f["/my_entry"].attrs["docs"],
+                f["/my_entry/definition"].attrs["docs"],
+                f["/my_entry/definition"].attrs["version_docs"],
+                f["/my_entry/nxodd_name/int_value"].attrs["docs"],
+                f["/my_entry/required_group"].attrs["docs"],
+            ]
+            for val in plain_attrs:
+                assert "\n" not in val
