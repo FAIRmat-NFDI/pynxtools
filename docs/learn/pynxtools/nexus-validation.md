@@ -1,26 +1,25 @@
-# Validation of NeXus files in `pynxtools`
+# Validation of NeXus files in pynxtools
 
-!!! info "This page is intended to give more information about the validation tools that are part of `pynxtools`. Please also have a look at our comprehensive [how-to guide](../../how-tos/pynxtools/validate-nexus-files.md) on NeXus validation."
+!!! info "This page explains how validation works in `pynxtools`. For step-by-step usage of the CLI tools, see the [how-to guide](../../how-tos/pynxtools/validate-nexus-files.md)."
 
-Validation is a processing step during which the structure, concepts, and annotations of data in a file are checked for conformance with a specific version of the NeXus definitions. The processing yields a list of deviations between the actual formatting of individual data instances and their expected formatting. These deviations are typically categorized based on their severity. In effect, boolean or more nuanced conclusions can be drawn how closely the content of the file follows the definitions.
+Validation checks that the structure, concepts, and data of an HDF5 file conform to a specific NeXus application definition. The output is a categorized list of deviations — missing fields, type mismatches, invalid enumeration values — from which a boolean validity verdict can be derived.
 
-The validity of NeXus files is fundamental to ensure FAIR data. Validation ensures that key contextual information - such as the type of experiment, laser wavelength, applied voltage, structure of tabular data, units of measurement, referenced standards, measurement location, and acquisition time - matches the expected definitions and formats.
+Valid NeXus files are foundational to FAIR data: they guarantee that key contextual information (experiment type, units, acquisition parameters, measurement location) is present, correctly named, and structured in a way any compliant tool can parse.
 
-The NeXus application definitions define the minimum set of terms/concepts that must be reported for a given experiment (i.e., the required terms that you must add to the NeXus file in order to be compliant with that application definition). Application definitions may also define terms that are optional in the NeXus data file. Entries in NeXus files (which are instances of the [`NXentry`](https://manual.nexusformat.org/classes/base_classes/NXentry.html) base class) should report which definition they implement (under [`NXentry/definition`](https://manual.nexusformat.org/classes/base_classes/NXentry.html#nxentry-definition-field)). Such an entry is valid if all required concepts of the respective application definition are present and if all instance data within the entry adheres to the format and constraints defined in the application definition.
+### What is checked during validation in pynxtools
 
-## Approach
+**Required concepts**
+: Warnings are logged when a required group, field, or attribute defined in the application definition is absent from the file. This applies to required concepts inside recommended or optional groups as well.
 
-One of the main advantages of using `pynxtools` is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.
+**Name fitting**
+: NeXus allows instance names to differ from schema concept names (e.g. `my_detector` for an `NXdetector` group). Each instance name is matched against the schema using NeXus name-fitting rules (see [NeXus naming rules](../nexus/nexus-rules.md#name-resolution)). Errors are raised if a group or field uses the name defined for a *different* NeXus concept type. Unmatched names produce a warning.
 
-The following use cases are covered by the validation in `pynxtools`:
+**Field and attribute values**
 
-- **Required concepts**: Warnings are logged if a required group/field/attribute is missing. This is also the case for required concepts within recommended/optional groups.
-- **Namefitting**: NeXus allows for variable instance names for a given concept through the combination of uppercase notation and the `nameType` attribute (for more information see the [section on NeXus naming rules](../nexus/nexus-rules.md#name-resolution).) In the validation process, the name of any instance data is compared to the defined NeXus concepts. Errors are raised if a group/field uses a name defined for a concept of a different NeXus type (i.e., if a group in the instance data has the same name as a defined field). If given instance data cannot be fit to any concept, a warning is logged as well.
-- **NeXus fields/attributes**:
-    - For concepts where an [**enumeration**](https://manual.nexusformat.org/nxdl_desc.html#enumeration) is used, it is checked if the provided value is contained in the enumeration. For _closed_ enumerations, a warning is logged if the provided value does not match any of the enumeration choices. For _open_ enumerations, an info level message is logged in such cases.
-    - Values of fields and attributes are checked against the [**NeXus data type**](https://manual.nexusformat.org/nxdl-types.html#index-0) and warnings are logged if a mismatch is detected.
-    - Units for fields are validated using the Python units package [`pint`](https://pint.readthedocs.io/en/stable/) by confirming that the dimensionality of a given unit matches its [**NeXus Unit Category**](https://manual.nexusformat.org/nxdl-types.html#unit-categories-allowed-in-nxdl-specifications). Missing units and units for which no associated field is given also produce warning messages.
-    - For NeXus attributes, a warning is logged if there is no associated group or field for the attribute.
+- *Enumerations*: closed enumerations produce a warning if the value is not in the allowed set; open enumerations produce an info message.
+- *Data types*: values are checked against the declared [`NexusType`](https://manual.nexusformat.org/nxdl-types.html#index-0) (e.g. `NX_FLOAT`, `NX_CHAR`). Mismatches produce warnings.
+- *Units*: units are validated using [`pint`](https://pint.readthedocs.io) by confirming that the given unit's dimensionality matches the field's declared [`NexusUnitCategory`](https://manual.nexusformat.org/nxdl-types.html#unit-categories-allowed-in-nxdl-specifications) (e.g. `NX_ENERGY`). Missing units and orphaned unit attributes are also flagged.
+- *Orphaned attributes*: an attribute with no corresponding group or field produces a warning.
 
 - **NXDL symbol consistency**: Application definitions can declare [symbols](https://manual.nexusformat.org/nxdl_desc.html#symbolstype) to express that multiple fields share a common dimension size. After all fields in a group have been visited, the validator checks that every field that references the same symbol agrees on its size. A warning is emitted for each symbol where two or more fields report different sizes.
 - **`NXdata`**: The [**`NXdata`**](https://manual.nexusformat.org/classes/base_classes/NXdata.html#nxdata) group plays a special rule in NeXus as it is used to define [the plottable data](https://manual.nexusformat.org/examples/python/plotting/index.html). Therefore, `NXdata` comes with a specific set of rules attributes (especially the presence of the `@signal` and `@data`) . The validator checks for the presence of these attributes and also ensures that the dimensionality of the signals and axes match.
@@ -28,49 +27,76 @@ The following use cases are covered by the validation in `pynxtools`:
 - **Undocumented concepts**: In NeXus, it is allowed to add additional data that are not defined in the NeXus definitions (e.g., additional fields). In order to prevent unintended use of this feature (arising, for example, from misspelling of instance names), warnings are logged for any such additional data.
 - **Reserved suffixes and prefixes**: NeXus defines a number of [reserved suffixes](https://manual.nexusformat.org/datarules.html#index-6). These are suffixes for the name of fields that can only be used if the actual field exists as well (e.g., the suffix `_set` in the field `temperature_set` would be used to report the setpoint for the field `temperature`). If the associated field does not exist, a warning is logged. In addition, NeXus also has a number of [reserved prefixes](https://manual.nexusformat.org/datarules.html#index-4), which can only be used in certain contexts (e.g., in a specific application definition). If such a prefix is used anywhere else, the validation tool produces a warning message.
 
-## Validation use cases and tools
+**HDF5 links**
+: Links are resolved before checking. The validator also checks for the required `@target` attribute on linked nodes.
 
-### As part of the dataconverter
+**Undocumented concepts**
+: NeXus permits additional data beyond what the application definition specifies. Each such addition produces a warning to catch accidental misspellings of field names.
 
-During [data conversion](dataconverter-and-readers.md) within `pynxtools`, before writing the HDF5 file, by default the data are first checked against the provided application definition. In the conversion, we are using a [special combined notation](../nexus/nexus-primer.md#what-is-nexus) to indicate that instance paths shall match to NeXus concepts. As an example, the path `ENTRY[entry]/INSTRUMENT[instrument]/DETECTOR[detector]` indicates that we would like to create an HDF5 group at `/entry/instrument/detector` and that it shall match to the `NXdetector` group within `NXentry/NXinstrument`. While this notation enables connecting instances to concepts in a succinct way, it also requires more rigorous check to validate that the names for instances and data actually match. Therefore, additional validation checks are implemented and warnings are logged if the two names have a mismatch.
+**Reserved suffixes and prefixes**
+: NeXus defines [reserved suffixes](https://manual.nexusformat.org/datarules.html#index-6) (e.g. `_set`) and [reserved prefixes](https://manual.nexusformat.org/datarules.html#index-4) that may only be used in specific contexts. The validator flags misuse of either.
 
-It is also possible to define in the data conversion process whether the data shall be [compressed in the HDF5 file](https://docs.hdfgroup.org/archive/support/HDF5/faq/compression.html). Warnings are logged if the given compression strength (which must be between 0 and 9) is incorrect.
+## Validation use cases
 
-Since the validation is performed during the conversion, it is possible to automatically correct the data: as a convenience feature, any instance data that produces invalid files (e.g., when an HDF5 field would be named the same as a group in the NeXus definitions) are removed before writing the files. In addition, if a mismatch between the data type of the instance and the concept is detected, we convert these values silently if possible. As an example, we convert from int to float or from the string representation of bools (`"true"`/`"false"`) to actual booleans.
-
-## `pynx validate`: Validate existing NeXus/HDF5 files
-
-While we encourage NeXus users to convert their data using the `pynxtools` data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, `pynxtools` provides a **standalone validator** (`pynx validate`). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the [API documentation](../../reference/cli-api.md#nexus-file-validation-pynx-validate).
-
-Validation of existing files is generally more straightforward than validating the `pynxtools` template as the NeXus type (i.e., group/fields/attributes) of instance data is easily detected from the file structure. Therefore, no additional special rules are applied in `pynx validate` other than those given above.
-
-## `pynx read`: NeXus file reader and debugger
+### During data conversion (write path)
 
 In addition to the validation tools mentioned above, there is another utility in `pynxtools` called **`pynx read`** (available from the command line after installation). This tool outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. Read more in [Reference > API for command line tools > pynx read](../../reference/cli-api.md#nexus-file-annotator-pynx-read).
 
-<!-- ??? info "Using a different set of NeXus definitions"
+When the `dataconverter` produces an HDF5 file, it validates the `Template` dictionary against the target NXDL before writing. Because the template uses a combined instance-plus-concept notation (`ENTRY[entry]/INSTRUMENT[instrument]/DETECTOR[detector]`), the validator also checks that instance names and concept names are consistent.
 
-    The environment variable "NEXUS_DEF_PATH" can be set to a directory which contains the NeXus definitions as NXDL XML files. If this environment variable is not defined, the module will use the definitions in its bundle (see `src/pynxtools/definitions`)._
+As a convenience, the dataconverter automatically:
 
-    The environment variable can be set as follows:
-    ```
-    export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
-    ``` -->
+- removes entries that would produce an invalid file (e.g. a field named the same as a group in the schema),
+- silently coerces values to the declared type when safe (e.g. int → float, `"true"` → `True`).
+
+### Validating existing files with `pynx validate`
+
+While we encourage NeXus users to convert their data using the `pynxtools` data conversion pipeline, we also realize that a lot of NeXus files are created using other applications. For such use cases, `pynxtools` provides a **standalone validator** (`pynx validate`). This CLI tool can be used to validate _existing_ HDF5 files against the NeXus application definition they claim to be compliant with. Read more in the [API documentation](../../reference/cli-api.md#nexus-file-validation-pynx-validate).
+
+File validation in pynxtools is implemented as a `NexusVisitor` subclass called `ValidationVisitor` (in `pynxtools.dataconverter.validation`). It receives node events from `NexusFileHandler` and checks each node against the `NexusNode` tree built from the file's declared application definition.
+
+```
+HDF5 file  ──▶  NexusFileHandler  ──▶  ValidationVisitor
+                   (traversal)            (checks each node)
+                                               │
+                                          NexusNode tree
+                                    (built from NXDL schema)
+```
+
+For a conceptual overview of the visitor architecture, see [pynxtools architecture](architecture.md).
+
+
+The `pynx validate` CLI tool applies the `ValidationVisitor` to any existing HDF5 file and reports deviations.
+
+```bash
+pynx validate path/to/file.nxs
+```
+
+Validation of existing files is more direct than template validation: the type of every group, field, and attribute is determined from the file's own structure, so no additional disambiguation is needed.
+
+See the [How-tos > pynxtools > Validate and inspect NeXus files](../../how-tos/pynxtools/validate-nexus-files.md) for a worked example and usage details.
+
+### Annotating files with `pynx read`
+
+`pynx read` is the companion annotation tool. Where `pynx validate` checks *conformance*, `pynx read` surfaces *documentation*: it annotates every node in a NeXus file with the schema description, optionality string, data type, unit category, and inheritance chain from the matching `NexusNode`. It is useful for debugging files and exploring what a given application definition requires.
+
+Both `pynx validate` and `pynx read` are backed by the same `NexusFileHandler` traversal; they differ only in the `NexusVisitor` they use (`Annotator`, `ValidationVisitor`, or `NomadVisitor`).
 
 ## Limitations
 
 While we try to cover most NeXus use cases in the validation, there are some checks that we do not apply consistently yet. These limitations are mostly due to inconsistencies in the standard or because a feature is seldomly used (like [NeXus choices](https://manual.nexusformat.org/nxdl_desc.html#choicetype)). We are looking forward to resolving such ambiguities with the NeXus community going forward, after which a more rigorous implementation in the validation software is possible.
 
-## Other validation software
+- **`NXchoice`**: seldomly used in practice; not fully validated.
+- **[`variants`](https://manual.nexusformat.org/datarules.html#variants)**: seldomly used in practice and only defined in the NeXus manual; not fully validated, not considered during annotation, unusable in data conversion and NOMAD parsing.
 
-There are several tools which can be used for validation of NeXus files.
+These limitations reflect open issues in the NeXus standard itself. Resolution is expected in collaboration with the NeXus community.
 
-1. [pynxtools](<https://github.com/FAIRmat-NFDI/pynxtools>) - our own software tool
+## Other validation tools
 
-2. [cnxvalidate: NeXus validation tool written in C](https://github.com/nexusformat/cnxvalidate)
+Several third-party tools can also validate NeXus files:
 
-3. [punx: Python Utilities for NeXus HDF5 files](https://github.com/prjemian/punx)
+1. [cnxvalidate — NeXus validation tool written in C](https://github.com/nexusformat/cnxvalidate)
+2. [punx — Python Utilities for NeXus HDF5 files](https://github.com/prjemian/punx)
+3. [nexpy/nxvalidate — a Python API for validating NeXus files](https://github.com/nexpy/nxvalidate)
 
-4. [nexpy/nxvalidate: A python API for validating NeXus file](https://github.com/nexpy/nxvalidate)
-
-All are different and have individual advantages or disadvantages. We encourage users to have a look at the [how-to guide for these tools](../../how-tos/pynxtools/validate-nexus-files-other-tools.md) to learn more.
+See the [dedicated how-to page](../../how-tos/pynxtools/validate-nexus-files-other-tools.md) for a comparison.

@@ -183,6 +183,8 @@ mpes
 mydatareader
 myext
 mynxdl
+myplugin
+myreader
 namefit
 namefitting
 nbstripout
@@ -192,6 +194,7 @@ ndarray
 ndataconverter
 ndim
 ndims
+ndim
 nexpy
 nexusapp
 nexusformat
