@@ -54,7 +54,7 @@ from pynxtools.dataconverter.helpers import (
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.nexus.nexus_tree import (
-    NexusEntity,
+    NexusField,
     NexusGroup,
     NexusNode,
     generate_tree_from,
@@ -122,7 +122,7 @@ def build_nested_dict_from(
 
 
 def is_valid_unit_for_node(
-    node: NexusEntity, unit: str, unit_path: str, hints: dict[str, Any]
+    node: NexusField, unit: str, unit_path: str, hints: dict[str, Any]
 ) -> None:
     """
     Validate whether a unit string is compatible with the expected unit category for a given NeXus node.
@@ -1837,7 +1837,7 @@ def validate_dict_against(
 
         # Check main field exists for units
         if (
-            isinstance(node, NexusEntity)
+            isinstance(node, NexusField)
             and node.unit is not None
             and f"{key}/@units" not in mapping
         ):

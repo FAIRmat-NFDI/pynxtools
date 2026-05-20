@@ -53,8 +53,8 @@ def inspect_appdef(
 
     NXDL: application definition name, e.g. NXmpes
     """
-    from pynxtools.dataconverter.nexus_tree import generate_tree_from
     from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_app_defs_names
+    from pynxtools.nexus.nexus_tree import generate_tree_from
 
     available = get_app_defs_names()
     if nxdl not in available:

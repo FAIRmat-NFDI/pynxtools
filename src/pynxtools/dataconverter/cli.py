@@ -47,8 +47,8 @@ from pynxtools.dataconverter.convert import (
     parse_params_file,
 )
 from pynxtools.dataconverter.convert import convert as _convert
-from pynxtools.dataconverter.nexus_tree import generate_tree_from
 from pynxtools.dataconverter.validate_file import validate as _validate
+from pynxtools.nexus.nexus_tree import generate_tree_from
 
 logger = logging.getLogger("pynxtools")
 
