@@ -816,13 +816,15 @@ class ValidationVisitor(NexusVisitor):
             )
 
         for req_concept in sorted(self._required_entities):
-            if any(req_concept.startswith(grp) for grp in self._required_groups):
+            if any(req_concept.startswith(grp + "/") for grp in self._required_groups):
                 continue
             if "@" in req_concept:
-                if any(
-                    req_concept.rsplit("@", 1)[0].startswith(ent)
-                    for ent in self._required_entities
-                ):
+                # Suppress attribute if its parent field is itself missing —
+                # fixing the field implicitly fixes the attribute.
+                # Use the exact parent path (before "/@") to avoid false matches
+                # where one field name is a prefix of another
+                # (e.g. "sensor/@attr" vs "my_sensor/@attr").
+                if req_concept.rsplit("/@", 1)[0] in self._required_entities:
                     continue
                 collector.collect_and_log(
                     f"{self._entry_name}/{req_concept}",
