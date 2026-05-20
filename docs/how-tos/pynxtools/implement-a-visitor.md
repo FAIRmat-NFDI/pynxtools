@@ -6,7 +6,7 @@
 
 ## When to write a custom visitor
 
-Write a custom visitor when you need to process every node of a NeXus file in a way that is not covered by the built-in `Annotator`. Common use cases:
+Write a custom visitor when you need to process every node of a NeXus file in a way that is not covered by the built-in `Annotator` or `ValidationVisitor`. Common use cases:
 
 - Collecting statistics over all fields (e.g. value ranges, missing data)
 - Extracting a specific subset of nodes for further processing
@@ -91,7 +91,10 @@ from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
 
 
 class SchemaAwareVisitor(NexusVisitor):
-    """Look up the NexusNode for every field and log its optionality and unit category."""
+    """
+    Example visitor that looks up the NexusNode for every field
+    and logs its optionality and declared unit category.
+    """
 
     def __init__(self, appdef: str) -> None:
         self.logger = logging.getLogger(__name__)
@@ -140,6 +143,7 @@ If your visitor needs to resolve the application definition from the file itself
 ```python
 def on_group(self, hdf_path: str, hdf_node: h5py.Group) -> None:
     if hdf_path == "":
+        # Root group — inspect NXentry children for definition field
         for entry_name in hdf_node:
             entry = hdf_node[entry_name]
             if isinstance(entry, h5py.Group):

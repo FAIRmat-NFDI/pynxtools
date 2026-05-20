@@ -1,98 +1,144 @@
 # Build your own pynxtools plugin
 
-The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any of the provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html). The converter can be extending to support other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](../../reference/built-in-readers.md) as well as [`pynxtools` reader plugins](../../reference/plugins.md) to convert supported data files for some experimental techniques into NeXus-compliant files.
+The `pynxtools` [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) converts experimental data to NeXus/HDF5 files based on any provided [NXDL schema](https://manual.nexusformat.org/nxdl.html). New data formats are supported by writing *readers*, either directly in pynxtools or as separate *plugins*.
 
-Your current data is not supported yet by the built-in `pynxtools` readers or the officially supported `pynxtools` plugins?
+There are [built-in readers](../../reference/built-in-readers.md) for generic use cases and [reader plugins](../../reference/plugins.md) for specific experimental techniques. If your data is not yet covered, this guide shows how to write your own.
 
-Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.
+!!! tip
+    There is a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin. We strongly recommend using it.
 
-## Getting started
+## Repository structure
 
-You should start by creating a clean repository that implements the following structure (for a plugin called ```pynxtools-plugin```):
+Start with a clean repository using this structure (for a plugin called `pynxtools-myplugin`):
 
 ```
-pynxtools-plugin
-├── .github/workflows
-├── docs
-│   ├── explanation
-│   ├── how-tos
-│   ├── reference
-│   ├── tutorial
-├── src
-│   ├── pynxtools_plugin
-│       ├── reader.py
-├── tests
-│   └── data
+pynxtools-myplugin/
+├── .github/workflows/
+├── docs/
+│   ├── explanation/
+│   ├── how-tos/
+│   ├── reference/
+│   └── tutorial/
+├── src/
+│   └── pynxtools_myplugin/
+│       └── reader.py
+├── tests/
+│   └── data/
 ├── LICENSE
 ├── mkdocs.yaml
 └── pyproject.toml
 ```
 
-To identify `pynxtools-plugin` as a plugin for `pynxtools`, an entry point must be established (in the `pyproject.toml` file):
+## Registering the plugin
 
-``` toml title="pyproject.toml"
+To make `pynxtools` discover your reader, declare an entry point in `pyproject.toml`:
+
+```toml title="pyproject.toml"
 [project.entry-points."pynxtools.reader"]
-mydatareader = "pynxtools_plugin.reader:MyDataReader"
+myplugin = "pynxtools_myplugin.reader:MyDataReader"
 ```
 
-Note that it is also possible that your plugin contains multiple readers. In that case, each reader must have its unique entry point.
+The key (`myplugin`) is the name passed to `--reader` on the command line. If your plugin ships multiple readers, each needs its own entry point.
 
-Here, we will focus mostly on the `reader.py` file and how to build a reader. For guidelines on how to build the other parts of your plugin, you can have a look here:
+## Choosing a base class
 
-- [Documentation writing guide](https://nomad-lab.eu/prod/v1/staging/docs/writing_guide.html)
-- [Plugin testing framework](using-pynxtools-test-framework.md)
+| Base class | Use when |
+|---|---|
+| `MultiFormatReader` | You need to handle multiple file formats, use a config/mapping file, or want built-in ELN/metadata callbacks. **Recommended for almost all new readers.** |
+| `BaseReader` | Your format is unusual enough that the `MultiFormatReader` pipeline does not apply. Maximum flexibility, minimum scaffolding. |
 
-<!-- Note: There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin, but this is currently not well-maintained.-->
+## Option A — Building off `MultiFormatReader` (recommended)
 
-## Writing a Reader
-
-After you have established the main structure, you can start writing your reader. The new reader shall be placed in `reader.py`.
-
-Then implement the reader function:
+`MultiFormatReader` provides a structured pipeline: file dispatch by extension, template setup, object handling, config parsing, and post-processing. All new FAIRmat readers extend it.
 
 ```python title="reader.py"
-"""MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
+from typing import Any
+
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
+
+
+class MyDataReader(MultiFormatReader):
+    """Reader for my instrument format."""
+
+    supported_nxdls = ["NXmynxdl"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.extensions = {
+            ".yaml": self.handle_eln_file,
+            ".json": self.set_config_file,
+            # add handlers for your instrument format here
+        }
+
+    # Override only the pipeline hooks you need:
+    # setup_template, handle_objects, post_process,
+    # get_attr, get_data, get_eln_data, get_data_dims
+
+READER = MyDataReader
+```
+
+See the [MultiFormatReader how-to guide](./use-multi-format-reader.md) for a full worked example, and [The MultiFormatReader](../../learn/pynxtools/multi-format-reader.md) for an in-depth explanation of each pipeline stage.
+
+## Option B — Building off `BaseReader`
+
+When `MultiFormatReader` is too prescriptive, implement `read` directly:
+
+```python title="reader.py"
 from typing import Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-class MyDataReader(BaseReader):
-    """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 
-    supported_nxdls = [
-        "NXmynxdl" # this needs to be changed during implementation.
-    ]
+class MyDataReader(BaseReader):
+    """Reader for my instrument format."""
+
+    supported_nxdls = ["NXmynxdl"]
 
     def read(
         self,
         template: dict = None,
         file_paths: tuple[str] = None,
-        objects: tuple[Any] = None
+        objects: tuple[Any] = None,
     ) -> dict:
-        """Reads data from given file and returns a filled template dictionary"""
-        # Here, you must provide functionality to fill the the template, see below.
+        """Read input files and return the filled template."""
         # Example:
-        # template["/entry/instrument/name"] = "my_instrument"
-
+        # template["/ENTRY[entry]/instrument/name"] = "my_instrument"
         return template
 
-
-# This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = MyDataReader
 ```
 
-### The reader template dictionary
+### The `Template` dictionary
 
-The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the NeXus application definition. The template contains keys that match the concepts in the provided NXDL file.
+The `template` parameter is a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) object pre-populated with `None` values for all keys defined in the target NXDL. Keys follow the NXDL bracket notation:
 
-The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file. They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... . Practically you can pass any value that can be handled by the [`h5py` package](https://www.h5py.org/).
+```python
+# Simple field
+template["/ENTRY[entry]/instrument/name"] = "my_instrument"
 
-Example for a template entry:
+# Field with units
+template["/ENTRY[entry]/instrument/source/energy"] = 12.5
+template["/ENTRY[entry]/instrument/source/energy/@units"] = "keV"
+
+# Attribute
+template["/ENTRY[entry]/instrument/@version"] = "1.0"
+
+# HDF5 link
+template["/ENTRY[entry]/data/raw"] = {"link": "/entry/instrument/detector/data"}
+```
+
+Generate an empty template to see all available keys:
+
+```bash
+dataconverter generate-template --nxdl NXmynxdl
+```
+
+#### Group naming
+
+When the NXDL does not fix the group name, the template uses uppercase concept notation:
 
 ```json
-{
-  "/entry/instrument/source/type": "None"
-}
+{ "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type": null }
 ```
 
 For a given NXDL schema, you can generate an empty template with the command
@@ -130,32 +176,16 @@ For attributes defined in the NXDL, the reader template dictionary will have the
 
 #### Units
 
-If there is a field defined in the NXDL, the converter expects a filled in `/data/@units` entry in the template dictionary corresponding to the right `/data` field unless it is specified as `NX_UNITLESS` in the NXDL. Otherwise, a warning will be shown.
+Every field with a unit category in the NXDL requires a corresponding `/@units` entry:
 
 ```json
 {
-  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
-  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
+  "/ENTRY[my_entry]/instrument/source/energy": null,
+  "/ENTRY[my_entry]/instrument/source/energy/@units": null
 }
 ```
 
-#### Links
-
-You can also define links by setting the value to sub dictionary object with key `link`:
-
-```python
-template["/entry/instrument/source"] = {"link": "/path/to/source/data"}
-```
-
-### Building off of the BaseReader
-
-When building off the [`BaseReader`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py), the developer has the most flexibility. Any new reader must implement the `read` function, which must return a filled template object.
-
-### Building off of the MultiFormatReader
-
-While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data.
-
-You can find an extensive how-to guide to build off the `MultiFormatReader` [here](./use-multi-format-reader.md).
+A warning is shown during conversion if the units entry is missing.
 
 ## Calling the reader from the command line
 
@@ -176,3 +206,14 @@ Aside from this default structure, there are many more flags that can be passed 
     :depth: 2
     :style: table
     :list_subcommands: True
+
+
+For the full CLI reference, see [here](../../reference/cli-api.md#data-conversion).
+
+## Testing
+
+Use the `pynxtools` testing framework to write round-trip tests for your reader:
+
+- [Using the pynxtools test framework](./using-pynxtools-test-framework.md)
+- [Running tests in parallel](./run-tests-in-parallel.md)
+

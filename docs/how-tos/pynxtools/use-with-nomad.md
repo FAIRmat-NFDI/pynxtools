@@ -164,7 +164,7 @@ If NOMAD reports a parsing error or your entry shows no data:
 2. **Check the `definition` field** — NOMAD relies on `/entry/definition` (or the definition field in other `NXentry` groups (e.g. `entry1`, `entry2`)) to select the correct schema. Verify it is set and matches a known application definition.
 
 <!-- ```bash
-read_nexus my_data.nxs -d /entry/definition
+pynx read my_data.nxs -d /entry/definition
 ``` -->
 
 3. **Check which parser was selected** — in the NOMAD GUI, go to your entry and open the **LOG** tab. The log shows which parser was invoked and if any warnings or errors were raised.
