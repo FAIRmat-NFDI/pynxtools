@@ -21,22 +21,16 @@
 #
 # For further information, see http://www.nexusformat.org
 -->
-<definition xmlns="http://definition.nexusformat.org/nxdl/3.1"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            category="base"
-            type="group"
-            name="NXlaser"
-            extends="NXsource"
-            xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="base" type="group" name="NXlaser" extends="NXsource" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
     <doc>
         A specialisation of NXsource for coherent laser sources.
-
+        
         Extends NXsource by adding a temporal coherence_length field and
         restricting the inherited type field to the single value "Laser".
         Use this base class in application definitions that require a laser
         as the illumination source.
     </doc>
-    <field name="wavelength" type="NX_FLOAT" units="NX_WAVELENGTH">
+    <field name="wavelength" type="NX_FLOAT">
         <doc>
             Central wavelength of the laser line.
         </doc>
