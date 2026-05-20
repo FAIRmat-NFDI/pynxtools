@@ -101,6 +101,9 @@ The `definition` field with an `<enumeration>` is a convention — it locks the 
 
 From now on, you will exclusively develop this application definition in YAML. As outlined above, there exists a tool [`nyaml`](https://github.com/FAIRmat-NFDI/nyaml) (developed by FAIRmat) that lets you write the NXDL definition in YAML and convert it to NXDL XML.
 
+!!! tip
+    The complete `nyaml` notation reference — all reserved keywords, the `\exists` constraint syntax, `\dimensions`, `\enumeration`, and more — is available at [fairmat-nfdi.github.io/nyaml](https://fairmat-nfdi.github.io/nyaml/).
+
 Install the `nyaml` Python package:
 
 === "uv"
@@ -127,14 +130,14 @@ nyaml2nxdl NXdouble_slit.nxdl.xml --output-file NXdouble_slit.yaml   # →
 Your basic application definition should look like this is the YAML format:
 
 ```yaml
-category: application
-doc: |
+\category: application
+\doc: |
   Application definition for a double-slit interference experiment.
-type: group
+\type: group
 NXdouble_slit(NXobject):
   (NXentry):
-    definition:
-      enumeration: [NXdouble_slit]
+    \definition:
+      \enumeration: [NXdouble_slit]
     title:
     start_time(NX_DATE_TIME):
 ```
@@ -163,8 +166,8 @@ Nest the physical components inside `NXinstrument`. Start with the light source:
     (NXinstrument):
       source(NXsource):
         wavelength(NX_FLOAT):
-          unit: NX_WAVELENGTH
-          doc: |
+          \unit: NX_WAVELENGTH
+          \doc: |
             Central wavelength of the light source.
 ```
 
@@ -185,18 +188,18 @@ Always prefer the most specific class. Add it with an *instance name* that descr
 ```yaml
       double_slit(NXslit):
         x_gap(NX_FLOAT):
-          unit: NX_LENGTH
-          doc: |
+          \unit: NX_LENGTH
+          \doc: |
             Width of each individual slit.
         slit_separation(NX_FLOAT):
-          unit: NX_LENGTH
-          doc: |
+          \unit: NX_LENGTH
+          \doc: |
             Center-to-center distance between the two slits.
         height(NX_FLOAT):
-          unit: NX_LENGTH
-          exists: optional
+          \unit: NX_LENGTH
+          \exists: optional
         material(NX_CHAR):
-          exists: optional
+          \exists: optional
 ```
 
 !!! note "Instance name vs. concept name"
@@ -212,8 +215,8 @@ The detector produces a 2D array. Use `<symbols>` to name the array dimensions a
 Add this block at the top, outside of the class `NXslit`:
 
 ```yaml
-symbols:
-  doc: |
+\symbols:
+  \doc: |
     Dimension symbols used in this definition.
   n_x: |
     Number of detector pixels along x.
@@ -228,38 +231,38 @@ Then add the detector group inside `NXinstrument`:
 ```yaml
       detector(NXdetector):
         distance(NX_FLOAT):
-          unit: NX_LENGTH
-          doc: |
+          \unit: NX_LENGTH
+          \doc: |
             Distance from the slit plane to the detector surface.
         data(NXdata):
-          doc: |
+          \doc: |
             Raw 2D pixel data collected by the detector with no calibration
             applied. This group stores data at the lowest level of processing
             possible, indexed by integer pixel coordinates.
           \@signal:
-            enumeration: [data]
+            \enumeration: [data]
           \@axes:
-            enumeration: [['x', 'y']]
+            \enumeration: [['x', 'y']]
           data(NX_NUMBER):
-            exists: recommended
-            unit: NX_ANY
-            doc: |
+            \exists: recommended
+            \unit: NX_ANY
+            \doc: |
               Raw 2D intensity array indexed by pixel position.
-            dimensions:
-              rank: 2
-              dim: (n_x, n_y)
+            \dimensions:
+              \rank: 2
+              \dim: (n_x, n_y)
           x(NX_INT):
-            doc: |
+            \doc: |
               Pixel indices along the horizontal detector axis (0-based).
-            dimensions:
-              rank: 1
-              dim: (n_x,)
+            \dimensions:
+              \rank: 1
+              \dim: (n_x,)
           y(NX_INT):
-            doc: |
+            \doc: |
               Pixel indices along the vertical detector axis (0-based).
-            dimensions:
-              rank: 1
-              dim: (n_y,)
+            \dimensions:
+              \rank: 1
+              \dim: (n_y,)
 ```
 
 !!! note "Raw data first, processed data separately"
@@ -274,9 +277,9 @@ Three levels express how important a concept is for conformance:
 
 | Level | NXDL | nyaml | What validators do |
 |-------|------|-------|------------|
-| Required | `required="true"` | `required: true` | Fail/warn if absent |
-| Recommended | `recommended="true"` | `recommended: true` | Warn if absent or accept |
-| Optional | `optional="true"` | `optional: true` | Silently accept if absent |
+| Required | *(none)* | `\exists: required` | Fail/warn if absent |
+| Recommended | `recommended="true"` | `\exists: recommended` | Warn if absent or accept |
+| Optional | `optional="true"` | `\exists: optional` | Silently accept if absent |
 
 Note that by default, every concept in a base class is optional (even if none of these keys is written), whereas in application definition, every concept is required, unless it is marked recommended or optional.
 
@@ -305,23 +308,23 @@ Add an optional processing group at the `(NXentry)` level (sibling of `(NXinstru
 
 ```yaml
     processID(NXprocess):
-      nameType: partial
-      exists: optional
-      doc: |
+      \nameType: partial
+      \exists: optional
+      \doc: |
         Describes one step in the processing chain that converts raw detector pixel data to the calibrated interference pattern stored in ``interference_pattern``. The 'ID' suffix in the group name is replaced by a short identifier chosen by the writer, e.g. 'pixel_calibration' or 'background_correction'. Multiple NXprocess groups may be present; their order is given by sequence_index.
       sequence_index(NX_INT):
-        doc: |
+        \doc: |
           Sequence index of processing, for determining the order of multiple
           NXprocess steps. Starts with 1.
       description(NX_CHAR):
-        doc: Free-text description of what this step does.
+        \doc: Free-text description of what this step does.
       program(NX_CHAR):
-        exists: optional
-        doc: Version string of the software.
+        \exists: optional
+        \doc: Version string of the software.
       version(NX_CHAR):
-        exists: optional
+        \exists: optional
       date(NX_DATE_TIME):
-        exists: optional
+        \exists: optional
 ```
 
 ---
@@ -332,35 +335,35 @@ Add an optional processing group at the `(NXentry)` level (sibling of `(NXinstru
 
 ```yaml
     interference_pattern(NXdata):
-      doc: |
+      \doc: |
         Default plot: the calibrated 2D interference pattern with spatial axes. The signal and axes may be linked to the raw detector arrays or derived from it via one or more NXprocess steps.
       \@signal:
-        enumeration: [data]
+        \enumeration: [data]
       \@axes:
-        enumeration: [['x_offset', 'y_offset']]
+        \enumeration: [['x_offset', 'y_offset']]
       data(NX_NUMBER):
-        unit: NX_ANY
-        doc: |
+        \unit: NX_ANY
+        \doc: |
           2D interference intensity after any processing steps.
-        dimensions:
-          rank: 2
-          dim: (n_x, n_y)
+        \dimensions:
+          \rank: 2
+          \dim: (n_x, n_y)
       x_offset(NX_FLOAT):
-        unit: NX_LENGTH
-        doc: |
+        \unit: NX_LENGTH
+        \doc: |
           Horizontal spatial offset from the detector centre, derived from
           pixel index and pixel pitch.
-        dimensions:
-          rank: 1
-          dim: (n_x,)
+        \dimensions:
+          \rank: 1
+          \dim: (n_x,)
       y_offset(NX_FLOAT):
-        unit: NX_LENGTH
-        doc: |
+        \unit: NX_LENGTH
+        \doc: |
           Vertical spatial offset from the detector centre, derived from
           pixel index and pixel pitch.
-        dimensions:
-          rank: 1
-          dim: (n_y,)
+        \dimensions:
+          \rank: 1
+          \dim: (n_y,)
 ```
 
 The axes here are physical lengths (NX_LENGTH), not pixel indices — they represent where each pixel falls in real space after calibration.
@@ -425,17 +428,17 @@ NXdouble_slit(NXobject):
     (NXinstrument):
       source(NXsource):
         wavelength(NX_FLOAT):
-          unit: NX_WAVELENGTH
-          doc: |
+          \unit: NX_WAVELENGTH
+          \doc: |
             Central wavelength of the light source.
         coherence_length(NX_FLOAT):
-          unit: NX_LENGTH
-          exists: recommended
-          doc: |
+          \unit: NX_LENGTH
+          \exists: recommended
+          \doc: |
             Temporal coherence length of the source.
         type(NX_CHAR):
-          exists: optional
-          enumeration: [Laser]
+          \exists: optional
+          \enumeration: [Laser]
 ```
 
 Note that:
@@ -468,7 +471,7 @@ NXdouble_slit(NXobject):
       source(NXlaser):
         wavelength(NX_FLOAT):
         coherence_length(NX_FLOAT):
-          exists: recommended
+          \exists: recommended
 ```
 
 Here, you only need to define whether any of the fields in `NXlaser` are required or recommended. All fields in base classes are optional; in the application definition, all of them are inherited. If we want to require or recommend any of them, we have to explicitly say so.

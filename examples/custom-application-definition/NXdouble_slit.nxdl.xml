@@ -46,7 +46,7 @@
         See https://en.wikipedia.org/wiki/Double-slit_experiment.
     </doc>
     <group type="NXentry">
-        <field name="definition">
+        <field name="\definition">
             <enumeration>
                 <item value="NXdouble_slit"/>
             </enumeration>
