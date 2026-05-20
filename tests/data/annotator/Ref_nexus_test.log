@@ -161,6 +161,7 @@ GROUP /entry [NXentry]  (12 members)
                       ``AXISNAME`` fields will be sequences of numbers but if an axis is better
                       represented using names, such as channel names, an array of NX_CHAR can be
                       provided.
+      @target = /entry/instrument/analyser/angles  [NeXus link]
       @units = 1/Å  [OPTIONAL]
     FIELD /entry/data/data  shape=(80, 146, 195)  dtype=float32
       Dataset referenced as NXdata SIGNAL
@@ -187,6 +188,7 @@ GROUP /entry [NXentry]  (12 members)
                       ``AXISNAME`` fields will be sequences of numbers but if an axis is better
                       represented using names, such as channel names, an array of NX_CHAR can be
                       provided.
+      @target = /entry/instrument/analyser/data  [NeXus link]
       @units = counts  [OPTIONAL]
     FIELD /entry/data/delays  shape=(195,)  dtype=float64
       Dataset referenced as NXdata AXIS #2
@@ -205,6 +207,7 @@ GROUP /entry [NXentry]  (12 members)
                       ``AXISNAME`` fields will be sequences of numbers but if an axis is better
                       represented using names, such as channel names, an array of NX_CHAR can be
                       provided.
+      @target = /entry/instrument/analyser/delays  [NeXus link]
       @units = fs  [OPTIONAL]
     FIELD /entry/data/energies  shape=(146,)  dtype=float64
       Dataset referenced as NXdata AXIS #1
@@ -223,6 +226,7 @@ GROUP /entry [NXentry]  (12 members)
                       ``AXISNAME`` fields will be sequences of numbers but if an axis is better
                       represented using names, such as channel names, an array of NX_CHAR can be
                       provided.
+      @target = /entry/instrument/analyser/energies  [NeXus link]
       @units = eV  [OPTIONAL]
   FIELD /entry/definition  shape=()  dtype=object
     Value     : NXarpes
@@ -312,6 +316,7 @@ GROUP /entry [NXentry]  (12 members)
           NXarpes/ENTRY/INSTRUMENT/analyser/angles
             Doc       : Angular axis of the analyser data which dimension the axis applies to is
                         defined using the normal NXdata methods.
+        @target = /entry/instrument/analyser/angles  [NeXus link]
         @units = 1/Å  [UNIT: NX_ANGLE]
       FIELD /entry/instrument/analyser/contrast_aperture  shape=()  dtype=object
         Value     : Out
@@ -346,10 +351,12 @@ GROUP /entry [NXentry]  (12 members)
                         follow the order of scan points, detector pixels, then time-of-flight (i.e.
                         spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
                         shown here are merely illustrative of coordination between related datasets.
+        @target = /entry/instrument/analyser/data  [NeXus link]
         @units = counts  [UNIT: NX_ANY]
       FIELD /entry/instrument/analyser/delays  shape=(195,)  dtype=float64
         Value     : [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186...
         <NOT IN SCHEMA>
+        @target = /entry/instrument/analyser/delays  [NeXus link]
         @units = fs  [NOT IN SCHEMA]
       FIELD /entry/instrument/analyser/detector_type  shape=()  dtype=object
         Value     : DLD
@@ -364,6 +371,7 @@ GROUP /entry [NXentry]  (12 members)
           NXarpes/ENTRY/INSTRUMENT/analyser/energies
             Doc       : Energy axis of the analyser data which dimension the axis applies to is
                         defined using the normal NXdata methods.
+        @target = /entry/instrument/analyser/energies  [NeXus link]
         @units = eV  [UNIT: NX_ENERGY]
       FIELD /entry/instrument/analyser/entrance_slit_setting  shape=()  dtype=int64
         Value     : 0
@@ -627,10 +635,12 @@ GROUP /entry [NXentry]  (12 members)
       FIELD /entry/instrument/manipulator/sample_bias  shape=()  dtype=int64
         Value     : 29
         <NOT IN SCHEMA>
+        @target = /entry/instrument/manipulator/sample_bias  [NeXus link]
         @units = V  [NOT IN SCHEMA]
       FIELD /entry/instrument/manipulator/sample_temperature  shape=()  dtype=int64
         Value     : 300
         <NOT IN SCHEMA>
+        @target = /entry/instrument/manipulator/sample_temperature  [NeXus link]
         @units = K  [NOT IN SCHEMA]
       FIELD /entry/instrument/manipulator/type  shape=()  dtype=object
         Value     : Hexapod
@@ -910,6 +920,7 @@ GROUP /entry [NXentry]  (12 members)
     FIELD /entry/sample/bias  shape=()  dtype=int64
       Value     : 29
       <NOT IN SCHEMA>
+      @target = /entry/instrument/manipulator/sample_bias  [NeXus link]
       @units = V  [NOT IN SCHEMA]
     FIELD /entry/sample/chem_id_cas  shape=()  dtype=object
       Value     : 12067-46-8
@@ -957,6 +968,7 @@ GROUP /entry [NXentry]  (12 members)
       Concept   : NXarpes/ENTRY/SAMPLE/temperature  [REQUIRED]
       Inheritance:
         NXarpes/ENTRY/SAMPLE/temperature
+      @target = /entry/instrument/manipulator/sample_temperature  [NeXus link]
       @units = K  [UNIT: NX_TEMPERATURE]
     FIELD /entry/sample/thickness  shape=()  dtype=float64
       Value     : 0.5
