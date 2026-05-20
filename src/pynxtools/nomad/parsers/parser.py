@@ -16,13 +16,15 @@
 # limitations under the License.
 #
 
+from typing import Any
+
 import h5py
 import lxml.etree as ET
 import numpy as np
 
 DEBUG_PYNXTOOLS_WITH_NOMAD = False
 
-from pynxtools.nexus.handler import NexusVisitor
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 from pynxtools.nexus.nexus import get_nxdl_doc
 from pynxtools.nexus.utils import decode_if_string
 
@@ -308,6 +310,9 @@ class NomadVisitor(NexusVisitor):
             self._sections[""] = self._nx_root
             return
 
+        # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node);
+        # nxdef  → resolver.appdef_for(hdf_node)
+        # nx_node (ET.Element) → NexusNode returned by the resolver
         hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
         _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
         if nxdl_path is None or nxdl_path == "/":
@@ -322,6 +327,7 @@ class NomadVisitor(NexusVisitor):
 
         group_name = hdf_path.rsplit("/", 1)[-1]
         # depth = 1-indexed position of this group within the nxdl_path list
+        # TODO: depth/nx_path indexing goes away once get_nxdl_doc is replaced by NexusNode
         depth = len(hdf_path.split("/"))
         nx_node = (
             nxdl_path[depth]
@@ -329,6 +335,9 @@ class NomadVisitor(NexusVisitor):
             else group_name
         )
 
+        # TODO: _to_section should accept NexusNode instead of ET.Element;
+        # node.name replaces nx_node.attrib.get("name"),
+        # node.nx_class replaces nx_node.attrib["type"]
         section = _to_section(
             group_name, nxdef_nomad, nx_node, parent_section, self._nx_root
         )
@@ -339,6 +348,8 @@ class NomadVisitor(NexusVisitor):
 
     def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
         """Populate the NOMAD quantity for this HDF5 dataset."""
+        # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node)
+        # and call _populate_field(node, hdf_node, current) directly (no depth, no nx_path)
         hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
         _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
         if nxdl_path is None or nxdl_path == "/":
@@ -359,7 +370,7 @@ class NomadVisitor(NexusVisitor):
         self,
         hdf_path: str,
         attr_name: str,
-        attr_value,
+        attr_value: Any,
         parent: h5py.Group | h5py.Dataset,
     ) -> None:
         """Populate the NOMAD quantity attribute for this HDF5 attribute."""
@@ -367,6 +378,8 @@ class NomadVisitor(NexusVisitor):
             return
 
         hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": parent}
+        # TODO: replace get_nxdl_doc with NexusSchemaResolver.attr_node_for(hdf_path, attr_name, parent)
+        # and call _populate_attribute(node, attr_name, attr_value, current) directly
         req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False, attr=attr_name)
         if not req_str or "NOT IN SCHEMA" in req_str or "None" in req_str:
             return
@@ -409,6 +422,12 @@ class NomadVisitor(NexusVisitor):
     ):
         """
         Populate attributes and fields into the NOMAD archive.
+
+        TODO: split into _populate_field(node: NexusNode, hdf_node, current) and
+        _populate_attribute(node: NexusNode, attr_name, attr_value, current) once
+        get_nxdl_doc is replaced by NexusSchemaResolver.  The depth/nx_path indexing
+        and ET.Element accesses (nx_attr.get("name"), nx_parent.tag.endswith("group"),
+        nx_path[-1].get("name")) all disappear when node: NexusNode is passed directly.
         """
         if attr:  # it is an attribute of either a field or a group
             nx_root = False
