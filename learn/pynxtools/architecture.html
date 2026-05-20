@@ -1203,10 +1203,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#node-type-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node type hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-nexusnode-provides" class="md-nav__link">
     <span class="md-ellipsis">
       
         What NexusNode provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusdefinition-the-tree-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusDefinition — the tree root
       
     </span>
   </a>
@@ -1888,10 +1910,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#node-type-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node type hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-nexusnode-provides" class="md-nav__link">
     <span class="md-ellipsis">
       
         What NexusNode provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusdefinition-the-tree-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusDefinition — the tree root
       
     </span>
   </a>
@@ -2130,20 +2174,111 @@
 </table>
 <p>The separation is deliberate: traversal and I/O live in <code>NexusFileHandler</code>; all domain-specific behavior (annotation, validation, NOMAD parsing) lives in <code>NexusVisitor</code> implementations. This makes every processing mode independently testable and composable.</p>
 <h2 id="the-schema-layer-nexusnode">The schema layer: <code>NexusNode</code><a class="headerlink" href="#the-schema-layer-nexusnode" title="Permanent link">&para;</a></h2>
-<p><code>NexusNode</code> (in <code>pynxtools.nexus.nexus_tree</code>) is an in-memory tree that mirrors an NXDL application definition. Each node corresponds to one group, field, or attribute defined in the XML schema.</p>
+<p><code>NexusNode</code> (in <code>pynxtools.nexus.nexus_tree</code>) is an in-memory tree that mirrors an NXDL application definition. Each node corresponds to one element defined in the XML schema: a definition root, a group, a field, an attribute, a choice, or a link.</p>
+<h3 id="node-type-hierarchy">Node type hierarchy<a class="headerlink" href="#node-type-hierarchy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th><code>nx_type</code></th>
+<th>XSD type</th>
+<th>Represents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NexusDefinition</code></td>
+<td><code>"definition"</code></td>
+<td><code>definitionType</code></td>
+<td>NXDL file root — carries <code>category</code>, <code>symbols</code>, <code>ignore_extra_*</code></td>
+</tr>
+<tr>
+<td><code>NexusGroup</code></td>
+<td><code>"group"</code></td>
+<td><code>groupType</code></td>
+<td>An HDF5 group / NeXus class instance</td>
+</tr>
+<tr>
+<td><code>NexusField</code></td>
+<td><code>"field"</code></td>
+<td><code>fieldType</code></td>
+<td>A dataset — carries <code>unit</code>, <code>long_name</code>, <code>interpretation</code>, and deprecated plotting hints</td>
+</tr>
+<tr>
+<td><code>NexusAttribute</code></td>
+<td><code>"attribute"</code></td>
+<td><code>attributeType</code></td>
+<td>An HDF5 attribute — type and enumeration only, no unit</td>
+</tr>
+<tr>
+<td><code>NexusChoice</code></td>
+<td><code>"choice"</code></td>
+<td><code>choiceType</code></td>
+<td>A <code>&lt;choice&gt;</code> element</td>
+</tr>
+<tr>
+<td><code>NexusLink</code></td>
+<td><code>"link"</code></td>
+<td>—</td>
+<td>A <code>&lt;link&gt;</code> element</td>
+</tr>
+</tbody>
+</table>
+<p><code>NexusField</code> and <code>NexusAttribute</code> share a private base <code>_NexusEntityBase</code> for dtype, enumeration, and shape information.  The distinction matters because <code>unit</code> is a field-only concept in the NeXus XSD (<code>fieldType</code> has a <code>units</code> attribute; <code>attributeType</code> does not).</p>
+<p><code>NexusEntity</code> is a backward-compatible alias for <code>NexusField</code>.  Existing code importing <code>NexusEntity</code> continues to work; new code should import <code>NexusField</code> or <code>NexusAttribute</code> directly.</p>
 <h3 id="what-nexusnode-provides">What <code>NexusNode</code> provides<a class="headerlink" href="#what-nexusnode-provides" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Optionality</strong>: whether a concept is <code>required</code>, <code>recommended</code>, or <code>optional</code>.</li>
-<li><strong>Type information</strong>: NeXus type (e.g. <code>NX_FLOAT</code>) and NeXus Unit category (e.g. <code>NX_ENERGY</code>).</li>
+<li><strong>Type information</strong>: NeXus type (e.g. <code>NX_FLOAT</code>) and, for fields, the unit category (e.g. <code>NX_ENERGY</code>).</li>
 <li><strong>Enumeration values</strong>: closed vs. open enumerations.</li>
 <li><strong>Inheritance chain traversal</strong>: <code>get_inheritance_enums()</code> and <code>get_inheritance_concept_paths()</code> walk the full NeXus inheritance chain and return constraints from every contributing parent class, ordered from the concrete subclass to the most general base class.</li>
 <li><strong>Name resolution</strong>: <code>best_child_for(name, node_type, nx_class)</code> selects the best-matching schema child for a given HDF5 instance name, applying NeXus name-fitting rules. Always returns the first of multiple equally-scoring matches.</li>
 <li><strong>Collection parent detection</strong>: <code>has_nxcollection_parent()</code> checks whether a node lives inside an <code>NXcollection</code> group (which exempts it from required-field checks).</li>
 </ul>
+<h3 id="nexusdefinition-the-tree-root"><code>NexusDefinition</code> — the tree root<a class="headerlink" href="#nexusdefinition-the-tree-root" title="Permanent link">&para;</a></h3>
+<p><code>generate_tree_from</code> returns a <code>NexusDefinition</code> node (not a generic <code>NexusGroup</code>).  It exposes the metadata declared at the top of every NXDL file:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>category</code></td>
+<td><code>"base"</code> or <code>"application"</code></td>
+<td><code>&lt;definition category="..."&gt;</code></td>
+</tr>
+<tr>
+<td><code>symbols</code></td>
+<td><code>dict[str, str]</code></td>
+<td><code>&lt;symbols&gt;/&lt;symbol&gt;</code> block</td>
+</tr>
+<tr>
+<td><code>ignore_extra_groups</code></td>
+<td><code>bool</code></td>
+<td><code>ignoreExtraGroups="true"</code></td>
+</tr>
+<tr>
+<td><code>ignore_extra_fields</code></td>
+<td><code>bool</code></td>
+<td><code>ignoreExtraFields="true"</code></td>
+</tr>
+<tr>
+<td><code>ignore_extra_attributes</code></td>
+<td><code>bool</code></td>
+<td><code>ignoreExtraAttributes="true"</code></td>
+</tr>
+</tbody>
+</table>
 <h3 id="generating-a-tree">Generating a tree<a class="headerlink" href="#generating-a-tree" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.nexus_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_tree_from</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.nexus_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">NexusDefinition</span><span class="p">,</span> <span class="n">generate_tree_from</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">root</span><span class="p">:</span> <span class="n">NexusNode</span> <span class="o">=</span> <span class="n">generate_tree_from</span><span class="p">(</span><span class="s2">&quot;NXarpes&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">root</span><span class="p">:</span> <span class="n">NexusDefinition</span> <span class="o">=</span> <span class="n">generate_tree_from</span><span class="p">(</span><span class="s2">&quot;NXarpes&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">category</span><span class="p">)</span>   <span class="c1"># &quot;application&quot;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">symbols</span><span class="p">)</span>    <span class="c1"># {&quot;nP&quot;: &quot;...&quot;, ...}</span>
 </code></pre></div>
 <p><code>generate_tree_from</code> resolves the full inheritance chain at build time, so every child node already contains the merged constraints from all contributing base classes.</p>
 <h2 id="the-traversal-layer-nexusfilehandler">The traversal layer: <code>NexusFileHandler</code><a class="headerlink" href="#the-traversal-layer-nexusfilehandler" title="Permanent link">&para;</a></h2>
@@ -2245,7 +2380,7 @@
 <tbody>
 <tr>
 <td><code>appdef_for(hdf_node)</code></td>
-<td>Walk up the HDF5 tree to find the <code>NXentry/definition</code> governing this node</td>
+<td>Walk up the HDF5 tree to find the <code>NXentry/definition</code> value; returns <code>str</code> or <code>None</code> if no <code>NXentry</code> ancestor exists</td>
 </tr>
 <tr>
 <td><code>tree_for(appdef)</code></td>
@@ -2290,8 +2425,8 @@
 <a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>              │  node_for(hdf_path, hdf_node)
 <a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>              ▼
 <a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    NexusSchemaResolver
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    ├─ appdef_for(hdf_node) ──► NXentry/definition
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    ├─ tree_for(appdef)  ─────► NexusNode tree (cached)
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    ├─ appdef_for(hdf_node) ──► NXentry/definition (str | None)
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    ├─ tree_for(appdef)  ─────► NexusDefinition root (cached)
 <a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    │                           (built from NXDL via generate_tree_from)
 <a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    └─ resolve_path(tree, ...) ► NexusNode (cached per path)
 </code></pre></div>
