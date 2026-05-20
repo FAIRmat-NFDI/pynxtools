@@ -138,6 +138,7 @@ hashvalue
 hdfdict
 hdfgroup
 hdfobject
+hdfpath
 hfive
 hixu
 hyperslab
@@ -212,6 +213,7 @@ oned
 optionalities
 orcid
 otherfile
+otypes
 oxidising
 pathtovalidate
 plottable
@@ -269,4 +271,3 @@ ylabel
 zaxis
 zenodo
 zstd
-otypes

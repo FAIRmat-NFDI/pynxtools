@@ -93,7 +93,9 @@ The root group itself is dispatched as a group with `hdf_path = ""`.
 
 ## The processing layer: `NexusVisitor`
 
-`NexusVisitor` (in `pynxtools.nexus.handler`) is the extension point. It is an abstract base class (`ABC`) that declares four hooks. All four must be implemented by concrete subclasses; hooks that are not meaningful for a particular visitor should be implemented as `pass`.
+`NexusVisitor` (in `pynxtools.nexus.handler`) is the extension point. It is an abstract base class (`ABC`) that declares four mandatory hooks and two optional hooks.
+
+The four mandatory hooks must be implemented by every concrete subclass; implement hooks that are not meaningful as `pass`:
 
 ```python
 from abc import ABC, abstractmethod
@@ -117,11 +119,19 @@ class NexusVisitor(ABC):
     def on_complete(self, root: h5py.File) -> None: ...
 ```
 
+Two optional hooks have default no-op implementations and may be overridden:
+
+| Hook | When called |
+|------|-------------|
+| `on_broken_link(hdf_path, link)` | A soft or external link cannot be resolved; the broken node is skipped. |
+| `on_external_link(hdf_path, link)` | An external link is encountered, *before* the handler opens the external file. |
+
 ### Built-in visitor implementations
 
 | Visitor | Module | CLI tool | Purpose |
 |---|---|---|---|
 | `Annotator` | `pynxtools.annotator.annotator` | `pynx read` | Logs NXDL documentation for every node in a NeXus file |
+| `ValidationVisitor` | `pynxtools.dataconverter.validation` | `pynx validate` | Checks every node against its NXDL constraints |
 | `NomadVisitor` | `pynxtools.nomad.parsers.parser` | `nomad parse` | Populates the NOMAD archive from a NeXus file |
 
 All built-in visitors are interchangeable in `NexusFileHandler`. Switching the visitor changes what happens to each node; the traversal is identical.
@@ -186,6 +196,19 @@ Three operating modes are supported:
 - **`-d` (documentation)**: annotate only the single node at a given HDF5 path.
 - **`-c` (concept)**: find all HDF5 nodes that implement a given NXDL concept path.
 
+### `pynx validate` — the validator
+
+`validate` creates a `ValidationVisitor` and passes it to `NexusFileHandler`. The validator checks:
+
+- required, recommended, and optional fields are present where expected,
+- field values conform to their `NexusType` and unit category,
+- enumeration values are in-range (warnings for closed enumerations, info for open),
+- `NXdata` signal and axis dimensionality rules are satisfied,
+- HDF5 links resolve correctly and carry a `@target` attribute; broken soft or external links are reported as `BrokenLink` problems,
+- reserved suffixes and prefixes are used in valid contexts.
+
+Validation state accumulates across callbacks and the summary report is emitted in `on_complete`.
+
 ## Data flow summary
 
 ```
@@ -194,12 +217,14 @@ HDF5 file
     ▼
 NexusFileHandler.process(visitor)
     │
-    ├─ on_group  ─────────┐
-    ├─ on_field  ──────────┤ NexusVisitor
-    ├─ on_attribute ───────┤  (Annotator / NomadVisitor / custom)
-    └─ on_complete ────────┘
+    ├─ on_group  ───────────┐
+    ├─ on_field  ───────────┤ NexusVisitor
+    ├─ on_attribute ────────┤  (Annotator / NomadVisitor / custom)
+    ├─ on_broken_link ──────┤  (optional — default no-op)
+    ├─ on_external_link ────┤  (optional — default no-op)
+    └─ on_complete ─────────┘
               │
-              │  node_for(hdf_path, hdf_node)
+              │  node_for(hdf_path, hdf_node) ──► NexusNode lookup (per node)
               ▼
     NexusSchemaResolver
     ├─ appdef_for(hdf_node) ──► NXentry/definition (str | None)
