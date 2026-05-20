@@ -23,8 +23,11 @@ import copy
 import importlib.util
 import logging
 import os
+import re
 import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
+from typing import Optional
 
 import blosc2
 import h5py
@@ -46,6 +49,8 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
 )
+from pynxtools.nexus.nexus_tree import NexusNode, generate_tree_from
+from pynxtools.nexus.schema_resolver import resolve_path
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
@@ -234,6 +239,51 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
         return None
 
 
+_RST_ROLE = re.compile(r":\w+:`([^`]+)`")  # :ref:`target` → target
+_RST_CODE = re.compile(r"``([^`]+)``")  # ``code`` → code
+_RST_LINK = re.compile(r"`([^`]+)\s*<[^>]+>`__?")  # `text <url>`_ → text
+_RST_REF = re.compile(r"`([^`]+)`__?")  # `text`_ → text
+_RST_BOLD = re.compile(r"\*\*([^*]+)\*\*")  # **bold** → bold
+_RST_ITALIC = re.compile(r"\*([^*]+)\*")  # *italic* → italic
+_RST_DIRECTIVE = re.compile(r"^\.\. \S[^\n]*$", re.MULTILINE)  # .. directive:: args
+_RST_UNDERLINE = re.compile(r"^[=\-~^#*+]{3,}\s*$", re.MULTILINE)  # heading underlines
+
+
+def _strip_rst(text: str) -> str:
+    """Strip RST markup and reflow to a single-line plain prose string.
+
+    Designed for h5web, which renders newlines as literal \\n.
+    Paragraphs are joined with a single space so the result is one
+    continuous string with no embedded newlines.
+    """
+    text = _RST_DIRECTIVE.sub("", text)
+    text = _RST_UNDERLINE.sub("", text)
+    text = _RST_ROLE.sub(r"\1", text)
+    text = _RST_CODE.sub(r"\1", text)
+    text = _RST_LINK.sub(r"\1", text)
+    text = _RST_REF.sub(r"\1", text)
+    text = _RST_BOLD.sub(r"\1", text)
+    text = _RST_ITALIC.sub(r"\1", text)
+    # Reflow: each paragraph becomes one line; paragraphs joined with a space
+    paragraphs = re.split(r"\n{2,}", text)
+    reflowed = [
+        " ".join(line.strip() for line in para.splitlines() if line.strip())
+        for para in paragraphs
+    ]
+    return " ".join(p for p in reflowed if p).strip()
+
+
+def _format_doc(text: str, fmt: str) -> str:
+    """Format a NeXus RST docstring for storage as an HDF5 string attribute.
+
+    ``'default'`` keeps raw RST (most compact, readable in h5web).
+    ``'plain'`` strips RST markup to clean prose.
+    """
+    if fmt == "plain":
+        return _strip_rst(text)
+    return text.strip()
+
+
 class Writer:
     """The writer class for writing a NeXus file in accordance with a given NXDL.
 
@@ -277,6 +327,9 @@ class Writer:
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
         self.append = append
+        self.write_docs: bool = False
+        self.docs_format: str = "default"
+        self._nexus_tree: NexusNode | None = None
 
     def has_content_cued_for_compression(self) -> str:
         """Check if template has some data that require blosc storage."""
@@ -291,6 +344,89 @@ class Writer:
                     else:
                         return DEFAULT_COMPRESSION_FILTER
         return "no_compression"
+
+    def _get_nexus_tree(self) -> NexusNode | None:
+        """Return (and lazily build) the NexusNode tree for the current appdef."""
+        if self._nexus_tree is None:
+            appdef = Path(self.nxdl_f_path).name.split(".")[0]
+            try:
+                self._nexus_tree = generate_tree_from(appdef)
+            except Exception:
+                self._nexus_tree = None
+        return self._nexus_tree
+
+    def __nxdl_docs(self, path: str) -> tuple[str | None, str | None]:
+        """Return ``(doc_text, docs_url)`` for the NeXus concept at *path*.
+
+        Uses the same inheritance logic as the Annotator: collects all levels of
+        the NexusNode inheritance chain that carry a non-None doc.  The URL is
+        taken from ``node.get_link()`` and points to the online NeXus manual entry
+        for the most specific concept that defines this node.
+
+        Returns ``(None, None)`` when docs are disabled or the node cannot be resolved.
+        """
+        if not self.write_docs:
+            return None, None
+
+        nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
+        tree = self._get_nexus_tree()
+        if tree is None:
+            return None, None
+
+        last_segment = nxdl_path.split("/")[-1]
+
+        if "@" in last_segment:
+            # Attribute path: e.g. /ENTRY/definition/@version or /ENTRY/definition@version
+            parent_nxdl, attr_name = nxdl_path.rsplit("@", 1)
+            parent_rel = parent_nxdl.strip("/") or None
+            parent_node = resolve_path(tree, parent_rel) if parent_rel else tree
+            node = (
+                parent_node.best_child_for(attr_name, node_type="attribute")
+                if parent_node is not None
+                else None
+            )
+            extra_pairs: list[tuple[str, str]] = []
+        else:
+            rel_path = nxdl_path.lstrip("/")
+            node = resolve_path(tree, rel_path) if rel_path else tree
+            # For the top-level ENTRY group, also include the appdef root doc
+            extra_pairs = []
+            if nxdl_path == "/ENTRY":
+                extra_pairs = [
+                    (src, doc)
+                    for src, doc in tree.get_inheritance_concept_paths()
+                    if doc
+                ]
+
+        if node is None and not extra_pairs:
+            return None, None
+
+        concept_doc_pairs: list[tuple[str, str]] = list(extra_pairs)
+        if node is not None:
+            for concept_label, doc_text in node.get_inheritance_concept_paths():
+                if doc_text:
+                    concept_doc_pairs.append((concept_label, doc_text))
+
+        if not concept_doc_pairs:
+            return None, None
+
+        try:
+            url: str | None = node.get_link() if node is not None else None
+        except Exception:
+            url = None
+
+        if self.docs_format == "plain":
+            # h5web renders \n literally — use inline separators instead
+            sections = [
+                f"{label}: {_format_doc(doc, self.docs_format)}"
+                for label, doc in concept_doc_pairs
+            ]
+            return " | ".join(sections), url
+        sections = [
+            f"{label}\n{_format_doc(doc, self.docs_format)}"
+            for label, doc in concept_doc_pairs
+        ]
+        return "\n\n".join(sections), url
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -353,6 +489,13 @@ class Writer:
                             logger.error(
                                 f"No attribute 'NX_class' could be written for {parent_path}."
                             )
+
+                    docs, docs_url = self.__nxdl_docs(parent_path)
+                    if docs:
+                        grp.attrs["docs"] = docs
+                    if docs_url:
+                        grp.attrs["docs_url"] = docs_url
+
                     return grp
                 else:
                     if self.append:
@@ -405,6 +548,12 @@ class Writer:
                                     path,
                                     append=self.append,
                                 )
+                                if dataset is not None:
+                                    docs, docs_url = self.__nxdl_docs(path)
+                                    if docs:
+                                        dataset.attrs["docs"] = docs
+                                    if docs_url:
+                                        dataset.attrs["docs_url"] = docs_url
                             else:
                                 hdf5_links_for_later.append(
                                     [data, grp, entry_name, self.output_path, path]
@@ -422,6 +571,11 @@ class Writer:
                                         dataset = grp.create_dataset(
                                             entry_name, data=data
                                         )
+                                    docs, docs_url = self.__nxdl_docs(path)
+                                    if docs:
+                                        dataset.attrs["docs"] = docs
+                                    if docs_url:
+                                        dataset.attrs["docs_url"] = docs_url
                                 except ValueError:
                                     logger.warning(
                                         f"ValueError caught upon create_dataset {path}"
@@ -477,13 +631,19 @@ class Writer:
                         path, self.data.undocumented.keys()
                     )
                     if isinstance(dataset_or_group, (h5py.Group, h5py.Dataset)):
-                        if entry_name[1:] not in dataset_or_group.attrs:
-                            dataset_or_group.attrs[entry_name[1:]] = data
+                        attr_name = entry_name[1:]
+                        if attr_name not in dataset_or_group.attrs:
+                            dataset_or_group.attrs[attr_name] = data
                         else:
                             if self.append:
                                 logger.info(
                                     f"Prevented the overwriting of attribute {path}"
                                 )
+                        docs, docs_url = self.__nxdl_docs(path)
+                        if docs:
+                            dataset_or_group.attrs[f"{attr_name}_docs"] = docs
+                        if docs_url:
+                            dataset_or_group.attrs[f"{attr_name}_docs_url"] = docs_url
                     else:
                         logger.warning(
                             f"Unable to get_parent_node {path}, skip adding attribute to dataset_or_group"
@@ -495,8 +655,16 @@ class Writer:
                     f"with the following message: {str(exc)}"
                 ) from exc
 
-    def write(self):
-        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+    def write(self, write_docs: bool = False, docs_format: str = "default") -> None:
+        """Writes the NeXus file with previously validated data from the reader with NXDL attrs.
+
+        Args:
+            write_docs: When True, embed NeXus concept docstrings as ``@docs`` attributes on
+                each HDF5 group/field, and as ``@<attr>_docs`` attributes alongside HDF5 attrs.
+            docs_format: ``"default"`` keeps raw RST; ``"plain"`` strips markup to clean prose.
+        """
+        self.write_docs = write_docs
+        self.docs_format = docs_format
         compression = self.has_content_cued_for_compression()
         if compression in COMPRESSION_FILTERS:
             logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
