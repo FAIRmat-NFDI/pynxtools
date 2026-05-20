@@ -41,8 +41,7 @@ import logging
 import os
 import re
 import textwrap
-from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import Any
 
 import h5py
 
@@ -60,7 +59,7 @@ class Annotator(NexusVisitor):
 
     Implements the same ``on_group`` / ``on_field`` / ``on_attribute`` /
     ``on_complete`` interface as every other `NexusVisitor`, making it
-    interchangeable with `ValidationVisitor` and future visitors.
+    interchangeable with `ValidationVisitor` and `NomadVisitor`.
 
     Parameters
     ----------
@@ -72,9 +71,6 @@ class Annotator(NexusVisitor):
     concept:
         If set, collect all HDF5 paths whose schema IS-A the given NXDL
         concept path (``-c`` mode).  Results are logged in `on_complete`.
-    parser:
-        Optional callback invoked for every field and attribute that is
-        present in the schema.  Used by the NOMAD parser (legacy interface).
     """
 
     def __init__(
@@ -82,12 +78,10 @@ class Annotator(NexusVisitor):
         logger,
         documentation: str | None = None,
         concept: str | None = None,
-        parser: Callable | None = None,
     ) -> None:
         self.logger = logger
         self.documentation = documentation
         self.concept = concept
-        self.parser = parser
         self._concept_matches: list[str] = []
         self._resolver = NexusSchemaResolver()
 
@@ -109,29 +103,6 @@ class Annotator(NexusVisitor):
         elif self.concept is not None:
             self._handle_concept_query(hdf_path, hdf_node)
 
-        elif self.parser is not None:
-            val = (
-                str(decode_if_string(hdf_node[()])).split("\n")
-                if len(hdf_node.shape) <= 1
-                else str(decode_if_string(hdf_node[0])).split("\n")
-            )
-
-            # Legacy NOMAD callback: still uses the old nxdl_path (list[ET.Element])
-            # interface. This will be replaced when NomadVisitor is implemented.
-            hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
-            from pynxtools.nexus.nexus import get_nxdl_doc
-
-            _, nxdef, nxdl_path_doc = get_nxdl_doc(hdf_info, doc=False)
-            self.parser(
-                {
-                    "hdf_info": hdf_info,
-                    "nxdef": nxdef,
-                    "nxdl_path": nxdl_path_doc,
-                    "val": val,
-                    "logger": self.logger,
-                }
-            )
-
     def on_attribute(
         self,
         hdf_path: str,
@@ -143,37 +114,8 @@ class Annotator(NexusVisitor):
         if self._should_annotate(hdf_path):
             self._annotate_attribute(hdf_path, attr_name, attr_value, parent)
 
-        elif self.parser is not None:
-            attr_node = self._resolver.attr_node_for(hdf_path, attr_name, parent)
-            in_schema = attr_node is not None
-            if in_schema:
-                val = str(decode_if_string(attr_value)).split("\n")
-
-                # Legacy NOMAD callback: still uses the old nxdl_path interface.
-                # This will be replaced when NomadVisitor is implemented.
-                hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": parent}
-                from pynxtools.nexus.nexus import get_nxdl_doc
-
-                req_str, nxdef, nxdl_path = get_nxdl_doc(
-                    hdf_info, doc=False, attr=attr_name
-                )
-                if req_str and "NOT IN SCHEMA" not in req_str and "None" not in req_str:
-                    self.parser(
-                        {
-                            "hdf_info": hdf_info,
-                            "nxdef": nxdef,
-                            "nxdl_path": nxdl_path,
-                            "val": val,
-                            "logger": self.logger,
-                        },
-                        attr=attr_name,
-                    )
-
     def on_complete(self, root: h5py.File) -> None:
         """Post-traversal: log -c results or print the default plottable."""
-        if self.parser:
-            return
-
         if self.concept is not None:
             for hdf_path in self._concept_matches:
                 self.logger.info(hdf_path)
@@ -188,8 +130,6 @@ class Annotator(NexusVisitor):
 
     def _should_annotate(self, hdf_path: str) -> bool:
         """Return True if *hdf_path* should be annotated in the current mode."""
-        if self.parser:
-            return False
         if self.documentation is None and self.concept is None:
             return True
         if self.documentation is not None and hdf_path in (
