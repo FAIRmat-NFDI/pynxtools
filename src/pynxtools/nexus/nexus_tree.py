@@ -151,9 +151,9 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
 
 def _select_best_namefit(
     name: str,
-    nodes: list["NexusNode"],
+    nodes: list["NexusNode"],  # TODO: list[NexusNode] when py3.10 support is deprecated
     hint: str | None = None,
-) -> Optional["NexusNode"]:
+) -> Optional["NexusNode"]:  # TODO: NexusNode | None when py3.10 support is deprecated
     """Select the best-fitting variadic NexusNode for an HDF5 node named *name*.
 
     Scores each node in *nodes* with :func:`get_nx_namefit` and returns the
@@ -189,7 +189,7 @@ def _select_best_namefit(
 
         if score not in score_board:
             score_board[score] = {"required": [], "recommended": [], "optional": []}
-        for constraint in ("optional", "required", "recommended"):
+        for constraint in ("required", "recommended", "optional"):
             if node.optionality == constraint:
                 score_board[score][constraint].append(idx)
                 break
@@ -645,7 +645,7 @@ class NexusNode(NodeMixin):
             if node is not None and not node.variadic and name == node.name:
                 return node
 
-        variadic = [n for n in children if n is not None and n.variadic]
+        variadic = [node for node in children if node is not None and node.variadic]
         return _select_best_namefit(name, variadic, hint)
 
     def get_docstring(self, depth: int | None = None) -> dict[str, str]:

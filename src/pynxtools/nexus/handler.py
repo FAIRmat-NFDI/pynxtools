@@ -309,12 +309,12 @@ class NexusFileHandler:
         # soft links and external links can be dispatched to the visitor rather
         # than crashing (h5py returns None for a broken soft link in .items()).
         if isinstance(hdf_node, h5py.Group):
-            for ch_name in hdf_node:
-                full_name = ch_name if not name else f"{name}/{ch_name}"
-                link = hdf_node.get(ch_name, getlink=True)
+            for child_name in hdf_node:
+                full_name = child_name if not name else f"{name}/{child_name}"
+                link = hdf_node.get(child_name, getlink=True)
 
                 if isinstance(link, h5py.SoftLink):
-                    child = hdf_node.get(ch_name)  # None when target is missing
+                    child = hdf_node.get(child_name)  # None when target is missing
                     if child is None:
                         visitor.on_broken_link(full_name, link)
                         continue
@@ -326,6 +326,6 @@ class NexusFileHandler:
                     self._traverse_external(full_name, link, visitor)
 
                 else:  # HardLink (or any future link type)
-                    child = hdf_node[ch_name]
+                    child = hdf_node[child_name]
                     if self._not_yet_visited(root, full_name):
                         self._full_visit(root, child, full_name, visitor)
