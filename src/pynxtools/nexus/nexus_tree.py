@@ -275,9 +275,9 @@ class NexusNode(NodeMixin):
     }
 
     def _set_deprecated(self) -> None:
-        """Set deprecated string from the primary XML element."""
+        """Read the ``deprecated`` attribute from the first element in the inheritance chain."""
         if self.inheritance:
-            self.deprecated = self.inheritance[0].attrib.get("deprecated") or None
+            self.deprecated = self.inheritance[0].attrib.get("deprecated")
 
     def _set_optionality(self):
         """
@@ -1034,6 +1034,7 @@ class NexusDefinition(NexusNode):
         super().__init__(nx_type=self.nx_type, **data)
         self.symbols = {}
         self._set_definition_attrs()
+        self._set_deprecated()
 
 
 class NexusChoice(NexusNode):
@@ -1228,6 +1229,7 @@ class NexusGroup(NexusNode):
         self.nx_class = nx_class
         self._set_occurrence_limits()
         self._set_optionality()
+        self._set_deprecated()
         self._check_sibling_namefit()
 
 
@@ -1523,7 +1525,7 @@ class _NexusEntityBase(NexusNode):
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
-        self._set_field_attrs()
+        self._set_deprecated()
 
 
 class NexusAttribute(_NexusEntityBase):
