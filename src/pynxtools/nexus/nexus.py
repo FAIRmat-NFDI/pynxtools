@@ -19,7 +19,7 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 
-# TODO: this module is marked for deprecated, remove when NomadVisitor exists
+# TODO: this module is marked for deprecation, remove when NomadVisitor uses NexusNode
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
     check_attr_name_nxdl,
@@ -43,9 +43,9 @@ _logger = logging.getLogger(__file__)
 
 
 def get_nxdl_entry(hdf_info):
-    """Get the nxdl application definition for an HDF5 node.
+    """Get the NXDL application definition for an HDF5 node.
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     entry = hdf_info
     if (
@@ -71,7 +71,7 @@ def get_nxdl_entry(hdf_info):
 def get_nx_class_path(hdf_info):
     """Get the full path of an HDF5 node using nexus classes; end with the field name.
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     hdf_node = hdf_info["hdf_node"]
     if hdf_node.name == "/":
@@ -100,7 +100,7 @@ def _check_deprecation_enum_axis(
 ):
     """Check for several attributes. - deprecation - enums - nxdata_axis
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     logger = logger or _logger
 
@@ -140,9 +140,9 @@ def _get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
     hdf_info,
     logger: logging.Logger | None = None,
 ):
-    """Get nxdl documentation for an attribute.
+    """Get NXDL documentation for an attribute.
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     logger = logger or _logger
 
@@ -221,7 +221,7 @@ def _get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
 
 
 def get_nxdl_doc(hdf_info, doc, attr=False, logger: logging.Logger | None = None):
-    """Get nxdl documentation for an HDF5 node (or its attribute).
+    """Get NXDL documentation for an HDF5 node (or its attribute).
 
     .. deprecated::
         Uses the legacy XML-element traversal approach.  This function exists
@@ -281,7 +281,7 @@ def get_nxdl_doc(hdf_info, doc, attr=False, logger: logging.Logger | None = None
 def _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
     """find the best fitting name in all children.
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     hdf_path, hdf_node, hdf_class_path = hdf_info2
     hdf_name = hdf_path[path_index]
@@ -308,7 +308,7 @@ def _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
 def _get_hdf_path(hdf_info):
     """Get the hdf_path from an hdf_info
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     if "hdf_path" in hdf_info:
         return hdf_info["hdf_path"].split("/")[1:]
@@ -326,7 +326,7 @@ def _get_inherited_hdf_nodes(
 ):
     """Returns a list of ET._Element for the given path.
 
-    .. deprecated:: Will be removed with the rest of this module when NomadVisitor lands.
+    .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """
     # let us start with the given definition file
     if hdf_node is None:
@@ -374,8 +374,28 @@ def _get_inherited_hdf_nodes(
 
 
 #: Backward-compatibility alias — new code should use ``_get_inherited_hdf_nodes``.
-# TODO: remove when NomadVisitor exists
+# TODO: deprecated, remove when NomadVisitor uses NexusNode
 get_inherited_hdf_nodes = _get_inherited_hdf_nodes
+
+
+def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
+    """Return list of NXDL concept paths for a NXDL element which corresponds to
+    hdf node.
+
+    .. deprecated::
+        This function uses the legacy XML-element traversal approach.
+        The ``-c`` / concept-query code path in :class:`~.annotation.Annotator`
+        is the only first-party caller and should be migrated to use
+        :class:`~.nexus_tree.NexusNode` directly.
+    """
+    hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
+    (_, _, elem_list) = _get_inherited_hdf_nodes(
+        nx_name=get_nxdl_entry(hdf_info),
+        hdf_node=hdf_node,
+        hdf_path=hdf_info["hdf_path"] if "hdf_path" in hdf_info else None,
+        hdf_root=hdf_info["hdf_root"] if "hdf_root" in hdf_info else None,
+    )
+    return elem_list
 
 
 class HandleNexus:
