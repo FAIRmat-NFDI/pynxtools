@@ -26,10 +26,9 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo.basesections import ActivityResult
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Bytes, Datetime
+from nomad.metainfo import Quantity, Section
 
-from pynxtools.nomad.annotations import NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusQuantity
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -211,10 +210,9 @@ class Data(ActivityResult):
     """
 
     m_def = Section(
-        a_nexus_group=NeXusGroup(
+        a_nexus_definition=NeXusDefinition(
             nx_class="NXdata",
             category="base",
-            optionality="optional",
             ignore_extra_fields=True,
             ignore_extra_attributes=True,
             symbols={
