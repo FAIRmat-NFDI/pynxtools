@@ -272,7 +272,7 @@ def _get_field_stats_iuf_contiguous(hdf_node) -> dict:
 
 class NomadVisitor(NexusVisitor):
     """
-    NexusVisitor that populates a NOMAD archive from a NeXus/HDF5 file.
+    Specialized NexusVisitor that populates a NOMAD archive from a NeXus/HDF5 file.
 
     Implements the full visitor interface, maintaining a ``_sections`` cache
     (``hdf_path → MSection``) that is populated in ``on_group``.  ``on_field``
@@ -347,7 +347,7 @@ class NomadVisitor(NexusVisitor):
         self._sections[hdf_path] = section
 
     def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
-        """Populate the NOMAD quantity for this HDF5 dataset."""
+        """Populate the NOMAD Metainfo quantity for this HDF5 dataset."""
         # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node)
         # and call _populate_field(node, hdf_node, current) directly (no depth, no nx_path)
         hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}

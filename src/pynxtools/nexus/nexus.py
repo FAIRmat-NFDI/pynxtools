@@ -559,7 +559,7 @@ class HandleNexus:
         self._handler = NexusFileHandler(nexus_file, is_open=is_open)
 
     def process_nexus_master_file(self, parser=None):
-        """Process a nexus master file by processing all its nodes and their attributes.
+        """Process a NeXus/HDF5 master file by processing all its nodes and their attributes.
 
         The *parser* argument is ignored — the NOMAD parser now uses
         ``NomadVisitor`` directly instead of the legacy callback interface.
