@@ -179,7 +179,7 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
                 archive.data.ENTRY[0]
                 .measurement.eventID[0]
                 .imageID[0]
-                .stack_2d.m_to_dict()["DATA__field"]["real__field"]["m_value"],
+                .stack_2d.m_to_dict()["real__field"]["real__field"]["m_value"],
                 dtype=data_type,
             ).item()
         else:

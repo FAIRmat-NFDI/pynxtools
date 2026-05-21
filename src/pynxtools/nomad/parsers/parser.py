@@ -19,13 +19,14 @@
 from typing import Any
 
 import h5py
-import lxml.etree as ET
 import numpy as np
 
 DEBUG_PYNXTOOLS_WITH_NOMAD = False
 
+from pynxtools.annotator.nxdata import chk_nxdata_axis
 from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
-from pynxtools.nexus.nexus import get_nxdl_doc
+from pynxtools.nexus.nexus_tree import NexusField, NexusGroup, NexusNode
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nexus.utils import decode_if_string
 
 try:
@@ -38,6 +39,7 @@ try:
     from nomad.metainfo.util import MQuantity, resolve_variadic_name
     from nomad.parsing import MatchingParser
     from nomad.utils import get_logger
+    from pint import Unit
     from pint.errors import UndefinedUnitError
 except ImportError as exc:
     raise ImportError(
@@ -46,70 +48,53 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema_packages.schema as nexus_schema
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import decode_or_not
-from pynxtools.nomad import FIELD_STATISTICS, REPLACEMENT_FOR_NX, get_quantity_base_name
+from pynxtools.nomad import FIELD_STATISTICS, get_quantity_base_name
 from pynxtools.nomad import _rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.units import ureg
-
-
-def _to_group_name(nx_node: ET._Element):
-    """
-    Normalize the given group name
-    """
-    # assuming always upper() is incorrect, e.g. NXem_msr is a specific one not EM_MSR!
-    grp_nm = nx_node.attrib.get("name", nx_node.attrib["type"][2:].upper())
-
-    return grp_nm
-
-
-def _make_hdf_info(hdf_path: str, hdf_node: Any) -> dict[str, Any]:
-    """Create metadata describing an HDF node and its absolute path."""
-    return {"hdf_path": f"/{hdf_path}", "hdf_node": hdf_node}
 
 
 # noinspection SpellCheckingInspection
 def _to_section(
     hdf_name: str | None,
     nx_def: str,
-    nx_node: ET.Element | None,  # noqa: UP045
+    nx_node: NexusNode | None,
     current: MSection,
     nx_root,
 ) -> MSection:
     """
-    Args:
-        hdf_name : name of the hdf group/field/attribute (None for definition)
-        nx_def : application definition
-        nx_node : node in the nxdl.xml
-        current : current section in which the new entry needs to be picked up from
+    Navigate to (or create) the NOMAD MSection for the given NXDL node.
 
-    Note that if the new element did not exist, it will be created
+    Args:
+        hdf_name : name of the HDF5 group (None for the definition root)
+        nx_def   : application definition name (NOMAD-renamed)
+        nx_node  : NexusNode for this element; pass None for the definition root
+        current  : the parent MSection to search within
+        nx_root  : the top-level nx_root MSection (for the ENTRY look-up)
 
     Returns:
-        tuple: the new subsection
+        The MSection for the group, or *current* unchanged for fields/attributes.
 
-    The strict mapping is available between metainfo and nexus:
-        Group <-> SubSection
-        Field <-> Quantity
-        Attribute <-> SubSection.Attribute or Quantity.Attribute
-
-    If the given nxdl_node is a Group, return the corresponding Section.
-    If the given nxdl_node is a Field, return the Section contains it.
-    If the given nxdl_node is an Attribute, return the associated Section or the
-    Section contains the associated Quantity.
+    The strict mapping between metainfo and NeXus:
+        Group  <-> SubSection
+        Field  <-> Quantity          (no section change needed)
+        Attribute <-> Quantity.Attribute  (no section change needed)
     """
-
     if hdf_name is None:
+        # Definition root
         nomad_def_name = nx_def
-    elif nx_node.tag.endswith("group"):
-        # it is a new group
-        nomad_def_name = _to_group_name(nx_node)
+    elif isinstance(nx_node, NexusGroup):
+        # Group: derive the NOMAD sub-section name from the schema node.
+        # Use the schema name when available; fall back to stripping the NX prefix.
+        schema_name = nx_node.name if nx_node.name else nx_node.nx_class[2:].upper()
+        nomad_def_name = schema_name
     else:
-        # no need to change section for quantities and attributes
+        # Field or attribute: no section change needed
         return current
 
     nomad_def_name = rename_nx_for_nomad(nomad_def_name, is_group=True)
 
     if current == nx_root:
-        # for groups, get the definition from the package
+        # Root level: look up or create the ENTRY sub-section
         new_def = current.m_def.all_sub_sections["ENTRY"]
         for section in current.m_get_sub_sections(new_def):
             if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
@@ -122,7 +107,6 @@ def _to_section(
         current.ENTRY.append(new_section)
         new_section.__dict__["nx_name"] = hdf_name
     else:
-        # for groups, get the definition from the package
         new_def = current.m_def.all_sub_sections[nomad_def_name]
         for section in current.m_get_sub_sections(new_def):
             if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
@@ -298,6 +282,7 @@ class NomadVisitor(NexusVisitor):
         self._logger = logger
         # MSections for HDF5 group in hdf_path
         self._sections: dict[str, MSection] = {}
+        self._resolver = NexusSchemaResolver()
         self.sample_class_refs: dict[str, list] = {
             "NXsample": [],
             "NXsubstance": [],
@@ -317,15 +302,13 @@ class NomadVisitor(NexusVisitor):
             self._sections[""] = self._nx_root
             return
 
-        # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node);
-        # nxdef  → resolver.appdef_for(hdf_node)
-        # nx_node (ET.Element) → NexusNode returned by the resolver
-        hdf_info = _make_hdf_info(hdf_path, hdf_node)
-        _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
-        if nxdl_path is None or nxdl_path == "/":
+        node = self._resolver.node_for(hdf_path, hdf_node)
+        if node is None:
             return
 
-        nxdef_nomad = rename_nx_for_nomad(nxdef) if nxdef else None
+        appdef = self._resolver.appdef_for(hdf_node)
+        nxdef_nomad = rename_nx_for_nomad(appdef) if appdef else None
+
         parent_path = hdf_path.rsplit("/", 1)[0] if "/" in hdf_path else ""
         parent_section = self._sections.get(parent_path)
         if parent_section is None:
@@ -333,20 +316,8 @@ class NomadVisitor(NexusVisitor):
             return
 
         group_name = hdf_path.rsplit("/", 1)[-1]
-        # depth = 1-indexed position of this group within the nxdl_path list
-        # TODO: depth/nx_path indexing goes away once get_nxdl_doc is replaced by NexusNode
-        depth = len(hdf_path.split("/"))
-        nx_node = (
-            nxdl_path[depth]
-            if isinstance(nxdl_path, list) and depth < len(nxdl_path)
-            else group_name
-        )
-
-        # TODO: _to_section should accept NexusNode instead of ET.Element;
-        # node.name replaces nx_node.attrib.get("name"),
-        # node.nx_class replaces nx_node.attrib["type"]
         section = _to_section(
-            group_name, nxdef_nomad, nx_node, parent_section, self._nx_root
+            group_name, nxdef_nomad, node, parent_section, self._nx_root
         )
         self._collect_class(section)
         section.m_set_section_attribute("m_nx_data_path", "/" + hdf_path)
@@ -354,24 +325,19 @@ class NomadVisitor(NexusVisitor):
         self._sections[hdf_path] = section
 
     def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
-        """Populate the NOMAD Metainfo quantity for this HDF5 dataset."""
-        # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node)
-        # and call _populate_field(node, hdf_node, current) directly (no depth, no nx_path)
-        hdf_info = _make_hdf_info(hdf_path, hdf_node)
-        _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
-        if nxdl_path is None or nxdl_path == "/":
+        """Populate the NOMAD quantity for this HDF5 dataset."""
+        field_name = hdf_path.rsplit("/", 1)[-1]
+        nxdata_hint = chk_nxdata_axis(hdf_node, field_name)
+        node = self._resolver.node_for(hdf_path, hdf_node, hint=nxdata_hint)
+        if node is None:
             return
 
-        nxdef_nomad = rename_nx_for_nomad(nxdef) if nxdef else None
         parent_path = hdf_path.rsplit("/", 1)[0] if "/" in hdf_path else ""
         current = self._sections.get(parent_path)
         if current is None:
             return
 
-        # depth after a full _nexus_populate walk of this field's path:
-        # one past the field name itself (matches post-loop depth in _nexus_populate)
-        depth = len(hdf_path.split("/")) + 1
-        self._populate_data(depth, nxdl_path, nxdef_nomad, hdf_node, current, attr=None)
+        self._populate_field(node, hdf_node, current)
 
     def on_attribute(
         self,
@@ -384,18 +350,12 @@ class NomadVisitor(NexusVisitor):
         if attr_name in self._SKIP_ATTRS:
             return
 
-        hdf_info = _make_hdf_info(hdf_path, parent)
-        # TODO: replace get_nxdl_doc with NexusSchemaResolver.attr_node_for(hdf_path, attr_name, parent)
-        # and call _populate_attribute(node, attr_name, attr_value, current) directly
-        req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False, attr=attr_name)
-        if not req_str or "NOT IN SCHEMA" in req_str or "None" in req_str:
+        attr_node = self._resolver.attr_node_for(hdf_path, attr_name, parent)
+        if attr_node is None:
             return
 
-        nxdef_nomad = rename_nx_for_nomad(nxdef) if nxdef else None
-
-        # For a group attribute, the MSection is the group itself.
-        # For a field attribute, the MSection is the group that contains the field
-        # (_to_section returns current unchanged for non-group NXDL nodes).
+        # For a group attribute the MSection is the group itself;
+        # for a field attribute it is the group that contains the field.
         if isinstance(parent, h5py.Group):
             current = self._sections.get(hdf_path)
         else:
@@ -404,10 +364,7 @@ class NomadVisitor(NexusVisitor):
         if current is None:
             return
 
-        depth = len(hdf_path.split("/")) + 1
-        self._populate_data(
-            depth, nxdl_path, nxdef_nomad, parent, current, attr=attr_name
-        )
+        self._populate_attribute(attr_node, attr_name, attr_value, parent, current)
 
     def on_complete(self, root: h5py.File) -> None:
         pass
@@ -424,240 +381,222 @@ class NomadVisitor(NexusVisitor):
         ):
             self.sample_class_refs[class_name].append(current)
 
-    def _populate_data(
-        self, depth: int, nx_path: list, nx_def: str, hdf_node, current: MSection, attr
-    ):
-        """
-        Populate attributes and fields into the NOMAD archive.
+    def _populate_field(
+        self,
+        node: NexusNode,
+        hdf_node: h5py.Dataset,
+        current: MSection,
+    ) -> None:
+        """Populate one NOMAD quantity from an HDF5 field dataset."""
+        field_name = rename_nx_for_nomad(node.name, is_field=True)
+        data_instance_name = hdf_node.name.split("/")[-1] + "__field"
 
-        TODO: split into _populate_field(node: NexusNode, hdf_node, current) and
-        _populate_attribute(node: NexusNode, attr_name, attr_value, current) once
-        get_nxdl_doc is replaced by NexusSchemaResolver.  The depth/nx_path indexing
-        and ET.Element accesses (nx_attr.get("name"), nx_parent.tag.endswith("group"),
-        nx_path[-1].get("name")) all disappear when node: NexusNode is passed directly.
-        """
-        if attr:  # it is an attribute of either a field or a group
-            nx_root = False
-            if nx_path[0] == "/":
-                nx_attr = nx_path[1]
-                nx_parent = nx_attr.getparent()
-                nx_root = True
-            else:
-                nx_attr = nx_path[depth]
-                nx_parent = nx_path[depth - 1]
+        try:
+            metainfo_def = resolve_variadic_name(
+                current.m_def.all_quantities, field_name
+            )
+            is_variadic = metainfo_def.variable
+        except Exception as e:
+            self._logger.warning(
+                f"error while setting field {data_instance_name} in {current.m_def} as no proper definition found for {field_name}",
+                target_name=field_name,
+                exc_info=e,
+            )
+            return
 
-            if isinstance(nx_attr, str):
-                if nx_attr != "units":
-                    # no need to handle units here as all quantities have flexible units
-                    pass
-            else:
-                # get the name of parent (either field or group) used to set attribute
-                # required by the syntax of metainfo mechanism due to
-                # variadic/template quantity names
+        # Metainfo does not support precision higher than i8, u8, f8, c16
+        if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
+            self._logger.warning(
+                f"error while setting field {data_instance_name} in {current.m_def} precision {hdf_node.dtype.itemsize} too high for {field_name}"
+            )
+            return
 
-                attr_name = nx_attr.get("name")  # could be 1D array, float or int
-                attr_value = hdf_node.attrs[attr_name]
-                current = _to_section(
-                    attr_name, nx_def, nx_attr, current, self._nx_root
-                )
-                try:
-                    if nx_root or nx_parent.tag.endswith("group"):
-                        parent_html_name = ""
-                        parent_name = ""
-                        parent_field_name = ""
-                        parent_html_base_name = ""
-                    else:
-                        parent_html_name = rename_nx_for_nomad(
-                            nx_path[-2].get("name"), is_field=True
-                        )
-                        parent_name = hdf_node.name.split("/")[-1]
-                        parent_field_name = parent_html_name
-                        parent_html_base_name = parent_html_name.split("__field")[0]
-                    attribute_name = parent_html_base_name + "___" + attr_name
-                    data_instance_name = parent_name + "___" + attr_name
-                    metainfo_def = None
-                    try:
-                        metainfo_def = resolve_variadic_name(
-                            current.m_def.all_quantities, attribute_name
-                        )
-                        attribute = attr_value
-                        # TODO: get unit from attribute <xxx>_units
-                        if isinstance(metainfo_def.type, MEnum):
-                            if isinstance(attr_value, np.ndarray):
-                                attribute = str(attr_value.tolist())
-                            else:
-                                attribute = str(attr_value)
-                        elif not isinstance(attr_value, str):
-                            if isinstance(attr_value, np.ndarray):
-                                attr_list = attr_value.tolist()
-                                if (
-                                    len(attr_list) == 1
-                                    or attr_value.dtype.kind in "iufc"
-                                ):
-                                    attribute = attr_list[0]
-                                else:
-                                    attribute = str(attr_list)
-                        if metainfo_def.use_full_storage:
-                            attribute = MQuantity.wrap(attribute, data_instance_name)
-                    except ValueError as exc:
-                        self._logger.warning(
-                            f"{current.m_def} has no suitable property for {parent_field_name} and {attr_name} as {attribute_name}",
-                            target_name=attr_name,
-                            exc_info=exc,
-                        )
-                    current.m_set(metainfo_def, attribute)
-                    # if attributes are set before setting the quantity, a bug can cause them being set under a wrong variadic name
-                    attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
-                    attribute.m_set_attribute("m_nx_data_file", self._nxs_fname)
-                except Exception as e:
-                    self._logger.warning(
-                        f"error while setting attribute {data_instance_name} in {current.m_def} as {metainfo_def}",
-                        target_name=attr_name,
-                        exc_info=e,
-                    )
-        else:  # it is a field
-            # get the corresponding field name
-            html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
-            data_instance_name = hdf_node.name.split("/")[-1] + "__field"
-            field_name = html_name
-            try:
-                metainfo_def = resolve_variadic_name(
-                    current.m_def.all_quantities, field_name
-                )
-                is_variadic = metainfo_def.variable
-            except Exception as e:
-                self._logger.warning(
-                    f"error while setting field {data_instance_name} in {current.m_def} as no proper definition found for {field_name}",
-                    target_name=field_name,
-                    exc_info=e,
-                )
-                return
+        field_stats: dict = {}  # stats built from finite iuf arrays
 
-            # Metainfo does not support precision higher than i8, u8, f8, c16
-            # TODO: is f2 supported ? maybe silently promote to f4 or f8, maybe downcast higher
-            # precision floating and complex to highest supported precision floating and complex respectively
-            # TODO: emit a warning in the case of hdf_node.dtype.kind in "fc" when hdf_node.dtype.itemsize < 4
-            # (e.g. when one is hitting the half-precision floats that were introduced with HDF5 2.0).
-            # TODO warn in case of facing arbitrary objects or structs"
-            if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
-                self._logger.warning(
-                    f"error while setting field {data_instance_name} in {current.m_def} precision {hdf_node.dtype.itemsize} too high for {field_name}"
-                )
-                return
+        # Metainfo does not support precision higher than i8, u8, f8, c16
+        # TODO: is f2 supported ? maybe silently promote to f4 or f8, maybe downcast higher
+        # precision floating and complex to highest supported precision floating and complex respectively
+        # TODO: emit a warning in the case of hdf_node.dtype.kind in "fc" when hdf_node.dtype.itemsize < 4
+        # (e.g. when one is hitting the half-precision floats that were introduced with HDF5 2.0).
+        # TODO warn in case of facing arbitrary objects or structs"
+        if hdf_node.dtype.kind in "iuf":
+            if hdf_node.shape != ():  # non-scalar, compute stats
+                if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
+                    field_stats = _get_field_stats_iuf_chunked(hdf_node)
+                else:  # load entire contiguous storage layout dataset at once
+                    field_stats = _get_field_stats_iuf_contiguous(hdf_node)
 
-            field_stats: dict = {}  # stats built from finite iuf arrays
-
-            if hdf_node.dtype.kind in "iuf":
-                if hdf_node.shape != ():  # non-scalar, compute stats
-                    if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
-                        field_stats = _get_field_stats_iuf_chunked(hdf_node)
-                    else:  # load entire contiguous storage layout dataset at once
-                        # we suggest to use chunked storage to avoid these costly cases
-                        field_stats = _get_field_stats_iuf_contiguous(hdf_node)
-
-                    for suffix in FIELD_STATISTICS:
-                        if not np.isfinite(field_stats.get(suffix, np.nan)):
-                            self._logger.info(
-                                f"found {suffix} non existent or not finite for integer, unsigned, or floating value",
-                                target_name=field_name + "[" + data_instance_name + "]",
-                            )
-                            return
-
-                    field = field_stats["__mean"]
-                else:  # scalar, no stats
-                    field = hdf_node[()]
-                    if not np.isfinite(field):
+                for suffix in FIELD_STATISTICS:
+                    if not np.isfinite(field_stats.get(suffix, np.nan)):
                         self._logger.info(
-                            "found non-finite integer, unsigned, or floating scalar",
+                            f"found {suffix} non existent or not finite for integer, unsigned, or floating value",
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
-            # no stats for non-iuf data
-            # TODO: make a second optimization round for complex numbers
-            # we have not faced though high volume examples with complex numbers yet
-            elif hdf_node.dtype.kind in "c":
-                if hdf_node.shape != ():
-                    field = hdf_node[(0,) * hdf_node.ndim]
-                else:
-                    field = hdf_node[()]
+            
+                field = field_stats["__mean"]
+            else:  # scalar, no stats
+                field = hdf_node[()]
                 if not np.isfinite(field):
                     self._logger.info(
-                        "found non finite complexfloating value",
+                        "found non-finite integer, unsigned, or floating scalar",
                         target_name=field_name + "[" + data_instance_name + "]",
                     )
                     return
-            elif np.issubdtype(hdf_node.dtype, np.bool_):
-                if hdf_node.shape != ():
-                    field = bool(hdf_node[(0,) * hdf_node.ndim])
-                else:
-                    field = bool(hdf_node[()])
-            else:  # strings
-                field = _get_field_str(hdf_node)
-                if field is None:
-                    self._logger.info(
-                        "found data of an unsupported type",
-                        target_name=field_name + "[" + data_instance_name + "]",
-                    )
-                    return
+        # TODO: make a second optimization round for complex numbers
+        # we have not faced though high volume examples with complex numbers yet
+        elif hdf_node.dtype.kind in "c":
+            if hdf_node.shape != ():
+                field = hdf_node[(0,) * hdf_node.ndim]
+            else:
+                field = hdf_node[()]
+            if not np.isfinite(field):
+                self._logger.info(
+                    "found non finite complexfloating value",
+                    target_name=field_name + "[" + data_instance_name + "]",
+                )
+                return
+        elif np.issubdtype(hdf_node.dtype, np.bool_):
+            if hdf_node.shape != ():
+                field = bool(hdf_node[(0,) * hdf_node.ndim])
+            else:
+                field = bool(hdf_node[()])
+        else:  # strings
+            field = _get_field_str(hdf_node)
+            if field is None:
+                self._logger.info(
+                    "found data of an unsupported type",
+                    target_name=field_name + "[" + data_instance_name + "]",
+                )
+                return
 
-            # check if unit is given
-            unit = hdf_node.attrs.get("units", None)
+        # check if unit is given
+        unit = hdf_node.attrs.get("units", None)
 
-            pint_unit: ureg.Unit | None = None
-            if unit:
-                try:
-                    if unit != "counts":
-                        pint_unit = ureg.parse_units(unit)
-                    else:
-                        pint_unit = ureg.parse_units("1")
-                    field = ureg.Quantity(field, pint_unit)
-                    if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
-                        for suffix in FIELD_STATISTICS:
-                            if FIELD_STATISTICS[suffix]["mask"]:
-                                field_stats[suffix] = ureg.Quantity(
-                                    field_stats[suffix], pint_unit
-                                )
-
-                except (ValueError, UndefinedUnitError):
-                    pass
-
-            if metainfo_def.use_full_storage:
-                field = MQuantity.wrap(field, data_instance_name)
-            elif metainfo_def.unit is None and pint_unit is not None:
-                metainfo_def.unit = pint_unit
-
+        pint_unit: Unit | None = None
+        if unit:
             try:
-                current.m_set(metainfo_def, field)
-                field.m_set_attribute("m_nx_data_path", hdf_node.name)
-                field.m_set_attribute("m_nx_data_file", self._nxs_fname)
-                if is_variadic:
-                    concept_basename = get_quantity_base_name(field.name)
-                    instance_name = get_quantity_base_name(data_instance_name)
-                    name_metainfo_def = resolve_variadic_name(
-                        current.m_def.all_quantities, concept_basename + "__name"
-                    )
-                    name_value = MQuantity.wrap(instance_name, instance_name + "__name")
-                    current.m_set(name_metainfo_def, name_value)
-                    name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
-                    name_value.m_set_attribute("m_nx_data_file", self._nxs_fname)
+                if unit != "counts":
+                    pint_unit = ureg.parse_units(unit)
+                else:
+                    pint_unit = ureg.parse_units("1")
+                field = ureg.Quantity(field, pint_unit)
                 if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
                     for suffix in FIELD_STATISTICS:
-                        if suffix != "__mean":
-                            concept_basename = get_quantity_base_name(field.name)
-                            instance_name = get_quantity_base_name(data_instance_name)
-                            stat_metainfo_def = resolve_variadic_name(
-                                current.m_def.all_quantities, concept_basename + suffix
+                        if FIELD_STATISTICS[suffix]["mask"]:
+                            field_stats[suffix] = ureg.Quantity(
+                                field_stats[suffix], pint_unit
                             )
-                            stat = MQuantity.wrap(
-                                field_stats[suffix], instance_name + suffix
-                            )
-                            current.m_set(stat_metainfo_def, stat)
-            except Exception as e:
-                self._logger.warning(
-                    "error while setting field",
-                    target_name=field_name,
-                    exc_info=e,
+
+            except (ValueError, UndefinedUnitError):
+                pass
+
+        if metainfo_def.use_full_storage:
+            field = MQuantity.wrap(field, data_instance_name)
+        elif metainfo_def.unit is None and pint_unit is not None:
+            metainfo_def.unit = pint_unit
+
+        try:
+            current.m_set(metainfo_def, field)
+            field.m_set_attribute("m_nx_data_path", hdf_node.name)
+            field.m_set_attribute("m_nx_data_file", self._nxs_fname)
+            if is_variadic:
+                concept_basename = get_quantity_base_name(field.name)
+                instance_name = get_quantity_base_name(data_instance_name)
+                name_metainfo_def = resolve_variadic_name(
+                    current.m_def.all_quantities, concept_basename + "__name"
                 )
+                name_value = MQuantity.wrap(instance_name, instance_name + "__name")
+                current.m_set(name_metainfo_def, name_value)
+                name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
+                name_value.m_set_attribute("m_nx_data_file", self._nxs_fname)
+            if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
+                for suffix in FIELD_STATISTICS:
+                    if suffix != "__mean":
+                        concept_basename = get_quantity_base_name(field.name)
+                        instance_name = get_quantity_base_name(data_instance_name)
+                        stat_metainfo_def = resolve_variadic_name(
+                            current.m_def.all_quantities, concept_basename + suffix
+                        )
+                        stat = MQuantity.wrap(
+                            field_stats[suffix], instance_name + suffix
+                        )
+                        current.m_set(stat_metainfo_def, stat)
+        except Exception as e:
+            self._logger.warning(
+                "error while setting field",
+                target_name=field_name,
+                exc_info=e,
+            )
+
+    def _populate_attribute(
+        self,
+        attr_node: NexusNode,
+        attr_name: str,
+        attr_value: Any,
+        parent: h5py.Group | h5py.Dataset,
+        current: MSection,
+    ) -> None:
+        """Populate one NOMAD quantity attribute from an HDF5 attribute."""
+        # Build the NOMAD metainfo quantity name for this attribute.
+        # Convention (matching schema.py _create_attributes):
+        #   group attribute → "___" + attr_name
+        #   field attribute → field_schema_name + "___" + attr_name
+        if isinstance(parent, h5py.Group):
+            # Group attribute: no parent field prefix
+            parent_html_base_name = ""
+            parent_name = ""
+        else:
+            # Field attribute: parent is the h5py.Dataset
+            parent_field_node = attr_node.parent
+            parent_html_base_name = rename_nx_for_nomad(
+                parent_field_node.name, is_field=True
+            ).split("__field")[0]
+            parent_name = parent.name.split("/")[-1]
+
+        attribute_name = parent_html_base_name + "___" + attr_name
+        data_instance_name = parent_name + "___" + attr_name
+
+        metainfo_def = None
+        try:
+            try:
+                metainfo_def = resolve_variadic_name(
+                    current.m_def.all_quantities, attribute_name
+                )
+                attribute = attr_value
+                # TODO: get unit from attribute <xxx>_units
+                if isinstance(metainfo_def.type, MEnum):
+                    if isinstance(attr_value, np.ndarray):
+                        attribute = str(attr_value.tolist())
+                    else:
+                        attribute = str(attr_value)
+                elif not isinstance(attr_value, str):
+                    if isinstance(attr_value, np.ndarray):
+                        attr_list = attr_value.tolist()
+                        if len(attr_list) == 1 or attr_value.dtype.kind in "iufc":
+                            attribute = attr_list[0]
+                        else:
+                            attribute = str(attr_list)
+                if metainfo_def.use_full_storage:
+                    attribute = MQuantity.wrap(attribute, data_instance_name)
+            except ValueError as exc:
+                self._logger.warning(
+                    f"{current.m_def} has no suitable property for {parent_html_base_name} and {attr_name} as {attribute_name}",
+                    target_name=attr_name,
+                    exc_info=exc,
+                )
+                return
+            current.m_set(metainfo_def, attribute)
+            # attributes must be set after their parent quantity to avoid a
+            # variadic-name mismatch bug in the metainfo layer
+            attribute.m_set_attribute("m_nx_data_path", parent.name)
+            attribute.m_set_attribute("m_nx_data_file", self._nxs_fname)
+        except Exception as e:
+            self._logger.warning(
+                f"error while setting attribute {data_instance_name} in {current.m_def} as {metainfo_def}",
+                target_name=attr_name,
+                exc_info=e,
+            )
 
 
 class NexusParser(MatchingParser):

@@ -40,9 +40,6 @@ def test_assert_nexus_metainfo_json_file():
     assert os.path.exists(nxs_filepath)
 
 
-@pytest.mark.skip(
-    reason="This test is for testing the nexus metainfo schema from a json file. Currently we deactivated it."
-)
 @pytest.mark.parametrize(
     "path,value",
     [
