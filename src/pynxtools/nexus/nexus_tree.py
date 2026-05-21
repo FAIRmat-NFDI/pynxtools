@@ -35,17 +35,17 @@ import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
 from pynxtools import NX_DOC_BASES, get_definitions_url
-from pynxtools.dataconverter.helpers import (
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_nx_namefit,
+    is_name_type,
+)
+from pynxtools.nexus.utils import (
     NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
     is_appdef,
     is_variadic,
     remove_namespace_from_tag,
-)
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_nx_namefit,
-    is_name_type,
 )
 
 logger = logging.getLogger(__file__)
@@ -1638,9 +1638,9 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinition":
+def generate_tree_from(nxdl: str, set_root_attr: bool = True) -> "NexusDefinition":
     """
-    Generate a NexusNode tree from a NeXus application definition.
+    Generate a NexusNode tree from a NeXus NXDL definition (application or base class).
 
     The root of the returned tree is a :class:`NexusDefinition` node whose
     ``category``, ``symbols``, and ``ignore_extra_*`` attributes reflect the
@@ -1648,9 +1648,13 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinit
     :class:`NexusGroup`, :class:`NexusField`, :class:`NexusAttribute`,
     :class:`NexusLink`, and :class:`NexusChoice` nodes as appropriate.
 
+    For application definitions the tree is rooted at the ``NXentry`` group.
+    For base classes the children live directly under the definition root.
+
     Args:
-        appdef (str): The application definition name (e.g. ``"NXarpes"``).
+        nxdl (str): The NXDL definition name (e.g. ``"NXarpes"`` or ``"NXdata"``).
         set_root_attr (bool): Whether to attach NXroot-level attributes to the root.
+            Only applied for application definitions.
 
     Returns:
         NexusDefinition: The root node of the tree.
@@ -1679,36 +1683,45 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinit
         ):
             add_children_to(current_elem, child)
 
-    appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
+    nxdl_xml_root, _ = get_nxdl_root_and_path(nxdl)
 
     global namespaces
-    namespaces = {"nx": appdef_xml_root.nsmap[None]}
+    namespaces = {"nx": nxdl_xml_root.nsmap[None]}
 
-    appdef_inheritance_chain = [appdef_xml_root]
-    appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
+    nxdl_inheritance_chain = [nxdl_xml_root]
+    nxdl_inheritance_chain += get_all_parents_for(nxdl_xml_root)
 
     tree = NexusDefinition(
-        name=appdef_xml_root.attrib["name"],
+        name=nxdl_xml_root.attrib["name"],
         name_type="specified",
         optionality="required",
         variadic=False,
         parent=None,
-        inheritance=appdef_inheritance_chain,
-        nxdl_base=appdef_xml_root.base,
+        inheritance=nxdl_inheritance_chain,
+        nxdl_base=nxdl_xml_root.base,
     )
 
-    # Set root attributes
-    if set_root_attr:
+    is_application = nxdl_xml_root.get("category") == "application"
+
+    if set_root_attr and is_application:
         nx_root, _ = get_nxdl_root_and_path("NXroot")
         for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
             child = tree.add_node_from(root_attrib)
             child.optionality = "optional"
 
-    entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
-    add_children_to(tree, entry)
+    if is_application:
+        entry = nxdl_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
+        if entry is not None:
+            add_children_to(tree, entry)
+    else:
+        for child_elem in nxdl_xml_root.xpath(
+            r"*[self::nx:field or self::nx:group or self::nx:attribute"
+            r" or self::nx:choice or self::nx:link]",
+            namespaces=namespaces,
+        ):
+            add_children_to(tree, child_elem)
 
-    # Add all fields and attributes from the parent appdefs
-    if len(appdef_inheritance_chain) > 1:
+    if len(nxdl_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
 
     return tree

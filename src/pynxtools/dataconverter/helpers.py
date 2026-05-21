@@ -35,14 +35,26 @@ from ase.data import chemical_symbols
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    find_definition_file,
     get_enums,
     get_inherited_nodes,
-    get_nexus_definitions_path,
     get_node_at_nxdl_path,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_required_string as nexus_get_required_string,
+)
+from pynxtools.nexus.utils import (
+    NEXUS_TO_PYTHON_DATA_TYPES,
+    get_all_parents_for,
+    get_appdef_root,
+    get_nxdl_root_and_path,
+    is_appdef,
+    is_variadic,
+    nx_bool,
+    nx_char,
+    nx_float,
+    nx_int,
+    nx_number,
+    remove_namespace_from_tag,
 )
 
 logger = logging.getLogger("pynxtools")
@@ -404,96 +416,6 @@ def get_nxdl_name_for(xml_elem: ET._Element) -> str | None:
     return None
 
 
-def get_appdef_root(xml_elem: ET._Element) -> ET._Element:
-    """
-    Get the root element of the tree of xml_elem
-
-    Args:
-        xml_elem (ET._Element): The element for which to get the root element.
-
-    Returns:
-        ET._Element: The root element of the tree.
-    """
-    return xml_elem.getroottree().getroot()
-
-
-def is_appdef(xml_elem: ET._Element) -> bool:
-    """
-    Check whether the xml element is part of an application definition.
-
-    Args:
-        xml_elem (ET._Element): The xml_elem whose tree to check.
-
-    Returns:
-        bool: True if the xml_elem is part of an application definition.
-    """
-    return get_appdef_root(xml_elem).attrib.get("category") == "application"
-
-
-def get_all_parents_for(xml_elem: ET._Element) -> list[ET._Element]:
-    """
-    Get all parents from the nxdl (via extends keyword)
-
-    Args:
-        xml_elem (ET._Element): The element to get the parents for.
-
-    Returns:
-        list[ET._Element]: The list of parents xml nodes.
-    """
-    root = get_appdef_root(xml_elem)
-    inheritance_chain = []
-    extends = root.get("extends")
-    while extends is not None:
-        parent_xml_root, _ = get_nxdl_root_and_path(extends)
-        extends = parent_xml_root.get("extends")
-        inheritance_chain.append(parent_xml_root)
-
-    return inheritance_chain
-
-
-def get_nxdl_root_and_path(nxdl: str):
-    """Get xml root element and file path from nxdl name e.g. NXapm.
-
-    Parameters
-    ----------
-    nxdl: str
-        Name of nxdl file e.g. NXapm from NXapm.nxdl.xml.
-
-    Returns
-    -------
-    ET.root
-        Root element of nxdl file.
-    str
-        Path of nxdl file.
-
-    Raises
-    ------
-    FileNotFoundError
-        Error if no file with the given nxdl name is found.
-    """
-
-    # Reading in the NXDL and generating a template
-    definitions_path = get_nexus_definitions_path()
-    data_path = os.path.join(
-        f"{os.path.abspath(os.path.dirname(__file__))}/../",
-        "data",
-    )
-    special_names = {
-        "NXsimple": os.path.join(data_path, "NXsimple.nxdl.xml"),
-        "NXtest": os.path.join(data_path, "NXtest.nxdl.xml"),
-        "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
-    }
-
-    if nxdl in special_names:
-        nxdl_f_path = special_names[nxdl]
-    else:
-        nxdl_f_path = find_definition_file(nxdl)
-        if nxdl_f_path is None:
-            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
-
-    return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
-
-
 def get_all_defined_required_children_for_elem(xml_element):
     """Gets all possible inherited required children for a given NXDL element"""
     list_of_children_to_add = set()
@@ -657,15 +579,6 @@ def contains_uppercase(field_name: str | None) -> bool:
     return any(char.isupper() for char in field_name)
 
 
-def is_variadic(name: str, name_type: str) -> bool:
-    """
-    Determine if a name is variadic based on its nameType.
-    """
-    if name:
-        return False if name_type == "specified" else True
-    return True
-
-
 def convert_nexus_to_suggested_name(nexus_name):
     """Helper function to suggest a name for a group from its NeXus class."""
     if contains_uppercase(nexus_name):
@@ -756,34 +669,6 @@ def is_value_valid_element_of_enum(value, elem_list) -> tuple[bool, list]:
         if enums is not None:
             return value in enums, enums
     return True, []
-
-
-nx_char = (str, np.character)
-nx_int = (int, np.integer)
-nx_float = (float, np.floating)
-nx_number = nx_int + nx_float
-nx_bool = (bool, np.bool_)
-
-NEXUS_TO_PYTHON_DATA_TYPES = {
-    "ISO8601": (str,),
-    "NX_BINARY": (bytes, bytearray, np.bytes_),
-    "NX_BOOLEAN": nx_bool,
-    "NX_CHAR": nx_char,
-    "NX_DATE_TIME": (str,),
-    "NX_FLOAT": nx_float,
-    "NX_INT": nx_int,
-    "NX_UINT": (np.unsignedinteger,),
-    "NX_NUMBER": nx_number,
-    "NX_POSINT": nx_int,  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (
-        complex,
-        np.complexfloating,
-    ),
-    "NX_CHAR_OR_NUMBER": nx_char + nx_number + nx_bool,
-    "NXDL_TYPE_UNAVAILABLE": (
-        nx_char,
-    ),  # Defaults to a string if a type is not provided.
-}
 
 
 def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
@@ -1373,14 +1258,6 @@ def get_concept_basepath(path: str) -> str:
         if re.search(r"[A-Z]", p):
             concept_path.append(p)
     return "/" + "/".join(concept_path)
-
-
-def remove_namespace_from_tag(tag):
-    """Helper function to remove the namespace from an XML tag."""
-
-    if not isinstance(tag, str):
-        return ""
-    return tag.split("}")[-1]
 
 
 def get_first_group(root):
