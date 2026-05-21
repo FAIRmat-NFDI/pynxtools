@@ -35,7 +35,7 @@ from nomad.metainfo import (
 from nomad.metainfo.data_type import Bytes, Datetime
 from {{ base_import }} import {{ base_class }}
 
-from pynxtools.nomad.annotations import NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
 {% for mod, cls in concept_imports %}
 from {{ mod }} import {{ cls }}
 {% endfor %}
@@ -53,13 +53,9 @@ class {{ class_name }}({{ base_class }}):
     """
 
     m_def = Section(
-        a_nexus_group=NeXusGroup(
+        a_nexus_definition=NeXusDefinition(
             nx_class="{{ nx_name }}",
             category="{{ nx_category }}",
-            optionality="{{ nx_optionality }}",
-            {% if nx_restricts %}
-            restricts=True,
-            {% endif %}
             {% if ignore_extra_groups %}
             ignore_extra_groups=True,
             {% endif %}
@@ -85,6 +81,23 @@ class {{ class_name }}({{ base_class }}):
         {% if sub_sec.variable %}
         variable=True,
         {% endif %}
+        {% if not sub_sec.is_named_concept %}
+        a_nexus_group=NeXusGroup(
+            nx_class="{{ sub_sec.node.nx_class }}",
+            name={{ sub_sec.nx_name_literal }},
+            name_type="{{ sub_sec.node.name_type or 'specified' }}",
+            optionality="{{ sub_sec.node.optionality }}",
+            {% if sub_sec.node.occurrence_limits[0] is not none %}
+            min_occurs={{ sub_sec.node.occurrence_limits[0] }},
+            {% endif %}
+            {% if sub_sec.node.occurrence_limits[1] is not none %}
+            max_occurs={{ sub_sec.node.occurrence_limits[1] }},
+            {% endif %}
+            {% if sub_sec.node.deprecated %}
+            deprecated="{{ sub_sec.node.deprecated }}",
+            {% endif %}
+        ),
+        {% endif %}
     )
     {% endfor %}
 
@@ -108,8 +121,8 @@ class {{ class_name }}({{ base_class }}):
             type="{{ qty.node.dtype }}",
             name_type="{{ qty.node.name_type or 'specified' }}",
             optionality="{{ qty.node.optionality }}",
-            {% if qty.node.unit %}
-            units="{{ qty.node.unit }}",
+            {% if qty.unit %}
+            units="{{ qty.unit }}",
             {% endif %}
             {% if qty.node.items %}
             enumeration={{ qty.node.items }},
@@ -120,11 +133,11 @@ class {{ class_name }}({{ base_class }}):
             {% if qty.parent_field %}
             parent_field="{{ qty.parent_field }}",
             {% endif %}
-            {% if qty.node.interpretation %}
-            interpretation="{{ qty.node.interpretation }}",
+            {% if qty.interpretation %}
+            interpretation="{{ qty.interpretation }}",
             {% endif %}
-            {% if qty.node.long_name %}
-            long_name="{{ qty.node.long_name }}",
+            {% if qty.long_name %}
+            long_name="{{ qty.long_name }}",
             {% endif %}
             {% if qty.node.deprecated %}
             deprecated="{{ qty.node.deprecated }}",
@@ -193,8 +206,8 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             type="{{ qty.node.dtype }}",
             name_type="{{ qty.node.name_type or 'specified' }}",
             optionality="{{ qty.node.optionality }}",
-            {% if qty.node.unit %}
-            units="{{ qty.node.unit }}",
+            {% if qty.unit %}
+            units="{{ qty.unit }}",
             {% endif %}
             {% if qty.node.items %}
             enumeration={{ qty.node.items }},
@@ -205,11 +218,11 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             {% if qty.parent_field %}
             parent_field="{{ qty.parent_field }}",
             {% endif %}
-            {% if qty.node.interpretation %}
-            interpretation="{{ qty.node.interpretation }}",
+            {% if qty.interpretation %}
+            interpretation="{{ qty.interpretation }}",
             {% endif %}
-            {% if qty.node.long_name %}
-            long_name="{{ qty.node.long_name }}",
+            {% if qty.long_name %}
+            long_name="{{ qty.long_name }}",
             {% endif %}
             {% if qty.node.deprecated %}
             deprecated="{{ qty.node.deprecated }}",
