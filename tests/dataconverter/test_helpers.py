@@ -19,6 +19,7 @@
 
 import logging
 import os
+import re
 import shutil
 import xml.etree.ElementTree as ET
 
@@ -94,6 +95,12 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/links/ext_link"] = {
         "link": f"{tmp_path}/xarray_saved_small_calibration.h5:/axes/ax3"
     }
+    template["/ENTRY[my_entry]/links/ext_link2"] = {
+        "link": "/xarray_saved_small_calibration.h5:/axes/ax3"
+    }
+    template["/ENTRY[my_entry]/links/ext_link3"] = {
+        "link": "xarray_saved_small_calibration.h5:/axes/ax3"
+    }
     return template
 
 
@@ -166,20 +173,25 @@ def test_writing_of_root_attributes(caplog):
     assert "" == caplog.text
 
     keys_added = template.keys()
-    assert "/@NX_class" in keys_added
     assert template["/@NX_class"] == "NXroot"
-    assert "/@file_name" in keys_added
     assert template["/@file_name"] == filename
-    assert "/@file_time" in keys_added
-    assert "/@file_update_time" in keys_added
-    assert "/@NeXus_repository" in keys_added
-    assert "/@NeXus_release" in keys_added
-    assert "/@HDF5_Version" in keys_added
-    assert "/@h5py_version" in keys_added
-    assert "/ENTRY[entry]/definition" in keys_added
-    assert "/ENTRY[entry]/definition/@version" in keys_added
-    assert "/ENTRY[entry1]/definition" in keys_added
-    assert "/ENTRY[entry1]/definition/@version" in keys_added
+    for key in [
+        "/@NX_class",
+        "/@file_name",
+        "/@file_time",
+        "/@file_update_time",
+        "/@NeXus_repository",
+        "/@NeXus_release",
+        "/@HDF5_Version",
+        "/@h5py_version",
+        "/@creator",
+        "/@creator_version",
+        "/ENTRY[entry]/definition",
+        "/ENTRY[entry]/definition/@version",
+        "/ENTRY[entry1]/definition",
+        "/ENTRY[entry1]/definition/@version",
+    ]:
+        assert key in keys_added
 
 
 def test_warning_on_root_attribute_overwrite(caplog):
@@ -229,7 +241,7 @@ def test_warning_on_definition_changed_by_reader(caplog):
         ("", "utf-8", ""),  # empty string
         (b"", "utf-8", ""),  # empty bytes
         (123, "utf-8", 123),  # unexpected type int
-        ([b"test"], "utf-8", [b"test"]),  # unexpected type list
+        ([b"test"], "utf-8", ["test"]),  # unexpected type list
         ({"a": 1}, "utf-8", {"a": 1}),  # unexpected type dict
     ],
 )
@@ -237,11 +249,29 @@ def test_clean_str_attr(attr, encoding, expected):
     if isinstance(attr, bytes) and encoding == "utf-8" and attr == b"\xff":
         # handled separately for UnicodeDecodeError
         with pytest.raises(UnicodeDecodeError):
-            helpers.clean_str_attr(attr, encoding)
+            helpers.decode_if_bytes(attr, encoding)
     else:
-        assert helpers.clean_str_attr(attr, encoding) == expected
+        assert helpers.decode_if_bytes(attr, encoding) == expected
 
 
 def test_clean_str_attr_invalid_encoding():
     with pytest.raises(UnicodeDecodeError):
-        helpers.clean_str_attr(b"\xff", encoding="utf-8")
+        helpers.decode_if_bytes(b"\xff", encoding="utf-8")
+
+
+def test_get_pynxtools_version():
+    version = helpers.get_pynxtools_version()
+    assert version != "unknown_version"
+    assert re.compile(
+        r"""
+        ^
+        (?P<major>\d+)\.
+        (?P<minor>\d+)\.
+        (?P<patch>\d+)
+        (?:\.post(?P<post>\d+))?
+        (?:\.dev(?P<dev>\d+))?
+        (?:\+(?P<local>[a-zA-Z0-9\.]+))?
+        $
+        """,
+        re.VERBOSE,
+    ).match(version)

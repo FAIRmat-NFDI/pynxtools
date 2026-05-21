@@ -15,14 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""An example reader implementation for the DataConverter."""
+"""MultiFormatReader: base class for file-format-dispatching NeXus readers."""
 
 import ast
 import logging
 import os
 import re
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import (
@@ -30,6 +30,7 @@ from pynxtools.dataconverter.readers.utils import (
     is_integer,
     is_number,
     parse_flatten_json,
+    parse_yml,
     to_bool,
 )
 from pynxtools.dataconverter.template import Template
@@ -316,17 +317,55 @@ def fill_from_config(
 
 class MultiFormatReader(BaseReader):
     """
-    A reader that takes a mapping json file and a data file/object to return a template.
+    Base class for readers that dispatch input files by extension and populate
+    a NeXus template from the read data, optionally guided by a JSON config file.
+
+    Pipeline executed by ``read()`` in order:
+
+    1. **objects** — ``handle_objects(objects)`` is called first so in-memory
+       data is available to all subsequent steps.
+    2. **files** — each input file is dispatched to the matching handler in
+       ``self.extensions`` (sorted by ``processing_order`` if set).
+    3. **static data** — ``setup_template()`` returns a dict/Template of entries
+       that do not originate from input files (reader metadata, hard-coded values).
+    4. **config file** — if ``self.config_file`` is set, it is parsed into
+       ``self.config_dict``.
+    5. **post-processing** — ``post_process()`` may modify ``self.config_dict``
+       or other instance attributes (like ``self.eln_data`` or ``self.data``) or
+       may returns a dict/Template of entries to update the template.
+    6. **config fill** — ``fill_from_config()`` resolves ``@attrs``/``@data``/
+       ``@eln``/``@link`` tokens in ``self.config_dict`` via callbacks and
+       updates the template.
+
+    Subclasses must set ``supported_nxdls`` and define ``self.extensions`` in
+    ``__init__``.  All other hook methods are optional.
+
+    Built-in handlers (register in ``self.extensions`` to activate):
+
+    * ``handle_eln_file`` — parses YAML/JSON ELN files via ``parse_yml``;
+      respects ``CONVERT_DICT`` and ``REPLACE_NESTED`` class attributes.
+    * ``set_config_file`` — stores the path of a JSON config file.
+
+    Built-in callbacks (override to customize):
+
+    * ``get_attr(key, path)`` — retrieve instrument metadata.
+    * ``get_data(key, path)`` — retrieve measurement data.
+    * ``get_eln_data(key, path)`` — reads from ``self.eln_data`` populated by
+      ``handle_eln_file``; override if a different ELN source is needed.
+    * ``get_data_dims(key, path)`` — return axis names for wildcard expansion.
     """
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: list[str] = []
-    extensions: dict[str, Callable[[Any], dict]] = {}
+    # Type annotation only — each instance gets its own dict in __init__.
+    extensions: dict[str, Callable[[Any], dict]]
     kwargs: dict[str, Any] | None = None
     overwrite_keys: bool = True
-    processing_order: list[str] | None = None
     config_file: str | None = None
-    config_dict: dict[str, Any]
+
+    # Override in subclasses to control how handle_eln_file maps keys.
+    CONVERT_DICT: dict[str, str] = {}
+    REPLACE_NESTED: dict[str, str] = {}
 
     def __init__(self, config_file: str | None = None):
         self.callbacks = ParseJsonCallbacks(
@@ -336,60 +375,136 @@ class MultiFormatReader(BaseReader):
             dims=self.get_data_dims,
         )
         self.config_file = config_file
-        self.config_dict = {}
+        self.config_dict: dict[str, Any] = {}
+        self.eln_data: dict[str, Any] = {}
+        # Instance-level dict — avoids shared mutable class attribute.
+        # Subclasses override this in their own __init__.
+        self.extensions: dict[str, Callable[[Any], dict]] = {}
+        self.processing_order: list[str] | None = None
+
+    # ------------------------------------------------------------------
+    # Built-in file handlers — register in self.extensions to activate.
+    # ------------------------------------------------------------------
+
+    def handle_eln_file(self, file_path: str) -> dict[str, Any]:
+        """
+        Parse a YAML/JSON ELN file into ``self.eln_data``.
+
+        Uses ``parse_yml`` with the class-level ``CONVERT_DICT`` and
+        ``REPLACE_NESTED`` mappings.  The result is available to ``get_eln_data``
+        automatically.  Subclasses may override this method or simply set
+        ``CONVERT_DICT`` / ``REPLACE_NESTED`` at class level.
+        """
+        entry_name = self.get_entry_names()[0]
+        self.eln_data = parse_yml(
+            file_path,
+            convert_dict=dict(self.CONVERT_DICT),
+            replace_nested=dict(self.REPLACE_NESTED),
+            parent_key=f"/ENTRY[{entry_name}]",
+        )
+        return {}
+
+    def set_config_file(self, file_path: str) -> dict[str, Any]:
+        """
+        Register a JSON config file to drive ``@attrs``/``@data``/``@eln`` mapping.
+
+        If a config file was already set, a warning is logged and the new path
+        replaces the old one.
+        """
+        if self.config_file is not None:
+            logger.warning(f"Config file already set. Replaced by {file_path}.")
+        self.config_file = file_path
+        return {}
+
+    # ------------------------------------------------------------------
+    # Hook methods — override in subclasses as needed.
+    # ------------------------------------------------------------------
 
     def setup_template(self) -> dict[str, Any]:
         """
-        Setups the initial data in the template.
-        This may be used to set fixed information, e.g., about the reader.
+        Return static, hard-coded entries to add to the template.
+
+        Called after all input files have been dispatched but before any
+        config-file processing.  Use this for entries whose values are
+        known at class-definition time — reader metadata, fixed units,
+        constant calibration values, etc.
+
+        **Contract**: this method must NOT access the NXDL template structure
+        (there is no reference to it) and must NOT access data read from input
+        files (``self.data`` or equivalent).  Any logic that depends on either
+        belongs in ``read()`` or ``post_process()``.
         """
         return {}
 
-    # pylint: disable=unused-argument
-    def handle_objects(self, objects: tuple[Any]) -> dict[str, Any]:
+    def handle_objects(self, objects: tuple[Any]) -> dict[str, Any]:  # pylint: disable=unused-argument
         """
-        Handles the objects passed into the reader.
+        Handle in-memory Python objects passed alongside input files.
+
+        Called *before* file dispatch so that object data is available to
+        extension handlers.  Return a dict to add entries to the template,
+        or an empty dict if data is stored on ``self`` for later use.
         """
         return {}
 
     def get_attr(self, key: str, path: str) -> Any:
         """
-        Returns an attributes from the given path.
-        Should return None if the path does not exist.
+        Return instrument metadata from ``path`` for the ``@attrs`` config token.
+
+        ``key`` is the resolved NeXus template path; ``path`` is the part after
+        ``@attrs:``.  Return ``None`` if the path does not exist.
         """
         return None
 
     def get_data(self, key: str, path: str) -> Any:
         """
-        Returns data from the given path.
-        Should return None if the path does not exist.
+        Return measurement data from ``path`` for the ``@data`` config token.
+
+        ``key`` is the resolved NeXus template path; ``path`` is the part after
+        ``@data:``.  Return ``None`` if the path does not exist.
         """
         return None
 
     def get_eln_data(self, key: str, path: str) -> Any:
         """
-        Returns data from the given eln path.
-        Should return None if the path does not exist.
+        Return ELN metadata for the ``@eln`` config token.
+
+        By default reads from ``self.eln_data`` populated by ``handle_eln_file``.
+        Uses ``path`` when provided (i.e. ``@eln:some/path``), otherwise falls
+        back to ``key`` (i.e. bare ``@eln``).  Return ``None`` if not found.
         """
-        return {}
+        if not self.eln_data:
+            return None
+        return self.eln_data.get(path or key)
 
     def get_data_dims(self, key: str, path: str) -> list[str]:
         """
-        Returns the dimensions of the data from the given path.
+        Return axis names for wildcard (``*``) expansion in the config file.
+
+        Override when the config uses ``AXISNAME[*]`` / ``@data:*.data``
+        notation to expand multiple axes automatically.
         """
         return []
 
     def get_entry_names(self) -> list[str]:
         """
-        Returns a list of entry names which should be constructed from the data.
-        Defaults to creating a single entry named "entry".
+        Return the list of NeXus entry names to write.
+
+        Each name causes ``/ENTRY/`` in the config file to be replaced by
+        ``/ENTRY[<name>]/``.  Override for multi-entry datasets.
         """
         return ["entry"]
 
-    def post_process(self) -> None:
+    def post_process(self) -> dict[str, Any] | None:
         """
-        Do postprocessing after all files and config file are read.
+        Post-process after files are read and the config file is parsed.
+
+        May modify ``self.config_dict`` (or other instance attributes like
+        ``self.eln_data`` or ``self.data``) in-place (e.g. to add dynamic entries
+        for multi-detector setups) and/or return a dict of template entries to
+        add before ``fill_from_config`` runs.  Return ``None`` or ``{}`` if
+        no additional entries are needed.
         """
+        return None
 
     def read(
         self,
@@ -399,26 +514,28 @@ class MultiFormatReader(BaseReader):
         **kwargs,
     ) -> dict:
         """
-        Reads data from multiple files and passes them to the appropriate functions
-        in the extensions dict.
+        Execute the MultiFormatReader pipeline and return a filled Template.
+
+        See the class docstring for the full pipeline description.
         """
         self.kwargs = kwargs
         self.config_file = self.kwargs.get("config_file", self.config_file)
         self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)
 
-        template = Template(overwrite_keys=self.overwrite_keys)
+        template = Template(template=template, overwrite_keys=self.overwrite_keys)
 
+        # 1. Objects — before file dispatch so handlers can build on them.
+        if objects is not None:
+            template.update(self.handle_objects(objects))
+
+        # 2. Files — dispatch each input file to its registered handler.
         def get_processing_order(path: str) -> tuple[int, str | int]:
-            """
-            Returns the processing order of the file.
-            """
             ext = os.path.splitext(path)[1]
             if self.processing_order is None or ext not in self.processing_order:
                 return (1, ext)
             return (0, self.processing_order.index(ext))
 
-        sorted_paths = sorted(file_paths, key=get_processing_order)
-        for file_path in sorted_paths:
+        for file_path in sorted(file_paths or [], key=get_processing_order):
             extension = os.path.splitext(file_path)[1].lower()
             if extension not in self.extensions:
                 logger.warning(
@@ -428,20 +545,23 @@ class MultiFormatReader(BaseReader):
             if not os.path.exists(file_path):
                 logger.warning(f"File {file_path} does not exist, ignoring entry.")
                 continue
-
             template.update(self.extensions.get(extension, lambda _: {})(file_path))
 
+        # 3. Static data not derived from input files.
         template.update(self.setup_template())
-        if objects is not None:
-            template.update(self.handle_objects(objects))
 
+        # 4. Config file.
         if self.config_file is not None:
             self.config_dict = parse_flatten_json(
                 self.config_file, create_link_dict=False
             )
 
-        self.post_process()
+        # 5. Post-processing.
+        post_result = self.post_process()
+        if post_result:
+            template.update(post_result)
 
+        # 6. Fill template from config dict via @-token callbacks.
         if self.config_dict:
             suppress_warning = kwargs.pop("suppress_warning", False)
             template.update(
@@ -452,6 +572,8 @@ class MultiFormatReader(BaseReader):
                     suppress_warning=suppress_warning,
                 )
             )
+
+        template.remove_none_values()
 
         return template
 

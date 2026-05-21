@@ -20,14 +20,27 @@
 # pylint: disable=R0912
 
 import copy
+import importlib.util
 import logging
+import os
 import sys
 import xml.etree.ElementTree as ET
 
+import blosc2
 import h5py
+import hdf5plugin
 import numpy as np
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.chunk import (
+    BLOSC_NTHREADS,
+    CHUNK_CONFIG_DEFAULT,
+    COMPRESSION_FILTERS,
+    DEFAULT_COMPRESSION_FILTER,
+    DEFAULT_COMPRESSION_STRENGTH,
+    PERFORMANT_COMPRESSION_FILTER,
+    chunking_strategy,
+)
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
@@ -109,7 +122,7 @@ def handle_shape_entries(data, file, path):
 
 
 # pylint: disable=too-many-locals, inconsistent-return-statements
-def handle_dicts_entries(data, grp, entry_name, output_path, path):
+def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
     """Handle function for dictionaries found as value of the nexus file.
 
     Several cases can be encountered:
@@ -144,30 +157,68 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
         grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
     # internal and external links
     elif "link" in data.keys():
-        if ":/" not in data["link"]:
+        if ":" not in data["link"]:
             grp[entry_name] = h5py.SoftLink(path)  # internal link
         else:
+            if not path.startswith("/"):
+                path = "/" + path
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            strength = 9  # strongest compression is space efficient but can take long
-            accept = (
+            if (
+                BLOSC_NTHREADS > 0
+                and "filter" in data.keys()
+                and data["filter"] == PERFORMANT_COMPRESSION_FILTER
+            ):
+                compression_filter = PERFORMANT_COMPRESSION_FILTER
+            else:  # fall-back to default
+                compression_filter = DEFAULT_COMPRESSION_FILTER
+
+            if (
                 ("strength" in data.keys())
                 and (isinstance(data["strength"], int))
-                and (data["strength"] >= 0)
-                and (data["strength"] <= 9)
-            )
-            if accept is True:
-                strength = data["strength"]
-            grp.create_dataset(
-                entry_name,
-                data=data["compress"],
-                compression="gzip",
-                chunks=True,
-                compression_opts=strength,
-            )
+                and (0 <= data["strength"] <= 9)
+            ):
+                compression_strength = data["strength"]
+            else:
+                compression_strength = DEFAULT_COMPRESSION_STRENGTH
+
+            if entry_name not in grp:
+                try:
+                    if compression_filter == "gzip":
+                        compression_config = dict(
+                            compression=compression_filter,
+                            compression_opts=compression_strength,
+                        )
+                    else:  # by virtue of construction blosc
+                        compression_config = hdf5plugin.Blosc2(
+                            cname="zstd", clevel=DEFAULT_COMPRESSION_STRENGTH
+                        )
+                    grp.create_dataset(
+                        entry_name,
+                        data=data["compress"],
+                        chunks=chunking_strategy(data),
+                        **compression_config,
+                    )
+                except ValueError:
+                    logger.warning(f"ValueError caught upon creating_dataset {path}")
+            else:
+                if append:
+                    logger.info(f"Prevented the overwriting of dataset {path}")
         else:
-            grp.create_dataset(entry_name, data=data["compress"])
+            if entry_name not in grp:
+                try:
+                    if not np.isscalar(data["compress"]):
+                        grp.create_dataset(
+                            entry_name, chunks=True, data=data["compress"]
+                        )
+                    else:
+                        grp.create_dataset(entry_name, data=data["compress"])
+                except ValueError:
+                    logger.warning(f"ValueError caught upon creating_dataset {path}")
+            else:
+                if append:
+                    logger.info(f"Prevented the overwriting of dataset {path}")
     else:
         raise InvalidDictProvided(
             "A dictionary was provided to the template but it didn't"
@@ -201,15 +252,45 @@ class Writer:
     """
 
     def __init__(
-        self, data: dict = None, nxdl_f_path: str = None, output_path: str = None
+        self,
+        data: dict = None,
+        nxdl_f_path: str = None,
+        output_path: str = None,
+        append: bool = False,
     ):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
         self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "w")
+        self.output_nexus = h5py.File(
+            self.output_path,
+            "a" if append else "w",
+            rdcc_nslots=CHUNK_CONFIG_DEFAULT["rdcc_nslots"],
+            rdcc_nbytes=CHUNK_CONFIG_DEFAULT["rdcc_nbytes"],
+            rdcc_w0=CHUNK_CONFIG_DEFAULT["rdcc_w0"],
+        )
+        # using "r+" or "a" allow resizing a dataset that uses chunked data storage layout
+        # we currently do not implement this resizing though
+        # create_{group,dataset} with an existent name throws a ValueError
+        # as the HDF5 library prevents it
+        # we catch such ValueError and warn via the logger
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
+        self.append = append
+
+    def has_content_cued_for_compression(self) -> str:
+        """Check if template has some data that require blosc storage."""
+        for value in self.data.values():
+            if isinstance(value, dict):
+                if "compress" in value:
+                    if (
+                        "filter" in value
+                        and value["filter"] == PERFORMANT_COMPRESSION_FILTER
+                    ):
+                        return PERFORMANT_COMPRESSION_FILTER
+                    else:
+                        return DEFAULT_COMPRESSION_FILTER
+        return "no_compression"
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -239,24 +320,44 @@ class Writer:
 
         return elem.attrib
 
-    def ensure_and_get_parent_node(self, path: str, undocumented_paths) -> h5py.Group:
-        """Returns the parent if it exists for a given path else creates the parent group."""
+    def ensure_and_get_parent_node(
+        self, path: str, undocumented_paths
+    ) -> h5py.Group | h5py.Dataset | None:
+        """Returns the parent if it exists for a given path, else attempts creating the parent group, if that fails return None."""
         parent_path = path[0 : path.rindex("/")] or "/"
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
-            grp = parent.create_group(parent_path_hdf5)
+            if isinstance(parent, h5py.Group):
+                if parent_path_hdf5 not in parent:
+                    try:
+                        grp = parent.create_group(parent_path_hdf5)
+                    except ValueError:
+                        logger.warning(
+                            f"ValueError upon create_group {parent_path_hdf5}"
+                        )
+                        return None
 
-            attrs = self.__nxdl_to_attrs(parent_path)
+                    attrs = self.__nxdl_to_attrs(parent_path)
 
-            if attrs is not None:
-                if nx_class := attrs.get("type"):
-                    grp.attrs["NX_class"] = nx_class
+                    if attrs is not None:
+                        if nx_class := attrs.get("type"):
+                            if "NX_class" not in grp.attrs:
+                                grp.attrs["NX_class"] = nx_class
+                            else:
+                                if self.append:
+                                    logger.info(
+                                        f"Prevented the overwriting of attribute {parent_path}/@NXclass"
+                                    )
+                        else:
+                            logger.error(
+                                f"No attribute 'NX_class' could be written for {parent_path}."
+                            )
+                    return grp
                 else:
-                    logger.error(
-                        f"No attribute 'NX_class' could be written for {parent_path}."
-                    )
-            return grp
+                    if self.append:
+                        logger.info(f"Prevented the overwriting of group {parent_path}")
+                    return None
         return self.output_nexus[parent_path_hdf5]
 
     def _put_data_into_hdf5(self):
@@ -267,7 +368,13 @@ class Writer:
         def add_units_key(dataset, path):
             units_key = f"{path}/@units"
             if units_key in self.data.keys() and self.data[units_key] is not None:
-                dataset.attrs["units"] = self.data[units_key]
+                if "units" not in dataset.attrs:
+                    dataset.attrs["units"] = self.data[units_key]
+                else:
+                    if self.append:
+                        logger.info(
+                            f"Prevented the overwriting of attribute {path}/@units"
+                        )
 
         for path, value in self.data.items():
             try:
@@ -286,17 +393,54 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    if isinstance(data, dict):
-                        if "compress" in data.keys():
-                            dataset = handle_dicts_entries(
-                                data, grp, entry_name, self.output_path, path
+                    if isinstance(grp, (h5py.Group, h5py.Dataset)):
+                        if isinstance(data, dict):
+                            # links, and chunked compressed data storage layout
+                            if "compress" in data.keys():
+                                dataset = handle_dicts_entries(
+                                    data,
+                                    grp,
+                                    entry_name,
+                                    self.output_path,
+                                    path,
+                                    append=self.append,
+                                )
+                            else:
+                                hdf5_links_for_later.append(
+                                    [data, grp, entry_name, self.output_path, path]
+                                )
+                        else:  # use chunk-based storage layout also for data that are
+                            # not compressed as it enables more memory efficient
+                            # iterating over chunks e.g. in nomad/parsers/parser.py
+                            if entry_name not in grp:
+                                try:
+                                    if not np.isscalar(data):
+                                        dataset = grp.create_dataset(
+                                            entry_name, chunks=True, data=data
+                                        )
+                                    else:
+                                        dataset = grp.create_dataset(
+                                            entry_name, data=data
+                                        )
+                                except ValueError:
+                                    logger.warning(
+                                        f"ValueError caught upon create_dataset {path}"
+                                    )
+                            else:
+                                if self.append:
+                                    logger.info(
+                                        f"Prevented the overwriting of dataset {path}"
+                                    )
+                    else:
+                        if not np.isscalar(data):
+                            dataset = grp.create_dataset(
+                                entry_name, chunks=True, data=data
                             )
                         else:
-                            hdf5_links_for_later.append(
-                                [data, grp, entry_name, self.output_path, path]
-                            )
-                    else:
-                        dataset = grp.create_dataset(entry_name, data=data)
+                            dataset = grp.create_dataset(entry_name, data=data)
+                        logger.warning(
+                            f"Unable to get_parent_node {path}, skip adding children"
+                        )
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
@@ -306,7 +450,7 @@ class Writer:
                 ) from exc
 
         for links in hdf5_links_for_later:
-            dataset = handle_dicts_entries(*links)
+            dataset = handle_dicts_entries(*links, append=self.append)
             if dataset is None:
                 # If target of a link is invalid to be linked
                 del self.data[links[-1]]
@@ -329,11 +473,21 @@ class Writer:
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
-                    # consider changing the name here the value can also be group!
-                    dataset = self.ensure_and_get_parent_node(
+                    dataset_or_group = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
-                    dataset.attrs[entry_name[1:]] = data
+                    if isinstance(dataset_or_group, (h5py.Group, h5py.Dataset)):
+                        if entry_name[1:] not in dataset_or_group.attrs:
+                            dataset_or_group.attrs[entry_name[1:]] = data
+                        else:
+                            if self.append:
+                                logger.info(
+                                    f"Prevented the overwriting of attribute {path}"
+                                )
+                    else:
+                        logger.warning(
+                            f"Unable to get_parent_node {path}, skip adding attribute to dataset_or_group"
+                        )
             except Exception as exc:
                 raise OSError(
                     f"Unknown error occurred writing the path: {path}"
@@ -343,6 +497,16 @@ class Writer:
 
     def write(self):
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+        compression = self.has_content_cued_for_compression()
+        if compression in COMPRESSION_FILTERS:
+            logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
+        if compression == PERFORMANT_COMPRESSION_FILTER:
+            if not any("pytest" in arg for arg in sys.argv):
+                logger.info(
+                    f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
+                )
+                logger.info(blosc2.print_versions())
+
         try:
             self._put_data_into_hdf5()
         finally:

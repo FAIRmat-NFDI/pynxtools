@@ -105,30 +105,6 @@ def load_ontology() -> Ontology:
         raise
 
 
-def get_label(entity):
-    # Try to get rdfs:label, else fallback to name or IRI
-    if hasattr(entity, "label") and entity.label:
-        return entity.label[0]
-    elif hasattr(entity, "name"):
-        return entity.name
-    else:
-        return str(entity)
-
-
-def format_nxclass_label(nxclass):
-    label = get_label(nxclass)
-    iri = getattr(nxclass, "iri", None)
-    if iri and "PaNET" in iri:
-        code = iri.split("/")[-1]
-        return f"{label} ({code})"
-    elif iri and "nexusformat" in iri:
-        return f"{label}"
-    elif iri:
-        return f"{label} ({iri})"
-    else:
-        return f"{label}"
-
-
 def fetch_superclasses(ontology, class_name):
     try:
         cls = ontology.search_one(iri="*" + class_name)
@@ -167,7 +143,38 @@ def fetch_superclasses(ontology, class_name):
             )
             and isinstance(sc, ThingClass)
         ]
-        return [format_nxclass_label(sc) for sc in direct_superclasses]
+        return [format_nx_class_label(sc) for sc in direct_superclasses]
     except Exception as e:
         logger.error(f"Error in fetch_superclasses: {e}")
         raise
+
+
+# ------------------------------------------------------------------
+# Private helper functions
+# ------------------------------------------------------------------
+
+
+def format_nx_class_label(nx_class: ThingClass) -> str:
+    """Format the label for the nx_class Class."""
+
+    def _get_label(entity: ThingClass) -> str:
+        """Try to get rdfs:label, else fallback to name or IRI."""
+        if hasattr(entity, "label") and entity.label:
+            return str(entity.label[0])
+
+        if hasattr(entity, "name"):
+            return str(entity.name)
+
+        return str(entity)
+
+    label = _get_label(nx_class)
+    iri: str | None = getattr(nx_class, "iri", None)
+
+    if iri and "PaNET" in iri:
+        code = iri.rsplit("/", 1)[-1]
+        return f"{label} ({code})"
+
+    if iri and "nexusformat" not in iri:
+        return f"{label} ({iri})"
+
+    return label

@@ -25,6 +25,8 @@ dependencies = [
     "click>=7.1.2",
     "click_default_group",
     "h5py>=3.6.0",
+    "hdf5plugin",  # making explicit what in the past came implicit through pandas
+    "blosc2",  # making explicit what in the past came implicit through pandas
     "xarray>=0.20.2",
     "PyYAML>=6.0",
     'numpy',
@@ -61,7 +63,7 @@ docs = [
 ]
 dev = [
     "mypy",
-    "ruff>=0.14.0",
+    "ruff>=0.15.0",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
@@ -77,51 +79,50 @@ convert = [
 ]
 
 apm = [
-    "pynxtools-apm>=0.2.3",
+    "pynxtools-apm>=0.5.0",
 ]
 ellips = [
-    "pynxtools-ellips>=0.0.10",
+    "pynxtools-ellips>=0.1.2",
 ]
 em = [
-    "pynxtools-em>=0.3.2",
+    "pynxtools-em>=0.4.3",
 ]
 igor = [
-    "pynxtools-igor>=0.1.2",
+    "pynxtools-igor>=0.1.5",
 ]
 mpes = [
-    "pynxtools-mpes>=0.2.3",
+    "pynxtools-mpes>=0.2.7",
 ]
 raman = [
-    "pynxtools-raman>=0.0.11",
+    "pynxtools-raman>=0.1.2",
 ]
 spm = [
-    "pynxtools-spm>=0.1.2",
+    "pynxtools-spm>=0.2.3",
 ]
 xps = [
-    "pynxtools-xps>=0.5.2",
+    "pynxtools-xps>=0.6.0",
 ]
 xrd = [
-    "pynxtools-xrd>=0.0.5",
+    "pynxtools-xrd>=0.0.8",
 ]
 
 [project.entry-points.'nomad.plugin']
-nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
-nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
-nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
-nexus_app = "pynxtools.nomad.entrypoints:nexus_app"
-simple_nexus_example = "pynxtools.nomad.entrypoints:simple_nexus_example"
+nexus_parser = "pynxtools.nomad.parsers:nexus_parser"
+nexus_schema = "pynxtools.nomad.schema_packages:nexus_schema"
+nexus_data_converter = "pynxtools.nomad.schema_packages:nexus_data_converter"
+nexus_app = "pynxtools.nomad.apps:nexus_app"
+simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
 ontology_service = "pynxtools.nomad.apis:ontology_service"
 
 [project.scripts]
-read_nexus = "pynxtools.nexus.nexus:main"
-dataconverter = "pynxtools.dataconverter.convert:main_cli"
-generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
-validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
+pynx           = "pynxtools.cli:pynx"
+read_nexus     = "pynxtools.nexus.cli:read"
+dataconverter  = "pynxtools.dataconverter.cli:convert"
+generate_eln   = "pynxtools.eln_mapper.cli:generate_eln"
+validate_nexus = "pynxtools.dataconverter.cli:validate"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
-"pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
-"pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 "pynxtools.NeXusOntology.script" = ["*.py"]
 
 [tool.setuptools.packages.find]
@@ -173,6 +174,7 @@ ignore = [
 ]
 fixable = ["ALL"]
 isort.split-on-trailing-comma = false
+isort.known-first-party = ["pynxtools"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -185,7 +187,7 @@ strict = false
 ignore_missing_imports = true
 follow_imports = "silent"
 no_strict_optional = true
-disable_error_code = "import, annotation-unchecked"
+disable_error_code = "import, import-untyped, annotation-unchecked"
 exclude = ["src/pynxtools/definitions/*", "src/pynxtools/NeXusOntology/*"]
 
 [tool.uv]

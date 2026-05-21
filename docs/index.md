@@ -28,6 +28,9 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 - [Installation guide](tutorial/installation.md)
 - [Converting your research data to NeXus](tutorial/converting-data-to-nexus.md)
+- [Writing your first application definition](tutorial/writing-an-application-definition.md)
+- [Building your first pynxtools reader](tutorial/build-a-reader.md)
+- [Bringing your own data](tutorial/bring-your-own-data.md)
 - [Uploading NeXus data to NOMAD](tutorial/nexus-to-nomad.md)
 - [Development guide](tutorial/contributing.md)
 
@@ -38,14 +41,15 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 #### NeXus data modelling
 
-- [Writing an application definition](how-tos/nexus/writing-an-appdef.md)
+- [Writing an application definition](how-tos/nexus/write-an-application-definition.md)
 <!-- - [Using multiple application definitions](how-tos/nexus/using-multiple-appdefs.md) -->
 <!-- - [Representing experimental geometries](how-tos/nexus/transformations.md) -->
 
 #### pynxtools
 
 - [Build your own `pynxtools` plugin](how-tos/pynxtools/build-a-plugin.md)
-- [How to use the built-in `MultiFormatReader`](how-tos/pynxtools/use-multi-format-reader.md)
+- [Use the built-in `MultiFormatReader`](how-tos/pynxtools/use-multi-format-reader.md)
+- [Implement a custom `NexusVisitor`](how-tos/pynxtools/implement-a-visitor.md)
 - [Test functionality for `pynxtools` plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
 - [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
 - [Using Python to create NeXus files](how-tos/pynxtools/create-nexus-files-by-python.md)
@@ -66,9 +70,15 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 #### pynxtools
 
+- [`pynxtools` architecture](learn/pynxtools/architecture.md)
+- [NeXus definitions in `pynxtools`](learn/pynxtools/nexus-definitions.md)
 - [Data conversion in `pynxtools`](learn/pynxtools/dataconverter-and-readers.md)
 - [Validation of NeXus files](learn/pynxtools/nexus-validation.md)
 - [The `MultiFormatReader` as a reader superclass](learn/pynxtools/multi-format-reader.md)
+- [Append mode for the dataconverter](learn/pynxtools/dataconverter-append-mode.md)
+- [Using and tailoring compression](learn/pynxtools/compression.md)
+- [Chunked storage and numerics](learn/pynxtools/numerics.md)
+- [Note on versioning](learn/pynxtools/versioning.md)
 - [Introduction to the ontology service](learn/pynxtools/ontology-service.md)
 
 </div>

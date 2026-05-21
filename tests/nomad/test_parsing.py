@@ -37,7 +37,7 @@ except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
 
 
-from pynxtools.nomad.parser import NexusParser
+from pynxtools.nomad.parsers.parser import NexusParser
 
 
 def extend_nexus_file(key_to_data: Mapping[str, Any], filename: Path):

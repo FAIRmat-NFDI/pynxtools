@@ -1,5 +1,7 @@
 # NeXus definitions
 
+!!! info "To learn more about how the NeXus definitions are integrated in `pynxtools`, see [Learn > pynxtools > NeXus definitions in pynxtools](../learn/pynxtools/nexus-definitions.md)."
+
 We link two references here.
 The first links to the official definitions by the [NIAC](http://www.nexusformat.org) and the second one links to latest FAIRmat definitions.
 

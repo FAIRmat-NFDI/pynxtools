@@ -11,30 +11,43 @@ nav:
   - Tutorials:
     - tutorial/installation.md
     - tutorial/converting-data-to-nexus.md
+    - tutorial/writing-an-application-definition.md
+    - tutorial/build-a-reader.md
+    - tutorial/bring-your-own-data.md
     - tutorial/nexus-to-nomad.md
     - tutorial/contributing.md
   - How-tos:
     - NeXus:
-      - how-tos/nexus/writing-an-appdef.md
+      - how-tos/nexus/write-an-application-definition.md
       # - how-tos/nexus/using-multiple-appdefs.md
       # - how-tos/nexus/transformations.md
     - pynxtools:
       - how-tos/pynxtools/build-a-plugin.md
       - how-tos/pynxtools/use-multi-format-reader.md
+      - how-tos/pynxtools/implement-a-visitor.md
       - how-tos/pynxtools/using-pynxtools-test-framework.md
       - how-tos/pynxtools/run-tests-in-parallel.md
       - how-tos/pynxtools/create-nexus-files-by-python.md
       - how-tos/pynxtools/validate-nexus-files.md
+      - how-tos/pynxtools/use-with-nomad.md
       - how-tos/pynxtools/ontology-service.md
+
   - Learn:
     - NeXus:
       - learn/nexus/nexus-primer.md
       - learn/nexus/nexus-rules.md
       # - learn/nexus/multiple-appdefs.md
     - pynxtools:
+      - learn/pynxtools/architecture.md
+      - learn/pynxtools/nexus-definitions.md
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md
+      - learn/pynxtools/dataconverter-append-mode.md
+      - learn/pynxtools/compression.md
+      - learn/pynxtools/versioning.md
+      - learn/pynxtools/nomad-integration.md
+      - learn/pynxtools/numerics.md
       - learn/pynxtools/ontology-service.md
   - Reference:
     - reference/definitions.md
@@ -104,5 +117,4 @@ extra_css:
 
 extra_javascript:
   - javascript.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

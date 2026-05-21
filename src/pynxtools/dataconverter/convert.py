@@ -18,27 +18,19 @@
 """This script runs the conversion routine using a selected reader and write out a NeXus file."""
 
 import glob
-import importlib.machinery
 import importlib.util
-import json
 import logging
 import os
-import sys
-from gettext import gettext
-from pathlib import Path
-from typing import Literal, Optional
 
-import click
 import lxml.etree as ET
 import yaml
-from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
-from pynxtools.dataconverter.nexus_tree import generate_tree_from
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
+from pynxtools.nexus.nexus_tree import generate_tree_from
 
 logger = logging.getLogger("pynxtools")
 
@@ -116,6 +108,9 @@ def transfer_data_into_template(
         Root element of nxdl file, otherwise provide nxdl_name
     skip_verify: bool, default False
         Skips verification routine if set to True
+        If the dataconverter is configured with append = True,
+        verification is currently always skipped, use validate
+        on the resulting HDF5 file instead
 
     Returns
     -------
@@ -146,17 +141,9 @@ def transfer_data_into_template(
             "The chosen NXDL isn't supported by the selected reader."
         )
 
-    if "ignore_undocumented" in kwargs:
-        ignore_undocumented = kwargs["ignore_undocumented"]
-        del kwargs["ignore_undocumented"]
-    else:
-        ignore_undocumented = False
-
-    if "fail" in kwargs:
-        fail = kwargs["fail"]
-        del kwargs["fail"]
-    else:
-        fail = False
+    ignore_undocumented = kwargs.pop("ignore_undocumented", False)
+    fail = kwargs.pop("fail", False)
+    append = kwargs.pop("append", False)
 
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
@@ -164,7 +151,7 @@ def transfer_data_into_template(
     entry_names = data.get_all_entry_names()
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
-    if not skip_verify:
+    if not append and not skip_verify:
         valid = validate_dict_against(
             nxdl_name,
             data,
@@ -200,6 +187,8 @@ def convert(
         Root name of nxdl file, e.g. NXmpes for NXmpes.nxdl.xml
     output : str
         Output file name.
+    skip_verify: bool, default False
+        Skips verification routine if set to True
     generate_template : bool, default False
         True if user wants template in logger info.
     fair : bool, default False
@@ -207,9 +196,14 @@ def convert(
         in the template.
     ignore_undocumented : bool, default False
         If True, all undocumented items are ignored in the validation.
-    skip_verify: bool, default False
-        Skips verification routine if set to True
-
+    append : bool, default False
+        If True, allows adding instances. Currently, resizing existent datasets
+        (e.g. using chunked storage layout) is not supported
+        It is the users responsibility to prepare the template dictionary
+        such that one does not instantiate any HDF5 object type that already
+        exists. If happening nonetheless, the HDF5 libraries ValueError is caught
+        and the program emits a log message warning that the instance has not been
+        added. This is in an attempt to prevent an invalidating of the file.
     Returns
     -------
     None.
@@ -224,252 +218,24 @@ def convert(
         skip_verify=skip_verify,
         **kwargs,
     )
-
-    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
+    helpers.add_default_root_attributes(
+        data=data,
+        filename=os.path.basename(output),
+        append=kwargs.get("append", False),
+    )
+    Writer(
+        data=data,
+        nxdl_f_path=nxdl_f_path,
+        output_path=output,
+        append=kwargs.get("append", False),
+    ).write()
 
     logger.info(f"The output file generated: {output}.")
 
 
 def parse_params_file(params_file):
     """Parses the parameters from a given dictionary and returns them"""
-    params = yaml.load(params_file, Loader=yaml.Loader)["dataconverter"]
+    params = yaml.load(params_file, Loader=yaml.SafeLoader)["dataconverter"]
     for param in list(params.keys()):
         params[param.replace("-", "_")] = params.pop(param)
     return params
-
-
-class CustomClickGroup(DefaultGroup):
-    def format_options(
-        self, ctx: click.Context, formatter: click.HelpFormatter
-    ) -> None:
-        """Writes all the options into the formatter if they exist."""
-        opts = []
-        for param in self.get_params(ctx) + ctx.command.commands["convert"].params:  # type: ignore
-            rv = param.get_help_record(ctx)
-            if rv is not None:
-                opts.append(rv)
-
-        if opts:
-            with formatter.section(gettext("Options")):
-                formatter.write_dl(opts)
-        self.format_commands(ctx, formatter)
-        with formatter.section(gettext("Info")):
-            formatter.write_text(
-                "You can see more options by using --help for specific commands. For example: dataconverter generate-template --help"
-            )
-
-
-@click.group(
-    cls=CustomClickGroup,
-    default="convert",
-    default_if_no_args=True,
-)
-def main_cli():
-    pass
-
-
-@main_cli.command("convert")
-@click.argument("files", nargs=-1, type=click.Path(exists=True))
-@click.option(
-    "--input-file",
-    default=[],
-    multiple=True,
-    help=(
-        "Deprecated: Please use the positional file arguments instead. The path to the "
-        "input data file to read. Repeat for more than one file. default=[] This option "
-        "is required if no '--params-file' is supplied."
-    ),
-)
-@click.option(
-    "--reader",
-    default="json_map",
-    type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
-    help=(
-        "The reader to use. Examples are json_map or readers from a pynxtools plugin. "
-        "default='json_map' This option is required if no '--params-file' is supplied."
-    ),
-)
-@click.option(
-    "--nxdl",
-    default=None,
-    help=(
-        "The name of the NeXus application definition file to use without the extension "
-        "nxdl.xml. This option is required if no '--params-file' is supplied."
-    ),
-)
-@click.option(
-    "--output",
-    default="output.nxs",
-    help="The path to the output NeXus file to be generated. default='output.nxs'",
-)
-@click.option(
-    "--params-file",
-    type=click.File("r"),
-    default=None,
-    help="Allows to pass a .yaml file with all the parameters the converter supports.",
-)
-@click.option(
-    "--ignore-undocumented",
-    is_flag=True,
-    default=False,
-    help="Ignore all undocumented concepts during validation.",
-)
-@click.option(
-    "--fail",
-    is_flag=True,
-    default=False,
-    help="Fail conversion and don't create an output file if the validation fails.",
-)
-@click.option(
-    "--skip-verify",
-    is_flag=True,
-    default=False,
-    help="Skips the verification routine during conversion.",
-)
-@click.option(
-    "--mapping",
-    help="Takes a <name>.mapping.json file and converts data from given input files.",
-)
-@click.option(
-    "-c",
-    "--config",
-    "config_file",
-    type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
-    default=None,
-    help="A json config file for the reader",
-)
-# pylint: disable=too-many-arguments
-def convert_cli(
-    files: tuple[str, ...],
-    input_file: tuple[str, ...],
-    reader: str,
-    nxdl: str,
-    output: str,
-    params_file: str,
-    ignore_undocumented: bool,
-    skip_verify: bool,
-    mapping: str,
-    config_file: str,
-    fail: bool,
-    **kwargs,
-):
-    """This command allows you to use the converter functionality of the dataconverter."""
-    if params_file:
-        try:
-            convert(**parse_params_file(params_file))
-            return
-        except TypeError as exc:
-            sys.tracebacklimit = 0
-            raise click.UsageError(
-                "Please make sure you have the following entries in your "
-                "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
-                "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
-                "put-file: value"
-            ) from exc
-    if nxdl is None:
-        raise click.UsageError("Missing option '--nxdl'")
-    if mapping:
-        reader = "json_map"
-        input_file = input_file + tuple([mapping])
-        # needs own call
-
-    if config_file:
-        kwargs["config_file"] = config_file
-
-    file_list = []
-    for file in files:
-        if os.path.isdir(file):
-            p = Path(file)
-            for f in p.rglob("*"):
-                if f.is_file():
-                    file_list.append(str(f))
-            continue
-        file_list.append(file)
-
-    if input_file:
-        logger.warning(
-            "The --input-file option is deprecated. Please use the positional arguments instead."
-        )
-
-    try:
-        convert(
-            tuple(file_list) + input_file,
-            reader,
-            nxdl,
-            output,
-            skip_verify,
-            ignore_undocumented=ignore_undocumented,
-            fail=fail,
-            **kwargs,
-        )
-    except FileNotFoundError as exc:
-        raise click.BadParameter(str(exc)) from exc
-    except ValidationFailed as exc:
-        raise click.ClickException(
-            "Validation failed: No file written because '--fail' was requested."
-        ) from exc
-
-
-@main_cli.command()
-@click.option(
-    "--nxdl",
-    default=None,
-    help=(
-        "The name of the NeXus application definition file to use without extension. For example: NXmpes"
-    ),
-    required=True,
-)
-@click.option(
-    "--required",
-    help="Use this flag to only get the required template.",
-    is_flag=True,
-)
-@click.option(
-    "--pythonic",
-    help="Prints a valid Python dictionary instead of JSON",
-    is_flag=True,
-)
-@click.option(
-    "--output",
-    help="Writes the output into the filepath provided.",
-    type=click.Path(),
-)
-def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
-    "Generates and prints a template to use for your nxdl."
-
-    def write_to_file(text):
-        f = open(output, "w")
-        f.write(text)
-        f.close()
-
-    tree = generate_tree_from(nxdl)
-
-    print_or_write = lambda txt: write_to_file(txt) if output else print(txt)
-
-    level: Literal["required", "recommended", "optional"] = "optional"
-    if required:
-        level = "required"
-    reqs = tree.required_fields_and_attrs_names(level=level)
-    template = {
-        helpers.convert_nxdl_path_dict_to_data_converter_dict(req): None for req in reqs
-    }
-
-    if pythonic:
-        print_or_write(str(template))
-        return
-    print_or_write(
-        json.dumps(
-            template,
-            indent=4,
-            sort_keys=True,
-            ensure_ascii=False,
-        )
-    )
-
-
-@main_cli.command("get-readers")
-def get_reader_cli():
-    """Prints a list of all installed readers."""
-    readers = get_names_of_all_readers()
-    logger.info(f"The following readers are currently installed: {readers}.")

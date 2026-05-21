@@ -48,7 +48,7 @@ def _get_def_map(file: str) -> dict[str, str]:
     with File(file, "r") as h5file:
         for entry_name, dataset in h5file.items():
             if (
-                helpers.clean_str_attr(dataset.attrs.get("NX_class")) == "NXentry"
+                helpers.decode_if_bytes(dataset.attrs.get("NX_class")) == "NXentry"
                 and f"/{entry_name}/definition" in h5file
             ):
                 def_map.update(
@@ -102,23 +102,3 @@ def validate(file: str, ignore_undocumented: bool = False):
                     f"Invalid: The entry `{entry}` in file `{file}` is NOT valid"
                     f" according to the `{nxdl}` application definition.",
                 )
-
-
-@click.command()
-@click.argument(
-    "file",
-    type=click.Path(exists=True),
-)
-@click.option(
-    "--ignore-undocumented",
-    is_flag=True,
-    default=False,
-    help="Ignore all undocumented concepts during validation.",
-)
-def validate_cli(file: str, ignore_undocumented: bool = False):
-    """
-    Validates a NeXus HDF5 file.
-
-    FILE: The path to the NeXus file to validate.
-    """
-    validate(file, ignore_undocumented)

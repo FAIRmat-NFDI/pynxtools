@@ -1378,7 +1378,7 @@ You can start the `punx` validation by running
     NeXus definitions version: main
     ```
 
-The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file. As you can see, while the output is verbose and comprehensive, `punx` does not actually pick up on the issues that the [`pynxtools` validator finds](validate-nexus-files.md#validate_nexus).
+The output tables "findings" and "summary statistics" can be used to find if errors are present in the NeXus file. While the output is verbose and comprehensive, you can observe that `punx` does not pick up on the issues that the [`pynxtools` validator](validate-nexus-files.md#pynx-validate) finds.
 
 You can just pass one of the logging levels to the `--report` flag to select for a subset of the report:
 
@@ -1971,4 +1971,4 @@ If you want to see the contents of a given base class, the `-b` option can be us
 
 ## Recommendations
 
-We strongly recommend to use the [`validate_nexus`](./validate-nexus-files.md#validate_nexus) tool that is shipped with our `pynxtools` software, as it is likely to be the most complete and up-to-date solution around. However, if you want to use another tool to cross-check, the `nxvalidate` tool seems to be a good solution, as it picks up on all the issues that `validate_nexus` detects as well.
+We strongly recommend to use the [`pynx validate`](./validate-nexus-files.md#pynx-validate) tool that is shipped with our `pynxtools` software, as it is likely to be the most complete and up-to-date solution around. However, if you want to use another tool to cross-check, the `nxvalidate` tool seems to be a good solution, as it picks up on all the issues that `pynx validate` detects as well.

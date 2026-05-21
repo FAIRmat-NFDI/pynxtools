@@ -20,8 +20,13 @@
 import re
 from typing import Union
 
-from pynxtools.dataconverter.nexus_tree import NexusEntity, NexusGroup, NexusNode
 from pynxtools.eln_mapper.eln import ElnGenerator
+from pynxtools.nexus.nexus_tree import (
+    NexusField,
+    NexusGroup,
+    NexusNode,
+    _NexusEntityBase,
+)
 
 NEXUS_TO_NOMAD_QUANTITY: dict[str, tuple[str, str]] = {
     "NX_BINARY": ("bytes", "NumberEditQuantity"),
@@ -226,7 +231,7 @@ class NomadElnGenerator(ElnGenerator):
         self._recurse_tree(node, section, recursion_level + 1)
 
     def _construct_entity_structure(
-        self, node: NexusEntity, recursive_dict: dict, recursion_level: int
+        self, node: _NexusEntityBase, recursive_dict: dict, recursion_level: int
     ):
         """Handle NeXus field or attribute, to construct structure like:
         <entity_name>:
@@ -240,7 +245,7 @@ class NomadElnGenerator(ElnGenerator):
 
         Parameters
         ----------
-        node: NexusEntity
+        node: _NexusEntityBase
             NeXus field/attribute to recurse
         recursive_dict : dict
             dict into which the entity is recursively added
@@ -273,7 +278,7 @@ class NomadElnGenerator(ElnGenerator):
         )
 
         unit = None
-        if node.unit:
+        if isinstance(node, NexusField) and node.unit:
             unit = DEFAULT_UNITS.get(node.unit)
 
         entity_dict["type"] = entity_type

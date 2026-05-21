@@ -2,7 +2,7 @@
 
 One of the main motivations for pynxtools is to develop a tool for combining various instrument output formats and electronic lab notebook (ELN) into a file according to [NeXus application definitions](https://fairmat-nfdi.github.io/nexus_definitions/classes/index.html). 
 
-The `dataconverter` API in pynxtools provides exactly that: it converts experimental as well as simulation data, together with the results from analysis of such data, to NeXus files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1). Here, we are using [HDF5](https://support.hdfgroup.org/HDF5/) as the serialization format.
+The `pynx convert` command in pynxtools provides exactly that: it converts experimental as well as simulation data, together with the results from analysis of such data, to NeXus files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1). Here, we are using [HDF5](https://support.hdfgroup.org/HDF5/) as the serialization format.
 
 The dataconverter currently has essentially three functionalities:
 
@@ -29,24 +29,49 @@ You should start by installing `pynxtools` and (if needed) one or more of its su
 
 ## Usage
 
-See [here](../../reference/cli-api.md#data-conversion) for the documentation of the `dataconverter` API.
+See [Reference > API for command line tools > pynx convert](../../reference/cli-api.md#data-conversion-pynx-convert) for the documentation of the `pynx convert` API.
+
+### Discover installed readers
+
+Before converting data, you need to know which readers are available in your environment. Use `pynx convert get-readers` to list them:
+
+```console
+pynx convert get-readers
+```
+
+Once you know which reader to use, `pynx convert reader-info` shows the NXDL application definitions and file extensions it supports:
+
+```console
+pynx convert reader-info <reader-name>
+```
+
+### Inspect an application definition
+
+To understand what fields a given NXDL application definition requires before converting your data, use `pynx inspect-appdef`:
+
+```console
+pynx inspect-appdef NXmynxdl
+pynx inspect-appdef NXmynxdl --level optional
+```
+
+The `--level` flag controls how much of the definition is shown: `required` (default), `recommended`, or `optional`. For the full list of paths suitable for filling in directly, use `pynx convert generate-template` instead.
 
 ### Use with multiple input files
 
 ```console
-dataconverter metadata data.raw otherfile --nxdl nxdl --reader <reader-name>
+pynx convert metadata data.raw otherfile --nxdl nxdl --reader <reader-name>
 ```
 
 ### Merge partial NeXus files into one
 
 ```console
-dataconverter --nxdl nxdl partial1.nxs partial2.nxs
+pynx convert --nxdl nxdl partial1.nxs partial2.nxs
 ```
 
 ### Map an HDF5 file/JSON file
 
 ```console
-dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
+pynx convert --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 ```
 
 You can find actual examples with data files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/).

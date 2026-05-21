@@ -19,6 +19,8 @@
 
 Additionally, the software can be used as a plugin in the research data management system NOMAD for making experimental data searchable and publishable. NOMAD is developed by the FAIRmat consortium which is a consortium of the German National Research Data Infrastructure (NFDI).
 
+We welcome contributions! See [contributing](https://fairmat-nfdi.github.io/pynxtools/tutorial/contributing.html) for guidelines on reporting bugs, requesting features, and submitting pull requests.
+
 Read more in the [official documentation page](https://fairmat-nfdi.github.io/pynxtools/).
 
 # How to cite this work
