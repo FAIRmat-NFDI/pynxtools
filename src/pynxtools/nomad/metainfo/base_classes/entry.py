@@ -27,9 +27,9 @@ from typing import TYPE_CHECKING
 import numpy as np
 from nomad.datamodel.metainfo.basesections import Measurement
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Bytes, Datetime
+from nomad.metainfo.data_type import Datetime
 
-from pynxtools.nomad.annotations import NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -58,10 +58,9 @@ class Entry(Measurement):
     """
 
     m_def = Section(
-        a_nexus_group=NeXusGroup(
+        a_nexus_definition=NeXusDefinition(
             nx_class="NXentry",
             category="base",
-            optionality="optional",
         ),
     )
 

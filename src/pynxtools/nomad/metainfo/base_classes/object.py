@@ -26,10 +26,9 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo.basesections import BaseSection
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Bytes, Datetime
+from nomad.metainfo import Quantity, Section, SubSection
 
-from pynxtools.nomad.annotations import NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.log import Log
@@ -54,10 +53,9 @@ class Object(BaseSection):
     """
 
     m_def = Section(
-        a_nexus_group=NeXusGroup(
+        a_nexus_definition=NeXusDefinition(
             nx_class="NXobject",
             category="base",
-            optionality="optional",
         ),
     )
 
