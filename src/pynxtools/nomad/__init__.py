@@ -131,3 +131,44 @@ def get_quantity_base_name(quantity_name):
         if quantity_name.endswith("__field") and quantity_name[-8] != "_"
         else quantity_name
     )
+
+
+PACKAGE_DIR = Path(__file__).resolve().parent
+CACHE_DIR = Path(config.fs.tmp) / "pynxtools"
+
+
+def resolve_artifact_path(
+    *,
+    filename: str,
+    package_dir: Path,
+    cache_dir: Path,
+    build_env_var: str = "PYNXTOOLS_BUILD_PACKAGE",
+) -> Path:
+    """Resolve the path for a generated artifact.
+
+    Resolution order:
+
+    1. If ``build_env_var`` is ``"1"``, always return the path inside
+       ``PACKAGE_DIR`` (ensures inclusion in built distributions).
+    2. If the file exists in ``PACKAGE_DIR``, return that path.
+    3. Otherwise, return the corresponding path inside ``CACHE_DIR`` for
+       development or first-time generation.
+
+    This function does not generate the file.
+
+    Returns:
+        Path: Resolved location for reading or writing the JSON file.
+    """
+    # 1. Build-mode override (forces packaging the file)
+    if os.environ.get(build_env_var) == "1":
+        return package_dir
+
+    # 2. Use packaged file if it exists
+    packaged = package_dir / filename
+    if packaged.exists():
+        return packaged
+
+    # 3. Otherwise store in cache dir
+    # create parent directory only if we need to write
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir / filename
