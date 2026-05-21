@@ -190,7 +190,7 @@ Key methods:
 
 `pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`.  The annotator holds a `NexusSchemaResolver` and uses it on every `on_field` / `on_attribute` callback to look up the matching `NexusNode`, then emits documentation, optionality, enumeration values, and inheritance information.
 
-When an `NXdata` group is encountered, the annotator calls `inspect_nxdata` (from `pynxtools.nexus.nxdata`) once at the group level to detect the primary signal, axis datasets, and convention (v3/v2/v1). The result is cached and used to annotate each field in that group with its NXdata role (`SIGNAL` / `AXIS #N`). After the full traversal, the default-plottable chain is also logged via `get_default_plottable`.
+When an `NXdata` group is encountered, the annotator calls `inspect_nxdata` (from `pynxtools.nexus.nxdata`) once at the group level to detect the primary signal, axis datasets, and convention (v3/v2/v1). The result is cached and used to annotate each field in that group with its NXdata role (`SIGNAL` / `AXIS #N`). Any structural violations returned by `check_nxdata` (e.g. shape mismatches, missing signal dataset) are logged at WARNING level. After the full traversal, the default-plottable chain is also logged via `get_default_plottable`.
 
 Three operating modes are supported:
 
@@ -205,7 +205,7 @@ Three operating modes are supported:
 - required, recommended, and optional fields are present where expected,
 - field values conform to their `NexusType` and unit category,
 - enumeration values are in-range (warnings for closed enumerations, info for open),
-- `NXdata` signal and axis dimensionality rules are satisfied,
+- `NXdata` structural rules are satisfied (signal present, axes rank and shape correspondence, auxiliary signal shape, `FIELDNAME_errors` shape, signal convention detectable),
 - HDF5 links resolve correctly and carry a `@target` attribute; broken soft or external links are reported as `BrokenLink` problems,
 - reserved suffixes and prefixes are used in valid contexts.
 
@@ -247,9 +247,12 @@ The [NeXus Data Plotting Standard](https://manual.nexusformat.org/examples/pytho
 
 | Symbol | Description |
 |--------|-------------|
-| `NXdataInfo` | Dataclass: `signal`, `signal_name`, `axes` (per-dimension lists), `aux_signals`, `convention` |
+| `NXdataInfo` | Dataclass: `signal`, `signal_name`, `axes` (per-dimension lists), `aux_signals`, `convention`, `errors` (mapping of `{name}_errors` datasets for signal, axes, and aux signals) |
+| `NXdataViolationKind` | Enum of structural violation kinds: `AxesRankMismatch`, `IndicesCountMismatch`, `IndicesNotSubset`, `AxisShapeMismatch`, `AuxSignalShapeMismatch`, `MissingSignalData`, `MissingAxisData`, `NoSignalConvention` |
+| `NXdataViolation` | Dataclass: `kind` (`NXdataViolationKind`), `message` (human-readable string), `subject` (HDF5 path of the offending node) |
 | `classify_field(hdf_node, name)` | Returns `'signal'`, `'axis'`, or `None` for a dataset within its NXdata parent |
-| `inspect_nxdata(group)` | Returns `NXdataInfo` by trying v3 → v2 → v1 |
+| `inspect_nxdata(group)` | Returns `NXdataInfo` by trying v3 → v2 → v1; also populates `NXdataInfo.errors` |
+| `check_nxdata(group, info=None)` | Returns `list[NXdataViolation]` for all structural NXdata rule violations; calls `inspect_nxdata` if `info` is not provided |
 | `find_default_nxdata(root)` | Walks the `@default` chain to locate the default plottable `NXdata` group |
 | `find_default_nxentry(root)` | Returns the default `NXentry` group |
 

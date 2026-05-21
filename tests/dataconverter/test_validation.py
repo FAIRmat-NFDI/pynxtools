@@ -2230,6 +2230,153 @@ def format_error_message(msg: str) -> str:
             ],
             id="symbol-size-mismatch",
         ),
+        # NXdata structural violation tests (dict/template path)
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                "required",
+            ),
+            [
+                "NXdata /ENTRY[my_entry]/NXODD_name[nxodd_name]/data:"
+                " @signal='data' but no data found in the NXdata group."
+            ],
+            id="nxdata-missing-signal-data",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                            np.ones(5),
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                        ["q", "r"],
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                    np.arange(5, dtype=float),
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[r]",
+                np.arange(5, dtype=float),
+            ),
+            [
+                "NXdata /ENTRY[my_entry]/NXODD_name[nxodd_name]@axes:"
+                " @axes has 2 entries but signal 'data' has rank 1."
+            ],
+            id="nxdata-axes-rank-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                    np.ones(5),
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                "q",
+            ),
+            [
+                "NXdata /ENTRY[my_entry]/NXODD_name[nxodd_name]/q:"
+                " @axes references axis 'q' which has no data."
+            ],
+            id="nxdata-missing-axis",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                        np.ones(5),
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                    "q",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                np.ones(3),
+            ),
+            [
+                "NXdata /ENTRY[my_entry]/NXODD_name[nxodd_name]/q:"
+                " 'q'.shape[0]=3 does not match signal dimension 0"
+                " (expected 5 or 6)."
+            ],
+            id="nxdata-axis-shape-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                                np.ones(5),
+                            ),
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                            "q",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                        np.arange(5, dtype=float),
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@auxiliary_signals",
+                    "aux",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[aux]",
+                np.ones(3),
+            ),
+            [
+                "NXdata /ENTRY[my_entry]/NXODD_name[nxodd_name]/aux:"
+                " Auxiliary signal 'aux' has shape (3,) but signal 'data'"
+                " has shape (5,); they must be equal."
+            ],
+            id="nxdata-aux-signal-shape-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                            np.ones(5),
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                        "q",
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                    np.arange(5, dtype=float),
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/data_errors",
+                np.ones(3),
+            ),
+            [
+                "NXdata /ENTRY[my_entry]/NXODD_name[nxodd_name]/data_errors:"
+                " 'data_errors' has shape (3,) but 'data' has shape (5,);"
+                " errors must match field shape.",
+                "Field /ENTRY[my_entry]/NXODD_name[nxodd_name]/data_errors"
+                " has no documentation.",
+            ],
+            id="nxdata-errors-shape-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                        np.ones(5),
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                    "q",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                np.arange(5, dtype=float),
+            ),
+            [],
+            id="nxdata-valid-with-axis",
+        ),
     ],
 )
 def test_validate_data_dict(data_dict, error_messages, caplog, request):
@@ -3656,6 +3803,151 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "'field_a': size 10, 'field_b': size 8."
             ],
             id="symbol-size-mismatch",
+        ),
+        # NXdata structural violation tests (HDF5/file path)
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                "required",
+            ),
+            [
+                "NXdata /my_entry/nxodd_name/data:"
+                " @signal='data' but no dataset 'data' exists in the group."
+            ],
+            id="nxdata-missing-signal-data",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                            np.ones(5),
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                        ["q", "r"],
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                    np.arange(5, dtype=float),
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[r]",
+                np.arange(5, dtype=float),
+            ),
+            [
+                "NXdata /my_entry/nxodd_name@axes:"
+                " @axes has 2 entries but signal 'data' has rank 1."
+            ],
+            id="nxdata-axes-rank-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                    np.ones(5),
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                "q",
+            ),
+            [
+                "NXdata /my_entry/nxodd_name/q:"
+                " @axes[0] references axis 'q' which does not exist in the group."
+            ],
+            id="nxdata-missing-axis",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                        np.ones(5),
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                    "q",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                np.ones(3),
+            ),
+            [
+                "NXdata /my_entry/nxodd_name/q:"
+                " 'q' at @axes[0] has length 3 but signal dimension 0"
+                " has size 5 (or 6 for bin edges)."
+            ],
+            id="nxdata-axis-shape-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                                np.ones(5),
+                            ),
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                            "q",
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                        np.arange(5, dtype=float),
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@auxiliary_signals",
+                    "aux",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[aux]",
+                np.ones(3),
+            ),
+            [
+                "NXdata /my_entry/nxodd_name/aux:"
+                " Auxiliary signal 'aux' has shape (3,) but primary signal 'data'"
+                " has shape (5,); they must be equal."
+            ],
+            id="nxdata-aux-signal-shape-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                            np.ones(5),
+                        ),
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                        "q",
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                    np.arange(5, dtype=float),
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/data_errors",
+                np.ones(3),
+            ),
+            [
+                "NXdata /my_entry/nxodd_name/data_errors:"
+                " 'data_errors' has shape (3,) but 'data' has shape (5,);"
+                " errors must have the same shape as their field."
+            ],
+            id="nxdata-errors-shape-mismatch",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                        np.ones(5),
+                    ),
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@axes",
+                    "q",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[q]",
+                np.arange(5, dtype=float),
+            ),
+            [],
+            id="nxdata-valid-with-axis",
         ),
     ],
 )

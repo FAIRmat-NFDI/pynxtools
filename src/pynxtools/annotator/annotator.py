@@ -49,6 +49,7 @@ from pynxtools.nexus.handler import NexusVisitor
 from pynxtools.nexus.nexus_tree import NexusField, NexusNode, generate_tree_from
 from pynxtools.nexus.nxdata import (
     NXdataInfo,
+    check_nxdata,
     find_default_nxdata,
     find_default_nxentry,
     inspect_nxdata,
@@ -265,6 +266,10 @@ class Annotator(NexusVisitor):
                     f"[{info.convention}] signal={info.signal_name}"
                     + (f", {axes_count} axis dataset(s)" if axes_count else ""),
                 )
+                for violation in check_nxdata(hdf_node, info):
+                    self.logger.warning(
+                        f"{det}NXdata constraint violation: {violation.message}"
+                    )
 
     def _annotate_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
         """Emit a structured block for a FIELD node."""

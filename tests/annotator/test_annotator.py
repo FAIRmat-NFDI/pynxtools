@@ -4,6 +4,7 @@ import difflib
 import logging
 from pathlib import Path
 
+import h5py
 import numpy as np
 import pytest
 
@@ -146,3 +147,28 @@ def test_c_option(tmp_path):
         concept="NXdata@signal",
     )
     assert any("entry/data@signal" in ln for ln in actual_signal)
+
+
+def test_annotator_nxdata_violation_logged(tmp_path):
+    """Annotator warns about check_nxdata violations (axes-rank mismatch case)."""
+    nxs_path = tmp_path / "bad_nxdata.nxs"
+    with h5py.File(nxs_path, "w") as f:
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        nxdata = entry.create_group("data")
+        nxdata.attrs["NX_class"] = "NXdata"
+        nxdata.attrs["signal"] = "I"
+        nxdata.attrs["axes"] = np.array(["q"], dtype="S10")  # 1 axis listed
+        nxdata.create_dataset(
+            "I", data=np.ones((5, 3))
+        )  # rank 2 → mismatch with 1 axis
+        nxdata.create_dataset("q", data=np.arange(5, dtype=float))
+
+    log_lines = _get_log(str(nxs_path), tmp_path, "nxdata_violation.log")
+    assert any("NXdata constraint violation" in line for line in log_lines)
+
+
+def test_annotator_valid_nxdata_no_violation(tmp_path):
+    """No NXdata constraint violations for the well-formed NXdata in the example file."""
+    log_lines = _get_log(EXAMPLE_NXS, tmp_path, "nxdata_valid.log")
+    assert not any("NXdata constraint violation" in line for line in log_lines)

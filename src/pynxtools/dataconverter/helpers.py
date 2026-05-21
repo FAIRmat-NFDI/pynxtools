@@ -119,7 +119,12 @@ class ValidationProblem(Enum):
     FailedNamefitting = auto()
     NXdataMissingSignalData = auto()
     NXdataMissingAxisData = auto()
-    NXdataAxisMismatch = auto()
+    NXdataAxisShapeMismatch = auto()
+    NXdataAxesRankMismatch = auto()
+    NXdataIndicesCountMismatch = auto()
+    NXdataIndicesNotSubset = auto()
+    NXdataAuxSignalShapeMismatch = auto()
+    NXdataNoSignalConvention = auto()
     KeyToBeRemoved = auto()
     InvalidConceptForNonVariadic = auto()
     ReservedSuffixWithoutField = auto()
@@ -243,14 +248,17 @@ class Collector:
             )
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
-        elif log_type == ValidationProblem.NXdataMissingSignalData:
-            logger.warning(f"Missing data for signal in {path}.")
-        elif log_type == ValidationProblem.NXdataMissingAxisData:
-            logger.warning(f"Missing data for @axes in {path}.")
-        elif log_type == ValidationProblem.NXdataAxisMismatch:
-            logger.warning(
-                f"Length of axis {path} does not match to {value} in dimension {args[0]}"
-            )
+        elif log_type in (
+            ValidationProblem.NXdataMissingSignalData,
+            ValidationProblem.NXdataMissingAxisData,
+            ValidationProblem.NXdataAxisShapeMismatch,
+            ValidationProblem.NXdataAxesRankMismatch,
+            ValidationProblem.NXdataIndicesCountMismatch,
+            ValidationProblem.NXdataIndicesNotSubset,
+            ValidationProblem.NXdataAuxSignalShapeMismatch,
+            ValidationProblem.NXdataNoSignalConvention,
+        ):
+            logger.warning(f"NXdata {path}: {value}")
         elif log_type == ValidationProblem.KeyToBeRemoved:
             logger.warning(f"The {value} {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:

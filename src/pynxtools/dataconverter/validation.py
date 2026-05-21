@@ -59,11 +59,27 @@ from pynxtools.nexus.nexus_tree import (
     _select_best_namefit,
     generate_tree_from,
 )
-from pynxtools.nexus.nxdata import inspect_nxdata
+from pynxtools.nexus.nxdata import (
+    NXdataViolation,
+    NXdataViolationKind,
+    check_nxdata,
+    inspect_nxdata,
+)
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver, resolve_path
 from pynxtools.units import NXUnitSet, ureg
 
 logger = logging.getLogger(__file__)
+
+_NXDATA_VIOLATION_TO_PROBLEM: dict[NXdataViolationKind, ValidationProblem] = {
+    NXdataViolationKind.MissingSignalData: ValidationProblem.NXdataMissingSignalData,
+    NXdataViolationKind.MissingAxisData: ValidationProblem.NXdataMissingAxisData,
+    NXdataViolationKind.AxisShapeMismatch: ValidationProblem.NXdataAxisShapeMismatch,
+    NXdataViolationKind.AxesRankMismatch: ValidationProblem.NXdataAxesRankMismatch,
+    NXdataViolationKind.IndicesCountMismatch: ValidationProblem.NXdataIndicesCountMismatch,
+    NXdataViolationKind.IndicesNotSubset: ValidationProblem.NXdataIndicesNotSubset,
+    NXdataViolationKind.AuxSignalShapeMismatch: ValidationProblem.NXdataAuxSignalShapeMismatch,
+    NXdataViolationKind.NoSignalConvention: ValidationProblem.NXdataNoSignalConvention,
+}
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()
@@ -616,75 +632,37 @@ class ValidationVisitor(NexusVisitor):
 
         if node.nx_class == "NXdata":
             self._handle_nxdata(path, group)
-        if node.nx_class == "NXcollection":
-            return
 
     def _handle_nxdata(self, path: str, group: h5py.Group) -> None:
         """Validate an NXdata group: signal, axes, aux signals, and AXISNAME_indices."""
-        import numbers as _numbers
-
-        full_path = f"{self._entry_name}/{path}"
-
-        # Only validate NXdata structure when a @signal attribute is explicitly
-        # declared (v3 convention).  Groups with no @signal are skipped — same
-        # behavior as the previous implementation and avoids false-positive
-        # signal detection via v1 heuristics.
-        if group.attrs.get("signal") is None:
-            return
-
         info = inspect_nxdata(group)
 
-        if info.signal is None:
-            # @signal attr present but the named dataset is missing
-            collector.collect_and_log(
-                f"{full_path}/{group.attrs['signal']}",
-                ValidationProblem.NXdataMissingSignalData,
-                None,
-            )
-            return
-
-        self._handle_field(f"{path}/{info.signal_name}", info.signal, hint="signal")
-
-        # Validate auxiliary signals exist
-        for aux in info.aux_signals:
-            if group.get(aux) is None:
-                collector.collect_and_log(
-                    f"{full_path}/{aux}",
-                    ValidationProblem.NXdataMissingSignalData,
-                    None,
-                )
-
-        # Validate axes: presence and dimension-length agreement
-        for a_item, ax_list in enumerate(info.axes):
-            for ax_ds in ax_list:
-                ax_name = ax_ds.name.split("/")[-1]
-                self._handle_field(f"{path}/{ax_name}", ax_ds, hint="axis")
-                if info.signal.shape and a_item < len(info.signal.shape):
-                    if info.signal.shape[a_item] != len(ax_ds):
-                        collector.collect_and_log(
-                            f"{path}/{ax_name}",
-                            ValidationProblem.NXdataAxisMismatch,
-                            f"{full_path}/@{info.signal_name}",
-                            a_item,
-                        )
-
-        # Validate AXISNAME_indices values are within signal dimension bounds
-        n_dims = len(info.signal.shape)
-        for attr in group.attrs.keys():
-            if attr.endswith("_indices"):
-                idx = group.attrs[attr]
-                if isinstance(idx, _numbers.Integral) and not (0 <= int(idx) < n_dims):
-                    collector.collect_and_log(
-                        f"{full_path}@{attr}",
-                        ValidationProblem.NXdataAxisMismatch,
-                        f"{full_path}/@{info.signal_name}",
-                        int(idx),
-                    )
+        # All structural NXdata violations via check_nxdata (uniform loop).
+        # Runs before the @signal guard so MissingSignalData is always reported.
+        for violation in check_nxdata(group, info):
+            problem = _NXDATA_VIOLATION_TO_PROBLEM.get(violation.kind)
+            if problem is not None:
+                collector.collect_and_log(violation.subject, problem, violation.message)
 
         # Validate NXdata-specific attributes against the schema
         nxdata_attr_names = ("signal", "auxiliary_signals", "axes")
         data_attrs = {k: group.attrs[k] for k in nxdata_attr_names if k in group.attrs}
         self._handle_attributes(path, data_attrs, group)
+
+        # Schema validation for signal/axis fields only when @signal is explicitly set (v3).
+        # Groups without @signal are skipped here — on_field covers their fields normally.
+        # Avoids false-positive v1/v2 signal detection contaminating the resolver cache.
+        if group.attrs.get("signal") is None or info.signal is None:
+            return
+
+        self._handle_field(f"{path}/{info.signal_name}", info.signal, hint="signal")
+        seen_axes: set[str] = set()
+        for ax_list in info.axes:
+            for ax_ds in ax_list:
+                ax_name = ax_ds.name.split("/")[-1]
+                if ax_name not in seen_axes:
+                    seen_axes.add(ax_name)
+                    self._handle_field(f"{path}/{ax_name}", ax_ds, hint="axis")
 
     def _handle_field(
         self,
@@ -1017,94 +995,212 @@ def validate_dict_against(
         }
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
-        def check_nxdata():
-            data = (
-                keys.get(f"DATA[{signal}]")
-                if f"DATA[{signal}]" in keys
-                else keys.get(signal)
-            )
+        keys = _follow_link(keys, prev_path)
+        signal = keys.get("@signal")
+        aux_signals = keys.get("@auxiliary_signals", [])
+        if isinstance(aux_signals, str):
+            aux_signals = [aux_signals]
+        axes = keys.get("@axes", [])
+        if isinstance(axes, str):
+            axes = [axes]
+
+        def _collect_violations() -> list[NXdataViolation]:
+            """Pure structural NXdata constraint checks for the dict/template path (v3 only)."""
+            if signal is None:
+                return []  # dict path: unprovided NXdata groups are normal in templates
+            viol: list[NXdataViolation] = []
+            data_key = f"DATA[{signal}]" if f"DATA[{signal}]" in keys else signal
+            data = _follow_link(keys.get(data_key), prev_path)
+
             if data is None:
-                collector.collect_and_log(
-                    f"{prev_path}/{signal}",
-                    ValidationProblem.NXdataMissingSignalData,
-                    None,
+                viol.append(
+                    NXdataViolation(
+                        kind=NXdataViolationKind.MissingSignalData,
+                        message=f"@signal='{signal}' but no data found in the NXdata group.",
+                        subject=f"{prev_path}/{signal}",
+                    )
                 )
-            else:
-                # Attach the base class to the inheritance chain
-                # if the concept for signal is already defined in the appdef
-                # TODO: This appends the base class multiple times
-                # it should be done only once
+                return viol
+
+            # Rule 1: @axes length must equal signal rank
+            if isinstance(data, np.ndarray) and len(axes) != data.ndim:
+                viol.append(
+                    NXdataViolation(
+                        kind=NXdataViolationKind.AxesRankMismatch,
+                        message=(
+                            f"@axes has {len(axes)} entries but signal "
+                            f"'{signal}' has rank {data.ndim}."
+                        ),
+                        subject=f"{prev_path}@axes",
+                    )
+                )
+
+            # Auxiliary signal shape must match primary signal shape
+            if isinstance(data, np.ndarray):
+                for aux in aux_signals:
+                    aux_key = f"DATA[{aux}]" if f"DATA[{aux}]" in keys else aux
+                    aux_data = _follow_link(keys.get(aux_key), prev_path)
+                    if (
+                        isinstance(aux_data, np.ndarray)
+                        and aux_data.shape != data.shape
+                    ):
+                        viol.append(
+                            NXdataViolation(
+                                kind=NXdataViolationKind.AuxSignalShapeMismatch,
+                                message=(
+                                    f"Auxiliary signal '{aux}' has shape {aux_data.shape} "
+                                    f"but signal '{signal}' has shape {data.shape}; "
+                                    f"they must be equal."
+                                ),
+                                subject=f"{prev_path}/{aux}",
+                            )
+                        )
+
+            # FIELDNAME_errors shape must match shape of its associated field
+            for err_base in (signal, *aux_signals, *[a for a in axes if a != "."]):
+                err_key = f"{err_base}_errors"
+                if err_key not in keys:
+                    continue
+                err_data = _follow_link(keys.get(err_key), prev_path)
+                ref_key = (
+                    f"DATA[{err_base}]" if f"DATA[{err_base}]" in keys else err_base
+                )
+                ref_data = _follow_link(keys.get(ref_key), prev_path)
+                if (
+                    isinstance(err_data, np.ndarray)
+                    and isinstance(ref_data, np.ndarray)
+                    and err_data.shape != ref_data.shape
+                ):
+                    viol.append(
+                        NXdataViolation(
+                            kind=NXdataViolationKind.AxisShapeMismatch,
+                            message=(
+                                f"'{err_key}' has shape {err_data.shape} but '{err_base}' "
+                                f"has shape {ref_data.shape}; errors must match field shape."
+                            ),
+                            subject=f"{prev_path}/{err_key}",
+                        )
+                    )
+
+            # Per-axis rules 2, 5, 6
+            for i, axis in enumerate(axes):
+                if axis == ".":
+                    continue
+                raw_index = keys.get(f"@{axis}_indices", i)
+                if isinstance(raw_index, (list, np.ndarray)):
+                    idx_list = [int(v) for v in np.asarray(raw_index).ravel()]
+                else:
+                    idx_list = [int(raw_index)]
+                axis_key = f"AXISNAME[{axis}]" if f"AXISNAME[{axis}]" in keys else axis
+                axis_data = _follow_link(keys.get(axis_key), prev_path)
+                if axis_data is None:
+                    viol.append(
+                        NXdataViolation(
+                            kind=NXdataViolationKind.MissingAxisData,
+                            message=f"@axes references axis '{axis}' which has no data.",
+                            subject=f"{prev_path}/{axis}",
+                        )
+                    )
+                    continue
+                if isinstance(data, np.ndarray) and isinstance(axis_data, np.ndarray):
+                    if len(idx_list) != axis_data.ndim:
+                        viol.append(
+                            NXdataViolation(
+                                kind=NXdataViolationKind.IndicesCountMismatch,
+                                message=(
+                                    f"@{axis}_indices has {len(idx_list)} value(s) but "
+                                    f"'{axis}' has rank {axis_data.ndim}; must be equal."
+                                ),
+                                subject=f"{prev_path}@{axis}_indices",
+                            )
+                        )
+                    else:
+                        if i not in idx_list and f"@{axis}_indices" in keys:
+                            viol.append(
+                                NXdataViolation(
+                                    kind=NXdataViolationKind.IndicesNotSubset,
+                                    message=(
+                                        f"'{axis}' at position {i} in @axes but "
+                                        f"@{axis}_indices={idx_list} does not include {i}."
+                                    ),
+                                    subject=f"{prev_path}@{axis}_indices",
+                                )
+                            )
+                        for dim_i, data_dim in enumerate(idx_list):
+                            if data_dim < data.ndim:
+                                expected = data.shape[data_dim]
+                                actual = axis_data.shape[dim_i]
+                                if actual != expected and actual != expected + 1:
+                                    viol.append(
+                                        NXdataViolation(
+                                            kind=NXdataViolationKind.AxisShapeMismatch,
+                                            message=(
+                                                f"'{axis}'.shape[{dim_i}]={actual} does not "
+                                                f"match signal dimension {data_dim} "
+                                                f"(expected {expected} or {expected + 1})."
+                                            ),
+                                            subject=f"{prev_path}/{axis}",
+                                        )
+                                    )
+            return viol
+
+        # Emit all structural violations via uniform mapping
+        for violation in _collect_violations():
+            problem = _NXDATA_VIOLATION_TO_PROBLEM.get(violation.kind)
+            if problem is not None:
+                collector.collect_and_log(violation.subject, problem, violation.message)
+
+        # Schema validation: signal field, NXdata attrs, and axis fields
+        if signal is not None:
+            data_key = f"DATA[{signal}]" if f"DATA[{signal}]" in keys else signal
+            data = _follow_link(keys.get(data_key), prev_path)
+            if data is not None:
                 data_node = node.search_add_child_for_multiple((signal, "DATA"))
                 data_bc_node = node.search_add_child_for("DATA")
-                data_node.inheritance.append(data_bc_node.inheritance[0])
+                if not any(
+                    elem is data_bc_node.inheritance[0]
+                    for elem in data_node.inheritance
+                ):
+                    data_node.inheritance.append(data_bc_node.inheritance[0])
                 for child in data_node.get_all_direct_children_names():
                     data_node.search_add_child_for(child)
-
                 handle_field(
                     node.search_add_child_for_multiple((signal, "DATA")),
                     keys,
                     prev_path=prev_path,
                 )
-
-            # check NXdata attributes
             for attr in ("signal", "auxiliary_signals", "axes"):
                 handle_attribute(
-                    node.search_add_child_for(attr),
+                    node.search_add_child_for(attr), keys, prev_path=prev_path
+                )
+            for i, axis in enumerate(axes):
+                if axis == ".":
+                    continue
+                axis_key = f"AXISNAME[{axis}]" if f"AXISNAME[{axis}]" in keys else axis
+                if _follow_link(keys.get(axis_key), prev_path) is None:
+                    continue
+                axis_node = node.search_add_child_for_multiple((axis, "AXISNAME"))
+                axis_bc_node = node.search_add_child_for("AXISNAME")
+                if not any(
+                    elem is axis_bc_node.inheritance[0]
+                    for elem in axis_node.inheritance
+                ):
+                    axis_node.inheritance.append(axis_bc_node.inheritance[0])
+                for child in axis_node.get_all_direct_children_names():
+                    axis_node.search_add_child_for(child)
+                handle_field(
+                    node.search_add_child_for_multiple((axis, "AXISNAME")),
                     keys,
                     prev_path=prev_path,
                 )
 
-            for i, axis in enumerate(axes):
-                if axis == ".":
-                    continue
-                index = keys.get(f"{axis}_indices", i)
-
-                if f"AXISNAME[{axis}]" in keys:
-                    axis = f"AXISNAME[{axis}]"
-                axis_data = _follow_link(keys.get(axis), prev_path)
-                if axis_data is None:
-                    collector.collect_and_log(
-                        f"{prev_path}/{axis}",
-                        ValidationProblem.NXdataMissingAxisData,
-                        None,
-                    )
-                    break
-                else:
-                    # Attach the base class to the inheritance chain
-                    # if the concept for the axis is already defined in the appdef
-                    # TODO: This appends the base class multiple times
-                    # it should be done only once
-                    axis_node = node.search_add_child_for_multiple((axis, "AXISNAME"))
-                    axis_bc_node = node.search_add_child_for("AXISNAME")
-                    axis_node.inheritance.append(axis_bc_node.inheritance[0])
-                    for child in axis_node.get_all_direct_children_names():
-                        axis_node.search_add_child_for(child)
-
-                    handle_field(
-                        node.search_add_child_for_multiple((axis, "AXISNAME")),
-                        keys,
-                        prev_path=prev_path,
-                    )
-                if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
-                    collector.collect_and_log(
-                        f"{prev_path}/{axis}",
-                        ValidationProblem.NXdataAxisMismatch,
-                        f"{prev_path}/{signal}",
-                        index,
-                    )
-
-        keys = _follow_link(keys, prev_path)
-        signal = keys.get("@signal")
-        aux_signals = keys.get("@auxiliary_signals", [])
-        axes = keys.get("@axes", [])
-        if isinstance(axes, str):
-            axes = [axes]
-
-        if signal is not None:
-            check_nxdata()
-
-        indices = map(lambda x: f"{x}_indices", axes)
-        errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
+        indices = list(map(lambda x: f"{x}_indices", axes))
+        errors = list(
+            map(
+                lambda x: f"{x}_errors",
+                [s for s in [signal, *aux_signals, *axes] if s is not None],
+            )
+        )
 
         # Handle all remaining keys which are not part of NXdata
         remaining_keys = {
