@@ -131,6 +131,19 @@ pynx read src/pynxtools/data/201805_WSe2_arpes.nxs -d /entry/instrument/analyser
 
 If you run this call, you get a smaller subset of the full annotation log that helps you to understand which NeXus concept a given HDF5 object corresponds to.
 
+## Broken and external links
+
+`pynx validate` checks HDF5 links as part of normal traversal:
+
+- **Broken soft links** (the link target does not exist in the same file) are reported as a `BrokenLink` warning:
+  ```
+  WARNING - Broken link at /entry/missing_field to /nonexistent.
+  ```
+- **Broken external links** (the referenced file cannot be opened, or the path inside it does not exist) are also reported as `BrokenLink` warnings.
+- **Valid external links** are followed transparently — the external subtree is validated as if it were part of the main file.  No warning is emitted for a successfully resolved external link.
+
+The link type (`h5py.SoftLink` or `h5py.ExternalLink`) is available to custom visitors via the `link` argument of `on_broken_link`.  See [Implement a custom NexusVisitor](implement-a-visitor.md#handling-broken-and-external-links) for an example.
+
 ## Other approaches (not part of pynxtools)
 
 Aside from the tools we develop within FAIRmat, the [official NeXus website](https://manual.nexusformat.org/validation.html) lists additional programs for the validation of NeXus files:

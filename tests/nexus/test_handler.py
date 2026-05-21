@@ -165,3 +165,113 @@ def test_base_visitor_does_not_raise():
 
     f = _make_in_memory_file()
     NexusFileHandler(f, is_open=True).process(_NullVisitor())
+
+
+# ---------------------------------------------------------------------------
+# Link traversal tests
+# ---------------------------------------------------------------------------
+
+
+class _LinkVisitor(_RecordingVisitor):
+    """Extends _RecordingVisitor to track broken and external links."""
+
+    def __init__(self):
+        super().__init__()
+        self.broken_links: list[tuple[str, object]] = []
+        self.external_links: list[tuple[str, h5py.ExternalLink]] = []
+
+    def on_broken_link(self, hdf_path: str, link) -> None:
+        self.broken_links.append((hdf_path, link))
+
+    def on_external_link(self, hdf_path: str, link: h5py.ExternalLink) -> None:
+        self.external_links.append((hdf_path, link))
+
+
+def test_handler_broken_soft_link(tmp_path):
+    """on_broken_link is called for a soft link whose target does not exist."""
+    fpath = tmp_path / "broken_soft.nxs"
+    with h5py.File(fpath, "w") as f:
+        f.create_group("entry")
+        f["entry/missing"] = h5py.SoftLink("/nonexistent")
+
+    visitor = _LinkVisitor()
+    NexusFileHandler(str(fpath)).process(visitor)
+
+    assert len(visitor.broken_links) == 1
+    path, link = visitor.broken_links[0]
+    assert path == "entry/missing"
+    assert isinstance(link, h5py.SoftLink)
+    assert "entry/missing" not in visitor.visited
+
+
+def test_handler_valid_soft_link(tmp_path):
+    """A resolvable soft link is visited; on_broken_link is not called."""
+    fpath = tmp_path / "valid_soft.nxs"
+    with h5py.File(fpath, "w") as f:
+        f.create_dataset("entry/real_data", data=42.0)
+        f["entry/alias"] = h5py.SoftLink("/entry/real_data")
+
+    visitor = _LinkVisitor()
+    NexusFileHandler(str(fpath)).process(visitor)
+
+    assert visitor.broken_links == []
+    assert "entry/real_data" in visitor.visited
+
+
+def test_handler_broken_external_link_missing_file(tmp_path):
+    """on_broken_link fires when the external file does not exist."""
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as f:
+        f["entry/ext"] = h5py.ExternalLink("nonexistent.h5", "/data")
+
+    visitor = _LinkVisitor()
+    NexusFileHandler(str(fpath)).process(visitor)
+
+    assert len(visitor.broken_links) == 1
+    path, link = visitor.broken_links[0]
+    assert path == "entry/ext"
+    assert isinstance(link, h5py.ExternalLink)
+    assert len(visitor.external_links) == 1
+
+
+def test_handler_broken_external_link_missing_path(tmp_path):
+    """on_broken_link fires when the external file exists but the path is absent."""
+    ext_file = tmp_path / "ext.h5"
+    with h5py.File(ext_file, "w") as f:
+        f.create_dataset("existing", data=1.0)
+
+    main_file = tmp_path / "main.nxs"
+    with h5py.File(main_file, "w") as f:
+        f["entry/ext"] = h5py.ExternalLink(str(ext_file), "/nonexistent")
+
+    visitor = _LinkVisitor()
+    NexusFileHandler(str(main_file)).process(visitor)
+
+    assert len(visitor.broken_links) == 1
+    path, link = visitor.broken_links[0]
+    assert path == "entry/ext"
+    assert isinstance(link, h5py.ExternalLink)
+
+
+def test_handler_valid_external_link(tmp_path):
+    """A resolvable external link is traversed; on_external_link fires before traversal."""
+    ext_file = tmp_path / "ext.h5"
+    with h5py.File(ext_file, "w") as f:
+        grp = f.create_group("sensor")
+        grp.create_dataset("value", data=3.14)
+
+    main_file = tmp_path / "main.nxs"
+    with h5py.File(main_file, "w") as f:
+        f["entry/ext"] = h5py.ExternalLink(str(ext_file), "/sensor")
+
+    visitor = _LinkVisitor()
+    NexusFileHandler(str(main_file)).process(visitor)
+
+    assert visitor.broken_links == []
+    assert len(visitor.external_links) == 1
+    ext_path, ext_link = visitor.external_links[0]
+    assert ext_path == "entry/ext"
+    assert isinstance(ext_link, h5py.ExternalLink)
+    # The external subtree is visited under the main-file path
+    assert "entry/ext" in visitor.visited
+    assert "entry/ext/value" in visitor.visited

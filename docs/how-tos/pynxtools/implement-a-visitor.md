@@ -34,6 +34,18 @@ class MyVisitor(NexusVisitor):
     def on_complete(self, root: h5py.File) -> None: pass
 ```
 
+Two additional optional hooks have default no-op implementations and may be overridden:
+
+| Hook | When called | Default |
+|------|-------------|---------|
+| `on_broken_link(hdf_path, link)` | A soft or external link cannot be resolved. The broken node is then skipped. | no-op |
+| `on_external_link(hdf_path, link)` | An external link is first encountered, *before* the handler opens the external file. | no-op |
+
+The `link` argument is an `h5py.SoftLink` or `h5py.ExternalLink`. Inspect its type to distinguish the two cases. Nodes from a successfully resolved external file are visited with the same `hdf_path` prefix as the link itself; for example, a link at `"entry/ext"` whose target is a group containing `"value"` results in `on_field("entry/ext/value", ...)`.
+
+!!! note "Hard links"
+    Hard links are followed transparently. A built-in cycle guard prevents infinite recursion when a hard-linked descendant aliases an ancestor.
+
 ## Worked example: collecting all field paths and values
 
 This visitor collects every field path and its scalar value into a flat dictionary.
@@ -132,6 +144,56 @@ logging.basicConfig(level=logging.INFO)
 visitor = SchemaAwareVisitor("NXarpes")
 NexusFileHandler("path/to/arpes_file.nxs").process(visitor)
 ```
+
+## Handling broken and external links
+
+Override `on_broken_link` and `on_external_link` to react to links that cannot be resolved or to external files that are traversed inline.
+
+```python
+from __future__ import annotations
+
+import h5py
+
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
+
+
+class LinkAwareVisitor(NexusVisitor):
+    """Report broken links and track which external files were opened."""
+
+    def __init__(self) -> None:
+        self.broken: list[tuple[str, str]] = []   # (hdf_path, link_target)
+        self.external_files: set[str] = set()
+
+    def on_group(self, hdf_path: str, hdf_node: h5py.Group) -> None:
+        pass
+
+    def on_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
+        pass
+
+    def on_attribute(self, hdf_path: str, attr_name: str, attr_value, parent) -> None:
+        pass
+
+    def on_complete(self, root: h5py.File) -> None:
+        pass
+
+    def on_broken_link(self, hdf_path: str, link) -> None:
+        target = getattr(link, "path", str(link))
+        self.broken.append((hdf_path, target))
+        print(f"BROKEN LINK at {hdf_path!r} → {target!r}")
+
+    def on_external_link(self, hdf_path: str, link: h5py.ExternalLink) -> None:
+        self.external_files.add(link.filename)
+        print(f"External file opened: {link.filename!r} for node {hdf_path!r}")
+
+
+# Usage
+visitor = LinkAwareVisitor()
+NexusFileHandler("path/to/file.nxs").process(visitor)
+print(f"Broken links: {visitor.broken}")
+print(f"External files referenced: {visitor.external_files}")
+```
+
+`on_broken_link` is called for both broken soft links (`h5py.SoftLink`) and broken external links (`h5py.ExternalLink`); inspect `type(link)` to distinguish them.  `on_external_link` fires only for external links, immediately before the external file is opened. It does not fire again for nodes inside the external subtree.
 
 ## Resolving the application definition from the file
 
