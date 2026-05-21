@@ -494,14 +494,9 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
 
 def _node_template_segment(node: NexusNode) -> str:
     """Return the template path segment string for a single NexusNode."""
-    if isinstance(node, NexusGroup):
-        if node.variadic:
-            instance = node.nx_class[2:].lower() if node.nx_class else node.name.lower()
-            return f"{node.name}[{instance}]"
-        return node.name
     if isinstance(node, NexusAttribute) or node.nx_type == "attribute":
         return f"@{node.name}"
-    # NexusField
+    # NexusGroup or NexusField
     if node.variadic:
         return f"{node.name}[{node.name.lower()}]"
     return node.name
