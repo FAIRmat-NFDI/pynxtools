@@ -61,6 +61,11 @@ def _to_group_name(nx_node: ET._Element):
     return grp_nm
 
 
+def _make_hdf_info(hdf_path: str, hdf_node: Any) -> dict[str, Any]:
+    """Create metadata describing an HDF node and its absolute path."""
+    return {"hdf_path": f"/{hdf_path}", "hdf_node": hdf_node}
+
+
 # noinspection SpellCheckingInspection
 def _to_section(
     hdf_name: str | None,
@@ -313,7 +318,7 @@ class NomadVisitor(NexusVisitor):
         # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node);
         # nxdef  → resolver.appdef_for(hdf_node)
         # nx_node (ET.Element) → NexusNode returned by the resolver
-        hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
+        hdf_info = _make_hdf_info(hdf_path, hdf_node)
         _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
         if nxdl_path is None or nxdl_path == "/":
             return
@@ -350,7 +355,7 @@ class NomadVisitor(NexusVisitor):
         """Populate the NOMAD Metainfo quantity for this HDF5 dataset."""
         # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node)
         # and call _populate_field(node, hdf_node, current) directly (no depth, no nx_path)
-        hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": hdf_node}
+        hdf_info = _make_hdf_info(hdf_path, hdf_node)
         _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
         if nxdl_path is None or nxdl_path == "/":
             return
@@ -377,7 +382,7 @@ class NomadVisitor(NexusVisitor):
         if attr_name in self._SKIP_ATTRS:
             return
 
-        hdf_info = {"hdf_path": "/" + hdf_path, "hdf_node": parent}
+        hdf_info = _make_hdf_info(hdf_path, parent)
         # TODO: replace get_nxdl_doc with NexusSchemaResolver.attr_node_for(hdf_path, attr_name, parent)
         # and call _populate_attribute(node, attr_name, attr_value, current) directly
         req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False, attr=attr_name)
@@ -527,6 +532,11 @@ class NomadVisitor(NexusVisitor):
                 return
 
             # Metainfo does not support precision higher than i8, u8, f8, c16
+            # TODO: is f2 supported ? maybe silently promote to f4 or f8, maybe downcast higher
+            # precision floating and complex to highest supported precision floating and complex respectively
+            # TODO: emit a warning in the case of hdf_node.dtype.kind in "fc" when hdf_node.dtype.itemsize < 4
+            # (e.g. when one is hitting the half-precision floats that were introduced with HDF5 2.0).
+            # TODO warn in case of facing arbitrary objects or structs"
             if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
                 self._logger.warning(
                     f"error while setting field {data_instance_name} in {current.m_def} precision {hdf_node.dtype.itemsize} too high for {field_name}"
@@ -540,6 +550,7 @@ class NomadVisitor(NexusVisitor):
                     if hdf_node.chunks is not None:  # iterate over hyperslabs (chunks)
                         field_stats = _get_field_stats_iuf_chunked(hdf_node)
                     else:  # load entire contiguous storage layout dataset at once
+                        # we suggest to use chunked storage to avoid these costly cases
                         field_stats = _get_field_stats_iuf_contiguous(hdf_node)
 
                     for suffix in FIELD_STATISTICS:
@@ -559,6 +570,9 @@ class NomadVisitor(NexusVisitor):
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
                         return
+            # no stats for non-iuf data
+            # TODO: make a second optimization round for complex numbers
+            # we have not faced though high volume examples with complex numbers yet
             elif hdf_node.dtype.kind in "c":
                 if hdf_node.shape != ():
                     field = hdf_node[(0,) * hdf_node.ndim]
@@ -742,6 +756,8 @@ class NexusParser(MatchingParser):
             import debugpy  # will connect to debugger if in debug mode
 
             debugpy.debug_this_thread()
+            # now one can anywhere place a manual breakpoint like e.g. so
+            # debugpy.breakpoint()
 
         self.archive = archive
         self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member
