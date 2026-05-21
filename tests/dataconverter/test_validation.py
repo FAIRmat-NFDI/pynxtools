@@ -2224,9 +2224,9 @@ def format_error_message(msg: str) -> str:
                 np.ones(8),  # field_a has 10, field_b has 8 — symbol "n" mismatch
             ),
             [
-                "Inconsistent sizes for NXDL symbol 'n' in group "
+                "Inconsistent dimensions for NXDL symbol 'n' in group "
                 "'/ENTRY[my_entry]/symbol_group': "
-                "fields disagree on dimension size: {8, 10}."
+                "'field_a': size 10, 'field_b': size 8."
             ],
             id="symbol-size-mismatch",
         ),
@@ -3652,8 +3652,8 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 np.ones(8),  # field_a has 10, field_b has 8 — symbol "n" mismatch
             ),
             [
-                "Inconsistent sizes for NXDL symbol 'n' in group '/my_entry/symbol_group': "
-                "fields disagree on dimension size: {8, 10}."
+                "Inconsistent dimensions for NXDL symbol 'n' in group '/my_entry/symbol_group': "
+                "'field_a': size 10, 'field_b': size 8."
             ],
             id="symbol-size-mismatch",
         ),

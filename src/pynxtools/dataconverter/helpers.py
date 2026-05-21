@@ -303,9 +303,13 @@ class Collector:
         elif log_type == ValidationProblem.ExternalLinkedFileNotFound:
             logger.warning(f"Linked external file '{value}' for {path} was not found.")
         elif log_type == ValidationProblem.SymbolSizeMismatch:
+            field_to_size: dict[str, int] = args[0]
+            details = ", ".join(
+                f"'{field}': size {size}"
+                for field, size in sorted(field_to_size.items())
+            )
             logger.warning(
-                f"Inconsistent sizes for NXDL symbol '{value}' in group '{path}': "
-                f"fields disagree on dimension size: {args[0]}."
+                f"Inconsistent dimensions for NXDL symbol '{value}' in group '{path}': {details}."
             )
 
     def collect_and_log(

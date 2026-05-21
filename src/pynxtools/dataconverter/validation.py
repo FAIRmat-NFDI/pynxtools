@@ -236,9 +236,9 @@ class ValidationVisitor(NexusVisitor):
         # is_valid_enum for open-enumeration custom-attribute lookups.
         self._data: h5py.Group | None = None
 
-        # Keyed by group path; maps NXDL symbol name → list of observed sizes.
+        # Keyed by group path; maps NXDL symbol name → list of (field_name, size) pairs.
         # Populated in _handle_field; checked in on_complete.
-        self._symbol_registry: dict[str, dict[str, list[int]]] = {}
+        self._symbol_registry: dict[str, dict[str, list[tuple[str, int]]]] = {}
 
     # ------------------------------------------------------------------
     # NexusVisitor interface
@@ -756,24 +756,27 @@ class ValidationVisitor(NexusVisitor):
         # that cross-field consistency can be checked in on_complete.
         if node.dim_symbols is not None and len(node.dim_symbols) == dataset.ndim:
             group_path = path.rsplit("/", 1)[0] if "/" in path else ""
+            field_name = path.rsplit("/", 1)[-1]
             sym_map = self._symbol_registry.setdefault(group_path, {})
             for dim_idx, sym in enumerate(node.dim_symbols):
                 if sym is not None:
-                    sym_map.setdefault(sym, []).append(dataset.shape[dim_idx])
+                    sym_map.setdefault(sym, []).append(
+                        (field_name, dataset.shape[dim_idx])
+                    )
 
     def _check_symbol_consistency(self) -> None:
         """Warn when fields in the same group disagree on a shared NXDL symbol size."""
         for group_path, sym_map in self._symbol_registry.items():
-            for sym_name, sizes in sym_map.items():
-                unique_sizes = set(sizes)
-                if len(unique_sizes) > 1:
+            for sym_name, field_sizes in sym_map.items():
+                field_to_size: dict[str, int] = dict(field_sizes)
+                if len(set(field_to_size.values())) > 1:
                     collector.collect_and_log(
                         f"{self._entry_name}/{group_path}"
                         if group_path
                         else self._entry_name,
                         ValidationProblem.SymbolSizeMismatch,
                         sym_name,
-                        unique_sizes,
+                        field_to_size,
                     )
 
     def _handle_attributes(
@@ -1503,7 +1506,9 @@ def validate_dict_against(
                 sym_map = dict_symbol_registry.setdefault(prev_path, {})
                 for dim_idx, sym in enumerate(node.dim_symbols):
                     if sym is not None:
-                        sym_map.setdefault(sym, []).append(value.shape[dim_idx])
+                        sym_map.setdefault(sym, []).append(
+                            (variant, value.shape[dim_idx])
+                        )
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = f"{prev_path}/@{node.name}"
@@ -1981,9 +1986,9 @@ def validate_dict_against(
     }
 
     keys_to_remove: list[str] = []
-    # Accumulates {group_path: {symbol_name: [observed_sizes]}} as fields
+    # Accumulates {group_path: {symbol_name: [(field_name, size)]}} as fields
     # with NXDL symbolic dimensions are processed.  Checked after recurse_tree.
-    dict_symbol_registry: dict[str, dict[str, list[int]]] = {}
+    dict_symbol_registry: dict[str, dict[str, list[tuple[str, int]]]] = {}
 
     tree = generate_tree_from(appdef)
     collector.clear()
@@ -1994,14 +1999,14 @@ def validate_dict_against(
     recurse_tree(tree, nested_keys)
 
     for group_path, sym_map in dict_symbol_registry.items():
-        for sym_name, sizes in sym_map.items():
-            unique_sizes = set(sizes)
-            if len(unique_sizes) > 1:
+        for sym_name, field_sizes in sym_map.items():
+            field_to_size: dict[str, int] = dict(field_sizes)
+            if len(set(field_to_size.values())) > 1:
                 collector.collect_and_log(
                     group_path,
                     ValidationProblem.SymbolSizeMismatch,
                     sym_name,
-                    unique_sizes,
+                    field_to_size,
                 )
 
     for not_visited_key in not_visited:
