@@ -63,8 +63,10 @@ Note that we are using the NeXus definitions as a [Git submodule](https://git-sc
 For the [ontology service](../learn/pynxtools/ontology-service.md), adding the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/oscars-project) as a git submodule is required. Here, it is recommended to use the sparse checkout:
 
 ```bash
+cd src/pynxtools/NeXusOntology
 git sparse-checkout init --no-cone
 git sparse-checkout set "/*" '!ontology/NeXusOntology.owl' '!ontology/NeXusOntology_full.owl' '!ontology/NeXusOntology_full_testdata.owl'
+cd ../../...
 ```
 
 Next, we install the package in editable mode (together with its dependencies):

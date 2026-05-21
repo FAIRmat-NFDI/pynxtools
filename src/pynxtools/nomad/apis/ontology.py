@@ -15,13 +15,13 @@ from owlready2 import ThingClass, get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
 
 from pynxtools.NeXusOntology.script.generate_ontology import main as generate_ontology
-from pynxtools.nomad.utils import CACHE_DIR, NOMAD_PACKAGE_DIR, resolve_artifact_path
+from pynxtools.nomad import CACHE_DIR, PACKAGE_DIR, resolve_artifact_path
 
 logger = logging.getLogger("pynxtools")
 
 
 def get_ontology_filepath(owl_filename: str) -> Path:
-    local_ontology_dir = NOMAD_PACKAGE_DIR.parent / "NeXusOntology" / "ontology"
+    local_ontology_dir = PACKAGE_DIR.parent / "NeXusOntology" / "ontology"
 
     return resolve_artifact_path(
         filename=owl_filename,
@@ -45,7 +45,7 @@ def ensure_ontology_file(imports: list[str] | None = None):
 
     try:
         # Get the latest commit hash from the definitions submodule in pynxtools
-        nexus_def_path = str(NOMAD_PACKAGE_DIR.parent / "definitions")
+        nexus_def_path = str(PACKAGE_DIR.parent / "definitions")
         repo = pygit2.Repository(nexus_def_path)
         latest_commit_hash = str(repo.head.target)[:7]
 
