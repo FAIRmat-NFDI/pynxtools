@@ -195,7 +195,10 @@ class Template(dict):
         ):
             keys = list(internal_dict.keys())
             for key in keys:
-                entry_name = helpers.get_name_from_data_dict_entry(key.split("/")[1])
+                first_segment = key.split("/")[1]
+                if "[" not in first_segment:
+                    continue  # root-level or non-entry path — leave unchanged
+                entry_name = helpers.get_name_from_data_dict_entry(first_segment)
 
                 entry_search_term = f"{entry_name}]"
                 rest_of_path = key[

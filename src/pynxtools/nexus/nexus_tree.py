@@ -46,6 +46,7 @@ from pynxtools.nexus.utils import (
     is_appdef,
     is_variadic,
     remove_namespace_from_tag,
+    strip_nx_prefix,
 )
 
 logger = logging.getLogger(__file__)
@@ -108,12 +109,6 @@ NexusUnitCategory = Literal[
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
-# TODO: this could be generalized across the repo
-def _strip_nx_prefix(nx_type: str) -> str:
-    """Convert NeXus type names like 'NXentry' to 'ENTRY'."""
-    return nx_type.removeprefix("NX").upper()
-
-
 def _xml_path_in_nxdl(elem: ET._Element) -> str:
     """Return the path of *elem* within its NXDL file.
 
@@ -140,7 +135,7 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
             # No explicit name → nameType is implicitly "any"; derive the template
             # name from the NX type by stripping the "NX" prefix and make uppercase.
             nx_type = current.attrib.get("type", "")
-            name = _strip_nx_prefix(nx_type) if nx_type.startswith("NX") else nx_type
+            name = strip_nx_prefix(nx_type) if nx_type.startswith("NX") else nx_type
         if name:
             parts.append(name)
         if remove_namespace_from_tag(parent.tag) == "definition":
@@ -491,7 +486,7 @@ class NexusNode(NodeMixin):
                 if "name" in sub_elems.attrib:
                     names[sub_elems.attrib["name"]] = None
                 elif "type" in sub_elems.attrib:
-                    names[_strip_nx_prefix(sub_elems.attrib["type"])] = None
+                    names[strip_nx_prefix(sub_elems.attrib["type"])] = None
 
         return list(names.keys())
 
@@ -677,7 +672,7 @@ class NexusNode(NodeMixin):
 
             name = elem.attrib.get("name")
             if not name:
-                name = _strip_nx_prefix(elem.attrib["type"])
+                name = strip_nx_prefix(elem.attrib["type"])
             docstrings[name] = doc.text
 
         return docstrings
@@ -824,7 +819,7 @@ class NexusNode(NodeMixin):
                     group_name = (
                         group.attrib.get("name")
                         if "name" in group.attrib
-                        else _strip_nx_prefix(group.attrib["type"])
+                        else strip_nx_prefix(group.attrib["type"])
                     )
 
                     if "name" in group.attrib:
@@ -891,7 +886,7 @@ class NexusNode(NodeMixin):
         elif tag == "group":
             name = xml_elem.attrib.get("name")
             if not name:
-                name = _strip_nx_prefix(xml_elem.attrib["type"])
+                name = strip_nx_prefix(xml_elem.attrib["type"])
                 name_type = "any"
 
             inheritance_chain = self._build_inheritance_chain(xml_elem)
@@ -1143,7 +1138,7 @@ class NexusGroup(NexusNode):
                 sibling_name = (
                     sibling.attrib.get("name")
                     if "name" in sibling.attrib
-                    else _strip_nx_prefix(sibling.attrib["type"])
+                    else strip_nx_prefix(sibling.attrib["type"])
                 )
 
                 if "name" in sibling.attrib:

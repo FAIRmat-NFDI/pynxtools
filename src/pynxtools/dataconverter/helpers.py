@@ -24,7 +24,7 @@ import re
 from collections.abc import Mapping, MutableMapping, Sequence
 from datetime import datetime, timezone
 from enum import Enum, auto
-from functools import cache, lru_cache
+from functools import cache
 from typing import Any, Literal, Optional, Union, cast
 
 import h5py
@@ -34,16 +34,33 @@ from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS
+
+# TODO: nxdl_utils is legacy XML-walking infrastructure. These imports should be
+# removed as helpers.py XML-walking functions are replaced by NexusNode-based equivalents.
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_enums,
-    get_inherited_nodes,
-    get_node_at_nxdl_path,
+    get_enums,  # TODO: remove, only used by deprecated is_value_valid_element_of_enum
+    get_inherited_nodes,  # TODO: remove, only used by deprecated get_all_defined_required_children
+    get_node_at_nxdl_path,  # TODO: remove, only used by deprecated check_for_optional_parent, is_node_required
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_required_string as nexus_get_required_string,
+    get_required_string as nexus_get_required_string,  # TODO: remove, only used by deprecated functions
+)
+from pynxtools.nexus.nexus_tree import (
+    NexusAttribute,
+    NexusChoice,
+    NexusField,
+    NexusGroup,
+    NexusLink,
+    NexusNode,
+    generate_tree_from,
 )
 from pynxtools.nexus.utils import (
+    # moved to pynxtools.nexus.utils, backwards compatibility
+    # TODO: remove backwards-compatibility shim in future releases
+    ISO8601,
     NEXUS_TO_PYTHON_DATA_TYPES,
+    RESERVED_PREFIXES,
+    RESERVED_SUFFIXES,
     get_all_parents_for,
     get_appdef_root,
     get_nxdl_root_and_path,
@@ -55,6 +72,7 @@ from pynxtools.nexus.utils import (
     nx_int,
     nx_number,
     remove_namespace_from_tag,
+    strip_nx_prefix,
 )
 
 logger = logging.getLogger("pynxtools")
@@ -72,41 +90,6 @@ def get_pynxtools_version() -> str:
         return f"{importlib.metadata.version('pynxtools')}"
     except importlib.metadata.PackageNotFoundError:
         return f"unknown_version"
-
-
-ISO8601 = re.compile(
-    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
-    r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
-)
-
-RESERVED_SUFFIXES = (
-    "_end",
-    "_increment_set",
-    "_errors",
-    "_indices",
-    "_mask",
-    "_set",
-    "_weights",
-    "_scaling_factor",
-    "_offset",
-)
-
-RESERVED_PREFIXES = {
-    "attribute": {
-        "@BLUESKY_": None,  # do not use anywhere
-        "@DECTRIS_": "NXmx",
-        "@IDF_": None,  # do not use anywhere
-        "@NDAttr": None,
-        "@NX_": "all",
-        "@PDBX_": None,  # do not use anywhere
-        "@SAS_": "NXcanSAS",
-        "@SILX_": None,  # do not use anywhere
-        "identifier": "all",
-    },
-    "field": {
-        "DECTRIS_": "NXmx",
-    },
-}
 
 
 class ValidationProblem(Enum):
@@ -373,7 +356,11 @@ collector = Collector()
 
 
 def is_a_lone_group(xml_element) -> bool:
-    """Checks whether a given group XML element has no field or attributes mentioned"""
+    """Checks whether a given group XML element has no field or attributes mentioned.
+
+    .. deprecated::
+        TODO: not used anymore, remove in future release.
+    """
     if xml_element.get("type") == "NXentry":
         return False
     for child in xml_element.findall(".//"):
@@ -383,7 +370,12 @@ def is_a_lone_group(xml_element) -> bool:
 
 
 def get_nxdl_name_from_elem(xml_element) -> str:
-    """Extracts the name or uses the type to remove the NX bit and use as name."""
+    """Extracts the name or uses the type to remove the NX bit and use as name.
+
+    .. deprecated::
+        Use ``NexusNode.name`` directly.
+        TODO: removed, only called in deprecated get_all_defined_required_children_for_elem.
+    """
     name_to_add = ""
     if "name" in xml_element.attrib:
         name_to_add = xml_element.attrib["name"]
@@ -396,10 +388,14 @@ def get_nxdl_name_from_elem(xml_element) -> str:
 
 
 def get_nxdl_name_for(xml_elem: ET._Element) -> str | None:
-    """
-    Get the name of the element from the NXDL element.
+    """Get the name of the element from the NXDL element.
+
     For an entity having a name this is just the name.
     For groups it is the uppercase type without NX, e.g. "ENTRY" for "NXentry".
+
+    .. deprecated::
+        Use ``NexusNode.name`` directly.
+        TODO: remove, not used anymore.
 
     Args:
         xml_elem (ET._Element): The xml element to get the name for.
@@ -417,7 +413,12 @@ def get_nxdl_name_for(xml_elem: ET._Element) -> str | None:
 
 
 def get_all_defined_required_children_for_elem(xml_element):
-    """Gets all possible inherited required children for a given NXDL element"""
+    """Gets all possible inherited required children for a given NXDL element.
+
+    .. deprecated::
+        Use ``NexusNode`` children filtered by ``optionality == "required"`` instead.
+        TODO: remove when removed deprecated callers.
+    """
     list_of_children_to_add = set()
     for child in xml_element:
         tag = remove_namespace_from_tag(child.tag)
@@ -457,7 +458,12 @@ visited_paths: list[str] = []
 
 
 def get_all_defined_required_children(nxdl_path, nxdl_name):
-    """Helper function to find all possible inherited required children for an NXDL path"""
+    """Helper function to find all possible inherited required children for an NXDL path.
+
+    .. deprecated::
+        Use ``NexusNode`` tree traversal with ``optionality == "required"`` instead.
+        TODO: remove, not used anymore
+    """
     if nxdl_name == "NXtest":
         return []
 
@@ -470,7 +476,11 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
 
 
 def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
-    """Takes a list of child names and appends them to template for a given path."""
+    """Takes a list of child names and appends them to template for a given path.
+
+    .. deprecated::
+        TODO: remove, not used anymore.
+    """
     for child in list_of_children_to_add:
         child_path = f"{path}/{child}"
         if child_path not in template.keys():
@@ -482,111 +492,131 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
     return template
 
 
+def _node_template_segment(node: NexusNode) -> str:
+    """Return the template path segment string for a single NexusNode."""
+    if isinstance(node, NexusGroup):
+        if node.variadic:
+            instance = node.nx_class[2:].lower() if node.nx_class else node.name.lower()
+            return f"{node.name}[{instance}]"
+        return node.name
+    if isinstance(node, NexusAttribute) or node.nx_type == "attribute":
+        return f"@{node.name}"
+    # NexusField
+    if node.variadic:
+        return f"{node.name}[{node.name.lower()}]"
+    return node.name
+
+
+def _walk_nexus_tree_for_template(
+    node: NexusNode,
+    template,
+    parent_path: str,
+    opt_parent_path: str | None = None,
+) -> None:
+    """Recursively populate *template* by walking a NexusNode tree.
+
+    *opt_parent_path* is the template path of the nearest optional/recommended
+    ancestor, propagated downward so that required children under optional parents
+    are correctly marked optional in the template.
+    """
+    for child in node.children:
+        if isinstance(child, NexusChoice):
+            _walk_nexus_tree_for_template(child, template, parent_path, opt_parent_path)
+            continue
+
+        segment = _node_template_segment(child)
+        path = f"{parent_path}/{segment}"
+
+        if isinstance(child, (NexusField, NexusAttribute)):
+            optionality = child.optionality or "optional"
+            if optionality == "required" and opt_parent_path is not None:
+                optionality = "optional"
+                template.optional_parents.append(opt_parent_path)
+            template[optionality][path] = None
+            if (
+                isinstance(child, NexusField)
+                and getattr(child, "unit", None)
+                and child.unit != "NX_UNITLESS"
+            ):
+                template[optionality][f"{path}/@units"] = None
+            _walk_nexus_tree_for_template(child, template, path, opt_parent_path)
+
+        elif isinstance(child, NexusGroup):
+            has_descendants = any(
+                isinstance(desc, (NexusField, NexusAttribute))
+                for desc in child.descendants
+            )
+            is_lone = not has_descendants and child.nx_class != "NXentry"
+            if is_lone:
+                optionality = child.optionality or "optional"
+                if optionality == "required" and opt_parent_path is not None:
+                    optionality = "optional"
+                    template.optional_parents.append(opt_parent_path)
+                template[optionality][path] = None
+                template["lone_groups"].append(path)
+
+            child_opt_parent = opt_parent_path
+            if child.optionality in ("optional", "recommended"):
+                child_opt_parent = path
+            _walk_nexus_tree_for_template(child, template, path, child_opt_parent)
+
+        elif isinstance(child, NexusLink):
+            template["optional"][path] = {"link": child.target}
+
+
 def generate_template_from_nxdl(
     root, template, path="", nxdl_root=None, nxdl_name=None
 ):
-    """Helper function to generate a template dictionary for given NXDL"""
-    if nxdl_root is None:
-        nxdl_name = root.attrib["name"]
-        nxdl_root = root
-        root = get_first_group(root)
+    """Generate a template dictionary for the given NXDL definition using NexusNode.
 
-    tag = remove_namespace_from_tag(root.tag)
-
-    if tag == "doc":
-        return
-
-    suffix = ""
-    if "name" in root.attrib and not contains_uppercase(root.attrib["name"]):
-        suffix = root.attrib["name"]
-    elif "type" in root.attrib:
-        nexus_class = convert_nexus_to_caps(root.attrib["type"])
-        name = root.attrib.get("name")
-        hdf_name = root.attrib.get("type")[2:]  # .removeprefix("NX") (python > 3.8)
-        suffix = (
-            f"{name}[{name.lower()}]"
-            if name is not None
-            else f"{nexus_class}[{hdf_name}]"
-        )
-
-    path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
-
-    # Only add fields or attributes to the dictionary
-    if tag in ("field", "attribute"):
-        optionality = get_required_string(root)
-        if optionality == "required":
-            optional_parent = check_for_optional_parent(path, nxdl_root)
-            optionality = (
-                "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
-            )
-            if optional_parent != "<<NOT_FOUND>>":
-                template.optional_parents.append(optional_parent)
-        template[optionality][path] = None
-
-        # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
-        if tag == "field" and (
-            "units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"
-        ):
-            template[optionality][f"{path}/@units"] = None
-
-        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
-        list_of_children_to_add = get_all_defined_required_children(
-            nxdl_path, nxdl_name
-        )
-        add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
-
-    elif tag == "group" and is_a_lone_group(root):
-        template[get_required_string(root)][path] = None
-        template["lone_groups"].append(path)
-        path_nxdl = convert_data_converter_dict_to_nxdl_path(path)
-        list_of_children_to_add = get_all_defined_required_children(
-            path_nxdl, nxdl_name
-        )
-        add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
-    # Handling link: link has a target attribute that store absolute path of concept to be
-    # linked. Writer reads link from template in the format {'link': <ABSOLUTE PATH>}
-    # {'link': ':/<ABSOLUTE PATH TO EXTERNAL FILE>'}
-    elif tag == "link":
-        # NOTE:  The code below can be implemented later once, NeXus brings optionality in
-        # link. Otherwise link will be considered optional by default.
-
-        # optionality = get_required_string(root)
-        # optional_parent = check_for_optional_parent(path, nxdl_root)
-        # optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
-        # if optionality == "optional":
-        #     template.optional_parents.append(optional_parent)
-        optionality = "optional"
-        template[optionality][path] = {"link": root.attrib["target"]}
-
-    for child in root:
-        generate_template_from_nxdl(child, template, path, nxdl_root, nxdl_name)
+    The first positional argument *root* must be the XML root element of the NXDL
+    definition (as returned by ``get_nxdl_root_and_path``).  The remaining arguments
+    are accepted for backward compatibility but are ignored.
+    """
+    nxdl_name = root.attrib["name"]
+    tree = generate_tree_from(nxdl_name)
+    _walk_nexus_tree_for_template(tree, template, path)
 
 
 def get_required_string(elem):
-    """Helper function to return nicely formatted names for optionality."""
+    """Return nicely formatted optionality string for an NXDL XML element.
+
+    .. deprecated::
+        Use ``NexusNode.optionality`` instead.
+        TODO: remove once all callers (including nexus.py HandleNexus) are migrated.
+    """
     return nexus_get_required_string(elem)[2:-2].lower()
 
 
-def convert_nexus_to_caps(nexus_name):
-    """Helper function to convert a NeXus class from <NxClass> to <CLASS>."""
-    return nexus_name[2:].upper()
+def convert_nexus_to_caps(nexus_name: str) -> str:
+    """Convert a NeXus class name like ``"NXentry"`` to its uppercase concept ``"ENTRY"``.
+
+    Thin wrapper around :func:`~pynxtools.nexus.utils.strip_nx_prefix`.
+
+    TODO: use strip_nx_prefix consistently throughout
+    """
+    return strip_nx_prefix(nexus_name)
 
 
-def contains_uppercase(field_name: str | None) -> bool:
-    """Helper function to check if a field name contains uppercase characters."""
+def _contains_uppercase(field_name: str | None) -> bool:
+    """Return True if *field_name* contains any uppercase character."""
     if field_name is None:
         return False
     return any(char.isupper() for char in field_name)
 
 
-def convert_nexus_to_suggested_name(nexus_name):
-    """Helper function to suggest a name for a group from its NeXus class."""
-    if contains_uppercase(nexus_name):
+def convert_nexus_to_suggested_name(nexus_name: str) -> str:
+    """Suggest an HDF5 instance name from a NeXus class name.
+
+    .. deprecated::
+        TODO: remove together with get_nxdl_name_from_elem.
+    """
+    if _contains_uppercase(nexus_name):
         return nexus_name
     return nexus_name[2:]
 
 
-def convert_data_converter_entry_to_nxdl_path_entry(entry) -> str | None:
+def _convert_data_converter_entry_to_nxdl_path_entry(entry) -> str | None:
     """
     Helper function to convert data converter style entry to NXDL style entry:
     ENTRY[entry] -> ENTRY
@@ -596,7 +626,7 @@ def convert_data_converter_entry_to_nxdl_path_entry(entry) -> str | None:
     return entry if results is None else results.group(1)
 
 
-def convert_nxdl_path_entry_to_data_converter_entry(entry) -> str:
+def _convert_nxdl_path_entry_to_data_converter_entry(entry) -> str:
     """
     Helper function to convert NXDL style entry to data converter style entry:
     ENTRY -> ENTRY[entry]
@@ -611,10 +641,10 @@ def convert_nxdl_path_dict_to_data_converter_dict(path) -> str:
     """
     data_converter_path = ""
     for entry in path.split("/")[1:]:
-        if not contains_uppercase(entry):
+        if not _contains_uppercase(entry) or entry.startswith("@"):
             data_converter_path += f"/{entry}"
             continue
-        data_converter_path += "/" + convert_nxdl_path_entry_to_data_converter_entry(
+        data_converter_path += "/" + _convert_nxdl_path_entry_to_data_converter_entry(
             entry
         )
     return data_converter_path
@@ -627,7 +657,7 @@ def convert_data_converter_dict_to_nxdl_path(path) -> str:
     """
     nxdl_path = ""
     for entry in path.split("/")[1:]:
-        nxdl_path += "/" + convert_data_converter_entry_to_nxdl_path_entry(entry)
+        nxdl_path += "/" + _convert_data_converter_entry_to_nxdl_path_entry(entry)
     return nxdl_path
 
 
@@ -663,7 +693,12 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
 
 
 def is_value_valid_element_of_enum(value, elem_list) -> tuple[bool, list]:
-    """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
+    """Checks whether a value has to be specific from the NXDL enumeration and returns options.
+
+    .. deprecated::
+        Use ``NexusNode.items`` and ``NexusNode.open_enum`` directly.
+        TODO: remove, not used anymore
+    """
     for elem in elem_list:
         enums = get_enums(elem)
         if enums is not None:
@@ -1169,7 +1204,12 @@ def path_in_data_dict(nxdl_path: str, data_keys: tuple[str, ...]) -> list[str]:
 
 
 def check_for_optional_parent(path: str, nxdl_root: ET._Element) -> str:
-    """Finds a parent in the branch that is optional and returns it's path or s<<NOT_FOUND>>."""
+    """Finds a parent in the branch that is optional and returns its path or <<NOT_FOUND>>.
+
+    .. deprecated::
+        Use NexusNode parent chain with ``optionality`` checks instead.
+        TODO: remove together with only caller ``add_inherited_children``
+    """
     parent_path = path.rsplit("/", 1)[0]
 
     if parent_path == "":
@@ -1185,7 +1225,12 @@ def check_for_optional_parent(path: str, nxdl_root: ET._Element) -> str:
 
 
 def is_node_required(nxdl_key, nxdl_root):
-    """Checks whether a node at given nxdl path is required"""
+    """Checks whether a node at given nxdl path is required.
+
+    .. deprecated::
+        Use ``NexusNode.optionality == "required"`` instead.
+        TODO: remove together with only caller ``all_required_children_are_set``
+    """
     if nxdl_key[nxdl_key.rindex("/") + 1 :] == "@units":
         return False
     if nxdl_key[nxdl_key.rindex("/") + 1] == "@":
@@ -1198,7 +1243,12 @@ def is_node_required(nxdl_key, nxdl_root):
 
 
 def all_required_children_are_set(optional_parent_path, data, nxdl_root):
-    """Walks over optional parent's children and makes sure all required ones are set"""
+    """Walks over optional parent's children and makes sure all required ones are set.
+
+    .. deprecated::
+        Use NexusNode tree traversal with optionality checks instead.
+        TODO: remove, not called anymore
+    """
     for key in data:
         if key in data["lone_groups"]:
             continue
@@ -1217,7 +1267,12 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
 
 
 def is_nxdl_path_a_child(nxdl_path: str, parent: str):
-    """Takes an NXDL path for an element and an NXDL parent and confirms it is a child."""
+    """Takes an NXDL path for an element and an NXDL parent and confirms it is a child.
+
+    .. deprecated::
+        Use NexusNode parent-child relations via anytree instead.
+        TODO: remove, not called anymore
+    """
     while nxdl_path.rfind("/") != -1:
         nxdl_path = nxdl_path[0 : nxdl_path.rfind("/")]
         if parent == nxdl_path:
@@ -1226,8 +1281,11 @@ def is_nxdl_path_a_child(nxdl_path: str, parent: str):
 
 
 def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
-    """Returns true if a group is contained in a path"""
+    """Returns true if a group is contained in a path.
 
+    .. deprecated::
+        TODO: remove together with only caller ``does_group_exist``
+    """
     tokens_group = path_to_group.split("/")
     tokens_entry = convert_data_converter_dict_to_nxdl_path(path_of_entry).split("/")
 
@@ -1242,7 +1300,11 @@ def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
 
 
 def does_group_exist(path_to_group, data):
-    """Returns True if the group or any children are set"""
+    """Returns True if the group or any children are set.
+
+    .. deprecated::
+        TODO: remove, not called anymore
+    """
     path_to_group = convert_data_converter_dict_to_nxdl_path(path_to_group)
     for path in data:
         if is_group_part_of_path(path_to_group, path) and data[path] is not None:
@@ -1251,7 +1313,12 @@ def does_group_exist(path_to_group, data):
 
 
 def get_concept_basepath(path: str) -> str:
-    """Get the concept path from the path"""
+    """Get the concept path from the path.
+
+    .. deprecated::
+        Use ``NexusNode.concept_path`` instead.
+        TODO: remove, not called anymore
+    """
     path_list = path.split("/")
     concept_path = []
     for p in path_list:
@@ -1261,7 +1328,12 @@ def get_concept_basepath(path: str) -> str:
 
 
 def get_first_group(root):
-    """Helper function to get the actual first group element from the NXDL."""
+    """Helper function to get the actual first group element from the NXDL.
+
+    .. deprecated::
+        Use ``generate_tree_from`` to build a NexusNode tree instead of walking raw NXDL XML.
+        TODO: remove, not called anymore
+    """
     for child in root:
         if remove_namespace_from_tag(child.tag) == "group":
             return child
@@ -1423,6 +1495,8 @@ def transform_to_intended_dt(str_value: Any) -> Any | None:
     -------
     Union[str, int, float, np.ndarray]
         Converted data type
+
+    TODO: is this function used anywhere? if not, deprecate/remove
     """
 
     symbol_list_for_data_separation = [";", " "]
@@ -1466,7 +1540,11 @@ def transform_to_intended_dt(str_value: Any) -> Any | None:
 def nested_dict_to_slash_separated_path(
     nested_dict: dict, flattened_dict: dict, parent_path=""
 ):
-    """Convert nested dict into slash separated path upto certain level."""
+    """Convert nested dict into slash separated path upto certain level.
+
+    .. deprecated::
+        TODO: remove — no known callers outside this module.
+    """
     sep = "/"
 
     for key, val in nested_dict.items():
@@ -1505,6 +1583,8 @@ def decode_if_bytes(value: Any, encoding: str = "utf-8") -> Any:
 
     This function is optimized for common scalar/ndarray paths and falls back to
     recursive decoding for nested Python containers.
+
+    TODO: generally usable, move to ``nexus/utils.py``
     """
     if isinstance(value, np.ndarray):
         if value.dtype.kind == "S":
@@ -1524,6 +1604,10 @@ def validate_data_dict(*args, **kwargs):
     Defined here (rather than via the __init__.py monkey-patch) to break a circular
     import that arises when nexus.nexus_tree moved out of the dataconverter package:
       nexus.nexus_tree → dataconverter.helpers → dataconverter.__init__ → validation → nexus.nexus_tree
+
+    .. deprecated::
+        TODO: marked for deprecation, remove in future release.
+
     """
     from pynxtools.dataconverter.validation import validate_data_dict as _impl
 

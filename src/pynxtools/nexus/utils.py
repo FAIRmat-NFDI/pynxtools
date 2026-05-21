@@ -32,6 +32,7 @@ or ``pynxtools.dataconverter`` to remain free of circular imports.
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +44,61 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     find_definition_file,
     get_nexus_definitions_path,
 )
+
+# ---------------------------------------------------------------------------
+# NeXus name utilities
+# ---------------------------------------------------------------------------
+
+
+def strip_nx_prefix(nx_type: str) -> str:
+    """Convert a NeXus class name like ``"NXentry"`` to its uppercase concept ``"ENTRY"``.
+
+    Strips the leading ``"NX"`` prefix and converts the remainder to uppercase.
+    Equivalent to ``nx_type.removeprefix("NX").upper()``.
+    """
+    return nx_type.removeprefix("NX").upper()
+
+
+# ---------------------------------------------------------------------------
+# NeXus schema constants
+# ---------------------------------------------------------------------------
+
+ISO8601 = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
+    r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$"
+)
+"""Compiled regex for the NX_DATE_TIME / ISO 8601 date-time format."""
+
+RESERVED_SUFFIXES: tuple[str, ...] = (
+    "_end",
+    "_increment_set",
+    "_errors",
+    "_indices",
+    "_mask",
+    "_set",
+    "_weights",
+    "_scaling_factor",
+    "_offset",
+)
+"""NeXus reserved field-name suffixes (NXDL specification §4.2)."""
+
+RESERVED_PREFIXES: dict[str, dict[str, str | None]] = {
+    "attribute": {
+        "@BLUESKY_": None,
+        "@DECTRIS_": "NXmx",
+        "@IDF_": None,
+        "@NDAttr": None,
+        "@NX_": "all",
+        "@PDBX_": None,
+        "@SAS_": "NXcanSAS",
+        "@SILX_": None,
+        "identifier": "all",
+    },
+    "field": {
+        "DECTRIS_": "NXmx",
+    },
+}
+"""NeXus reserved attribute and field-name prefixes (NXDL specification §4.2)."""
 
 # ---------------------------------------------------------------------------
 # NeXus primitive type aliases
