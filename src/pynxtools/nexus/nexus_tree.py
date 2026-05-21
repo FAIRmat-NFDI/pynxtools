@@ -35,17 +35,18 @@ import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
 from pynxtools import NX_DOC_BASES, get_definitions_url
-from pynxtools.dataconverter.helpers import (
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_nx_namefit,
+    is_name_type,
+)
+from pynxtools.nexus.utils import (
     NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
     is_appdef,
     is_variadic,
     remove_namespace_from_tag,
-)
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_nx_namefit,
-    is_name_type,
+    strip_nx_prefix,
 )
 
 logger = logging.getLogger(__file__)
@@ -108,12 +109,6 @@ NexusUnitCategory = Literal[
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
-# TODO: this could be generalized across the repo
-def _strip_nx_prefix(nx_type: str) -> str:
-    """Convert NeXus type names like 'NXentry' to 'ENTRY'."""
-    return nx_type.removeprefix("NX").upper()
-
-
 def _xml_path_in_nxdl(elem: ET._Element) -> str:
     """Return the path of *elem* within its NXDL file.
 
@@ -140,7 +135,7 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
             # No explicit name → nameType is implicitly "any"; derive the template
             # name from the NX type by stripping the "NX" prefix and make uppercase.
             nx_type = current.attrib.get("type", "")
-            name = _strip_nx_prefix(nx_type) if nx_type.startswith("NX") else nx_type
+            name = strip_nx_prefix(nx_type) if nx_type.startswith("NX") else nx_type
         if name:
             parts.append(name)
         if remove_namespace_from_tag(parent.tag) == "definition":
@@ -491,7 +486,7 @@ class NexusNode(NodeMixin):
                 if "name" in sub_elems.attrib:
                     names[sub_elems.attrib["name"]] = None
                 elif "type" in sub_elems.attrib:
-                    names[_strip_nx_prefix(sub_elems.attrib["type"])] = None
+                    names[strip_nx_prefix(sub_elems.attrib["type"])] = None
 
         return list(names.keys())
 
@@ -677,7 +672,7 @@ class NexusNode(NodeMixin):
 
             name = elem.attrib.get("name")
             if not name:
-                name = _strip_nx_prefix(elem.attrib["type"])
+                name = strip_nx_prefix(elem.attrib["type"])
             docstrings[name] = doc.text
 
         return docstrings
@@ -824,7 +819,7 @@ class NexusNode(NodeMixin):
                     group_name = (
                         group.attrib.get("name")
                         if "name" in group.attrib
-                        else _strip_nx_prefix(group.attrib["type"])
+                        else strip_nx_prefix(group.attrib["type"])
                     )
 
                     if "name" in group.attrib:
@@ -891,7 +886,7 @@ class NexusNode(NodeMixin):
         elif tag == "group":
             name = xml_elem.attrib.get("name")
             if not name:
-                name = _strip_nx_prefix(xml_elem.attrib["type"])
+                name = strip_nx_prefix(xml_elem.attrib["type"])
                 name_type = "any"
 
             inheritance_chain = self._build_inheritance_chain(xml_elem)
@@ -983,6 +978,8 @@ class NexusDefinition(NexusNode):
         category (Optional[Literal["base", "application"]]):
             NXDL class category.  ``None`` only when the root XML element is not
             a ``<definition>`` tag (should not occur for well-formed NXDL files).
+        extends (str | None):
+            The NXDL definition that this definition extends.
         symbols (dict[str, str]):
             Maps symbol names (e.g. ``"nP"``) to their documentation strings as
             declared in the ``<symbols>`` block of the definition.  Empty dict when
@@ -997,18 +994,20 @@ class NexusDefinition(NexusNode):
 
     nx_type: Literal["definition"] = "definition"
     category: Literal["base", "application"] | None = None
+    extends: str | None = None
     symbols: dict[str, str] = {}
     ignore_extra_groups: bool = False
     ignore_extra_fields: bool = False
     ignore_extra_attributes: bool = False
 
     def _set_definition_attrs(self) -> None:
-        """Read category, symbols, and ignoreExtra* flags from the definition XML element."""
+        """Read category, extends, symbols, and ignoreExtra* flags from the definition XML element."""
         for elem in self.inheritance:
             tag = elem.tag.split("}")[-1] if "}" in elem.tag else elem.tag
             if tag != "definition":
                 continue
             self.category = elem.attrib.get("category")
+            self.extends = elem.attrib.get("extends")
             self.ignore_extra_groups = (
                 elem.attrib.get("ignoreExtraGroups", "false") == "true"
             )
@@ -1143,7 +1142,7 @@ class NexusGroup(NexusNode):
                 sibling_name = (
                     sibling.attrib.get("name")
                     if "name" in sibling.attrib
-                    else _strip_nx_prefix(sibling.attrib["type"])
+                    else strip_nx_prefix(sibling.attrib["type"])
                 )
 
                 if "name" in sibling.attrib:
@@ -1638,9 +1637,9 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinition":
+def generate_tree_from(nxdl: str, set_root_attr: bool = True) -> "NexusDefinition":
     """
-    Generate a NexusNode tree from a NeXus application definition.
+    Generate a NexusNode tree from a NeXus NXDL definition (application or base class).
 
     The root of the returned tree is a :class:`NexusDefinition` node whose
     ``category``, ``symbols``, and ``ignore_extra_*`` attributes reflect the
@@ -1648,9 +1647,13 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinit
     :class:`NexusGroup`, :class:`NexusField`, :class:`NexusAttribute`,
     :class:`NexusLink`, and :class:`NexusChoice` nodes as appropriate.
 
+    For application definitions the tree is rooted at the ``NXentry`` group.
+    For base classes the children live directly under the definition root.
+
     Args:
-        appdef (str): The application definition name (e.g. ``"NXarpes"``).
+        nxdl (str): The NXDL definition name (e.g. ``"NXarpes"`` or ``"NXdata"``).
         set_root_attr (bool): Whether to attach NXroot-level attributes to the root.
+            Only applied for application definitions.
 
     Returns:
         NexusDefinition: The root node of the tree.
@@ -1679,36 +1682,45 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> "NexusDefinit
         ):
             add_children_to(current_elem, child)
 
-    appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
+    nxdl_xml_root, _ = get_nxdl_root_and_path(nxdl)
 
     global namespaces
-    namespaces = {"nx": appdef_xml_root.nsmap[None]}
+    namespaces = {"nx": nxdl_xml_root.nsmap[None]}
 
-    appdef_inheritance_chain = [appdef_xml_root]
-    appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
+    nxdl_inheritance_chain = [nxdl_xml_root]
+    nxdl_inheritance_chain += get_all_parents_for(nxdl_xml_root)
 
     tree = NexusDefinition(
-        name=appdef_xml_root.attrib["name"],
+        name=nxdl_xml_root.attrib["name"],
         name_type="specified",
         optionality="required",
         variadic=False,
         parent=None,
-        inheritance=appdef_inheritance_chain,
-        nxdl_base=appdef_xml_root.base,
+        inheritance=nxdl_inheritance_chain,
+        nxdl_base=nxdl_xml_root.base,
     )
 
-    # Set root attributes
-    if set_root_attr:
+    is_application = nxdl_xml_root.get("category") == "application"
+
+    if set_root_attr and is_application:
         nx_root, _ = get_nxdl_root_and_path("NXroot")
         for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
             child = tree.add_node_from(root_attrib)
             child.optionality = "optional"
 
-    entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
-    add_children_to(tree, entry)
+    if is_application:
+        entry = nxdl_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
+        if entry is not None:
+            add_children_to(tree, entry)
+    else:
+        for child_elem in nxdl_xml_root.xpath(
+            r"*[self::nx:field or self::nx:group or self::nx:attribute"
+            r" or self::nx:choice or self::nx:link]",
+            namespaces=namespaces,
+        ):
+            add_children_to(tree, child_elem)
 
-    # Add all fields and attributes from the parent appdefs
-    if len(appdef_inheritance_chain) > 1:
+    if len(nxdl_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
 
     return tree

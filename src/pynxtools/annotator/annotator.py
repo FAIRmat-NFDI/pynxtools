@@ -384,9 +384,8 @@ class Annotator(NexusVisitor):
         attr = parts[1] if len(parts) > 1 else None
 
         # Bare class name (e.g. "NXbeam"): match groups by HDF5 NX_class attribute.
-        # generate_tree_from only supports application definitions, so full IS-A
-        # chain traversal for base classes (e.g. querying "NXobject" to find all
-        # groups) is not yet implemented. Exact class match only.
+        # Full IS-A chain traversal for bare class queries (e.g. querying "NXobject"
+        # to find all groups) is not yet implemented. Exact class match only.
         if "/" not in target and isinstance(hdf_node, h5py.Group):
             nx_class = decode_if_string(hdf_node.attrs.get("NX_class", b""))
             if nx_class != target:
