@@ -62,7 +62,7 @@ from pynxtools.nexus.nexus_tree import (
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver, resolve_path
 from pynxtools.units import NXUnitSet, ureg
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__file__)
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()

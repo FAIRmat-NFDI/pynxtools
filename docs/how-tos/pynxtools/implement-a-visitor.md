@@ -41,7 +41,7 @@ Two additional optional hooks have default no-op implementations and may be over
 | `on_broken_link(hdf_path, link)` | A soft or external link cannot be resolved. The broken node is then skipped. | no-op |
 | `on_external_link(hdf_path, link)` | An external link is first encountered, *before* the handler opens the external file. | no-op |
 
-The `link` argument is an `h5py.SoftLink` or `h5py.ExternalLink` — inspect its type to distinguish the two cases.  Nodes from a successfully resolved external file are visited with the same `hdf_path` prefix as the link itself; for example, a link at `"entry/ext"` whose target is a group containing `"value"` results in `on_field("entry/ext/value", ...)`.
+The `link` argument is an `h5py.SoftLink` or `h5py.ExternalLink`. Inspect its type to distinguish the two cases. Nodes from a successfully resolved external file are visited with the same `hdf_path` prefix as the link itself; for example, a link at `"entry/ext"` whose target is a group containing `"value"` results in `on_field("entry/ext/value", ...)`.
 
 !!! note "Hard links"
     Hard links are followed transparently. A built-in cycle guard prevents infinite recursion when a hard-linked descendant aliases an ancestor.
@@ -193,7 +193,7 @@ print(f"Broken links: {visitor.broken}")
 print(f"External files referenced: {visitor.external_files}")
 ```
 
-`on_broken_link` is called for both broken soft links (`h5py.SoftLink`) and broken external links (`h5py.ExternalLink`); inspect `type(link)` to distinguish them.  `on_external_link` fires only for external links, immediately before the external file is opened — it does not fire again for nodes inside the external subtree.
+`on_broken_link` is called for both broken soft links (`h5py.SoftLink`) and broken external links (`h5py.ExternalLink`); inspect `type(link)` to distinguish them.  `on_external_link` fires only for external links, immediately before the external file is opened. It does not fire again for nodes inside the external subtree.
 
 ## Resolving the application definition from the file
 
