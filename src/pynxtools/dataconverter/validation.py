@@ -184,10 +184,13 @@ class ValidationVisitor(NexusVisitor):
 
     * ``on_group`` - validates the group's NX_class and required child concepts;
       skips nodes outside the target entry.
-    * ``on_field`` - validates type, unit, enum, and NXdata constraints.
+    * ``on_field`` - validates type, unit, enum, and NXdata constraints;
+      records dimension sizes for NXDL symbols into ``_symbol_registry``.
     * ``on_attribute`` - validates attribute type and enum membership.
     * ``on_complete`` - emits ``MissingRequired*`` problems for every required
-      concept not encountered during traversal.
+      concept not encountered during traversal, then checks that all fields
+      sharing the same NXDL symbol within a group agree on its size
+      (``SymbolSizeMismatch``).
     * ``on_broken_link`` - emits a ``BrokenLink`` problem for soft or external
       links whose target cannot be resolved.  The link type (``h5py.SoftLink``
       vs ``h5py.ExternalLink``) is available via the *link* argument.
@@ -233,6 +236,10 @@ class ValidationVisitor(NexusVisitor):
         # is_valid_enum for open-enumeration custom-attribute lookups.
         self._data: h5py.Group | None = None
 
+        # Keyed by group path; maps NXDL symbol name → list of observed sizes.
+        # Populated in _handle_field; checked in on_complete.
+        self._symbol_registry: dict[str, dict[str, list[int]]] = {}
+
     # ------------------------------------------------------------------
     # NexusVisitor interface
     # ------------------------------------------------------------------
@@ -272,8 +279,9 @@ class ValidationVisitor(NexusVisitor):
         pass
 
     def on_complete(self, root: h5py.File) -> None:
-        """Emit validation errors for all required concepts not encountered."""
+        """Emit problems for required concepts not seen and for symbol-size mismatches."""
         self._report_missing()
+        self._check_symbol_consistency()
 
     def on_broken_link(self, hdf_path: str, link) -> None:
         """Log a broken soft or external link as a validation problem."""

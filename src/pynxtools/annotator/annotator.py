@@ -48,7 +48,7 @@ import h5py
 from pynxtools.annotator.nxdata import chk_nxdata_axis
 from pynxtools.nexus.handler import NexusVisitor
 from pynxtools.nexus.nexus import get_default_plottable
-from pynxtools.nexus.nexus_tree import NexusNode, NexusEntity
+from pynxtools.nexus.nexus_tree import NexusField, NexusNode
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nexus.utils import decode_if_string
 
@@ -149,7 +149,7 @@ class Annotator(NexusVisitor):
         return 0 if not hdf_path else hdf_path.count("/")
 
     @staticmethod
-    def _dim_str(node: NexusEntity) -> str:
+    def _dim_str(node: NexusField) -> str:
         """Return a human-readable dimension string like ``nP × 10 × i``, or ``""`` if unavailable.
 
         Symbol names (from ``dim_symbols``) take priority over literal sizes (from ``shape``).
@@ -280,7 +280,7 @@ class Annotator(NexusVisitor):
             opt_str = f"  [{node.optionality.upper()}]" if node.optionality else ""
             self._detail(det, "Concept", f"{node.concept_path}{opt_str}")
 
-            if isinstance(node, NexusEntity):
+            if isinstance(node, NexusField):
                 dim_str = self._dim_str(node)
                 if dim_str:
                     self._detail(det, "Dims", dim_str)
