@@ -286,6 +286,8 @@ class NomadVisitor(NexusVisitor):
 
     ``_populate_data`` (previously on ``NexusParser``) lives here so that all
     archive-population logic is co-located with the traversal state.
+
+    ``hdf_path`` is used throughout with no leading "/".
     """
 
     _SKIP_ATTRS: frozenset = frozenset({"NX_class", "target"})
@@ -294,7 +296,7 @@ class NomadVisitor(NexusVisitor):
         self._nx_root = nx_root
         self._nxs_fname = nxs_fname
         self._logger = logger
-        # hdf_path (no leading "/") → MSection for that HDF5 group
+        # MSections for HDF5 group in hdf_path
         self._sections: dict[str, MSection] = {}
         self.sample_class_refs: dict[str, list] = {
             "NXsample": [],
