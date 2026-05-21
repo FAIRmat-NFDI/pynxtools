@@ -102,7 +102,7 @@ The `definition` field with an `<enumeration>` is a convention — it locks the 
 From now on, you will exclusively develop this application definition in YAML. As outlined above, there exists a tool [`nyaml`](https://github.com/FAIRmat-NFDI/nyaml) (developed by FAIRmat) that lets you write the NXDL definition in YAML and convert it to NXDL XML.
 
 !!! tip
-    The complete `nyaml` notation reference — all reserved keywords, the `\exists` constraint syntax, `\dimensions`, `\enumeration`, and more — is available at [fairmat-nfdi.github.io/nyaml](https://fairmat-nfdi.github.io/nyaml/).
+    The complete `nyaml` notation reference with all reserved keywords, the `\exists` constraint syntax, `\dimensions`, `\enumeration`, and more, is available at [fairmat-nfdi.github.io/nyaml](https://fairmat-nfdi.github.io/nyaml/).
 
 Install the `nyaml` Python package:
 
