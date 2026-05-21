@@ -9,6 +9,7 @@
 \type: group
 NXlaser(NXsource):
   wavelength(NX_FLOAT):
+    \unit: NX_WAVELENGTH
     \doc: |
       Central wavelength of the laser line.
   coherence_length(NX_FLOAT):

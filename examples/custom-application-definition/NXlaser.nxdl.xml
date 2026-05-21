@@ -30,7 +30,7 @@
         Use this base class in application definitions that require a laser
         as the illumination source.
     </doc>
-    <field name="wavelength" type="NX_FLOAT">
+    <field name="wavelength" type="NX_FLOAT" units="NX_WAVELENGTH">
         <doc>
             Central wavelength of the laser line.
         </doc>
