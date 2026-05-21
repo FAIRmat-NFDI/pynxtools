@@ -978,6 +978,8 @@ class NexusDefinition(NexusNode):
         category (Optional[Literal["base", "application"]]):
             NXDL class category.  ``None`` only when the root XML element is not
             a ``<definition>`` tag (should not occur for well-formed NXDL files).
+        extends (str | None):
+            The NXDL definition that this definition extends.
         symbols (dict[str, str]):
             Maps symbol names (e.g. ``"nP"``) to their documentation strings as
             declared in the ``<symbols>`` block of the definition.  Empty dict when
@@ -992,18 +994,20 @@ class NexusDefinition(NexusNode):
 
     nx_type: Literal["definition"] = "definition"
     category: Literal["base", "application"] | None = None
+    extends: str | None = None
     symbols: dict[str, str] = {}
     ignore_extra_groups: bool = False
     ignore_extra_fields: bool = False
     ignore_extra_attributes: bool = False
 
     def _set_definition_attrs(self) -> None:
-        """Read category, symbols, and ignoreExtra* flags from the definition XML element."""
+        """Read category, extends, symbols, and ignoreExtra* flags from the definition XML element."""
         for elem in self.inheritance:
             tag = elem.tag.split("}")[-1] if "}" in elem.tag else elem.tag
             if tag != "definition":
                 continue
             self.category = elem.attrib.get("category")
+            self.extends = elem.attrib.get("extends")
             self.ignore_extra_groups = (
                 elem.attrib.get("ignoreExtraGroups", "false") == "true"
             )
