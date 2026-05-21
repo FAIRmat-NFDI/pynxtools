@@ -36,7 +36,7 @@ try:
     from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
     from nomad.metainfo import MEnum, MSection
-    from nomad.metainfo.util import MQuantity, resolve_variadic_name
+    from nomad.metainfo.util import MQuantity
     from nomad.parsing import MatchingParser
     from nomad.utils import get_logger
     from pint import Unit
@@ -389,20 +389,18 @@ class NomadVisitor(NexusVisitor):
     ) -> None:
         """Populate one NOMAD quantity from an HDF5 field dataset."""
         field_name = rename_nx_for_nomad(node.name, is_field=True)
+        concept_basename = get_quantity_base_name(field_name)
         data_instance_name = hdf_node.name.split("/")[-1] + "__field"
 
-        try:
-            metainfo_def = resolve_variadic_name(
-                current.m_def.all_quantities, field_name
-            )
-            is_variadic = metainfo_def.variable
-        except Exception as e:
+        metainfo_def = current.m_def.all_quantities.get(field_name)
+        if metainfo_def is None:
             self._logger.warning(
-                f"error while setting field {data_instance_name} in {current.m_def} as no proper definition found for {field_name}",
+                f"error while setting field {data_instance_name} in {current.m_def}: "
+                f"no definition found for {field_name}",
                 target_name=field_name,
-                exc_info=e,
             )
             return
+        is_variadic = metainfo_def.variable
 
         # Metainfo does not support precision higher than i8, u8, f8, c16
         if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
@@ -500,28 +498,27 @@ class NomadVisitor(NexusVisitor):
             current.m_set(metainfo_def, field)
             field.m_set_attribute("m_nx_data_path", hdf_node.name)
             field.m_set_attribute("m_nx_data_file", self._nxs_fname)
+            instance_name = get_quantity_base_name(data_instance_name)
             if is_variadic:
-                concept_basename = get_quantity_base_name(field.name)
-                instance_name = get_quantity_base_name(data_instance_name)
-                name_metainfo_def = resolve_variadic_name(
-                    current.m_def.all_quantities, concept_basename + "__name"
+                name_metainfo_def = current.m_def.all_quantities.get(
+                    concept_basename + "__name"
                 )
-                name_value = MQuantity.wrap(instance_name, instance_name + "__name")
-                current.m_set(name_metainfo_def, name_value)
-                name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
-                name_value.m_set_attribute("m_nx_data_file", self._nxs_fname)
+                if name_metainfo_def is not None:
+                    name_value = MQuantity.wrap(instance_name, instance_name + "__name")
+                    current.m_set(name_metainfo_def, name_value)
+                    name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
+                    name_value.m_set_attribute("m_nx_data_file", self._nxs_fname)
             if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
                 for suffix in FIELD_STATISTICS:
                     if suffix != "__mean":
-                        concept_basename = get_quantity_base_name(field.name)
-                        instance_name = get_quantity_base_name(data_instance_name)
-                        stat_metainfo_def = resolve_variadic_name(
-                            current.m_def.all_quantities, concept_basename + suffix
+                        stat_metainfo_def = current.m_def.all_quantities.get(
+                            concept_basename + suffix
                         )
-                        stat = MQuantity.wrap(
-                            field_stats[suffix], instance_name + suffix
-                        )
-                        current.m_set(stat_metainfo_def, stat)
+                        if stat_metainfo_def is not None:
+                            stat = MQuantity.wrap(
+                                field_stats[suffix], instance_name + suffix
+                            )
+                            current.m_set(stat_metainfo_def, stat)
         except Exception as e:
             self._logger.warning(
                 "error while setting field",
@@ -538,54 +535,51 @@ class NomadVisitor(NexusVisitor):
         current: MSection,
     ) -> None:
         """Populate one NOMAD quantity attribute from an HDF5 attribute."""
-        # Build the NOMAD metainfo quantity name for this attribute.
-        # Convention (matching schema.py _create_attributes):
-        #   group attribute → "___" + attr_name
-        #   field attribute → field_schema_name + "___" + attr_name
+        # Build the NOMAD metainfo quantity name for this attribute using the
+        # NXDL concept name from attr_node (not the HDF5 instance name) so that
+        # variadic attr concepts like AXISNAME_indices resolve to their exact
+        # schema key (e.g. "___AXISNAME_indices") rather than requiring fuzzy
+        # namefit scoring against the instance name.
+        #   group attribute → "___" + attr_concept_name
+        #   field attribute → field_concept_basename + "___" + attr_concept_name
+        attr_concept_name = attr_node.name
         if isinstance(parent, h5py.Group):
-            # Group attribute: no parent field prefix
             parent_html_base_name = ""
             parent_name = ""
         else:
-            # Field attribute: parent is the h5py.Dataset
             parent_field_node = attr_node.parent
             parent_html_base_name = rename_nx_for_nomad(
                 parent_field_node.name, is_field=True
             ).split("__field")[0]
             parent_name = parent.name.split("/")[-1]
 
-        attribute_name = parent_html_base_name + "___" + attr_name
+        attribute_name = parent_html_base_name + "___" + attr_concept_name
         data_instance_name = parent_name + "___" + attr_name
 
-        metainfo_def = None
+        metainfo_def = current.m_def.all_quantities.get(attribute_name)
+        if metainfo_def is None:
+            self._logger.warning(
+                f"{current.m_def} has no suitable property for {parent_html_base_name} and {attr_name} as {attribute_name}",
+                target_name=attr_name,
+            )
+            return
         try:
-            try:
-                metainfo_def = resolve_variadic_name(
-                    current.m_def.all_quantities, attribute_name
-                )
-                attribute = attr_value
-                # TODO: get unit from attribute <xxx>_units
-                if isinstance(metainfo_def.type, MEnum):
-                    if isinstance(attr_value, np.ndarray):
-                        attribute = str(attr_value.tolist())
+            attribute = attr_value
+            # TODO: get unit from attribute <xxx>_units
+            if isinstance(metainfo_def.type, MEnum):
+                if isinstance(attr_value, np.ndarray):
+                    attribute = str(attr_value.tolist())
+                else:
+                    attribute = str(attr_value)
+            elif not isinstance(attr_value, str):
+                if isinstance(attr_value, np.ndarray):
+                    attr_list = attr_value.tolist()
+                    if len(attr_list) == 1 or attr_value.dtype.kind in "iufc":
+                        attribute = attr_list[0]
                     else:
-                        attribute = str(attr_value)
-                elif not isinstance(attr_value, str):
-                    if isinstance(attr_value, np.ndarray):
-                        attr_list = attr_value.tolist()
-                        if len(attr_list) == 1 or attr_value.dtype.kind in "iufc":
-                            attribute = attr_list[0]
-                        else:
-                            attribute = str(attr_list)
-                if metainfo_def.use_full_storage:
-                    attribute = MQuantity.wrap(attribute, data_instance_name)
-            except ValueError as exc:
-                self._logger.warning(
-                    f"{current.m_def} has no suitable property for {parent_html_base_name} and {attr_name} as {attribute_name}",
-                    target_name=attr_name,
-                    exc_info=exc,
-                )
-                return
+                        attribute = str(attr_list)
+            if metainfo_def.use_full_storage:
+                attribute = MQuantity.wrap(attribute, data_instance_name)
             current.m_set(metainfo_def, attribute)
             # attributes must be set after their parent quantity to avoid a
             # variadic-name mismatch bug in the metainfo layer
