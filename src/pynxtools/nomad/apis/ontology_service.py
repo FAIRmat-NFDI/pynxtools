@@ -35,6 +35,7 @@ from owlready2 import ThingClass, get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
 
 from pynxtools.NeXusOntology.script.generate_ontology import main as generate_ontology
+from pynxtools.nomad.apis.ontology import format_nx_class_label
 
 logger = logging.getLogger("pynxtools")
 
@@ -42,9 +43,10 @@ ontology_service_entry_point = config.get_plugin_entry_point(
     "pynxtools.nomad.apis:ontology_service"
 )
 
-#######################################################################
-########################## define app and functions ###################
-#######################################################################
+# ------------------------------------------------------------------
+# FastAPI app and public functions #
+# ------------------------------------------------------------------
+
 app = FastAPI(
     root_path=f"{config.services.api_base_path}/ontology_service",
     title="Ontology Service",
@@ -120,30 +122,6 @@ def load_ontology() -> Ontology:
         raise
 
 
-def get_label(entity):
-    # Try to get rdfs:label, else fallback to name or IRI
-    if hasattr(entity, "label") and entity.label:
-        return entity.label[0]
-    elif hasattr(entity, "name"):
-        return entity.name
-    else:
-        return str(entity)
-
-
-def format_nxclass_label(nxclass):
-    label = get_label(nxclass)
-    iri = getattr(nxclass, "iri", None)
-    if iri and "PaNET" in iri:
-        code = iri.split("/")[-1]
-        return f"{label} ({code})"
-    elif iri and "nexusformat" in iri:
-        return f"{label}"
-    elif iri:
-        return f"{label} ({iri})"
-    else:
-        return f"{label}"
-
-
 def fetch_superclasses(ontology, class_name):
     try:
         cls = ontology.search_one(iri="*" + class_name)
@@ -182,15 +160,17 @@ def fetch_superclasses(ontology, class_name):
             )
             and isinstance(sc, ThingClass)
         ]
-        return [format_nxclass_label(sc) for sc in direct_superclasses]
+        return [format_nx_class_label(sc) for sc in direct_superclasses]
     except Exception as e:
         logger.error(f"Error in fetch_superclasses: {e}")
         raise
 
 
-#######################################################################
-########################## application routes #########################
-#######################################################################
+# ------------------------------------------------------------------
+# Application routes
+# ------------------------------------------------------------------
+
+
 @app.on_event("startup")
 def startup_event():
     """

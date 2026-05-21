@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import types
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -243,7 +244,9 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         if isinstance(sec, cls):
                             collection.append(ref_cls(name=sec.name, reference=sec))
                             break
-                # ------------------ ontology service  ------------------
+                # ------------------------------------------------------------------
+                # ontology service
+                # ------------------------------------------------------------------
                 try:
                     if hasattr(entry, "definition__field") and entry.definition__field:
                         # Directly use entry.definition__field as class_name
@@ -269,7 +272,6 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                 except Exception as e:
                     logger.warning(f"Failed to extract superclasses: {e}")
                     archive.results.eln.methods.append("Generic Experiment")
-                # ------------------ ontology service  ------------------
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:

@@ -253,7 +253,6 @@ nonvariadic
 nslots
 nsmap
 nthreads
-nxclass
 nxcollection
 nxdata
 nxdl
