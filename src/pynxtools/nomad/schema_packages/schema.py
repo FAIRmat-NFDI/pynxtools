@@ -30,13 +30,14 @@ from typing import Any, Optional, Union
 import h5py
 import numpy as np
 import orjson
-import pandas as pd
+import requests
 from ase import Atoms
 from ase.data import atomic_numbers
 from scipy.spatial import cKDTree
 from toposort import toposort_flatten
 
 try:
+    from nomad.config import config
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import ArchiveSection, EntryData, Schema
     from nomad.datamodel.metainfo import basesections
