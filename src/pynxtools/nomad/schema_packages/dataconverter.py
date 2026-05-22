@@ -28,7 +28,11 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_app_defs_names,  # pylint: disable=import-error
 )
 
-m_package = Package(name="nexus_data_converter")
+m_package = Package(
+    name="nexus_data_converter",
+    # TODO: this should be on the individual classes?!
+    aliases=["pynxtools.nomad.dataconverter"],
+)
 
 
 def create_eln_dict(archive):
