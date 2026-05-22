@@ -18,7 +18,6 @@ from typing import Any, Optional, Union
 import h5py
 import numpy as np
 import orjson
-import pandas as pd
 import requests
 from ase import Atoms
 from ase.data import atomic_numbers
