@@ -18,11 +18,21 @@
 """
 Assembles all generated NeXus base class sections into a single NOMAD Package.
 
-build_package() is the only public function.  It:
+build_package() is the only public function. It:
 1. Imports all 142 generated base_classes/*.py modules.
 2. Collects each module's top-level generated Section definition.
 3. Combines them into a single Package and calls __init_metainfo__() to
    resolve all string-proxy SubSection references.
+
+Deduplication note
+------------------
+NOMAD's metaclass auto-adds every Section to a per-module Package when the
+class body is executed (metainfo.py ~line 939). If those per-module Packages
+are left in place, NOMAD's all_metainfo_packages() scan finds them alongside
+our assembled Package and each section appears twice. We prevent this by
+replacing each module's m_package attribute with our assembled Package after
+import; the scan then finds only the assembled Package for all base class
+modules.
 """
 
 from __future__ import annotations
@@ -67,27 +77,17 @@ def build_package() -> Package:
             continue
         module_name = f"{_PACKAGE_NAME}.{py_file.stem}"
         mod = importlib.import_module(module_name)
+        # Replace the per-module Package that NOMAD's metaclass auto-created
+        # during import with our assembled Package. all_metainfo_packages()
+        # later scans sys.modules for m_package attributes; without this, it
+        # finds both the per-module packages and ours, registering each section
+        # twice.
+        setattr(mod, "m_package", m_package)
         for attr_name in dir(mod):
             obj = getattr(mod, attr_name, None)
             if _is_generated_section(obj, module_name):
                 m_package.section_definitions.append(obj.m_def)
 
-    try:
-        m_package.__init_metainfo__()
-    except Exception as exc:
-        # Phase 1: base_classes only.  Cross-category SubSection references
-        # (e.g. NXphase → contributed NXmicrostructure_ipf) cannot be resolved
-        # until Phase 2 generates those modules.  Warn and continue; the
-        # affected subsections will be unresolvable until then.
-        import warnings
-
-        warnings.warn(
-            f"Package initialization incomplete: {exc}. "
-            "Some cross-category SubSection references may be unresolved.",
-            stacklevel=2,
-        )
+    m_package.__init_metainfo__()
     _m_package = m_package
     return m_package
-
-
-build_package()
