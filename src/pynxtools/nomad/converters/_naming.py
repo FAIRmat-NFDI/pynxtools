@@ -4,38 +4,8 @@ Naming utilities for converting NXDL names to Python / NOMAD conventions.
 
 from __future__ import annotations
 
-# Abbreviations that stay ALL-CAPS when converting NXDL names to CamelCase.
-# TODO: do we really want to have this additional naming restriction?
-ABBREVIATIONS: frozenset[str] = frozenset(
-    {
-        "xrd",
-        "xps",
-        "arpes",
-        "mpes",
-        "em",
-        "apm",
-        "xas",
-        "afm",
-        "stm",
-        "sem",
-        "tem",
-        "spm",
-        "ir",
-        "uv",
-        "cd",
-        "nmr",
-        "eels",
-        "saxs",
-        "waxs",
-        "sans",
-        "raman",
-        "ellips",
-    }
-)
-
 # NOMAD BaseSection quantity names that conflict with NXDL field names.
 # Fields with these names get a `_field` suffix to avoid shadowing.
-# TODO: is this a good idea??
 _RESERVED_QUANTITY_NAMES: frozenset[str] = frozenset(
     {"name", "datetime", "lab_id", "description"}
 )
@@ -45,24 +15,18 @@ def nxdl_to_class_name(nx_name: str) -> str:
     """Convert an NXDL class name (e.g. 'NXoptical_spectroscopy') to a
     Python CamelCase class name ('OpticalSpectroscopy').
 
-    Abbreviations listed in ABBREVIATIONS stay ALL-CAPS.
-
     Examples
     --------
     >>> nxdl_to_class_name("NXentry")
     'Entry'
-    >>> nxdl_to_class_name("NXxrd")
-    'XRD'
-    >>> nxdl_to_class_name("NXarpes")
-    'ARPES'
+    >>> nxdl_to_class_name("NXxps")
+    'Xps'
     >>> nxdl_to_class_name("NXoptical_spectroscopy")
     'OpticalSpectroscopy'
     """
     stem = nx_name[2:] if nx_name.startswith("NX") else nx_name
     parts = stem.split("_")
-    return "".join(
-        p.upper() if p.lower() in ABBREVIATIONS else p.capitalize() for p in parts if p
-    )
+    return "".join(p.capitalize() for p in parts if p)
 
 
 def nxdl_to_quantity_name(nxdl_name: str) -> str:
@@ -98,7 +62,6 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
 # Base section mapping
 # ---------------------------------------------------------------------------
 
-# TODO: this should eventually be removed!
 # Maps NXDL top-level class name → (Python class name, dotted import path)
 BASESECTIONS_MAP: dict[str, tuple[str, str]] = {
     "NXobject": ("BaseSection", "nomad.datamodel.metainfo.basesections"),
