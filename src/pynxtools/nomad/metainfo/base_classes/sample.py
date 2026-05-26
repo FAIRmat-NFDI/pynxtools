@@ -25,20 +25,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Datetime
+from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
-from pynxtools.nomad.metainfo.base_classes.beam import Beam
-from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.environment import Environment
-from pynxtools.nomad.metainfo.base_classes.geometry import Geometry
-from pynxtools.nomad.metainfo.base_classes.history import History
-from pynxtools.nomad.metainfo.base_classes.log import Log
-from pynxtools.nomad.metainfo.base_classes.off_geometry import OffGeometry
-from pynxtools.nomad.metainfo.base_classes.positioner import Positioner
-from pynxtools.nomad.metainfo.base_classes.sample_component import SampleComponent
+from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -47,7 +40,7 @@ if TYPE_CHECKING:
 __all__ = ["Sample"]
 
 
-class Sample(CompositeSystem):
+class Sample(Component, basesections.CompositeSystem):
     """
     Any information on the sample.
 
@@ -72,65 +65,191 @@ class Sample(CompositeSystem):
     )
 
     geometry = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleGeometry",
+        section_def="pynxtools.nomad.metainfo.base_classes.geometry.Geometry",
         repeats=True,
+        description=(
+            "The position and orientation of the center of mass of the sample"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="geometry",
+            name_type="specified",
+            optionality="optional",
+            deprecated="Use the field `depends_on` and :ref:`NXtransformations` to position the sample and NXoff_geometry to describe its shape instead",
+        ),
     )
     beam = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleBeam",
+        section_def="pynxtools.nomad.metainfo.base_classes.beam.Beam",
         repeats=True,
         variable=True,
+        description=(
+            "Details of beam incident on sample - used to calculate sample/beam "
+            "interaction point"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     sample_component = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleSampleComponent",
+        section_def="pynxtools.nomad.metainfo.base_classes.sample_component.SampleComponent",
         repeats=True,
         variable=True,
+        description=(
+            "One group per sample component This is the preferred way of "
+            "recording per component information over the n_comp arrays"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample_component",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     transmission = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleTransmission",
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=True,
+        description=("As a function of Wavelength"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="transmission",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     temperature_log = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleTemperatureLog",
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
         repeats=True,
+        description=(
+            "temperature_log.value is a link to e.g. "
+            "temperature_env.sensor1.value_log.value"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="temperature_log",
+            name_type="specified",
+            optionality="optional",
+            deprecated="use ``temperature``, see: https://github.com/nexusformat/definitions/issues/816",
+        ),
     )
     temperature_env = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleTemperatureEnv",
+        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
         repeats=True,
+        description=("Additional sample temperature environment information"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="temperature_env",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     magnetic_field = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleMagneticField",
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
         repeats=True,
+        description=(
+            "magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="magnetic_field",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     magnetic_field_log = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleMagneticFieldLog",
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
         repeats=True,
+        description=(
+            "magnetic_field_log.value is a link to e.g. "
+            "magnetic_field_env.sensor1.value_log.value"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="magnetic_field_log",
+            name_type="specified",
+            optionality="optional",
+            deprecated="use ``magnetic_field``, see: https://github.com/nexusformat/definitions/issues/816",
+        ),
     )
     magnetic_field_env = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleMagneticFieldEnv",
+        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
         repeats=True,
+        description=("Additional sample magnetic environment information"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="magnetic_field_env",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     external_ADC = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleExternalAdc",
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
         repeats=True,
+        description=("logged value (or logic state) read from user's setup"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="external_ADC",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     positioner = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SamplePositioner",
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
         repeats=True,
         variable=True,
+        description=("Any positioner (motor, PZT, ...) used to locate the sample"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     off_geometry = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleOffGeometry",
+        section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,
+        description=("This group describes the shape of the sample"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXoff_geometry",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleEnvironment",
+        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
         repeats=True,
         variable=True,
+        description=(
+            "Any environmental or external stimuli/measurements. These can "
+            "include, among others: applied pressure, surrounding gas phase and "
+            "gas pressure, external electric/magnetic/mechanical fields, "
+            "temperature, ..."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     history = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.SampleHistory",
+        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
         repeats=True,
+        description=(
+            "A set of physical processes that occurred to the sample "
+            "prior/during experiment."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name="history",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
 
     name_field = Quantity(
@@ -784,236 +903,3 @@ class Sample(CompositeSystem):
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
-
-
-# =============================================================================
-# Named concept groups — one Section class per group defined in NXsample.
-# These are referenced by the SubSections above via string FQNs and resolved
-# lazily by NOMAD at __init_metainfo__() time.
-# =============================================================================
-
-
-class SampleGeometry(Geometry):
-    """
-    The position and orientation of the center of mass of the sample
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgeometry",
-            name="geometry",
-            name_type="specified",
-            optionality="optional",
-            deprecated="Use the field `depends_on` and :ref:`NXtransformations` to position the sample and NXoff_geometry to describe its shape instead",
-        ),
-    )
-
-
-class SampleBeam(Beam):
-    """
-    Details of beam incident on sample - used to calculate sample/beam
-    interaction point
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleSampleComponent(SampleComponent):
-    """
-    One group per sample component This is the preferred way of recording per
-    component information over the n_comp arrays
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsample_component",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleTransmission(Data):
-    """
-    As a function of Wavelength
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="transmission",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleTemperatureLog(Log):
-    """
-    temperature_log.value is a link to e.g.
-    temperature_env.sensor1.value_log.value
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="temperature_log",
-            name_type="specified",
-            optionality="optional",
-            deprecated="use ``temperature``, see: https://github.com/nexusformat/definitions/issues/816",
-        ),
-    )
-
-
-class SampleTemperatureEnv(Environment):
-    """
-    Additional sample temperature environment information
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="temperature_env",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleMagneticField(Log):
-    """
-    magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="magnetic_field",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleMagneticFieldLog(Log):
-    """
-    magnetic_field_log.value is a link to e.g.
-    magnetic_field_env.sensor1.value_log.value
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="magnetic_field_log",
-            name_type="specified",
-            optionality="optional",
-            deprecated="use ``magnetic_field``, see: https://github.com/nexusformat/definitions/issues/816",
-        ),
-    )
-
-
-class SampleMagneticFieldEnv(Environment):
-    """
-    Additional sample magnetic environment information
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="magnetic_field_env",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleExternalAdc(Log):
-    """
-    logged value (or logic state) read from user's setup
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="external_ADC",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-
-
-class SamplePositioner(Positioner):
-    """
-    Any positioner (motor, PZT, ...) used to locate the sample
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpositioner",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleOffGeometry(OffGeometry):
-    """
-    This group describes the shape of the sample
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXoff_geometry",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
-class SampleEnvironment(Environment):
-    """
-    Any environmental or external stimuli/measurements. These can include,
-    among others: applied pressure, surrounding gas phase and gas pressure,
-    external electric/magnetic/mechanical fields, temperature, ...
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class SampleHistory(History):
-    """
-    A set of physical processes that occurred to the sample prior/during
-    experiment.
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXhistory",
-            name="history",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )

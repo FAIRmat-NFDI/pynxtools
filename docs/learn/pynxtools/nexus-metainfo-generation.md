@@ -237,7 +237,13 @@ src/pynxtools/nomad/
 ### Example generated file (`entry.py`, excerpt)
 
 ```python
-class Entry(Measurement):
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.base_classes.object import Object
+from pynxtools.nomad.metainfo.base_classes.user import User
+
+class Entry(Object, basesections.Measurement):
     """Description of a complete, self-consistent measurement."""
 
     m_def = Section(
@@ -278,6 +284,9 @@ class Entry(Measurement):
         ),
     )
 
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
 
 class EntryUser(User):
     """A user contributing to this entry."""
@@ -291,12 +300,20 @@ class EntryUser(User):
             optionality="optional",
         ),
     )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 ```
 
 ### Named concepts vs. cross-file SubSections
 
-Every group child of a NXDL base class generates both a named concept class *and* a
-`SubSection` in the parent.
+A named concept class is generated only when the group defines **its own quantities** that
+differ from the generic class — changed optionality, extra fields, or different
+type/units/enumeration.  Groups that exist purely for occurrence context (e.g. a
+`backgroundBACKGROUND` group with no additional fields) point their `SubSection` directly
+at the generic class; no named concept class is generated.  This rule also prevents
+circular imports since every class transitively extends `Object` (the generated `NXobject`
+class).
 
 | SubSection target | `a_nexus_group` location |
 |---|---|
@@ -384,20 +401,39 @@ string FQNs into live class references.
 
 ---
 
-## Base section mapping
+## Inheritance chain
 
-Generated classes inherit from NOMAD `basesections` where a semantic match exists:
+Every generated class extends its **NeXus parent** class (the Python class generated from
+the NXDL `extends` attribute) and — where a semantic match exists — additionally inherits
+from the corresponding NOMAD base section:
 
-| NXDL class | Python base class |
-|-----------|------------------|
-| `NXobject` | `BaseSection` |
-| `NXentry` | `Measurement` |
-| `NXprocess` | `ActivityStep` |
-| `NXsample` | `CompositeSystem` |
-| `NXsample_component` | `Component` |
-| `NXfabrication` | `Instrument` |
-| `NXdata` | `ActivityResult` |
-| all others | `BaseSection` |
+```python
+class Object(BaseSection): ...             # NXobject → root
+class Entry(Object, basesections.Measurement): ...
+class Process(Object, basesections.ActivityStep): ...
+class Sample(Component, basesections.CompositeSystem): ...
+class SampleComponent(Component, basesections.Component): ...
+class Data(Object, basesections.ActivityResult): ...
+```
+
+The NOMAD base section is imported **as the module** (`from nomad.datamodel.metainfo import
+basesections`) and used as `basesections.Measurement` in the class signature. This avoids
+name collisions when the generated NeXus class and the NOMAD base share the same Python
+name (e.g. both `Component`).
+
+The secondary NOMAD base is only added when the NeXus `extends` chain does not already
+provide it — preventing duplicate entries in the MRO.
+
+| NXDL class | Generated class signature |
+|-----------|--------------------------|
+| `NXobject` | `Object(BaseSection)` |
+| `NXentry` | `Entry(Object, basesections.Measurement)` |
+| `NXprocess` | `Process(Object, basesections.ActivityStep)` |
+| `NXsample` | `Sample(Component, basesections.CompositeSystem)` |
+| `NXsample_component` | `SampleComponent(Component, basesections.Component)` |
+| `NXfabrication` | `Fabrication(Object, basesections.Instrument)` |
+| `NXdata` | `Data(Object, basesections.ActivityResult)` |
+| all others | `<Class>(Object)` |
 
 ---
 

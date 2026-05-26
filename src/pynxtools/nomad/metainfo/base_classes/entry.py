@@ -25,21 +25,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo.basesections import Measurement
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Datetime
+from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
-from pynxtools.nomad.metainfo.base_classes.collection import Collection
-from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
-from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.note import Note
-from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
-from pynxtools.nomad.metainfo.base_classes.process import Process
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
-from pynxtools.nomad.metainfo.base_classes.subentry import Subentry
-from pynxtools.nomad.metainfo.base_classes.user import User
+from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -48,7 +41,7 @@ if TYPE_CHECKING:
 __all__ = ["Entry"]
 
 
-class Entry(Measurement):
+class Entry(Object, basesections.Measurement):
     """
     (**required**) :ref:`NXentry` describes the measurement.
 
@@ -65,61 +58,154 @@ class Entry(Measurement):
     )
 
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryData",
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=True,
         variable=True,
+        description=(
+            "The data group .. note:: Before the NIAC2016 meeting [#]_, at least "
+            "one :ref:`NXdata` group was required in each :ref:`NXentry` group. "
+            "At the NIAC2016 meeting, it was decided to make :ref:`NXdata` an "
+            "optional group in :ref:`NXentry` groups for data files that do not "
+            "use an application definition. It is recommended strongly that all "
+            "NeXus data files provide a NXdata group. It is permissible to omit "
+            "the NXdata group only when defining the default plot is not "
+            "practical or possible from the available data. For example, neutron "
+            "event data may not have anything that makes a useful plot without "
+            "extensive processing. Certain application definitions override this "
+            "decision and require an :ref:`NXdata` group in the :ref:`NXentry` "
+            "group. The ``minOccurs=0`` attribute in the application definition "
+            "will indicate the :ref:`NXdata` group is optional, otherwise, it is "
+            "required. .. [#] NIAC2016: "
+            "https://www.nexusformat.org/NIAC2016.html, "
+            "https://github.com/nexusformat/NIAC/issues/16"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     experiment_documentation = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryExperimentDocumentation",
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
+        description=(
+            "Description of the full experiment (document in pdf, latex, ...)"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="experiment_documentation",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     notes = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryNotes",
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
+        description=("Notes describing entry"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="notes",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     thumbnail = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail",
         repeats=True,
+        description=(
+            "A small image that is representative of the entry. An example of "
+            "this is a 640x480 jpeg image automatically produced by a low "
+            "resolution plot of the NXdata."
+        ),
     )
     user = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryUser",
+        section_def="pynxtools.nomad.metainfo.base_classes.user.User",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXuser",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     sample = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntrySample",
+        section_def="pynxtools.nomad.metainfo.base_classes.sample.Sample",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryInstrument",
+        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     collection = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryCollection",
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     monitor = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryMonitor",
+        section_def="pynxtools.nomad.metainfo.base_classes.monitor.Monitor",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonitor",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryParameters",
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     process = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryProcess",
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     subentry = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntrySubentry",
+        section_def="pynxtools.nomad.metainfo.base_classes.subentry.Subentry",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsubentry",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
 
     default = Quantity(
@@ -571,75 +657,12 @@ class Entry(Measurement):
 
 
 # =============================================================================
-# Named concept groups — one Section class per group defined in NXentry.
-# These are referenced by the SubSections above via string FQNs and resolved
-# lazily by NOMAD at __init_metainfo__() time.
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
-
-
-class EntryData(Data):
-    """
-    The data group
-
-    .. note:: Before the NIAC2016 meeting [#]_, at least one :ref:`NXdata`
-    group was required in each :ref:`NXentry` group. At the NIAC2016 meeting,
-    it was decided to make :ref:`NXdata` an optional group in :ref:`NXentry`
-    groups for data files that do not use an application definition. It is
-    recommended strongly that all NeXus data files provide a NXdata group. It
-    is permissible to omit the NXdata group only when defining the default plot
-    is not practical or possible from the available data.
-
-    For example, neutron event data may not have anything that makes a useful
-    plot without extensive processing.
-
-    Certain application definitions override this decision and require an
-    :ref:`NXdata` group in the :ref:`NXentry` group. The ``minOccurs=0``
-    attribute in the application definition will indicate the :ref:`NXdata`
-    group is optional, otherwise, it is required.
-
-    .. [#] NIAC2016: https://www.nexusformat.org/NIAC2016.html,
-    https://github.com/nexusformat/NIAC/issues/16
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryExperimentDocumentation(Note):
-    """
-    Description of the full experiment (document in pdf, latex, ...)
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="experiment_documentation",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryNotes(Note):
-    """
-    Notes describing entry
-    """
-
-    m_def = Section(
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="notes",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
 
 
 class EntryThumbnail(Note):
@@ -672,98 +695,5 @@ class EntryThumbnail(Note):
         ),
     )
 
-
-class EntryUser(User):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXuser",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntrySample(Sample):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsample",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryInstrument(Instrument):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryCollection(Collection):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryMonitor(Monitor):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonitor",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryParameters(Parameters):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntryProcess(Process):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class EntrySubentry(Subentry):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsubentry",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

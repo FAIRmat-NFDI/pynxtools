@@ -25,10 +25,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo.basesections import ActivityResult
-from nomad.metainfo import Quantity, Section
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusQuantity
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -37,7 +40,7 @@ if TYPE_CHECKING:
 __all__ = ["Data"]
 
 
-class Data(ActivityResult):
+class Data(Object, basesections.ActivityResult):
     """
     The :ref:`NXdata` class is designed to encapsulate all the information
     required for a set of data to be plotted. NXdata groups contain plottable

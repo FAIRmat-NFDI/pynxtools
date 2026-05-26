@@ -78,7 +78,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 - [Using and tailoring compression](learn/pynxtools/compression.md)
 - [Chunked storage and numerics](learn/pynxtools/numerics.md)
 - [Note on versioning](learn/pynxtools/versioning.md)
-- [NeXus Metainfo Generation](learn/pynxtools/nexus-metainfo-generation.md)
+<!-- - [NeXus Metainfo Generation](learn/pynxtools/nexus-metainfo-generation.md) -->
 
 </div>
 <div markdown="block">

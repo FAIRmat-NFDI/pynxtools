@@ -25,22 +25,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
-from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
+from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.deflector import Deflector
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.electromagnetic_lens import (
-    ElectromagneticLens,
-)
-from pynxtools.nomad.metainfo.base_classes.energydispersion import Energydispersion
-from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
 from pynxtools.nomad.metainfo.base_classes.resolution import Resolution
-from pynxtools.nomad.metainfo.base_classes.spindispersion import Spindispersion
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -49,7 +42,7 @@ if TYPE_CHECKING:
 __all__ = ["Electronanalyzer"]
 
 
-class Electronanalyzer(BaseSection):
+class Electronanalyzer(Component):
     """
     Basic class for describing an electron analyzer.
 
@@ -74,62 +67,152 @@ class Electronanalyzer(BaseSection):
     energy_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerEnergyResolution",
         repeats=True,
+        description=(
+            "Energy resolution of the analyzer with the current setting. May be "
+            "linked from an NXcalibration."
+        ),
     )
     momentum_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerMomentumResolution",
         repeats=True,
+        description=("Momentum resolution of the electron analyzer (FWHM)"),
     )
     angular_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerAngularResolution",
         repeats=True,
+        description=("Angular resolution of the electron analyzer (FWHM)"),
     )
     spatial_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerSpatialResolution",
         repeats=True,
+        description=(
+            "Spatial resolution of the electron analyzer (Airy disk radius) This "
+            "concept is related to term `10.14`_ of the ISO 18115-1:2023 "
+            "standard. .. _10.14: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:10.15"
+        ),
     )
     transmission_function = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerTransmissionFunction",
         repeats=True,
+        description=(
+            "Transmission function of the electron analyzer. The transmission "
+            "function (TF) specifies the detection efficiency per solid angle "
+            "for electrons of different kinetic energy passing through the "
+            "electron analyzer. It depends on the spectrometer geometry as well "
+            "as operation settings such as lens mode and pass energy. The "
+            "transmission function is usually given as relative intensity vs. "
+            "kinetic energy. The TF is used for calibration of the intensity "
+            "scale in quantitative XPS. Without proper transmission correction, "
+            "a comparison of results measured from the same sample using "
+            "different operating modes for an instrument would show significant "
+            "variations in signal intensity for the same kinetic energies. This "
+            "concept is related to term `7.15`_ of the ISO 18115-1:2023 "
+            "standard. .. _7.15: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.15"
+        ),
     )
     collectioncolumn = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerCollectioncolumn",
+        section_def="pynxtools.nomad.metainfo.base_classes.collectioncolumn.Collectioncolumn",
         repeats=True,
         variable=True,
+        description=(
+            "Describes the electron collection (spatial and momentum imaging) column"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollectioncolumn",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     energydispersion = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerEnergydispersion",
+        section_def="pynxtools.nomad.metainfo.base_classes.energydispersion.Energydispersion",
         repeats=True,
         variable=True,
+        description=("Describes the energy dispersion section"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenergydispersion",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     spindispersion = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerSpindispersion",
+        section_def="pynxtools.nomad.metainfo.base_classes.spindispersion.Spindispersion",
         repeats=True,
         variable=True,
+        description=("Describes the spin dispersion section"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspindispersion",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     detector = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerDetector",
+        section_def="pynxtools.nomad.metainfo.base_classes.detector.Detector",
         repeats=True,
         variable=True,
+        description=("Describes the electron detector"),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     deflector = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerDeflector",
+        section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
         repeats=True,
         variable=True,
+        description=(
+            "Deflectors outside the main optics ensembles described by the subclasses"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdeflector",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     electromagnetic_lens = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerElectromagneticLens",
+        section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
         repeats=True,
         variable=True,
+        description=(
+            "Individual lenses outside the main optics ensembles described by "
+            "the subclasses"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectromagnetic_lens",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerFabrication",
+        section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     resolution = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerResolution",
+        section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
         repeats=True,
         variable=True,
+        description=("Any other resolution not explicitly named in this base class."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
 
     description_field = Quantity(
@@ -275,9 +358,11 @@ class Electronanalyzer(BaseSection):
 
 
 # =============================================================================
-# Named concept groups — one Section class per group defined in NXelectronanalyzer.
-# These are referenced by the SubSections above via string FQNs and resolved
-# lazily by NOMAD at __init_metainfo__() time.
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
 
 
@@ -337,23 +422,9 @@ class ElectronanalyzerEnergyResolution(Resolution):
             units="NX_ENERGY",
         ),
     )
-    relative_resolution = Quantity(
-        type=np.float64,
-        description=(
-            "Ratio of the energy resolution of the electron analyzer at a "
-            "specified energy value to that energy value. This concept is "
-            "related to term `10.7`_ of the ISO 18115-1:2023 standard. .. _10.7: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:10.7"
-        ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
-            name="relative_resolution",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANY",
-        ),
-    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class ElectronanalyzerMomentumResolution(Resolution):
@@ -406,6 +477,9 @@ class ElectronanalyzerMomentumResolution(Resolution):
         ),
     )
 
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
 
 class ElectronanalyzerAngularResolution(Resolution):
     """
@@ -456,6 +530,9 @@ class ElectronanalyzerAngularResolution(Resolution):
             units="NX_ANGLE",
         ),
     )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class ElectronanalyzerSpatialResolution(Resolution):
@@ -513,6 +590,9 @@ class ElectronanalyzerSpatialResolution(Resolution):
         ),
     )
 
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
 
 class ElectronanalyzerTransmissionFunction(Data):
     """
@@ -557,7 +637,7 @@ class ElectronanalyzerTransmissionFunction(Data):
         ),
     )
     axes = Quantity(
-        type=MEnum([["kinetic_energy"]]),
+        type=MEnum(["kinetic_energy"]),
         shape=["*"],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -565,7 +645,7 @@ class ElectronanalyzerTransmissionFunction(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=[["kinetic_energy"]],
+            enumeration=["kinetic_energy"],
         ),
     )
     kinetic_energy = Quantity(
@@ -597,127 +677,5 @@ class ElectronanalyzerTransmissionFunction(Data):
         ),
     )
 
-
-class ElectronanalyzerCollectioncolumn(Collectioncolumn):
-    """
-    Describes the electron collection (spatial and momentum imaging) column
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollectioncolumn",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerEnergydispersion(Energydispersion):
-    """
-    Describes the energy dispersion section
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenergydispersion",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerSpindispersion(Spindispersion):
-    """
-    Describes the spin dispersion section
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspindispersion",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerDetector(Detector):
-    """
-    Describes the electron detector
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerDeflector(Deflector):
-    """
-    Deflectors outside the main optics ensembles described by the subclasses
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdeflector",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerElectromagneticLens(ElectromagneticLens):
-    """
-    Individual lenses outside the main optics ensembles described by the
-    subclasses
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerFabrication(Fabrication):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
-
-
-class ElectronanalyzerResolution(Resolution):
-    """
-    Any other resolution not explicitly named in this base class.
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
-    )
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

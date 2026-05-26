@@ -1031,8 +1031,8 @@ class NexusDefinition(NexusNode):
             break
 
     def __init__(self, **data) -> None:
-        super().__init__(nx_type=self.nx_type, **data)
         self.symbols = {}
+        super().__init__(nx_type=self.nx_type, **data)
         self._set_definition_attrs()
         self._set_deprecated()
 
@@ -1285,18 +1285,6 @@ class _NexusEntityBase(NexusNode):
     open_enum: bool = False
     shape: tuple[int | None, ...] | None = None
     dim_symbols: tuple[str | None, ...] | None = None
-    interpretation: str | None = None
-    long_name: str | None = None
-
-    def _set_field_attrs(self) -> None:
-        """Set field-specific NXDL attributes from the primary XML element."""
-        if not self.inheritance:
-            return
-        xml_elem = self.inheritance[0]
-        self.interpretation = xml_elem.attrib.get("interpretation") or None
-        long_name_elem = xml_elem.find("nx:long_name", namespaces=namespaces)
-        if long_name_elem is not None and long_name_elem.text:
-            self.long_name = long_name_elem.text.strip() or None
 
     def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
         """Check compatibility of this node with an XML element from the (possible) inheritance."""
@@ -1356,6 +1344,7 @@ class _NexusEntityBase(NexusNode):
                             raise Exception(
                                 f"Error parsing enumeration item in the provided NXDL: {value}"
                             )
+
                     else:
                         elem_enum_items.append(value)
 
