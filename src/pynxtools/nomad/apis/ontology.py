@@ -1,16 +1,11 @@
 import logging
 import os
-import subprocess
 from pathlib import Path
 
 import pygit2
-import structlog
 
 os.environ["OWLREADY2_JAVA_LOG_LEVEL"] = "WARNING"
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
-from nomad.config import config
 from owlready2 import ThingClass, get_ontology, sync_reasoner
 from owlready2.namespace import Ontology
 
@@ -33,10 +28,11 @@ def get_ontology_filepath(owl_filename: str) -> Path:
 INFERRED_OWL_FILE_PATH = None
 
 
-def ensure_ontology_file(imports: list[str] | None = None):
+def ensure_ontology_file(imports: list[str] | None = None) -> Path:
     """
     Verify that a inferred ontology file matching the latest definitions exists.
     If it is missing, regenerate the ontology, run the reasoner, and save the inferred ontology.
+    Returns the path to the inferred OWL file.
     """
     if imports is None:
         imports = []
@@ -81,14 +77,15 @@ def ensure_ontology_file(imports: list[str] | None = None):
 
         # Update the OWL_FILE_PATH to point to the inferred ontology file
         INFERRED_OWL_FILE_PATH = inferred_owl_file_path
+        return inferred_owl_file_path
 
     except Exception as e:
         raise RuntimeError(f"Failed to ensure ontology file: {e}")
 
 
-def load_ontology() -> Ontology:
+def load_ontology(imports: list[str] | None = None) -> Ontology:
     try:
-        ensure_ontology_file()
+        ensure_ontology_file(imports)
         if not INFERRED_OWL_FILE_PATH:
             raise RuntimeError("OWL_FILE_PATH is not set")
 
