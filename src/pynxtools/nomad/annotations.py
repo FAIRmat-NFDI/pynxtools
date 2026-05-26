@@ -42,8 +42,8 @@ except ImportError as exc:
 class NeXusDefinition(AnnotationModel):
     """Annotation on Section.m_def for NeXus definition-level semantics.
 
-    Corresponds to the NXDL <definition> element.  Carries the class identity
-    and definition-level validation controls.  One per generated Python class.
+    Corresponds to the NXDL <definition> element. Carries the class identity
+    and definition-level validation controls. One per generated Python class.
     """
 
     # ``class`` is a Python reserved keyword → must keep nx_ prefix here.
@@ -63,7 +63,7 @@ class NeXusDefinition(AnnotationModel):
 class NeXusGroup(AnnotationModel):
     """Annotation on SubSection for NeXus group-reference semantics.
 
-    Corresponds to a NXDL <group> child element.  Carries the instance name,
+    Corresponds to a NXDL <group> child element. Carries the instance name,
     naming convention, optionality, and occurrence limits that describe how a
     group of a given nx_class appears inside its parent definition.
     """
@@ -81,7 +81,7 @@ class NeXusGroup(AnnotationModel):
 class NeXusQuantity(AnnotationModel):
     """Annotation on Quantity for NeXus field and attribute semantics.
 
-    Field names mirror NXDL XML attributes directly.  ``kind`` distinguishes
+    Field names mirror NXDL XML attributes directly. ``kind`` distinguishes
     fields (have units, interpretation, long_name) from attributes (do not).
     """
 
@@ -90,15 +90,15 @@ class NeXusQuantity(AnnotationModel):
     parent_field: str | None = None
     # ``type`` is a Python builtin but valid as a Pydantic field name.
     type: str = "NX_CHAR"
-    # NX unit category (e.g. "NX_ENERGY").  Only meaningful for kind="field".
+    # NX unit category (e.g. "NX_ENERGY"). Only meaningful for kind="field".
     units: str | None = None
     name_type: Literal["specified", "any", "partial"] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "optional"
     enumeration: list[str] | None = None
     open_enum: bool = False
-    # From NXDL fieldType/@interpretation.  Only meaningful for kind="field".
+    # From NXDL fieldType/@interpretation. Only meaningful for kind="field".
     interpretation: str | None = None
-    # From NXDL fieldType/@long_name.  Only meaningful for kind="field".
+    # From NXDL fieldType/@long_name. Only meaningful for kind="field".
     long_name: str | None = None
     deprecated: str | None = None
 

@@ -25,15 +25,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.basesections import BaseSection
-from nomad.metainfo import Quantity, Section, SubSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
-from pynxtools.nomad.metainfo.base_classes.collection import Collection
-from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.log import Log
-from pynxtools.nomad.metainfo.base_classes.note import Note
-from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -60,29 +57,77 @@ class Object(BaseSection):
     )
 
     collection = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.ObjectCollection",
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
     )
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.ObjectData",
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
     )
     log = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.ObjectLog",
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
     )
     note = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.ObjectNote",
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
     )
     parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.ObjectParameters",
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    GROUPNAME_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
+        repeats=True,
+        variable=True,
+        description=("NXlog group containing logged values of GROUPNAME."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="GROUPNAME_log",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
     )
 
     FIELDNAME_set = Quantity(
@@ -207,92 +252,3 @@ class Object(BaseSection):
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
-
-
-# =============================================================================
-# Named concept groups — one Section class per group defined in NXobject.
-# These are referenced by the SubSections above via string FQNs and resolved
-# lazily by NOMAD at __init_metainfo__() time.
-# =============================================================================
-
-
-class ObjectCollection(Collection):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
-class ObjectData(Data):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
-class ObjectLog(Log):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
-class ObjectNote(Note):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
-class ObjectParameters(Parameters):
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
-
-
-class ObjectGroupnameLog(Log):
-    """
-    NXlog group containing logged values of GROUPNAME.
-    """
-
-    m_def = Section(
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name=None,
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
-    )
