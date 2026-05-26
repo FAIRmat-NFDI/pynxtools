@@ -90,40 +90,18 @@ The key quantities indexed by the NeXus normalizer depend on the application def
 ## Metainfo: NeXus definitions as a NOMAD schema
 
 NOMAD uses its own schema language (*Metainfo*) to describe data structures. When
-`pynxtools` is loaded as a plugin, all NeXus base classes bundled with it are available
-as importable Python `Section` classes. Every class carries structured annotations
-(`NeXusGroup`, `NeXusQuantity`) that connect each quantity and group back to its NXDL
-definition.
+`pynxtools` is loaded as a plugin, all NeXus base classes and application definitions
+bundled with it are compiled from NXDL XML at import time and registered as NOMAD
+`Section` classes. This compilation is handled by `nomad/schema_packages/schema.py`.
 
-This means:
+The compiled schema makes every NeXus concept searchable in NOMAD:
 
-- Every NeXus field becomes a Metainfo `Quantity` with the correct type, unit, and
-  optionality (`required` / `recommended` / `optional`).
-- Every NeXus base class becomes an importable Python class that domain plugins can
-  inherit from directly.
+- Every NeXus field becomes a Metainfo `Quantity` with the correct Python type and unit.
+- Every NeXus group becomes a `SubSection`.
 - The application definition specifies which sections and quantities are required.
 
-The Metainfo can be viewed in the NOMAD GUI at:
+The Metainfo can be browsed in the NOMAD GUI at:
 `Analyze → Metainfo → pynxtools`
-
-### Regenerating the schema
-
-The Python classes in `pynxtools/nomad/metainfo/base_classes/` are generated from the
-NXDL definitions. To regenerate them after a NeXus definitions update:
-
-```bash
-# Regenerate all base classes
-pynx nomad generate-metainfo --all
-
-# Regenerate one class
-pynx nomad generate-metainfo --nx-class NXdetector
-
-# CI dry-run: exits non-zero if committed files differ from generated output
-pynx nomad generate-metainfo --all --dry-run
-```
-
-Generation is additive-only — hand-written `normalize()` methods in existing files are
-never overwritten.
 
 ---
 
@@ -202,3 +180,5 @@ For OASIS setup details see the
   programmatic upload, OASIS setup, debugging parser output
 - [NOMAD documentation](https://nomad-lab.eu/prod/v1/docs/)
 - [NOMAD Metainfo browser](https://nomad-lab.eu/prod/v1/gui/analyze/metainfo/pynxtools)
+- [Learn → pynxtools → NeXus Metainfo Generation](nexus-metainfo-generation.md) —
+  upcoming code-generation system (in development)

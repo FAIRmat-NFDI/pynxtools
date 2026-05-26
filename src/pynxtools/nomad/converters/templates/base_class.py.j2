@@ -26,6 +26,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import (
     MEnum,
     Quantity,
@@ -33,9 +35,10 @@ from nomad.metainfo import (
     SubSection,
 )
 from nomad.metainfo.data_type import Bytes, Datetime
-from {{ base_import }} import {{ base_class }}
-
 from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+{% if base_class != "BaseSection" %}
+from {{ base_import }} import {{ base_class }}
+{% endif %}
 {% for mod, cls in concept_imports %}
 from {{ mod }} import {{ cls }}
 {% endfor %}
@@ -47,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["{{ class_name }}"]
 
 
-class {{ class_name }}({{ base_class }}):
+class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_class %}, basesections.{{ nomad_base_class }}{% endif %}):
     """
     {{ docstring | indent(4) }}
     """
@@ -80,6 +83,11 @@ class {{ class_name }}({{ base_class }}):
         repeats={{ sub_sec.repeats }},
         {% if sub_sec.variable %}
         variable=True,
+        {% endif %}
+        {% if sub_sec.description %}
+        description=(
+            {{ sub_sec.description }}
+        ),
         {% endif %}
         {% if not sub_sec.is_named_concept %}
         a_nexus_group=NeXusGroup(
@@ -152,9 +160,11 @@ class {{ class_name }}({{ base_class }}):
 {% if named_concepts %}
 
 # =============================================================================
-# Named concept groups — one Section class per group defined in {{ nx_name }}.
-# These are referenced by the SubSections above via string FQNs and resolved
-# lazily by NOMAD at __init_metainfo__() time.
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
 {% for concept in named_concepts %}
 
@@ -230,6 +240,9 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         ),
     )
     {% endfor %}
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 {% endfor %}
 {% endif %}
