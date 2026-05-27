@@ -1267,10 +1267,6 @@ class _NexusEntityBase(NexusNode):
             rather than a literal integer, or ``None`` otherwise.  ``None`` when no
             ``<dimensions>`` element is present at all.
             Defaults to None.
-        dim_symbols (Optional[tuple[Optional[str], ...]]):
-            Parallel to ``shape``.  Stores the NXDL symbol name (e.g. ``"nP"``)
-            for dimensions defined by a symbol rather than a literal integer.
-            ``None`` when no ``<dimensions>`` element is present at all.
     """
 
     nx_type: Literal["field", "attribute"]
