@@ -1258,13 +1258,15 @@ class _NexusEntityBase(NexusNode):
             Also the base classes of these entities are considered.
             If there is no dimension present in any of the xml nodes, it will be set to None.
             Contains None for unbounded dimensions.
-            Symbols in either the `rank` or `value` attribute are not considered
-            and result in an unbounded shape.
+            Symbols in either the ``rank`` or ``value`` attribute result in an unbounded
+            (``None``) entry; the symbol name is stored in ``dim_symbols`` instead.
             Defaults to None.
         dim_symbols (Optional[tuple[Optional[str], ...]]):
-            Parallel to ``shape``.  Stores the NXDL symbol name (e.g. ``"nP"``)
-            for dimensions defined by a symbol rather than a literal integer.
-            ``None`` when no ``<dimensions>`` element is present at all.
+            Parallel to ``shape``.  For each dimension position, stores the NXDL symbol
+            name (e.g. ``"nP"``, ``"i"``) if that dimension was defined via a symbol
+            rather than a literal integer, or ``None`` otherwise.  ``None`` when no
+            ``<dimensions>`` element is present at all.
+            Defaults to None.
     """
 
     nx_type: Literal["field", "attribute"]

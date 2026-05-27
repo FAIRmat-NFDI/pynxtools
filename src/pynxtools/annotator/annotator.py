@@ -48,7 +48,7 @@ import h5py
 from pynxtools.annotator.nxdata import chk_nxdata_axis
 from pynxtools.nexus.handler import NexusVisitor
 from pynxtools.nexus.nexus import get_default_plottable
-from pynxtools.nexus.nexus_tree import NexusNode
+from pynxtools.nexus.nexus_tree import NexusField, NexusNode
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nexus.utils import decode_if_string
 
@@ -147,6 +147,32 @@ class Annotator(NexusVisitor):
     def _depth(hdf_path: str) -> int:
         """Return nesting depth: 0=root, 1=/entry, 2=/entry/data, ..."""
         return 0 if not hdf_path else hdf_path.count("/")
+
+    @staticmethod
+    def _dim_str(node: NexusField) -> str:
+        """Return a human-readable dimension string like ``nP × 10 × i``, or ``""`` if unavailable.
+
+        Symbol names (from ``dim_symbols``) take priority over literal sizes (from ``shape``).
+        Positions with neither are shown as ``*``.
+        """
+        shape = node.shape
+        syms = node.dim_symbols
+        if shape is None and syms is None:
+            return ""
+        n = max(len(shape) if shape else 0, len(syms) if syms else 0)
+        if n == 0:
+            return ""
+        parts: list[str] = []
+        for i in range(n):
+            sym = syms[i] if syms and i < len(syms) else None
+            size = shape[i] if shape and i < len(shape) else None
+            if sym:
+                parts.append(sym)
+            elif size is not None:
+                parts.append(str(size))
+            else:
+                parts.append("*")
+        return " × ".join(parts)  # × separator
 
     # Label width for detail lines — keeps the colon column aligned within a block.
     _LW = 10
@@ -253,6 +279,12 @@ class Annotator(NexusVisitor):
         else:
             opt_str = f"  [{node.optionality.upper()}]" if node.optionality else ""
             self._detail(det, "Concept", f"{node.concept_path}{opt_str}")
+
+            if isinstance(node, NexusField):
+                dim_str = self._dim_str(node)
+                if dim_str:
+                    self._detail(det, "Dims", dim_str)
+
             self._emit_inheritance(det, node)
 
             for src, values in node.get_inheritance_enums():
