@@ -664,7 +664,7 @@ class ValidationVisitor(NexusVisitor):
                         collector.collect_and_log(
                             f"{path}/{ax_name}",
                             ValidationProblem.NXdataAxisMismatch,
-                            f"{full_path}/{info.signal_name}",
+                            f"{full_path}/@{info.signal_name}",
                             a_item,
                         )
 
@@ -677,7 +677,7 @@ class ValidationVisitor(NexusVisitor):
                     collector.collect_and_log(
                         f"{full_path}@{attr}",
                         ValidationProblem.NXdataAxisMismatch,
-                        f"{full_path}/{info.signal_name}",
+                        f"{full_path}/@{info.signal_name}",
                         int(idx),
                     )
 
