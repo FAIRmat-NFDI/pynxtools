@@ -22,14 +22,14 @@ All NXDL parsing goes through the NexusNode API from
 pynxtools.nexus.nexus_tree. NexusField already resolves dtype,
 units, shape, enumerations, and optionality through the inheritance chain.
 
-generate_tree_from(nx_name) in nexus_tree.py is the single entry point —
-returns a NexusDefinition root with NexusGroup/NexusField/NexusAttribute
+generate_tree_from(nx_name) in nexus_tree.py is the single entry point.
+It returns a NexusDefinition root with NexusGroup/NexusField/NexusAttribute
 children. No raw XML parsing happens inside this module.
 
 Entry points
 ------------
-write_base_class(nx_name)       — write one base class .py file
-generate_all_base_classes()     — write all base class .py files
+write_base_class(nx_name)       : write one base class .py file
+generate_all_base_classes()     : write all base class .py files
 """
 
 from __future__ import annotations
@@ -87,6 +87,9 @@ class QuantityContext:
     unit: str | None  # NX unit category, e.g. "NX_ENERGY" — NexusField only
     interpretation: str | None  # NexusField only
     long_name: str | None  # NexusField only
+    # Scalar-only enum items (None when any item is a list; used for MEnum and annotation).
+    # NXDL encodes list-valued enum items as Python list literals, e.g. ['kinetic_energy'].
+    scalar_items: list[str] | None
     # The originating node — NexusField for fields, NexusAttribute for attributes.
     node: NexusField | NexusAttribute
 
@@ -339,8 +342,14 @@ def _build_quantity_from_node(
         interpretation = None
         long_name = None
 
-    if node.items and not node.open_enum:
-        python_type = f"MEnum({node.items!r})"
+    # Enum items whose values are themselves lists (e.g. `['kinetic_energy']`) cannot
+    # be used in MEnum (unhashable) or in NeXusQuantity.enumeration (list[str]).
+    scalar_items: list[str] | None = None
+    if node.items and not any(isinstance(item, list) for item in node.items):
+        scalar_items = node.items
+
+    if scalar_items and not node.open_enum:
+        python_type = f"MEnum({scalar_items!r})"
     else:
         python_type = nx_type_to_source(node.dtype)
 
@@ -354,6 +363,7 @@ def _build_quantity_from_node(
         unit=unit,
         interpretation=interpretation,
         long_name=long_name,
+        scalar_items=scalar_items,
         node=node,
     )
 

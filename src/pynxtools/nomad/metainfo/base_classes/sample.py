@@ -66,7 +66,7 @@ class Sample(Component, basesections.CompositeSystem):
 
     geometry = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.geometry.Geometry",
-        repeats=True,
+        repeats=False,
         description=(
             "The position and orientation of the center of mass of the sample"
         ),
@@ -110,7 +110,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     transmission = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
-        repeats=True,
+        repeats=False,
         description=("As a function of Wavelength"),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -121,7 +121,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     temperature_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
-        repeats=True,
+        repeats=False,
         description=(
             "temperature_log.value is a link to e.g. "
             "temperature_env.sensor1.value_log.value"
@@ -136,7 +136,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     temperature_env = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
-        repeats=True,
+        repeats=False,
         description=("Additional sample temperature environment information"),
         a_nexus_group=NeXusGroup(
             nx_class="NXenvironment",
@@ -147,7 +147,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     magnetic_field = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
-        repeats=True,
+        repeats=False,
         description=(
             "magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value"
         ),
@@ -160,7 +160,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     magnetic_field_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
-        repeats=True,
+        repeats=False,
         description=(
             "magnetic_field_log.value is a link to e.g. "
             "magnetic_field_env.sensor1.value_log.value"
@@ -175,7 +175,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     magnetic_field_env = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
-        repeats=True,
+        repeats=False,
         description=("Additional sample magnetic environment information"),
         a_nexus_group=NeXusGroup(
             nx_class="NXenvironment",
@@ -186,7 +186,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     external_ADC = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
-        repeats=True,
+        repeats=False,
         description=("logged value (or logic state) read from user's setup"),
         a_nexus_group=NeXusGroup(
             nx_class="NXlog",
@@ -239,7 +239,7 @@ class Sample(Component, basesections.CompositeSystem):
     )
     history = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.history.History",
-        repeats=True,
+        repeats=False,
         description=(
             "A set of physical processes that occurred to the sample "
             "prior/during experiment."

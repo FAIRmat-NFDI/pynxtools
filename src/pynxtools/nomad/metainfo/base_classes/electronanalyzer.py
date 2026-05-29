@@ -66,7 +66,7 @@ class Electronanalyzer(Component):
 
     energy_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerEnergyResolution",
-        repeats=True,
+        repeats=False,
         description=(
             "Energy resolution of the analyzer with the current setting. May be "
             "linked from an NXcalibration."
@@ -74,17 +74,17 @@ class Electronanalyzer(Component):
     )
     momentum_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerMomentumResolution",
-        repeats=True,
+        repeats=False,
         description=("Momentum resolution of the electron analyzer (FWHM)"),
     )
     angular_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerAngularResolution",
-        repeats=True,
+        repeats=False,
         description=("Angular resolution of the electron analyzer (FWHM)"),
     )
     spatial_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerSpatialResolution",
-        repeats=True,
+        repeats=False,
         description=(
             "Spatial resolution of the electron analyzer (Airy disk radius) This "
             "concept is related to term `10.14`_ of the ISO 18115-1:2023 "
@@ -94,7 +94,7 @@ class Electronanalyzer(Component):
     )
     transmission_function = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerTransmissionFunction",
-        repeats=True,
+        repeats=False,
         description=(
             "Transmission function of the electron analyzer. The transmission "
             "function (TF) specifies the detection efficiency per solid angle "
@@ -637,7 +637,7 @@ class ElectronanalyzerTransmissionFunction(Data):
         ),
     )
     axes = Quantity(
-        type=MEnum(["kinetic_energy"]),
+        type=str,
         shape=["*"],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -645,7 +645,6 @@ class ElectronanalyzerTransmissionFunction(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["kinetic_energy"],
         ),
     )
     kinetic_energy = Quantity(
