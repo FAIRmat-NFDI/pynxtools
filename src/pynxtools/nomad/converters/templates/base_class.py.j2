@@ -132,8 +132,8 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
             {% if qty.unit %}
             units="{{ qty.unit }}",
             {% endif %}
-            {% if qty.node.items %}
-            enumeration={{ qty.node.items }},
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
             {% endif %}
             {% if qty.node.open_enum %}
             open_enum=True,
@@ -219,8 +219,8 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             {% if qty.unit %}
             units="{{ qty.unit }}",
             {% endif %}
-            {% if qty.node.items %}
-            enumeration={{ qty.node.items }},
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
             {% endif %}
             {% if qty.node.open_enum %}
             open_enum=True,
