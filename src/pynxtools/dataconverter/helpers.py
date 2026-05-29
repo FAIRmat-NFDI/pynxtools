@@ -119,6 +119,8 @@ class ValidationProblem(Enum):
     FailedNamefitting = auto()
     NXdataMissingSignalData = auto()
     NXdataMissingAxisData = auto()
+    NXdataOutdatedConvention = auto()
+    NXdataNoConvention = auto()
     NXdataAxisMismatch = auto()
     KeyToBeRemoved = auto()
     InvalidConceptForNonVariadic = auto()
@@ -251,6 +253,17 @@ class Collector:
             logger.warning(
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
+        elif log_type == ValidationProblem.NXdataOutdatedConvention:
+            logger.warning(
+                f"NXdata group {path} uses version {value} for defining the plottable data. "
+                "This is discouraged; consider updating to v3."
+            )
+        elif log_type == ValidationProblem.NXdataNoConvention:
+            logger.warning(
+                f"NXdata group {path} does not use any of the existing versions (v3/v2/v1) for "
+                "defining the plottable data."
+            )
+
         elif log_type == ValidationProblem.KeyToBeRemoved:
             logger.warning(f"The {value} {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:

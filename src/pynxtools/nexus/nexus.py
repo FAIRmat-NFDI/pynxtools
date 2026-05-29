@@ -279,7 +279,7 @@ def get_nxdl_doc(hdf_info, doc, attr=False, logger: logging.Logger | None = None
 
 
 def _helper_get_inherited_nodes(hdf_info2, elem_list, path_index, attr):
-    """find the best fitting name in all children.
+    """Find the best fitting name in all children.
 
     .. deprecated:: Will be removed with the rest of this module when NomadVisitor uses NexusNode.
     """

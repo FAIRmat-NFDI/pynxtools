@@ -1,8 +1,7 @@
 #
-# Copyright The pynxtools Authors.
+# Copyright The NOMAD Authors.
 #
-# This file is part of pynxtools.
-# See https://github.com/FAIRmat-NFDI/pynxtools for further info.
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +34,7 @@ annotator and the validator (see issue #519).
 from __future__ import annotations
 
 import numbers
+import re
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -196,6 +196,7 @@ def inspect_nxdata(group: h5py.Group) -> NXdataInfo:
         info.signal = datasets[0]
         info.signal_name = datasets[0].name.split("/")[-1]
         info.convention = "v1"
+        # No info.axes and info.aux_signals for v1 (not defined)
 
     return info
 
@@ -206,6 +207,7 @@ def inspect_nxdata(group: h5py.Group) -> NXdataInfo:
 
 
 def _default_entry(root: h5py.File | h5py.Group) -> h5py.Group | None:
+    """Return the default entry group or the first NXentry group if no default is set."""
     name = decode_if_string(root.attrs.get("default"))
     if name and name in root and isinstance(root[name], h5py.Group):
         return root[name]
@@ -213,13 +215,14 @@ def _default_entry(root: h5py.File | h5py.Group) -> h5py.Group | None:
 
 
 def _first_nxentry(root: h5py.File | h5py.Group) -> h5py.Group | None:
+    """Find the first NXentry with an NeXus file or inside an HDF5 group."""
     for key in root.keys():
-        grp = root[key]
+        hdf_node = root[key]
         if (
-            isinstance(grp, h5py.Group)
-            and decode_if_string(grp.attrs.get("NX_class")) == "NXentry"
+            isinstance(hdf_node, h5py.Group)
+            and decode_if_string(hdf_node.attrs.get("NX_class")) == "NXentry"
         ):
-            return grp
+            return hdf_node
     return None
 
 
@@ -239,6 +242,7 @@ def _follow_default_chain(group: h5py.Group) -> h5py.Group | None:
 
 
 def _first_nxdata(nxentry: h5py.Group) -> h5py.Group | None:
+    """Find the first NXdata with an NXentry"""
     for key in nxentry.keys():
         grp = nxentry[key]
         if (
@@ -250,6 +254,7 @@ def _first_nxdata(nxentry: h5py.Group) -> h5py.Group | None:
 
 
 def _read_aux_signals(group: h5py.Group) -> list[str]:
+    """Read the aux_signals from an NXdata group"""
     aux = decode_if_string(group.attrs.get("auxiliary_signals"))
     if aux is None:
         return []
@@ -272,7 +277,9 @@ def _collect_axes_v3(
             ):
                 if axes_attr in group and isinstance(group[axes_attr], h5py.Dataset):
                     ax_list.append(group[axes_attr])
-        elif axes_attr is not None:
+        elif isinstance(axes_attr, list) and all(
+            isinstance(named_axis, str) for named_axis in axes_attr
+        ):
             for ax_name_raw in axes_attr:
                 ax_name = decode_if_string(ax_name_raw)
                 if ax_name == ".":
@@ -291,7 +298,7 @@ def _collect_axes_v3(
                 ):
                     ax_list.append(group[ax_name])
         # AXISNAME_indices attrs on the group for axes not in @axes
-        for attr in group.attrs.keys():
+        for attr in group.attrs:
             if attr.endswith("_indices") and isinstance(
                 group.attrs[attr], numbers.Integral
             ):
@@ -312,7 +319,7 @@ def _collect_axes_v2(
 ) -> list[list[h5py.Dataset]]:
     """Collect axis datasets per signal dimension using v2/v1 conventions."""
     own_axes = decode_if_string(signal_dataset.attrs.get("axes"))
-    axes_names = own_axes.split(":") if isinstance(own_axes, str) else []
+    axes_names = re.split(r"[:,]", own_axes) if isinstance(own_axes, str) else []
     dim = len(signal_dataset.shape)
     result = []
     for a_item in range(dim):

@@ -634,6 +634,19 @@ class ValidationVisitor(NexusVisitor):
 
         info = inspect_nxdata(group)
 
+        if info.convention in ("v1", "v2"):
+            collector.collect_and_log(
+                f"{full_path}/group",
+                ValidationProblem.NXdataOutdatedConvention,
+                info.convention,
+            )
+        if info.convention is None:
+            collector.collect_and_log(
+                f"{full_path}/group",
+                ValidationProblem.NXdataNoConvention,
+                info.convention,
+            )
+
         if info.signal is None:
             # @signal attr present but the named dataset is missing
             collector.collect_and_log(
