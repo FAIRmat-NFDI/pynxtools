@@ -381,14 +381,8 @@ def _build_subsection_from_node(
     When ``is_named_concept=False`` a_nexus_group is rendered on the SubSection.
     """
     nx_name_type = node.name_type or "specified"
-    _, max_occurs = node.occurrence_limits
 
-    repeats: bool = (
-        node.variadic
-        or nx_name_type in ("any", "partial")
-        or max_occurs is None
-        or (isinstance(max_occurs, int) and max_occurs > 1)
-    )
+    repeats: bool = node.variadic
     variable = nx_name_type in ("any", "partial")
 
     if nx_name_type == "any":
