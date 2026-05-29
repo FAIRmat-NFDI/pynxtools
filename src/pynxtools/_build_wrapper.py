@@ -20,6 +20,9 @@ def get_vcs_version(tag_match="*[0-9]*") -> str | None:
     based on git tags and commits
     """
     try:
+        cwd = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "../pynxtools/definitions")
+        )
         return (
             run(
                 [
@@ -32,7 +35,11 @@ def get_vcs_version(tag_match="*[0-9]*") -> str | None:
                     "--match",
                     tag_match,
                 ],
-                cwd=os.path.join(os.path.dirname(__file__), "../pynxtools/definitions"),
+                cwd=cwd,
+                # Prevent git from walking up past the definitions directory.
+                # Without this, git falls back to the pynxtools repo when definitions
+                # has no .git (e.g. in a non-editable install inside the source tree).
+                env={**os.environ, "GIT_CEILING_DIRECTORIES": os.path.dirname(cwd)},
                 check=True,
                 capture_output=True,
             )

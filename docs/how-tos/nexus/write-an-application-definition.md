@@ -198,8 +198,7 @@ pip install nyaml
 nyaml2nxdl NXdouble_slit.yaml   # → NXdouble_slit.nxdl.xml
 ```
 
-The YAML syntax maps one-to-one to the XML: groups become keys, fields become nested keys with
-`type`/`unit`/`doc` sub-keys, and attributes use the `\@`-prefix.
+The YAML syntax maps one-to-one to the XML: groups become keys, fields become nested keys with `\type`, `\unit`, or `\doc` sub-keys, and attributes use the `\@`-prefix.
 
 You can learn more in the [`nyaml` documentation](https://fairmat-nfdi.github.io/nyaml/).
 

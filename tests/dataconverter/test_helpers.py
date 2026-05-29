@@ -95,6 +95,12 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/links/ext_link"] = {
         "link": f"{tmp_path}/xarray_saved_small_calibration.h5:/axes/ax3"
     }
+    template["/ENTRY[my_entry]/links/ext_link2"] = {
+        "link": "/xarray_saved_small_calibration.h5:/axes/ax3"
+    }
+    template["/ENTRY[my_entry]/links/ext_link3"] = {
+        "link": "xarray_saved_small_calibration.h5:/axes/ax3"
+    }
     return template
 
 
@@ -235,7 +241,7 @@ def test_warning_on_definition_changed_by_reader(caplog):
         ("", "utf-8", ""),  # empty string
         (b"", "utf-8", ""),  # empty bytes
         (123, "utf-8", 123),  # unexpected type int
-        ([b"test"], "utf-8", [b"test"]),  # unexpected type list
+        ([b"test"], "utf-8", ["test"]),  # unexpected type list
         ({"a": 1}, "utf-8", {"a": 1}),  # unexpected type dict
     ],
 )

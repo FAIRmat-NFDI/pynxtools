@@ -9,6 +9,10 @@
  category="application"
 >
     <doc>This is a dummy NXDL to test out the dataconverter.</doc>
+    <symbols>
+        <doc>Symbols used to express shared dimension constraints.</doc>
+        <symbol name="n"><doc>number of data points shared across symbol_group fields</doc></symbol>
+    </symbols>
     <group type="NXentry">
         <field name="program_name"/>
         <field name="definition">
@@ -141,6 +145,17 @@
             <field name="identifier_2" optional="True"/>
         </group>
         <group name="named_collection" type="NXcollection" optional="true"/>
+        <group name="symbol_group" type="NXnote" optional="true">
+            <doc>Group used to test cross-field NXDL symbol-size consistency.</doc>
+            <field name="field_a" optional="true" type="NX_FLOAT">
+                <doc>First field sharing symbol n.</doc>
+                <dimensions rank="1"><dim index="1" value="n"/></dimensions>
+            </field>
+            <field name="field_b" optional="true" type="NX_FLOAT">
+                <doc>Second field sharing symbol n.</doc>
+                <dimensions rank="1"><dim index="1" value="n"/></dimensions>
+            </field>
+        </group>
         <link name="my_link" optional="true" target="NXentry/NXdata/specified_group_with_no_name_type"/>
     </group>
 </definition>

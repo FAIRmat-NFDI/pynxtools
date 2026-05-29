@@ -1,8 +1,7 @@
 #
-# Copyright The pynxtools Authors.
+# Copyright The NOMAD Authors.
 #
-# This file is part of pynxtools.
-# See https://github.com/FAIRmat-NFDI/pynxtools for further info.
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +17,6 @@
 #
 import logging
 import os
-from pathlib import Path
-from typing import Optional
 
 import h5py
 import numpy as np
@@ -30,7 +27,10 @@ from pynxtools.dataconverter.cli import validate as validate_cmd
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validate_file import validate
-from pynxtools.dataconverter.validation import validate_dict_against
+from pynxtools.dataconverter.validation import (
+    validate_dict_against,
+    validate_hdf_group_against,
+)
 from pynxtools.dataconverter.writer import Writer
 
 from .test_helpers import alter_dict  # pylint: disable=unused-import
@@ -43,6 +43,10 @@ if np.lib.NumpyVersion(np.__version__) >= "2.0.0":
     np_bool = "numpy.bool"
 else:
     np_bool = "numpy.bool_"
+
+VALIDATION_TEST_DATA_DIR = os.path.join(
+    os.path.dirname(__file__), "..", "data", "validation"
+)
 
 
 def set_to_none_in_dict(data_dict: Template | None, key: str, optionality: str):
@@ -261,6 +265,9 @@ TEMPLATE["lone_groups"] = [
     "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
 ]
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
+# symbol_group: two fields sharing NXDL symbol "n" — consistent sizes by default
+TEMPLATE["optional"]["/ENTRY[my_entry]/symbol_group/field_a"] = np.zeros(10)
+TEMPLATE["optional"]["/ENTRY[my_entry]/symbol_group/field_b"] = np.ones(10)
 # keys not registered in appdef
 TEMPLATE["required"]["/ENTRY[my_entry]/duration"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/duration/@units"] = "s"  # pylint: disable=E1126
@@ -1110,6 +1117,7 @@ def format_error_message(msg: str) -> str:
             ],
             id="field-instead-of-named-group",
         ),
+        # Internal links tests
         pytest.param(
             alter_dict(
                 alter_dict(
@@ -1340,6 +1348,87 @@ def format_error_message(msg: str) -> str:
                 "The key /ENTRY[my_entry]/my_link will not be written.",
             ],
             id="invalid-nxlink-type",
+        ),
+        # External links tests
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/posint_value"
+                },
+            ),
+            [],
+            id="external_link-valid-external-link",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs:/my_entry/nxodd_two_name/posint_value"
+                },
+            ),
+            [
+                (
+                    f"Linked external file '{VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs' "
+                    "for /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value was not found."
+                ),
+                (
+                    "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value "
+                    f"to {VALIDATION_TEST_DATA_DIR}/NXtest_invalid_file.nxs:/my_entry/nxodd_two_name/posint_value."
+                ),
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value will not be written.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value hasn't been supplied.",
+            ],
+            id="external_link-invalid-file-link",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/non_existent_field"
+                },
+            ),
+            [
+                (
+                    "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value "
+                    f"to {VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/non_existent_field."
+                ),
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value will not be written.",
+                "The required field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value hasn't been supplied.",
+            ],
+            id="external_link-non-existent-target-link",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/nxodd_two_name/bool_value"
+                },
+            ),
+            [
+                (
+                    "The value at /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value should be one of the following Python types: "
+                    "(<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_POSINT."
+                ),
+            ],
+            id="external_link-invalid-data-type-nxdata",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration",
+                {
+                    "link": f"{VALIDATION_TEST_DATA_DIR}/NXtest_file.nxs:/my_entry/my_instrument/my_source/type",
+                },
+            ),
+            [
+                "The value at /ENTRY[my_entry]/duration should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ],
+            id="external_link-invalid-data-type-field",
         ),
         pytest.param(
             alter_dict(
@@ -2127,6 +2216,19 @@ def format_error_message(msg: str) -> str:
                 "changer_position is not any of ['gzip', 'blosc']."
             ],
             id="baseclass-compressed-filter-supported-false",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/symbol_group/field_b",
+                np.ones(8),  # field_a has 10, field_b has 8 — symbol "n" mismatch
+            ),
+            [
+                "Inconsistent dimensions for NXDL symbol 'n' in group "
+                "'/ENTRY[my_entry]/symbol_group': "
+                "'field_a': size 10, 'field_b': size 8."
+            ],
+            id="symbol-size-mismatch",
         ),
     ],
 )
@@ -3543,6 +3645,18 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ],
             id="baseclass-compressed-wrong-type",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/symbol_group/field_b",
+                np.ones(8),  # field_a has 10, field_b has 8 — symbol "n" mismatch
+            ),
+            [
+                "Inconsistent dimensions for NXDL symbol 'n' in group '/my_entry/symbol_group': "
+                "'field_a': size 10, 'field_b': size 8."
+            ],
+            id="symbol-size-mismatch",
+        ),
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
@@ -3960,3 +4074,94 @@ def test_validate_file_positive_int(
         assert observed_warnings == expected_warnings
 
     os.remove(file_path)
+
+
+# ---------------------------------------------------------------------------
+# Link validation tests
+# ---------------------------------------------------------------------------
+
+
+def _minimal_entry(h5w: h5py.File) -> None:
+    """Write a bare-minimum NXentry to *h5w* so validate_hdf_group_against has an entry."""
+    entry = h5w.create_group("entry")
+    entry.attrs["NX_class"] = "NXentry"
+
+
+def test_validate_broken_soft_link(tmp_path, caplog):
+    """A broken soft link inside the entry is reported as a BrokenLink problem."""
+    fpath = tmp_path / "broken_soft.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/missing"] = h5py.SoftLink("/nonexistent")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert len(broken_msgs) == 1
+    assert "/entry/missing" in broken_msgs[0]
+    assert "/nonexistent" in broken_msgs[0]
+
+
+def test_validate_broken_external_link_missing_file(tmp_path, caplog):
+    """A broken external link (file missing) is reported as a BrokenLink problem."""
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/ext"] = h5py.ExternalLink("nonexistent_file.h5", "/data")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert len(broken_msgs) == 1
+    assert "/entry/ext" in broken_msgs[0]
+
+
+def test_validate_broken_external_link_missing_path(tmp_path, caplog):
+    """A broken external link (file exists, path absent) is reported as a BrokenLink problem."""
+    ext_file = tmp_path / "ext.h5"
+    with h5py.File(ext_file, "w") as h5w:
+        h5w.create_dataset("existing", data=1.0)
+
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/ext"] = h5py.ExternalLink(str(ext_file), "/nonexistent_path")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert len(broken_msgs) == 1
+    assert "/entry/ext" in broken_msgs[0]
+
+
+def test_validate_valid_external_link(tmp_path, caplog):
+    """A resolvable external link produces no BrokenLink warning."""
+    ext_file = tmp_path / "ext.h5"
+    with h5py.File(ext_file, "w") as h5w:
+        h5w.create_dataset("value", data=42.0)
+
+    fpath = tmp_path / "main.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _minimal_entry(h5w)
+        h5w["entry/ext"] = h5py.ExternalLink(str(ext_file), "/value")
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmpes", h5f["/entry"], str(fpath), ignore_undocumented=True
+            )
+
+    broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
+    assert broken_msgs == []

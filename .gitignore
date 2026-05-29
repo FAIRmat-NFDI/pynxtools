@@ -88,7 +88,9 @@ cover/
 
 # Django stuff:
 *.log
-!tests/data/nexus/Ref_nexus_test.log
+!tests/data/annotator/Ref_nexus_test.log
+!tests/data/annotator/Ref1_c_option_test.log
+!tests/data/annotator/Ref_d_option_test.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal

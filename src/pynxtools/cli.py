@@ -34,9 +34,10 @@ Legacy entry points (``read_nexus``, ``dataconverter``, ``generate_eln``,
 
 import click
 
+from pynxtools.annotator.cli import read
 from pynxtools.dataconverter.cli import convert, validate
 from pynxtools.eln_mapper.cli import generate_eln
-from pynxtools.nexus.cli import inspect_appdef, read
+from pynxtools.nexus.cli import inspect_appdef
 
 
 @click.group()

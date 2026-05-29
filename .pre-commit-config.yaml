@@ -13,6 +13,7 @@ repos:
       - id: mypy  # static type checking
         additional_dependencies:
           - types-PyYAML
+        args: [--exclude, 'src/pynxtools/definitions/*']
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.21.2

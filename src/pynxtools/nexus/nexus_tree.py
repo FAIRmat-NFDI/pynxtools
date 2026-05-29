@@ -1,8 +1,7 @@
 #
-# Copyright The pynxtools Authors.
+# Copyright The NOMAD Authors.
 #
-# This file is part of pynxtools.
-# See https://github.com/FAIRmat-NFDI/pynxtools for further info.
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,35 +17,39 @@
 #
 """
 `NexusNode` and its subclasses are a tree implementation based on anytree.
-They are used to represent the structure of an NeXus application definition.
+They are used to represent the structure of a NeXus application definition.
 
-The `NexusNode` representation is typically spares, i.e., it only contains
-everything present in the application definition.
-However, all necessary parameters are added from the inheritance chain
-on the fly when the tree is generated.
+The `NexusNode` representation only contains everything present in NXDL
+file where it is defined. However, all inherited parameters are added from
+the inheritance chain on the fly when the tree is generated.
 
-It also allows for adding further nodes from the inheritance chain on the fly.
+Using anytree enables the addition of further NexusNode instances
+to the tree on the fly.
 """
 
+import logging
 from functools import lru_cache, reduce
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
 from pynxtools import NX_DOC_BASES, get_definitions_url
-from pynxtools.dataconverter.helpers import (
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_nx_namefit,
+    is_name_type,
+)
+from pynxtools.nexus.utils import (
     NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
     is_appdef,
     is_variadic,
     remove_namespace_from_tag,
+    strip_nx_prefix,
 )
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_nx_namefit,
-    is_name_type,
-)
+
+logger = logging.getLogger(__file__)
 
 NexusType = Literal[
     "NX_BINARY",
@@ -106,6 +109,101 @@ NexusUnitCategory = Literal[
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
+def _xml_path_in_nxdl(elem: ET._Element) -> str:
+    """Return the path of *elem* within its NXDL file.
+
+    Walks up the XML parent chain until the ``<definition>`` root is reached.
+    Returns an absolute path string (``"/ENTRY/INSTRUMENT/energy"``) or an
+    empty string when *elem* is the definition root itself.
+    """
+    if remove_namespace_from_tag(elem.tag) == "definition":
+        return ""
+    parts: list[str] = []
+    current = elem
+    while True:
+        parent = current.getparent()
+        if parent is None:
+            break
+        fixed_name = current.attrib.get("name")
+        if fixed_name:
+            # Any explicit name in NXDL is the concept path segment directly.
+            # This covers nameType="specified" (e.g. "analyser"),
+            # nameType="partial" (e.g. "backgroundBACKGROUND"),
+            # and nameType="any" with an explicit template name (e.g. "INSTRUMENT").
+            name = fixed_name
+        else:
+            # No explicit name → nameType is implicitly "any"; derive the template
+            # name from the NX type by stripping the "NX" prefix and make uppercase.
+            nx_type = current.attrib.get("type", "")
+            name = strip_nx_prefix(nx_type) if nx_type.startswith("NX") else nx_type
+        if name:
+            parts.append(name)
+        if remove_namespace_from_tag(parent.tag) == "definition":
+            break
+        current = parent
+    return "/" + "/".join(reversed(parts)) if parts else ""
+
+
+def _select_best_namefit(
+    name: str,
+    nodes: list["NexusNode"],  # TODO: list[NexusNode] when py3.10 support is deprecated
+    hint: str | None = None,
+) -> Optional["NexusNode"]:  # TODO: NexusNode | None when py3.10 support is deprecated
+    """Select the best-fitting variadic NexusNode for an HDF5 node named *name*.
+
+    Scores each node in *nodes* with :func:`get_nx_namefit` and returns the
+    highest-scoring match.  Logs a debug warning when multiple nodes share the
+    top score under the same optionality constraint, which indicates a schema
+    ambiguity (e.g. two variadic concepts with the same name pattern).
+
+    Args:
+        name: HDF5 node name to fit against the candidates.
+        nodes: Pre-filtered list of variadic :class:`NexusNode` candidates.
+        hint: ``"signal"`` or ``"axis"`` — used to skip ``DATA`` / ``AXISNAME``
+            nodes that don't match the intended role inside an NXdata group.
+
+    Returns:
+        The best-matching :class:`NexusNode`, or ``None`` if no candidate scores
+        above ``-1``.
+    """
+    hint_map: dict[str, str] = {"DATA": "signal", "AXISNAME": "axis"}
+    best_match: NexusNode | None = None
+    best_score = -1
+    score_board: dict[int, dict[str, list[int]]] = {}
+
+    for idx, node in enumerate(nodes):
+        name_any = node.name_type == "any"
+        name_partial = node.name_type == "partial"
+        score = get_nx_namefit(name, node.name, name_any, name_partial)
+
+        if score > best_score:
+            if hint and hint_map.get(node.name) != hint:
+                continue
+            best_match = node
+            best_score = score
+
+        if score not in score_board:
+            score_board[score] = {"required": [], "recommended": [], "optional": []}
+        for constraint in ("required", "recommended", "optional"):
+            if node.optionality == constraint:
+                score_board[score][constraint].append(idx)
+                break
+
+    if score_board:
+        alternative_best_score = max(score_board)
+        if alternative_best_score > -1:
+            for constraint in ("required", "recommended", "optional"):
+                if len(score_board[alternative_best_score][constraint]) > 1:
+                    logger.debug(
+                        f"Multiple best fitting with score {alternative_best_score} found "
+                        f"{[nodes[i].concept_path for i in score_board[alternative_best_score][constraint]]} "
+                        f"constrained by {constraint}; indicates possible issues with nameTyping of "
+                        f"specific NeXus classes/concepts"
+                    )
+
+    return best_match
+
+
 class NexusNode(NodeMixin):
     """
     A NexusNode represents one node in the NeXus tree.
@@ -114,8 +212,9 @@ class NexusNode(NodeMixin):
 
     Args:
         name (str):
-            The name of the node.
-        nx_type (Literal["group", "field", "attribute", "choice", "link"]):
+            The name of the node. This is the part of the concept name at
+            the respective level in the NeXus hierarchy.
+        nx_type (Literal["definition", "group", "field", "attribute", "choice", "link"]):
             The type of the node, e.g., xml tag in the nxdl file.
         name_type (Optional["specified", "any", "partial"]):
             The nameType of the node.
@@ -133,7 +232,7 @@ class NexusNode(NodeMixin):
         inheritance (list[InstanceOf[ET._Element]]):
             The inheritance chain of the node.
             The first element of the list is the xml representation of this node.
-            All following elements are the xml nodes of the node if these are
+            All following elements are the xml ancestor nodes of the node if these are
             present in parent classes.
             Defaults to [].
         parent: (Optional[NexusNode]):
@@ -151,11 +250,11 @@ class NexusNode(NodeMixin):
             The inverse of the above `is_a`. In the example case
             `DATA` `parent_of` `my_data`.
         nxdl_base: str
-            Base of the NXDL file where the XML element for this node is  defined
+            Base of the NXDL file where the XML element for this node is defined
     """
 
     name: str
-    nx_type: Literal["group", "field", "attribute", "choice", "link"]
+    nx_type: Literal["definition", "group", "field", "attribute", "choice", "link"]
     name_type: Literal["specified", "any", "partial"] | None = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
@@ -168,7 +267,7 @@ class NexusNode(NodeMixin):
         int | None,
         int | None,
     ] = (None, None)
-    lvl_map = {
+    lvl_map: dict[str, tuple[str, ...]] = {
         "required": ("required",),
         "recommended": ("recommended", "required"),
         "optional": ("optional", "recommended", "required"),
@@ -201,7 +300,7 @@ class NexusNode(NodeMixin):
     def __init__(
         self,
         name: str,
-        nx_type: Literal["group", "field", "attribute", "choice", "link"],
+        nx_type: Literal["definition", "group", "field", "attribute", "choice", "link"],
         name_type: Literal["specified", "any", "partial"] | None = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: bool | None = None,
@@ -327,16 +426,16 @@ class NexusNode(NodeMixin):
         nx_class: str | None = None,
         depth: int | None = None,
         only_appdef: bool = False,
-    ) -> set[str]:
+    ) -> list[str]:
         """
         Get all children names of the current node up to a certain depth.
-        Only `field`, `group` `choice` or `attribute` are considered as children.
+        Only `field`, `group`, `choice`, or `attribute` are considered as children.
 
         Args:
             node_type (Optional[str], optional):
                 The tags of the children to consider.
-                This should either be "field", "group", "choice" or "attribute".
-                If None all tags are considered.
+                This should either be "field", "group", "choice", or "attribute".
+                If None, all tags are considered.
                 Defaults to None.
             nx_class (Optional[str], optional):
                 The NeXus class of the group to consider.
@@ -357,7 +456,8 @@ class NexusNode(NodeMixin):
             ValueError: If depth is not int or negative.
 
         Returns:
-            set[str]: A set of children names.
+            list[str]: Children names in NXDL definition order (insertion-order
+            stable; deeper inheritance layers append after the appdef layer).
         """
 
         if depth is not None and (not isinstance(depth, int) or depth < 0):
@@ -376,18 +476,19 @@ class NexusNode(NodeMixin):
                 r"or self::nx:link]"
             )
 
-        names = set()
+        # Use dict keys for deduplication while preserving insertion order.
+        names: dict[str, None] = {}
         for elem in self.inheritance[:depth]:
             if only_appdef and not is_appdef(elem):
                 break
 
             for sub_elems in elem.xpath(search_tags, namespaces=namespaces):
                 if "name" in sub_elems.attrib:
-                    names.add(sub_elems.attrib["name"])
+                    names[sub_elems.attrib["name"]] = None
                 elif "type" in sub_elems.attrib:
-                    names.add(sub_elems.attrib["type"][2:].upper())
+                    names[strip_nx_prefix(sub_elems.attrib["type"])] = None
 
-        return names
+        return list(names.keys())
 
     def required_groups(
         self,
@@ -396,18 +497,18 @@ class NexusNode(NodeMixin):
         recurse_children: bool = True,
     ) -> list[str]:
         """
-        Gets all required groups names of the current node and its children.
+        Gets all required group names of the current node and its children.
 
         Args:
             prev_path (str, optional):
                 The path prefix to attach to the names found at this node. Defaults to "".
             level (Literal["required", "recommended", "optional"], optional):
                 Denotes which level of requiredness should be returned.
-                Setting this to `required` will return only required fields and attributes.
+                Setting this to `required` will return only required groups.
                 Setting this to `recommended` will return
-                both required and recommended fields and attributes.
-                Setting this to "optional" will return all fields and attributes
-                directly present in the application definition but no fields
+                both required and recommended groups.
+                Setting this to "optional" will return all groups
+                directly present in the NXDL definition of the node but no groups
                 inherited from the base classes.
                 Defaults to "required".
             recurse_children (bool):
@@ -415,7 +516,7 @@ class NexusNode(NodeMixin):
                 Default to True.
 
         Returns:
-            list[str]: A list of required fields and attributes names.
+            list[str]: A list of required group names.
         """
 
         req_children = []
@@ -453,7 +554,7 @@ class NexusNode(NodeMixin):
                 Setting this to `recommended` will return
                 both required and recommended fields and attributes.
                 Setting this to "optional" will return all fields and attributes
-                directly present in the application definition but no fields
+                directly present in the NXDL definition of the node but no fields
                 inherited from the base classes.
                 Defaults to "required".
             recurse_children (bool):
@@ -469,16 +570,18 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.optionality not in optionalities:
                 continue
-            if child.nx_type == "attribute":
+            elif child.nx_type == "field":
+                req_children.append(f"{prev_path}/{child.name}")
+                if (
+                    isinstance(child, NexusField)
+                    and child.unit is not None
+                    and child.unit != "NX_UNITLESS"
+                ):
+                    req_children.append(f"{prev_path}/{child.name}/@units")
+            elif child.nx_type == "attribute":
                 req_children.append(f"{prev_path}/@{child.name}")
                 continue
-
-            if child.nx_type == "field":
-                req_children.append(f"{prev_path}/{child.name}")
-                if isinstance(child, NexusEntity) and child.unit is not None:
-                    req_children.append(f"{prev_path}/{child.name}/@units")
-
-            if child.nx_type == "link":
+            elif child.nx_type == "link":
                 req_children.append(f"{prev_path}/{child.name}")
                 continue
 
@@ -491,6 +594,55 @@ class NexusNode(NodeMixin):
 
         return req_children
 
+    def has_nxcollection_parent(self) -> bool:
+        """Return ``True`` if any ancestor group has ``nx_class == 'NXcollection'``."""
+        parent = self.parent
+        while parent is not None:
+            if (
+                getattr(parent, "nx_type", None) == "group"
+                and getattr(parent, "nx_class", None) == "NXcollection"
+            ):
+                return True
+            parent = parent.parent
+        return False
+
+    def best_child_for(
+        self,
+        name: str,
+        node_type: str | None = None,
+        nx_class: str | None = None,
+        hint: str | None = None,
+    ) -> Optional["NexusNode"]:
+        """Return the best-fitting child ``NexusNode`` for an HDF5 node named *name*.
+
+        Resolves all children via :meth:`search_add_child_for`, then selects the
+        best match using :func:`get_nx_namefit`.  Returns ``None`` if no child
+        fits *name*.
+
+        Args:
+            name: HDF5 node name to match.
+            node_type: One of ``'group'``, ``'field'``, ``'attribute'``, or ``None``.
+            nx_class: NeXus class filter (only used when *node_type* is ``'group'``).
+            hint: One of ``'axis'`` or ``'signal'`` — used to disambiguate variadic
+                ``AXISNAME`` / ``DATA`` nodes inside ``NXdata`` groups.
+
+        Returns:
+            The matching :class:`NexusNode`, or ``None``.
+        """
+        children = [
+            self.search_add_child_for(child)
+            for child in self.get_all_direct_children_names(
+                nx_class=nx_class, node_type=node_type
+            )
+        ]
+
+        for node in children:
+            if node is not None and not node.variadic and name == node.name:
+                return node
+
+        variadic = [node for node in children if node is not None and node.variadic]
+        return _select_best_namefit(name, variadic, hint)
+
     def get_docstring(self, depth: int | None = None) -> dict[str, str]:
         """
         Gets the docstrings of the current node and its parents up to a certain depth.
@@ -498,7 +650,8 @@ class NexusNode(NodeMixin):
         Args:
             depth (Optional[int], optional):
                 The depth up to which to retrieve the docstrings.
-                If this is None all docstrings of all parents are returned.
+                If this is None all docstrings of all parents are returned, i.e. iterating up
+                to the root NXobject.
                 Defaults to None.
 
         Raises:
@@ -514,13 +667,86 @@ class NexusNode(NodeMixin):
         for elem in self.inheritance[:depth][::-1]:
             doc = elem.find("nx:doc", namespaces=namespaces)
 
-            if doc is not None:
-                name = elem.attrib.get("name")
-                if not name:
-                    name = elem.attrib["type"][2:].upper()
-                docstrings[name] = doc.text
+            if doc is None or doc.text is None:
+                continue
+
+            name = elem.attrib.get("name")
+            if not name:
+                name = strip_nx_prefix(elem.attrib["type"])
+            docstrings[name] = doc.text
 
         return docstrings
+
+    @property
+    def concept_path(self) -> str:
+        """Return ``'NXarpes/ENTRY/INSTRUMENT'`` style concept path string.
+
+        The prefix is the NXDL file stem where this node is first defined
+        (e.g. ``NXarpes``). The suffix is the schema path from the appdef root
+        (e.g. ``/ENTRY/INSTRUMENT``), joined without a separator since the path
+        already starts with ``/``.
+        """
+        base = (self.nxdl_base or "").split("/")[-1].split(".nxdl.xml")[0]
+        path = self.get_path()
+        return f"{base}{path}" if base else path
+
+    def get_inheritance_concept_paths(self) -> list[tuple[str, str | None]]:
+        """Return ``[(concept_label, doc_text_or_None), ...]``, most-specific first.
+
+        *concept_label* encodes both the NXDL file and the path of the element
+        within that file, giving precise provenance for every inheritance level:
+
+        - ``"NXarpes/ENTRY/INSTRUMENT/energy"`` — field defined inside the appdef
+        - ``"NXinstrument/energy"`` — same field in the base class
+        - ``"NXarpes/ENTRY/INSTRUMENT"`` — group defined in the appdef
+        - ``"NXinstrument"`` — base class root (the definition element itself)
+
+        The bare ``NXobject`` root entry is excluded (boilerplate common to all nodes);
+        named entries within NXobject (e.g. ``NXobject/identifierNAME``) are kept.
+        """
+        results: list[tuple[str, str | None]] = []
+        seen: set[str] = set()
+        for elem in self.inheritance:
+            src = (elem.base or "").split("/")[-1].split(".nxdl.xml")[0]
+            if not src:
+                continue
+            path = _xml_path_in_nxdl(elem)
+            # Suppress only the bare NXobject root (no within-file path);
+            # named fields/groups inside NXobject (e.g. identifierNAME) are meaningful.
+            if src == "NXobject" and not path:
+                continue
+            label = f"{src}{path}" if path else src
+            if label in seen:
+                continue
+            seen.add(label)
+            doc_elem = elem.find("nx:doc", namespaces=namespaces)
+            doc: str | None = None
+            if doc_elem is not None and doc_elem.text and doc_elem.text.strip():
+                doc = doc_elem.text.strip()
+            results.append((label, doc))
+        return results
+
+    def get_inheritance_enums(self) -> list[tuple[str, list[str]]]:
+        """Return ``[(nxdl_source, [value, ...]), ...]`` for elements with enumerations.
+
+        Most specific first (appdef before base class).  *nxdl_source* is the
+        NXDL file stem, e.g. ``"NXarpes"``.
+        """
+        results: list[tuple[str, list[str]]] = []
+        for elem in self.inheritance:
+            enum_elem = elem.find("nx:enumeration", namespaces=namespaces)
+            if enum_elem is None:
+                continue
+            values = [
+                item.attrib["value"]
+                for item in enum_elem
+                if remove_namespace_from_tag(item.tag) == "item"
+                and "value" in item.attrib
+            ]
+            if values:
+                src = (elem.base or "").split("/")[-1].split(".nxdl.xml")[0]
+                results.append((src, values))
+        return results
 
     def get_link(self) -> str:
         """
@@ -593,7 +819,7 @@ class NexusNode(NodeMixin):
                     group_name = (
                         group.attrib.get("name")
                         if "name" in group.attrib
-                        else group.attrib["type"][2:].upper()
+                        else strip_nx_prefix(group.attrib["type"])
                     )
 
                     if "name" in group.attrib:
@@ -647,12 +873,12 @@ class NexusNode(NodeMixin):
 
         if tag in ("field", "attribute"):
             name = xml_elem.attrib.get("name")
+            cls = NexusField if tag == "field" else NexusAttribute
 
-            current_elem = NexusEntity(
+            current_elem = cls(
                 parent=self,
                 name=name,
                 name_type=name_type,
-                nx_type=tag,
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
                 inheritance=[xml_elem],
@@ -660,7 +886,7 @@ class NexusNode(NodeMixin):
         elif tag == "group":
             name = xml_elem.attrib.get("name")
             if not name:
-                name = xml_elem.attrib["type"][2:].upper()
+                name = strip_nx_prefix(xml_elem.attrib["type"])
                 name_type = "any"
 
             inheritance_chain = self._build_inheritance_chain(xml_elem)
@@ -692,6 +918,7 @@ class NexusNode(NodeMixin):
                 nxdl_base=xml_elem.base,
             )
         else:
+            # TODO: Tags: link
             # We don't know the tag, skip processing children of it
             # TODO: Add logging or raise an error as this is not a known nxdl tag
             return None
@@ -708,7 +935,7 @@ class NexusNode(NodeMixin):
         Returns:
             Optional["NexusNode"]:
                 The NexusNode which was added.
-                None if no matching sub-element was found to add.
+                None if no matching subelement was found to add.
         """
         for elem in self.inheritance:
             xml_elem = elem.xpath(
@@ -727,10 +954,78 @@ class NexusNode(NodeMixin):
                 return self.add_node_from(xml_elem[0])
         return None
 
+    def get_child_by_name(self, name: str) -> Optional["NexusNode"]:
+        """Get a child node by its name."""
+        return next((c for c in self.children if c.name == name), None)
+
     def __repr__(self) -> str:
         if self.nx_type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
+
+
+class NexusDefinition(NexusNode):
+    """
+    Root node representing a complete NXDL definition file (``definitionType`` in ``nxdl.xsd``).
+
+    A definition is semantically distinct from a nested group (``NexusGroup``): it
+    carries the category, symbol table, and validation-control flags that belong to
+    the NXDL file as a whole.  It never appears as a nested element in HDF5 files.
+
+    Args:
+        nx_type (Literal["definition"]):
+            Fixed to ``"definition"`` — should and cannot be manually altered.
+        category (Optional[Literal["base", "application"]]):
+            NXDL class category.  ``None`` only when the root XML element is not
+            a ``<definition>`` tag (should not occur for well-formed NXDL files).
+        extends (str | None):
+            The NXDL definition that this definition extends.
+        symbols (dict[str, str]):
+            Maps symbol names (e.g. ``"nP"``) to their documentation strings as
+            declared in the ``<symbols>`` block of the definition.  Empty dict when
+            no symbols are declared.
+        ignore_extra_groups (bool):
+            When ``True``, unknown groups in HDF5 files are not reported as errors.
+        ignore_extra_fields (bool):
+            When ``True``, unknown fields are not reported as errors.
+        ignore_extra_attributes (bool):
+            When ``True``, unknown attributes are not reported as errors.
+    """
+
+    nx_type: Literal["definition"] = "definition"
+    category: Literal["base", "application"] | None = None
+    extends: str | None = None
+    symbols: dict[str, str] = {}
+    ignore_extra_groups: bool = False
+    ignore_extra_fields: bool = False
+    ignore_extra_attributes: bool = False
+
+    def _set_definition_attrs(self) -> None:
+        """Read category, extends, symbols, and ignoreExtra* flags from the definition XML element."""
+        for elem in self.inheritance:
+            tag = elem.tag.split("}")[-1] if "}" in elem.tag else elem.tag
+            if tag != "definition":
+                continue
+            self.category = elem.attrib.get("category")
+            self.extends = elem.attrib.get("extends")
+            self.ignore_extra_groups = (
+                elem.attrib.get("ignoreExtraGroups", "false") == "true"
+            )
+            self.ignore_extra_fields = (
+                elem.attrib.get("ignoreExtraFields", "false") == "true"
+            )
+            self.ignore_extra_attributes = (
+                elem.attrib.get("ignoreExtraAttributes", "false") == "true"
+            )
+            for sym in elem.findall("nx:symbols/nx:symbol", namespaces=namespaces):
+                sym_name = sym.attrib.get("name", "")
+                doc = (sym.findtext("nx:doc", namespaces=namespaces) or "").strip()
+                self.symbols[sym_name] = doc
+            break
+
+    def __init__(self, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+        self._set_definition_attrs()
 
 
 class NexusChoice(NexusNode):
@@ -772,7 +1067,7 @@ class NexusLink(NexusNode):
     It just collects the suggested target value.
 
     Args:
-        nx_type (Literal["choice"]):
+        nx_type (Literal["link"]):
             Just ties this node to the link tag in the nxdl file.
             Should and cannot be manually altered.
             Defaults to "link".
@@ -847,7 +1142,7 @@ class NexusGroup(NexusNode):
                 sibling_name = (
                     sibling.attrib.get("name")
                     if "name" in sibling.attrib
-                    else sibling.attrib["type"][2:].upper()
+                    else strip_nx_prefix(sibling.attrib["type"])
                 )
 
                 if "name" in sibling.attrib:
@@ -928,55 +1223,61 @@ class NexusGroup(NexusNode):
         self._check_sibling_namefit()
 
 
-class NexusEntity(NexusNode):
+class _NexusEntityBase(NexusNode):
     """
-    A NexusEntity represents a field or an attribute in the NeXus tree.
+    Shared base for NexusField and NexusAttribute.
+
+    Holds only what both ``fieldType`` and ``attributeType`` define in ``nxdl.xsd``:
+    data type, enumeration items, and shape/dimension information.  Not part of
+    the public API — import ``NexusField`` or ``NexusAttribute`` directly.
 
     Args:
         nx_type (Literal["field", "attribute"]):
             The type of the entity is restricted to either a `field` or an `attribute`.
-        unit (Optional[NexusUnitCategory]):
-            The unit of the entity.
-            This is set automatically on init based on the values found in the nxdl file.
-            Also the base classes of these entities are considered.
-            Defaults to None.
+            Should not be manually altered.
         dtype (NexusType):
-            The nxdl datatype of the entity.
-            This is set automatically on init based on the values found in the nxdl file.
+            The NXDL data type.
+            This is set automatically on init based on the values found in the NXDL file.
             Also the base classes of these entities are considered.
             If it is not present in any of the xml nodes, it will be set to `NX_CHAR`.
             Defaults to "NX_CHAR".
         items (Optional[list[str]]):
-            This is a restriction of the field value to a list of items.
-            Only applies to nodes of dtype `NX_CHAR`.
-            This is set automatically on init based on the values found in the nxdl file.
+            This is a restriction of the value to a list of items.
+            This is set automatically on init based on the values found in the NXDL file.
             Also the base classes of these entities are considered.
             If there is no restriction this is set to None.
             Defaults to None.
         open_enum (bool):
-            If enumerations are used, the enumeration can be open (i.e., the value is not limited
-            to the enumeration items) or closed (i.e., the value must exactly match one of the
-            enumeration items). This is controlled by the open_enum boolean. By default, it is closed.
+            ``True`` when the enumeration carries ``open="true"``.
+            If enumerations are used, the enumeration can be open (i.e., the value is
+            not limited to the enumeration items) or closed (i.e., the value must exactly
+            match one of the enumeration items). By default, enumerations are closed.
         shape (Optional[tuple[Optional[int], ...]]):
-            The shape of the entity as given by the dimensions tag.
+            The shape of the entity as given by the ``<dimensions>`` tag.
             This is set automatically on init based on the values found in the nxdl file.
             Also the base classes of these entities are considered.
             If there is no dimension present in any of the xml nodes, it will be set to None.
             Contains None for unbounded dimensions.
-            Symbols in either the `rank` or `value` attribute are not considered
-            and result in an unbounded shape.
+            Symbols in either the ``rank`` or ``value`` attribute result in an unbounded
+            (``None``) entry; the symbol name is stored in ``dim_symbols`` instead.
+            Defaults to None.
+        dim_symbols (Optional[tuple[Optional[str], ...]]):
+            Parallel to ``shape``.  For each dimension position, stores the NXDL symbol
+            name (e.g. ``"nP"``, ``"i"``) if that dimension was defined via a symbol
+            rather than a literal integer, or ``None`` otherwise.  ``None`` when no
+            ``<dimensions>`` element is present at all.
             Defaults to None.
     """
 
     nx_type: Literal["field", "attribute"]
-    unit: NexusUnitCategory | None = None
     dtype: NexusType = "NX_CHAR"
     items: list[str] | None = None
     open_enum: bool = False
     shape: tuple[int | None, ...] | None = None
+    dim_symbols: tuple[str | None, ...] | None = None
 
     def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
-        """Check compatibility of this node with an XML element from the (possible) inheritance"""
+        """Check compatibility of this node with an XML element from the (possible) inheritance."""
 
         def _check_name_fit(xml_elem: ET._Element) -> bool:
             elem_name = xml_elem.attrib.get("name")
@@ -997,10 +1298,12 @@ class NexusEntity(NexusNode):
             return True
 
         def _check_units_fit(xml_elem: ET._Element) -> bool:
+            # unit is field-only; attributes pass this check unconditionally.
+            unit = getattr(self, "unit", None)
             elem_units = xml_elem.attrib.get("units")
-            if elem_units and elem_units != "NX_ANY":
-                if elem_units != self.unit:
-                    if not elem_units == "NX_TRANSFORMATION" and self.unit in [
+            if elem_units and elem_units != "NX_ANY" and unit is not None:
+                if elem_units != unit:
+                    if not elem_units == "NX_TRANSFORMATION" and unit in [
                         "NX_LENGTH",
                         "NX_ANGLE",
                         "NX_UNITLESS",
@@ -1037,7 +1340,7 @@ class NexusEntity(NexusNode):
                 def convert_to_hashable(item):
                     """Convert lists to tuples for hashable types, leave non-list items as they are."""
                     if isinstance(item, list):
-                        return tuple(item)  # Convert sub-lists to tuples
+                        return tuple(item)  # Convert sub_lists to tuples
                     return item  # Non-list items remain as they are
 
                 set_items = {convert_to_hashable(sublist) for sublist in self.items}
@@ -1102,9 +1405,7 @@ class NexusEntity(NexusNode):
         return True
 
     def _construct_inheritance_chain_from_parent(self):
-        """
-        Builds the inheritance chain of the current node based on the parent node.
-        """
+        """Build the inheritance chain of the current node from the parent's XML elements."""
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
@@ -1115,10 +1416,7 @@ class NexusEntity(NexusNode):
                         self.inheritance.append(elem)
 
     def _set_type(self):
-        """
-        Sets the dtype of the current entity based on the values in the inheritance chain.
-        The first value found is used.
-        """
+        """Set dtype from the first ``type`` attribute found in the inheritance chain."""
         for elem in self.inheritance:
             if "type" in elem.attrib:
                 self.dtype = elem.attrib["type"]
@@ -1135,11 +1433,7 @@ class NexusEntity(NexusNode):
                 return
 
     def _set_items_and_enum_type(self):
-        """
-        Sets the enumeration items of the current entity
-        based on the values in the inheritance chain.
-        The first value found is used.
-        """
+        """Set items and open_enum from the first ``<enumeration>`` in the inheritance chain."""
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
 
@@ -1163,10 +1457,7 @@ class NexusEntity(NexusNode):
                 return
 
     def _set_shape(self):
-        """
-        Sets the shape of the current entity based on the values in the inheritance chain.
-        The first value found is used.
-        """
+        """Set shape and dim_symbols from the first ``<dimensions>`` in the inheritance chain."""
         for elem in self.inheritance:
             dimension = elem.find(f"nx:dimensions", namespaces=namespaces)
             if dimension is not None:
@@ -1179,11 +1470,12 @@ class NexusEntity(NexusNode):
             try:
                 int(rank)
             except ValueError:
-                # TODO: Handling of symbols
+                # rank itself is a symbol — cannot determine dimensionality
                 return
         xml_dim = dimension.findall("nx:dim", namespaces=namespaces)
         rank = rank if rank is not None else len(xml_dim)
         dims: list[int | None] = [None] * int(rank)
+        syms: list[str | None] = [None] * int(rank)
         for dim in xml_dim:
             idx = int(dim.attrib["index"])
             if "value" not in dim.attrib:
@@ -1193,25 +1485,145 @@ class NexusEntity(NexusNode):
                 value = int(dim.attrib["value"])
                 dims[idx - 1] = value
             except ValueError:
-                # TODO: Handling of symbols
-                pass
+                # dim value is a symbol name (or expression like "tof+1") — store it
+                syms[idx - 1] = dim.attrib["value"]
 
         self.shape = tuple(dims)
+        self.dim_symbols = tuple(syms)
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
-        self._set_unit()
         self._set_type()
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
         self._construct_inheritance_chain_from_parent()
-        # Set all parameters again based on the acquired inheritance
-        self._set_unit()
+        # Repeat after the inheritance chain is extended
         self._set_type()
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
+
+
+class NexusAttribute(_NexusEntityBase):
+    """
+    A NeXus attribute node — models ``attributeType`` from ``nxdl.xsd``.
+
+    Attributes (``<attribute>`` tags) share dtype, enumeration, and dimension
+    information with fields, but carry no unit, interpretation, or signal/axis
+    metadata.  Those are field-only concepts; see ``NexusField``.
+
+    Args:
+        nx_type (Literal["attribute"]):
+            Fixed to ``"attribute"`` — should and cannot be manually altered.
+    """
+
+    nx_type: Literal["attribute"] = "attribute"
+
+    def __init__(self, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+
+
+class NexusField(_NexusEntityBase):
+    """
+    A NeXus field node — models ``fieldType`` from ``nxdl.xsd`` completely.
+
+    In addition to the shared type/enum/shape information from
+    ``_NexusEntityBase``, a field can carry:
+
+    * a unit category (``units`` XML attribute → ``unit``),
+    * display metadata (``long_name``, ``interpretation``),
+    * deprecated plotting hints (``signal``, ``axis``, ``axes``, ``primary``),
+    * rarely-used array access offsets (``stride``, ``data_offset``).
+
+    The plotting-hint attributes are deprecated in modern NeXus (superseded by
+    group-level HDF5 ``@signal``/``@axes`` attributes on ``NXdata`` groups) but
+    are modelled here because they still appear in existing application
+    definitions.
+
+    Args:
+        nx_type (Literal["field"]):
+            Fixed to ``"field"`` — should and cannot be manually altered.
+        unit (Optional[NexusUnitCategory]):
+            Unit category.  Set automatically from the ``units`` XML attribute
+            in the inheritance chain.
+        long_name (Optional[str]):
+            Human-readable field name.
+        interpretation (Optional[str]):
+            How the consumer should interpret the last dimensions
+            (e.g. ``"spectrum"``, ``"image"``).
+        signal (Optional[int]):
+            Deprecated ordinate marker.
+        axis (Optional[int]):
+            Deprecated abscissa marker.
+        axes (Optional[str]):
+            Deprecated colon-separated axis list.
+        primary (Optional[int]):
+            Deprecated axis-selection priority.
+        stride (Optional[str]):
+            Comma-separated stride list (rarely used in practice).
+        data_offset (Optional[str]):
+            Comma-separated starting coordinates (rarely used in practice).
+    """
+
+    nx_type: Literal["field"] = "field"
+    unit: NexusUnitCategory | None = None
+    long_name: str | None = None
+    interpretation: (
+        Literal[
+            "scalar",
+            "spectrum",
+            "image",
+            "rgba-image",
+            "hsla-image",
+            "hsl-image",
+            "binary",
+            "rgb-image",
+            "cmyk-image",
+        ]
+        | None
+    ) = None
+    signal: int | None = None
+    axis: int | None = None
+    axes: str | None = None
+    primary: int | None = None
+    stride: str | None = None
+    data_offset: str | None = None
+
+    def _set_unit(self):
+        """Set unit from the first ``units`` attribute found in the inheritance chain."""
+        for elem in self.inheritance:
+            if "units" in elem.attrib:
+                self.unit = elem.attrib["units"]
+                return
+
+    def _set_field_attrs(self):
+        """Read long_name, interpretation, and deprecated field attrs in one inheritance pass."""
+        for elem in self.inheritance:
+            if self.long_name is None:
+                self.long_name = elem.attrib.get("long_name")
+            if self.interpretation is None:
+                self.interpretation = elem.attrib.get("interpretation")
+            if self.signal is None and (v := elem.attrib.get("signal")):
+                self.signal = int(v)
+            if self.axis is None and (v := elem.attrib.get("axis")):
+                self.axis = int(v)
+            if self.axes is None:
+                self.axes = elem.attrib.get("axes")
+            if self.primary is None and (v := elem.attrib.get("primary")):
+                self.primary = int(v)
+            if self.stride is None:
+                self.stride = elem.attrib.get("stride")
+            if self.data_offset is None:
+                self.data_offset = elem.attrib.get("data_offset")
+
+    def __init__(self, **data) -> None:
+        super().__init__(nx_type=self.nx_type, **data)
+        self._set_unit()
+        self._set_field_attrs()
+        # Repeat after the inheritance chain is extended by the base __init__
+        self._set_unit()
+        self._set_field_attrs()
 
 
 def populate_tree_from_parents(node: NexusNode):
@@ -1227,18 +1639,26 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
+def generate_tree_from(nxdl: str, set_root_attr: bool = True) -> "NexusDefinition":
     """
-    Generates a NexusNode tree from an application definition.
-    NexusNode is based on anytree nodes and anytree's functions can be used
-    for displaying and traversal of the tree.
+    Generate a NexusNode tree from a NeXus NXDL definition (application or base class).
+
+    The root of the returned tree is a :class:`NexusDefinition` node whose
+    ``category``, ``symbols``, and ``ignore_extra_*`` attributes reflect the
+    metadata declared in the NXDL file.  Children of the root are
+    :class:`NexusGroup`, :class:`NexusField`, :class:`NexusAttribute`,
+    :class:`NexusLink`, and :class:`NexusChoice` nodes as appropriate.
+
+    For application definitions the tree is rooted at the ``NXentry`` group.
+    For base classes the children live directly under the definition root.
 
     Args:
-        appdef (str): The application definition name to generate the NexusNode tree from.
-        set_root_attr (bool): Whether or not to set the root attributes.
+        nxdl (str): The NXDL definition name (e.g. ``"NXarpes"`` or ``"NXdata"``).
+        set_root_attr (bool): Whether to attach NXroot-level attributes to the root.
+            Only applied for application definitions.
 
     Returns:
-        NexusNode: The tree representing the application definition.
+        NexusDefinition: The root node of the tree.
     """
 
     def add_children_to(parent: NexusNode, xml_elem: ET._Element) -> None:
@@ -1264,38 +1684,45 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         ):
             add_children_to(current_elem, child)
 
-    appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
+    nxdl_xml_root, _ = get_nxdl_root_and_path(nxdl)
 
     global namespaces
-    namespaces = {"nx": appdef_xml_root.nsmap[None]}
+    namespaces = {"nx": nxdl_xml_root.nsmap[None]}
 
-    appdef_inheritance_chain = [appdef_xml_root]
-    appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
+    nxdl_inheritance_chain = [nxdl_xml_root]
+    nxdl_inheritance_chain += get_all_parents_for(nxdl_xml_root)
 
-    tree = NexusGroup(
-        name=appdef_xml_root.attrib["name"],
-        nx_class="NXroot",
-        nx_type="group",
+    tree = NexusDefinition(
+        name=nxdl_xml_root.attrib["name"],
         name_type="specified",
         optionality="required",
         variadic=False,
         parent=None,
-        inheritance=appdef_inheritance_chain,
-        nxdl_base=appdef_xml_root.base,
+        inheritance=nxdl_inheritance_chain,
+        nxdl_base=nxdl_xml_root.base,
     )
 
-    # Set root attributes
-    if set_root_attr:
+    is_application = nxdl_xml_root.get("category") == "application"
+
+    if set_root_attr and is_application:
         nx_root, _ = get_nxdl_root_and_path("NXroot")
         for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
             child = tree.add_node_from(root_attrib)
             child.optionality = "optional"
 
-    entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
-    add_children_to(tree, entry)
+    if is_application:
+        entry = nxdl_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
+        if entry is not None:
+            add_children_to(tree, entry)
+    else:
+        for child_elem in nxdl_xml_root.xpath(
+            r"*[self::nx:field or self::nx:group or self::nx:attribute"
+            r" or self::nx:choice or self::nx:link]",
+            namespaces=namespaces,
+        ):
+            add_children_to(tree, child_elem)
 
-    # Add all fields and attributes from the parent appdefs
-    if len(appdef_inheritance_chain) > 1:
+    if len(nxdl_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
 
     return tree
