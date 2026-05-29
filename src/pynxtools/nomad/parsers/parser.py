@@ -26,13 +26,11 @@ DEBUG_PYNXTOOLS_WITH_NOMAD = False
 
 from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 from pynxtools.nexus.nexus import get_nxdl_doc
-from pynxtools.nexus.utils import decode_if_string
 
 try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
     from nomad.metainfo import MEnum, MSection
     from nomad.metainfo.util import MQuantity, resolve_variadic_name
@@ -70,7 +68,7 @@ def _make_hdf_info(hdf_path: str, hdf_node: Any) -> dict[str, Any]:
 def _to_section(
     hdf_name: str | None,
     nx_def: str,
-    nx_node: ET.Element | None,  # noqa: UP045
+    nx_node: ET._Element | None,  # noqa: UP045
     current: MSection,
     nx_root,
 ) -> MSection:
@@ -319,7 +317,7 @@ class NomadVisitor(NexusVisitor):
 
         # TODO: replace get_nxdl_doc with NexusSchemaResolver.node_for(hdf_path, hdf_node);
         # nxdef  → resolver.appdef_for(hdf_node)
-        # nx_node (ET.Element) → NexusNode returned by the resolver
+        # nx_node (ET._Element) → NexusNode returned by the resolver
         hdf_info = _make_hdf_info(hdf_path, hdf_node)
         _, nxdef, nxdl_path = get_nxdl_doc(hdf_info, doc=False)
         if nxdl_path is None or nxdl_path == "/":
@@ -342,7 +340,7 @@ class NomadVisitor(NexusVisitor):
             else group_name
         )
 
-        # TODO: _to_section should accept NexusNode instead of ET.Element;
+        # TODO: _to_section should accept NexusNode instead of ET._Element;
         # node.name replaces nx_node.attrib.get("name"),
         # node.nx_class replaces nx_node.attrib["type"]
         section = _to_section(
@@ -433,7 +431,7 @@ class NomadVisitor(NexusVisitor):
         TODO: split into _populate_field(node: NexusNode, hdf_node, current) and
         _populate_attribute(node: NexusNode, attr_name, attr_value, current) once
         get_nxdl_doc is replaced by NexusSchemaResolver.  The depth/nx_path indexing
-        and ET.Element accesses (nx_attr.get("name"), nx_parent.tag.endswith("group"),
+        and ET._Element accesses (nx_attr.get("name"), nx_parent.tag.endswith("group"),
         nx_path[-1].get("name")) all disappear when node: NexusNode is passed directly.
         """
         if attr:  # it is an attribute of either a field or a group
