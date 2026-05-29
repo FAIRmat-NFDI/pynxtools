@@ -1419,6 +1419,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#shared-nxdata-detection-pynxtoolsnexusnxdata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared NXdata detection: pynxtools.nexus.nxdata
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shared NXdata detection: pynxtools.nexus.nxdata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#public-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convention-detection-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convention detection order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#relationship-to-the-dataconverter" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2137,6 +2176,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#shared-nxdata-detection-pynxtoolsnexusnxdata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared NXdata detection: pynxtools.nexus.nxdata
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shared NXdata detection: pynxtools.nexus.nxdata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#public-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convention-detection-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convention detection order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#relationship-to-the-dataconverter" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2453,6 +2531,7 @@
 <h2 id="how-the-cli-tools-are-built">How the CLI tools are built<a class="headerlink" href="#how-the-cli-tools-are-built" title="Permanent link">&para;</a></h2>
 <h3 id="pynx-read-the-annotator"><code>pynx read</code> — the annotator<a class="headerlink" href="#pynx-read-the-annotator" title="Permanent link">&para;</a></h3>
 <p><code>pynx read</code> creates an <code>Annotator</code> visitor and passes it to <code>NexusFileHandler</code>.  The annotator holds a <code>NexusSchemaResolver</code> and uses it on every <code>on_field</code> / <code>on_attribute</code> callback to look up the matching <code>NexusNode</code>, then emits documentation, optionality, enumeration values, and inheritance information.</p>
+<p>When an <code>NXdata</code> group is encountered, the annotator calls <code>inspect_nxdata</code> (from <code>pynxtools.nexus.nxdata</code>) once at the group level to detect the primary signal, axis datasets, and convention (v3/v2/v1). The result is cached and used to annotate each field in that group with its NXdata role (<code>SIGNAL</code> / <code>AXIS #N</code>). After the full traversal, the default-plottable chain is also logged via <code>get_default_plottable</code>.</p>
 <p>Three operating modes are supported:</p>
 <ul>
 <li><strong>Default</strong>: annotate every node and print the default-plottable summary.</li>
@@ -2493,6 +2572,46 @@
 </code></pre></div>
 <h2 id="extending-pynxtools-with-a-custom-visitor">Extending pynxtools with a custom visitor<a class="headerlink" href="#extending-pynxtools-with-a-custom-visitor" title="Permanent link">&para;</a></h2>
 <p>Because <code>NexusFileHandler</code> accepts any <code>NexusVisitor</code>, it is straightforward to add new processing modes without modifying pynxtools internals. See the <a href="../../how-tos/pynxtools/implement-a-visitor.html">how-to guide on implementing a custom visitor</a> for a worked example.</p>
+<h2 id="shared-nxdata-detection-pynxtoolsnexusnxdata">Shared NXdata detection: <code>pynxtools.nexus.nxdata</code><a class="headerlink" href="#shared-nxdata-detection-pynxtoolsnexusnxdata" title="Permanent link">&para;</a></h2>
+<p>The <a href="https://manual.nexusformat.org/examples/python/plotting/index.html">NeXus Data Plotting Standard</a> defines three conventions — v3 (NIAC2014), v2 (~2004), and v1 (oldest) — for identifying the plottable signal and its axes in an <code>NXdata</code> group. Rather than duplicating this logic in the annotator and the validator, pynxtools centralizes it in <code>pynxtools.nexus.nxdata</code> with no logging dependency.</p>
+<h3 id="public-api">Public API<a class="headerlink" href="#public-api" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NXdataInfo</code></td>
+<td>Dataclass: <code>signal</code>, <code>signal_name</code>, <code>axes</code> (per-dimension lists), <code>aux_signals</code>, <code>convention</code></td>
+</tr>
+<tr>
+<td><code>classify_field(hdf_node, name)</code></td>
+<td>Returns <code>'signal'</code>, <code>'axis'</code>, or <code>None</code> for a dataset within its NXdata parent</td>
+</tr>
+<tr>
+<td><code>inspect_nxdata(group)</code></td>
+<td>Returns <code>NXdataInfo</code> by trying v3 → v2 → v1</td>
+</tr>
+<tr>
+<td><code>find_default_nxdata(root)</code></td>
+<td>Walks the <code>@default</code> chain to locate the default plottable <code>NXdata</code> group</td>
+</tr>
+<tr>
+<td><code>find_default_nxentry(root)</code></td>
+<td>Returns the default <code>NXentry</code> group</td>
+</tr>
+</tbody>
+</table>
+<h3 id="convention-detection-order">Convention detection order<a class="headerlink" href="#convention-detection-order" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>v3 (NIAC2014)</strong>: signal named by <code>@signal</code> group attribute; axes named by <code>@axes</code> or <code>AXISNAME_indices</code> group attributes.</li>
+<li><strong>v2 (~2004)</strong>: signal has own <code>@signal="1"</code> field attribute; axes have own <code>@axis=N</code> or colon-separated <code>@axes</code> on the signal.</li>
+<li><strong>v1 (oldest)</strong>: single dataset in the group — treated as the signal.</li>
+</ol>
+<p>Both <code>Annotator</code> and <code>ValidationVisitor</code> call <code>inspect_nxdata</code> at the group level (once per NXdata group) and use the returned <code>NXdataInfo</code> for per-field role annotation and dimensionality validation respectively.</p>
 <h2 id="relationship-to-the-dataconverter">Relationship to the dataconverter<a class="headerlink" href="#relationship-to-the-dataconverter" title="Permanent link">&para;</a></h2>
 <p>The dataconverter (write path) is independent of <code>NexusFileHandler</code> (read path). Readers produce a <code>Template</code> dictionary; the dataconverter validates the template against an NXDL tree (also built from <code>NexusNode</code>) and writes the HDF5 file.</p>
 <p>See <a href="dataconverter-and-readers.html">Data conversion in pynxtools</a> for the write-path architecture.</p>
