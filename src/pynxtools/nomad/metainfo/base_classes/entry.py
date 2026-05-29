@@ -88,7 +88,7 @@ class Entry(Object, basesections.Measurement):
     )
     experiment_documentation = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
-        repeats=True,
+        repeats=False,
         description=(
             "Description of the full experiment (document in pdf, latex, ...)"
         ),
@@ -101,7 +101,7 @@ class Entry(Object, basesections.Measurement):
     )
     notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
-        repeats=True,
+        repeats=False,
         description=("Notes describing entry"),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -112,7 +112,7 @@ class Entry(Object, basesections.Measurement):
     )
     thumbnail = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail",
-        repeats=True,
+        repeats=False,
         description=(
             "A small image that is representative of the entry. An example of "
             "this is a 640x480 jpeg image automatically produced by a low "
