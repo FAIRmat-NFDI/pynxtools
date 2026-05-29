@@ -41,14 +41,18 @@ import logging
 import os
 import re
 import textwrap
-from typing import Any
+from typing import Any, Literal
 
 import h5py
 
-from pynxtools.annotator.nxdata import chk_nxdata_axis
 from pynxtools.nexus.handler import NexusVisitor
-from pynxtools.nexus.nexus import get_default_plottable
-from pynxtools.nexus.nexus_tree import NexusField, NexusNode
+from pynxtools.nexus.nexus_tree import NexusField, NexusNode, generate_tree_from
+from pynxtools.nexus.nxdata import (
+    NXdataInfo,
+    find_default_nxdata,
+    find_default_nxentry,
+    inspect_nxdata,
+)
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nexus.utils import decode_if_string
 
@@ -84,6 +88,8 @@ class Annotator(NexusVisitor):
         self.concept = concept
         self._concept_matches: list[str] = []
         self._resolver = NexusSchemaResolver()
+        # NXdata inspection results keyed by HDF5 group path
+        self._nxdata_cache: dict[str, NXdataInfo] = {}
 
     # ------------------------------------------------------------------
     # NexusVisitor interface
@@ -122,7 +128,7 @@ class Annotator(NexusVisitor):
             return
 
         if self.documentation is None:
-            get_default_plottable(root, self.logger)
+            self._log_default_plottable(root)
 
     # ------------------------------------------------------------------
     # Dispatch documentation (``-d``) and concept (``-c``) mode
@@ -248,6 +254,18 @@ class Annotator(NexusVisitor):
         for src, values in node.get_inheritance_enums():
             self._detail(det, "Enums", f"[{src}] {', '.join(values)}")
 
+        if decode_if_string(hdf_node.attrs.get("NX_class")) == "NXdata":
+            info = inspect_nxdata(hdf_node)
+            self._nxdata_cache[hdf_node.name] = info
+            if info.signal_name is not None:
+                axes_count = sum(len(ax_list) for ax_list in info.axes)
+                self._detail(
+                    det,
+                    "NXdata",
+                    f"[{info.convention}] signal={info.signal_name}"
+                    + (f", {axes_count} axis dataset(s)" if axes_count else ""),
+                )
+
     def _annotate_field(self, hdf_path: str, hdf_node: h5py.Dataset) -> None:
         """Emit a structured block for a FIELD node."""
         depth = self._depth(hdf_path)
@@ -259,9 +277,10 @@ class Annotator(NexusVisitor):
             f"{ind}FIELD /{hdf_path}  shape={hdf_node.shape}  dtype={hdf_node.dtype}"
         )
 
-        # NXdata axis/signal annotation — also returns a hint for schema lookup.
-        # Pass self.logger so the debug messages appear in the caller's log.
-        nxdata_hint = chk_nxdata_axis(hdf_node, name, indent=det, logger=self.logger)
+        # NXdata axis/signal role — look up from the group-level cache populated in
+        # _annotate_group.  This avoids re-running detection for every field in the
+        # same NXdata group and keeps all detection logic in nexus.nxdata.
+        nxdata_hint = self._nxdata_role(hdf_node, name, det)
 
         val = (
             str(decode_if_string(hdf_node[()])).split("\n")
@@ -289,6 +308,67 @@ class Annotator(NexusVisitor):
 
             for src, values in node.get_inheritance_enums():
                 self._detail(det, "Enums", f"[{src}] {', '.join(values)}")
+
+    def _log_default_plottable(self, root: h5py.File) -> None:
+        """Log the default-plottable summary at the end of a full annotation run."""
+        logger = self.logger
+        logger.debug("")
+        logger.debug("========================")
+        logger.debug("=== Default Plottable ===")
+        logger.debug("========================")
+
+        nxentry = find_default_nxentry(root)
+        if not nxentry:
+            logger.debug("No NXentry has been found")
+            return
+        logger.debug("")
+        logger.debug("NXentry has been identified: " + nxentry.name)
+
+        nxdata = find_default_nxdata(root)
+        if not nxdata:
+            logger.debug("No NXdata group has been found")
+            return
+        logger.debug("")
+        logger.debug("NXdata group has been identified: " + nxdata.name)
+
+        info = inspect_nxdata(nxdata)
+        if info.signal is None:
+            logger.debug("No Signal has been found")
+            return
+        logger.debug("")
+        logger.debug("Signal has been identified: " + info.signal.name)
+
+        for aux_sig in info.aux_signals:
+            logger.debug(f"Further auxiliary signal has been identified: {aux_sig}")
+
+        for a_item, ax_list in enumerate(info.axes):
+            logger.debug("")
+            logger.debug(
+                f"For Axis #{a_item}, {len(ax_list)} axes have been identified: {ax_list!s}"
+            )
+
+    def _nxdata_role(
+        self, hdf_node: h5py.Dataset, name: str, indent: str
+    ) -> Literal["axis", "signal"] | None:
+        """Return ``'signal'``, ``'axis'``, or ``None`` for *hdf_node* within its NXdata group.
+
+        Uses the ``NXdataInfo`` cached by ``_annotate_group``; falls back to ``None``
+        if the parent group has not been seen yet or is not NXdata.
+        """
+        info = self._nxdata_cache.get(hdf_node.parent.name)
+        if info is None:
+            return None
+        if name == info.signal_name or name in info.aux_signals:
+            self.logger.debug(f"{indent}Dataset referenced as NXdata SIGNAL")
+            return "signal"
+        for dim, ax_list in enumerate(info.axes):
+            for ax_ds in ax_list:
+                if ax_ds.name.split("/")[-1] == name:
+                    self.logger.debug(
+                        f"{indent}Dataset referenced as NXdata AXIS #{dim}"
+                    )
+                    return "axis"
+        return None
 
     # Structural HDF5 attributes that carry no annotation value.
     _SKIP_ATTRS: frozenset = frozenset({"NX_class"})

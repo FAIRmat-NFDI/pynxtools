@@ -59,6 +59,7 @@ from pynxtools.nexus.nexus_tree import (
     _select_best_namefit,
     generate_tree_from,
 )
+from pynxtools.nexus.nxdata import inspect_nxdata
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver, resolve_path
 from pynxtools.units import NXUnitSet, ureg
 
@@ -619,48 +620,71 @@ class ValidationVisitor(NexusVisitor):
             return
 
     def _handle_nxdata(self, path: str, group: h5py.Group) -> None:
-        """Validate an NXdata group: signal, axes, and NXdata-specific attributes."""
-        full_path = f"{self._entry_name}/{path}"
-        signal = group.attrs.get("signal")
-        aux_signals = group.attrs.get("auxiliary_signals", [])
-        axes = group.attrs.get("axes", [])
-        if isinstance(axes, str):
-            axes = [axes]
+        """Validate an NXdata group: signal, axes, aux signals, and AXISNAME_indices."""
+        import numbers as _numbers
 
-        if signal is None:
+        full_path = f"{self._entry_name}/{path}"
+
+        # Only validate NXdata structure when a @signal attribute is explicitly
+        # declared (v3 convention).  Groups with no @signal are skipped — same
+        # behavior as the previous implementation and avoids false-positive
+        # signal detection via v1 heuristics.
+        if group.attrs.get("signal") is None:
             return
 
-        data_field = group.get(signal)
-        if data_field is None:
-            collector.collect_and_log(
-                f"{full_path}/{signal}", ValidationProblem.NXdataMissingSignalData, None
-            )
-        else:
-            self._handle_field(f"{path}/{signal}", data_field, hint="signal")
+        info = inspect_nxdata(group)
 
+        if info.signal is None:
+            # @signal attr present but the named dataset is missing
+            collector.collect_and_log(
+                f"{full_path}/{group.attrs['signal']}",
+                ValidationProblem.NXdataMissingSignalData,
+                None,
+            )
+            return
+
+        self._handle_field(f"{path}/{info.signal_name}", info.signal, hint="signal")
+
+        # Validate auxiliary signals exist
+        for aux in info.aux_signals:
+            if group.get(aux) is None:
+                collector.collect_and_log(
+                    f"{full_path}/{aux}",
+                    ValidationProblem.NXdataMissingSignalData,
+                    None,
+                )
+
+        # Validate axes: presence and dimension-length agreement
+        for a_item, ax_list in enumerate(info.axes):
+            for ax_ds in ax_list:
+                ax_name = ax_ds.name.split("/")[-1]
+                self._handle_field(f"{path}/{ax_name}", ax_ds, hint="axis")
+                if info.signal.shape and a_item < len(info.signal.shape):
+                    if info.signal.shape[a_item] != len(ax_ds):
+                        collector.collect_and_log(
+                            f"{path}/{ax_name}",
+                            ValidationProblem.NXdataAxisMismatch,
+                            f"{full_path}/@{info.signal_name}",
+                            a_item,
+                        )
+
+        # Validate AXISNAME_indices values are within signal dimension bounds
+        n_dims = len(info.signal.shape)
+        for attr in group.attrs.keys():
+            if attr.endswith("_indices"):
+                idx = group.attrs[attr]
+                if isinstance(idx, _numbers.Integral) and not (0 <= int(idx) < n_dims):
+                    collector.collect_and_log(
+                        f"{full_path}@{attr}",
+                        ValidationProblem.NXdataAxisMismatch,
+                        f"{full_path}/@{info.signal_name}",
+                        int(idx),
+                    )
+
+        # Validate NXdata-specific attributes against the schema
         nxdata_attr_names = ("signal", "auxiliary_signals", "axes")
         data_attrs = {k: group.attrs[k] for k in nxdata_attr_names if k in group.attrs}
         self._handle_attributes(path, data_attrs, group)
-
-        for i, axis in enumerate(axes):
-            if axis == ".":
-                continue
-            index = group.get(f"{axis}_indices", i)
-            axis_field = group.get(axis)
-            if axis_field is None:
-                collector.collect_and_log(
-                    f"{full_path}/{axis}", ValidationProblem.NXdataMissingAxisData, None
-                )
-                break
-            else:
-                self._handle_field(f"{path}/{axis}", axis_field, hint="axis")
-            if np.shape(data_field)[index] != len(axis_field):
-                collector.collect_and_log(
-                    f"{path}/{axis}",
-                    ValidationProblem.NXdataAxisMismatch,
-                    f"{full_path}/{signal}",
-                    index,
-                )
 
     def _handle_field(
         self,
