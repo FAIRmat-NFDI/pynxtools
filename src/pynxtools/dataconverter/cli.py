@@ -50,7 +50,7 @@ from pynxtools.dataconverter.convert import convert as _convert
 from pynxtools.dataconverter.nexus_tree import generate_tree_from
 from pynxtools.dataconverter.validate_file import validate as _validate
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 
 class CustomClickGroup(DefaultGroup):

@@ -45,7 +45,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_required_string as nexus_get_required_string,
 )
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 import importlib.metadata
 

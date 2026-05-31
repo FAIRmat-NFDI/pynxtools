@@ -62,7 +62,7 @@ from pynxtools.dataconverter.nexus_tree import (
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.units import NXUnitSet, ureg
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 if DEBUG_VALIDATION:
     debugpy.debug_this_thread()

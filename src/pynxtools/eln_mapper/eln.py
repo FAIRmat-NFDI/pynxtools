@@ -32,7 +32,7 @@ from pynxtools.dataconverter.nexus_tree import (
     generate_tree_from,
 )
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 NODES_TO_SKIP: list[str] = ["definition"]
 

@@ -86,7 +86,7 @@ def read(nexus_file, documentation, concept):
     logging.basicConfig(
         level=logging.INFO, format=logging_format, handlers=[stdout_handler]
     )
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger(__name__)
     logger.addHandler(stdout_handler)
     logger.setLevel(logging.DEBUG)
     logger.propagate = False

@@ -28,7 +28,7 @@ import warnings
 
 from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 _DEPRECATION_MSG = (
     "YamlJsonReader is deprecated and will be removed in a future release. "

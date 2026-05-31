@@ -53,7 +53,7 @@ from pynxtools.dataconverter.readers.multi.reader import (
 )
 from pynxtools.dataconverter.template import Template
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 
 def unpack_hdf_dataset_for_json_map(item) -> Any:

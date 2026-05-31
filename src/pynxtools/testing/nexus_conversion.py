@@ -43,7 +43,7 @@ from pynxtools.nexus.nexus import HandleNexus
 
 def get_log_file(nxs_file, log_file, tmp_path):
     """Get log file for the nexus file with read_nexus tools."""
-    logger = logging.getLogger("pynxtools")
+    logger = logging.getLogger(__name__)
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False

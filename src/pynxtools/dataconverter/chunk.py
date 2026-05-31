@@ -23,7 +23,7 @@ import os
 
 import numpy as np
 
-logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
+logger = logging.getLogger(__name__)
 
 # HDF5 data storage layout for HDF5 datasets is "contiguous" unless
 # one wraps the payload for a dataconverter template into a dictionary with
@@ -109,7 +109,7 @@ CHUNK_CONFIG_LUSTRE: dict[str, int | float] = {
 
 CHUNK_CONFIG_DEFAULT = CHUNK_CONFIG_HFIVEPY
 
-logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
+logger = logging.getLogger(__name__)
 
 
 def prioritized_axes_heuristic(

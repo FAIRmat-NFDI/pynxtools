@@ -27,7 +27,7 @@ from typing import Any, Optional, Union
 
 import yaml
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 
 @dataclass

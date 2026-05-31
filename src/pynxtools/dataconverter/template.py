@@ -24,7 +24,7 @@ import re
 
 from pynxtools.dataconverter import helpers
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 
 class Template(dict):

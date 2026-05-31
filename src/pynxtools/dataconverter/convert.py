@@ -31,7 +31,7 @@ from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 
-logger = logging.getLogger("pynxtools")
+logger = logging.getLogger(__name__)
 
 
 from importlib.metadata import entry_points
