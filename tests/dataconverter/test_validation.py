@@ -273,6 +273,8 @@ TEMPLATE["required"][
 
 def format_error_message(msg: str) -> str:
     for prefix in ("ERROR:", "WARNING:"):
+        # TODO: fix tests, these prefixes have been removed, see src/pynxtools/__init__.py
+        #
         if msg.startswith(prefix):
             return msg[len(prefix) :].lstrip()
     return msg

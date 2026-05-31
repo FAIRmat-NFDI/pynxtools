@@ -37,6 +37,8 @@ NX_DOC_BASES: dict[str, str] = {
 class CustomFormatter(logging.Formatter):
     """Formatter that specifically highlights errors and warnings."""
 
+    # TODO::do not like this, rather always add UTC time stamp and level and then
+    # always remove these, instead of extra highlight just for pleasing tests
     def format(self, record):
         if not getattr(record, "prefixed", False):
             if record.levelno in LOGGER_LEVELS_TO_HIGHLIGHT:
@@ -47,10 +49,11 @@ class CustomFormatter(logging.Formatter):
 
 
 logger = logging.getLogger("pynxtools")
-handler = logging.StreamHandler()
-formatter = CustomFormatter("%(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+# handler = logging.StreamHandler()
+# formatter = CustomFormatter("%(message)s")
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
+# logger.addHandler(logging.NullHandler())
 logger.setLevel(logging.INFO)
 
 
