@@ -126,11 +126,14 @@ def transfer_data_into_template(
     if isinstance(input_file, str):
         input_file = (input_file,)
 
-    bulletpoint = "\n\u2022 "
-    logger.info(
-        f"Using {reader} reader to convert the given files:"
-        f" {bulletpoint.join((' ', *input_file))}"
-    )
+    # bulletpoint = "\n\u2022 "
+    # logger.info(
+    #     f"Using {reader} reader to convert the given files:"
+    #     f" {bulletpoint.join((' ', *input_file))}"
+    # )
+    logger.info(f"Using {reader} to convert the given files:")
+    for entry in (input_file,) if isinstance(input_file, str) else input_file:
+        logger.info(entry)
 
     data_reader = get_reader(reader)
     if not (
