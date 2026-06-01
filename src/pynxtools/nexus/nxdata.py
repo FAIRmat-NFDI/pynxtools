@@ -206,8 +206,12 @@ def inspect_nxdata(group: h5py.Group) -> NXdataInfo:
             ds = group[key]
             info.signal = ds
             info.signal_name = key
-            info.convention = "v2" if ds.attrs.get("axes") is not None else "v1"
-            info.axes = _collect_axes_v2(group, ds)
+            if ds.attrs.get("axes") is not None:
+                info.convention = "v2"
+                info.axes = _collect_axes_v2(group, ds)
+            else:
+                info.convention = "v1"
+                info.axes = _collect_axes_v1(group, ds)
             return info
 
     return info
@@ -330,7 +334,11 @@ def _collect_axes_v3(
 def _collect_axes_v2(
     group: h5py.Group, signal_dataset: h5py.Dataset
 ) -> list[list[h5py.Dataset]]:
-    """Collect axis datasets per signal dimension using v2/v1 conventions."""
+    """Collect axis datasets per signal dimension using the v2 convention.
+
+    Axes are named by the colon/comma-delimited ``@axes`` attribute on the
+    signal field.  No ``axis=N`` fallback — that is v1 territory.
+    """
     own_axes = decode_if_string(signal_dataset.attrs.get("axes"))
     axes_names = re.split(r"[:,]", own_axes) if isinstance(own_axes, str) else []
     dim = len(signal_dataset.shape)
@@ -341,13 +349,36 @@ def _collect_axes_v2(
             ds = group[axes_names[a_item]]
             if isinstance(ds, h5py.Dataset):
                 ax_list.append(ds)
-        if not ax_list:
-            for key in group.keys():
-                ds = group[key]
-                if isinstance(ds, h5py.Dataset) and ds.attrs.get("axis") == a_item + 1:
-                    if ds.attrs.get("primary") == 1:
-                        ax_list.insert(0, ds)
-                    else:
-                        ax_list.append(ds)
+        result.append(ax_list)
+    return result
+
+
+def _collect_axes_v1(
+    group: h5py.Group, signal_dataset: h5py.Dataset
+) -> list[list[h5py.Dataset]]:
+    """Collect axis datasets per signal dimension using the v1 convention.
+
+    Each axis field carries an integer ``axis=N`` attribute linking it to
+    signal dimension *N*.  Among potentially multiple candidates for the
+    same dimension, the field with ``primary=1`` is the preferred axis and
+    is placed first in the per-dimension list; alternatives follow.
+    """
+    dim = len(signal_dataset.shape)
+    result = []
+    for a_item in range(dim):
+        ax_list: list[h5py.Dataset] = []
+        for key in group.keys():
+            ds = group[key]
+            if not isinstance(ds, h5py.Dataset):
+                continue
+            axis_val = ds.attrs.get("axis")
+            if not isinstance(axis_val, numbers.Integral):
+                continue
+            if int(axis_val) != a_item + 1:
+                continue
+            if ds.attrs.get("primary") == 1:
+                ax_list.insert(0, ds)
+            else:
+                ax_list.append(ds)
         result.append(ax_list)
     return result

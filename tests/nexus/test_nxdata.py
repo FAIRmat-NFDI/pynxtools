@@ -350,6 +350,25 @@ def test_inspect_nxdata_v1(tmp_path):
         assert info.axes[0][0].name.endswith("q")
 
 
+def test_inspect_nxdata_v1_primary_ordering(tmp_path):
+    """v1: among multiple axis=1 candidates, primary=1 must come first."""
+    with h5py.File(tmp_path / "inspect_nxdata_v1_primary_ordering.nxs", "w") as f:
+        g = f.create_group("data")
+        g.attrs["NX_class"] = "NXdata"
+        ds = g.create_dataset("I", data=np.zeros(10))
+        ds.attrs["signal"] = "1"
+        alt = g.create_dataset("q_alt", data=np.arange(10, dtype=float))
+        alt.attrs["axis"] = np.int32(1)  # alternative — no primary
+        prim = g.create_dataset("q", data=np.arange(10, dtype=float))
+        prim.attrs["axis"] = np.int32(1)
+        prim.attrs["primary"] = np.int32(1)
+        info = inspect_nxdata(g)
+        assert info.convention == "v1"
+        assert len(info.axes[0]) == 2
+        assert info.axes[0][0].name.endswith("q")  # primary first
+        assert info.axes[0][1].name.endswith("q_alt")  # alternative second
+
+
 def test_inspect_nxdata_no_convention_single_dataset_no_signal(tmp_path):
     """Single dataset with no signal marker is not spec-compliant → convention=None."""
     with h5py.File(
