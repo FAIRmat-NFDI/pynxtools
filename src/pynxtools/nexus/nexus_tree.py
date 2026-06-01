@@ -533,6 +533,11 @@ class NexusNode(NodeMixin):
                 continue
             if child.nx_type == "group":
                 req_children.append(f"{prev_path}/{child.name}")
+            elif child.nx_type == "choice":
+                # A required choice means exactly one alternative must be present.
+                # Do not recurse: adding both alternatives as individually required
+                # would produce false "missing required group" errors.
+                continue
 
             if recurse_children:
                 req_children.extend(
@@ -591,6 +596,10 @@ class NexusNode(NodeMixin):
             elif child.nx_type == "link":
                 req_children.append(f"{prev_path}/{child.name}")
                 continue
+            elif child.nx_type == "choice":
+                # Do not recurse: adding fields from all alternatives as individually
+                # required would produce false "missing required field" errors.
+                continue
 
             if recurse_children:
                 req_children.extend(
@@ -643,11 +652,32 @@ class NexusNode(NodeMixin):
             )
         ]
 
+        # When searching for groups specifically, also search inside choice nodes.
+        # Choices are schema-only containers: HDF5 groups inside them appear at the
+        # same level as the choice itself, so best_child_for must descend into them.
+        if node_type == "group":
+            for choice_name in self.get_all_direct_children_names(node_type="choice"):
+                candidate = self.search_add_child_for(choice_name)
+                if candidate is not None:
+                    children.append(candidate)
+
         for node in children:
             if node is not None and not node.variadic and name == node.name:
+                if isinstance(node, NexusChoice):
+                    # Descend: return the child matching nx_class, or the first child
+                    for choice_child in node.children:
+                        if nx_class is None or (
+                            getattr(choice_child, "nx_class", None) == nx_class
+                        ):
+                            return choice_child
+                    return node.children[0] if node.children else None
                 return node
 
-        variadic = [node for node in children if node is not None and node.variadic]
+        variadic = [
+            node
+            for node in children
+            if node is not None and node.variadic and not isinstance(node, NexusChoice)
+        ]
         return _select_best_namefit(name, variadic, hint)
 
     def get_docstring(self, depth: int | None = None) -> dict[str, str]:

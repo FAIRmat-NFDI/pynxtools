@@ -4190,3 +4190,37 @@ def test_validate_valid_external_link(tmp_path, caplog):
 
     broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
     assert broken_msgs == []
+
+
+# ---------------------------------------------------------------------------
+# NexusChoice HDF5 validation tests
+# ---------------------------------------------------------------------------
+
+
+def test_choice_group_not_flagged_as_undocumented(tmp_path, caplog):
+    """An HDF5 group that matches a NXDL choice alternative must not produce MissingDocumentation."""
+    fpath = tmp_path / "choice_test.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        entry = h5w.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        instr = entry.create_group("instrument")
+        instr.attrs["NX_class"] = "NXinstrument"
+        det = instr.create_group("detector")
+        det.attrs["NX_class"] = "NXdetector"
+        # pixel_shape is a <choice> in NXdetector with NXoff_geometry or NXcylindrical_geometry
+        pixel_shape = det.create_group("pixel_shape")
+        pixel_shape.attrs["NX_class"] = "NXoff_geometry"
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmx", h5f["/entry"], str(fpath), ignore_undocumented=False
+            )
+
+    undocumented_msgs = [
+        r.message for r in caplog.records if "undocumented" in r.message.lower()
+    ]
+    choice_msgs = [m for m in undocumented_msgs if "pixel_shape" in m]
+    assert choice_msgs == [], (
+        f"pixel_shape (choice alternative) incorrectly flagged: {choice_msgs}"
+    )

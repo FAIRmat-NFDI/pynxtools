@@ -1604,12 +1604,15 @@ def validate_dict_against(
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
         old_collector = collector
-        collector = Collector()
-        collector.logging = False
         for child in node.children:
-            collector.clear()
+            collector = Collector()
+            collector.logging = False
+            saved_name = child.name
             child.name = node.name
-            handle_group(child, keys, prev_path)
+            try:
+                handle_group(child, keys, prev_path)
+            finally:
+                child.name = saved_name
 
             if not collector.has_validation_problems():
                 collector = old_collector

@@ -1,5 +1,6 @@
 from typing import Any, get_args
 
+import pytest
 from anytree import Resolver
 
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -8,6 +9,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_units,
 )
 from pynxtools.nexus.nexus_tree import (
+    NexusChoice,
     NexusNode,
     NexusType,
     NexusUnitCategory,
@@ -83,3 +85,43 @@ def test_correct_extension_of_tree():
 
     nxtest_field = resolver.get(nxtest, "ENTRY/extended_field")
     assert nxtest_field is None
+
+
+# ---------------------------------------------------------------------------
+# NexusChoice resolution tests
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "nx_class,expected_nx_class",
+    [
+        ("NXoff_geometry", "NXoff_geometry"),
+        ("NXcylindrical_geometry", "NXcylindrical_geometry"),
+        (None, "NXoff_geometry"),  # no nx_class hint → first child
+    ],
+)
+def test_best_child_for_choice_with_group_type(nx_class, expected_nx_class):
+    """best_child_for with node_type='group' descends into NexusChoice."""
+    tree = generate_tree_from("NXdetector")
+    result = tree.best_child_for("pixel_shape", node_type="group", nx_class=nx_class)
+    assert result is not None, f"Expected a node for nx_class={nx_class!r}"
+    assert not isinstance(result, NexusChoice), "Must not return the choice itself"
+    assert result.nx_type == "group"
+    assert getattr(result, "nx_class", None) == expected_nx_class
+
+
+def test_best_child_for_choice_without_type_filter():
+    """best_child_for with no node_type filter also descends into NexusChoice."""
+    tree = generate_tree_from("NXdetector")
+    result = tree.best_child_for("pixel_shape")
+    assert result is not None
+    assert not isinstance(result, NexusChoice)
+    assert result.nx_type == "group"
+
+
+def test_required_groups_does_not_include_choice_alternatives():
+    """required_groups must not add both alternatives of a choice as individually required."""
+    tree = generate_tree_from("NXdetector")
+    req = tree.required_groups()
+    # pixel_shape and detector_shape are optional choices; neither alternative should appear
+    assert not any("pixel_shape" in r or "detector_shape" in r for r in req)
