@@ -137,7 +137,7 @@ def test_shape_from_node_replaces_none_with_wildcard():
     assert shape_from_node(node) == [2, "*", 5]
 
 
-def test_build_quantity_from_field_maps_length_unit(monkeypatch):
+def test_build_quantity_from_field_maps_transformation_unit(monkeypatch):
     """Verify field quantities keep unit semantics and enum/type conversions."""
     _patch_fake_node_types(monkeypatch)
     monkeypatch.setattr(converter.NXUnitSet, "get_dimensionality", lambda unit: "[]")
@@ -145,7 +145,7 @@ def test_build_quantity_from_field_maps_length_unit(monkeypatch):
     node = FakeField(
         name="value",
         dtype="NX_CHAR",
-        unit="NX_LENGTH",
+        unit="NX_TRANSFORMATION",
         shape=(None,),
         items=["a", "b"],
         open_enum=False,
@@ -154,7 +154,7 @@ def test_build_quantity_from_field_maps_length_unit(monkeypatch):
     build_quantity_from_node = getattr(converter, "_build_quantity_from_node")
     qty = build_quantity_from_node(node)
 
-    assert qty.unit == "NX_LENGTH"
+    assert qty.unit == "NX_ANY"
     assert qty.dimensionality == "[]"
     assert qty.shape == ["*"]
     assert qty.python_type == "MEnum(['a', 'b'])"
@@ -248,11 +248,39 @@ def test_base_from_extends_for_direct_child_with_nomad_base():
 
 
 def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatch):
-    """Ensure quantity names are suffixed when an ancestor subsection uses the same name."""
+    """Ensure conflict_concept is suffixed for both direct and concept-level conflicts.
+
+        This covers two related runtime rename cases in one build_context call:
+    - the current class defines a field whose name already exists as an ancestor
+      subsection, so the field becomes ``conflict_concept_field``
+    - the current class also defines a named concept group ``conflict_concept``
+      whose own field has the same name, and that concept's ancestor chain also
+      exposes ``conflict_concept`` as a subsection, so the concept field is
+      also renamed with ``_field``
+
+        The pre-computation path in ``_ensure_conflicts_precomputed`` is exercised in
+        a separate test below. Here the scan is skipped via state flag so the
+        assertions stay focused on build-time rename behavior driven by ancestor
+        subsection names.
+    """
     _patch_fake_node_types(monkeypatch)
 
     attr = FakeAttribute(name="units", dtype="NX_CHAR")
-    field = FakeField(name="signal", dtype="NX_FLOAT", children=[attr])
+    field = FakeField(
+        name="conflict_concept",
+        dtype="NX_FLOAT",
+        children=[attr],
+    )
+    concept_field = FakeField(name="conflict_concept", dtype="NX_FLOAT")
+    nested_conflict_group = FakeGroup(
+        name="conflict_concept",
+        nx_class="NXconflict_leaf",
+    )
+    current_group = FakeGroup(
+        name="conflict_concept",
+        nx_class="NXconflict_parent",
+        children=[concept_field, nested_conflict_group],
+    )
 
     root = SimpleNamespace(
         category="base",
@@ -261,14 +289,16 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
         ignore_extra_fields=False,
         ignore_extra_attributes=False,
         symbols=[],
-        inheritance=[SimpleNamespace(attrib={"extends": "NXobject"})],
-        nxdl_base="NXentry",
-        children=[field],
+        inheritance=[SimpleNamespace(attrib={"extends": "NXancestor"})],
+        nxdl_base="NXentry.nxdl.xml",
+        children=[field, current_group],
         get_docstring=lambda depth=1: {"en": "Doc."},
     )
 
-    monkeypatch.setattr(converter, "_ensure_conflicts_precomputed", lambda: None)
+    monkeypatch.setattr(converter, "_conflicts_precomputed", True)
     monkeypatch.setattr(converter, "generate_tree_from", lambda _: root)
+    monkeypatch.setattr(converter, "_base_class_quantities", lambda _: {})
+    monkeypatch.setattr(converter, "_nxdl_category", lambda _: "base_classes")
     monkeypatch.setattr(
         converter,
         "_base_from_extends",
@@ -283,23 +313,123 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
     monkeypatch.setattr(
         converter,
         "_all_ancestor_member_names",
-        lambda _: (frozenset(), frozenset({"signal"})),
+        lambda nx_name: (
+            (frozenset(), frozenset({"conflict_concept"}))
+            if nx_name in {"NXancestor", "NXconflict_parent"}
+            else (frozenset(), frozenset())
+        ),
     )
     monkeypatch.setattr(converter, "_qty_field_suffix_for", {})
 
     context = converter.build_context("NXentry")
     names = [q.python_name for q in context["quantities"]]
+    concept_qty_names = [
+        quantity.python_name for quantity in context["named_concepts"][0].quantities
+    ]
 
-    assert names == ["signal_field", "signal_field__units"]
+    assert names == ["conflict_concept_field", "conflict_concept_field__units"]
+    assert context["subsections"][0].python_name == "conflict_concept"
+    assert concept_qty_names == ["conflict_concept_field"]
+
+
+def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
+    monkeypatch,
+):
+    """Ensure pre-computation records `_field` suffixes for ancestor field conflicts.
+
+    This test exercises the dedicated conflict scan used before build_context.
+    The setup models a multi-level inheritance chain where:
+    - ``NXancestor`` defines a field named ``conflict_concept``
+    - ``NXentry`` extends ``NXparent``
+    - ``NXentry`` defines a group named ``conflict_concept``
+
+    The scan should therefore mark the ancestor field name for suffixing in
+    ``converter._qty_field_suffix_for['NXancestor']`` and yield the effective
+    suffixed quantity name ``conflict_concept_field``.
+    """
+    _patch_fake_node_types(monkeypatch)
+
+    monkeypatch.setattr(converter, "_conflicts_precomputed", False)
+    monkeypatch.setattr(converter, "_qty_field_suffix_for", {})
+    monkeypatch.setattr(
+        converter,
+        "_discover_base_classes",
+        lambda: ["NXancestor", "NXparent", "NXentry"],
+    )
+    monkeypatch.setattr(
+        converter,
+        "_nx_extends",
+        lambda nx_name: {
+            "NXentry": "NXparent",
+            "NXparent": "NXancestor",
+            "NXancestor": "NXobject",
+            "NXobject": "NXobject",
+        }.get(nx_name, "NXobject"),
+    )
+
+    roots = {
+        "NXancestor": SimpleNamespace(
+            nxdl_base="NXancestor.nxdl.xml",
+            children=[
+                FakeField(
+                    name="conflict_concept",
+                    dtype="NX_FLOAT",
+                    nxdl_base="NXancestor.nxdl.xml",
+                )
+            ],
+        ),
+        "NXparent": SimpleNamespace(
+            nxdl_base="NXparent.nxdl.xml",
+            children=[],
+        ),
+        "NXentry": SimpleNamespace(
+            nxdl_base="NXentry.nxdl.xml",
+            children=[
+                FakeGroup(
+                    name="conflict_concept",
+                    nx_class="NXconflict_parent",
+                    nxdl_base="NXentry.nxdl.xml",
+                    children=[
+                        FakeGroup(
+                            name="conflict_concept",
+                            nx_class="NXconflict_leaf",
+                            nxdl_base="NXentry.nxdl.xml",
+                        )
+                    ],
+                )
+            ],
+        ),
+        "NXobject": SimpleNamespace(nxdl_base="NXobject.nxdl.xml", children=[]),
+    }
+    monkeypatch.setattr(converter, "generate_tree_from", lambda nx_name: roots[nx_name])
+
+    ensure_conflicts_precomputed = getattr(converter, "_ensure_conflicts_precomputed")
+    qty_field_suffix_for = getattr(converter, "_qty_field_suffix_for")
+
+    ensure_conflicts_precomputed()
+
+    ancestor = roots["NXancestor"]
+    assert f"{ancestor.children[0].name}_field" == "conflict_concept_field"
+
+    assert qty_field_suffix_for["NXancestor"] == frozenset({"conflict_concept"})
 
 
 @pytest.mark.parametrize("reserved_name", sorted(_RESERVED_QUANTITY_NAMES))
 def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserved_name):
-    """Ensure all reserved names from naming rules are emitted with _field suffix."""
+    """Ensure reserved quantity names are rewritten with `_field` in build output.
+
+    For each reserved name from naming rules, this checks both:
+    - the field quantity name itself
+    - the derived field-attribute quantity name
+    """
     _patch_fake_node_types(monkeypatch)
 
-    attr = FakeAttribute(name="units", dtype="NX_CHAR")
-    field = FakeField(name=reserved_name, dtype="NX_FLOAT", children=[attr])
+    field_units_attr = FakeAttribute(name="units", dtype="NX_CHAR")
+    reserved_field = FakeField(
+        name=reserved_name,
+        dtype="NX_FLOAT",
+        children=[field_units_attr],
+    )
 
     root = SimpleNamespace(
         category="base",
@@ -310,11 +440,11 @@ def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserve
         symbols=[],
         inheritance=[SimpleNamespace(attrib={"extends": "NXobject"})],
         nxdl_base="NXentry.nxdl.xml",
-        children=[field],
+        children=[reserved_field],
         get_docstring=lambda depth=1: {"en": "Doc."},
     )
 
-    monkeypatch.setattr(converter, "_ensure_conflicts_precomputed", lambda: None)
+    monkeypatch.setattr(converter, "_conflicts_precomputed", True)
     monkeypatch.setattr(converter, "generate_tree_from", lambda _: root)
     monkeypatch.setattr(
         converter,
@@ -335,9 +465,10 @@ def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserve
     monkeypatch.setattr(converter, "_qty_field_suffix_for", {})
 
     context = converter.build_context("NXentry")
-    names = [q.python_name for q in context["quantities"]]
+    quantity_names = [q.python_name for q in context["quantities"]]
+    expected_base = f"{reserved_name}_field"
 
-    assert names == [f"{reserved_name}_field", f"{reserved_name}_field__units"]
+    assert quantity_names == [expected_base, f"{expected_base}__units"]
 
 
 def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
