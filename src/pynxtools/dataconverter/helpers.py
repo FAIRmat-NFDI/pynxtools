@@ -254,7 +254,7 @@ class Collector:
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
         elif log_type == ValidationProblem.NXdataOutdatedConvention:
-            logger.warning(
+            logger.info(
                 f"NXdata group {path} uses version {value} for defining the plottable data. "
                 "This is discouraged; consider updating to v3."
             )
@@ -350,6 +350,7 @@ class Collector:
             ValidationProblem.MissingNXclass,
             ValidationProblem.OpenEnumWithCustom,
             ValidationProblem.OpenEnumWithMissingCustom,
+            ValidationProblem.NXdataOutdatedConvention,
         ):
             if self.logging and message not in self.data["info"]:
                 self._log(path, log_type, value, *args, **kwargs)

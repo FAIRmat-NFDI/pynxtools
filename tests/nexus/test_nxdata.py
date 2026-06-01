@@ -95,6 +95,18 @@ def test_classify_field_axis_v2_via_colon_axes(tmp_path):
         assert classify_field(ds, "q") == "axis"
 
 
+def test_classify_field_none_when_signal_attr_absent(tmp_path):
+    """No @signal attr on the NXdata group → dataset is not a signal."""
+    with h5py.File(
+        tmp_path / "classify_field_none_when_signal_attr_absent.nxs", "w"
+    ) as f:
+        g = f.create_group("entry/data")
+        g.attrs["NX_class"] = "NXdata"
+        # no @signal attribute set
+        ds = g.create_dataset("I", data=np.zeros(10))
+        assert classify_field(ds, "I") != "signal"
+
+
 def test_classify_field_none_for_non_nxdata(tmp_path):
     with h5py.File(tmp_path / "classify_field_none_for_non_nxdata.nxs", "w") as f:
         g = f.create_group("entry/instrument")
@@ -251,7 +263,23 @@ def test_inspect_nxdata_v3_auxiliary_signals(tmp_path):
         g.create_dataset("I3", data=np.ones(10))
         info = inspect_nxdata(g)
         assert info.convention == "v3"
-        assert set(info.aux_signals) == {"I2", "I3"}
+        assert info.aux_signals == ["I2", "I3"]
+
+
+def test_inspect_nxdata_v3_auxiliary_signals_order(tmp_path):
+    """aux_signals list preserves the order declared in @auxiliary_signals."""
+    with h5py.File(
+        tmp_path / "inspect_nxdata_v3_auxiliary_signals_order.nxs", "w"
+    ) as f:
+        g = f.create_group("data")
+        g.attrs["NX_class"] = "NXdata"
+        g.attrs["signal"] = "I"
+        g.attrs["auxiliary_signals"] = np.array(["I3", "I2"], dtype="S10")
+        g.create_dataset("I", data=np.zeros(10))
+        g.create_dataset("I2", data=np.ones(10))
+        g.create_dataset("I3", data=np.ones(10))
+        info = inspect_nxdata(g)
+        assert info.aux_signals == ["I3", "I2"]
 
 
 def test_inspect_nxdata_v3_multi_dim_axes(tmp_path):
@@ -304,14 +332,35 @@ def test_inspect_nxdata_v2(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-def test_inspect_nxdata_v1_single_dataset(tmp_path):
-    with h5py.File(tmp_path / "inspect_nxdata_v1_single_dataset.nxs", "w") as f:
+def test_inspect_nxdata_v1(tmp_path):
+    """v1: signal="1" on a field, axes via axis=N attribute (no @axes on signal)."""
+    with h5py.File(tmp_path / "inspect_nxdata_v1.nxs", "w") as f:
+        g = f.create_group("data")
+        g.attrs["NX_class"] = "NXdata"
+        ds = g.create_dataset("I", data=np.zeros(10))
+        ds.attrs["signal"] = "1"
+        ax = g.create_dataset("q", data=np.arange(10, dtype=float))
+        ax.attrs["axis"] = np.int32(1)
+        ax.attrs["primary"] = np.int32(1)
+        info = inspect_nxdata(g)
+        assert info.convention == "v1"
+        assert info.signal_name == "I"
+        assert len(info.axes) == 1
+        assert len(info.axes[0]) == 1
+        assert info.axes[0][0].name.endswith("q")
+
+
+def test_inspect_nxdata_no_convention_single_dataset_no_signal(tmp_path):
+    """Single dataset with no signal marker is not spec-compliant → convention=None."""
+    with h5py.File(
+        tmp_path / "inspect_nxdata_no_convention_single_dataset_no_signal.nxs", "w"
+    ) as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.create_dataset("I", data=np.zeros(5))
         info = inspect_nxdata(g)
-        assert info.convention == "v1"
-        assert info.signal_name == "I"
+        assert info.signal is None
+        assert info.convention is None
 
 
 def test_inspect_nxdata_no_convention_multiple_datasets_no_signal(tmp_path):
@@ -323,6 +372,5 @@ def test_inspect_nxdata_no_convention_multiple_datasets_no_signal(tmp_path):
         g.create_dataset("I", data=np.zeros(5))
         g.create_dataset("I2", data=np.zeros(5))
         info = inspect_nxdata(g)
-        # multiple datasets with no signal attr → no convention
         assert info.signal is None
         assert info.convention is None

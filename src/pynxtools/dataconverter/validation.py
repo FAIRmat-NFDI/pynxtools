@@ -688,7 +688,7 @@ class ValidationVisitor(NexusVisitor):
                 idx = group.attrs[attr]
                 if isinstance(idx, _numbers.Integral) and not (0 <= int(idx) < n_dims):
                     collector.collect_and_log(
-                        f"{full_path}@{attr}",
+                        f"{full_path}/@{attr}",
                         ValidationProblem.NXdataAxisMismatch,
                         f"{full_path}/@{info.signal_name}",
                         int(idx),

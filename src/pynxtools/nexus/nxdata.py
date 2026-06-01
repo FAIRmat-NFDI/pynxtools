@@ -18,8 +18,19 @@
 """Pure NXdata detection utilities — no logging dependency.
 
 This module implements the three NeXus Data Plotting Standard conventions
-(v3 from NIAC2014, v2 from ~2004, v1 oldest) for identifying the default
-plottable signal and its axes in an HDF5/NeXus file.
+for identifying the default plottable signal and its axes in an HDF5/NeXus
+file, in order of preference:
+
+- **v3 (NIAC2014)**: ``@signal`` attribute on the NXdata group names the
+  signal; ``@axes`` or ``AXISNAME_indices`` group attributes name the axes.
+- **v2 (~2004)**: a field carries ``signal="1"``; axes are named via a
+  colon/comma-delimited ``@axes`` attribute on that field.
+- **v1 (oldest)**: a field carries ``signal="1"``; axes are associated via
+  ``axis=N`` integer attributes on the axis fields (and optionally
+  ``primary=1`` to select the preferred axis for a given dimension).
+
+If none of these spec-defined conventions is detected, ``convention=None``
+is returned and the signal is left as ``None``.
 
 Public API:
     NXdataInfo      — structured result of inspecting an NXdata group
@@ -54,8 +65,11 @@ class NXdataInfo:
         axes:         ``axes[dim]`` is a list of candidate axis datasets for
                       dimension *dim* of the signal.
         aux_signals:  Names of auxiliary signal datasets (v3 only).
-        convention:   Which plottable convention was detected: ``'v3'``,
-                      ``'v2'``, ``'v1'``, or ``None`` if nothing was found.
+        convention:   Which plottable convention was detected: ``'v3'``
+                      (NIAC2014 group-level ``@signal``), ``'v2'`` (field-level
+                      ``signal="1"`` with ``@axes`` on the signal), ``'v1'``
+                      (field-level ``signal="1"`` with ``axis=N`` on axis
+                      fields), or ``None`` if no spec-defined convention found.
     """
 
     signal: h5py.Dataset | None = None
@@ -160,10 +174,13 @@ def find_default_nxdata(root: h5py.File | h5py.Group) -> h5py.Group | None:
 
 
 def inspect_nxdata(group: h5py.Group) -> NXdataInfo:
-    """Return a :class:`NXdataInfo` for *group*, implementing v3→v2→v1 conventions.
+    """Return a :class:`NXdataInfo` for *group*, implementing v3 → v2 → v1 conventions.
 
-    Tries v3 first (``@signal`` attr on the group), then v2 (``@signal="1"`` on
-    a field), then v1 (single dataset with no signal attribute required).
+    Tries v3 first (``@signal`` attr on the group), then v2 (field-level
+    ``signal="1"`` with ``@axes`` on that field), then v1 (field-level
+    ``signal="1"`` with ``axis=N`` attributes on axis fields).  Returns
+    ``NXdataInfo()`` with ``convention=None`` if no spec-defined convention
+    is satisfied.
     """
     info = NXdataInfo()
 
@@ -179,24 +196,19 @@ def inspect_nxdata(group: h5py.Group) -> NXdataInfo:
             info.axes = _collect_axes_v3(group, dataset)
             return info
 
-    # v2: field with own @signal="1" attribute
+    # v2 / v1: field with own @signal="1" attribute
+    # v2 if that field also carries @axes (colon/comma-delimited axis names);
+    # v1 if axes are associated via axis=N integer attributes on axis fields.
     for key in group.keys():
         if not isinstance(group[key], h5py.Dataset):
             continue
         if decode_if_string(group[key].attrs.get("signal")) == "1":
-            info.signal = group[key]
+            ds = group[key]
+            info.signal = ds
             info.signal_name = key
-            info.convention = "v2"
-            info.axes = _collect_axes_v2(group, group[key])
+            info.convention = "v2" if ds.attrs.get("axes") is not None else "v1"
+            info.axes = _collect_axes_v2(group, ds)
             return info
-
-    # v1: single dataset (no signal attribute required)
-    datasets = [group[k] for k in group.keys() if isinstance(group[k], h5py.Dataset)]
-    if len(datasets) == 1:
-        info.signal = datasets[0]
-        info.signal_name = datasets[0].name.split("/")[-1]
-        info.convention = "v1"
-        # No info.axes and info.aux_signals for v1 (not defined)
 
     return info
 
@@ -215,7 +227,7 @@ def _default_entry(root: h5py.File | h5py.Group) -> h5py.Group | None:
 
 
 def _first_nxentry(root: h5py.File | h5py.Group) -> h5py.Group | None:
-    """Find the first NXentry with an NeXus file or inside an HDF5 group."""
+    """Return the first NXentry encountered in HDF5 iteration order under *root*."""
     for key in root.keys():
         hdf_node = root[key]
         if (
@@ -270,6 +282,8 @@ def _collect_axes_v3(
     result = []
     for a_item in range(dim):
         ax_list: list[h5py.Dataset] = []
+        # Per the NeXus manual, @axes should be a list; the str branch handles
+        # single-axis files where HDF5 stores a scalar string instead of a 1-element array.
         if isinstance(axes_attr, str):
             ind = group.attrs.get(f"{axes_attr}_indices")
             if (isinstance(ind, numbers.Integral) and ind == a_item) or (
@@ -277,11 +291,11 @@ def _collect_axes_v3(
             ):
                 if axes_attr in group and isinstance(group[axes_attr], h5py.Dataset):
                     ax_list.append(group[axes_attr])
-        elif isinstance(axes_attr, list) and all(
-            isinstance(named_axis, str) for named_axis in axes_attr
-        ):
+        elif isinstance(axes_attr, (list, np.ndarray)):
             for ax_name_raw in axes_attr:
                 ax_name = decode_if_string(ax_name_raw)
+                if not isinstance(ax_name, str):
+                    continue
                 if ax_name == ".":
                     continue
                 ind = group.attrs.get(f"{ax_name}_indices")
@@ -291,8 +305,7 @@ def _collect_axes_v3(
             if not ax_list and a_item < len(axes_attr):
                 ax_name = decode_if_string(axes_attr[a_item])
                 if (
-                    ax_name
-                    and ax_name != "."
+                    ax_name != "."
                     and ax_name in group
                     and isinstance(group[ax_name], h5py.Dataset)
                 ):
