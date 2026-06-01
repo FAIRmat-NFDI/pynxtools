@@ -330,7 +330,7 @@ class Sample(Component, basesections.CompositeSystem):
             parent_field="electric_field",
         ),
     )
-    magnetic_field = Quantity(
+    magnetic_field_quantity = Quantity(
         type=np.float64,
         shape=["*"],
         description=("Applied magnetic field"),
@@ -343,7 +343,7 @@ class Sample(Component, basesections.CompositeSystem):
             units="NX_ANY",
         ),
     )
-    magnetic_field__direction = Quantity(
+    magnetic_field_quantity__direction = Quantity(
         type=MEnum(["x", "y", "z"]),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -658,7 +658,7 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
         ),
     )
-    sample_component = Quantity(
+    sample_component_quantity = Quantity(
         type=MEnum(["sample", "can", "atmosphere", "kit"]),
         shape=["*"],
         description=("Type of component"),
