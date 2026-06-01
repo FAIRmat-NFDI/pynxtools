@@ -51,6 +51,7 @@ from pynxtools.nexus.nexus_tree import NexusGroup as NXTreeGroup
 from pynxtools.nomad.converters._naming import (
     _DEFAULT_BASE,
     BASESECTIONS_MAP,
+    field_conflicts_with_group,
     nx_type_to_source,
     nxdl_to_class_name,
     nxdl_to_quantity_name,
@@ -513,9 +514,9 @@ def _build_named_concept(
         # Apply same conflict resolution as top-level quantities: ancestor
         # SubSection wins, field Quantity gets _field suffix.
         if qty.python_name in concept_field_suffix:
-            qty.python_name = f"{qty.python_name}_field"
+            qty.python_name = field_conflicts_with_group(qty.python_name)
         elif qty.python_name in concept_ancestor_sub_names:
-            qty.python_name = f"{qty.python_name}_field"
+            qty.python_name = field_conflicts_with_group(qty.python_name)
         if qty.python_name in seen:
             continue
         seen.add(qty.python_name)
@@ -858,6 +859,26 @@ def build_context(nx_name: str) -> dict:
     # covered by the Python base class and must not be re-declared here.
     primary_nxdl = root_node.nxdl_base
 
+    # Pre-scan: collect subsection python_names defined in this class so that
+    # a same-class field with the same name (e.g. NXsample.sample_component field
+    # vs NXsample_component variadic group) can be suffixed before processing.
+    own_sub_names: set[str] = set()
+    for child in root_node.children:
+        if child.nx_type != "group" or child.nxdl_base != primary_nxdl:
+            continue
+        nx_nt = child.name_type or "specified"
+        if nx_nt == "any":
+            stem = (
+                child.nx_class[2:].lower()
+                if child.nx_class.startswith("NX")
+                else child.nx_class.lower()
+            )
+            own_sub_names.add(nxdl_to_subsection_name(stem))
+        else:
+            own_sub_names.add(nxdl_to_subsection_name(child.name))
+
+    all_sub_names = parent_sub_names | own_sub_names
+
     for child in root_node.children:
         if child.nx_type == "group" and child.nxdl_base != primary_nxdl:
             continue
@@ -867,11 +888,9 @@ def build_context(nx_name: str) -> dict:
             # Group wins: if a descendant uses this name for a group, the field
             # was precomputed to need _field suffix.
             if qty.python_name in _qty_field_suffix_for.get(nx_name, frozenset()):
-                qty.python_name = f"{qty.python_name}_field"
-            # Ancestor group wins: if an ancestor uses this name for a SubSection,
-            # this field shadows it — rename to _field.
-            elif qty.python_name in parent_sub_names:
-                qty.python_name = f"{qty.python_name}_field"
+                qty.python_name = field_conflicts_with_group(qty.python_name)
+            elif qty.python_name in all_sub_names:
+                qty.python_name = field_conflicts_with_group(qty.python_name)
             if qty.python_name in seen_quantities:
                 continue
             seen_quantities.add(qty.python_name)
@@ -880,9 +899,9 @@ def build_context(nx_name: str) -> dict:
         elif child.nx_type == "field":
             qty = _build_quantity_from_node(child)
             if qty.python_name in _qty_field_suffix_for.get(nx_name, frozenset()):
-                qty.python_name = f"{qty.python_name}_field"
-            elif qty.python_name in parent_sub_names:
-                qty.python_name = f"{qty.python_name}_field"
+                qty.python_name = field_conflicts_with_group(qty.python_name)
+            elif qty.python_name in all_sub_names:
+                qty.python_name = field_conflicts_with_group(qty.python_name)
             if qty.python_name in seen_quantities:
                 continue
             seen_quantities.add(qty.python_name)

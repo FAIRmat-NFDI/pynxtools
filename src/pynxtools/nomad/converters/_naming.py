@@ -47,6 +47,22 @@ def nxdl_to_quantity_name(nxdl_name: str) -> str:
     return nxdl_name
 
 
+def field_conflicts_with_group(python_name: str) -> str:
+    """Return a renamed Quantity python_name that no longer collides with a SubSection.
+
+    Groups always win the unqualified name. The conflicting field Quantity is
+    renamed with a ``_quantity`` suffix.
+
+    Examples
+    --------
+    >>> field_conflicts_with_group("sample_component")
+    'sample_component_quantity'
+    >>> field_conflicts_with_group("magnetic_field")
+    'magnetic_field_quantity'
+    """
+    return f"{python_name}_quantity"
+
+
 def nxdl_to_subsection_name(nxdl_name: str) -> str:
     """Convert an NXDL group name to a safe Python subsection name.
 
