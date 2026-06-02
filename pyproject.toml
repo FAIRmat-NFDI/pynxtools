@@ -171,6 +171,10 @@ fixable = ["ALL"]
 isort.split-on-trailing-comma = false
 isort.known-first-party = ["pynxtools"]
 
+[tool.ruff.lint.per-file-ignores]
+# NXreflections uses single-letter Miller index field names h, k, l (E741: ambiguous variable name)
+"src/pynxtools/nomad/metainfo/base_classes/reflections.py" = ["E741"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
