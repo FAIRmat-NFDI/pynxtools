@@ -1,0 +1,415 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nx-class NXunit_cell` to regenerate.
+# Additive-only: the generator will never remove or rename existing members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.base_classes.object import Object
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["UnitCell"]
+
+
+class UnitCell(Object):
+    """
+    Base class to describe structural aspects of an arrangement of atoms or
+    ions including a crystallographic unit cell.
+
+    Following recommendations of `CIF
+    <https://www.iucr.org/resources/cif/spec/version1.1>`_ and `International
+    Tables of Crystallography <https://it.iucr.org/>`_.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXunit_cell",
+            category="base",
+            symbols={"d": "Dimensionality of the lattice."},
+        ),
+    )
+
+    atom = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    reference_frame = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-reference-frame-field"
+        ],
+        description=(
+            "Path to a reference frame in which the unit cell is defined to "
+            "resolve ambiguity in cases when e.g. a different reference frame "
+            "than the NeXus default reference frame (McStas) was chosen."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="reference_frame",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    dimensionality = Quantity(
+        type=MEnum(["1", "2", "3"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-dimensionality-field"
+        ],
+        description=("Dimensionality of the structure."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="dimensionality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["1", "2", "3"],
+        ),
+    )
+    a_b_c = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-a-b-c-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=(
+            "Geometry of the unit cell quantified via parameters a, b, and c."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="a_b_c",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    a = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-a-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Geometry of the unit cell quantified individually via parameter a."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="a",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    b = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-b-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Geometry of the unit cell quantified individually via parameter b."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="b",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    c = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-c-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Geometry of the unit cell quantified individually via parameter c."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="c",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    alpha_beta_gamma = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-alpha-beta-gamma-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=(
+            "Geometry of the unit cell quantified via parameters alpha, beta, "
+            "and gamma."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="alpha_beta_gamma",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    alpha = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-alpha-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Geometry of the unit cell quantified individually via parameter alpha."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="alpha",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    beta = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-beta-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Geometry of the unit cell quantified individually via parameter beta."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="beta",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    gamma = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-gamma-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Geometry of the unit cell quantified individually via parameter gamma."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="gamma",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    crystal_system = Quantity(
+        type=MEnum(
+            [
+                "triclinic",
+                "monoclinic",
+                "orthorhombic",
+                "tetragonal",
+                "rhombohedral",
+                "hexagonal",
+                "cubic",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-crystal-system-field"
+        ],
+        description=(
+            "Crystal system. For a crystal system in 2D space monoclinic is an "
+            "exact synonym for oblique. For a crystal system in 2D space "
+            "orthorhombic is an exact synonym for rectangular. For a crystal "
+            "system in 2D space tetragonal is an exact synonym for square."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="crystal_system",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "triclinic",
+                "monoclinic",
+                "orthorhombic",
+                "tetragonal",
+                "rhombohedral",
+                "hexagonal",
+                "cubic",
+            ],
+        ),
+    )
+    laue_group = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-laue-group-field"
+        ],
+        description=(
+            "Laue group using International Table of Crystallography notation."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="laue_group",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    point_group = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-point-group-field"
+        ],
+        description=(
+            "Point group using International Table of Crystallography notation."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="point_group",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    space_group = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-space-group-field"
+        ],
+        description=(
+            "Space group from the International Table of Crystallography notation."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="space_group",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    is_centrosymmetric = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-is-centrosymmetric-field"
+        ],
+        description=(
+            "True if space group is considered a centrosymmetric one. False if "
+            "space group is considered a non-centrosymmetric one. "
+            "Centrosymmetric has all types and combinations of symmetry elements "
+            "(translation, rotational axis, mirror planes, center of inversion) "
+            "Non-centrosymmetric compared to centrosymmetric is constrained (no "
+            "inversion). Chiral compared to non-centrosymmetric is constrained "
+            "(no mirror planes)."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="is_centrosymmetric",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    is_chiral = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-is-chiral-field"
+        ],
+        description=(
+            "True if space group is considered a chiral one. False if space "
+            "group is consider a non-chiral one."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="is_chiral",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-area-field"
+        ],
+        dimensionality="[length] ** 2",
+        description=("Area of the unit cell if dimensionality is 2."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_AREA",
+        ),
+    )
+    volume = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-volume-field"
+        ],
+        dimensionality="[length] ** 3",
+        description=("Volume of the unit cell if dimensionality is 3."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="volume",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLUME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
