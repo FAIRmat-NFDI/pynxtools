@@ -64,6 +64,9 @@ from pynxtools.units import NXUnitSet
 
 _TEMPLATE_DIR = Path(__file__).parent / "templates"
 _DEFAULT_OUTPUT_DIR = Path(__file__).parents[1] / "metainfo" / "base_classes"
+_DEFAULT_APPLICATIONS_OUTPUT_DIR = (
+    Path(__file__).parents[1] / "metainfo" / "applications"
+)
 
 _jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(str(_TEMPLATE_DIR)),
@@ -203,26 +206,32 @@ _NXDL_CATEGORY_CACHE: dict[str, str] = {}
 
 
 def _nxdl_category(nx_class: str) -> str:
-    """Return the metainfo sub-package name ('base_classes', 'applications',
-    or 'contributed') for a given NXDL class name."""
+    """Return the metainfo output sub-package ('base_classes' or 'applications')
+    for a given NXDL class name, routing by NXDL category attribute."""
     if nx_class in _NXDL_CATEGORY_CACHE:
         return _NXDL_CATEGORY_CACHE[nx_class]
 
-    import glob as _glob
+    try:
+        root = generate_tree_from(nx_class)
+        result = "applications" if root.category == "application" else "base_classes"
+    except Exception:
+        result = "base_classes"
 
-    defs = get_nexus_definitions_path()
-    cat_map = {
-        "base_classes": "base_classes",
-        "applications": "applications",
-        "contributed_definitions": "contributed",
-    }
-    for folder, metainfo_sub in cat_map.items():
-        if _glob.glob(str(defs / folder / f"{nx_class}.nxdl.xml")):
-            _NXDL_CATEGORY_CACHE[nx_class] = metainfo_sub
-            return metainfo_sub
+    _NXDL_CATEGORY_CACHE[nx_class] = result
+    return result
 
-    _NXDL_CATEGORY_CACHE[nx_class] = "base_classes"
-    return "base_classes"
+
+def _target_module_exists(nx_class: str) -> bool:
+    """Return True if the generated .py file for nx_class already exists on disk."""
+    category = _nxdl_category(nx_class)
+    module = _class_module_name(nx_class)
+    if category == "applications":
+        target = (
+            Path(__file__).parents[1] / "metainfo" / "applications" / f"{module}.py"
+        )
+    else:
+        target = _DEFAULT_OUTPUT_DIR / f"{module}.py"
+    return target.exists()
 
 
 def _class_module_name(nx_class: str) -> str:
@@ -329,6 +338,9 @@ def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
         child_suffix = "".join(
             p.capitalize() for p in node.name.lower().replace("-", "_").split("_") if p
         )
+    # Avoid double prefix: XpsXpsCoordinateSystem → XpsCoordinateSystem
+    if child_suffix.startswith(parent_class_name):
+        return child_suffix
     return parent_class_name + child_suffix
 
 
@@ -707,7 +719,7 @@ def _ensure_conflicts_precomputed() -> None:
         return
     _conflicts_precomputed = True
 
-    all_classes = _discover_base_classes()
+    all_classes = _discover_base_classes() + _discover_applications()
 
     # Pass 1: collect own group python_names per class
     class_group_names: dict[str, set[str]] = {}
@@ -811,10 +823,11 @@ def _base_from_extends(
         return "Object", obj_path, True, "", ""
 
     # Non-trivial NeXus parent — use the generated parent class as primary base
-    if _nxdl_category(extends_nx_class) == "base_classes":
+    parent_category = _nxdl_category(extends_nx_class)
+    if parent_category in ("base_classes", "applications"):
         ext_module = _class_module_name(extends_nx_class)
         ext_class = nxdl_to_class_name(extends_nx_class)
-        ext_path = f"pynxtools.nomad.metainfo.base_classes.{ext_module}"
+        ext_path = f"pynxtools.nomad.metainfo.{parent_category}.{ext_module}"
         # Only add NOMAD secondary base when the parent's chain doesn't already
         # provide it (e.g. ApmRanging extends NXprocess which IS ActivityStep —
         # adding ActivityStep again would create an unresolvable diamond in NOMAD).
@@ -842,11 +855,59 @@ def build_context(nx_name: str) -> dict:
 
     nx_category = root_node.category
 
+    # Application definitions wrap exactly one NXentry group at the top level.
+    # Unwrap it: Xps(Entry) is correct; Xps(Object) containing an entry is not.
+    # Exception: if the application extends another application/contributed class
+    # (e.g. NXafm extends NXspm), inherit from that class instead of Entry.
+    _unwrapped_children = None
+    if nx_category == "application":
+        _nx_entry_child = next(
+            (
+                c
+                for c in root_node.children
+                if c.nx_type == "group" and c.nx_class == "NXentry"
+            ),
+            None,
+        )
+        if _nx_entry_child is not None:
+            _unwrapped_children = _nx_entry_child.children
+
     class_name = nxdl_to_class_name(nx_name)
     parent_module = _class_module_name(nx_name)
-    base_class, base_import, base_is_generated, nomad_base_class, _nomad_base_import = (
-        _base_from_extends(nx_name, root_node)
-    )
+
+    if _unwrapped_children is not None:
+        # Use Entry as Python base (NXentry's generated class), not the extends chain.
+        # The extends chain for application defs is always NXobject which would give Object;
+        # but the semantic base is Entry since we've unwrapped the NXentry level.
+        _extends_nx_name = (
+            root_node.inheritance[0].attrib.get("extends", "NXobject")
+            if root_node.inheritance
+            else "NXobject"
+        )
+        if _nxdl_category(_extends_nx_name) == "applications":
+            # Extends another application — use that as base (same unwrapping applies)
+            (
+                base_class,
+                base_import,
+                base_is_generated,
+                nomad_base_class,
+                _nomad_base_import,
+            ) = _base_from_extends(nx_name, root_node)
+        else:
+            # Standard application: unwrap NXentry → base is Entry
+            base_class = "Entry"
+            base_import = "pynxtools.nomad.metainfo.base_classes.entry"
+            base_is_generated = True
+            nomad_base_class = ""
+            _nomad_base_import = ""
+    else:
+        (
+            base_class,
+            base_import,
+            base_is_generated,
+            nomad_base_class,
+            _nomad_base_import,
+        ) = _base_from_extends(nx_name, root_node)
 
     docstring = (
         _plain_description(root_node) or f"NOMAD metainfo class for NeXus {nx_name}."
@@ -871,25 +932,36 @@ def build_context(nx_name: str) -> dict:
     # _ensure_conflicts_precomputed() which marks the ancestor Quantity for _field.
     parent_sub_names: frozenset[str] = frozenset()
     if base_is_generated:
-        _extends_nx = (
-            root_node.inheritance[0].attrib.get("extends", "NXobject")
-            if root_node.inheritance
-            else "NXobject"
-        )
-        _, parent_sub_names = _all_ancestor_member_names(_extends_nx)
+        if _unwrapped_children is not None:
+            # Python base is Entry (from NXentry unwrapping); use NXentry's ancestor
+            # chain for conflict detection so that Entry's SubSections (e.g. 'notes')
+            # are included in parent_sub_names.
+            _conflict_ancestor = "NXentry"
+        else:
+            _conflict_ancestor = (
+                root_node.inheritance[0].attrib.get("extends", "NXobject")
+                if root_node.inheritance
+                else "NXobject"
+            )
+        _, parent_sub_names = _all_ancestor_member_names(_conflict_ancestor)
 
-    # Only process children directly defined in this NXDL file.
-    # _check_sibling_namefit adds inherited variadic groups (e.g. NOTE from
-    # NXobject) as siblings during NexusGroup.__init__; those are already
-    # covered by the Python base class and must not be re-declared here.
+    # For unwrapped application definitions, children come from the NXentry group;
+    # for all others, from root_node directly.
+    # primary_nxdl filter is relaxed for unwrapped children (they belong to the
+    # NXentry element, whose nxdl_base may differ from the application root).
+    effective_children = (
+        _unwrapped_children if _unwrapped_children is not None else root_node.children
+    )
     primary_nxdl = root_node.nxdl_base
 
     # Pre-scan: collect subsection python_names defined in this class so that
     # a same-class field with the same name (e.g. NXsample.sample_component field
     # vs NXsample_component variadic group) can be suffixed before processing.
     own_sub_names: set[str] = set()
-    for child in root_node.children:
-        if child.nx_type != "group" or child.nxdl_base != primary_nxdl:
+    for child in effective_children:
+        if child.nx_type != "group":
+            continue
+        if _unwrapped_children is None and child.nxdl_base != primary_nxdl:
             continue
         nx_nt = child.name_type or "specified"
         if nx_nt == "any":
@@ -904,8 +976,12 @@ def build_context(nx_name: str) -> dict:
 
     all_sub_names = parent_sub_names | own_sub_names
 
-    for child in root_node.children:
-        if child.nx_type == "group" and child.nxdl_base != primary_nxdl:
+    for child in effective_children:
+        if (
+            child.nx_type == "group"
+            and _unwrapped_children is None
+            and child.nxdl_base != primary_nxdl
+        ):
             continue
 
         if child.nx_type == "attribute":
@@ -952,12 +1028,11 @@ def build_context(nx_name: str) -> dict:
                 )
 
         elif child.nx_type == "group":
-            # Phase 1: only generate SubSections for base_classes targets.
-            # Cross-category references (contributed, applications) cannot be
-            # resolved until Phase 2 generates those modules. Attempting to
-            # register them makes NOMAD's global __init_metainfo__() fail.
-            # Regenerate with --force when Phase 2 is complete.
-            if _nxdl_category(child.nx_class) != "base_classes":
+            # Skip cross-category references whose target module has not been
+            # generated yet — NOMAD's __init_metainfo__() would fail to resolve
+            # the string FQN.  Once Phase 2 generates all application modules,
+            # regenerate base classes with --force to capture these references.
+            if not _target_module_exists(child.nx_class):
                 continue
 
             concept_name = _concept_class_name(class_name, child)
@@ -978,12 +1053,14 @@ def build_context(nx_name: str) -> dict:
 
             if concept.quantities:
                 named_concepts.append(concept)
-                target_fqn = f"pynxtools.nomad.metainfo.base_classes.{parent_module}.{concept_name}"
+                _parent_category = _nxdl_category(nx_name)
+                target_fqn = f"pynxtools.nomad.metainfo.{_parent_category}.{parent_module}.{concept_name}"
 
                 # Track import for concept base class (skip self-referencing groups).
                 if concept.base_module != parent_module:
+                    _base_category = _nxdl_category(f"NX{concept.base_module}")
                     import_entry = (
-                        f"pynxtools.nomad.metainfo.base_classes.{concept.base_module}",
+                        f"pynxtools.nomad.metainfo.{_base_category}.{concept.base_module}",
                         concept.base_class_name,
                     )
                     if import_entry not in concept_imports:
@@ -1140,25 +1217,31 @@ def _existing_member_names(source: str) -> set[str]:
     return names
 
 
-def write_base_class(
+def write_class(
     nx_name: str,
     dry_run: bool = False,
     force: bool = False,
     output_dir: Path | None = None,
 ) -> bool:
-    """Generate and write the Python file for one base class.
+    """Generate and write the Python file for any NXDL class (base or application).
 
     Returns True if the file content changed (or was created), False if unchanged.
     In dry_run mode: returns True if the file would differ, raises nothing.
 
-    output_dir defaults to the pynxtools-internal base_classes directory.
+    output_dir defaults to the category-appropriate internal directory:
+    base_classes/ for category='base', applications/ for category='application'.
     Pass an explicit path to target a different package (e.g. nomad-measurements).
     """
     context = build_context(nx_name)
     new_source = render(context)
 
     module_name = _class_module_name(nx_name)
-    dest = output_dir if output_dir is not None else _DEFAULT_OUTPUT_DIR
+    if output_dir is not None:
+        dest = output_dir
+    elif _nxdl_category(nx_name) == "applications":
+        dest = _DEFAULT_APPLICATIONS_OUTPUT_DIR
+    else:
+        dest = _DEFAULT_OUTPUT_DIR
     out_path = dest / f"{module_name}.py"
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -1191,10 +1274,42 @@ def write_base_class(
 # ---------------------------------------------------------------------------
 
 
-def _discover_base_classes() -> list[str]:
+def _nxdl_category_attr(nx_class: str) -> str:
+    """Read the category attribute from the NXDL <definition> element directly."""
+    try:
+        root = generate_tree_from(nx_class)
+        return root.category or "base"
+    except Exception:
+        return "base"
+
+
+def _discover_all_nxdl_classes() -> list[str]:
+    """Return all NXDL class names across all definition folders."""
     defs = get_nexus_definitions_path()
-    bc_dir = defs / "base_classes"
-    return sorted(f.stem.replace(".nxdl", "") for f in bc_dir.glob("*.nxdl.xml"))
+    result: list[str] = []
+    for folder in ("base_classes", "applications", "contributed_definitions"):
+        folder_dir = defs / folder
+        if folder_dir.exists():
+            result.extend(
+                f.stem.replace(".nxdl", "") for f in folder_dir.glob("*.nxdl.xml")
+            )
+    return sorted(set(result))
+
+
+def _discover_base_classes() -> list[str]:
+    """Return all NXDL classes with category='base'."""
+    return [
+        nx for nx in _discover_all_nxdl_classes() if _nxdl_category_attr(nx) == "base"
+    ]
+
+
+def _discover_applications() -> list[str]:
+    """Return all NXDL classes with category='application'."""
+    return [
+        nx
+        for nx in _discover_all_nxdl_classes()
+        if _nxdl_category_attr(nx) == "application"
+    ]
 
 
 def _build_dependency_graph(nx_names: list[str]) -> dict[str, set[str]]:
@@ -1213,19 +1328,23 @@ def _build_dependency_graph(nx_names: list[str]) -> dict[str, set[str]]:
     return deps
 
 
-def generate_all_base_classes(
+def write_base_class(
+    nx_name: str,
+    dry_run: bool = False,
+    force: bool = False,
+    output_dir: Path | None = None,
+) -> bool:
+    """Backward-compatible alias for write_class."""
+    return write_class(nx_name, dry_run=dry_run, force=force, output_dir=output_dir)
+
+
+def _generate_nx_classes(
+    nx_names: list[str],
     dry_run: bool = False,
     force: bool = False,
     output_dir: Path | None = None,
 ) -> int:
-    """Generate Python files for all NXDL base classes in dependency order.
-
-    Returns the number of files written (dry_run: number that would change).
-
-    output_dir defaults to the pynxtools-internal base_classes directory.
-    Pass an explicit path to target a different package (e.g. nomad-measurements).
-    """
-    nx_names = _discover_base_classes()
+    """Generate Python files for a list of NXDL classes in dependency order."""
     dep_graph = _build_dependency_graph(nx_names)
     ordered = toposort_flatten(dep_graph, sort=True)
 
@@ -1234,7 +1353,7 @@ def generate_all_base_classes(
         if nx_name not in dep_graph:
             continue
         try:
-            changed = write_base_class(
+            changed = write_class(
                 nx_name, dry_run=dry_run, force=force, output_dir=output_dir
             )
         except Exception as exc:
@@ -1243,3 +1362,25 @@ def generate_all_base_classes(
         if changed:
             written += 1
     return written
+
+
+def generate_all_base_classes(
+    dry_run: bool = False,
+    force: bool = False,
+    output_dir: Path | None = None,
+) -> int:
+    """Generate Python files for all NXDL base-category classes in dependency order."""
+    return _generate_nx_classes(
+        _discover_base_classes(), dry_run=dry_run, force=force, output_dir=output_dir
+    )
+
+
+def generate_all_applications(
+    dry_run: bool = False,
+    force: bool = False,
+    output_dir: Path | None = None,
+) -> int:
+    """Generate Python files for all NXDL application-category classes in dependency order."""
+    return _generate_nx_classes(
+        _discover_applications(), dry_run=dry_run, force=force, output_dir=output_dir
+    )

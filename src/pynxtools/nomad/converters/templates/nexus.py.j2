@@ -20,6 +20,10 @@
 # Run `pynx nomad generate-metainfo --nxdl {{ nx_name }}` to regenerate.
 # Additive-only: the generator will never remove or rename existing class members.
 # Add normalize() logic directly; it will be preserved on regeneration.
+{% if nx_category == "application" %}
+# NOTE: This class is generated from a community-contributed NXDL definition.
+# The NXDL source may change across versions. Regenerate after updating definitions.
+{% endif %}
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
