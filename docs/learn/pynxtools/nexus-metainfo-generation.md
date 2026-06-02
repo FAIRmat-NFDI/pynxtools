@@ -217,12 +217,12 @@ src/pynxtools/nomad/
     annotations.py              # NeXusDefinition + NeXusGroup + NeXusQuantity + registration
     converters/
         __init__.py
-        _naming.py              # nxdl_to_class_name, BASESECTIONS_MAP, type mapping
+        _mapping.py             # nxdl_to_class_name, BASESECTIONS_MAP, type mapping
         nxdl_to_metainfo.py     # generator: NexusNode → .py via Jinja2
         templates/
             base_class.py.j2    # Jinja2 template
     metainfo/
-        __init__.py             # public: build_package()
+        __init__.py             # public: build_base_classes_package()
         _package.py             # assembles NOMAD Package
         base_classes/           # generated .py files (one per NXDL base class)
             __init__.py
@@ -247,6 +247,7 @@ class Entry(Object, basesections.Measurement):
     """Description of a complete, self-consistent measurement."""
 
     m_def = Section(
+        links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXentry",
             category="base",
@@ -275,6 +276,7 @@ class Entry(Object, basesections.Measurement):
 
     start_time = Quantity(
         type=Datetime,
+        links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-start-time-field"],
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="start_time",
@@ -292,6 +294,7 @@ class EntryUser(User):
     """A user contributing to this entry."""
 
     m_def = Section(
+        links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-user-group"],
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXuser",
@@ -347,15 +350,19 @@ data = Quantity(
 
 ## Additive-only generation
 
-The generator never removes or renames existing members. When a file already exists:
+The generator never removes hand-written additions. When a file already exists:
 
-- If `force=False` (default): the file is rewritten only if the new source contains
-  members not yet present in the existing file.
+- If `force=False` (default): the file is rewritten whenever the generated source differs
+  from the existing file **and** the existing file contains no user-added members (methods
+  or quantities not present in the new output). This means generator-driven changes
+  (descriptions, annotation values, new members) propagate automatically, while files with
+  custom `normalize()` logic are protected.
 - If `force=True`: the file is always overwritten.
 - In `dry_run` mode: returns `True` if the file would differ; no disk write occurs.
 
-Custom `normalize()` methods added directly to generated files are preserved because the
-`ast.parse()` check compares member *names*, not content.
+User-added members are detected by comparing the set of names in the existing file against
+the set the generator would produce. Any name present in the existing file but absent from
+the new output is considered user-added.
 
 ---
 
@@ -383,20 +390,20 @@ pynx nomad generate-metainfo --all --force
 NOMAD `Package`:
 
 ```python
-from pynxtools.nomad.metainfo._package import build_package
+from pynxtools.nomad.metainfo._package import build_base_classes_package
 
-pkg = build_package()
+pkg = build_base_classes_package()
 print(len(pkg.section_definitions), "sections")
 ```
 
-During `build_package()`, `__init_metainfo__()` resolves all `SubSection.section_def`
+During `build_base_classes_package()`, `__init_metainfo__()` resolves all `SubSection.section_def`
 string FQNs into live class references.
 
 !!! note "Phase 1 limitation"
     Some base classes reference groups from the contributed definitions
     (e.g. `NXphase` → `NXmicrostructure_ipf`).  Those contributed classes are not
     generated in Phase 1, so the corresponding `SubSection` references remain
-    unresolved.  `build_package()` emits a warning and continues rather than raising.
+    unresolved.  `build_base_classes_package()` emits a warning and continues rather than raising.
     These cross-category references are resolved in Phase 2.
 
 ---
@@ -448,7 +455,7 @@ Domain-specific abbreviations (`xrd`, `xps`, `arpes`, `mpes`, `em`, `apm`, `xas`
 ### Quantity names
 
 Field and attribute names are kept as-is (NeXus convention uses snake_case throughout).
-Attributes are emitted without the `@` prefix. Python reserved words and a small set of NOMAD basesections-reserved names get a `_field` suffix (e.g. `name` → `name_field`). 
+Attributes are emitted without the `@` prefix. A small set of NOMAD `BaseSection`-reserved names get a `_quantity` suffix (e.g. `name` → `name_quantity`). When a field name collides with a same-class or ancestor `SubSection` name, the field also gets `_quantity` (groups always win the unqualified name).
 
 ### Subsection names
 
