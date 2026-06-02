@@ -50,6 +50,9 @@ class Sample(Component, basesections.CompositeSystem):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample"
+        ],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXsample",
             category="base",
@@ -252,8 +255,11 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
 
-    name_field = Quantity(
+    name_quantity = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-name-field"
+        ],
         description=("Descriptive name of sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -265,6 +271,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     chemical_formula = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-chemical-formula-field"
+        ],
         description=(
             "The chemical formula specified using CIF conventions. Abbreviated "
             "version of CIF standard: * Only recognized element symbols may be "
@@ -293,6 +302,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     temperature = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-temperature-field"
+        ],
         dimensionality="[temperature]",
         description=("Sample temperature. This could be a scanned variable"),
         a_nexus_quantity=NeXusQuantity(
@@ -306,6 +318,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     electric_field = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-electric-field-field"
+        ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         shape=["*"],
         description=("Applied electric field"),
@@ -320,6 +335,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     electric_field__direction = Quantity(
         type=MEnum(["x", "y", "z"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-electric-field-direction-attribute"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="direction",
@@ -332,6 +350,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     magnetic_field_quantity = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-magnetic-field-field"
+        ],
         shape=["*"],
         description=("Applied magnetic field"),
         a_nexus_quantity=NeXusQuantity(
@@ -345,6 +366,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     magnetic_field_quantity__direction = Quantity(
         type=MEnum(["x", "y", "z"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-magnetic-field-direction-attribute"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="direction",
@@ -357,6 +381,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     stress_field = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-stress-field-field"
+        ],
         shape=["*"],
         description=("Applied external stress field"),
         a_nexus_quantity=NeXusQuantity(
@@ -370,6 +397,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     stress_field__direction = Quantity(
         type=MEnum(["x", "y", "z"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-stress-field-direction-attribute"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="direction",
@@ -382,6 +412,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     pressure = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-pressure-field"
+        ],
         dimensionality="[mass] / [length] / [time] ** 2",
         shape=["*"],
         description=("Applied pressure"),
@@ -396,6 +429,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     changer_position = Quantity(
         type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-changer-position-field"
+        ],
         dimensionality="dimensionless",
         description=("Sample changer position"),
         a_nexus_quantity=NeXusQuantity(
@@ -409,6 +445,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     unit_cell_abc = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-abc-field"
+        ],
         dimensionality="[length]",
         shape=[3],
         description=("Crystallography unit cell parameters a, b, and c"),
@@ -423,6 +462,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     unit_cell_alphabetagamma = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-alphabetagamma-field"
+        ],
         dimensionality="[angle]",
         shape=[3],
         description=("Crystallography unit cell parameters alpha, beta, and gamma"),
@@ -437,6 +479,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     unit_cell = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-field"
+        ],
         dimensionality="[length]",
         shape=["*", 6],
         description=("Unit cell parameters (lengths and angles)"),
@@ -451,6 +496,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     unit_cell_volume = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-volume-field"
+        ],
         dimensionality="[length] ** 3",
         shape=["*"],
         description=("Volume of the unit cell"),
@@ -465,6 +513,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     sample_orientation = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-orientation-field"
+        ],
         dimensionality="[angle]",
         shape=[3],
         description=(
@@ -482,6 +533,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     orientation_matrix = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-orientation-matrix-field"
+        ],
         shape=["*", 3, 3],
         description=(
             "Orientation matrix of single crystal sample using Busing-Levy "
@@ -498,6 +552,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     ub_matrix = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-ub-matrix-field"
+        ],
         shape=["*", 3, 3],
         description=(
             "UB matrix of single crystal sample using Busing-Levy convention: W. "
@@ -515,6 +572,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     mass = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-mass-field"
+        ],
         dimensionality="[mass]",
         shape=["*"],
         description=("Mass of sample"),
@@ -529,6 +589,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     density = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-density-field"
+        ],
         dimensionality="[mass] / [length] ** 3",
         shape=["*"],
         description=("Density of sample"),
@@ -543,6 +606,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     relative_molecular_mass = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-relative-molecular-mass-field"
+        ],
         dimensionality="[mass]",
         shape=["*"],
         description=("Relative Molecular Mass of sample"),
@@ -570,6 +636,9 @@ class Sample(Component, basesections.CompositeSystem):
                 "sample environment",
             ]
         ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-type-field"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="type",
@@ -602,6 +671,9 @@ class Sample(Component, basesections.CompositeSystem):
                 "other",
             ]
         ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-situation-field"
+        ],
         description=(
             "The atmosphere will be one of the components, which is where its "
             "details will be stored; the relevant components will be indicated "
@@ -624,8 +696,11 @@ class Sample(Component, basesections.CompositeSystem):
             ],
         ),
     )
-    description_field = Quantity(
+    description_quantity = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-description-field"
+        ],
         description=("Description of the sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -637,6 +712,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     preparation_date = Quantity(
         type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-preparation-date-field"
+        ],
         description=("Date of preparation of the sample"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -648,6 +726,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     component = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-component-field"
+        ],
         shape=["*"],
         description=("Details of the component of the sample and/or can"),
         a_nexus_quantity=NeXusQuantity(
@@ -660,6 +741,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     sample_component_quantity = Quantity(
         type=MEnum(["sample", "can", "atmosphere", "kit"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-component-field"
+        ],
         shape=["*"],
         description=("Type of component"),
         a_nexus_quantity=NeXusQuantity(
@@ -673,6 +757,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     concentration = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-concentration-field"
+        ],
         dimensionality="[mass] / [length] ** 3",
         shape=["*"],
         description=("Concentration of each component"),
@@ -687,6 +774,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     volume_fraction = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-volume-fraction-field"
+        ],
         shape=["*"],
         description=("Volume fraction of each component"),
         a_nexus_quantity=NeXusQuantity(
@@ -699,6 +789,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     scattering_length_density = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-scattering-length-density-field"
+        ],
         dimensionality="1 / [length] ** 2",
         shape=["*"],
         description=("Scattering length density of each component"),
@@ -723,6 +816,9 @@ class Sample(Component, basesections.CompositeSystem):
                 "cubic",
             ]
         ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-class-field"
+        ],
         description=("In case it is all we know and we want to record/document it"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -743,6 +839,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     space_group = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-space-group-field"
+        ],
         shape=["*"],
         description=("Crystallographic space group"),
         a_nexus_quantity=NeXusQuantity(
@@ -755,6 +854,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     point_group = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-point-group-field"
+        ],
         shape=["*"],
         description=("Crystallographic point group, deprecated if space_group present"),
         a_nexus_quantity=NeXusQuantity(
@@ -767,6 +869,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     path_length = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-path-length-field"
+        ],
         dimensionality="[length]",
         description=(
             "Path length through sample/can for simple case when it does not "
@@ -783,6 +888,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     path_length_window = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-path-length-window-field"
+        ],
         dimensionality="[length]",
         description=(
             "Thickness of a beam entry/exit window on the can (mm) - assumed "
@@ -799,6 +907,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     thickness = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-thickness-field"
+        ],
         dimensionality="[length]",
         description=("sample thickness"),
         a_nexus_quantity=NeXusQuantity(
@@ -812,6 +923,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     external_DAC = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-external-dac-field"
+        ],
         description=("value sent to user's sample setup"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -824,6 +938,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     short_title = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-short-title-field"
+        ],
         description=("20 character fixed length sample description for legends"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -835,6 +952,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     rotation_angle = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-rotation-angle-field"
+        ],
         dimensionality="[angle]",
         description=(
             "Optional rotation angle for the case when the powder diagram has "
@@ -853,6 +973,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     x_translation = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-x-translation-field"
+        ],
         dimensionality="[length]",
         description=(
             "Translation of the sample along the X-direction of the laboratory "
@@ -870,6 +993,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     distance = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-distance-field"
+        ],
         dimensionality="[length]",
         description=(
             "Translation of the sample along the Z-direction of the laboratory "
@@ -887,6 +1013,9 @@ class Sample(Component, basesections.CompositeSystem):
     )
     physical_form = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-physical-form-field"
+        ],
         description=(
             "Physical form of the sample material. Examples include single "
             "crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, "

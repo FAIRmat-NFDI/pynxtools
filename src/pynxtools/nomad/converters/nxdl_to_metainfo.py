@@ -44,11 +44,11 @@ import jinja2
 from toposort import toposort_flatten
 
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nexus.nexus_tree import NexusAttribute, NexusField, generate_tree_from
 from pynxtools.nexus.nexus_tree import NexusDefinition as NXTreeDefinition
 from pynxtools.nexus.nexus_tree import NexusGroup as NXTreeGroup
-from pynxtools.nomad.converters._naming import (
+from pynxtools.nexus.utils import get_nexus_definitions_path
+from pynxtools.nomad.converters._mapping import (
     _DEFAULT_BASE,
     BASESECTIONS_MAP,
     field_conflicts_with_group,
@@ -1012,6 +1012,7 @@ def build_context(nx_name: str) -> dict:
         "base_is_generated": base_is_generated,
         "nomad_base_class": nomad_base_class,
         "docstring": docstring,
+        "class_doc_url": root_node.get_link(),
         "quantities": quantities,
         "subsections": subsections,
         "named_concepts": named_concepts,
