@@ -18,7 +18,7 @@
 """
 Assembles all generated NeXus base class sections into a single NOMAD Package.
 
-build_package() is the only public function. It:
+build_base_classes_package() is the only public function. It:
 1. Imports all 142 generated base_classes/*.py modules.
 2. Collects each module's top-level generated Section definition.
 3. Combines them into a single Package and calls __init_metainfo__() to
@@ -63,7 +63,7 @@ def _is_generated_section(obj: object, module_name: str) -> bool:
     return defining_module == module_name
 
 
-def build_package() -> Package:
+def build_base_classes_package() -> Package:
     """Import all generated base class modules and assemble a single Package."""
     global _m_package
     if _m_package is not None:

@@ -1,3 +1,20 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 """
 Naming utilities for converting NXDL names to Python / NOMAD conventions.
 """
@@ -5,7 +22,7 @@ Naming utilities for converting NXDL names to Python / NOMAD conventions.
 from __future__ import annotations
 
 # NOMAD BaseSection quantity names that conflict with NXDL field names.
-# Fields with these names get a `_field` suffix to avoid shadowing.
+# Fields with these names get a `_quantity` suffix to avoid shadowing.
 _RESERVED_QUANTITY_NAMES: frozenset[str] = frozenset(
     {"name", "datetime", "lab_id", "description"}
 )
@@ -33,17 +50,17 @@ def nxdl_to_quantity_name(nxdl_name: str) -> str:
     """Convert an NXDL field/attribute name to a safe Python quantity name.
 
     Fields whose names collide with NOMAD BaseSection quantities get a
-    ``_field`` suffix.
+    ``_quantity`` suffix.
 
     Examples
     --------
     >>> nxdl_to_quantity_name("start_time")
     'start_time'
     >>> nxdl_to_quantity_name("name")
-    'name_field'
+    'name_quantity'
     """
     if nxdl_name in _RESERVED_QUANTITY_NAMES:
-        return f"{nxdl_name}_field"
+        return f"{nxdl_name}_quantity"
     return nxdl_name
 
 
@@ -78,6 +95,8 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
 # Base section mapping
 # ---------------------------------------------------------------------------
 
+# TODO: this should be done in code and
+# there should be a check that this does not get overwritten
 # Maps NXDL top-level class name → (Python class name, dotted import path)
 BASESECTIONS_MAP: dict[str, tuple[str, str]] = {
     "NXobject": ("BaseSection", "nomad.datamodel.metainfo.basesections"),

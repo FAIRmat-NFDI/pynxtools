@@ -157,11 +157,9 @@ print([p.name for p in config.plugins.entry_points])
 
 ## NOMAD OASIS — local deployment
 
-NOMAD OASIS is a self-hosted deployment that gives institutions full control over
-their data while retaining compatibility with the public NOMAD instance.
+NOMAD OASIS is a self-hosted deployment that gives institutions full control over their data while retaining compatibility with the public NOMAD instance.
 
-To include `pynxtools` in a NOMAD OASIS deployment, add it to the OASIS
-optional dependencies in `pyproject.toml`:
+To include `pynxtools` in a NOMAD OASIS deployment, add it to the OASIS optional dependencies in `pyproject.toml` (under `plugins`):
 
 ```toml
 [project.optional-dependencies]

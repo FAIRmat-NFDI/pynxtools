@@ -56,6 +56,7 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
     """
 
     m_def = Section(
+        links=["{{ class_doc_url }}"],
         a_nexus_definition=NeXusDefinition(
             nx_class="{{ nx_name }}",
             category="{{ nx_category }}",
@@ -112,6 +113,7 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
     {% for qty in quantities %}
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
+        links=["{{ qty.node.get_link() }}"],
         {% if qty.dimensionality %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}
@@ -176,6 +178,7 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
     """
     {% endif %}
     m_def = Section(
+        links=["{{ concept.node.get_link() }}"],
         {% if concept.variable %}
         variable=True,
         {% endif %}
@@ -199,6 +202,7 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
     {% for qty in concept.quantities %}
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
+        links=["{{ qty.node.get_link() }}"],
         {% if qty.dimensionality %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}

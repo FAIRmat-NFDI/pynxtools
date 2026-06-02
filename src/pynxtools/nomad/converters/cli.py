@@ -88,7 +88,7 @@ def generate_metainfo(
       pynx nomad generate-metainfo --all --dry-run   # CI check: non-zero exit if files differ
       pynx nomad generate-metainfo --all --force      # unconditional overwrite
       pynx nomad generate-metainfo --all \\
-          --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo/base_classes
+          --output-dir ../nomad-measurements/src/nomad_measurements/base
     """
     if not nx_class and not generate_all:
         raise click.UsageError("Specify --nx-class NX_CLASS or --all.")

@@ -53,6 +53,9 @@ class Electronanalyzer(Component):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer"
+        ],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXelectronanalyzer",
             category="base",
@@ -215,8 +218,11 @@ class Electronanalyzer(Component):
         ),
     )
 
-    description_field = Quantity(
+    description_quantity = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-description-field"
+        ],
         description=("Free text description of the type of the detector"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -226,8 +232,11 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    name_field = Quantity(
+    name_quantity = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-name-field"
+        ],
         description=("Name or model of the equipment"),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -237,8 +246,11 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    name_field__short_name = Quantity(
+    name_quantity__short_name = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-name-short-name-attribute"
+        ],
         description=("Acronym or other shorthand name"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -251,6 +263,9 @@ class Electronanalyzer(Component):
     )
     work_function = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-work-function-field"
+        ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=(
             "Work function of the electron analyzer. The work function of a "
@@ -291,6 +306,9 @@ class Electronanalyzer(Component):
     )
     voltage_range = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-voltage-range-field"
+        ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=(
             "Voltage range of the power supply. This influences the noise of the "
@@ -307,6 +325,9 @@ class Electronanalyzer(Component):
     )
     fast_axes = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-fast-axes-field"
+        ],
         shape=["*"],
         description=(
             "List of the axes that are acquired simultaneously by the detector. "
@@ -338,6 +359,9 @@ class Electronanalyzer(Component):
     )
     slow_axes = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-slow-axes-field"
+        ],
         shape=["*"],
         description=(
             "List of the axes that are acquired by scanning a physical "
@@ -373,6 +397,9 @@ class ElectronanalyzerEnergyResolution(Resolution):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXresolution",
             name="energy_resolution",
@@ -383,6 +410,9 @@ class ElectronanalyzerEnergyResolution(Resolution):
 
     physical_quantity = Quantity(
         type=MEnum(["energy"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-physical-quantity-field"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="physical_quantity",
@@ -394,6 +424,9 @@ class ElectronanalyzerEnergyResolution(Resolution):
     )
     resolution = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-resolution-field"
+        ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=(
             "Minimum distinguishable energy separation in the energy spectra. "
@@ -412,6 +445,9 @@ class ElectronanalyzerEnergyResolution(Resolution):
     )
     resolution_errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-resolution-errors-field"
+        ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -433,6 +469,9 @@ class ElectronanalyzerMomentumResolution(Resolution):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXresolution",
             name="momentum_resolution",
@@ -443,6 +482,9 @@ class ElectronanalyzerMomentumResolution(Resolution):
 
     physical_quantity = Quantity(
         type=MEnum(["momentum"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-physical-quantity-field"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="physical_quantity",
@@ -454,6 +496,9 @@ class ElectronanalyzerMomentumResolution(Resolution):
     )
     resolution = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-resolution-field"
+        ],
         dimensionality="1 / [length]",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -466,6 +511,9 @@ class ElectronanalyzerMomentumResolution(Resolution):
     )
     resolution_errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-resolution-errors-field"
+        ],
         dimensionality="1 / [length]",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -487,6 +535,9 @@ class ElectronanalyzerAngularResolution(Resolution):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXresolution",
             name="angular_resolution",
@@ -497,6 +548,9 @@ class ElectronanalyzerAngularResolution(Resolution):
 
     physical_quantity = Quantity(
         type=MEnum(["angle"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-physical-quantity-field"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="physical_quantity",
@@ -508,6 +562,9 @@ class ElectronanalyzerAngularResolution(Resolution):
     )
     resolution = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-resolution-field"
+        ],
         dimensionality="[angle]",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -520,6 +577,9 @@ class ElectronanalyzerAngularResolution(Resolution):
     )
     resolution_errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-resolution-errors-field"
+        ],
         dimensionality="[angle]",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -546,6 +606,9 @@ class ElectronanalyzerSpatialResolution(Resolution):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXresolution",
             name="spatial_resolution",
@@ -556,6 +619,9 @@ class ElectronanalyzerSpatialResolution(Resolution):
 
     physical_quantity = Quantity(
         type=MEnum(["length"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-physical-quantity-field"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="field",
             name="physical_quantity",
@@ -567,6 +633,9 @@ class ElectronanalyzerSpatialResolution(Resolution):
     )
     resolution = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-resolution-field"
+        ],
         dimensionality="[length]",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -579,6 +648,9 @@ class ElectronanalyzerSpatialResolution(Resolution):
     )
     resolution_errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-resolution-errors-field"
+        ],
         dimensionality="[length]",
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -617,6 +689,9 @@ class ElectronanalyzerTransmissionFunction(Data):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="transmission_function",
@@ -627,6 +702,9 @@ class ElectronanalyzerTransmissionFunction(Data):
 
     signal = Quantity(
         type=MEnum(["relative_intensity"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-signal-attribute"
+        ],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
             name="signal",
@@ -638,6 +716,9 @@ class ElectronanalyzerTransmissionFunction(Data):
     )
     axes = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-axes-attribute"
+        ],
         shape=["*"],
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -649,6 +730,9 @@ class ElectronanalyzerTransmissionFunction(Data):
     )
     kinetic_energy = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-kinetic-energy-field"
+        ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Kinetic energy values"),
@@ -663,6 +747,9 @@ class ElectronanalyzerTransmissionFunction(Data):
     )
     relative_intensity = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-relative-intensity-field"
+        ],
         dimensionality="dimensionless",
         shape=["*"],
         description=("Relative transmission efficiency for the given kinetic energies"),
