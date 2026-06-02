@@ -15,13 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""CLI commands for the NXDL → NOMAD metainfo generator.
-
-Exposes one symbol consumed by the ``pynx nomad `` group:
-
-``generate-metainfo``
-    Click command for creating the NeXus NOMAD metainfo as Python classes.
-"""
+"""CLI commands for the NXDL → NOMAD metainfo generator."""
 
 from __future__ import annotations
 
@@ -44,7 +38,21 @@ import click
     "generate_all",
     is_flag=True,
     default=False,
-    help="Generate all base classes in dependency order.",
+    help="Generate all categories (applications first, then base classes with --force).",
+)
+@click.option(
+    "--all-base",
+    "generate_all_base",
+    is_flag=True,
+    default=False,
+    help="Generate all base-category classes only.",
+)
+@click.option(
+    "--all-applications",
+    "generate_all_applications",
+    is_flag=True,
+    default=False,
+    help="Generate all application-category classes only.",
 )
 @click.option(
     "--dry-run",
@@ -66,43 +74,64 @@ import click
     type=click.Path(file_okay=False, path_type=Path),
     help=(
         "Directory to write generated .py files into. "
-        "Defaults to pynxtools/nomad/metainfo/base_classes/. "
+        "Defaults to the category-appropriate internal directory. "
         "Override when generating into a different package (e.g. nomad-measurements)."
     ),
 )
 def generate_metainfo(
     nx_class: str | None,
     generate_all: bool,
+    generate_all_base: bool,
+    generate_all_applications: bool,
     dry_run: bool,
     force: bool,
     output_dir: Path | None,
 ) -> None:
     """Generate Python NOMAD metainfo classes from NXDL definitions.
 
-    Exactly one of --nxdl or --all must be given.
+    Exactly one of --nxdl, --all, --all-base, or --all-applications must be given.
 
     \b
     Examples:
       pynx nomad generate-metainfo --nxdl NXdetector
-      pynx nomad generate-metainfo --all
-      pynx nomad generate-metainfo --all --dry-run   # CI check: non-zero exit if files differ
-      pynx nomad generate-metainfo --all --force      # unconditional overwrite
-      pynx nomad generate-metainfo --all \\
+      pynx nomad generate-metainfo --all-base
+      pynx nomad generate-metainfo --all-applications
+      pynx nomad generate-metainfo --all           # apps first, then base --force
+      pynx nomad generate-metainfo --all --dry-run  # CI check
+      pynx nomad generate-metainfo --all-base \\
           --output-dir ../nomad-measurements/src/nomad_measurements/base
     """
-    if not nx_class and not generate_all:
-        raise click.UsageError("Specify --nxdl NXDL or --all.")
-    if nx_class and generate_all:
-        raise click.UsageError("--nxdl and --all are mutually exclusive.")
+    flags = [nx_class, generate_all, generate_all_base, generate_all_applications]
+    if sum(bool(f) for f in flags) == 0:
+        raise click.UsageError(
+            "Specify one of --nxdl NX_CLASS, --all, --all-base, or --all-applications."
+        )
+    if sum(bool(f) for f in flags) > 1:
+        raise click.UsageError(
+            "--nxdl, --all, --all-base, and --all-applications are mutually exclusive."
+        )
 
     from pynxtools.nomad.converters.nxdl_to_metainfo import (
-        generate_all_base_classes,
-        write_base_class,
+        generate_all_applications as _gen_apps,
     )
+    from pynxtools.nomad.converters.nxdl_to_metainfo import (
+        generate_all_base_classes,
+        write_class,
+    )
+
+    def _report(n_changed: int) -> None:
+        if dry_run:
+            if n_changed:
+                click.echo(f"{n_changed} file(s) would change.")
+                sys.exit(1)
+            else:
+                click.echo("All files up to date.")
+        else:
+            click.echo(f"{n_changed} file(s) written.")
 
     if nx_class:
         try:
-            changed = write_base_class(
+            changed = write_class(
                 nx_class, dry_run=dry_run, force=force, output_dir=output_dir
             )
         except Exception as exc:
@@ -114,17 +143,21 @@ def generate_metainfo(
             else:
                 click.echo(f"Up to date: {nx_class}")
         else:
-            status = "written" if changed else "unchanged"
-            click.echo(f"{nx_class}: {status}")
-    else:
-        n_changed = generate_all_base_classes(
-            dry_run=dry_run, force=force, output_dir=output_dir
+            click.echo(f"{nx_class}: {'written' if changed else 'unchanged'}")
+
+    elif generate_all_base:
+        _report(
+            generate_all_base_classes(
+                dry_run=dry_run, force=force, output_dir=output_dir
+            )
         )
-        if dry_run:
-            if n_changed:
-                click.echo(f"{n_changed} file(s) would change.")
-                sys.exit(1)
-            else:
-                click.echo("All files up to date.")
-        else:
-            click.echo(f"{n_changed} file(s) written.")
+
+    elif generate_all_applications:
+        _report(_gen_apps(dry_run=dry_run, force=force, output_dir=output_dir))
+
+    else:  # --all: applications first, then base with --force to pick up cross-category refs
+        n = _gen_apps(dry_run=dry_run, force=force, output_dir=output_dir)
+        n += generate_all_base_classes(
+            dry_run=dry_run, force=True, output_dir=output_dir
+        )
+        _report(n)

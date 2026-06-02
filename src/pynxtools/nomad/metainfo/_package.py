@@ -16,13 +16,11 @@
 # limitations under the License.
 #
 """
-Assembles all generated NeXus base class sections into a single NOMAD Package.
+Assembles generated NeXus metainfo sections into NOMAD Packages.
 
-build_base_classes_package() is the only public function. It:
-1. Imports all 142 generated base_classes/*.py modules.
-2. Collects each module's top-level generated Section definition.
-3. Combines them into a single Package and calls __init_metainfo__() to
-   resolve all string-proxy SubSection references.
+Public functions:
+    build_base_classes_package()   — all category='base' classes
+    build_applications_package()   — all category='application' classes
 
 Deduplication note
 ------------------
@@ -31,8 +29,7 @@ class body is executed (metainfo.py ~line 939). If those per-module Packages
 are left in place, NOMAD's all_metainfo_packages() scan finds them alongside
 our assembled Package and each section appears twice. We prevent this by
 replacing each module's m_package attribute with our assembled Package after
-import; the scan then finds only the assembled Package for all base class
-modules.
+import; the scan then finds only the assembled Package for all modules.
 """
 
 from __future__ import annotations
@@ -45,9 +42,10 @@ from nomad.metainfo import Package
 import pynxtools.nomad.annotations  # noqa: F401 — registers NeXusGroup / NeXusQuantity
 
 _BASE_CLASSES_DIR = Path(__file__).parent / "base_classes"
-_PACKAGE_NAME = "pynxtools.nomad.metainfo.base_classes"
+_APPLICATIONS_DIR = Path(__file__).parent / "applications"
 
-_m_package: Package | None = None
+_m_base_package: Package | None = None
+_m_applications_package: Package | None = None
 
 
 def _is_generated_section(obj: object, module_name: str) -> bool:
@@ -57,37 +55,54 @@ def _is_generated_section(obj: object, module_name: str) -> bool:
     m_def = getattr(obj, "m_def", None)
     if not isinstance(m_def, NomadSection):
         return False
-    # Only pick up classes whose m_def was created in this specific module
-    # (not imported helpers like BaseSection, Quantity, etc.)
     defining_module = getattr(obj, "__module__", None)
     return defining_module == module_name
 
 
-def build_base_classes_package() -> Package:
-    """Import all generated base class modules and assemble a single Package."""
-    global _m_package
-    if _m_package is not None:
-        return _m_package
+def _build_package_from_dir(category_dir: Path, package_name: str) -> Package:
+    """Import all *.py modules in category_dir and assemble a single Package."""
+    m_package = Package(name=package_name)
 
-    m_package = Package(name=_PACKAGE_NAME)
-
-    py_files = sorted(_BASE_CLASSES_DIR.glob("*.py"))
+    py_files = sorted(category_dir.glob("*.py"))
     for py_file in py_files:
         if py_file.stem == "__init__":
             continue
-        module_name = f"{_PACKAGE_NAME}.{py_file.stem}"
+        module_name = f"{package_name}.{py_file.stem}"
         mod = importlib.import_module(module_name)
-        # Replace the per-module Package that NOMAD's metaclass auto-created
-        # during import with our assembled Package. all_metainfo_packages()
-        # later scans sys.modules for m_package attributes; without this, it
-        # finds both the per-module packages and ours, registering each section
-        # twice.
         setattr(mod, "m_package", m_package)
-        for attr_name in dir(mod):
+        for attr_name in getattr(mod, "__all__", dir(mod)):
             obj = getattr(mod, attr_name, None)
             if _is_generated_section(obj, module_name):
                 m_package.section_definitions.append(obj.m_def)
 
     m_package.__init_metainfo__()
-    _m_package = m_package
     return m_package
+
+
+def build_base_classes_package() -> Package:
+    """Import all generated base class modules and assemble a single Package."""
+    global _m_base_package
+    if _m_base_package is not None:
+        return _m_base_package
+    _m_base_package = _build_package_from_dir(
+        _BASE_CLASSES_DIR, "pynxtools.nomad.metainfo.base_classes"
+    )
+    return _m_base_package
+
+
+def build_applications_package() -> Package:
+    """Import all generated application modules and assemble a single Package.
+
+    Ensures base_classes are loaded first so cross-package FQN references
+    (application SubSections pointing at base class named-concept classes) resolve.
+    """
+    global _m_applications_package
+    if _m_applications_package is not None:
+        return _m_applications_package
+    # Base classes must be imported (and their sections registered) before
+    # application sections can resolve SubSection FQNs that point into base_classes.
+    build_base_classes_package()
+    _m_applications_package = _build_package_from_dir(
+        _APPLICATIONS_DIR, "pynxtools.nomad.metainfo.applications"
+    )
+    return _m_applications_package

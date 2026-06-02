@@ -22,21 +22,14 @@ Programmatic use
 ----------------
 ::
 
-    from pynxtools.nomad.metainfo import build_base_classes_package, all_sections
-
-build_base_classes_package()  — assemble and return the SchemaPackage of all NeXus base
-                                 class Section definitions.
-all_sections()   — shorthand: return the list of Section definitions directly.
+    from pynxtools.nomad.metainfo import build_base_classes_package, build_applications_package
 
 NOMAD entry points
 ------------------
-All SchemaPackageEntryPoint objects for schema packages defined under
-pynxtools.nomad.metainfo are declared here.
-Add new ones in the same pattern as the existing entry points below.
-
-nexus_base_classes — Python-native Section classes for all ~142 NeXus base
-                     classes, generated from the NXDL definitions bundled
-                     with pynxtools.
+nexus_base_classes   — Python-native Section classes for all NeXus base classes
+                       (category='base'), generated from NXDL.
+nexus_applications   — Python-native Section classes for all NeXus application
+                       and contributed definitions (category='application').
 """
 
 from __future__ import annotations
@@ -48,6 +41,13 @@ from nomad.metainfo import SchemaPackage
 def build_base_classes_package() -> SchemaPackage:
     """Assemble and return the NeXus base classes SchemaPackage."""
     from pynxtools.nomad.metainfo._package import build_base_classes_package as _build
+
+    return _build()
+
+
+def build_applications_package() -> SchemaPackage:
+    """Assemble and return the NeXus applications SchemaPackage."""
+    from pynxtools.nomad.metainfo._package import build_applications_package as _build
 
     return _build()
 
@@ -64,10 +64,26 @@ class NexusBaseClassesEntryPoint(SchemaPackageEntryPoint):
         return build_base_classes_package()
 
 
+class NexusApplicationsEntryPoint(SchemaPackageEntryPoint):
+    def load(self):
+        from pynxtools.nomad.metainfo._package import build_applications_package
+
+        return build_applications_package()
+
+
 nexus_base_classes = NexusBaseClassesEntryPoint(
     name="NeXus Base Classes",
     description=(
         "Python-native NOMAD metainfo Section classes for all NeXus base classes, "
         "generated from the NXDL definitions bundled with pynxtools."
+    ),
+)
+
+nexus_applications = NexusApplicationsEntryPoint(
+    name="NeXus Application Definitions",
+    description=(
+        "Python-native NOMAD metainfo Section classes for all NeXus application "
+        "and contributed definitions, generated from the NXDL definitions bundled "
+        "with pynxtools."
     ),
 )

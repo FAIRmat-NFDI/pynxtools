@@ -49,8 +49,8 @@ def nxdl_to_class_name(nx_name: str) -> str:
 def nxdl_to_quantity_name(nxdl_name: str) -> str:
     """Convert an NXDL field/attribute name to a safe Python quantity name.
 
-    Fields whose names collide with NOMAD BaseSection quantities get a
-    ``_quantity`` suffix.
+    Fields whose names collide with NOMAD BaseSection quantities or Python
+    keywords get a ``_quantity`` suffix.
 
     Examples
     --------
@@ -58,8 +58,12 @@ def nxdl_to_quantity_name(nxdl_name: str) -> str:
     'start_time'
     >>> nxdl_to_quantity_name("name")
     'name_quantity'
+    >>> nxdl_to_quantity_name("lambda")
+    'lambda_quantity'
     """
-    if nxdl_name in _RESERVED_QUANTITY_NAMES:
+    import keyword
+
+    if nxdl_name in _RESERVED_QUANTITY_NAMES or keyword.iskeyword(nxdl_name):
         return f"{nxdl_name}_quantity"
     return nxdl_name
 
