@@ -1030,6 +1030,16 @@ class NexusDefinition(NexusNode):
                 self.symbols[sym_name] = doc
             break
 
+    def get_link(self) -> str:
+        """Return the NeXus manual URL for this class definition."""
+        definitions_url = get_definitions_url()
+        doc_base = NX_DOC_BASES.get(
+            definitions_url, "https://manual.nexusformat.org/classes"
+        )
+        nx_file = self.nxdl_base.split("/definitions/")[-1].split(".nxdl.xml")[0]
+        anchor = self.name.lower()
+        return f"{doc_base}/{nx_file}.html#{anchor}"
+
     def __init__(self, **data) -> None:
         self.symbols = {}
         super().__init__(nx_type=self.nx_type, **data)

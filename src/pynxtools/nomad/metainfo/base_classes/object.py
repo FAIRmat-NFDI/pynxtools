@@ -50,6 +50,9 @@ class Object(BaseSection):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject"
+        ],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXobject",
             category="base",
@@ -132,6 +135,9 @@ class Object(BaseSection):
 
     FIELDNAME_set = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-set-field"
+        ],
         description=("Target values of FIELDNAME."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -143,6 +149,9 @@ class Object(BaseSection):
     )
     FIELDNAME_errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-errors-field"
+        ],
         description=("Uncertainties of FIELDNAME values."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -154,6 +163,9 @@ class Object(BaseSection):
     )
     FIELDNAME_weights = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-weights-field"
+        ],
         description=("Weights of FIELDNAME values."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -165,6 +177,9 @@ class Object(BaseSection):
     )
     FIELDNAME_mask = Quantity(
         type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-mask-field"
+        ],
         description=(
             "Boolean mask of FIELDNAME values. The value is masked if set to 1."
         ),
@@ -178,6 +193,9 @@ class Object(BaseSection):
     )
     identifierNAME = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-identifiername-field"
+        ],
         description=(
             "An identifier for a (persistent) resource. An identifier, provided "
             "by some authority, that has been assigned to an object described by "
@@ -198,6 +216,9 @@ class Object(BaseSection):
     )
     identifierNAME__type = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-identifiername-type-attribute"
+        ],
         description=(
             "The type of identifier used. It is recommended to use the most "
             "specific type when describing the identifier. For example, all "
@@ -232,6 +253,9 @@ class Object(BaseSection):
     )
     default = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-default-attribute"
+        ],
         description=(
             ".. index:: plotting Declares which child group contains a path "
             "leading to a :ref:`NXdata` group or a group using a base class "
