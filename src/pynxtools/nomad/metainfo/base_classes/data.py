@@ -213,6 +213,9 @@ class Data(Object, basesections.ActivityResult):
     """
 
     m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata"
+        ],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXdata",
             category="base",
@@ -229,6 +232,9 @@ class Data(Object, basesections.ActivityResult):
 
     signal = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-signal-attribute"
+        ],
         description=(
             ".. index:: find the default plottable data .. index:: plotting .. "
             "index:: signal attribute value The value is the :ref:`name "
@@ -249,6 +255,9 @@ class Data(Object, basesections.ActivityResult):
     )
     auxiliary_signals = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-auxiliary-signals-attribute"
+        ],
         description=(
             ".. index:: plotting Array of strings holding the :ref:`names "
             "<validItemName>` of additional signals to be plotted with the "
@@ -268,6 +277,9 @@ class Data(Object, basesections.ActivityResult):
     )
     default_slice = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-default-slice-attribute"
+        ],
         description=(
             "Which slice of data to show in a plot by default. This is useful "
             "especially for datasets with more than 2 dimensions. Should be an "
@@ -302,6 +314,9 @@ class Data(Object, basesections.ActivityResult):
     )
     reference = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-reference-attribute"
+        ],
         description=(
             "Points to the path of a field defining the data to which the `DATA` "
             "group refers. This concept allows to link the data to a respective "
@@ -320,6 +335,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME_indices = Quantity(
         type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-indices-attribute"
+        ],
         description=(
             "The ``AXISNAME_indices`` attribute is a single integer or an array "
             "of integers that defines which :ref:`DATA </NXdata/DATA-field>` "
@@ -344,6 +362,9 @@ class Data(Object, basesections.ActivityResult):
     )
     axes = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axes-attribute"
+        ],
         shape=["*"],
         description=(
             ".. index:: plotting The ``axes`` attribute is a list of strings "
@@ -366,6 +387,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-field"
+        ],
         description=(
             "Coordinate values along one or more :ref:`DATA "
             "</NXdata/DATA-field>` dimensions. The shape of an ``AXISNAME`` "
@@ -391,6 +415,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__long_name = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-long-name-attribute"
+        ],
         description=("Axis label"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -403,6 +430,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__units = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-units-attribute"
+        ],
         description=(
             "Unit in which the coordinate values are expressed. See the section "
             ":ref:`Design-Units` for more information."
@@ -418,6 +448,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__distribution = Quantity(
         type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-distribution-attribute"
+        ],
         description=("``0|false``: single value, ``1|true``: multiple values"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -430,6 +463,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__first_good = Quantity(
         type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-first-good-attribute"
+        ],
         description=("Index of first good value"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -442,6 +478,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__last_good = Quantity(
         type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-last-good-attribute"
+        ],
         description=("Index of last good value"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -454,6 +493,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__axis = Quantity(
         type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-axis-attribute"
+        ],
         description=(
             "Index (positive integer) identifying this specific set of numbers. "
             "N.B. The ``axis`` attribute is the old way of designating a link. "
@@ -473,6 +515,9 @@ class Data(Object, basesections.ActivityResult):
     )
     AXISNAME__reference = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-reference-attribute"
+        ],
         description=(
             "Points to the path of a field defining the axis to which the "
             "``AXISNAME`` axis refers. This concept allows to link an axis to a "
@@ -500,6 +545,9 @@ class Data(Object, basesections.ActivityResult):
     )
     DATA = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-field"
+        ],
         description=(
             ".. index:: plotting Data values to be used as the NeXus *plottable "
             "data*. As the upper case ``DATA`` indicates, the names of the "
@@ -520,6 +568,9 @@ class Data(Object, basesections.ActivityResult):
     )
     DATA__signal = Quantity(
         type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-signal-attribute"
+        ],
         description=(
             ".. index:: plotting Plottable (independent) axis, indicate index "
             "number. Only one field in a :ref:`NXdata` group may have the "
@@ -538,6 +589,9 @@ class Data(Object, basesections.ActivityResult):
     )
     DATA__axes = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-axes-attribute"
+        ],
         description=(
             "Defines the names of the coordinates (independent axes) for this "
             "data set as a colon-delimited array. NOTE: The :ref:`axes "
@@ -557,6 +611,9 @@ class Data(Object, basesections.ActivityResult):
     )
     DATA__long_name = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-long-name-attribute"
+        ],
         description=("data label"),
         a_nexus_quantity=NeXusQuantity(
             kind="attribute",
@@ -569,6 +626,9 @@ class Data(Object, basesections.ActivityResult):
     )
     DATA__reference = Quantity(
         type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-reference-attribute"
+        ],
         description=(
             "Points to the path of a field defining the data to which the `DATA` "
             "field refers. This concept allows to link the data to a respective "
@@ -589,6 +649,9 @@ class Data(Object, basesections.ActivityResult):
     )
     FIELDNAME_errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-errors-field"
+        ],
         description=(
             '"Errors" (meaning *uncertainties* or *standard deviations*) '
             "associated with any field named ``FIELDNAME`` in this ``NXdata`` "
@@ -607,6 +670,9 @@ class Data(Object, basesections.ActivityResult):
     )
     errors = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-errors-field"
+        ],
         description=(
             "Standard deviations of data values - the data array is identified "
             "by the group attribute ``signal``. The ``errors`` array must have "
@@ -624,6 +690,9 @@ class Data(Object, basesections.ActivityResult):
     )
     FIELDNAME_scaling_factor = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-scaling-factor-field"
+        ],
         description=(
             "An optional scaling factor to apply to the values in any field "
             "named ``FIELDNAME`` in this ``NXdata`` group. This can be a "
@@ -650,6 +719,9 @@ class Data(Object, basesections.ActivityResult):
     )
     FIELDNAME_offset = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-offset-field"
+        ],
         description=(
             "An optional offset to apply to the values in FIELDNAME (usually the "
             "signal). When omitted, the offset is assumed to be 0. See "
@@ -666,6 +738,9 @@ class Data(Object, basesections.ActivityResult):
     )
     scaling_factor = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-scaling-factor-field"
+        ],
         description=(
             "The scaling_factor and FIELDNAME_scaling_factor fields have similar "
             "semantics. However, scaling_factor is ambiguous in the case of "
@@ -684,6 +759,9 @@ class Data(Object, basesections.ActivityResult):
     )
     offset = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-offset-field"
+        ],
         description=(
             "The offset and FIELDNAME_offset fields have similar semantics. "
             "However, offset is ambiguous in the case of multiple signals. "
@@ -701,6 +779,9 @@ class Data(Object, basesections.ActivityResult):
     )
     title = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-title-field"
+        ],
         description=("Title for the plot."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -712,6 +793,9 @@ class Data(Object, basesections.ActivityResult):
     )
     x = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-x-field"
+        ],
         shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
@@ -730,6 +814,9 @@ class Data(Object, basesections.ActivityResult):
     )
     y = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-y-field"
+        ],
         shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
@@ -748,6 +835,9 @@ class Data(Object, basesections.ActivityResult):
     )
     z = Quantity(
         type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-z-field"
+        ],
         shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "

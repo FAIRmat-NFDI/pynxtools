@@ -22,10 +22,10 @@ Programmatic use
 ----------------
 ::
 
-    from pynxtools.nomad.metainfo import build_package, all_sections
+    from pynxtools.nomad.metainfo import build_base_classes_package, all_sections
 
-build_package()  — assemble and return the SchemaPackage of all NeXus base
-                   class Section definitions.
+build_base_classes_package()  — assemble and return the SchemaPackage of all NeXus base
+                                 class Section definitions.
 all_sections()   — shorthand: return the list of Section definitions directly.
 
 NOMAD entry points
@@ -45,23 +45,23 @@ from nomad.config.models.plugins import SchemaPackageEntryPoint
 from nomad.metainfo import SchemaPackage
 
 
-def build_package() -> SchemaPackage:
+def build_base_classes_package() -> SchemaPackage:
     """Assemble and return the NeXus base classes SchemaPackage."""
-    from pynxtools.nomad.metainfo._package import build_package as _build
+    from pynxtools.nomad.metainfo._package import build_base_classes_package as _build
 
     return _build()
 
 
 def all_sections() -> list:
     """Return all Section definitions in the NeXus base classes package."""
-    return list(build_package().section_definitions)
+    return list(build_base_classes_package().section_definitions)
 
 
 class NexusBaseClassesEntryPoint(SchemaPackageEntryPoint):
     def load(self):
-        from pynxtools.nomad.metainfo._package import build_package
+        from pynxtools.nomad.metainfo._package import build_base_classes_package
 
-        return build_package()
+        return build_base_classes_package()
 
 
 nexus_base_classes = NexusBaseClassesEntryPoint(
