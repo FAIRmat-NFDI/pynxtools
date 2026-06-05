@@ -158,6 +158,7 @@ class FitFunctionFitParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit_function.html#nxfit_function-fit-parameters-parameter-field"
         ],
+        variable=True,
         description=(
             "A parameter for a fit function. This would typically be a variable "
             "that is optimized in a fit."

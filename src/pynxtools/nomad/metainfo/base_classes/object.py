@@ -138,6 +138,7 @@ class Object(BaseSection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-set-field"
         ],
+        variable=True,
         description=("Target values of FIELDNAME."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -152,6 +153,7 @@ class Object(BaseSection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-errors-field"
         ],
+        variable=True,
         description=("Uncertainties of FIELDNAME values."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -166,6 +168,7 @@ class Object(BaseSection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-weights-field"
         ],
+        variable=True,
         description=("Weights of FIELDNAME values."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",
@@ -180,6 +183,7 @@ class Object(BaseSection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-fieldname-mask-field"
         ],
+        variable=True,
         description=(
             "Boolean mask of FIELDNAME values. The value is masked if set to 1."
         ),
@@ -196,6 +200,7 @@ class Object(BaseSection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXobject.html#nxobject-identifiername-field"
         ],
+        variable=True,
         description=(
             "An identifier for a (persistent) resource. An identifier, provided "
             "by some authority, that has been assigned to an object described by "

@@ -124,6 +124,7 @@ class Note(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXnote.html#nxnote-identifiername-field"
         ],
+        variable=True,
         description=(
             "Identifier of the resource if that resource that has been "
             "serialized. For example, the identifier to a resource in another "
