@@ -76,24 +76,24 @@ class Spectrum(Object):
         description=("Details how spectra were processed from the detector readings."),
     )
     spectrum_0d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum0d",
+        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum0d",
         repeats=False,
         description=(
             "One spectrum for a point of a 0d ROI. Also known as spot measurement."
         ),
     )
     spectrum_1d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum1d",
+        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum1d",
         repeats=False,
         description=("One spectrum for each point of a 1d ROI."),
     )
     spectrum_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum2d",
+        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum2d",
         repeats=False,
         description=("One spectrum for each scan point of 2d ROI."),
     )
     spectrum_3d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum3d",
+        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum3d",
         repeats=False,
         description=("One spectrum for point of a 3d ROI."),
     )
@@ -183,7 +183,7 @@ class SpectrumProcess(Process):
         super().normalize(archive, logger)
 
 
-class SpectrumSpectrum0d(Data):
+class Spectrum0d(Data):
     """
     One spectrum for a point of a 0d ROI. Also known as spot measurement.
     """
@@ -269,7 +269,7 @@ class SpectrumSpectrum0d(Data):
         super().normalize(archive, logger)
 
 
-class SpectrumSpectrum1d(Data):
+class Spectrum1d(Data):
     """
     One spectrum for each point of a 1d ROI.
     """
@@ -387,7 +387,7 @@ class SpectrumSpectrum1d(Data):
         super().normalize(archive, logger)
 
 
-class SpectrumSpectrum2d(Data):
+class Spectrum2d(Data):
     """
     One spectrum for each scan point of 2d ROI.
     """
@@ -537,7 +537,7 @@ class SpectrumSpectrum2d(Data):
         super().normalize(archive, logger)
 
 
-class SpectrumSpectrum3d(Data):
+class Spectrum3d(Data):
     """
     One spectrum for point of a 3d ROI.
     """

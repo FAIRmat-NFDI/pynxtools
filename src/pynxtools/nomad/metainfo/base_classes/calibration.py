@@ -85,7 +85,7 @@ class Calibration(Process):
         description=("Additional input axis to be used in the formula."),
     )
     calibration_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationCalibrationParameters",
+        section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationParameters",
         repeats=False,
         description=(
             "Fit coefficients to be used in ``fit_formula_description``. As an "
@@ -414,7 +414,7 @@ class CalibrationFitFormulaInputs(Parameters):
         super().normalize(archive, logger)
 
 
-class CalibrationCalibrationParameters(Parameters):
+class CalibrationParameters(Parameters):
     """
     Fit coefficients to be used in ``fit_formula_description``.
 
