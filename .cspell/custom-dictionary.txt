@@ -208,6 +208,9 @@ nxdls
 nxentry
 nxroot
 nxtest
+nxtestbase
+testbase
+Testbase
 nyaml
 oned
 optionalities

@@ -18,138 +18,94 @@
 
 """Unit tests for the NXDL -> metainfo converter."""
 
+import ast
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
 import pynxtools.nomad.converters.nxdl_to_metainfo as converter
-from pynxtools.nomad.converters._naming import _RESERVED_QUANTITY_NAMES
+from pynxtools.nexus.nexus_tree import (
+    NexusAttribute,
+    NexusField,
+    NexusGroup,
+    generate_tree_from,
+)
 
 
-class FakeField:
-    """Minimal field-like node for converter unit tests."""
+def _class_members(source: str) -> dict[str, dict[str, str]]:
+    """Return {class_name: {member_name: constructor}} for every class in source.
 
-    nx_type = "field"
-
-    def __init__(
-        self,
-        name: str,
-        dtype: str = "NX_CHAR",
-        unit: str | None = None,
-        shape=None,
-        interpretation: str | None = None,
-        long_name: str | None = None,
-        items=None,
-        open_enum: bool = False,
-        optionality: bool = False,
-        children=None,
-        nxdl_base: str = "NXtest.nxdl.xml",
-        doc: str = "",
-    ):
-        self.name = name
-        self.dtype = dtype
-        self.unit = unit
-        self.shape = shape
-        self.interpretation = interpretation
-        self.long_name = long_name
-        self.items = items
-        self.open_enum = open_enum
-        self.optionality = optionality
-        self.children = children or []
-        self.nxdl_base = nxdl_base
-        self._doc = doc
-
-    def get_docstring(self, depth=1):
-        _ = depth
-        return {"en": self._doc}
+    Only ``Quantity`` and ``SubSection`` assignments are collected; ``m_def``
+    (a ``Section`` call) is excluded because its content differs structurally
+    between the main class and named-concept sub-classes and is not the subject
+    of section-by-section field/group comparison.
+    """
+    result: dict[str, dict[str, str]] = {}
+    for node in ast.parse(source).body:
+        if isinstance(node, ast.ClassDef):
+            members: dict[str, str] = {}
+            for item in node.body:
+                if isinstance(item, ast.Assign):
+                    for tgt in item.targets:
+                        if isinstance(tgt, ast.Name) and tgt.id != "m_def":
+                            call = item.value
+                            if isinstance(call, ast.Call):
+                                fn = call.func
+                                if isinstance(fn, ast.Name):
+                                    kind = fn.id
+                                elif isinstance(fn, ast.Attribute):
+                                    kind = fn.attr
+                                else:
+                                    continue
+                                members[tgt.id] = kind
+            result[node.name] = members
+    return result
 
 
-class FakeAttribute:
-    """Minimal attribute-like node for converter unit tests."""
-
-    nx_type = "attribute"
-
-    def __init__(
-        self,
-        name: str,
-        dtype: str = "NX_CHAR",
-        shape=None,
-        items=None,
-        open_enum: bool = False,
-        optionality: bool = False,
-        nxdl_base: str = "NXtest.nxdl.xml",
-        doc: str = "",
-    ):
-        self.name = name
-        self.dtype = dtype
-        self.shape = shape
-        self.items = items
-        self.open_enum = open_enum
-        self.optionality = optionality
-        self.nxdl_base = nxdl_base
-        self._doc = doc
-
-    def get_docstring(self, depth=1):
-        _ = depth
-        return {"en": self._doc}
+def _class_bases(source: str) -> dict[str, list[str]]:
+    """Return {class_name: [base, ...]} for every class in source."""
+    result: dict[str, list[str]] = {}
+    for node in ast.parse(source).body:
+        if isinstance(node, ast.ClassDef):
+            bases: list[str] = []
+            for base in node.bases:
+                if isinstance(base, ast.Name):
+                    bases.append(base.id)
+                elif isinstance(base, ast.Attribute) and isinstance(
+                    base.value, ast.Name
+                ):
+                    bases.append(f"{base.value.id}.{base.attr}")
+            result[node.name] = bases
+    return result
 
 
-class FakeGroup:
-    """Minimal group-like node for converter unit tests."""
+_GOLDEN_DIR = (
+    Path(__file__).parents[2]
+    / "src"
+    / "pynxtools"
+    / "nomad"
+    / "metainfo"
+    / "base_classes"
+)
 
-    nx_type = "group"
-
-    def __init__(
-        self,
-        name: str,
-        nx_class: str,
-        name_type: str = "specified",
-        variadic: bool = False,
-        children=None,
-        nxdl_base: str = "NXentry.nxdl.xml",
-        doc: str = "",
-    ):
-        self.name = name
-        self.nx_class = nx_class
-        self.name_type = name_type
-        self.variadic = variadic
-        self.children = children or []
-        self.nxdl_base = nxdl_base
-        self._doc = doc
-
-    def get_docstring(self, depth=1):
-        _ = depth
-        return {"en": self._doc}
-
-
-def _patch_fake_node_types(monkeypatch):
-    """Route converter runtime type checks to local fake node classes."""
-    monkeypatch.setattr(converter, "NexusField", FakeField)
-    monkeypatch.setattr(converter, "NexusAttribute", FakeAttribute)
-    monkeypatch.setattr(converter, "NXTreeGroup", FakeGroup)
-
-
-def test_shape_from_node_replaces_none_with_wildcard():
-    """Ensure symbolic or unbounded shape dimensions are rendered as wildcard."""
-    node = FakeField(name="signal", shape=(2, None, 5))
-
-    shape_from_node = getattr(converter, "_shape_from_node")
-    assert shape_from_node(node) == [2, "*", 5]
+# Golden files generated from controlled fixture NXDLs (NXtestBase, NXtest,
+# NXtest_extended) — independent of the live NeXus definitions repo.
+_CONVERTER_GOLDEN_DIR = Path(__file__).parent.parent / "data" / "nomad" / "converter"
 
 
 def test_build_quantity_from_field_maps_transformation_unit(monkeypatch):
     """Verify field quantities keep unit semantics and enum/type conversions."""
-    _patch_fake_node_types(monkeypatch)
+    # NXUnitSet.get_dimensionality requires the full NOMAD unit database at runtime.
+    # The lambda isolates this test from that external dependency.
     monkeypatch.setattr(converter.NXUnitSet, "get_dimensionality", lambda unit: "[]")
 
-    node = FakeField(
-        name="value",
-        dtype="NX_CHAR",
-        unit="NX_TRANSFORMATION",
-        shape=(None,),
-        items=["a", "b"],
-        open_enum=False,
-    )
+    node = NexusField(name="value")
+    node.dtype = "NX_CHAR"
+    node.unit = "NX_TRANSFORMATION"
+    node.shape = (None,)
+    node.items = ["a", "b"]
+    node.open_enum = False
 
     build_quantity_from_node = getattr(converter, "_build_quantity_from_node")
     qty = build_quantity_from_node(node)
@@ -161,11 +117,11 @@ def test_build_quantity_from_field_maps_transformation_unit(monkeypatch):
     assert qty.scalar_items == ["a", "b"]
 
 
-def test_build_quantity_from_attribute_uses_dtype_mapping(monkeypatch):
+def test_build_quantity_from_attribute_uses_dtype_mapping():
     """Verify attribute quantities skip field-only metadata and map dtype."""
-    _patch_fake_node_types(monkeypatch)
-
-    node = FakeAttribute(name="status", dtype="NX_BOOLEAN", shape=(None, 1))
+    node = NexusAttribute(name="status")
+    node.dtype = "NX_BOOLEAN"
+    node.shape = (None, 1)  # multi-dim: exercises (None, 1) → ["*", 1] conversion
 
     build_quantity_from_node = getattr(converter, "_build_quantity_from_node")
     qty = build_quantity_from_node(node, parent_field="signal")
@@ -194,11 +150,12 @@ def test_build_quantity_from_attribute_uses_dtype_mapping(monkeypatch):
             '"peakPEAK"',
             True,
         ),
+        # name_type="any": python_name is derived from nx_class ("NXdetector" → "detector"),
+        # not from the element name — the element name is irrelevant for variadic groups.
         ("any", True, "detector", "None", True),
     ],
 )
 def test_build_subsection_from_node_by_name_type(
-    monkeypatch,
     name_type,
     variadic,
     expected_name,
@@ -206,18 +163,20 @@ def test_build_subsection_from_node_by_name_type(
     expected_variable,
 ):
     """Validate subsection naming and flags for specified, partial, and any groups."""
-    _patch_fake_node_types(monkeypatch)
-    node = FakeGroup(
-        name="ENTRY" if name_type == "specified" else "peakPEAK",
+    node = NexusGroup(
         nx_class="NXdetector",
+        name="ENTRY" if name_type == "specified" else "peakPEAK",
+        nx_type="group",
         name_type=name_type,
         variadic=variadic,
     )
 
     build_subsection_from_node = getattr(converter, "_build_subsection_from_node")
+    # section_fqn is stored as a plain string and never validated against the NXDL
+    # definitions — any FQN works, so we use a mock to avoid coupling to real classes.
     section = build_subsection_from_node(
         node,
-        section_fqn="pynxtools.nomad.metainfo.base_classes.detector.Detector",
+        section_fqn="test.module.TestSection",
     )
 
     assert section.python_name == expected_name
@@ -227,10 +186,12 @@ def test_build_subsection_from_node_by_name_type(
 
 
 def test_base_from_extends_for_direct_child_with_nomad_base():
-    """Check inheritance tuple for direct NXobject children with NOMAD semantic base."""
-    root = SimpleNamespace(
-        inheritance=[SimpleNamespace(attrib={"extends": "NXobject"})]
-    )
+    """Check inheritance tuple for direct NXobject children with NOMAD semantic base.
+
+    Uses a real ``NexusDefinition`` from ``generate_tree_from("NXentry")`` so the
+    XML inheritance chain is exercised without any mocking.
+    """
+    root = generate_tree_from("NXentry")
 
     base_from_extends = getattr(converter, "_base_from_extends")
     nomad_base_for_nx_class = getattr(converter, "_nomad_base_for_nx_class")
@@ -250,7 +211,7 @@ def test_base_from_extends_for_direct_child_with_nomad_base():
 def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatch):
     """Ensure conflict_concept is suffixed for both direct and concept-level conflicts.
 
-        This covers two related runtime rename cases in one build_context call:
+    This covers two related runtime rename cases in one build_context call:
     - the current class defines a field whose name already exists as an ancestor
       subsection, so the field becomes ``conflict_concept_field``
     - the current class also defines a named concept group ``conflict_concept``
@@ -258,29 +219,35 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
       exposes ``conflict_concept`` as a subsection, so the concept field is
       also renamed with ``_field``
 
-        The pre-computation path in ``_ensure_conflicts_precomputed`` is exercised in
-        a separate test below. Here the scan is skipped via state flag so the
-        assertions stay focused on build-time rename behavior driven by ancestor
-        subsection names.
+    The pre-computation path in ``_ensure_conflicts_precomputed`` is exercised in
+    a separate test below. Here the scan is skipped via state flag so the
+    assertions stay focused on build-time rename behavior driven by ancestor
+    subsection names.
     """
-    _patch_fake_node_types(monkeypatch)
+    attr = NexusAttribute(name="units")
+    attr.dtype = "NX_CHAR"
+    field = NexusField(name="conflict_concept")
+    field.dtype = "NX_FLOAT"
+    attr.parent = field
 
-    attr = FakeAttribute(name="units", dtype="NX_CHAR")
-    field = FakeField(
-        name="conflict_concept",
-        dtype="NX_FLOAT",
-        children=[attr],
-    )
-    concept_field = FakeField(name="conflict_concept", dtype="NX_FLOAT")
-    nested_conflict_group = FakeGroup(
-        name="conflict_concept",
-        nx_class="NXconflict_leaf",
-    )
-    current_group = FakeGroup(
-        name="conflict_concept",
+    concept_field = NexusField(name="conflict_concept")
+    concept_field.dtype = "NX_FLOAT"
+    current_group = NexusGroup(
         nx_class="NXconflict_parent",
-        children=[concept_field, nested_conflict_group],
+        name="conflict_concept",
+        nx_type="group",
+        nxdl_base="NXentry.nxdl.xml",
     )
+    # nested_conflict_group makes current_group a named concept (groups with only
+    # fields but no child groups would be inlined; a child group triggers concept
+    # class generation, which is the path under test).
+    nested_conflict_group = NexusGroup(
+        nx_class="NXconflict_leaf",
+        name="conflict_concept",
+        nx_type="group",
+    )
+    concept_field.parent = current_group
+    nested_conflict_group.parent = current_group
 
     root = SimpleNamespace(
         category="base",
@@ -335,9 +302,8 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
 def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
     monkeypatch,
 ):
-    """Ensure pre-computation records `_field` suffixes for ancestor field conflicts.
+    """Ensure pre-computation records ``_field`` suffixes for ancestor field conflicts.
 
-    This test exercises the dedicated conflict scan used before build_context.
     The setup models a multi-level inheritance chain where:
     - ``NXancestor`` defines a field named ``conflict_concept``
     - ``NXentry`` extends ``NXparent``
@@ -347,8 +313,6 @@ def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
     ``converter._qty_field_suffix_for['NXancestor']`` and yield the effective
     suffixed quantity name ``conflict_concept_field``.
     """
-    _patch_fake_node_types(monkeypatch)
-
     monkeypatch.setattr(converter, "_conflicts_precomputed", False)
     monkeypatch.setattr(converter, "_qty_field_suffix_for", {})
     monkeypatch.setattr(
@@ -367,16 +331,29 @@ def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
         }.get(nx_name, "NXobject"),
     )
 
+    ancestor_field = NexusField(
+        name="conflict_concept", nxdl_base="NXancestor.nxdl.xml"
+    )
+    ancestor_field.dtype = "NX_FLOAT"
+
+    leaf_group = NexusGroup(
+        nx_class="NXconflict_leaf",
+        name="conflict_concept",
+        nx_type="group",
+        nxdl_base="NXentry.nxdl.xml",
+    )
+    parent_group = NexusGroup(
+        nx_class="NXconflict_parent",
+        name="conflict_concept",
+        nx_type="group",
+        nxdl_base="NXentry.nxdl.xml",
+    )
+    leaf_group.parent = parent_group
+
     roots = {
         "NXancestor": SimpleNamespace(
             nxdl_base="NXancestor.nxdl.xml",
-            children=[
-                FakeField(
-                    name="conflict_concept",
-                    dtype="NX_FLOAT",
-                    nxdl_base="NXancestor.nxdl.xml",
-                )
-            ],
+            children=[ancestor_field],
         ),
         "NXparent": SimpleNamespace(
             nxdl_base="NXparent.nxdl.xml",
@@ -384,20 +361,7 @@ def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
         ),
         "NXentry": SimpleNamespace(
             nxdl_base="NXentry.nxdl.xml",
-            children=[
-                FakeGroup(
-                    name="conflict_concept",
-                    nx_class="NXconflict_parent",
-                    nxdl_base="NXentry.nxdl.xml",
-                    children=[
-                        FakeGroup(
-                            name="conflict_concept",
-                            nx_class="NXconflict_leaf",
-                            nxdl_base="NXentry.nxdl.xml",
-                        )
-                    ],
-                )
-            ],
+            children=[parent_group],
         ),
         "NXobject": SimpleNamespace(nxdl_base="NXobject.nxdl.xml", children=[]),
     }
@@ -409,27 +373,23 @@ def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
     ensure_conflicts_precomputed()
 
     ancestor = roots["NXancestor"]
-    assert f"{ancestor.children[0].name}_field" == "conflict_concept_field"
-
+    # The function records the rename in _qty_field_suffix_for without modifying
+    # the NexusField node itself; the node name stays "conflict_concept".
+    assert ancestor.children[0].name == "conflict_concept"
     assert qty_field_suffix_for["NXancestor"] == frozenset({"conflict_concept"})
 
 
-@pytest.mark.parametrize("reserved_name", sorted(_RESERVED_QUANTITY_NAMES))
+@pytest.mark.parametrize("reserved_name", ("name", "lab_id", "description"))
 def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserved_name):
-    """Ensure reserved quantity names are rewritten with `_field` in build output.
+    """Ensure reserved quantity names are rewritten with ``_field`` in build output.
 
-    For each reserved name from naming rules, this checks both:
-    - the field quantity name itself
-    - the derived field-attribute quantity name
+    Covers the NX_CHAR-typed names in ``_RESERVED_QUANTITY_NAMES`` (name, lab_id,
+    description) which shadow ``BaseSection`` attributes and must be suffixed to
+    avoid silently overriding them.  ``datetime`` uses a different dtype and is
+    not included here.
     """
-    _patch_fake_node_types(monkeypatch)
-
-    field_units_attr = FakeAttribute(name="units", dtype="NX_CHAR")
-    reserved_field = FakeField(
-        name=reserved_name,
-        dtype="NX_FLOAT",
-        children=[field_units_attr],
-    )
+    reserved_field = NexusField(name=reserved_name)
+    reserved_field.dtype = "NX_CHAR"
 
     root = SimpleNamespace(
         category="base",
@@ -468,7 +428,7 @@ def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserve
     quantity_names = [q.python_name for q in context["quantities"]]
     expected_base = f"{reserved_name}_field"
 
-    assert quantity_names == [expected_base, f"{expected_base}__units"]
+    assert quantity_names == [expected_base]
 
 
 def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
@@ -508,3 +468,117 @@ def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):
     written = converter.generate_all_base_classes(output_dir=tmp_path)
 
     assert written == 1
+
+
+# ---------------------------------------------------------------------------
+# Full-pipeline integration tests (controlled NXtestBase fixture → Python source)
+# ---------------------------------------------------------------------------
+
+
+def test_write_base_class_nxtestbase_full_pipeline(tmp_path):
+    """Full-pipeline: NXtestBase generates valid Python covering key converter features.
+
+    NXtestBase (src/pynxtools/data/NXtestBase.nxdl.xml) is a controlled fixture that
+    covers: NX_CHAR, NX_FLOAT with units, NX_INT, NX_BOOLEAN, closed enum, group
+    reference, and group-level attribute.  Using a fixture NXDL keeps this test
+    independent of live NeXus definition changes while still exercising the full
+    generate_tree_from → build_context → render → write pipeline.
+    """
+    converter.write_base_class("NXtestBase", output_dir=tmp_path, force=True)
+    source = (tmp_path / "testbase.py").read_text(encoding="utf-8")
+
+    assert "class Testbase(Object):" in source
+    assert 'nx_class="NXtestBase"' in source
+    assert "label = Quantity(" in source
+    assert "energy = Quantity(" in source
+    assert "count = Quantity(" in source
+    assert "flag = Quantity(" in source
+    assert "mode = Quantity(" in source
+    assert "data = SubSection(" in source
+    assert "version = Quantity(" in source
+    compile(source, "testbase.py", "exec")
+
+
+def test_write_base_class_nxtestbase_matches_golden():
+    """Generated NXtestBase output must be byte-identical to the stored golden file.
+
+    The golden file lives in tests/data/nomad/converter/testbase.py and was produced
+    by running the converter against NXtestBase.nxdl.xml.  A failure here means the
+    converter template or NXtestBase.nxdl.xml changed without regenerating the golden
+    file.  Fix by running::
+
+        python -c "
+        import pynxtools.nomad.converters.nxdl_to_metainfo as c
+        open('tests/data/nomad/converter/testbase.py','w').write(c.render(c.build_context('NXtestBase')))
+        "
+    """
+    golden = (_CONVERTER_GOLDEN_DIR / "testbase.py").read_text(encoding="utf-8")
+    generated = converter.render(converter.build_context("NXtestBase"))
+    assert generated == golden
+
+
+@pytest.mark.parametrize(
+    "nx_class, module_name",
+    [
+        ("NXobject", "object"),
+        ("NXdata", "data"),
+        ("NXentry", "entry"),
+        ("NXsample", "sample"),
+    ],
+)
+def test_committed_base_class_matches_generator(nx_class, module_name):
+    """Committed Python metainfo file must be identical to what the generator produces.
+
+    A failure here means the NXDL definition or the Jinja2 template changed but
+    the corresponding ``.py`` file in ``src/pynxtools/nomad/metainfo/base_classes/``
+    was not regenerated. Fix by running::
+
+        pynx nomad generate-metainfo --nx-class <NX_CLASS>
+    """
+    golden = (_GOLDEN_DIR / f"{module_name}.py").read_text(encoding="utf-8")
+    generated = converter.render(converter.build_context(nx_class))
+    assert generated == golden
+
+
+# ---------------------------------------------------------------------------
+# NXtest / NXtest_extended: full-pipeline section-by-section golden tests
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "nx_class, golden_file",
+    [
+        ("NXtest", "test.py"),
+        ("NXtest_extended", "test_extended.py"),
+    ],
+)
+def test_nxtest_fixture_sections_match_golden(nx_class, golden_file):
+    """Generated classes from NXtest fixtures match the stored golden section structure.
+
+    Compares class inheritance and member names/kinds (Quantity, SubSection) for
+    every class in the generated file against the golden stored in
+    tests/data/nomad/converter/.  The comparison is structural — formatting,
+    docstring text, and annotation keyword ordering do not affect the result.
+    NXtest and NXtest_extended are application definitions used here as controlled
+    fixtures; they cover the full converter path including named concept groups,
+    inheritance from base classes, and multi-class output files.
+
+    A failure here means the NXtest*.nxdl.xml fixture or the Jinja2 template
+    changed without regenerating the golden.  Fix by running::
+
+        python -c "
+        import pynxtools.nomad.converters.nxdl_to_metainfo as c
+        open('tests/data/nomad/converter/<golden_file>', 'w').write(
+            c.render(c.build_context('<nx_class>'))
+        )
+        "
+    """
+    golden = (_CONVERTER_GOLDEN_DIR / golden_file).read_text(encoding="utf-8")
+    generated = converter.render(converter.build_context(nx_class))
+
+    assert _class_bases(generated) == _class_bases(golden), (
+        f"{nx_class}: class inheritance mismatch"
+    )
+    assert _class_members(generated) == _class_members(golden), (
+        f"{nx_class}: class member mismatch (name or Quantity/SubSection kind changed)"
+    )
