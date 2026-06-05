@@ -69,6 +69,7 @@ class BeamTransferMatrixTable(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_transfer_matrix_table.html#nxbeam_transfer_matrix_table-datatype-n-field"
         ],
+        variable=True,
         description=(
             "Select which type of data was recorded, for example aperture and "
             "focal length. It is possible to have multiple selections. This "
@@ -110,6 +111,7 @@ class BeamTransferMatrixTable(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_transfer_matrix_table.html#nxbeam_transfer_matrix_table-transfer-matrix-field"
         ],
+        variable=True,
         shape=["*", "*"],
         description=(
             "Contains the datastructure which relates beam properties of an "

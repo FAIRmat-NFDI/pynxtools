@@ -85,7 +85,7 @@ class Calibration(Process):
         description=("Additional input axis to be used in the formula."),
     )
     calibration_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationParameters",
+        section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationCalibrationParameters",
         repeats=False,
         description=(
             "Fit coefficients to be used in ``fit_formula_description``. As an "
@@ -306,6 +306,7 @@ class Calibration(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-mapping-mapping-field"
         ],
+        variable=True,
         description=(
             "Mapping data for calibration. This can be used to map data points "
             "from uncalibrated to calibrated values, i.e., by multiplying each "
@@ -414,7 +415,7 @@ class CalibrationFitFormulaInputs(Parameters):
         super().normalize(archive, logger)
 
 
-class CalibrationParameters(Parameters):
+class CalibrationCalibrationParameters(Parameters):
     """
     Fit coefficients to be used in ``fit_formula_description``.
 
@@ -441,6 +442,7 @@ class CalibrationParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-calibration-parameters-an-field"
         ],
+        variable=True,
         description=(
             "Use a0, a1, ..., an for the coefficients of a polynomial fit, "
             "corresponding to the values in the ``fit_formula_description``."
