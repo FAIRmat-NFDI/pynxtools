@@ -1,0 +1,414 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nx-class NXtas` to regenerate.
+# Additive-only: the generator will never remove or rename existing members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.sample import Sample
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["Tas"]
+
+
+class Tas(Entry):
+    """
+    This is an application definition for a triple axis spectrometer.
+
+    It is for the trademark scan of the TAS, the Q-E scan. For your alignment
+    scans use the rules in :ref:`NXscan`.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXtas",
+            category="application",
+            symbols={"nP": "Number of points"},
+        ),
+    )
+
+    instrument = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    sample = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.tas.TasSample",
+        repeats=True,
+        variable=True,
+    )
+    monitor = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.tas.TasMonitor",
+        repeats=True,
+        variable=True,
+    )
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=True,
+        variable=True,
+        description=(
+            "One of the ei,ef,qh,qk,ql,en should get a primary=1 attribute to "
+            "denote the main scan axis"
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-title-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    start_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-start-time-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="start_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    definition = Quantity(
+        type=MEnum(["NXtas"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-definition-field"
+        ],
+        description=("Official NeXus NXDL schema to which this file conforms"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="definition",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["NXtas"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class TasSample(Sample):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-name-field"
+        ],
+        description=("Descriptive name of sample"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    qh = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-qh-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="qh",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    qk = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-qk-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="qk",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    ql = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-ql-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="ql",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    en = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-en-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="en",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    rotation_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-rotation-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="rotation_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    sgu = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-sgu-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="sgu",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    sgl = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-sgl-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="sgl",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    unit_cell = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-unit-cell-field"
+        ],
+        dimensionality="[length]",
+        shape=[6],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="unit_cell",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    orientation_matrix = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-orientation-matrix-field"
+        ],
+        dimensionality="dimensionless",
+        shape=[9],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="orientation_matrix",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TasMonitor(Monitor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonitor",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    mode = Quantity(
+        type=MEnum(["monitor", "timer"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-mode-field"
+        ],
+        description=(
+            "Count to a preset value based on either clock time (timer) or "
+            "received monitor counts (monitor)."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["monitor", "timer"],
+        ),
+    )
+    preset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-preset-field"
+        ],
+        description=("preset value for time or monitor"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="preset",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-data-field"
+        ],
+        shape=["*"],
+        description=("Total integral monitor counts"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="data",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

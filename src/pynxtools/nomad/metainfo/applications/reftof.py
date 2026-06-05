@@ -1,0 +1,329 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nx-class NXreftof` to regenerate.
+# Additive-only: the generator will never remove or rename existing members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.sample import Sample
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["Reftof"]
+
+
+class Reftof(Entry):
+    """
+    This is an application definition for raw data from a TOF reflectometer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXreftof",
+            category="application",
+            symbols={
+                "xSize": "xSize description",
+                "ySize": "ySize description",
+                "nTOF": "nTOF description",
+            },
+        ),
+    )
+
+    instrument = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofInstrument",
+        repeats=False,
+    )
+    sample = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofSample",
+        repeats=False,
+    )
+    control = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofControl",
+        repeats=False,
+    )
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-title-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    start_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-start-time-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="start_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    end_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-end-time-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="end_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    definition = Quantity(
+        type=MEnum(["NXreftof"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-definition-field"
+        ],
+        description=("Official NeXus NXDL schema to which this file conforms"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="definition",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["NXreftof"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class ReftofInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-name-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ReftofSample(Sample):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-sample-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample",
+            name="sample",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-sample-name-field"
+        ],
+        description=("Descriptive name of sample"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    rotation_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-sample-rotation-angle-field"
+        ],
+        dimensionality="[angle]",
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="rotation_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ReftofControl(Monitor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonitor",
+            name="control",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    mode = Quantity(
+        type=MEnum(["monitor", "timer"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-mode-field"
+        ],
+        description=(
+            "Count to a preset value based on either clock time (timer) or "
+            "received monitor counts (monitor)."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["monitor", "timer"],
+        ),
+    )
+    preset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-preset-field"
+        ],
+        description=("preset value for time or monitor"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="preset",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    integral = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-integral-field"
+        ],
+        description=("Total integral monitor counts"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="integral",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    time_of_flight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-time-of-flight-field"
+        ],
+        dimensionality="[time]",
+        description=("Time channels"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="time_of_flight",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME_OF_FLIGHT",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-data-field"
+        ],
+        description=("Monitor counts in each time channel"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="data",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

@@ -1,0 +1,319 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nx-class NXspm_piezo_config` to regenerate.
+# Additive-only: the generator will never remove or rename existing members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+#
+# NOTE: This class is generated from a community-contributed NXDL definition.
+# The NXDL source may change across versions. Regenerate after updating definitions.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
+from pynxtools.nomad.metainfo.base_classes.object import Object
+from pynxtools.nomad.metainfo.base_classes.spm_piezoelectric_material import (
+    SpmPiezoelectricMaterial,
+)
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["SpmPiezoConfig"]
+
+
+class SpmPiezoConfig(Object):
+    """
+    A base class describing piezo actuator settings for scanning probe
+    microscopy.
+
+    Piezoelectric actuators work utilizing the inverse-piezoelectric effect,
+    when a voltage is applied on the material and it deforms proportional to
+    the applied voltage. Description below shows calibration coefficients and
+    other configuration parameters of open loop piezo actuators (that is
+    actuators without capacitive sensor feedback systems).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXspm_piezo_config",
+            category="base",
+        ),
+    )
+
+    piezo_material = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_config.SpmPiezoConfigPiezoMaterial",
+        repeats=False,
+        description=(
+            "The material description and properties of the piezoelectric "
+            "scanner materials."
+        ),
+    )
+    calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_config.SpmPiezoConfigCalibration",
+        repeats=False,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class SpmPiezoConfigPiezoMaterial(SpmPiezoelectricMaterial):
+    """
+    The material description and properties of the piezoelectric scanner
+    materials.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-piezo-material-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezoelectric_material",
+            name="piezo_material",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    curvature_radiusN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-piezo-material-curvature-radiusn-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "The N (substring) denotes X or Y. There are 2 parameters in X and Y "
+            "directions. It can be set approximately to the length of the piezo "
+            "tube along X and Y axis."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="curvature_radiusN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmPiezoConfigCalibration(Calibration):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration_type = Quantity(
+        type=MEnum(["active", "passive"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-type-field"
+        ],
+        description=(
+            "The name of the calibration type, sometimes it is called `active "
+            "calibration`."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="calibration_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["active", "passive"],
+        ),
+    )
+    calibration_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-name-field"
+        ],
+        description=(
+            "A specific name of the calibration (e.g. active type with name 'LHe')."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="calibration_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    calibration_date = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-date-field"
+        ],
+        description=("The date of the calibration."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="calibration_date",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    calibratedAXIS = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibratedaxis-field"
+        ],
+        description=(
+            "The AXIS (substring) denotes X, Y or Z, e.g., calibrated_x. There "
+            "are three directions X, Y, and Z for calibration, along with three "
+            "available parameters each: Calibration (m/V), Range (m), and HV "
+            "gain. Only two of these parameters are required to define the "
+            "calibration. Consequently, when any value is changed, one of the "
+            "other values will be automatically updated."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="calibratedAXIS",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    hv_gainN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-hv-gainn-field"
+        ],
+        description=(
+            "The N (substring) denotes X or Y or Z, e.g., hv_gain_x. In some "
+            "systems, there is an HV gain readout feature. For these systems, "
+            "the HV gain should be automatically adjusted whenever the gain is "
+            "changed at the high voltage amplifier."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="hv_gainN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    rangeN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-rangen-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "The N (substring) denotes X or Y or Z, e.g., range_x. There are 3 "
+            "parameters in X, Y and Z directions. The range is the maximum "
+            "distance the piezo can move."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="rangeN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    tiltN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-tiltn-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "The N (substring) denotes X and Y directions (e.g., tilt_x), and "
+            "for both directions tilt needs to be adjusted according to the "
+            "actual surface."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="tiltN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    drift_correction_status = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-drift-correction-status-field"
+        ],
+        description=(
+            "The drift correction status (true / false) in calibration step of piezo."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="drift_correction_status",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    driftN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-driftn-field"
+        ],
+        description=(
+            "The N (substring) denotes X, Y and Z directions (e.g., drift_x). "
+            "Define the drift speed [m/s] for all three axes. When the "
+            "compensation is on, the piezo will start to move at that speed."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="driftN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

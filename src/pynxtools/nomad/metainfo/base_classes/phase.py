@@ -87,6 +87,50 @@ class Phase(Object):
             optionality="optional",
         ),
     )
+    microstructure_ipf = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure_ipf.MicrostructureIpf",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_ipf",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    microstructure_odf = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdf",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_odf",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    microstructure_pf = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure_pf.MicrostructurePf",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_pf",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    microstructure = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
 
     phase_id = Quantity(
         type=np.int64,

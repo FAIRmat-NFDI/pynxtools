@@ -338,9 +338,6 @@ def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
         child_suffix = "".join(
             p.capitalize() for p in node.name.lower().replace("-", "_").split("_") if p
         )
-    # Avoid double prefix: XpsXpsCoordinateSystem → XpsCoordinateSystem
-    if child_suffix.startswith(parent_class_name):
-        return child_suffix
     return parent_class_name + child_suffix
 
 
@@ -961,7 +958,7 @@ def build_context(nx_name: str) -> dict:
     for child in effective_children:
         if child.nx_type != "group":
             continue
-        if _unwrapped_children is None and child.nxdl_base != primary_nxdl:
+        if child.nxdl_base != primary_nxdl:
             continue
         nx_nt = child.name_type or "specified"
         if nx_nt == "any":
@@ -977,11 +974,7 @@ def build_context(nx_name: str) -> dict:
     all_sub_names = parent_sub_names | own_sub_names
 
     for child in effective_children:
-        if (
-            child.nx_type == "group"
-            and _unwrapped_children is None
-            and child.nxdl_base != primary_nxdl
-        ):
+        if child.nx_type == "group" and child.nxdl_base != primary_nxdl:
             continue
 
         if child.nx_type == "attribute":
@@ -1048,6 +1041,13 @@ def build_context(nx_name: str) -> dict:
                 if concept_name in seen_concept:
                     continue  # still a collision — skip (rare)
             seen_concept.add(concept_name)
+
+            # If concept name would equal the base class name → circular inheritance.
+            # Disambiguate by re-prefixing with the full type-based name.
+            # e.g. NXapm.measurement (type NXapm_measurement):
+            #   concept "ApmMeasurement" == base "ApmMeasurement" → "ApmApmMeasurement"
+            if concept_name == nxdl_to_class_name(child.nx_class):
+                concept_name = class_name + nxdl_to_class_name(child.nx_class)
 
             concept = _build_named_concept(concept_name, child)
 
@@ -1135,10 +1135,13 @@ def build_context(nx_name: str) -> dict:
             if not (mod == base_import and cls == base_class)
         ]
 
+    is_contributed = "contributed_definitions" in (root_node.nxdl_base or "")
+
     return {
         "class_name": class_name,
         "nx_name": nx_name,
         "nx_category": nx_category,
+        "is_contributed": is_contributed,
         "nx_deprecated": root_node.deprecated,
         "ignore_extra_groups": root_node.ignore_extra_groups,
         "ignore_extra_fields": root_node.ignore_extra_fields,
