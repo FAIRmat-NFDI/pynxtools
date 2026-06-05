@@ -1,0 +1,737 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nx-class NXxrd_pan` to regenerate.
+# Additive-only: the generator will never remove or rename existing members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+#
+# NOTE: This class is generated from a community-contributed NXDL definition.
+# The NXDL source may change across versions. Regenerate after updating definitions.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.applications.xrd import Xrd
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.object import Object
+from pynxtools.nomad.metainfo.base_classes.sample import Sample
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["XrdPan"]
+
+
+class XrdPan(Xrd):
+    """
+    NXxrd_pan is a specialization of NXxrd with extra properties for the
+    PANalytical XRD data format.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXxrd_pan",
+            category="application",
+        ),
+    )
+
+    instrument = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    experiment_config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfig",
+        repeats=False,
+        description=("Collect user inputs e.g. name or path of the input file."),
+    )
+    experiment_result = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentResult",
+        repeats=False,
+        description=(
+            "All experiment results data such as scattering angle (2theta), "
+            "intensity, incident angle, scattering vector, etc will be stored "
+            "here."
+        ),
+    )
+    q_data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanQData",
+        repeats=False,
+        description=("The desired view for scattering vectors."),
+    )
+    sample = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanSample",
+        repeats=True,
+        variable=True,
+        description=("Description on sample."),
+    )
+
+    data_file = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-data-file-field"
+        ],
+        description=("Name of the data file."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="data_file",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    measurement_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-measurement-type-field"
+        ],
+        description=("Type of measurement."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="measurement_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    definition = Quantity(
+        type=MEnum(["NXxrd_pan"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-definition-field"
+        ],
+        description=("Official NeXus NXDL schema to which this file conforms."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="definition",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["NXxrd_pan"],
+        ),
+    )
+    method = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-method-field"
+        ],
+        description=(
+            "Method used to collect the data default='X-Ray Diffraction (XRD)'"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["X-Ray Diffraction (XRD)"],
+            open_enum=True,
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-title-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    start_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-start-time-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="start_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class XrdPanExperimentConfig(Object):
+    """
+    Collect user inputs e.g. name or path of the input file.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXobject",
+            name="experiment_config",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    beam_attenuation_factors = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-beam-attenuation-factors-field"
+        ],
+        description=("Beam attenuation factors over the path."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="beam_attenuation_factors",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    goniometer_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-goniometer-x-field"
+        ],
+        dimensionality="[length]",
+        description=("Goniometer position X."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="goniometer_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    goniometer_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-goniometer-y-field"
+        ],
+        dimensionality="[length]",
+        description=("Goniometer position Y."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="goniometer_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    goniometer_z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-goniometer-z-field"
+        ],
+        dimensionality="[length]",
+        description=("Goniometer position Z"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="goniometer_z",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    count_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-count-time-field"
+        ],
+        dimensionality="[time]",
+        description=("Total time of count."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="count_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanExperimentResult(Data):
+    """
+    All experiment results data such as scattering angle (2theta), intensity,
+    incident angle, scattering vector, etc will be stored here.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="experiment_result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-intensity-field"
+        ],
+        shape=["*"],
+        description=("Number of scattered electrons per unit time."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="intensity",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    two_theta = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-two-theta-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("Two-theta (scattering angle) of the diffractogram."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="two_theta",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    omega = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-omega-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("Incident angle of the diffractogram."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="omega",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    phi = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-phi-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("The phi range of the diffractogram."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="phi",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    chi = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-chi-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("The chi range of the diffractogram"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="chi",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    q_parallel = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-parallel-field"
+        ],
+        description=(
+            "The scattering vector component, which is parallel to the sample surface."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="q_parallel",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    q_perpendicular = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-perpendicular-field"
+        ],
+        description=(
+            "The scattering vector component, which is perpendicular to the "
+            "sample surface."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="q_perpendicular",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    q_norm = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-norm-field"
+        ],
+        description=(
+            "The norm value of the scattering vector, q. The scattering vector "
+            "is defined as a difference between the incident and scattered wave "
+            "vectors. For details: "
+            "https://en.wikipedia.org/wiki/Powder_diffraction and "
+            "https://theory.labster.com/scattering-vector/"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="q_norm",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-experiment-result-polar-angle-field"
+        ],
+        shape=["*"],
+        description=(
+            "link (suggested "
+            "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
+            "ale in /NXentry/NXinstrument/NXdetector"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-experiment-result-data-field"
+        ],
+        shape=["*"],
+        description=(
+            "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
+            "to data in /Nxentry/Nxinstrument/Nxdetector"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="data",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanQData(Data):
+    """
+    The desired view for scattering vectors.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="q_data",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    q = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-q-field"
+        ],
+        description=(
+            "This concept corresponds to the norm value of the scattering "
+            "vector(q). The concept is the same as 'q_norm' of "
+            "'experiment_result' and should be linked to "
+            "/entry[ENTRY]/experiment_result/q_norm."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="q",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-intensity-field"
+        ],
+        description=(
+            "Number of scattered electrons per unit time at each scattering "
+            "vector (q) value. The concept is the same as the 'intensity' of "
+            "experiment_result and should be linked to "
+            "/entry[ENTRY]/experiment_result/intensity."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="intensity",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    q_parallel = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-q-parallel-field"
+        ],
+        description=(
+            "The scattering vector (q) component, which is parallel to the "
+            "sample surface. This component is used in the Reciprocal Space "
+            "Mapping (RSM) technique of X-ray diffraction method. The concept is "
+            "the same as 'q_parallel' of experiment_result, and should be linked "
+            "to /entry[ENTRY]/experiment_result/q_parallel."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="q_parallel",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    q_perpendicular = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-q-perpendicular-field"
+        ],
+        description=(
+            "The scattering vector component, which is perpendicular to the "
+            "sample surface. The concept is the same as 'q_perpendicular' of "
+            "experiment_result, and should be linked to "
+            "/entry[ENTRY]/experiment_result/q_perpendicular."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="q_perpendicular",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-q-data-polar-angle-field"
+        ],
+        shape=["*"],
+        description=(
+            "link (suggested "
+            "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
+            "ale in /NXentry/NXinstrument/NXdetector"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-q-data-data-field"
+        ],
+        shape=["*"],
+        description=(
+            "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
+            "to data in /Nxentry/Nxinstrument/Nxdetector"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="data",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanSample(Sample):
+    """
+    Description on sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-sample-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    sample_mode = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-sample-sample-mode-field"
+        ],
+        description=("Mode of sample."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="sample_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    sample_id = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-sample-sample-id-field"
+        ],
+        description=("Id of sample."),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="sample_id",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    sample_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-sample-sample-name-field"
+        ],
+        description=(
+            "Usually in xrd sample are being analyzed, but sample might be "
+            "identified by assumed name or given name."
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="sample_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-name-field"
+        ],
+        description=("Descriptive name of sample"),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    rotation_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-rotation-angle-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Optional rotation angle for the case when the powder diagram has "
+            "been obtained through an omega-2theta scan like from a traditional "
+            "single detector powder diffractometer"
+        ),
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="rotation_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

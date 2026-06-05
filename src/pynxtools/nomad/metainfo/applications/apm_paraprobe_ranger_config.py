@@ -1,0 +1,154 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_ranger_config` to regenerate.
+# Additive-only: the generator will never remove or rename existing members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+#
+# NOTE: This class is generated from a community-contributed NXDL definition.
+# The NXDL source may change across versions. Regenerate after updating definitions.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
+    ApmParaprobeToolConfig,
+)
+from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
+    ApmParaprobeToolParameters,
+)
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["ApmParaprobeRangerConfig"]
+
+
+class ApmParaprobeRangerConfig(ApmParaprobeToolConfig):
+    """
+    Application definition for a configuration file of the paraprobe-ranger
+    tool.
+
+    The tool paraprobe-ranger evaluates how mass-to-charge-state-ratio values
+    map on (molecular) ion types.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_config.html#nxapm_paraprobe_ranger_config"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXapm_paraprobe_ranger_config",
+            category="application",
+            symbols={
+                "n_nuclides": "The number of isotopes to consider as building blocks for searching molecular\n                ions.",
+                "n_composition": "The number of compositions to consider for molecular ion search tasks.",
+            },
+        ),
+    )
+
+    rangeID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_ranger_config.ApmParaprobeRangerConfigRangeID",
+        repeats=True,
+        variable=True,
+    )
+
+    definition = Quantity(
+        type=MEnum(["NXapm_paraprobe_ranger_config"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_config.html#nxapm_paraprobe_ranger_config-entry-definition-field"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="definition",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["NXapm_paraprobe_ranger_config"],
+        ),
+    )
+    definition__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-definition-version-attribute"
+        ],
+        a_nexus_quantity=NeXusQuantity(
+            kind="attribute",
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="definition",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class ApmParaprobeRangerConfigRangeID(ApmParaprobeToolParameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_config.html#nxapm_paraprobe_ranger_config-entry-rangeid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_parameters",
+            name="rangeID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    identifier_analysis = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-rangeid-identifier-analysis-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_quantity=NeXusQuantity(
+            kind="field",
+            name="identifier_analysis",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
