@@ -151,6 +151,7 @@ class Transformations(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXtransformations.html#nxtransformations-axisname-field"
         ],
+        variable=True,
         description=(
             "Units need to be appropriate for translation or rotation The name "
             "of this field is not forced. The user is free to use any name that "
@@ -321,6 +322,7 @@ class Transformations(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXtransformations.html#nxtransformations-axisname-end-field"
         ],
+        variable=True,
         description=(
             "``AXISNAME_end`` is a placeholder for a name constructed from the "
             "actual name of an axis to which ``_end`` has been appended. The "
@@ -341,6 +343,7 @@ class Transformations(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXtransformations.html#nxtransformations-axisname-increment-set-field"
         ],
+        variable=True,
         description=(
             "``AXISNAME_increment_set`` is a placeholder for a name constructed "
             "from the actual name of an axis to which ``_increment_set`` has "

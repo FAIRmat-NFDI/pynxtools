@@ -140,22 +140,22 @@ class Image(Object):
         ),
     )
     image_1d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image1d",
+        section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage1d",
         repeats=False,
         description=("One-dimensional image."),
     )
     image_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image2d",
+        section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage2d",
         repeats=False,
         description=("Two-dimensional image."),
     )
     image_3d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image3d",
+        section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage3d",
         repeats=False,
         description=("Three-dimensional image."),
     )
     image_4d = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image4d",
+        section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage4d",
         repeats=False,
         description=("Four-dimensional image."),
     )
@@ -228,7 +228,7 @@ class ImageProcess(Process):
         super().normalize(archive, logger)
 
 
-class Image1d(Data):
+class ImageImage1d(Data):
     """
     One-dimensional image.
     """
@@ -360,7 +360,7 @@ class Image1d(Data):
         super().normalize(archive, logger)
 
 
-class Image2d(Data):
+class ImageImage2d(Data):
     """
     Two-dimensional image.
     """
@@ -528,7 +528,7 @@ class Image2d(Data):
         super().normalize(archive, logger)
 
 
-class Image3d(Data):
+class ImageImage3d(Data):
     """
     Three-dimensional image.
     """
@@ -732,7 +732,7 @@ class Image3d(Data):
         super().normalize(archive, logger)
 
 
-class Image4d(Data):
+class ImageImage4d(Data):
     """
     Four-dimensional image.
     """

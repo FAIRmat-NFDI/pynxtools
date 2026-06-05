@@ -90,6 +90,7 @@ class Parameters(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-field"
         ],
+        variable=True,
         description=("A parameter that is used in or results from processing."),
         a_nexus_quantity=NeXusQuantity(
             kind="field",

@@ -105,6 +105,7 @@ class History(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXhistory.html#nxhistory-identifiername-field"
         ],
+        variable=True,
         description=(
             "An ID or reference to the location or a unique (globally "
             "persistent) identifier of e.g. another file which gives as many as "

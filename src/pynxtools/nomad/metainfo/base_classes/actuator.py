@@ -161,6 +161,7 @@ class Actuator(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXactuator.html#nxactuator-outputvalue-field"
         ],
+        variable=True,
         description=(
             "Any output that the actuator produces. For example, a heater can "
             "have the field output_power(NX_NUMBER)."
