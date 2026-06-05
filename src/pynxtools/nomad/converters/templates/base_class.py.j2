@@ -114,6 +114,9 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
         links=["{{ qty.node.get_link() }}"],
+        {% if qty.node.name_type in ("any", "partial") %}
+        variable=True,
+        {% endif %}
         {% if qty.dimensionality %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}
@@ -203,6 +206,9 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
         links=["{{ qty.node.get_link() }}"],
+        {% if qty.node.name_type in ("any", "partial") %}
+        variable=True,
+        {% endif %}
         {% if qty.dimensionality %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}

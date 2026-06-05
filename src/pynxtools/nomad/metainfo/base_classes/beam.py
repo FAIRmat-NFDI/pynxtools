@@ -761,6 +761,7 @@ class BeamTransformations(Transformations):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-transformations-beamdirection-field"
         ],
+        variable=True,
         dimensionality="dimensionless",
         description=(
             "Direction of beam vector, its value is ignored. If missing, then "

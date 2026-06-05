@@ -198,6 +198,7 @@ class OpticalLens(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-curvature-radius-face-field"
         ],
+        variable=True,
         dimensionality="[length]",
         description=(
             "Curvature radius of the lens. Instead of 'FACE' in the name of this "

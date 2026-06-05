@@ -139,6 +139,7 @@ class Fit(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-figure-of-meritmetric-field"
         ],
+        variable=True,
         dimensionality="dimensionless",
         description=(
             "Figure-of-merit to determine the goodness of fit, i.e., how well "

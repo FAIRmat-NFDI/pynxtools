@@ -338,6 +338,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-indices-attribute"
         ],
+        variable=True,
         description=(
             "The ``AXISNAME_indices`` attribute is a single integer or an array "
             "of integers that defines which :ref:`DATA </NXdata/DATA-field>` "
@@ -390,6 +391,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-field"
         ],
+        variable=True,
         description=(
             "Coordinate values along one or more :ref:`DATA "
             "</NXdata/DATA-field>` dimensions. The shape of an ``AXISNAME`` "
@@ -548,6 +550,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-field"
         ],
+        variable=True,
         description=(
             ".. index:: plotting Data values to be used as the NeXus *plottable "
             "data*. As the upper case ``DATA`` indicates, the names of the "
@@ -652,6 +655,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-errors-field"
         ],
+        variable=True,
         description=(
             '"Errors" (meaning *uncertainties* or *standard deviations*) '
             "associated with any field named ``FIELDNAME`` in this ``NXdata`` "
@@ -693,6 +697,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-scaling-factor-field"
         ],
+        variable=True,
         description=(
             "An optional scaling factor to apply to the values in any field "
             "named ``FIELDNAME`` in this ``NXdata`` group. This can be a "
@@ -722,6 +727,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-offset-field"
         ],
+        variable=True,
         description=(
             "An optional offset to apply to the values in FIELDNAME (usually the "
             "signal). When omitted, the offset is assumed to be 0. See "
