@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl" ?>
+<definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd"
+    xmlns="http://definition.nexusformat.org/nxdl/3.1"
+ name="NXtestBase"
+ extends="NXobject"
+ type="group"
+ category="base"
+>
+    <doc>
+        Minimal base class used as a controlled fixture in converter unit tests.
+        Not part of the NeXus standard definitions. Covers: NX_CHAR, NX_FLOAT with
+        units, NX_INT, NX_BOOLEAN, closed enumeration, group reference, and
+        group-level attribute — the key structural features exercised by the
+        NXDL-to-metainfo converter.
+    </doc>
+    <field name="label" type="NX_CHAR">
+        <doc>A text label field (tests NX_CHAR → str mapping).</doc>
+    </field>
+    <field name="energy" type="NX_FLOAT" units="NX_ENERGY">
+        <doc>An energy value (tests NX_FLOAT + unit → np.float64 mapping).</doc>
+    </field>
+    <field name="count" type="NX_INT" units="NX_UNITLESS">
+        <doc>An integer count (tests NX_INT → np.int64 mapping).</doc>
+    </field>
+    <field name="flag" type="NX_BOOLEAN" units="NX_UNITLESS">
+        <doc>A boolean flag (tests NX_BOOLEAN → bool mapping).</doc>
+    </field>
+    <field name="mode">
+        <doc>Operating mode (tests closed enumeration → MEnum mapping).</doc>
+        <enumeration>
+            <item value="fast"/>
+            <item value="slow"/>
+            <item value="medium"/>
+        </enumeration>
+    </field>
+    <group type="NXdata" name="data">
+        <doc>Primary data group (tests group → SubSection mapping).</doc>
+    </group>
+    <attribute name="version" type="NX_CHAR">
+        <doc>Schema version string (tests group-level attribute → Quantity mapping).</doc>
+    </attribute>
+</definition>
