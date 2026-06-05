@@ -1535,12 +1535,19 @@ def build_context(nx_name: str) -> dict:
             # Disambiguate by re-prefixing with the full type-based name.
             # e.g. NXapm.measurement (type NXapm_measurement):
             #   concept "ApmMeasurement" == base "ApmMeasurement" → "ApmApmMeasurement"
+<<<<<<< HEAD
             # Nested concepts are named from the un-doubled name (_naming_base):
             # ApmApmMeasurement's "instrument" child becomes
             # "ApmMeasurementInstrument", not "ApmApmMeasurementInstrument".
             _naming_base = concept_name
             if concept_name == nxdl_to_class_name(child.nx_class):
                 concept_name = class_name + nxdl_to_class_name(child.nx_class)
+=======
+            if concept_name == nxdl_to_class_name(child.nx_class):
+                concept_name = class_name + nxdl_to_class_name(child.nx_class)
+
+            concept = _build_named_concept(concept_name, child)
+>>>>>>> 329ef189 (add all applications and contributed; only two packages)
 
             # If the parent application defines a specialization for this group,
             # use it as the base instead of the generic NX class.
@@ -1673,12 +1680,15 @@ def build_context(nx_name: str) -> dict:
 
     is_contributed = "contributed_definitions" in (root_node.nxdl_base or "")
 
+<<<<<<< HEAD
     nomad_extra_bases_list = [_split_fqn(fqn) for fqn in nomad_extra_bases]
     needs_basesections = "basesections." in base_class or any(
         mod == "nomad.datamodel.metainfo.basesections"
         for mod, _ in nomad_extra_bases_list
     )
 
+=======
+>>>>>>> 329ef189 (add all applications and contributed; only two packages)
     return {
         "class_name": class_name,
         "nx_name": nx_name,
