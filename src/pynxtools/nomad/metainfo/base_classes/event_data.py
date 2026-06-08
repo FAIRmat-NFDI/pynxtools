@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -82,8 +89,7 @@ class EventData(Object):
         dimensionality="[time]",
         shape=["*"],
         description=("A list of timestamps for each event as it comes in."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="event_time_offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -102,8 +108,7 @@ class EventData(Object):
             "There will be extra information in the NXdetector to convert "
             "event_id to detector_number."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="event_id",
             type="NX_INT",
             name_type="specified",
@@ -119,8 +124,7 @@ class EventData(Object):
         dimensionality="[time]",
         shape=["*"],
         description=("The time that each pulse started with respect to the offset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="event_time_zero",
             type="NX_NUMBER",
             name_type="specified",
@@ -134,8 +138,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-time-zero-offset-attribute"
         ],
         description=("ISO8601"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -154,8 +157,7 @@ class EventData(Object):
             "The index into the event_time_offset, event_id pair for the pulse "
             "occurring at the matching entry in event_time_zero."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="event_index",
             type="NX_INT",
             name_type="specified",
@@ -176,8 +178,7 @@ class EventData(Object):
             "attach to a particular pulse height. The information to attach to a "
             "particular pulse is located in events_per_pulse."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_height",
             type="NX_FLOAT",
             name_type="specified",
@@ -195,8 +196,7 @@ class EventData(Object):
             "Timestamps matching the corresponding cue_index into the event_id, "
             "event_time_offset pair."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cue_timestamp_zero",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -209,8 +209,7 @@ class EventData(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-cue-timestamp-zero-start-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="start",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -227,8 +226,7 @@ class EventData(Object):
             "Index into the event_id, event_time_offset pair matching the "
             "corresponding cue_timestamp."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cue_index",
             type="NX_INT",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -88,8 +95,7 @@ class Rotations(Object):
             "contextualizes how the here reported parameterized quantities can "
             "be interpreted."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_frame",
             type="NX_CHAR",
             name_type="specified",
@@ -113,8 +119,7 @@ class Rotations(Object):
             "description of the disorientation between crystals adjoining a "
             "hetero-phase boundary."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crystal_symmetry",
             type="NX_CHAR",
             name_type="specified",
@@ -143,8 +148,7 @@ class Rotations(Object):
             "inaccuracies just for the sake of reporting a simplified "
             "symmetrized description should be avoided."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_symmetry",
             type="NX_CHAR",
             name_type="specified",
@@ -163,8 +167,7 @@ class Rotations(Object):
             "considering crystal_symmetry and sample_symmetry. Rotations which "
             "should be interpreted as antipodal are not marked as such."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_quaternion",
             type="NX_NUMBER",
             name_type="specified",
@@ -187,8 +190,7 @@ class Rotations(Object):
             "reference_frame to resolve which of the many possible Euler-angle "
             "conventions (Bunge ZXZ, XYZ, Kocks, Tait, etc.) were used."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_euler",
             type="NX_NUMBER",
             name_type="specified",
@@ -206,8 +208,7 @@ class Rotations(Object):
             "True for all those value tuples which have assumed antipodal "
             "symmetry. False for all others."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_antipodal",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -228,8 +229,7 @@ class Rotations(Object):
             "is_antipodal can be used to mark orientations with the antipodal "
             "property."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_quaternion",
             type="NX_NUMBER",
             name_type="specified",
@@ -252,8 +252,7 @@ class Rotations(Object):
             "many Euler-angle conventions possible (Bunge ZXZ, XYZ, Kocks, Tait, "
             "etc.) were used."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_euler",
             type="NX_NUMBER",
             name_type="specified",
@@ -276,8 +275,7 @@ class Rotations(Object):
             "the angular argument is expected to be the minimal obeying "
             "symmetries."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="misorientation_quaternion",
             type="NX_NUMBER",
             name_type="specified",
@@ -297,8 +295,7 @@ class Rotations(Object):
             "same symmetry assumptions as expressed for the field "
             "misorientation_quaternion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="misorientation_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -318,8 +315,7 @@ class Rotations(Object):
             "symmetry assumptions as expressed for the field "
             "misorientation_angle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="misorientation_axis",
             type="NX_NUMBER",
             name_type="specified",
@@ -339,8 +335,7 @@ class Rotations(Object):
             "obeying symmetry operations for equivalent disorientations as "
             "defined by crystal_symmetry and sample_symmetry."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="disorientation_quaternion",
             type="NX_NUMBER",
             name_type="specified",
@@ -362,8 +357,7 @@ class Rotations(Object):
             "same symmetry assumptions as expressed for the field "
             "disorientation_quaternion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="disorientation_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -382,8 +376,7 @@ class Rotations(Object):
             "Disorientations axis (normalized) following the same symmetry "
             "assumptions as expressed for the field disorientation_angle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="disorientation_axis",
             type="NX_NUMBER",
             name_type="specified",

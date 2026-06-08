@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -116,8 +123,7 @@ class CgPolyhedron(CgPrimitive):
             "The number of faces for each polyhedron. Faces of adjoining "
             "polyhedra are counted for each polyhedron."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_faces",
             type="NX_UINT",
             name_type="specified",
@@ -133,8 +139,7 @@ class CgPolyhedron(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("Area of each of faces."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="face_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -151,8 +156,7 @@ class CgPolyhedron(CgPrimitive):
             "The number of edges for each polyhedron. Edges of adjoining "
             "polyhedra are counted for each polyhedron."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_edges",
             type="NX_UINT",
             name_type="specified",
@@ -167,8 +171,7 @@ class CgPolyhedron(CgPrimitive):
         dimensionality="[length]",
         shape=["*"],
         description=("Length of each edge."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edge_length",
             type="NX_NUMBER",
             name_type="specified",

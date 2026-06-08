@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -75,8 +82,7 @@ class Atom(Object):
             "human-readable name of the element or ion like such as Al +++ or "
             "12C +."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -93,8 +99,7 @@ class Atom(Object):
             "Given numerical identifier for the set. The identifier zero is "
             "reserved for the special unknown ion type."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="id",
             type="NX_UINT",
             name_type="specified",
@@ -110,8 +115,7 @@ class Atom(Object):
         description=(
             "Identifier used to refer to if the set of atoms represents a substance."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_chemical",
             type="NX_CHAR",
             name_type="specified",
@@ -132,8 +136,7 @@ class Atom(Object):
             "and `N. G. Limas <10.1039/C6RA05507A>`_ discuss computational "
             "details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="charge",
             type="NX_NUMBER",
             name_type="specified",
@@ -158,8 +161,7 @@ class Atom(Object):
             "interval. Details on ranging definition files in the literature are "
             "`M. K. Miller <https://doi.org/10.1002/sia.1719>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="charge_state",
             type="NX_NUMBER",
             name_type="specified",
@@ -178,8 +180,7 @@ class Atom(Object):
             "atoms nor a set of cluster of these have a volume that is unique as "
             "a some cut-off criterion is required."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
             name_type="specified",
@@ -197,8 +198,7 @@ class Atom(Object):
             "Index for each atom at locations as detailed by position. Indices "
             "can be used as identifier and thus names for individual atoms."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices",
             type="NX_CHAR",
             name_type="specified",
@@ -219,8 +219,7 @@ class Atom(Object):
             "information efficiently is via individual hash values. Consult the "
             "docstring of ``nuclide_hash`` for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_UINT",
             name_type="specified",
@@ -235,8 +234,7 @@ class Atom(Object):
         ],
         shape=["*", "*"],
         description=("Position of each atom."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -255,8 +253,7 @@ class Atom(Object):
             "ambiguity when the reference frame is different to the NeXus "
             "default reference frame (McStas)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -275,8 +272,7 @@ class Atom(Object):
             "Relative occupancy of the atom position. This field is useful for "
             "specifying the atomic motif in instances of :ref:`NXunit_cell`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="occupancy",
             type="NX_NUMBER",
             name_type="specified",
@@ -317,8 +313,7 @@ class Atom(Object):
             "Sufficient unused indices remain to case situations when new "
             "elements will be discovered."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
             name_type="specified",
@@ -346,8 +341,7 @@ class Atom(Object):
             "That is encoded as a column vector (14, 6). The array is stored "
             "matching the order of nuclide_hash."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nuclide_list",
             type="NX_UINT",
             name_type="specified",
@@ -369,8 +363,7 @@ class Atom(Object):
             "primarily of interest for documenting :ref:`NXprocess` steps of "
             "indexing a ToF/mass-to-charge-state ratio histogram."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mass_to_charge_range",
             type="NX_NUMBER",
             name_type="specified",

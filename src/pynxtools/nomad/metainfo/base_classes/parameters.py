@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -77,8 +84,7 @@ class Parameters(Object):
             "data. If this attribute is provided, it is assumed that all the "
             "parameters in this group are associated with this model."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -92,8 +98,7 @@ class Parameters(Object):
         ],
         variable=True,
         description=("A parameter that is used in or results from processing."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="PARAMETER",
             type="NX_CHAR_OR_NUMBER",
             name_type="any",
@@ -105,8 +110,7 @@ class Parameters(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
@@ -122,8 +126,7 @@ class Parameters(Object):
         description=(
             "The standard deviation of the parameter after optimizing its value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="error",
             type="NX_NUMBER",
             name_type="specified",
@@ -137,8 +140,7 @@ class Parameters(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-description-attribute"
         ],
         description=("A description of what this parameter represents."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -157,8 +159,7 @@ class Parameters(Object):
             "is dependent on the program used to optimize the parameters and is "
             "not specified by NeXus."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="expression",
             type="NX_CHAR",
             name_type="specified",
@@ -172,8 +173,7 @@ class Parameters(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-initial-attribute"
         ],
         description=("The initial value of the parameter used in optimization."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="initial",
             type="NX_NUMBER",
             name_type="specified",
@@ -187,8 +187,7 @@ class Parameters(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-max-attribute"
         ],
         description=("The upper bound of the parameter used in optimization."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="max",
             type="NX_NUMBER",
             name_type="specified",
@@ -202,8 +201,7 @@ class Parameters(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-min-attribute"
         ],
         description=("The lower bound of the parameter used in optimization."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="min",
             type="NX_NUMBER",
             name_type="specified",
@@ -217,8 +215,7 @@ class Parameters(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-vary-attribute"
         ],
         description=("True if the parameter was varied during optimization."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vary",
             type="NX_BOOLEAN",
             name_type="specified",

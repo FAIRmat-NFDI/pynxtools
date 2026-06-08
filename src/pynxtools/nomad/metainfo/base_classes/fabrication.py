@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -61,8 +68,7 @@ class Fabrication(Object, basesections.Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfabrication.html#nxfabrication-vendor-field"
         ],
         description=("Company name of the manufacturer."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vendor",
             type="NX_CHAR",
             name_type="specified",
@@ -75,8 +81,7 @@ class Fabrication(Object, basesections.Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfabrication.html#nxfabrication-model-field"
         ],
         description=("Version or model of the component named by the manufacturer."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -92,8 +97,7 @@ class Fabrication(Object, basesections.Instrument):
             "If it is possible that different versions exist, the value in this "
             "field should be made specific enough to resolve the version."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -107,8 +111,7 @@ class Fabrication(Object, basesections.Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfabrication.html#nxfabrication-serial-number-field"
         ],
         description=("Serial number of the component."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="serial_number",
             type="NX_CHAR",
             name_type="specified",
@@ -127,8 +130,7 @@ class Fabrication(Object, basesections.Instrument):
             "setup. Just the year is often sufficient, but if a full date/time "
             "is used, it is recommended to add an explicit time zone."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="construction_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -141,8 +143,7 @@ class Fabrication(Object, basesections.Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfabrication.html#nxfabrication-capability-field"
         ],
         description=("Free-text list of functionalities which the component offers."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="capability",
             type="NX_CHAR",
             name_type="specified",

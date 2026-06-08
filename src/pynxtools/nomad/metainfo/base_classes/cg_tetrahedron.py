@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -104,8 +111,7 @@ class CgTetrahedron(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*", 4],
         description=("Area of each of the four triangular faces of each tetrahedron."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="face_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -121,8 +127,7 @@ class CgTetrahedron(CgPrimitive):
         dimensionality="[length]",
         shape=["*", 6],
         description=("Length of each edge of each tetrahedron."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edge_length",
             type="NX_NUMBER",
             name_type="specified",

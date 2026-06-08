@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.circuit import Circuit
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
@@ -95,8 +102,7 @@ class CsStorageCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-type-field"
         ],
         description=("Qualifier for the type of storage medium used."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -110,8 +116,7 @@ class CsStorageCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-max-physical-capacity-field"
         ],
         description=("Total amount of data which the medium can hold."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_physical_capacity",
             type="NX_POSINT",
             name_type="specified",
@@ -125,8 +130,7 @@ class CsStorageCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-max-read-rate-field"
         ],
         description=("Maximum read rate of the storage medium."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_read_rate",
             type="NX_NUMBER",
             name_type="specified",
@@ -140,8 +144,7 @@ class CsStorageCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-max-write-rate-field"
         ],
         description=("Maximum write rate of the storage medium."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_write_rate",
             type="NX_NUMBER",
             name_type="specified",

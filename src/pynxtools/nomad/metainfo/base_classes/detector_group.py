@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -87,8 +94,7 @@ class DetectorGroup(Object):
             "of NXdetector_group groups or in NXdetector_group group_names and "
             "group_parent fields as having children."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="group_names",
             type="NX_CHAR",
             name_type="specified",
@@ -107,8 +113,7 @@ class DetectorGroup(Object):
             "group named in the field group_names. The IDs are positive integers "
             "starting with 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="group_index",
             type="NX_INT",
             name_type="specified",
@@ -124,8 +129,7 @@ class DetectorGroup(Object):
             "An array of the hierarchical levels of the parents of detectors or "
             "groupings of detectors. A top-level grouping has parent level -1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="group_parent",
             type="NX_INT",
             name_type="specified",
@@ -138,8 +142,7 @@ class DetectorGroup(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_group.html#nxdetector_group-group-type-field"
         ],
         description=("Code number for group type, e.g. bank=1, tube=2 etc."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="group_type",
             type="NX_INT",
             name_type="specified",

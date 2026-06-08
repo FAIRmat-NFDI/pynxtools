@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -103,8 +110,7 @@ class CgPrimitive(Object):
             "Reference to an instance of :ref:`NXcoordinate_system` in which "
             "these primitives are defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -118,8 +124,7 @@ class CgPrimitive(Object):
         ],
         dimensionality="dimensionless",
         description=("The dimensionality of the primitive set with value up to d."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
             name_type="specified",
@@ -137,8 +142,7 @@ class CgPrimitive(Object):
         description=(
             "The cardinality of the primitive set. Value should be equal to c."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
             name_type="specified",
@@ -165,8 +169,7 @@ class CgPrimitive(Object):
             "C-/Python-style indexing have specific implicit identifier "
             "conventions where index_offset is 1 and 0 respectively."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -181,8 +184,7 @@ class CgPrimitive(Object):
         ],
         shape=["*"],
         description=("Identifier of each member for explicit indexing."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices",
             type="NX_INT",
             name_type="specified",
@@ -196,8 +198,7 @@ class CgPrimitive(Object):
         ],
         shape=["*", "*"],
         description=("The center of each primitive"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center",
             type="NX_NUMBER",
             name_type="specified",
@@ -212,8 +213,7 @@ class CgPrimitive(Object):
         ],
         shape=["*"],
         description=("True if the center is a center of mass."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_center_of_mass",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -228,8 +228,7 @@ class CgPrimitive(Object):
         dimensionality="[length]",
         shape=["*", "*"],
         description=("Shape of each primitive"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shape",
             type="NX_NUMBER",
             name_type="specified",
@@ -249,8 +248,7 @@ class CgPrimitive(Object):
             "assumption that one edge is parallel to an axis of the coordinate "
             "system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_NUMBER",
             name_type="specified",
@@ -270,8 +268,7 @@ class CgPrimitive(Object):
             "assumption that one edge is parallel to an axis of the coordinate "
             "system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="width",
             type="NX_NUMBER",
             name_type="specified",
@@ -291,8 +288,7 @@ class CgPrimitive(Object):
             "assumption that one edge is parallel to an axis of the coordinate "
             "system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="height",
             type="NX_NUMBER",
             name_type="specified",
@@ -310,8 +306,7 @@ class CgPrimitive(Object):
             "True if primitive is closed such that it has properties like area "
             "or volume."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_closed",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -330,8 +325,7 @@ class CgPrimitive(Object):
             "for values of dimensionality larger than 1, Area is an alias for "
             "the two-dimensional case."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
             name_type="specified",
@@ -350,8 +344,7 @@ class CgPrimitive(Object):
             "Alias for surface_area of each primitive. Set to NaN if does not "
             "apply for primitives for which is_closed is False."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="area",
             type="NX_NUMBER",
             name_type="specified",
@@ -371,8 +364,7 @@ class CgPrimitive(Object):
             "of each primitive. Use the depends_on attribute to specify in which "
             "coordinate system these direction unit vectors are defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation",
             type="NX_NUMBER",
             name_type="specified",
@@ -386,8 +378,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-mesh-field"
         ],
         description=("Do the primitives define a mesh."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_mesh",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -400,8 +391,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-triangle-mesh-field"
         ],
         description=("Do the primitives define a triangle mesh or not."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_triangle_mesh",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -414,8 +404,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-surface-mesh-field"
         ],
         description=("Do the primitives discretize the surface of an object or not."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_surface_mesh",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -446,8 +435,7 @@ class CgPrimitive(Object):
             "detail the rule set how e.g. a geodesic (surface) mesh was "
             "instantiated as there are many possibilities to do so."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_geodesic_mesh",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -463,8 +451,7 @@ class CgPrimitive(Object):
             "Possibility to store details such as when primitives form a "
             "(specific) type of mesh such as geodesic meshes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",

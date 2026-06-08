@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -88,8 +95,7 @@ class Peak(Object):
             "Human-readable label which specifies which concept/entity the peak "
             "represents/identifies."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="label",
             type="NX_CHAR",
             name_type="specified",
@@ -102,8 +108,7 @@ class Peak(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpeak.html#nxpeak-total-area-field"
         ],
         description=("Total area under the curve."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -147,8 +152,7 @@ class PeakData(Data):
             "Position values along one or more data dimensions (to hold the "
             "values for the independent variable)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -165,8 +169,7 @@ class PeakData(Data):
             "This array holds the intensity/count values of the fitted peak at "
             "each position."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",

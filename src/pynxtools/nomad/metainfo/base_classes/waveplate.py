@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -96,8 +103,7 @@ class Waveplate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-type-field"
         ],
         description=("Type of waveplate (e.g. achromatic or zero-order)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -120,8 +126,7 @@ class Waveplate(Component):
             "Specify the retardance of the waveplate (e.g. full-wave, half-wave "
             "(lambda/2), quarter-wave (lambda/4))."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="retardance",
             type="NX_CHAR",
             name_type="specified",
@@ -141,8 +146,7 @@ class Waveplate(Component):
             "minimum and maximum values of the wavelength range (in this case "
             'N_wavelengths = 2). In this case, also use type="achromatic".'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelengths",
             type="NX_NUMBER",
             name_type="specified",
@@ -156,8 +160,7 @@ class Waveplate(Component):
         ],
         dimensionality="[length]",
         description=("Diameter of the waveplate (if the waveplate is circular)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -175,8 +178,7 @@ class Waveplate(Component):
             "Clear aperture of the device (e.g. 90% of diameter for a disc or "
             "90% of length/height for square geometry)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="clear_aperture",
             type="NX_FLOAT",
             name_type="specified",
@@ -191,8 +193,7 @@ class Waveplate(Component):
         ],
         dimensionality="dimensionless",
         description=("Average reflectance of the waveplate in percentage."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflectance",
             type="NX_NUMBER",
             name_type="specified",
@@ -242,8 +243,7 @@ class WaveplateSubstrate(Sample):
             "Specify the material of the waveplate. If the device has a coating "
             "it should be described in coating/coating_material."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -257,8 +257,7 @@ class WaveplateSubstrate(Sample):
         ],
         dimensionality="[length]",
         description=("Thickness of the waveplate substrate."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -277,8 +276,7 @@ class WaveplateSubstrate(Sample):
             "Complex index of refraction of the waveplate substrate. Specify at "
             "given wavelength (or energy, wavenumber etc.) values."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction_substrate",
             type="NX_NUMBER",
             name_type="specified",
@@ -319,8 +317,7 @@ class WaveplateCoating(Sample):
             "Specify the coating type (e.g. dielectric, anti-reflection (AR), "
             "multilayer coating etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_type",
             type="NX_CHAR",
             name_type="specified",
@@ -333,8 +330,7 @@ class WaveplateCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-coating-coating-material-field"
         ],
         description=("Specify the coating material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_CHAR",
             name_type="specified",
@@ -348,8 +344,7 @@ class WaveplateCoating(Sample):
         ],
         dimensionality="[length]",
         description=("Thickness of the coating."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -367,8 +362,7 @@ class WaveplateCoating(Sample):
             "Wavelength range for which the coating is designed. Enter the "
             "minimum and maximum values of the wavelength range."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_range_coating",
             type="NX_NUMBER",
             name_type="specified",
@@ -386,8 +380,7 @@ class WaveplateCoating(Sample):
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (wavelength, energy, wavenumber etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction_coating",
             type="NX_NUMBER",
             name_type="specified",

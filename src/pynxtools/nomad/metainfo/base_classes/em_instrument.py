@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.manipulator import Manipulator
 
@@ -255,8 +262,7 @@ class EmInstrument(Instrument):
             "Given name of the microscope at the hosting institution. This is an "
             "alias. Examples could be NionHermes, Titan, JEOL, Gemini, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -272,8 +278,7 @@ class EmInstrument(Instrument):
             "Location of the lab or place where the instrument is installed. "
             "Using GEOREF is preferred."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="location",
             type="NX_CHAR",
             name_type="specified",
@@ -304,8 +309,7 @@ class EmInstrument(Instrument):
             "instrument models are used which suggests the microscope is a "
             "scanning (sem) or transmission electron microscope (tem):"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -399,8 +403,7 @@ class EmInstrumentStageID(Manipulator):
             "bulk_specimen, double_tilt, tilt_rotate, heating_chip, "
             "atmosphere_chip, electrical_biasing_chip, liquid_cell_chip"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="design",
             type="NX_CHAR",
             name_type="specified",
@@ -417,8 +420,7 @@ class EmInstrumentStageID(Manipulator):
             "of the stage_lab hierarchy is commonly referred to. Examples could "
             "be stub, puck, carousel, microtip, clip, holder, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -439,8 +441,7 @@ class EmInstrumentStageID(Manipulator):
             ":ref:`NXcoordinate_system`. Especially when this NXem_instrument "
             "base class is used in an application definition like NXem."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tilt1",
             type="NX_NUMBER",
             name_type="specified",
@@ -457,8 +458,7 @@ class EmInstrumentStageID(Manipulator):
             "Discouraged free-text field to provide details about how to "
             "interpret tilt1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -480,8 +480,7 @@ class EmInstrumentStageID(Manipulator):
             ":ref:`NXcoordinate_system`. Especially when this NXem_instrument "
             "base class is used in an application definition like NXem."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tilt2",
             type="NX_NUMBER",
             name_type="specified",
@@ -498,8 +497,7 @@ class EmInstrumentStageID(Manipulator):
             "Discouraged free-text field to provide details about how to "
             "interpret tilt2."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -521,8 +519,7 @@ class EmInstrumentStageID(Manipulator):
             ":ref:`NXcoordinate_system`. Especially when this NXem_instrument "
             "base class is used in an application definition like NXem."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation",
             type="NX_NUMBER",
             name_type="specified",
@@ -539,8 +536,7 @@ class EmInstrumentStageID(Manipulator):
             "Discouraged free-text field to provide details about how to "
             "interpret rotation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -564,8 +560,7 @@ class EmInstrumentStageID(Manipulator):
             "NXem_instrument base class is used in an application definition "
             "like NXem."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",

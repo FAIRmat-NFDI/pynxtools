@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -104,8 +111,7 @@ class InsertionDevice(Component):
             'the generic "wiggler" designation for extended multipole '
             "wigglers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -120,8 +126,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="[length]",
         description=("separation between opposing pairs of magnetic poles"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gap",
             type="NX_FLOAT",
             name_type="specified",
@@ -139,8 +144,7 @@ class InsertionDevice(Component):
             "angular of gap difference between upstream and downstream ends of "
             "the insertion device"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="taper",
             type="NX_FLOAT",
             name_type="specified",
@@ -154,8 +158,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-phase-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase",
             type="NX_FLOAT",
             name_type="specified",
@@ -170,8 +173,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="dimensionless",
         description=("number of poles"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="poles",
             type="NX_INT",
             name_type="specified",
@@ -185,8 +187,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-magnetic-wavelength-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnetic_wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -201,8 +202,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="dimensionless",
         description=("beam displacement parameter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="k",
             type="NX_FLOAT",
             name_type="specified",
@@ -217,8 +217,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="[length]",
         description=("length of insertion device"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_FLOAT",
             name_type="specified",
@@ -233,8 +232,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
         description=("total power delivered by insertion device"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="power",
             type="NX_FLOAT",
             name_type="specified",
@@ -249,8 +247,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("energy of peak intensity in output spectrum"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -265,8 +262,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("bandwidth of peak energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bandwidth",
             type="NX_FLOAT",
             name_type="specified",
@@ -281,8 +277,7 @@ class InsertionDevice(Component):
         ],
         dimensionality="dimensionless",
         description=("harmonic number of peak"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="harmonic",
             type="NX_INT",
             name_type="specified",
@@ -298,8 +293,7 @@ class InsertionDevice(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a insertion device."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

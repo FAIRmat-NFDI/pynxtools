@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -114,8 +121,7 @@ class PidController(Component):
             "produced by sensor(s) in the setup. For example, a set of sensors "
             "could be averaged over before feeding it back into the loop."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -131,8 +137,7 @@ class PidController(Component):
             "The Setpoint(s) used as an input for the PID controller. It can "
             "also be a link to an ``NXsensor.value`` field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="setpoint",
             type="NX_FLOAT",
             name_type="specified",
@@ -151,8 +156,7 @@ class PidController(Component):
             "this constant dominates, the output value is linearly proportional "
             "to the Error Value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="K_p",
             type="NX_NUMBER",
             name_type="specified",
@@ -171,8 +175,7 @@ class PidController(Component):
             "integral term is proportional to both the magnitude and persistence "
             "of the Error Value over time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="K_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -192,8 +195,7 @@ class PidController(Component):
             "Value. This term is important for damping oscillations in the "
             "feedback system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="K_d",
             type="NX_NUMBER",
             name_type="specified",
@@ -213,8 +215,7 @@ class PidController(Component):
             "value to achieve a desired Setpoint value. A description of this "
             "model should be provided in the ``feed_forward_model`` field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="K_ff",
             type="NX_NUMBER",
             name_type="specified",
@@ -240,8 +241,7 @@ class PidController(Component):
             "variables, mathematical functions, and coefficients in order to "
             "describe the physical system relevant to the PID controller."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="feed_forward_model",
             type="NX_CHAR",
             name_type="specified",
@@ -269,8 +269,7 @@ class PidController(Component):
             "(e.g. disconnected sensor output or actuator input) result in a "
             "safe state (e.g. a valve should be left open to release pressure)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="control_action",
             type="NX_CHAR",
             name_type="specified",

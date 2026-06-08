@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -115,8 +122,7 @@ class Energydispersion(Component):
             "Energy dispersion scheme employed, for example: tof, hemispherical, "
             "cylindrical, mirror, retarding grid, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scheme",
             type="NX_CHAR",
             name_type="specified",
@@ -136,8 +142,7 @@ class Energydispersion(Component):
             "18115-1:2023 standard. .. _12.63: "
             "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:12.63"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pass_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -155,8 +160,7 @@ class Energydispersion(Component):
             "Kinetic energy set for this dispersive section. Can be either the "
             "set kinetic energy, or the whole calibrated energy axis of a scan."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kinetic_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -171,8 +175,7 @@ class Energydispersion(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("Drift energy for time-of-flight energy dispersive elements."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="drift_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -187,8 +190,7 @@ class Energydispersion(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("Center of the energy window"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -210,8 +212,7 @@ class Energydispersion(Component):
             "of m steps it is a 2xm array of windows, one for each measurement "
             "point."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_interval",
             type="NX_FLOAT",
             name_type="specified",
@@ -226,8 +227,7 @@ class Energydispersion(Component):
         ],
         dimensionality="[length]",
         description=("Diameter of the dispersive orbit"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -242,8 +242,7 @@ class Energydispersion(Component):
         ],
         dimensionality="[length]",
         description=("Radius of the dispersive orbit"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -257,8 +256,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-energy-scan-mode-field"
         ],
         description=("Way of scanning the energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_scan_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -280,8 +278,7 @@ class Energydispersion(Component):
         ],
         dimensionality="[length]",
         description=("Length of the time-of-flight drift electrode"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tof_distance",
             type="NX_FLOAT",
             name_type="specified",

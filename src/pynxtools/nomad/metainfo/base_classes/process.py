@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -106,8 +113,7 @@ class Process(Object, basesections.ActivityStep):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXprocess.html#nxprocess-program-field"
         ],
         description=("Name of the program used"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -123,8 +129,7 @@ class Process(Object, basesections.ActivityStep):
             "Sequence index of processing, for determining the order of multiple "
             "**NXprocess** steps. Starts with 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",
@@ -137,8 +142,7 @@ class Process(Object, basesections.ActivityStep):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXprocess.html#nxprocess-version-field"
         ],
         description=("Version of the program used"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -151,8 +155,7 @@ class Process(Object, basesections.ActivityStep):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXprocess.html#nxprocess-date-field"
         ],
         description=("Date and time of processing."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
             name_type="specified",

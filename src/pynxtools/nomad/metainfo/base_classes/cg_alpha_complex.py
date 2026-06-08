@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -131,8 +138,7 @@ class CgAlphaComplex(CgPrimitive):
             "algorithm. Alpha_wrapping means meshes created using the "
             "alpha_wrapping algorithm."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -146,8 +152,7 @@ class CgAlphaComplex(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_alpha_complex.html#nxcg_alpha_complex-regularization-field"
         ],
         description=("Human-readable description about regularization procedures."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="regularization",
             type="NX_CHAR",
             name_type="specified",
@@ -163,8 +168,7 @@ class CgAlphaComplex(CgPrimitive):
             "Was the alpha complex regularized, i.e. have singular faces been "
             "removed, or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_regularized",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -180,8 +184,7 @@ class CgAlphaComplex(CgPrimitive):
             "The alpha parameter, i.e. the squared radius of the alpha-sphere "
             "that is used when computing the alpha complex."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alpha",
             type="NX_NUMBER",
             name_type="specified",
@@ -198,8 +201,7 @@ class CgAlphaComplex(CgPrimitive):
         description=(
             "The offset distance parameter used when computing alpha_wrappings."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",

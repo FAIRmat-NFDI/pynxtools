@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -176,8 +183,7 @@ class CgHexahedron(CgPrimitive):
         dimensionality="[length]",
         shape=["*", 3],
         description=("Qualifier for the shape of each hexahedron."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shape",
             type="NX_NUMBER",
             name_type="specified",
@@ -198,8 +204,7 @@ class CgHexahedron(CgPrimitive):
             "with the assumption that one edge is parallel to an axis of the "
             "coordinate system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_NUMBER",
             name_type="specified",
@@ -221,8 +226,7 @@ class CgHexahedron(CgPrimitive):
             "should not be reported without specifying also the assumed "
             "reference frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="width",
             type="NX_NUMBER",
             name_type="specified",
@@ -241,8 +245,7 @@ class CgHexahedron(CgPrimitive):
             "Qualifier often used to describe the extent of an object in the "
             "vertical direction assuming a specific coordinate system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="height",
             type="NX_NUMBER",
             name_type="specified",
@@ -258,8 +261,7 @@ class CgHexahedron(CgPrimitive):
         dimensionality="[length] ** 3",
         shape=["*"],
         description=("Volume of each hexahedron."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
             name_type="specified",
@@ -275,8 +277,7 @@ class CgHexahedron(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("Total (surface) area (of all six faces) of each hexahedron."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="area",
             type="NX_NUMBER",
             name_type="specified",
@@ -292,8 +293,7 @@ class CgHexahedron(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*", 6],
         description=("Area of each of the six faces of each hexahedron."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="face_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -311,8 +311,7 @@ class CgHexahedron(CgPrimitive):
             "Specifies if the hexahedra represent cuboids or cubes eventually "
             "rotated ones but at least not too exotic six-faced polyhedra."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_box",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -330,8 +329,7 @@ class CgHexahedron(CgPrimitive):
             "describes whether hexahedra are boxes whose primary edges are "
             "parallel to the axes of the coordinate system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_axis_aligned",
             type="NX_BOOLEAN",
             name_type="specified",
