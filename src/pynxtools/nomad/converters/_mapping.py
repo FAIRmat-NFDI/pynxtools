@@ -100,30 +100,34 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
 # ---------------------------------------------------------------------------
 
 # TODO: this should be done in code and
-# there should be a check that this does not get overwritten
-# Maps NXDL top-level class name → (Python class name, dotted import path)
-BASESECTIONS_MAP: dict[str, tuple[str, str]] = {
-    "NXobject": ("BaseSection", "nomad.datamodel.metainfo.basesections"),
-    "NXentry": ("Measurement", "nomad.datamodel.metainfo.basesections"),
-    "NXprocess": ("ActivityStep", "nomad.datamodel.metainfo.basesections"),
-    "NXsample": ("CompositeSystem", "nomad.datamodel.metainfo.basesections"),
-    "NXsample_component": ("Component", "nomad.datamodel.metainfo.basesections"),
-    "NXfabrication": ("Instrument", "nomad.datamodel.metainfo.basesections"),
-    "NXdata": ("ActivityResult", "nomad.datamodel.metainfo.basesections"),
+# Maps NXDL top-level class name → list of fully-qualified NOMAD class names.
+# Multiple entries produce multiple extra Python bases, e.g.:
+#   "NXentry": ["nomad.datamodel.metainfo.basesections.Measurement",
+#               "nomad.datamodel.data.EntryData"]
+#   → class Entry(Object, basesections.Measurement, EntryData)
+BASESECTIONS_MAP: dict[str, list[str]] = {
+    "NXobject": ["nomad.datamodel.metainfo.basesections.BaseSection"],
+    "NXentry": [
+        "nomad.datamodel.metainfo.basesections.Measurement",
+        "nomad.datamodel.data.EntryData",
+    ],
+    "NXprocess": ["nomad.datamodel.metainfo.basesections.ActivityStep"],
+    "NXsample": ["nomad.datamodel.metainfo.basesections.CompositeSystem"],
+    "NXsample_component": ["nomad.datamodel.metainfo.basesections.Component"],
+    "NXfabrication": ["nomad.datamodel.metainfo.basesections.Instrument"],
+    "NXdata": ["nomad.datamodel.metainfo.basesections.ActivityResult"],
 }
 
-_DEFAULT_BASE: tuple[str, str] = (
-    "BaseSection",
-    "nomad.datamodel.metainfo.basesections",
-)
+_DEFAULT_BASE: list[str] = ["nomad.datamodel.metainfo.basesections.BaseSection"]
 
 
-def get_base_section(nx_name: str) -> tuple[str, str]:
-    """Return (class_name, import_module) for the NOMAD base section that
-    a given NXDL top-level class should inherit from.
+def get_base_section(nx_name: str) -> list[str]:
+    """Return list of fully-qualified NOMAD class names for the extra Python bases
+    that a given NXDL top-level class should inherit from.
 
-    Falls back to (BaseSection, nomad.datamodel.metainfo.basesections) for
-    all classes not explicitly listed.
+    Each string is a dotted module.ClassName path. The last component is the
+    class name; everything before it is the import module.
+    Falls back to ["nomad.datamodel.metainfo.basesections.BaseSection"].
     """
     return BASESECTIONS_MAP.get(nx_name, _DEFAULT_BASE)
 

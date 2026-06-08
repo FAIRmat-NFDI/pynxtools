@@ -25,6 +25,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import EntryData
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
@@ -48,7 +49,7 @@ if TYPE_CHECKING:
 __all__ = ["Entry"]
 
 
-class Entry(Object, basesections.Measurement):
+class Entry(Object, basesections.Measurement, EntryData):
     """
     (**required**) :ref:`NXentry` describes the measurement.
 

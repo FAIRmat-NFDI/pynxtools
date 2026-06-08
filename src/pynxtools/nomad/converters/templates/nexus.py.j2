@@ -31,7 +31,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from nomad.datamodel.metainfo import basesections
+{% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections" %}from {{ mod }} import {{ cls }}
+{% endif %}{% endfor %}from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import (
     MEnum,
@@ -62,7 +63,7 @@ if TYPE_CHECKING:
 __all__ = ["{{ class_name }}"]
 
 
-class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_class %}, basesections.{{ nomad_base_class }}{% endif %}):
+class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls in nomad_extra_bases %}, {% if mod == "nomad.datamodel.metainfo.basesections" %}basesections.{{ cls }}{% else %}{{ cls }}{% endif %}{% endfor %}{% endif %}):
     """
     {{ docstring | indent(4) }}
     """

@@ -692,11 +692,11 @@ def _all_ancestor_member_names(nx_class: str) -> tuple[frozenset[str], frozenset
     return result
 
 
-def _nomad_base_for_nx_class(nx_class: str) -> tuple[str, str]:
+def _nomad_base_for_nx_class(nx_class: str) -> list[str]:
     """Walk the NeXus extends chain starting from nx_class to find the best
-    NOMAD base section.
+    NOMAD base sections.
 
-    Returns the first (class_name, import_path) from BASESECTIONS_MAP found
+    Returns the list of fully-qualified class names from BASESECTIONS_MAP found
     while walking the chain, or _DEFAULT_BASE if none is found.
     """
     visited: set[str] = set()
@@ -710,6 +710,14 @@ def _nomad_base_for_nx_class(nx_class: str) -> tuple[str, str]:
             break
         current = parent
     return _DEFAULT_BASE
+
+
+def _split_fqn(fqn: str) -> tuple[str, str]:
+    """Split 'a.b.c.ClassName' → ('a.b.c', 'ClassName')."""
+    last_dot = fqn.rfind(".")
+    if last_dot < 0:
+        return "", fqn
+    return fqn[:last_dot], fqn[last_dot + 1 :]
 
 
 _qty_field_suffix_for: dict[str, frozenset[str]] = {}
@@ -801,20 +809,24 @@ def _ensure_conflicts_precomputed() -> None:
 
 def _base_from_extends(
     nx_name: str, root_node: NXTreeDefinition
-) -> tuple[str, str, bool, str, str]:
-    """Return (class_name, import_path, is_generated, nomad_class, nomad_import).
+) -> tuple[str, str, bool, list[str]]:
+    """Return (class_name, import_path, is_generated, nomad_fqns).
+
+    ``nomad_fqns`` is a list of fully-qualified NOMAD class names to add as
+    extra Python bases (e.g. ["nomad.datamodel.metainfo.basesections.Measurement",
+    "nomad.datamodel.data.EntryData"]).  Empty list → no extra bases.
 
     Every generated class (except NXobject itself) has the generated NXobject
     class as its NeXus base, either directly or via an intermediate generated
     class. When a NOMAD base section is appropriate (from BASESECTIONS_MAP or
-    the extends chain), it is added as an explicit second base — but only when
+    the extends chain), it is added as explicit extra base(s) — but only when
     the parent's inheritance chain does not already provide it (avoids redundant
     diamond bases that NOMAD's metaclass cannot resolve).
 
     - NXobject → Object(BaseSection) — root class, single base only
-    - Direct NXobject children → Foo(Object[, NomadBase])
-    - Deeper descendants → Foo(ParentClass[, NomadBase]) where NomadBase is only
-      added when the parent chain does not already provide it
+    - Direct NXobject children → Foo(Object[, NomadBases...])
+    - Deeper descendants → Foo(ParentClass[, NomadBases...]) where bases are only
+      added when the parent chain does not already provide them
     """
     extends_nx_class: str = (
         root_node.inheritance[0].attrib.get("extends", "NXobject")
@@ -824,18 +836,19 @@ def _base_from_extends(
 
     # NXobject is the NeXus root — BaseSection only, no generated parent
     if nx_name == "NXobject":
-        cls, mod = _DEFAULT_BASE
-        return cls, mod, False, "", ""
+        cls, mod = _split_fqn(_DEFAULT_BASE[0])
+        return cls, mod, False, []
 
-    # NOMAD semantic base for this class (walks up extends chain to BASESECTIONS_MAP)
-    nomad_cls, nomad_mod = _nomad_base_for_nx_class(nx_name)
+    # NOMAD semantic bases for this class (walks up extends chain to BASESECTIONS_MAP)
+    nomad_fqns = _nomad_base_for_nx_class(nx_name)
+    nomad_primary = _split_fqn(nomad_fqns[0])[1] if nomad_fqns else "BaseSection"
 
     if extends_nx_class in ("NXobject", nx_name):
         # Direct child of NXobject — use generated Object as primary NeXus base
         obj_path = "pynxtools.nomad.metainfo.base_classes.object"
-        if nomad_cls != "BaseSection":
-            return "Object", obj_path, True, nomad_cls, nomad_mod
-        return "Object", obj_path, True, "", ""
+        if nomad_primary != "BaseSection":
+            return "Object", obj_path, True, nomad_fqns
+        return "Object", obj_path, True, []
 
     # Non-trivial NeXus parent — use the generated parent class as primary base
     parent_category = _nxdl_category(extends_nx_class)
@@ -843,19 +856,20 @@ def _base_from_extends(
         ext_module = _class_module_name(extends_nx_class)
         ext_class = nxdl_to_class_name(extends_nx_class)
         ext_path = f"pynxtools.nomad.metainfo.{parent_category}.{ext_module}"
-        # Only add NOMAD secondary base when the parent's chain doesn't already
-        # provide it (e.g. ApmRanging extends NXprocess which IS ActivityStep —
+        # Only add NOMAD secondary bases when the parent's chain doesn't already
+        # provide them (e.g. ApmRanging extends NXprocess which IS ActivityStep —
         # adding ActivityStep again would create an unresolvable diamond in NOMAD).
-        # Name collisions between the generated NeXus base and the NOMAD base
-        # (e.g. both named "Component") are avoided by importing basesections as a
-        # module and referencing them as basesections.Component in the class body.
-        parent_nomad_cls, _ = _nomad_base_for_nx_class(extends_nx_class)
-        if nomad_cls != parent_nomad_cls:
-            return ext_class, ext_path, True, nomad_cls, nomad_mod
-        return ext_class, ext_path, True, "", ""
+        parent_nomad_fqns = _nomad_base_for_nx_class(extends_nx_class)
+        parent_primary = (
+            _split_fqn(parent_nomad_fqns[0])[1] if parent_nomad_fqns else "BaseSection"
+        )
+        if nomad_primary != parent_primary:
+            return ext_class, ext_path, True, nomad_fqns
+        return ext_class, ext_path, True, []
 
-    # Cross-category parent or self-referential: fall back to NOMAD base only
-    return nomad_cls, nomad_mod, False, "", ""
+    # Cross-category parent or self-referential: fall back to NOMAD bases only
+    cls, mod = _split_fqn(nomad_fqns[0]) if nomad_fqns else _split_fqn(_DEFAULT_BASE[0])
+    return cls, mod, False, []
 
 
 def build_context(nx_name: str) -> dict:
@@ -905,23 +919,20 @@ def build_context(nx_name: str) -> dict:
                 base_class,
                 base_import,
                 base_is_generated,
-                nomad_base_class,
-                _nomad_base_import,
+                nomad_extra_bases,
             ) = _base_from_extends(nx_name, root_node)
         else:
             # Standard application: unwrap NXentry → base is Entry
             base_class = "Entry"
             base_import = "pynxtools.nomad.metainfo.base_classes.entry"
             base_is_generated = True
-            nomad_base_class = ""
-            _nomad_base_import = ""
+            nomad_extra_bases = []
     else:
         (
             base_class,
             base_import,
             base_is_generated,
-            nomad_base_class,
-            _nomad_base_import,
+            nomad_extra_bases,
         ) = _base_from_extends(nx_name, root_node)
 
     docstring = (
@@ -1168,7 +1179,7 @@ def build_context(nx_name: str) -> dict:
         "base_class": base_class,
         "base_import": base_import,
         "base_is_generated": base_is_generated,
-        "nomad_base_class": nomad_base_class,
+        "nomad_extra_bases": [_split_fqn(fqn) for fqn in nomad_extra_bases],
         "docstring": docstring,
         "class_doc_url": root_node.get_link(),
         "quantities": quantities,
@@ -1186,13 +1197,15 @@ def build_context(nx_name: str) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def render(context: dict) -> str:
+def render(context: dict, out_path: Path | None = None) -> str:
     """Render the Jinja2 template and format with ruff."""
     template = _jinja_env.get_template("nexus.py.j2")
     raw = template.render(**context)
+    # Use the real output path as stdin-filename so ruff picks up pyproject.toml
+    stdin_filename = str(out_path) if out_path is not None else "generated.py"
     try:
         result = subprocess.run(
-            ["ruff", "check", "--fix", "--stdin-filename", "generated.py", "-"],
+            ["ruff", "check", "--fix", f"--stdin-filename={stdin_filename}", "-"],
             input=raw,
             capture_output=True,
             text=True,
@@ -1203,7 +1216,7 @@ def render(context: dict) -> str:
         checked = raw
     try:
         result = subprocess.run(
-            ["ruff", "format", "-"],
+            ["ruff", "format", f"--stdin-filename={stdin_filename}", "-"],
             input=checked,
             capture_output=True,
             text=True,
@@ -1254,9 +1267,6 @@ def write_class(
     metainfo/ directory. Pass an explicit path to generate into a different package
     (e.g. --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo).
     """
-    context = build_context(nx_name)
-    new_source = render(context)
-
     module_name = _class_module_name(nx_name)
     is_application = _nxdl_category(nx_name) == "applications"
     subfolder = "applications" if is_application else "base_classes"
@@ -1267,6 +1277,9 @@ def write_class(
     else:
         dest = _DEFAULT_BASE_OUTPUT_DIR
     out_path = dest / f"{module_name}.py"
+
+    context = build_context(nx_name)
+    new_source = render(context, out_path=out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     if out_path.exists():
