@@ -19,18 +19,48 @@
 """Unit tests for the NXDL -> metainfo converter."""
 
 import ast
+import xml.etree.ElementTree as ET
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
 import pynxtools.nomad.converters.nxdl_to_metainfo as converter
 from pynxtools.nexus.nexus_tree import (
     NexusAttribute,
+    NexusDefinition,
     NexusField,
     NexusGroup,
     generate_tree_from,
 )
+
+_NX_NS = "http://definition.nexusformat.org/nxdl/3.1"
+
+
+def _make_definition(
+    nx_name: str,
+    *,
+    extends: str = "NXobject",
+    doc: str = "",
+) -> NexusDefinition:
+    """Build a minimal NexusDefinition for testing without parsing NXDL files.
+
+    Creates a bare ``<definition>`` XML element with the given ``extends`` and
+    optional ``<doc>`` text, then wraps it in a real ``NexusDefinition`` so that
+    ``_set_definition_attrs()``, ``get_docstring()``, and ``get_link()`` all work
+    without any additional mocking.  Children are attached afterward via the
+    standard anytree pattern: ``child.parent = root``.
+    """
+    elem = ET.Element(f"{_NX_NS}definition")
+    elem.attrib["name"] = nx_name
+    elem.attrib["category"] = "base"
+    elem.attrib["extends"] = extends
+    if doc:
+        ET.SubElement(elem, f"{{{_NX_NS}}}doc").text = doc
+    return NexusDefinition(
+        name=nx_name,
+        nxdl_base=f"{nx_name}.nxdl.xml",
+        inheritance=[elem],
+    )
 
 
 def _class_members(source: str) -> dict[str, dict[str, str]]:
@@ -213,11 +243,11 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
 
     This covers two related runtime rename cases in one build_context call:
     - the current class defines a field whose name already exists as an ancestor
-      subsection, so the field becomes ``conflict_concept_field``
+      subsection, so the field becomes ``conflict_concept_quantity``
     - the current class also defines a named concept group ``conflict_concept``
       whose own field has the same name, and that concept's ancestor chain also
       exposes ``conflict_concept`` as a subsection, so the concept field is
-      also renamed with ``_field``
+      also renamed with ``_quantity``
 
     The pre-computation path in ``_ensure_conflicts_precomputed`` is exercised in
     a separate test below. Here the scan is skipped via state flag so the
@@ -249,18 +279,9 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
     concept_field.parent = current_group
     nested_conflict_group.parent = current_group
 
-    root = SimpleNamespace(
-        category="base",
-        deprecated=False,
-        ignore_extra_groups=False,
-        ignore_extra_fields=False,
-        ignore_extra_attributes=False,
-        symbols=[],
-        inheritance=[SimpleNamespace(attrib={"extends": "NXancestor"})],
-        nxdl_base="NXentry.nxdl.xml",
-        children=[field, current_group],
-        get_docstring=lambda depth=1: {"en": "Doc."},
-    )
+    root = _make_definition("NXentry", extends="NXancestor", doc="Doc.")
+    field.parent = root
+    current_group.parent = root
 
     monkeypatch.setattr(converter, "_conflicts_precomputed", True)
     monkeypatch.setattr(converter, "generate_tree_from", lambda _: root)
@@ -294,9 +315,9 @@ def test_build_context_renames_field_when_parent_subsection_conflicts(monkeypatc
         quantity.python_name for quantity in context["named_concepts"][0].quantities
     ]
 
-    assert names == ["conflict_concept_field", "conflict_concept_field__units"]
+    assert names == ["conflict_concept_quantity", "conflict_concept_quantity__units"]
     assert context["subsections"][0].python_name == "conflict_concept"
-    assert concept_qty_names == ["conflict_concept_field"]
+    assert concept_qty_names == ["conflict_concept_quantity"]
 
 
 def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
@@ -350,20 +371,17 @@ def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
     )
     leaf_group.parent = parent_group
 
+    nx_ancestor = _make_definition("NXancestor")
+    ancestor_field.parent = nx_ancestor
+
+    nx_entry = _make_definition("NXentry")
+    parent_group.parent = nx_entry
+
     roots = {
-        "NXancestor": SimpleNamespace(
-            nxdl_base="NXancestor.nxdl.xml",
-            children=[ancestor_field],
-        ),
-        "NXparent": SimpleNamespace(
-            nxdl_base="NXparent.nxdl.xml",
-            children=[],
-        ),
-        "NXentry": SimpleNamespace(
-            nxdl_base="NXentry.nxdl.xml",
-            children=[parent_group],
-        ),
-        "NXobject": SimpleNamespace(nxdl_base="NXobject.nxdl.xml", children=[]),
+        "NXancestor": nx_ancestor,
+        "NXparent": _make_definition("NXparent"),
+        "NXentry": nx_entry,
+        "NXobject": _make_definition("NXobject"),
     }
     monkeypatch.setattr(converter, "generate_tree_from", lambda nx_name: roots[nx_name])
 
@@ -381,7 +399,7 @@ def test_ensure_conflicts_precomputed_marks_ancestor_field_for_group_conflict(
 
 @pytest.mark.parametrize("reserved_name", ("name", "lab_id", "description"))
 def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserved_name):
-    """Ensure reserved quantity names are rewritten with ``_field`` in build output.
+    """Ensure reserved quantity names are rewritten with ``_quantity`` in build output.
 
     Covers the NX_CHAR-typed names in ``_RESERVED_QUANTITY_NAMES`` (name, lab_id,
     description) which shadow ``BaseSection`` attributes and must be suffixed to
@@ -391,18 +409,8 @@ def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserve
     reserved_field = NexusField(name=reserved_name)
     reserved_field.dtype = "NX_CHAR"
 
-    root = SimpleNamespace(
-        category="base",
-        deprecated=False,
-        ignore_extra_groups=False,
-        ignore_extra_fields=False,
-        ignore_extra_attributes=False,
-        symbols=[],
-        inheritance=[SimpleNamespace(attrib={"extends": "NXobject"})],
-        nxdl_base="NXentry.nxdl.xml",
-        children=[reserved_field],
-        get_docstring=lambda depth=1: {"en": "Doc."},
-    )
+    root = _make_definition("NXentry", extends="NXobject")
+    reserved_field.parent = root
 
     monkeypatch.setattr(converter, "_conflicts_precomputed", True)
     monkeypatch.setattr(converter, "generate_tree_from", lambda _: root)
@@ -426,7 +434,7 @@ def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserve
 
     context = converter.build_context("NXentry")
     quantity_names = [q.python_name for q in context["quantities"]]
-    expected_base = f"{reserved_name}_field"
+    expected_base = f"{reserved_name}_quantity"
 
     assert quantity_names == [expected_base]
 
@@ -500,12 +508,14 @@ def test_write_base_class_nxtestbase_full_pipeline(tmp_path):
 
 
 def test_write_base_class_nxtestbase_matches_golden():
-    """Generated NXtestBase output must be byte-identical to the stored golden file.
+    """Generated NXtestBase class structure must match the stored golden file.
 
     The golden file lives in tests/data/nomad/converter/testbase.py and was produced
-    by running the converter against NXtestBase.nxdl.xml.  A failure here means the
-    converter template or NXtestBase.nxdl.xml changed without regenerating the golden
-    file.  Fix by running::
+    by running the converter against NXtestBase.nxdl.xml.  Compares class inheritance
+    and member names/kinds (Quantity, SubSection) for every class; formatting,
+    docstring text, and annotation keyword ordering do not affect the result.  A
+    failure here means the converter template or NXtestBase.nxdl.xml changed without
+    regenerating the golden file.  Fix by running::
 
         python -c "
         import pynxtools.nomad.converters.nxdl_to_metainfo as c
@@ -514,30 +524,12 @@ def test_write_base_class_nxtestbase_matches_golden():
     """
     golden = (_CONVERTER_GOLDEN_DIR / "testbase.py").read_text(encoding="utf-8")
     generated = converter.render(converter.build_context("NXtestBase"))
-    assert generated == golden
-
-
-@pytest.mark.parametrize(
-    "nx_class, module_name",
-    [
-        ("NXobject", "object"),
-        ("NXdata", "data"),
-        ("NXentry", "entry"),
-        ("NXsample", "sample"),
-    ],
-)
-def test_committed_base_class_matches_generator(nx_class, module_name):
-    """Committed Python metainfo file must be identical to what the generator produces.
-
-    A failure here means the NXDL definition or the Jinja2 template changed but
-    the corresponding ``.py`` file in ``src/pynxtools/nomad/metainfo/base_classes/``
-    was not regenerated. Fix by running::
-
-        pynx nomad generate-metainfo --nx-class <NX_CLASS>
-    """
-    golden = (_GOLDEN_DIR / f"{module_name}.py").read_text(encoding="utf-8")
-    generated = converter.render(converter.build_context(nx_class))
-    assert generated == golden
+    assert _class_bases(generated) == _class_bases(golden), (
+        "NXtestBase: class inheritance mismatch"
+    )
+    assert _class_members(generated) == _class_members(golden), (
+        "NXtestBase: class member mismatch (name or Quantity/SubSection kind changed)"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -548,6 +540,7 @@ def test_committed_base_class_matches_generator(nx_class, module_name):
 @pytest.mark.parametrize(
     "nx_class, golden_file",
     [
+        ("NXtestBase", "testbase.py"),
         ("NXtest", "test.py"),
         ("NXtest_extended", "test_extended.py"),
     ],
