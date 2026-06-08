@@ -273,7 +273,7 @@ class NeXusChoice(AnnotationModel):
 ```
 src/pynxtools/nomad/
     annotations.py              # NeXusDefinition + NeXusGroup + NeXusField + NeXusAttribute
-                               #   + NeXusLink + NeXusChoice + registration
+                                #   + NeXusLink + NeXusChoice + registration
     converters/
         __init__.py
         _mapping.py             # nxdl_to_class_name, BASESECTIONS_MAP, type mapping
@@ -429,7 +429,7 @@ the new output is considered user-added.
 
 ```bash
 # Generate one class
-pynx nomad generate-metainfo --nx-class NXentry
+pynx nomad generate-metainfo --nxdl NXentry
 
 # Generate all base classes in topological (dependency) order
 pynx nomad generate-metainfo --all
