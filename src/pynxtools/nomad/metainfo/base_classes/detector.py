@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXdetector` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXdetector` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -25,10 +25,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Bytes, Datetime
+from nomad.metainfo.data_type import Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
@@ -36,7 +34,6 @@ from pynxtools.nomad.annotations import (
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
