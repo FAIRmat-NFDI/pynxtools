@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.atom import Atom
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -83,8 +90,7 @@ class ChemicalComposition(Object):
             "pint in Python, are challenged by these differences as at.-% and "
             "wt.-% are both fractional quantities."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="normalization",
             type="NX_CHAR",
             name_type="specified",
@@ -103,8 +109,7 @@ class ChemicalComposition(Object):
             "Total formula mass or number of atoms, depending on the "
             "normalization stated in the normalization field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total",
             type="NX_NUMBER",
             name_type="specified",
@@ -158,8 +163,7 @@ class ChemicalCompositionAtom(Atom):
             "Count or weight which, when divided by total yields the composition "
             "of this element, isotope, molecule, or ion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="amount",
             type="NX_NUMBER",
             name_type="specified",
@@ -180,8 +184,7 @@ class ChemicalCompositionAtom(Atom):
             "explicitly. Composition should be reported consistently for all "
             "instances ELEMENT."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="composition",
             type="NX_FLOAT",
             name_type="specified",
@@ -196,8 +199,7 @@ class ChemicalCompositionAtom(Atom):
         ],
         dimensionality="dimensionless",
         description=("Magnitude of the standard deviation of the composition."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="composition_errors",
             type="NX_FLOAT",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -245,8 +252,7 @@ class Data(Object, basesections.ActivityResult):
             "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
             "a summary of the discussion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -267,8 +273,7 @@ class Data(Object, basesections.ActivityResult):
             "signal. .. NIAC2018: "
             "https://www.nexusformat.org/NIAC2018Minutes.html"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="auxiliary_signals",
             type="NX_CHAR",
             name_type="specified",
@@ -304,8 +309,7 @@ class Data(Object, basesections.ActivityResult):
             'nP] channel = ["threshold_1", "threshold_2", "difference"] '
             "data = uint[nP, nC, i, j]"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default_slice",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
@@ -325,8 +329,7 @@ class Data(Object, basesections.ActivityResult):
             "readout of a detector, ``@reference`` links to that detectors data: "
             "@reference: '/entry/instrument/detector/data' for a 2D detector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="reference",
             type="NX_CHAR",
             name_type="specified",
@@ -353,8 +356,7 @@ class Data(Object, basesections.ActivityResult):
             "``AXISNAME_indices`` contains multiple integers, it must be saved "
             "as an actual array of integers and not a comma separated string."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="AXISNAME_indices",
             type="NX_INT",
             name_type="partial",
@@ -378,8 +380,7 @@ class Data(Object, basesections.ActivityResult):
             "as an actual array of strings and not a single comma separated "
             "string."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -407,8 +408,7 @@ class Data(Object, basesections.ActivityResult):
             "represented using names, such as channel names, an array of NX_CHAR "
             "can be provided."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME",
             type="NX_CHAR_OR_NUMBER",
             name_type="any",
@@ -421,8 +421,7 @@ class Data(Object, basesections.ActivityResult):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-long-name-attribute"
         ],
         description=("Axis label"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -439,8 +438,7 @@ class Data(Object, basesections.ActivityResult):
             "Unit in which the coordinate values are expressed. See the section "
             ":ref:`Design-Units` for more information."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
@@ -454,8 +452,7 @@ class Data(Object, basesections.ActivityResult):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-distribution-attribute"
         ],
         description=("``0|false``: single value, ``1|true``: multiple values"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="distribution",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -469,8 +466,7 @@ class Data(Object, basesections.ActivityResult):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-first-good-attribute"
         ],
         description=("Index of first good value"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="first_good",
             type="NX_INT",
             name_type="specified",
@@ -484,8 +480,7 @@ class Data(Object, basesections.ActivityResult):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-last-good-attribute"
         ],
         description=("Index of last good value"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="last_good",
             type="NX_INT",
             name_type="specified",
@@ -505,8 +500,7 @@ class Data(Object, basesections.ActivityResult):
             "the ``axis`` attribute. The :ref:`axes </NXdata@axes-attribute>` "
             "attribute is now preferred."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axis",
             type="NX_POSINT",
             name_type="specified",
@@ -536,8 +530,7 @@ class Data(Object, basesections.ActivityResult):
             "'/entry/instrument/detector/transformations/some_transformation' "
             "for a motion of the detector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="reference",
             type="NX_CHAR",
             name_type="specified",
@@ -561,8 +554,7 @@ class Data(Object, basesections.ActivityResult):
             "all datasets in the ``NXdata`` that contain data values. The "
             "maximum rank is ``32`` for compatibility with backend file formats."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="DATA",
             type="NX_NUMBER",
             name_type="any",
@@ -580,8 +572,7 @@ class Data(Object, basesections.ActivityResult):
             "``signal=1`` attribute. Do not use the ``signal`` attribute with "
             "the ``axis`` attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_POSINT",
             name_type="specified",
@@ -602,8 +593,7 @@ class Data(Object, basesections.ActivityResult):
             "designating a link. Do not use the :ref:`axes "
             "</NXdata@axes-attribute>` attribute with the ``axis`` attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -618,8 +608,7 @@ class Data(Object, basesections.ActivityResult):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-long-name-attribute"
         ],
         description=("data label"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -641,8 +630,7 @@ class Data(Object, basesections.ActivityResult):
             "of a detector, ``@reference`` links to that detectors data: "
             "@reference: '/entry/instrument/detector/data' for a 2D detector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="reference",
             type="NX_CHAR",
             name_type="specified",
@@ -664,8 +652,7 @@ class Data(Object, basesections.ActivityResult):
             "field (axis). The dimensions of the ``FIELDNAME_errors`` field must "
             "match the dimensions of the corresponding ``FIELDNAME`` field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_errors",
             type="NX_NUMBER",
             name_type="partial",
@@ -683,8 +670,7 @@ class Data(Object, basesections.ActivityResult):
             "the same dimensions as ``DATA``. Client is responsible for defining "
             "the dimensions of the data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="errors",
             type="NX_NUMBER",
             name_type="specified",
@@ -714,8 +700,7 @@ class Data(Object, basesections.ActivityResult):
             "downstream applications, when necessary. When omitted, the scaling "
             "factor is assumed to be 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_scaling_factor",
             type="NX_NUMBER",
             name_type="partial",
@@ -734,8 +719,7 @@ class Data(Object, basesections.ActivityResult):
             ":ref:`FIELDNAME_scaling_factor "
             "</NXdata/FIELDNAME_scaling_factor-field>` for more information."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_offset",
             type="NX_NUMBER",
             name_type="partial",
@@ -754,8 +738,7 @@ class Data(Object, basesections.ActivityResult):
             "FIELDNAME_scaling_factor instead, even when only a single signal is "
             "present."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scaling_factor",
             type="NX_FLOAT",
             name_type="specified",
@@ -774,8 +757,7 @@ class Data(Object, basesections.ActivityResult):
             "Therefore offset is deprecated. Use FIELDNAME_offset instead, even "
             "when only a single signal is present."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset",
             type="NX_FLOAT",
             name_type="specified",
@@ -789,8 +771,7 @@ class Data(Object, basesections.ActivityResult):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-title-field"
         ],
         description=("Title for the plot."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
@@ -809,8 +790,7 @@ class Data(Object, basesections.ActivityResult):
             "special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>` "
             "kept for backward compatibility."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_FLOAT",
             name_type="specified",
@@ -830,8 +810,7 @@ class Data(Object, basesections.ActivityResult):
             "special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>` "
             "kept for backward compatibility."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_FLOAT",
             name_type="specified",
@@ -851,8 +830,7 @@ class Data(Object, basesections.ActivityResult):
             "special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>` "
             "kept for backward compatibility."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_FLOAT",
             name_type="specified",

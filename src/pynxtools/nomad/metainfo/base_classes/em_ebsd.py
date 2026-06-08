@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -333,8 +340,7 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             "`<https://doi.org/10.1016/j.matchar.2016.04.008>`_ suggests to "
             "assume that this is coordinate :math:`Xg = 0, Yg = 0, Zg = 0`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -351,8 +357,7 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing x-axis base vector of the "
             "gnomonic_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -369,8 +374,7 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing y-axis base vector of the "
             "gnomonic_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -387,8 +391,7 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing z-axis base vector of the "
             "gnomonic_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -445,8 +448,7 @@ class EmEbsdPatternCenter(Process):
             "From which border of the EBSP (in the detector reference frame) is "
             "the pattern center's x-position (PCx) measured."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_boundary_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -463,8 +465,7 @@ class EmEbsdPatternCenter(Process):
             "In which direction are positive values for the x-axis coordinate "
             "value measured from the specified boundary."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_normalization_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -481,8 +482,7 @@ class EmEbsdPatternCenter(Process):
             "From which border of the EBSP (in the detector reference frame) is "
             "the pattern center's y-position (PCy) measured."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_boundary_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -499,8 +499,7 @@ class EmEbsdPatternCenter(Process):
             "In which direction are positive values for the y-axis coordinate "
             "value measured from the specified boundary."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_normalization_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -549,8 +548,7 @@ class EmEbsdMeasurement(Process):
             "experiments where a measurement was e.g. taken after 0 minutes, 30 "
             "minutes, 6 hours, or 24 hours of annealing."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time",
             type="NX_NUMBER",
             name_type="specified",
@@ -567,8 +565,7 @@ class EmEbsdMeasurement(Process):
             "Timestamp relative to which time was counted to aid converting "
             "between time and timestamp."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="epoch_start",
             type="NX_CHAR",
             name_type="specified",
@@ -585,8 +582,7 @@ class EmEbsdMeasurement(Process):
             "Path to an instance of :ref:`NXdata` where the measured patterns "
             "are stored."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -632,8 +628,7 @@ class EmEbsdSimulation(Process):
             "Path to an instance of :ref:`NXimage` where the simulated patterns "
             "are stored."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -705,8 +700,7 @@ class EmEbsdCalibration(Process):
         description=(
             "Path to an instance of :ref:`NXem` where calibration data are stored."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -762,8 +756,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-method-field"
         ],
         description=("Principal algorithm used for indexing."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="method",
             type="NX_CHAR",
             name_type="specified",
@@ -784,8 +777,7 @@ class EmEbsdIndexing(Process):
             "point. * 0 - Not analyzed * 1 - Too high angular deviation * 2 - No "
             "solution * 100 - Success * 255 - Unexpected errors"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status",
             type="NX_UINT",
             name_type="specified",
@@ -814,8 +806,7 @@ class EmEbsdIndexing(Process):
             "phase model), phase_id has as many entries as scan points and "
             "matching_phase has also as many entries as scan points."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phases_per_scan_point",
             type="NX_INT",
             name_type="specified",
@@ -850,8 +841,7 @@ class EmEbsdIndexing(Process):
             "point and omitting tuples for those scan points with no phases "
             "according to phases_per_scan_point."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_id",
             type="NX_INT",
             name_type="specified",
@@ -872,8 +862,7 @@ class EmEbsdIndexing(Process):
             "it details how the phase_id and the matching_phase arrays are "
             "interpreted. See documentation of phase_id for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="matching_phase",
             type="NX_INT",
             name_type="specified",
@@ -891,8 +880,7 @@ class EmEbsdIndexing(Process):
             "not. Examples can be confidence_index, mean_angular_deviation, or "
             "other."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="matching_phase_descriptor",
             type="NX_CHAR",
             name_type="specified",
@@ -911,8 +899,7 @@ class EmEbsdIndexing(Process):
             "Calibrated center positions of each scan point in the sample "
             "surface reference system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_point_positions",
             type="NX_NUMBER",
             name_type="specified",
@@ -930,8 +917,7 @@ class EmEbsdIndexing(Process):
             "Fraction of successfully indexed patterns with a phase not the "
             "null-phase vs the number_of_scan_points."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indexing_rate",
             type="NX_NUMBER",
             name_type="specified",
@@ -946,8 +932,7 @@ class EmEbsdIndexing(Process):
         ],
         dimensionality="dimensionless",
         description=("Number of scan points in the original mapping."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_scan_points",
             type="NX_UINT",
             name_type="specified",
@@ -965,8 +950,7 @@ class EmEbsdIndexing(Process):
             "respectively tessellation of the region-of-interest into scan "
             "points."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pixel_shape",
             type="NX_CHAR",
             name_type="specified",

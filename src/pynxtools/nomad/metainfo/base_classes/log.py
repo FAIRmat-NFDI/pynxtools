@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -95,8 +102,7 @@ class Log(Object):
             "specified in the units attribute. The scaling_factor allows for "
             "arbitrary time units such as ticks of some hardware clock."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time",
             type="NX_NUMBER",
             name_type="specified",
@@ -109,8 +115,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-time-start-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="start",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -123,8 +128,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-time-scaling-factor-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="scaling_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -144,8 +148,7 @@ class Log(Object):
             "In this example the dimensionality of values would be "
             "value[nEntries,xdim,ydim]."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_NUMBER",
             name_type="specified",
@@ -159,8 +162,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-raw-value-field"
         ],
         description=("Array of raw information, such as thermocouple voltage"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="raw_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -174,8 +176,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-description-field"
         ],
         description=("Description of logged value"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -187,8 +188,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="average_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -204,8 +204,7 @@ class Log(Object):
         description=(
             "estimated uncertainty (often used: standard deviation) of average_value"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="average_value_error",
             type="NX_FLOAT",
             name_type="specified",
@@ -222,8 +221,7 @@ class Log(Object):
         description=(
             "estimated uncertainty (often used: standard deviation) of average_value"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="average_value_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -236,8 +234,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-minimum-value-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="minimum_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -250,8 +247,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-maximum-value-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="maximum_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -265,8 +261,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-duration-field"
         ],
         description=("Total time log was taken"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="duration",
             type="NX_FLOAT",
             name_type="specified",
@@ -283,8 +278,7 @@ class Log(Object):
         description=(
             "Timestamps matching the corresponding cue_index into the time, value pair."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cue_timestamp_zero",
             type="NX_NUMBER",
             name_type="specified",
@@ -298,8 +292,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-timestamp-zero-start-attribute"
         ],
         description=('If missing start is assumed to be the same as for "time".'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="start",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -313,8 +306,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-timestamp-zero-scaling-factor-attribute"
         ],
         description=('If missing start is assumed to be the same as for "time".'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="scaling_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -331,8 +323,7 @@ class Log(Object):
             "Index into the time, value pair matching the corresponding "
             "cue_timestamp_zero."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cue_index",
             type="NX_INT",
             name_type="specified",

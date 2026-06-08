@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.image import Image
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -103,8 +110,7 @@ class EmImgImage(Image):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_img.html#nxem_img-image-imaging-mode-field"
         ],
         description=("Which imaging mode was used?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imaging_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -128,8 +134,7 @@ class EmImgImage(Image):
         description=(
             "Annulus inner (first value) and outer (second value) half angle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="half_angle_interval",
             type="NX_NUMBER",
             name_type="specified",

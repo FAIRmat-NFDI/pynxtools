@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -60,8 +67,7 @@ class Flipper(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -79,8 +85,7 @@ class Flipper(Component):
             "Linear density of turns (such as number of turns/cm) in flipping "
             "field coils"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flip_turns",
             type="NX_FLOAT",
             name_type="specified",
@@ -98,8 +103,7 @@ class Flipper(Component):
             "Linear density of turns (such as number of turns/cm) in "
             "compensating field coils"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="comp_turns",
             type="NX_FLOAT",
             name_type="specified",
@@ -116,8 +120,7 @@ class Flipper(Component):
         description=(
             "Linear density of turns (such as number of turns/cm) in guide field coils"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="guide_turns",
             type="NX_FLOAT",
             name_type="specified",
@@ -132,8 +135,7 @@ class Flipper(Component):
         ],
         dimensionality="[current]",
         description=('Flipping field coil current in "on" state"'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flip_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -148,8 +150,7 @@ class Flipper(Component):
         ],
         dimensionality="[current]",
         description=('Compensating field coil current in "on" state"'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="comp_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -164,8 +165,7 @@ class Flipper(Component):
         ],
         dimensionality="[current]",
         description=('Guide field coil current in "on" state'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="guide_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -180,8 +180,7 @@ class Flipper(Component):
         ],
         dimensionality="[length]",
         description=("thickness along path of neutron travel"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -197,8 +196,7 @@ class Flipper(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a spin flipper."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

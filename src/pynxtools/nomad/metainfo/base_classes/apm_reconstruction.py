@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -135,8 +142,7 @@ class ApmReconstruction(Process):
         description=(
             "Three-dimensional positions of the ions in the reconstructed volume."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reconstructed_positions",
             type="NX_FLOAT",
             name_type="specified",
@@ -153,8 +159,7 @@ class ApmReconstruction(Process):
             "The instance of :ref:`NXcoordinate_system` in which the positions "
             "are defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -172,8 +177,7 @@ class ApmReconstruction(Process):
             "extracted from the CAnalysis.CResults.fQuality field of a "
             "CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="quality",
             type="NX_CHAR",
             name_type="specified",
@@ -190,8 +194,7 @@ class ApmReconstruction(Process):
             "Sum of ion volumes The value can be extracted from the "
             "CAnalysis.CSpatial.fRecoVolume field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_FLOAT",
             name_type="specified",
@@ -211,8 +214,7 @@ class ApmReconstruction(Process):
             "because ions may launch but hit in locations other than the "
             "detector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="field_of_view",
             type="NX_FLOAT",
             name_type="specified",
@@ -275,8 +277,7 @@ class ApmReconstructionConfig(Parameters):
             "Lowest voltage at which an ion that is considered in the "
             "reconstructed volume has been extracted from the specimen."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage_filter_initial",
             type="NX_FLOAT",
             name_type="specified",
@@ -294,8 +295,7 @@ class ApmReconstructionConfig(Parameters):
             "Highest voltage at which an ion that is considered in the "
             "reconstructed volume has been extracted from the specimen."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage_filter_final",
             type="NX_FLOAT",
             name_type="specified",
@@ -313,8 +313,7 @@ class ApmReconstructionConfig(Parameters):
             "For reconstructions performed with APSuite / IVAS the value "
             '"cameca" should be used.'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="protocol_name",
             type="NX_CHAR",
             name_type="specified",
@@ -333,8 +332,7 @@ class ApmReconstructionConfig(Parameters):
             "calibrated. The value can be extracted from the "
             "CAnalysis.CSpatial.fPrimaryElement field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="primary_element",
             type="NX_CHAR",
             name_type="specified",
@@ -351,8 +349,7 @@ class ApmReconstructionConfig(Parameters):
             "Assumed detection efficiency The value can be extracted from the "
             "CAnalysis.CSpatial.fEfficiency field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="efficiency",
             type="NX_FLOAT",
             name_type="specified",
@@ -370,8 +367,7 @@ class ApmReconstructionConfig(Parameters):
             "Nominal flight path The value can be extracted from the "
             "CAnalysis.CSpatial.fFlightPath field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flight_path",
             type="NX_FLOAT",
             name_type="specified",
@@ -389,8 +385,7 @@ class ApmReconstructionConfig(Parameters):
             "the CAnalysis.CSpatial.fEvaporationField field of a CamecaRoot ROOT "
             "file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="evaporation_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -409,8 +404,7 @@ class ApmReconstructionConfig(Parameters):
             "CAnalysis.CSpatial.fImageCompression field of a CamecaRoot ROOT "
             "file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="image_compression",
             type="NX_FLOAT",
             name_type="specified",
@@ -430,8 +424,7 @@ class ApmReconstructionConfig(Parameters):
             "evaporation field. The value can be extracted from the "
             "CAnalysis.CSpatial.fKfactor field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kfactor",
             type="NX_FLOAT",
             name_type="specified",
@@ -449,8 +442,7 @@ class ApmReconstructionConfig(Parameters):
             "Shank angle The value can be extracted from the "
             "CAnalysis.CSpatial.fShankAngle field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shank_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -465,8 +457,7 @@ class ApmReconstructionConfig(Parameters):
         ],
         dimensionality="[length] ** 3",
         description=("Assumed atomic volume"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_volume",
             type="NX_FLOAT",
             name_type="specified",
@@ -484,8 +475,7 @@ class ApmReconstructionConfig(Parameters):
             "The value can be extracted from the CAnalysis.CSpatial.fTipRadius "
             "field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tip_radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -503,8 +493,7 @@ class ApmReconstructionConfig(Parameters):
             "The value can be extracted from the CAnalysis.CSpatial.fTipRadius0 "
             "field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tip_radius_zero",
             type="NX_FLOAT",
             name_type="specified",
@@ -522,8 +511,7 @@ class ApmReconstructionConfig(Parameters):
             "The value can be extracted from the CAnalysis.CSpatial.fVoltage0 "
             "field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage_zero",
             type="NX_FLOAT",
             name_type="specified",
@@ -543,8 +531,7 @@ class ApmReconstructionConfig(Parameters):
             "calibration was performed, the field should be filled with the n/a, "
             "meaning not applied."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crystallographic_calibration",
             type="NX_CHAR",
             name_type="specified",
@@ -566,8 +553,7 @@ class ApmReconstructionConfig(Parameters):
             "tomography. The value can be extracted from the "
             "CAnalysis.CResults.fComments field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -604,8 +590,7 @@ class ApmReconstructionObb(Collection):
         ],
         dimensionality="[length]",
         description=("Minimum coordinate value along the x-direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="xmin",
             type="NX_FLOAT",
             name_type="specified",
@@ -620,8 +605,7 @@ class ApmReconstructionObb(Collection):
         ],
         dimensionality="[length]",
         description=("Maximum coordinate value along the x-direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="xmax",
             type="NX_FLOAT",
             name_type="specified",
@@ -636,8 +620,7 @@ class ApmReconstructionObb(Collection):
         ],
         dimensionality="[length]",
         description=("Minimum coordinate value along the y-direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ymin",
             type="NX_FLOAT",
             name_type="specified",
@@ -652,8 +635,7 @@ class ApmReconstructionObb(Collection):
         ],
         dimensionality="[length]",
         description=("Maximum coordinate value along the y-direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ymax",
             type="NX_FLOAT",
             name_type="specified",
@@ -668,8 +650,7 @@ class ApmReconstructionObb(Collection):
         ],
         dimensionality="[length]",
         description=("Minimum coordinate value along the z-direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="zmin",
             type="NX_FLOAT",
             name_type="specified",
@@ -684,8 +665,7 @@ class ApmReconstructionObb(Collection):
         ],
         dimensionality="[length]",
         description=("Maximum coordinate value along the z-direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="zmax",
             type="NX_FLOAT",
             name_type="specified",

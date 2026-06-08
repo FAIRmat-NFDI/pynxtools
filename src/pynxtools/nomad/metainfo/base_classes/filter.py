@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -131,8 +138,7 @@ class Filter(Component):
             "change: Beryllium | Pyrolytic Graphite | Graphite | Sapphire | "
             "Silicon | Supermirror."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -148,8 +154,7 @@ class Filter(Component):
             "position with respect to in or out of the beam (choice of only "
             '"in" or "out")'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status",
             type="NX_CHAR",
             name_type="specified",
@@ -164,8 +169,7 @@ class Filter(Component):
         ],
         dimensionality="[temperature]",
         description=("average/nominal filter temperature"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -180,8 +184,7 @@ class Filter(Component):
         ],
         dimensionality="[length]",
         description=("Thickness of the filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -196,8 +199,7 @@ class Filter(Component):
         ],
         dimensionality="[mass] / [length] ** 3",
         description=("mass density of the filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="density",
             type="NX_NUMBER",
             name_type="specified",
@@ -228,8 +230,7 @@ class Filter(Component):
             "their symbol. * This is the *Hill* system used by Chemical "
             "Abstracts."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -243,8 +244,7 @@ class Filter(Component):
         ],
         dimensionality="[length]",
         description=("Unit cell lattice parameter: length of side a"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_a",
             type="NX_FLOAT",
             name_type="specified",
@@ -259,8 +259,7 @@ class Filter(Component):
         ],
         dimensionality="[length]",
         description=("Unit cell lattice parameter: length of side b"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_b",
             type="NX_FLOAT",
             name_type="specified",
@@ -275,8 +274,7 @@ class Filter(Component):
         ],
         dimensionality="[length]",
         description=("Unit cell lattice parameter: length of side c"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_c",
             type="NX_FLOAT",
             name_type="specified",
@@ -291,8 +289,7 @@ class Filter(Component):
         ],
         dimensionality="[angle]",
         description=("Unit cell lattice parameter: angle alpha"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_alpha",
             type="NX_FLOAT",
             name_type="specified",
@@ -307,8 +304,7 @@ class Filter(Component):
         ],
         dimensionality="[angle]",
         description=("Unit cell lattice parameter: angle beta"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_beta",
             type="NX_FLOAT",
             name_type="specified",
@@ -323,8 +319,7 @@ class Filter(Component):
         ],
         dimensionality="[angle]",
         description=("Unit cell lattice parameter: angle gamma"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_gamma",
             type="NX_FLOAT",
             name_type="specified",
@@ -340,8 +335,7 @@ class Filter(Component):
         dimensionality="[length] ** 3",
         shape=["*"],
         description=("Unit cell"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_volume",
             type="NX_FLOAT",
             name_type="specified",
@@ -360,8 +354,7 @@ class Filter(Component):
             "convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, "
             "457-464"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_matrix",
             type="NX_FLOAT",
             name_type="specified",
@@ -375,8 +368,7 @@ class Filter(Component):
         ],
         dimensionality="dimensionless",
         description=("m value of supermirror filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="m_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -390,8 +382,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-substrate-material-field"
         ],
         description=("substrate material of supermirror filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -405,8 +396,7 @@ class Filter(Component):
         ],
         dimensionality="[length]",
         description=("substrate thickness of supermirror filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -420,8 +410,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-coating-material-field"
         ],
         description=("coating material of supermirror filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_CHAR",
             name_type="specified",
@@ -435,8 +424,7 @@ class Filter(Component):
         ],
         dimensionality="[length]",
         description=("substrate roughness (RMS) of supermirror filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -452,8 +440,7 @@ class Filter(Component):
         dimensionality="[length]",
         shape=["*"],
         description=("coating roughness (RMS) of supermirror filter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -467,8 +454,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-depends-on-field"
         ],
         description=(".. todo:: Add a definition for the reference point of a filter."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

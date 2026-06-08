@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -83,8 +90,7 @@ class UnitCell(Object):
             "resolve ambiguity in cases when e.g. a different reference frame "
             "than the NeXus default reference frame (McStas) was chosen."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_frame",
             type="NX_CHAR",
             name_type="specified",
@@ -97,8 +103,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-dimensionality-field"
         ],
         description=("Dimensionality of the structure."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
             name_type="specified",
@@ -116,8 +121,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified via parameters a, b, and c."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="a_b_c",
             type="NX_NUMBER",
             name_type="specified",
@@ -134,8 +138,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified individually via parameter a."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="a",
             type="NX_NUMBER",
             name_type="specified",
@@ -152,8 +155,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified individually via parameter b."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="b",
             type="NX_NUMBER",
             name_type="specified",
@@ -170,8 +172,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified individually via parameter c."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="c",
             type="NX_NUMBER",
             name_type="specified",
@@ -190,8 +191,7 @@ class UnitCell(Object):
             "Geometry of the unit cell quantified via parameters alpha, beta, "
             "and gamma."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alpha_beta_gamma",
             type="NX_NUMBER",
             name_type="specified",
@@ -208,8 +208,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified individually via parameter alpha."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alpha",
             type="NX_NUMBER",
             name_type="specified",
@@ -226,8 +225,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified individually via parameter beta."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beta",
             type="NX_NUMBER",
             name_type="specified",
@@ -244,8 +242,7 @@ class UnitCell(Object):
         description=(
             "Geometry of the unit cell quantified individually via parameter gamma."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gamma",
             type="NX_NUMBER",
             name_type="specified",
@@ -274,8 +271,7 @@ class UnitCell(Object):
             "orthorhombic is an exact synonym for rectangular. For a crystal "
             "system in 2D space tetragonal is an exact synonym for square."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crystal_system",
             type="NX_CHAR",
             name_type="specified",
@@ -299,8 +295,7 @@ class UnitCell(Object):
         description=(
             "Laue group using International Table of Crystallography notation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="laue_group",
             type="NX_CHAR",
             name_type="specified",
@@ -315,8 +310,7 @@ class UnitCell(Object):
         description=(
             "Point group using International Table of Crystallography notation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="point_group",
             type="NX_CHAR",
             name_type="specified",
@@ -331,8 +325,7 @@ class UnitCell(Object):
         description=(
             "Space group from the International Table of Crystallography notation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="space_group",
             type="NX_CHAR",
             name_type="specified",
@@ -353,8 +346,7 @@ class UnitCell(Object):
             "inversion). Chiral compared to non-centrosymmetric is constrained "
             "(no mirror planes)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_centrosymmetric",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -370,8 +362,7 @@ class UnitCell(Object):
             "True if space group is considered a chiral one. False if space "
             "group is consider a non-chiral one."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_chiral",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -385,8 +376,7 @@ class UnitCell(Object):
         ],
         dimensionality="[length] ** 2",
         description=("Area of the unit cell if dimensionality is 2."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="area",
             type="NX_NUMBER",
             name_type="specified",
@@ -401,8 +391,7 @@ class UnitCell(Object):
         ],
         dimensionality="[length] ** 3",
         description=("Volume of the unit cell if dimensionality is 3."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
             name_type="specified",

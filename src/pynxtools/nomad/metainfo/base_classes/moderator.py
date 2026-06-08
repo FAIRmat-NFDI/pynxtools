@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -114,8 +121,7 @@ class Moderator(Component):
             "Effective distance as seen by measuring radiation. Note, it is "
             "recommended to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -140,8 +146,7 @@ class Moderator(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -165,8 +170,7 @@ class Moderator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-poison-depth-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="poison_depth",
             type="NX_FLOAT",
             name_type="specified",
@@ -180,8 +184,7 @@ class Moderator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-coupled-field"
         ],
         description=("whether the moderator is coupled"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coupled",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -194,8 +197,7 @@ class Moderator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-coupling-material-field"
         ],
         description=("The material used for coupling. Usually Cd."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coupling_material",
             type="NX_CHAR",
             name_type="specified",
@@ -207,8 +209,7 @@ class Moderator(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-poison-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="poison_material",
             type="NX_CHAR",
             name_type="specified",
@@ -223,8 +224,7 @@ class Moderator(Component):
         ],
         dimensionality="[temperature]",
         description=("average/nominal moderator temperature"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -243,8 +243,7 @@ class Moderator(Component):
             "moderator pointing towards the source (the negative part of the z "
             "axis). .. image:: moderator/moderator.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

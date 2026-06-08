@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -96,8 +103,7 @@ class CsPrng(Object):
             "one of the most commonly used algorithm is the MersenneTwister "
             "(mt19937)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -115,8 +121,7 @@ class CsPrng(Object):
             "Parameter of the PRNG controlling its initialization and thus "
             "controlling the specific sequence generated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="seed",
             type="NX_INT",
             name_type="specified",
@@ -136,8 +141,7 @@ class CsPrng(Object):
             "to equilibrate the sequence. If no warmup was performed or if "
             "warmup procedures are unclear, users should set the value to zero."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="warmup",
             type="NX_UINT",
             name_type="specified",

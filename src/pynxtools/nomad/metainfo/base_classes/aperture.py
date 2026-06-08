@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -142,8 +149,7 @@ class Aperture(Component):
             "geometries an NXoff_geometry group can be used to provide an "
             "unambiguous reference. .. image:: aperture/aperture.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -156,8 +162,7 @@ class Aperture(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaperture.html#nxaperture-material-field"
         ],
         description=("Absorbing material of the aperture"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material",
             type="NX_CHAR",
             name_type="specified",
@@ -170,8 +175,7 @@ class Aperture(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaperture.html#nxaperture-description-field"
         ],
         description=("Description of aperture"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -197,8 +201,7 @@ class Aperture(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaperture.html#nxaperture-shape-field"
         ],
         description=("Shape of the aperture."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shape",
             type="NX_CHAR",
             name_type="specified",
@@ -227,8 +230,7 @@ class Aperture(Component):
             "The relevant dimension for the aperture, i.e. slit width, pinhole "
             "and iris diameter"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="size",
             type="NX_NUMBER",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -153,8 +160,7 @@ class SpectrumProcess(Process):
             "Imaging (data collection) mode of the instrument during acquisition "
             "of the data in this :ref:`NXspectrum` instance."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -170,8 +176,7 @@ class SpectrumProcess(Process):
             "Link or name of an :ref:`NXdetector` instance with which the data "
             "were collected."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -208,8 +213,7 @@ class SpectrumSpectrum0d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -223,8 +227,7 @@ class SpectrumSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-0d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -240,8 +243,7 @@ class SpectrumSpectrum0d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -255,8 +257,7 @@ class SpectrumSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-0d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -294,8 +295,7 @@ class SpectrumSpectrum1d(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -309,8 +309,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -326,8 +325,7 @@ class SpectrumSpectrum1d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -341,8 +339,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -358,8 +355,7 @@ class SpectrumSpectrum1d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -373,8 +369,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -412,8 +407,7 @@ class SpectrumSpectrum2d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -427,8 +421,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -444,8 +437,7 @@ class SpectrumSpectrum2d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -459,8 +451,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -476,8 +467,7 @@ class SpectrumSpectrum2d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -491,8 +481,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -508,8 +497,7 @@ class SpectrumSpectrum2d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -523,8 +511,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -562,8 +549,7 @@ class SpectrumSpectrum3d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -577,8 +563,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -594,8 +579,7 @@ class SpectrumSpectrum3d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the slower dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
             name_type="specified",
@@ -609,8 +593,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-k-long-name-attribute"
         ],
         description=("Point coordinate along the slower dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -626,8 +609,7 @@ class SpectrumSpectrum3d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -641,8 +623,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -658,8 +639,7 @@ class SpectrumSpectrum3d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -673,8 +653,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -690,8 +669,7 @@ class SpectrumSpectrum3d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -705,8 +683,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -744,8 +721,7 @@ class SpectrumStack0d(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -759,8 +735,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -776,8 +751,7 @@ class SpectrumStack0d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
             name_type="specified",
@@ -791,8 +765,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-indices-group-long-name-attribute"
         ],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -808,8 +781,7 @@ class SpectrumStack0d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Spectrum identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_spectrum",
             type="NX_INT",
             name_type="specified",
@@ -823,8 +795,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-indices-spectrum-long-name-attribute"
         ],
         description=("Spectrum identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -840,8 +811,7 @@ class SpectrumStack0d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -855,8 +825,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -894,8 +863,7 @@ class SpectrumStack2d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -909,8 +877,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -926,8 +893,7 @@ class SpectrumStack2d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
             name_type="specified",
@@ -941,8 +907,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-indices-group-long-name-attribute"
         ],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -958,8 +923,7 @@ class SpectrumStack2d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Spectrum identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_spectrum",
             type="NX_INT",
             name_type="specified",
@@ -973,8 +937,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-indices-spectrum-long-name-attribute"
         ],
         description=("Spectrum identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -990,8 +953,7 @@ class SpectrumStack2d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -1005,8 +967,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1022,8 +983,7 @@ class SpectrumStack2d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -1037,8 +997,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1054,8 +1013,7 @@ class SpectrumStack2d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -1069,8 +1027,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1108,8 +1065,7 @@ class SpectrumStack3d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*", "*"],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -1123,8 +1079,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-intensity-long-name-attribute"
         ],
         description=("Counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1140,8 +1095,7 @@ class SpectrumStack3d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
             name_type="specified",
@@ -1155,8 +1109,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-indices-group-long-name-attribute"
         ],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1172,8 +1125,7 @@ class SpectrumStack3d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Spectrum identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_spectrum",
             type="NX_INT",
             name_type="specified",
@@ -1187,8 +1139,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-indices-spectrum-long-name-attribute"
         ],
         description=("Spectrum identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1204,8 +1155,7 @@ class SpectrumStack3d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the slower dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
             name_type="specified",
@@ -1219,8 +1169,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-k-long-name-attribute"
         ],
         description=("Point coordinate along the slower dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1236,8 +1185,7 @@ class SpectrumStack3d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -1251,8 +1199,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1268,8 +1215,7 @@ class SpectrumStack3d(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -1283,8 +1229,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1300,8 +1245,7 @@ class SpectrumStack3d(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Energy axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -1315,8 +1259,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-energy-long-name-attribute"
         ],
         description=("Energy"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -97,8 +104,7 @@ class Phase(Object):
             "instances of :ref:`NXphase` named phase0, phase1, and phase2 should "
             "be stored in that HDF5 file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_id",
             type="NX_INT",
             name_type="specified",
@@ -116,8 +122,7 @@ class Phase(Object):
             "is 0 and one would like to use the field name, the value should be "
             "n/a or notIndexed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",

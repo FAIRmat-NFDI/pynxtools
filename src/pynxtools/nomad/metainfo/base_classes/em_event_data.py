@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -191,8 +198,7 @@ class EmEventData(Object):
             "(left bound of the time interval) while the end_time specifies the "
             "end (right bound) of the time interval."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -208,8 +214,7 @@ class EmEventData(Object):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the snapshot time interval ended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -223,8 +228,7 @@ class EmEventData(Object):
         ],
         dimensionality="dimensionless",
         description=("Identifier of a specific state and setting of the microscope."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_event",
             type="NX_INT",
             name_type="specified",
@@ -239,8 +243,7 @@ class EmEventData(Object):
         ],
         dimensionality="dimensionless",
         description=("The name of the sample to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_sample",
             type="NX_CHAR",
             name_type="specified",
@@ -273,8 +276,7 @@ class EmEventData(Object):
             "field description should be avoided as it is difficult to "
             "machine-interpret. Instead, an enumeration should be used."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",

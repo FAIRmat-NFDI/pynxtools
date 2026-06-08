@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -109,8 +116,7 @@ class ScanController(Component):
             "programs work as expected. The field scan_schema can be used to add "
             "some constraints on how the beam was scanned over the surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_schema",
             type="NX_CHAR",
             name_type="specified",
@@ -129,8 +135,7 @@ class ScanController(Component):
             "standard. .. _Dwell Time: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000015"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dwell_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -151,8 +156,7 @@ class ScanController(Component):
             "standard. .. _Flyback Time: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000028"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flyback_time",
             type="NX_NUMBER",
             name_type="specified",

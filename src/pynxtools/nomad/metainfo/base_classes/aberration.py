@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -73,8 +80,7 @@ class Aberration(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-magnitude-field"
         ],
         description=("Magnitude of the aberration"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnitude",
             type="NX_NUMBER",
             name_type="specified",
@@ -88,8 +94,7 @@ class Aberration(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-magnitude-errors-field"
         ],
         description=("Uncertainty of the magnitude of the aberration"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnitude_errors",
             type="NX_NUMBER",
             name_type="specified",
@@ -107,8 +112,7 @@ class Aberration(Object):
             "the 95% confidence interval, variance, standard deviation, using "
             "which algorithm or statistical model."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnitude_errors_model",
             type="NX_CHAR",
             name_type="specified",
@@ -122,8 +126,7 @@ class Aberration(Object):
         ],
         dimensionality="[time]",
         description=("Time elapsed since the last measurement."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="delta_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -144,8 +147,7 @@ class Aberration(Object):
             "the coordinate system differs to the one used in CEOS and instead "
             "two aberration coefficients a and b are used."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -159,8 +161,7 @@ class Aberration(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-name-field"
         ],
         description=("Given name to this aberration."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -173,8 +174,7 @@ class Aberration(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-alias-field"
         ],
         description=("Alias to name or refer to this specific type of aberration."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",

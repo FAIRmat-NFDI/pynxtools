@@ -20,7 +20,10 @@ NOMAD annotation models for NeXus sections and quantities.
 
 NeXusDefinition — attached to Section.m_def; mirrors NXDL <definition> semantics.
 NeXusGroup      — attached to SubSection definitions; mirrors NXDL <group> semantics.
-NeXusQuantity   — attached to Quantity definitions; mirrors NXDL <field>/<attribute>.
+NeXusField      — attached to Quantity definitions; mirrors NXDL <field> semantics.
+NeXusAttribute  — attached to Quantity definitions; mirrors NXDL <attribute> semantics.
+NeXusLink       — attached to Quantity definitions; mirrors NXDL <link> semantics.
+NeXusChoice     — attached to SubSection definitions; one per alternative in a <choice>.
 
 The split between NeXusDefinition and NeXusGroup mirrors the NXDL schema:
 - <definition> carries category, ignore-extra flags, symbols, and restricts.
@@ -30,7 +33,11 @@ Usage:
 
     m_def = Section(a_nexus_definition=NeXusDefinition(nx_class="NXentry", ...))
     data  = SubSection(..., a_nexus_group=NeXusGroup(nx_class="NXdata", ...))
-    qty   = Quantity(..., a_nexus_quantity=NeXusQuantity(kind="field", ...))
+    fld   = Quantity(..., a_nexus_field=NeXusField(name="energy", ...))
+    attr  = Quantity(..., a_nexus_attribute=NeXusAttribute(name="signal", ...))
+    link   = Quantity(..., a_nexus_link=NeXusLink(name="data", target="/NXentry/..."))
+    geom  = SubSection(..., a_nexus_choice=NeXusChoice(nx_class="NXoff_geometry",
+                                                       group_name="pixel_shape"))
 
 Naming convention
 -----------------
@@ -95,39 +102,98 @@ class NeXusGroup(AnnotationModel):
     deprecated: str | None = None
 
 
-class NeXusQuantity(AnnotationModel):
-    """Annotation on Quantity for NeXus field and attribute semantics.
+class NeXusField(AnnotationModel):
+    """Annotation on a Quantity for NXDL <field> semantics.
 
-    Field names mirror NXDL XML attributes directly. ``kind`` distinguishes
-    fields (have units, interpretation, long_name) from attributes (do not).
+    Corresponds to a NXDL <field> child element. Fields hold typed data arrays
+    and may carry unit categories, interpretation hints, and long names.
     """
 
-    kind: Literal["field", "attribute"]
     name: str
-    parent_field: str | None = None
     # ``type`` is a Python builtin but valid as a Pydantic field name.
     type: str = "NX_CHAR"
-    # NX unit category (e.g. "NX_ENERGY"). Only meaningful for kind="field".
+    # NX unit category (e.g. "NX_ENERGY").
     units: str | None = None
     name_type: Literal["specified", "any", "partial"] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "optional"
     enumeration: list[str] | None = None
     open_enum: bool = False
-    # From NXDL fieldType/@interpretation. Only meaningful for kind="field".
     interpretation: str | None = None
-    # From NXDL fieldType/@long_name. Only meaningful for kind="field".
     long_name: str | None = None
+    deprecated: str | None = None
+
+
+class NeXusAttribute(AnnotationModel):
+    """Annotation on a Quantity for NXDL <attribute> semantics.
+
+    Corresponds to a NXDL <attribute> element — either a group-level attribute
+    or a field-level attribute. Field-level attributes set ``parent_field`` to
+    the name of the parent field (e.g. ``parent_field="energy"`` for
+    ``energy__units``).
+    """
+
+    name: str
+    # Set when this is an attribute of a field rather than of the group.
+    parent_field: str | None = None
+    # ``type`` is a Python builtin but valid as a Pydantic field name.
+    type: str = "NX_CHAR"
+    name_type: Literal["specified", "any", "partial"] = "specified"
+    optionality: Literal["required", "recommended", "optional"] = "optional"
+    enumeration: list[str] | None = None
+    open_enum: bool = False
+    deprecated: str | None = None
+
+
+class NeXusLink(AnnotationModel):
+    """Annotation on a Quantity for NXDL <link> semantics.
+
+    A <link> element names a reference to another field or group elsewhere in
+    the HDF5 file.  The ``target`` is the schema-level default target path as
+    written in the NXDL; the actual HDF5 target is resolved by the parser at
+    read time.
+    """
+
+    name: str
+    target: str
+    optionality: Literal["required", "recommended", "optional"] = "optional"
+    deprecated: str | None = None
+
+
+class NeXusChoice(AnnotationModel):
+    """Annotation on a SubSection for one alternative in an NXDL <choice>.
+
+    A <choice name="pixel_shape"> block allows exactly one of several NX
+    classes to occupy a named slot.  One SubSection is generated per
+    alternative; all share the same ``group_name`` so consumers can identify
+    the alternatives that belong together.
+
+    Naming convention: ``{group_name}_{nxdl_class_suffix}`` where the suffix
+    is the NX class name with the ``NX`` prefix removed and lowercased
+    (e.g. ``pixel_shape_off_geometry``, ``pixel_shape_cylindrical_geometry``).
+    """
+
+    # ``class`` is a Python reserved keyword → must keep nx_ prefix here.
+    nx_class: str
+    group_name: str
+    optionality: Literal["required", "recommended", "optional"] = "optional"
     deprecated: str | None = None
 
 
 # Resolve the `Definition` ForwardRef used inside AnnotationModel.m_definition.
 NeXusDefinition.model_rebuild()
 NeXusGroup.model_rebuild()
-NeXusQuantity.model_rebuild()
+NeXusField.model_rebuild()
+NeXusAttribute.model_rebuild()
+NeXusLink.model_rebuild()
+NeXusChoice.model_rebuild()
 
 # Explicit registration so that a_nexus_definition=... / a_nexus_group=... /
-# a_nexus_quantity=... work on Section / SubSection / Quantity definitions.
+# a_nexus_field=... / a_nexus_attribute=... / a_nexus_link=... / a_nexus_choice=...
+# work on Section / SubSection / Quantity definitions.
 # Must be imported before any schema package loads.
 AnnotationModel.m_registry["nexus_definition"] = NeXusDefinition
 AnnotationModel.m_registry["nexus_group"] = NeXusGroup
-AnnotationModel.m_registry["nexus_quantity"] = NeXusQuantity
+AnnotationModel.m_registry["nexus_field"] = NeXusField
+AnnotationModel.m_registry["nexus_attribute"] = NeXusAttribute
+AnnotationModel.m_registry["nexus_link"] = NeXusLink
+AnnotationModel.m_registry["nexus_choice"] = NeXusChoice

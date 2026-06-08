@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -86,8 +93,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-type-field"
         ],
         description=("Type of the capillary"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -104,8 +110,7 @@ class Capillary(Component):
             "The manufacturer of the capillary. This is actually important as it "
             "may have an impact on performance."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="manufacturer",
             type="NX_CHAR",
             name_type="specified",
@@ -118,8 +123,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-maximum-incident-angle-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="maximum_incident_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -133,8 +137,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-accepting-aperture-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="accepting_aperture",
             type="NX_FLOAT",
             name_type="specified",
@@ -148,8 +151,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-working-distance-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="working_distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -163,8 +165,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-focal-size-field"
         ],
         description=("The focal size in FWHM"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="focal_size",
             type="NX_FLOAT",
             name_type="specified",
@@ -179,8 +180,7 @@ class Capillary(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a capillary lens."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

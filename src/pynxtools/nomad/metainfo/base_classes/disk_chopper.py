@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -103,8 +110,7 @@ class DiskChopper(Component):
             "Type of the disk-chopper: only one from the enumerated list (match "
             "text exactly)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -122,8 +128,7 @@ class DiskChopper(Component):
             "Chopper rotation speed. Positive for anticlockwise rotation when "
             "facing away from the source, negative otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_speed",
             type="NX_FLOAT",
             name_type="specified",
@@ -137,8 +142,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-slits-field"
         ],
         description=("Number of slits"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slits",
             type="NX_INT",
             name_type="specified",
@@ -152,8 +156,7 @@ class DiskChopper(Component):
         ],
         dimensionality="[angle]",
         description=("Angular opening"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slit_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -168,8 +171,7 @@ class DiskChopper(Component):
         ],
         dimensionality="[length]",
         description=("Disk spacing in direction of beam"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pair_separation",
             type="NX_FLOAT",
             name_type="specified",
@@ -190,8 +192,7 @@ class DiskChopper(Component):
             "from the source. The first edge must be the opening edge of a slit, "
             "thus the last edge may have an angle greater than 360 degrees."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slit_edges",
             type="NX_FLOAT",
             name_type="specified",
@@ -211,8 +212,7 @@ class DiskChopper(Component):
             "attribute. Please note that absolute timestamps under unix are "
             "relative to ``1970-01-01T00:00:00.0Z``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="top_dead_center",
             type="NX_NUMBER",
             name_type="specified",
@@ -225,8 +225,7 @@ class DiskChopper(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-top-dead-center-start-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="start",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -245,8 +244,7 @@ class DiskChopper(Component):
             "top-dead-center timestamp sensor, anticlockwise when facing away "
             "from the source."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beam_position",
             type="NX_FLOAT",
             name_type="specified",
@@ -261,8 +259,7 @@ class DiskChopper(Component):
         ],
         dimensionality="[length]",
         description=("Radius of the disk"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -277,8 +274,7 @@ class DiskChopper(Component):
         ],
         dimensionality="[length]",
         description=("Total slit height"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slit_height",
             type="NX_FLOAT",
             name_type="specified",
@@ -293,8 +289,7 @@ class DiskChopper(Component):
         ],
         dimensionality="[angle]",
         description=("Chopper phase angle"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase",
             type="NX_FLOAT",
             name_type="specified",
@@ -311,8 +306,7 @@ class DiskChopper(Component):
         description=(
             "Time difference between timing system t0 and chopper driving clock signal"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="delay",
             type="NX_NUMBER",
             name_type="specified",
@@ -329,8 +323,7 @@ class DiskChopper(Component):
             "Pulse reduction factor of this chopper in relation to other "
             "choppers/fastest pulse in the instrument"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ratio",
             type="NX_INT",
             name_type="specified",
@@ -347,8 +340,7 @@ class DiskChopper(Component):
             "Effective distance to the origin. Note, it is recommended to use "
             "NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -364,8 +356,7 @@ class DiskChopper(Component):
         dimensionality="[length]",
         shape=[2],
         description=("Low and high values of wavelength range transmitted"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_range",
             type="NX_FLOAT",
             name_type="specified",
@@ -388,8 +379,7 @@ class DiskChopper(Component):
             "is not where the beam passes though. .. image:: "
             "disk_chopper/disk_chopper.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

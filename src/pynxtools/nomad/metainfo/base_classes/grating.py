@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -119,8 +126,7 @@ class Grating(Component):
             "edge listed first. Blazed gratings can be identified by the low "
             "value of the first-listed angle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angles",
             type="NX_FLOAT",
             name_type="specified",
@@ -141,8 +147,7 @@ class Grating(Component):
             "increasing powers of position. Gratings which do not have variable "
             "line spacing will only have a single coefficient (constant)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="period",
             type="NX_FLOAT",
             name_type="specified",
@@ -156,8 +161,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-duty-cycle-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="duty_cycle",
             type="NX_FLOAT",
             name_type="specified",
@@ -171,8 +175,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-depth-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depth",
             type="NX_FLOAT",
             name_type="specified",
@@ -186,8 +189,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-diffraction-order-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diffraction_order",
             type="NX_INT",
             name_type="specified",
@@ -202,8 +204,7 @@ class Grating(Component):
         ],
         dimensionality="[angle]",
         description=("Angle between the incident beam and the utilised outgoing beam."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="deflection_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -216,8 +217,7 @@ class Grating(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-interior-atmosphere-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="interior_atmosphere",
             type="NX_CHAR",
             name_type="specified",
@@ -230,8 +230,7 @@ class Grating(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -244,8 +243,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_density",
             type="NX_FLOAT",
             name_type="specified",
@@ -259,8 +257,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-thickness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -273,8 +270,7 @@ class Grating(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-coating-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_CHAR",
             name_type="specified",
@@ -287,8 +283,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-roughness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -302,8 +297,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-coating-roughness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -318,8 +312,7 @@ class Grating(Component):
         ],
         dimensionality="[length]",
         description=("An array describing the thickness of each layer"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="layer_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -335,8 +328,7 @@ class Grating(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a bending grating."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

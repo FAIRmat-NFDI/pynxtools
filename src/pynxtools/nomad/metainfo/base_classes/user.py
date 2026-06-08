@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -65,8 +72,7 @@ class User(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-name-field"
         ],
         description=("Name of user responsible for this entry"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -82,8 +88,7 @@ class User(Object):
             "Role of user responsible for this entry. Suggested roles are "
             '"local_contact", "principal_investigator", and "proposer"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="role",
             type="NX_CHAR",
             name_type="specified",
@@ -96,8 +101,7 @@ class User(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-affiliation-field"
         ],
         description=("Affiliation of user"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="affiliation",
             type="NX_CHAR",
             name_type="specified",
@@ -110,8 +114,7 @@ class User(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-address-field"
         ],
         description=("Address of user"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="address",
             type="NX_CHAR",
             name_type="specified",
@@ -124,8 +127,7 @@ class User(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-telephone-number-field"
         ],
         description=("Telephone number of user"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="telephone_number",
             type="NX_CHAR",
             name_type="specified",
@@ -138,8 +140,7 @@ class User(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-fax-number-field"
         ],
         description=("Fax number of user"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fax_number",
             type="NX_CHAR",
             name_type="specified",
@@ -152,8 +153,7 @@ class User(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-email-field"
         ],
         description=("Email of user"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="email",
             type="NX_CHAR",
             name_type="specified",
@@ -169,8 +169,7 @@ class User(Object):
             "facility based unique identifier for this person e.g. their "
             "identification code on the facility address/contact database"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="facility_user_id",
             type="NX_CHAR",
             name_type="specified",
@@ -186,8 +185,7 @@ class User(Object):
             "an author code, Open Researcher and Contributor ID, defined by "
             "https://orcid.org and expressed as a URI"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ORCID",
             type="NX_CHAR",
             name_type="specified",

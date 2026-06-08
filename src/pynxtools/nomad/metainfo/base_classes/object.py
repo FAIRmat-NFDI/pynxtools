@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -140,8 +147,7 @@ class Object(BaseSection):
         ],
         variable=True,
         description=("Target values of FIELDNAME."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_set",
             type="NX_NUMBER",
             name_type="partial",
@@ -155,8 +161,7 @@ class Object(BaseSection):
         ],
         variable=True,
         description=("Uncertainties of FIELDNAME values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_errors",
             type="NX_NUMBER",
             name_type="partial",
@@ -170,8 +175,7 @@ class Object(BaseSection):
         ],
         variable=True,
         description=("Weights of FIELDNAME values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_weights",
             type="NX_NUMBER",
             name_type="partial",
@@ -187,8 +191,7 @@ class Object(BaseSection):
         description=(
             "Boolean mask of FIELDNAME values. The value is masked if set to 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="FIELDNAME_mask",
             type="NX_BOOLEAN",
             name_type="partial",
@@ -211,8 +214,7 @@ class Object(BaseSection):
             "exist regarding this resolution process are called persistent "
             "identifiers. Persistent identifiers are also known as PIDs."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifierNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -232,12 +234,12 @@ class Object(BaseSection):
             "Purl, ORCID and ROR identifiers should have their corresponding "
             "types and should not use the more generic URL identifier."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+            parent_field="identifierNAME",
             enumeration=[
                 "ARK",
                 "DOI",
@@ -253,7 +255,6 @@ class Object(BaseSection):
                 "URN",
             ],
             open_enum=True,
-            parent_field="identifierNAME",
         ),
     )
     default = Quantity(
@@ -270,8 +271,7 @@ class Object(BaseSection):
             "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
             "a summary of the discussion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",

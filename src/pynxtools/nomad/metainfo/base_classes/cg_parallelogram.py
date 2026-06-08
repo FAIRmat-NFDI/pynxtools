@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -124,8 +131,7 @@ class CgParallelogram(CgPrimitive):
         ],
         shape=["*"],
         description=("To specify which parallelogram is a rectangle."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_rectangle",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -143,8 +149,7 @@ class CgParallelogram(CgPrimitive):
             "field describes whether parallelograms are rectangles whose primary "
             "edges are parallel to the axes of the coordinate system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_axis_aligned",
             type="NX_BOOLEAN",
             name_type="specified",

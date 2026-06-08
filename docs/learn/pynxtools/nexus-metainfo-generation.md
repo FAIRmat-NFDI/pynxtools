@@ -149,13 +149,13 @@ Has no `unit`, `long_name`, `interpretation`, or plotting-hint attributes.
 
 ## Annotation models
 
-Three `AnnotationModel` subclasses carry all NeXus-specific metadata on generated
-sections and quantities.
+Six `AnnotationModel` subclasses carry all NeXus-specific metadata on generated
+sections and quantities — one per NXDL node kind.  Each annotation is queryable
+at runtime via `m_def.m_get_annotations("nexus_field")` etc.
 
 ### `NeXusDefinition`
 
-Attached to `Section.m_def` of every top-level generated class.  Carries the NXDL
-definition identity and class-level validation controls.
+Attached to `Section.m_def` of every top-level generated class.
 
 ```python
 class NeXusDefinition(AnnotationModel):
@@ -171,11 +171,8 @@ class NeXusDefinition(AnnotationModel):
 
 ### `NeXusGroup`
 
-For top-level classes this annotation lives on the **named concept class `m_def`**
-rather than on the `SubSection`. For cross-file group references (where no named
-concept class is generated in the same file) it lives on the `SubSection`.
-
-Carries the occurrence context: how a group of a given class appears inside its parent.
+On named concept class `m_def` (group with own quantities, same file) or on the
+`SubSection` for cross-file group references.
 
 ```python
 class NeXusGroup(AnnotationModel):
@@ -188,25 +185,86 @@ class NeXusGroup(AnnotationModel):
     deprecated: str | None = None
 ```
 
-### `NeXusQuantity`
+### `NeXusField`
 
-Attached to every `Quantity` for field and attribute children.
+Attached to every `Quantity` derived from a NXDL `<field>` element.  Fields
+carry typed data arrays and may have unit categories, interpretation hints,
+and long names.
 
 ```python
-class NeXusQuantity(AnnotationModel):
-    kind: Literal["field", "attribute"]
+class NeXusField(AnnotationModel):
     name: str
     type: str = "NX_CHAR"
+    units: str | None = None
     name_type: Literal["specified", "any", "partial"] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "optional"
-    units: str | None = None
     enumeration: list[str] | None = None
     open_enum: bool = False
-    parent_field: str | None = None
     interpretation: str | None = None
     long_name: str | None = None
     deprecated: str | None = None
 ```
+
+### `NeXusAttribute`
+
+Attached to every `Quantity` derived from a NXDL `<attribute>` element (either
+group-level or field-level).  Field-level attributes set `parent_field` to the
+owning field name (e.g. `parent_field="energy"` for `energy__units`).
+
+```python
+class NeXusAttribute(AnnotationModel):
+    name: str
+    parent_field: str | None = None
+    type: str = "NX_CHAR"
+    name_type: Literal["specified", "any", "partial"] = "specified"
+    optionality: Literal["required", "recommended", "optional"] = "optional"
+    enumeration: list[str] | None = None
+    open_enum: bool = False
+    deprecated: str | None = None
+```
+
+### `NeXusLink`
+
+Attached to a `Quantity(type=str)` derived from a NXDL `<link>` element.
+The `target` is the schema-level default target path; the parser resolves the
+actual HDF5 target at read time.
+
+```python
+class NeXusLink(AnnotationModel):
+    name: str
+    target: str
+    optionality: Literal["required", "recommended", "optional"] = "optional"
+    deprecated: str | None = None
+```
+
+### `NeXusChoice`
+
+Attached to each `SubSection` representing one alternative in a NXDL `<choice>`
+block.  A choice allows exactly one NX class to occupy a named slot.  One
+SubSection is generated per alternative; all share the same `group_name`.
+
+Naming: `{choice_name}_{class_suffix}` — e.g. `pixel_shape_off_geometry` and
+`pixel_shape_cylindrical_geometry` for `<choice name="pixel_shape">`.
+
+```python
+class NeXusChoice(AnnotationModel):
+    nx_class: str
+    group_name: str
+    optionality: Literal["required", "recommended", "optional"] = "optional"
+    deprecated: str | None = None
+```
+
+### Summary: annotation placement
+
+| NXDL element | Generated artifact | Annotation key |
+|---|---|---|
+| `<definition>` | top-level Section class `m_def` | `nexus_definition` |
+| `<group>` (named concept) | concept class `m_def` | `nexus_group` |
+| `<group>` (cross-file) | `SubSection` | `nexus_group` |
+| `<field>` | `Quantity` | `nexus_field` |
+| `<attribute>` | `Quantity` | `nexus_attribute` |
+| `<link>` | `Quantity(type=str)` | `nexus_link` |
+| `<choice>` alternative | `SubSection` | `nexus_choice` |
 
 ---
 
@@ -214,7 +272,8 @@ class NeXusQuantity(AnnotationModel):
 
 ```
 src/pynxtools/nomad/
-    annotations.py              # NeXusDefinition + NeXusGroup + NeXusQuantity + registration
+    annotations.py              # NeXusDefinition + NeXusGroup + NeXusField + NeXusAttribute
+                               #   + NeXusLink + NeXusChoice + registration
     converters/
         __init__.py
         _mapping.py             # nxdl_to_class_name, BASESECTIONS_MAP, type mapping

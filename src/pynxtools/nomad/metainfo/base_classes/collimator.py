@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -98,8 +105,7 @@ class Collimator(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -114,8 +120,7 @@ class Collimator(Component):
         ],
         dimensionality="[angle]",
         description=("Angular divergence of Soller collimator"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="soller_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -130,8 +135,7 @@ class Collimator(Component):
         ],
         dimensionality="[angle]",
         description=("divergence of collimator in local x direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="divergence_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -146,8 +150,7 @@ class Collimator(Component):
         ],
         dimensionality="[angle]",
         description=("divergence of collimator in local y direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="divergence_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -162,8 +165,7 @@ class Collimator(Component):
         ],
         dimensionality="1 / [time]",
         description=("Frequency of oscillating collimator"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency",
             type="NX_FLOAT",
             name_type="specified",
@@ -178,8 +180,7 @@ class Collimator(Component):
         ],
         dimensionality="[length]",
         description=("blade thickness"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="blade_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -194,8 +195,7 @@ class Collimator(Component):
         ],
         dimensionality="[length]",
         description=("blade spacing"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="blade_spacing",
             type="NX_FLOAT",
             name_type="specified",
@@ -209,8 +209,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-absorbing-material-field"
         ],
         description=("name of absorbing material"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="absorbing_material",
             type="NX_CHAR",
             name_type="specified",
@@ -223,8 +222,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-transmitting-material-field"
         ],
         description=("name of transmitting material"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmitting_material",
             type="NX_CHAR",
             name_type="specified",
@@ -245,8 +243,7 @@ class Collimator(Component):
             "reference point on the z axis. The collimator faces negative z "
             "values. .. image:: collimator/collimator.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

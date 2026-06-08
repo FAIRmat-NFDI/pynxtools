@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -119,8 +126,7 @@ class Calibration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-description-field"
         ],
         description=("A description of the procedures employed."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -136,8 +142,7 @@ class Calibration(Process):
             "The physical quantity of the calibration, e.g., energy, momentum, "
             "time, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -154,8 +159,7 @@ class Calibration(Process):
             "to a detailed description of a calibration method but no actual "
             "calibration data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_calibration_method",
             type="NX_CHAR",
             name_type="specified",
@@ -174,8 +178,7 @@ class Calibration(Process):
             "calibration information. The axis values may be copied or linked in "
             "the appropriate NXcalibration fields for reference."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_calibration_reference",
             type="NX_CHAR",
             name_type="specified",
@@ -191,8 +194,7 @@ class Calibration(Process):
             "Indicates the name of the last operation applied in the NXprocess "
             "sequence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="last_process",
             type="NX_CHAR",
             name_type="specified",
@@ -205,8 +207,7 @@ class Calibration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-applied-field"
         ],
         description=("Has the calibration been applied?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -222,8 +223,7 @@ class Calibration(Process):
         description=(
             "Array containing the data coordinates in the original uncalibrated axis"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="original_axis",
             type="NX_FLOAT",
             name_type="specified",
@@ -246,8 +246,7 @@ class Calibration(Process):
             "Variable names are case-sensitive (age, Age and AGE are three "
             "different variables)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="symbol",
             type="NX_CHAR",
             name_type="specified",
@@ -265,8 +264,7 @@ class Calibration(Process):
             "Should be a valid NeXus path name, e.g., "
             "/entry/instrument/detector/raw."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="input_path",
             type="NX_CHAR",
             name_type="specified",
@@ -293,8 +291,7 @@ class Calibration(Process):
             "by ``my_field`` or ``my_field0`` if you want to read the zeroth "
             "element of the array."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fit_formula_description",
             type="NX_CHAR",
             name_type="specified",
@@ -313,8 +310,7 @@ class Calibration(Process):
             "point in the input axis by the corresponding point in the mapping "
             "data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mapping_MAPPING",
             type="NX_FLOAT",
             name_type="partial",
@@ -330,8 +326,7 @@ class Calibration(Process):
         description=(
             "An array representing the axis after calibration, matching the data length"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="calibrated_axis",
             type="NX_FLOAT",
             name_type="specified",
@@ -352,8 +347,7 @@ class Calibration(Process):
             "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
             "a summary of the discussion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",
@@ -401,8 +395,7 @@ class CalibrationFitFormulaInputs(Parameters):
             "Should be a valid NeXus path name, e.g., "
             "/entry/instrument/detector/raw."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="input_path",
             type="NX_CHAR",
             name_type="specified",
@@ -447,8 +440,7 @@ class CalibrationCalibrationParameters(Parameters):
             "Use a0, a1, ..., an for the coefficients of a polynomial fit, "
             "corresponding to the values in the ``fit_formula_description``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="aN",
             type="NX_NUMBER",
             name_type="partial",
@@ -467,8 +459,7 @@ class CalibrationCalibrationParameters(Parameters):
             "factors, see :ref:`/NXdata/FIELDNAME_scaling_factor "
             "</NXdata/FIELDNAME_scaling_factor-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scaling_factor",
             type="NX_FLOAT",
             name_type="specified",
@@ -487,8 +478,7 @@ class CalibrationCalibrationParameters(Parameters):
             "`scaling_factor`. For a more detailed description of offset, see "
             ":ref:`/NXdata/FIELDNAME_offset </NXdata/FIELDNAME_offset-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset",
             type="NX_FLOAT",
             name_type="specified",

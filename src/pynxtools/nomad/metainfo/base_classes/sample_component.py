@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -95,8 +102,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-name-field"
         ],
         description=("Descriptive name of sample component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -126,8 +132,7 @@ class SampleComponent(Component, basesections.Component):
             "their symbol. * This is the *Hill* system used by Chemical "
             "Abstracts."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -142,8 +147,7 @@ class SampleComponent(Component, basesections.Component):
         dimensionality="[length]",
         shape=[3],
         description=("Crystallography unit cell parameters a, b, and c"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_abc",
             type="NX_FLOAT",
             name_type="specified",
@@ -159,8 +163,7 @@ class SampleComponent(Component, basesections.Component):
         dimensionality="[angle]",
         shape=[3],
         description=("Crystallography unit cell parameters alpha, beta, and gamma"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_alphabetagamma",
             type="NX_FLOAT",
             name_type="specified",
@@ -175,8 +178,7 @@ class SampleComponent(Component, basesections.Component):
         ],
         dimensionality="[length] ** 3",
         description=("Volume of the unit cell"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_volume",
             type="NX_FLOAT",
             name_type="specified",
@@ -195,8 +197,7 @@ class SampleComponent(Component, basesections.Component):
             "This will follow the Busing and Levy convention from Acta.Crysta "
             "v22, p457 (1967)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_orientation",
             type="NX_FLOAT",
             name_type="specified",
@@ -215,8 +216,7 @@ class SampleComponent(Component, basesections.Component):
             "follow the Busing and Levy convention from Acta.Crysta v22, p457 "
             "(1967)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_matrix",
             type="NX_FLOAT",
             name_type="specified",
@@ -230,8 +230,7 @@ class SampleComponent(Component, basesections.Component):
         ],
         dimensionality="[mass]",
         description=("Mass of sample component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mass",
             type="NX_FLOAT",
             name_type="specified",
@@ -246,8 +245,7 @@ class SampleComponent(Component, basesections.Component):
         ],
         dimensionality="[mass] / [length] ** 3",
         description=("Density of sample component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="density",
             type="NX_FLOAT",
             name_type="specified",
@@ -262,8 +260,7 @@ class SampleComponent(Component, basesections.Component):
         ],
         dimensionality="[mass]",
         description=("Relative Molecular Mass of sample component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_molecular_mass",
             type="NX_FLOAT",
             name_type="specified",
@@ -277,8 +274,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-description-field"
         ],
         description=("Description of the sample component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -291,8 +287,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-volume-fraction-field"
         ],
         description=("Volume fraction of component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume_fraction",
             type="NX_FLOAT",
             name_type="specified",
@@ -306,8 +301,7 @@ class SampleComponent(Component, basesections.Component):
         ],
         dimensionality="1 / [length] ** 2",
         description=("Scattering length density of component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_length_density",
             type="NX_FLOAT",
             name_type="specified",
@@ -331,8 +325,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-unit-cell-class-field"
         ],
         description=("In case it is all we know and we want to record/document it"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_class",
             type="NX_CHAR",
             name_type="specified",
@@ -354,8 +347,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-space-group-field"
         ],
         description=("Crystallographic space group"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="space_group",
             type="NX_CHAR",
             name_type="specified",
@@ -368,8 +360,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-point-group-field"
         ],
         description=("Crystallographic point group, deprecated if space_group present"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="point_group",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -61,8 +68,7 @@ class Pump(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpump.html#nxpump-design-field"
         ],
         description=("Principle type of the pump."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="design",
             type="NX_CHAR",
             name_type="specified",
@@ -90,8 +96,7 @@ class Pump(Component):
             "The minimum pressure achievable in a chamber after it has been "
             "pumped down for an extended period."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="base_pressure",
             type="NX_FLOAT",
             name_type="specified",
@@ -110,8 +115,7 @@ class Pump(Component):
             "the primary purpose of creating a flow or pressure of gas should "
             'state "gas" as the medium.'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="medium",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -66,8 +73,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-applied-field"
         ],
         description=("Has the distortion correction been applied?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -87,8 +93,7 @@ class Distortion(Process):
             "operations. .. _symmetry-guided distortion correction: "
             "https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="symmetry",
             type="NX_INT",
             name_type="specified",
@@ -107,8 +112,7 @@ class Distortion(Process):
             "For symmetry-guided distortion correction. Here we record the "
             "coordinates of the symmetry centre point."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="original_centre",
             type="NX_FLOAT",
             name_type="specified",
@@ -127,8 +131,7 @@ class Distortion(Process):
             "For symmetry-guided distortion correction. Here we record the "
             "coordinates of the relevant symmetry points."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="original_points",
             type="NX_FLOAT",
             name_type="specified",
@@ -148,8 +151,7 @@ class Distortion(Process):
             "corrections. 2D matrix holding the column information of the "
             "mapping of each original coordinate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cdeform_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -169,8 +171,7 @@ class Distortion(Process):
             "2D matrix holding the row information of the mapping of each "
             "original coordinate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rdeform_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -184,8 +185,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-description-field"
         ],
         description=("Description of the procedures employed."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",

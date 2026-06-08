@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -71,8 +78,7 @@ class CgEllipsoid(CgPrimitive):
             "respectively for an ellipse). Use if all ellipsoids in the set have "
             "the same half-axes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="semi_axes_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -90,8 +96,7 @@ class CgEllipsoid(CgPrimitive):
         description=(
             "Length of the semi-axes if ellipsoids have individually different lengths."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="semi_axes_values",
             type="NX_NUMBER",
             name_type="specified",
@@ -106,8 +111,7 @@ class CgEllipsoid(CgPrimitive):
         ],
         dimensionality="[length]",
         description=("In the case that all ellipsoids are spheres."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radius",
             type="NX_NUMBER",
             name_type="specified",
@@ -126,8 +130,7 @@ class CgEllipsoid(CgPrimitive):
             "In the case that all ellipsoids are spheres whose radii differ. For "
             "a mixture of spheres use semi_axes_values."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radii",
             type="NX_NUMBER",
             name_type="specified",

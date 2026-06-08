@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -104,8 +111,7 @@ class Collectioncolumn(Component):
             "Scheme of the electron collection lens, i.e. angular dispersive, "
             "spatial dispersive, momentum dispersive, non-dispersive, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scheme",
             type="NX_CHAR",
             name_type="specified",
@@ -119,8 +125,7 @@ class Collectioncolumn(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("Voltage applied to the extractor lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extractor_voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -139,8 +144,7 @@ class Collectioncolumn(Component):
             "Variations indicate leakage, field emission or arc currents to the "
             "extractor lens."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extractor_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -155,8 +159,7 @@ class Collectioncolumn(Component):
         ],
         dimensionality="[length]",
         description=("Distance between sample and detector entrance"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="working_distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -170,8 +173,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-lens-mode-field"
         ],
         description=("Labelling of the lens setting in use."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lens_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -187,8 +189,7 @@ class Collectioncolumn(Component):
             "The space projected in the angularly dispersive directions, real or "
             "reciprocal"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="projection",
             type="NX_CHAR",
             name_type="specified",
@@ -207,8 +208,7 @@ class Collectioncolumn(Component):
             "to term `7.4`_ of the ISO 18115-1:2023 standard. .. _7.4: "
             "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.4"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angular_acceptance",
             type="NX_FLOAT",
             name_type="specified",
@@ -223,8 +223,7 @@ class Collectioncolumn(Component):
         ],
         dimensionality="[length]",
         description=("Acceptance length or area of the collection column."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spatial_acceptance",
             type="NX_FLOAT",
             name_type="specified",
@@ -239,8 +238,7 @@ class Collectioncolumn(Component):
         ],
         dimensionality="dimensionless",
         description=("The magnification of the electron lens assembly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnification",
             type="NX_FLOAT",
             name_type="specified",

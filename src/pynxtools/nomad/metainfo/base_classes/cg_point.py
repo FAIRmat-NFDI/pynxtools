@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -76,8 +83,7 @@ class CgPoint(CgPrimitive):
         ],
         shape=["*", "*"],
         description=("Coordinates of the points."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -97,8 +103,7 @@ class CgPoint(CgPrimitive):
             "contextualize the time_offset relative to which time values are "
             "defined. Alternative store timestamp."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time",
             type="NX_NUMBER",
             name_type="specified",
@@ -113,8 +118,7 @@ class CgPoint(CgPrimitive):
         ],
         shape=["*"],
         description=("ISO8601 with local time zone offset for each point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="timestamp",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -130,8 +134,7 @@ class CgPoint(CgPrimitive):
             "ISO8601 with local time zone offset that serves as the reference "
             "for values in the field time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time_offset",
             type="NX_DATE_TIME",
             name_type="specified",

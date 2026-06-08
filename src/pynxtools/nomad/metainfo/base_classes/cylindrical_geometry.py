@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -80,8 +87,7 @@ class CylindricalGeometry(Object):
             "origin is the position of each pixel as described by the "
             "``x/y/z_pixel_offset`` datasets in ``NXdetector``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertices",
             type="NX_NUMBER",
             name_type="specified",
@@ -102,8 +108,7 @@ class CylindricalGeometry(Object):
             "second point B on edge of the same face as A, and third point C at "
             "the other face and on axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cylinders",
             type="NX_INT",
             name_type="specified",
@@ -117,8 +122,7 @@ class CylindricalGeometry(Object):
         ],
         shape=["*"],
         description=("Maps cylinders in ``cylinder``, by index, with a detector id."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_number",
             type="NX_INT",
             name_type="specified",

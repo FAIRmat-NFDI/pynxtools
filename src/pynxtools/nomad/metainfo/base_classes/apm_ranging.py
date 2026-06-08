@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -162,8 +169,7 @@ class ApmRangingMassToChargeDistribution(Process):
             "value. The lower (left-hand side) inclusive bound of the interval "
             ":math:`[{\\frac{m}{q}}_{min}, {\\frac{m}{q}}_{max}]`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="min_mass_to_charge",
             type="NX_FLOAT",
             name_type="specified",
@@ -181,8 +187,7 @@ class ApmRangingMassToChargeDistribution(Process):
             "value. The upper (right-hand side) inclusive bound of the interval "
             ":math:`[{\\frac{m}{q}}_{min}, {\\frac{m}{q}}_{max}]`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_mass_to_charge",
             type="NX_FLOAT",
             name_type="specified",
@@ -200,8 +205,7 @@ class ApmRangingMassToChargeDistribution(Process):
             "The number of bins on the interval :math:`[{\\frac{m}{q}}_{min}, "
             "{\\frac{m}{q}}_{max}]`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="n_mass_to_charge",
             type="NX_POSINT",
             name_type="specified",
@@ -242,8 +246,7 @@ class ApmRangingBackgroundQuantification(Process):
             "model. Thereby, community feedback can be collected to inform an "
             "improved version of this base class in the future."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -285,8 +288,7 @@ class ApmRangingPeakIdentification(Process):
             "unknown type is 0 representing a reserved value. Consequently, "
             "start counting iontypes from 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_ion_types",
             type="NX_UINT",
             name_type="specified",
@@ -306,8 +308,7 @@ class ApmRangingPeakIdentification(Process):
             "and distinguish typically. Currently, a value of 32 is used (see M. "
             "Kühbach et al. <https://doi.org/10.1017/S1431927621012241>`_)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="maximum_number_of_atoms_per_molecular_ion",
             type="NX_UINT",
             name_type="specified",
