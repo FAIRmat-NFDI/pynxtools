@@ -63,10 +63,9 @@ from pynxtools.nomad.converters._mapping import (
 from pynxtools.units import NXUnitSet
 
 _TEMPLATE_DIR = Path(__file__).parent / "templates"
-_DEFAULT_OUTPUT_DIR = Path(__file__).parents[1] / "metainfo" / "base_classes"
-_DEFAULT_APPLICATIONS_OUTPUT_DIR = (
-    Path(__file__).parents[1] / "metainfo" / "applications"
-)
+_DEFAULT_OUTPUT_DIR = Path(__file__).parents[1] / "metainfo"
+_DEFAULT_BASE_OUTPUT_DIR = _DEFAULT_OUTPUT_DIR / "base_classes"
+_DEFAULT_APPLICATIONS_OUTPUT_DIR = _DEFAULT_OUTPUT_DIR / "applications"
 
 _jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(str(_TEMPLATE_DIR)),
@@ -227,11 +226,9 @@ def _target_module_exists(nx_class: str) -> bool:
     category = _nxdl_category(nx_class)
     module = _class_module_name(nx_class)
     if category == "applications":
-        target = (
-            Path(__file__).parents[1] / "metainfo" / "applications" / f"{module}.py"
-        )
+        target = _DEFAULT_APPLICATIONS_OUTPUT_DIR / f"{module}.py"
     else:
-        target = _DEFAULT_OUTPUT_DIR / f"{module}.py"
+        target = _DEFAULT_BASE_OUTPUT_DIR / f"{module}.py"
     return target.exists()
 
 
@@ -1246,20 +1243,23 @@ def write_class(
     Returns True if the file content changed (or was created), False if unchanged.
     In dry_run mode: returns True if the file would differ, raises nothing.
 
-    output_dir defaults to the category-appropriate internal directory:
-    base_classes/ for category='base', applications/ for category='application'.
-    Pass an explicit path to target a different package (e.g. nomad-measurements).
+    output_dir should be the parent of base_classes/ and applications/ — the generator
+    appends the correct subfolder automatically. Defaults to the pynxtools-internal
+    metainfo/ directory. Pass an explicit path to generate into a different package
+    (e.g. --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo).
     """
     context = build_context(nx_name)
     new_source = render(context)
 
     module_name = _class_module_name(nx_name)
+    is_application = _nxdl_category(nx_name) == "applications"
+    subfolder = "applications" if is_application else "base_classes"
     if output_dir is not None:
-        dest = output_dir
-    elif _nxdl_category(nx_name) == "applications":
+        dest = output_dir / subfolder
+    elif is_application:
         dest = _DEFAULT_APPLICATIONS_OUTPUT_DIR
     else:
-        dest = _DEFAULT_OUTPUT_DIR
+        dest = _DEFAULT_BASE_OUTPUT_DIR
     out_path = dest / f"{module_name}.py"
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
