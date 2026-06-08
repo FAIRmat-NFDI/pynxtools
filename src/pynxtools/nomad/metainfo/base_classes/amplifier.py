@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXamplifier` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXamplifier` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -76,8 +83,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-classification-field"
         ],
         description=("Type of the amplifier base on the response on frequency."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="classification",
             type="NX_CHAR",
             name_type="specified",
@@ -98,8 +104,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-num-of-channels-field"
         ],
         description=("The number of preamplifier channels are assigned."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="num_of_channels",
             type="NX_NUMBER",
             name_type="specified",
@@ -115,8 +120,7 @@ class Amplifier(Component):
             "The number of preamplifier channels are ready to be used. (array "
             "for active channels)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="active_channels",
             type="NX_NUMBER",
             name_type="specified",
@@ -132,8 +136,7 @@ class Amplifier(Component):
             "The output signal does not go through a feedback loop to adjust the "
             "amplification of the amplifier. (array for active channels)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="openloop_amplification",
             type="NX_NUMBER",
             name_type="specified",
@@ -150,8 +153,7 @@ class Amplifier(Component):
             "the noise in the output signal of the amplifier. "
             "S/N=V_signal/V_noise. (array for active channels)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="signal_over_noise",
             type="NX_NUMBER",
             name_type="specified",
@@ -171,8 +173,7 @@ class Amplifier(Component):
             "electromagnetic interference), there may have some unwanted "
             "coupling between different channels, which is called crosstalk."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crosstalk_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -189,8 +190,7 @@ class Amplifier(Component):
             "If measures are taken for reducing interferences between different "
             "signalling pathways."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crosstalk_compensation",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -209,8 +209,7 @@ class Amplifier(Component):
             "please also provide :ref: `center_frequency "
             "</NXamplifier/center_frequency-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -225,8 +224,7 @@ class Amplifier(Component):
         ],
         dimensionality="1 / [time]",
         description=("The frequency in the middle of the bandwidth."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -244,8 +242,7 @@ class Amplifier(Component):
             "The lower frequency point of the bandwidth where gain drops "
             "significantly (e.g., -3dB point)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lower_cutoff_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -263,8 +260,7 @@ class Amplifier(Component):
             "The upper frequency point of the bandwidth where gain drops "
             "significantly (e.g., -3dB point)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="upper_cutoff_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -280,8 +276,7 @@ class Amplifier(Component):
         description=(
             "The ratio of the output signal to the input signal of the amplifier."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gain",
             type="NX_NUMBER",
             name_type="specified",

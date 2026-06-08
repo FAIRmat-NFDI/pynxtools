@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXdispersion_repeated_parameter` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXdispersion_repeated_parameter` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -65,8 +72,7 @@ class DispersionRepeatedParameter(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_repeated_parameter.html#nxdispersion_repeated_parameter-name-field"
         ],
         description=("The name of the parameter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -79,8 +85,7 @@ class DispersionRepeatedParameter(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_repeated_parameter.html#nxdispersion_repeated_parameter-description-field"
         ],
         description=("A description of what this parameter represents"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -99,8 +104,7 @@ class DispersionRepeatedParameter(Object):
             "interpretable standard units with common prefixes (e.g. micro, nano "
             "etc.) or their short-hand notation (e.g. nm, mm, kHz etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="parameter_units",
             type="NX_CHAR",
             name_type="specified",
@@ -114,8 +118,7 @@ class DispersionRepeatedParameter(Object):
         ],
         shape=["*"],
         description=("The value of the parameter"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="values",
             type="NX_NUMBER",
             name_type="specified",

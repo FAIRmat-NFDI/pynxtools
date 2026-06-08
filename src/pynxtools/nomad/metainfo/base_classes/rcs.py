@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXrcs` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXrcs` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -75,8 +82,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-name-field"
         ],
         description=("The name of the real-time control system."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -89,8 +95,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-description-field"
         ],
         description=("The description of the real-time control system."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -103,8 +108,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-type-field"
         ],
         description=("The type of the real-time control system."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -122,8 +126,7 @@ class Rcs(Object):
             "the number of close-loop process (gathering data, process data and "
             "update system) control cycles per unit time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -140,8 +143,7 @@ class Rcs(Object):
         description=(
             "The time of data measuring in a data lifecycle or process cycle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -159,8 +161,7 @@ class Rcs(Object):
             "Data acquisition time in single data lifecycle or process cycle of "
             "the real-time control system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acquisition_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -177,8 +178,7 @@ class Rcs(Object):
         description=(
             "The time of data animation of single in a data lifecycle or process cycle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="animation_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -193,8 +193,7 @@ class Rcs(Object):
         ],
         dimensionality="[time]",
         description=("The time of data indication of the end of process."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indication_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -238,8 +237,7 @@ class RcsFabrication(Fabrication):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-fabrication-model-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",

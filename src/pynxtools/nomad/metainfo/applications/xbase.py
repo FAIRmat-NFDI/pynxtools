@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXxbase` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXxbase` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,15 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -82,7 +90,7 @@ class Xbase(Entry):
         repeats=False,
     )
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseData",
         repeats=True,
         variable=True,
         description=(
@@ -91,12 +99,6 @@ class Xbase(Entry):
             "point to the corresponding detector groups in the instrument "
             "hierarchy."
         ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     title = Quantity(
@@ -104,8 +106,7 @@ class Xbase(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -117,8 +118,7 @@ class Xbase(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -131,8 +131,7 @@ class Xbase(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -173,8 +172,7 @@ class XbaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -193,8 +191,7 @@ class XbaseSample(Sample):
             "the data. But let us bow to common usage which includes the UB "
             "nearly always."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_matrix",
             type="NX_FLOAT",
             name_type="specified",
@@ -212,8 +209,7 @@ class XbaseSample(Sample):
             "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
             "necessary, but normally written."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell",
             type="NX_FLOAT",
             name_type="specified",
@@ -231,8 +227,7 @@ class XbaseSample(Sample):
         description=(
             "The sample temperature or whatever sensor represents this value best"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -250,8 +245,7 @@ class XbaseSample(Sample):
             "Translation of the sample along the X-direction of the laboratory "
             "coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_translation",
             type="NX_FLOAT",
             name_type="specified",
@@ -269,8 +263,7 @@ class XbaseSample(Sample):
             "Translation of the sample along the Y-direction of the laboratory "
             "coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_translation",
             type="NX_FLOAT",
             name_type="specified",
@@ -288,8 +281,7 @@ class XbaseSample(Sample):
             "Translation of the sample along the Z-direction of the laboratory "
             "coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -324,8 +316,7 @@ class XbaseControl(Monitor):
             "Count to a preset value based on either clock time (timer) or "
             "received monitor counts (monitor)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -339,8 +330,7 @@ class XbaseControl(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-control-preset-field"
         ],
         description=("preset value for time or monitor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preset",
             type="NX_FLOAT",
             name_type="specified",
@@ -354,13 +344,48 @@ class XbaseControl(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-control-integral-field"
         ],
         description=("Total integral monitor counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="integral",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XbaseData(Data):
+    """
+    The name of this group id data if there is only one detector; if there are
+    several the names will be data1, data2, data3 and will point to the
+    corresponding detector groups in the instrument hierarchy.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-data-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    data = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-data-data-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="data",
+            target="/NXentry/NXinstrument/NXdetector/data",
+            optionality="required",
         ),
     )
 

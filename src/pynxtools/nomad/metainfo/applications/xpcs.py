@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXxpcs` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXxpcs` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -134,8 +141,7 @@ class Xpcs(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -153,8 +159,7 @@ class Xpcs(Entry):
             'scan). * For bluesky users, this is the run\'s `"scan_id"`. * For '
             "SPEC users, this is the scan number (``SCAN_N``)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="entry_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -176,8 +181,7 @@ class Xpcs(Entry):
             "<https://certif.com/content/spec/>`__ users will not use this field "
             "without further engineering."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="entry_identifier_uuid",
             type="NX_CHAR",
             name_type="specified",
@@ -192,8 +196,7 @@ class Xpcs(Entry):
         description=(
             "Scan number (must be an integer). NOTE: Link to collection_identifier."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_number",
             type="NX_INT",
             name_type="specified",
@@ -209,8 +212,7 @@ class Xpcs(Entry):
         description=(
             'Starting time of experiment, such as "2021-02-11 11:22:33.445566Z".'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -223,8 +225,7 @@ class Xpcs(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-end-time-field"
         ],
         description=('Ending time of experiment, such as "2021-02-11 11:23:45Z".'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -275,8 +276,7 @@ class XpcsData(Data):
             "Two-dimensional summation along the frames stack. sum of intensity "
             'v. time (in the units of "frames")'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frame_sum",
             type="NX_NUMBER",
             name_type="specified",
@@ -294,8 +294,7 @@ class XpcsData(Data):
             "Two-dimensional average along the frames stack. average intensity "
             'v. time (in the units of "frames")'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frame_average",
             type="NX_NUMBER",
             name_type="specified",
@@ -335,8 +334,7 @@ class XpcsData(Data):
             ".. [#] NeXus 2-D data and axes: "
             "https://manual.nexusformat.org/classes/base_classes/NXdata.html#nxdata"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="g2",
             type="NX_NUMBER",
             name_type="specified",
@@ -356,14 +354,13 @@ class XpcsData(Data):
             "exchange format with each key representing one ``q`` by its "
             'corresponding roi_map value ("data_exchange_keys")'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["one_array", "data_exchange_keys", "other"],
             parent_field="g2",
+            enumeration=["one_array", "data_exchange_keys", "other"],
         ),
     )
     g2_derr = Quantity(
@@ -378,8 +375,7 @@ class XpcsData(Data):
             "expected (:math:`\\pm` error). The data should be in the same "
             "format as ``g2``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="g2_derr",
             type="NX_NUMBER",
             name_type="specified",
@@ -392,14 +388,13 @@ class XpcsData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-derr-storage-mode-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["one_array", "data_exchange_keys", "other"],
             parent_field="g2_derr",
+            enumeration=["one_array", "data_exchange_keys", "other"],
         ),
     )
     G2_unnormalized = Quantity(
@@ -412,8 +407,7 @@ class XpcsData(Data):
             "``g2`` without the denominator. The data should be in the same "
             "format as ``g2``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="G2_unnormalized",
             type="NX_NUMBER",
             name_type="specified",
@@ -426,14 +420,13 @@ class XpcsData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-unnormalized-storage-mode-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["one_array", "data_exchange_keys", "other"],
             parent_field="G2_unnormalized",
+            enumeration=["one_array", "data_exchange_keys", "other"],
         ),
     )
     delay_difference = Quantity(
@@ -451,8 +444,7 @@ class XpcsData(Data):
             "integers) preferred, refer to :ref:`NXdetector` for conversion to "
             "time units."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="delay_difference",
             type="NX_INT",
             name_type="specified",
@@ -465,14 +457,13 @@ class XpcsData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-delay-difference-storage-mode-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["one_array", "data_exchange_keys", "other"],
             parent_field="delay_difference",
+            enumeration=["one_array", "data_exchange_keys", "other"],
         ),
     )
 
@@ -531,8 +522,7 @@ class XpcsTwotime(Data):
             "to reduce data storage needs is to only record half of the 2D array "
             "by populating array elements above or below the array diagonal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="two_time_corr_func",
             type="NX_NUMBER",
             name_type="specified",
@@ -551,19 +541,18 @@ class XpcsTwotime(Data):
             "storage_mode describes the format of the data to be loaded We "
             "encourage the documentation of other formats represented here."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="two_time_corr_func",
             enumeration=[
                 "one_array_q_first",
                 "one_array_q_last",
                 "data_exchange_keys",
                 "other",
             ],
-            parent_field="two_time_corr_func",
         ),
     )
     two_time_corr_func__baseline_reference = Quantity(
@@ -576,14 +565,13 @@ class XpcsTwotime(Data):
             "is a constant value added to the functional form of the "
             "auto-correlation function. This value is required."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="baseline_reference",
             type="NX_INT",
             name_type="specified",
             optionality="required",
-            enumeration=["0", "1"],
             parent_field="two_time_corr_func",
+            enumeration=["0", "1"],
         ),
     )
     two_time_corr_func__time_origin_location = Quantity(
@@ -592,14 +580,13 @@ class XpcsTwotime(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-two-time-corr-func-time-origin-location-attribute"
         ],
         description=("time_origin_location is the location of the origin"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="time_origin_location",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["upper_left", "lower_left"],
             parent_field="two_time_corr_func",
+            enumeration=["upper_left", "lower_left"],
         ),
     )
     two_time_corr_func__populated_elements = Quantity(
@@ -611,14 +598,13 @@ class XpcsTwotime(Data):
             "populated_elements describe the elements of the 2D array that are "
             "populated with data"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="populated_elements",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["all", "upper_half", "lower_half"],
             parent_field="two_time_corr_func",
+            enumeration=["all", "upper_half", "lower_half"],
         ),
     )
     g2_from_two_time_corr_func = Quantity(
@@ -640,8 +626,7 @@ class XpcsTwotime(Data):
             "affect the fitting required to extract quantitative results. The "
             "following attributes will be used to manage the customization."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="g2_from_two_time_corr_func",
             type="NX_NUMBER",
             name_type="specified",
@@ -656,19 +641,18 @@ class XpcsTwotime(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-storage-mode-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="g2_from_two_time_corr_func",
             enumeration=[
                 "one_array_q_first",
                 "one_array_q_last",
                 "data_exchange_keys",
                 "other",
             ],
-            parent_field="g2_from_two_time_corr_func",
         ),
     )
     g2_from_two_time_corr_func__baseline_reference = Quantity(
@@ -676,14 +660,13 @@ class XpcsTwotime(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-baseline-reference-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="baseline_reference",
             type="NX_INT",
             name_type="specified",
             optionality="required",
-            enumeration=["0", "1"],
             parent_field="g2_from_two_time_corr_func",
+            enumeration=["0", "1"],
         ),
     )
     g2_from_two_time_corr_func__first_point_for_fit = Quantity(
@@ -698,14 +681,13 @@ class XpcsTwotime(Data):
             'first_point_for_fit is True ("1") or False ("0"). This value is '
             "required."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="first_point_for_fit",
             type="NX_INT",
             name_type="specified",
             optionality="required",
-            enumeration=["0", "1"],
             parent_field="g2_from_two_time_corr_func",
+            enumeration=["0", "1"],
         ),
     )
     g2_err_from_two_time_corr_func = Quantity(
@@ -719,8 +701,7 @@ class XpcsTwotime(Data):
             "error is left up to the implemented code. Symmetric error will be "
             "expected (:math:`\\pm` error)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="g2_err_from_two_time_corr_func",
             type="NX_NUMBER",
             name_type="specified",
@@ -735,19 +716,18 @@ class XpcsTwotime(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-err-from-two-time-corr-func-storage-mode-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="g2_err_from_two_time_corr_func",
             enumeration=[
                 "one_array_q_first",
                 "one_array_q_last",
                 "data_exchange_keys",
                 "other",
             ],
-            parent_field="g2_err_from_two_time_corr_func",
         ),
     )
     g2_from_two_time_corr_func_partials = Quantity(
@@ -770,8 +750,7 @@ class XpcsTwotime(Data):
             "nth_partial) Note that delay_difference is not included here "
             "because it is derived from the shape of extracted :math:`g_2`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="g2_from_two_time_corr_func_partials",
             type="NX_NUMBER",
             name_type="specified",
@@ -784,14 +763,13 @@ class XpcsTwotime(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-partials-storage-mode-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="storage_mode",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["one_array", "data_exchange_keys", "other"],
             parent_field="g2_from_two_time_corr_func_partials",
+            enumeration=["one_array", "data_exchange_keys", "other"],
         ),
     )
     g2_from_two_time_corr_func_partials__baseline_reference = Quantity(
@@ -799,14 +777,13 @@ class XpcsTwotime(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-partials-baseline-reference-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="baseline_reference",
             type="NX_INT",
             name_type="specified",
             optionality="required",
-            enumeration=["0", "1"],
             parent_field="g2_from_two_time_corr_func_partials",
+            enumeration=["0", "1"],
         ),
     )
     g2_err_from_two_time_corr_func_partials = Quantity(
@@ -820,8 +797,7 @@ class XpcsTwotime(Data):
             "error is left up to the implemented code. Symmetric error will be "
             "expected (:math:`\\pm` error)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="g2_err_from_two_time_corr_func_partials",
             type="NX_NUMBER",
             name_type="specified",
@@ -855,8 +831,7 @@ class XpcsSample(Sample):
         ],
         dimensionality="[temperature]",
         description=("Sample temperature setpoint, (C or K)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature_set",
             type="NX_NUMBER",
             name_type="specified",
@@ -871,8 +846,7 @@ class XpcsSample(Sample):
         ],
         dimensionality="[temperature]",
         description=("Sample temperature actual, (C or K)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
             name_type="specified",

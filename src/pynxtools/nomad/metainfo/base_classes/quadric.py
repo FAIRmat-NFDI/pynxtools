@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXquadric` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXquadric` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -73,8 +80,7 @@ class Quadric(Object):
             "has dimension reciprocal length squared, and units the square of "
             "those given."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="parameters",
             type="NX_NUMBER",
             name_type="specified",
@@ -110,8 +116,7 @@ class Quadric(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadric.html#nxquadric-surface-type-field"
         ],
         description=("An optional description of the form of the quadric surface:"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="surface_type",
             type="NX_CHAR",
             name_type="specified",
@@ -148,8 +153,7 @@ class Quadric(Object):
             "Path to an :ref:`NXtransformations` that defining the axis on which "
             "the orientation of the surface depends."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_intersector_results` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_intersector_results` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
 )
@@ -83,8 +90,7 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -97,8 +103,7 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -152,8 +157,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "from the current_set have directed link(s) pointing to which named "
             "feature(s) from the next_set."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current_to_next_link",
             type="NX_UINT",
             name_type="specified",
@@ -173,8 +177,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "the link is due to volumetric overlap (0x00 == 0), proximity (0x01 "
             "== 1), or something else unknown (0xFF == 255)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current_to_next_link_type",
             type="NX_UINT",
             name_type="specified",
@@ -196,8 +199,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "links are defined is symmetric it holds that next_to_current maps "
             "the links for current_to_next in just the opposite direction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="next_to_current_link",
             type="NX_UINT",
             name_type="specified",
@@ -217,8 +219,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "the link is due to a volumetric overlap (0x00 == 0), proximity "
             "(0x01 == 1), or something else unknown (0xFF == 255)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="next_to_current_link_type",
             type="NX_UINT",
             name_type="specified",
@@ -238,8 +239,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "intersection, i.e. how much volume do the two features share. If "
             "features do not intersect the volume is zero."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intersection_volume",
             type="NX_FLOAT",
             name_type="specified",

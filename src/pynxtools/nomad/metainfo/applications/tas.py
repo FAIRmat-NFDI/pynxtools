@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXtas` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXtas` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,15 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -83,18 +91,12 @@ class Tas(Entry):
         variable=True,
     )
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.tas.TasData",
         repeats=True,
         variable=True,
         description=(
             "One of the ei,ef,qh,qk,ql,en should get a primary=1 attribute to "
             "denote the main scan axis"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name=None,
-            name_type="any",
-            optionality="required",
         ),
     )
 
@@ -103,8 +105,7 @@ class Tas(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -116,8 +117,7 @@ class Tas(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -130,8 +130,7 @@ class Tas(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -173,8 +172,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -188,8 +186,7 @@ class TasSample(Sample):
         ],
         dimensionality="dimensionless",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qh",
             type="NX_FLOAT",
             name_type="specified",
@@ -204,8 +201,7 @@ class TasSample(Sample):
         ],
         dimensionality="dimensionless",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qk",
             type="NX_FLOAT",
             name_type="specified",
@@ -220,8 +216,7 @@ class TasSample(Sample):
         ],
         dimensionality="dimensionless",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ql",
             type="NX_FLOAT",
             name_type="specified",
@@ -236,8 +231,7 @@ class TasSample(Sample):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="en",
             type="NX_FLOAT",
             name_type="specified",
@@ -252,8 +246,7 @@ class TasSample(Sample):
         ],
         dimensionality="[angle]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -268,8 +261,7 @@ class TasSample(Sample):
         ],
         dimensionality="[angle]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -284,8 +276,7 @@ class TasSample(Sample):
         ],
         dimensionality="[angle]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sgu",
             type="NX_FLOAT",
             name_type="specified",
@@ -300,8 +291,7 @@ class TasSample(Sample):
         ],
         dimensionality="[angle]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sgl",
             type="NX_FLOAT",
             name_type="specified",
@@ -316,8 +306,7 @@ class TasSample(Sample):
         ],
         dimensionality="[length]",
         shape=[6],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell",
             type="NX_FLOAT",
             name_type="specified",
@@ -332,8 +321,7 @@ class TasSample(Sample):
         ],
         dimensionality="dimensionless",
         shape=[9],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_matrix",
             type="NX_FLOAT",
             name_type="specified",
@@ -369,8 +357,7 @@ class TasMonitor(Monitor):
             "Count to a preset value based on either clock time (timer) or "
             "received monitor counts (monitor)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -384,8 +371,7 @@ class TasMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-preset-field"
         ],
         description=("preset value for time or monitor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preset",
             type="NX_FLOAT",
             name_type="specified",
@@ -400,13 +386,113 @@ class TasMonitor(Monitor):
         ],
         shape=["*"],
         description=("Total integral monitor counts"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TasData(Data):
+    """
+    One of the ei,ef,qh,qk,ql,en should get a primary=1 attribute to denote the
+    main scan axis
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    ei = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-ei-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="ei",
+            target="/NXentry/NXinstrument/monochromator:NXcrystal/ei",
+            optionality="required",
+        ),
+    )
+    ef = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-ef-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="ef",
+            target="/NXentry/NXinstrument/analyser:NXcrystal/ef",
+            optionality="required",
+        ),
+    )
+    en = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-en-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="en",
+            target="/NXentry/NXsample/en",
+            optionality="required",
+        ),
+    )
+    qh = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-qh-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="qh",
+            target="/NXentry/NXsample/qh",
+            optionality="required",
+        ),
+    )
+    qk = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-qk-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="qk",
+            target="/NXentry/NXsample/qk",
+            optionality="required",
+        ),
+    )
+    ql = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-ql-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="ql",
+            target="/NXentry/NXsample/ql",
+            optionality="required",
+        ),
+    )
+    data = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-data-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="data",
+            target="/NXentry/NXinstrument/NXdetector/data",
+            optionality="required",
         ),
     )
 

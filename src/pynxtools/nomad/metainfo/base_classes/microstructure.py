@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.microstructure_feature import (
     MicrostructureFeature,
 )
@@ -353,8 +360,7 @@ class Microstructure(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-comment-field"
         ],
         description=("Discouraged free-text field for leaving comments"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -370,8 +376,7 @@ class Microstructure(Object):
             "ISO8601 with offset to local time zone included when a timestamp is "
             "required."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -389,8 +394,7 @@ class Microstructure(Object):
             "snapshot. Not to be confused with wall-clock timing or profiling "
             "data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time",
             type="NX_NUMBER",
             name_type="specified",
@@ -405,8 +409,7 @@ class Microstructure(Object):
         ],
         dimensionality="dimensionless",
         description=("Iteration or increment counter."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="iteration",
             type="NX_INT",
             name_type="specified",
@@ -458,8 +461,7 @@ class MicrostructureConfiguration(Process):
             "management system to identify if the description specifies one-, "
             "two-, or three-dimensional microstructural representations."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
             name_type="specified",
@@ -489,8 +491,7 @@ class MicrostructureConfiguration(Process):
             "clustering `F. Niessen et al. "
             "<https://doi.org/10.1107/S1600576721011560>`_"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -515,8 +516,7 @@ class MicrostructureConfiguration(Process):
             "warrants to assume that there exists an interface between the two "
             "regions."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="disorientation_threshold",
             type="NX_NUMBER",
             name_type="specified",
@@ -554,8 +554,7 @@ class MicrostructurePhases(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("First identifier whereby to identify phases implicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -613,8 +612,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "pixelated (in 1D, 2D) or voxelated representations (in 3D) which "
             "represent the geometrical entities of the discretization."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="representation",
             type="NX_CHAR",
             name_type="specified",
@@ -631,8 +629,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "How many crystals are distinguished. Crystals are listed "
             "irrespective of the phase to which these are assigned."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_crystals",
             type="NX_UINT",
             name_type="specified",
@@ -651,8 +648,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "distinguished based on statistical thermodynamics argument and "
             "crystal structure."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_phases",
             type="NX_UINT",
             name_type="specified",
@@ -667,8 +663,7 @@ class MicrostructureCrystals(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("First identifier whereby to identify crystals implicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -684,8 +679,7 @@ class MicrostructureCrystals(MicrostructureFeature):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier whereby to identify each crystal explicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_crystal",
             type="NX_INT",
             name_type="specified",
@@ -703,8 +697,7 @@ class MicrostructureCrystals(MicrostructureFeature):
         description=(
             "Identifier whereby to identify phase for each crystal explicitly."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_phase",
             type="NX_INT",
             name_type="specified",
@@ -722,8 +715,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "True, if the feature makes contact with the edge of the ROI. False, "
             "if the feature does not make contact with the edge of the ROI."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="boundary_contact",
             type="NX_UINT",
             name_type="specified",
@@ -742,8 +734,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "orientations of that crystal evaluated as a summary statistic for "
             "all probed positions vs the average disorientation of that crystal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_spread",
             type="NX_NUMBER",
             name_type="specified",
@@ -759,8 +750,7 @@ class MicrostructureCrystals(MicrostructureFeature):
         dimensionality="[length]",
         shape=["*"],
         description=("Length of each crystal"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_NUMBER",
             name_type="specified",
@@ -776,8 +766,7 @@ class MicrostructureCrystals(MicrostructureFeature):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("Area of each crystal."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="area",
             type="NX_NUMBER",
             name_type="specified",
@@ -793,8 +782,7 @@ class MicrostructureCrystals(MicrostructureFeature):
         dimensionality="[length] ** 3",
         shape=["*"],
         description=("Volume of each crystal"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
             name_type="specified",
@@ -857,8 +845,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "simulations or 3D experiments) which represent the geometrical "
             "entities of the discretization."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="representation",
             type="NX_CHAR",
             name_type="specified",
@@ -872,8 +859,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("How many interfaces are distinguished."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_interfaces",
             type="NX_UINT",
             name_type="specified",
@@ -888,8 +874,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("First identifier whereby to identify interfaces implicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -908,8 +893,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "Identifier whereby to identify each interface explicitly. An array "
             "with as many entries as interfaces or their projections."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_interface",
             type="NX_INT",
             name_type="specified",
@@ -929,8 +913,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "value pair. An array with as many pairs as interfaces or their "
             "projections."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_crystal",
             type="NX_INT",
             name_type="specified",
@@ -944,8 +927,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-crystal-use-these-attribute"
         ],
         description=("The specific identifiers whereby to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -965,8 +947,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "pair. An array with as many pairs as interfaces or their "
             "projections."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_phase",
             type="NX_INT",
             name_type="specified",
@@ -980,8 +961,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-phase-use-these-attribute"
         ],
         description=("The specific identifiers whereby to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1007,8 +987,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "This array resolves the number of values along the second dimension "
             "for the field indices_triple_junctions."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_triple_junctions",
             type="NX_UINT",
             name_type="specified",
@@ -1028,8 +1007,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "array with as many tuples of pairs to describe all junctions about "
             "all interfaces."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_triple_junction",
             type="NX_INT",
             name_type="specified",
@@ -1043,8 +1021,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-triple-junction-use-these-attribute"
         ],
         description=("The specific identifiers whereby to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1063,8 +1040,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "False, if the interface does not make contact with the edge of the "
             "ROI."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="boundary_contact",
             type="NX_UINT",
             name_type="specified",
@@ -1078,8 +1054,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ],
         shape=["*"],
         description=("Gibbs free surface energy for each interface."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="surface_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -1094,8 +1069,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ],
         shape=["*"],
         description=("Non-intrinsic mobility of each interface."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mobility",
             type="NX_NUMBER",
             name_type="specified",
@@ -1115,8 +1089,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "This is not necessarily the same as the length of the individual "
             "polyline segments whereby the interface is discretized."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_NUMBER",
             name_type="specified",
@@ -1132,8 +1105,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("The surface area of all interfaces."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="area",
             type="NX_NUMBER",
             name_type="specified",
@@ -1188,8 +1160,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "dimensions using (boolean) masks which represent the geometrical "
             "entities of the discretization."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="representation",
             type="NX_CHAR",
             name_type="specified",
@@ -1203,8 +1174,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("Number of triple junctions."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_junctions",
             type="NX_UINT",
             name_type="specified",
@@ -1219,8 +1189,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("First identifier to identify triple junctions implicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -1236,8 +1205,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier to identify each triple junction explicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_triple_junction",
             type="NX_INT",
             name_type="specified",
@@ -1256,8 +1224,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "Set of identifier for positions whereby to identify the location of "
             "each junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="location",
             type="NX_INT",
             name_type="specified",
@@ -1271,8 +1238,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-location-use-these-attribute"
         ],
         description=("The specific identifiers whereby to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1288,8 +1254,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         dimensionality="[length]",
         shape=["*", "*"],
         description=("Explicit positions."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -1308,8 +1273,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "Set of tuples of identifier of crystals connected to the junction "
             "for each triple junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_crystal",
             type="NX_INT",
             name_type="specified",
@@ -1328,8 +1292,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "Set of tuples of identifier of interfaces connected to the junction "
             "for each triple junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_interface",
             type="NX_INT",
             name_type="specified",
@@ -1345,8 +1308,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         description=(
             "The specific interface identifiers whereby to resolve ambiguities."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1365,8 +1327,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "Set of tuples of identifier for polyline segments connected to the "
             "junction for each triple junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_polyline",
             type="NX_INT",
             name_type="specified",
@@ -1380,8 +1341,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-polyline-use-these-attribute"
         ],
         description=("The specific indices_polyline whereby to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1400,8 +1360,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "False, if the triple line does not make contact with the edge of "
             "the ROI."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="boundary_contact",
             type="NX_UINT",
             name_type="specified",
@@ -1415,8 +1374,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ],
         shape=["*"],
         description=("Specific line energy of each triple junction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="line_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -1431,8 +1389,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ],
         shape=["*"],
         description=("Non-intrinsic mobility of each triple junction."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mobility",
             type="NX_NUMBER",
             name_type="specified",
@@ -1452,8 +1409,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "same as the length of the individual polyline segments whereby the "
             "junction is discretized."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_NUMBER",
             name_type="specified",
@@ -1472,8 +1428,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "The volume about each triple junction. Respective cut-off criteria "
             "need to be specified."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
             name_type="specified",
@@ -1522,8 +1477,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "(in 3D) using (boolean) masks which represent the geometrical "
             "entities of the discretization."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="representation",
             type="NX_CHAR",
             name_type="specified",
@@ -1537,8 +1491,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("Number of quadruple junctions."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_junctions",
             type="NX_UINT",
             name_type="specified",
@@ -1553,8 +1506,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ],
         dimensionality="dimensionless",
         description=("First identifier to identify quadruple junctions implicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -1570,8 +1522,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier to identify each quadruple junction explicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_quadruple_junction",
             type="NX_INT",
             name_type="specified",
@@ -1590,8 +1541,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "Set of identifier for positions whereby to identify the location of "
             "each junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="location",
             type="NX_INT",
             name_type="specified",
@@ -1605,8 +1555,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-location-use-these-attribute"
         ],
         description=("The specific point identifier whereby to resolve ambiguities."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1622,8 +1571,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         dimensionality="[length]",
         shape=["*", "*"],
         description=("Explicit positions."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -1642,8 +1590,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "Set of tuples of identifier of crystals connected to the junction "
             "for each junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_crystal",
             type="NX_INT",
             name_type="specified",
@@ -1660,8 +1607,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "The specific identifier to instances of crystal identifiers whereby "
             "to resolve ambiguities."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1680,8 +1626,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "Set of tuples of identifier of interfaces connected to the junction "
             "for each junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_interface",
             type="NX_INT",
             name_type="specified",
@@ -1698,8 +1643,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "The specific identifier to instances of interface identifiers "
             "whereby to resolve ambiguities."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1718,8 +1662,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "Set of tuples of identifier for triple junctions connected to the "
             "junction for each quadruple junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_triple_junction",
             type="NX_INT",
             name_type="specified",
@@ -1736,8 +1679,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "The specific identifier to instances of triple junction identifiers "
             "whereby to resolve ambiguities."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1756,8 +1698,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "Set of tuples of identifier for phases of crystals connected to the "
             "junction for each quadruple junction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_phase",
             type="NX_INT",
             name_type="specified",
@@ -1774,8 +1715,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "The specific identifier to instances of phase identifier whereby to "
             "resolve ambiguities."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="use_these",
             type="NX_CHAR",
             name_type="specified",
@@ -1793,8 +1733,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "True, if the junction makes contact with the edge of the ROI. True, "
             "if the junction does not make contact with the edge of the ROI."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="boundary_contact",
             type="NX_UINT",
             name_type="specified",
@@ -1808,8 +1747,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ],
         shape=["*"],
         description=("Energy of the quadruple_junction as a defect."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -1824,8 +1762,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ],
         shape=["*"],
         description=("Non-intrinsic mobility of each quadruple_junction."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mobility",
             type="NX_NUMBER",
             name_type="specified",

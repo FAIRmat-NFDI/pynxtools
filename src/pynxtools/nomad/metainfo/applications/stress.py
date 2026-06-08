@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXstress` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXstress` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -193,8 +200,7 @@ class Stress(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -208,8 +214,7 @@ class Stress(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-title-field"
         ],
         description=("Extended title for the entry."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -226,8 +231,7 @@ class Stress(Entry):
             "(e.g. DOI, proposal id, ...). At ILL, this could be, for example, "
             "``exp_1-02-286``, ``exp_INDU-229``, or ``exp_INTER-569``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -247,8 +251,7 @@ class Stress(Entry):
             "``angular-dispersive neutron powder diffraction`` * "
             "``time-of-flight (TOF) neutron powder diffraction``"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -265,8 +268,7 @@ class Stress(Entry):
             "form of a list if multiple measurements are included in the same "
             "NXentry."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -282,8 +284,7 @@ class Stress(Entry):
             "The end time(s) of measurement(s) which can be provided in form of "
             "a list if multiple measurements are included in the same NXentry."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -301,8 +302,7 @@ class Stress(Entry):
             "chosen by the user or the instrument scientist and could be, for "
             "example, ``05_DA_650_AX_B3P5``, ``SENB-14``, ``Quartz``,...."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -319,8 +319,7 @@ class Stress(Entry):
             "information provided in this field can highlight, for example, the "
             "measurement setup or information about experimental conditions."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_description",
             type="NX_CHAR",
             name_type="specified",
@@ -337,8 +336,7 @@ class Stress(Entry):
             "from the :ref:`center </NXstress/ENTRY/peaks/center-field>` peak "
             "parameter."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="processing_type",
             type="NX_CHAR",
             name_type="specified",
@@ -361,8 +359,7 @@ class Stress(Entry):
             "Describes the specific measurement direction covered by the data in "
             "this file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -409,8 +406,7 @@ class StressInstrument(Instrument):
             "experiment. This could be, for example, *Strain Analyser for Large "
             "and Small scale engineering Applications*."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -426,8 +422,7 @@ class StressInstrument(Instrument):
             "Short name for the instrument, perhaps the acronym, which would be "
             "for the the example above ``SALSA``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",
@@ -467,8 +462,7 @@ class StressSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -480,14 +474,13 @@ class StressSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-stress-field-direction-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="direction",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["x", "y", "z"],
             parent_field="stress_field",
+            enumeration=["x", "y", "z"],
         ),
     )
     depends_on = Quantity(
@@ -500,8 +493,7 @@ class StressSample(Sample):
             "anywhere, but is normally stored in the NXtransformations group "
             "within the NXsample group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -542,8 +534,7 @@ class StressProcess(Process):
             "The raw data file name(s) used during the data reduction process. "
             "This can be a list."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="raw_data_file",
             type="NX_CHAR",
             name_type="specified",
@@ -559,8 +550,7 @@ class StressProcess(Process):
             "Date when the raw data was reduced and the data in the *NXstress* "
             "file format generated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -576,8 +566,7 @@ class StressProcess(Process):
             "Software package used to perform data reduction including the "
             "version number or release date."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -590,8 +579,7 @@ class StressProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-integration-type-field"
         ],
         description=("Describes how the data was integrated."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="integration_type",
             type="NX_CHAR",
             name_type="specified",
@@ -604,8 +592,7 @@ class StressProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-bins-field"
         ],
         description=("Describes the type of binning used during data reduction."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bins",
             type="NX_CHAR",
             name_type="specified",
@@ -622,8 +609,7 @@ class StressProcess(Process):
             "single peak fit, multiple peak fit, Pawley refinement, Rietveld "
             "refinement, …"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fit_type",
             type="NX_CHAR",
             name_type="specified",
@@ -636,8 +622,7 @@ class StressProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-fit-range-field"
         ],
         description=("Describes the data range used for peak fitting."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fit_range",
             type="NX_CHAR",
             name_type="specified",
@@ -652,8 +637,7 @@ class StressProcess(Process):
         description=(
             "Type and value describing the goodness of fit. For example, Rw 0.23."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="goodness_of_fit",
             type="NX_CHAR",
             name_type="specified",
@@ -670,8 +654,7 @@ class StressProcess(Process):
             "of valid entries are: ``None``, ``time``, ``primary monitor``, "
             "``detector``, …"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="normalization",
             type="NX_CHAR",
             name_type="specified",
@@ -713,8 +696,7 @@ class StressPeaks(Reflections):
         dimensionality="dimensionless",
         shape=["*"],
         description=("First Miller index."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="h",
             type="NX_INT",
             name_type="specified",
@@ -730,8 +712,7 @@ class StressPeaks(Reflections):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Second Miller index."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="k",
             type="NX_INT",
             name_type="specified",
@@ -747,8 +728,7 @@ class StressPeaks(Reflections):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Third Miller index."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="l",
             type="NX_INT",
             name_type="specified",
@@ -763,8 +743,7 @@ class StressPeaks(Reflections):
         ],
         shape=["*"],
         description=("Crystal lattice systems (*cubic*, *hexagonal*, ...)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lattice",
             type="NX_CHAR",
             name_type="specified",
@@ -780,8 +759,7 @@ class StressPeaks(Reflections):
         description=(
             "Crystallographic space group :math:`(Fm\\bar{3}m, Im\\bar{3}m, ...)`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="space_group",
             type="NX_CHAR",
             name_type="specified",
@@ -798,8 +776,7 @@ class StressPeaks(Reflections):
             "Name of the crystallographic phase (hematite, goethite, \\ "
             ":math:`\\alpha`-Al\\ :sub:`2`\\ O\\ :sub:`3`\\ , ...)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_name",
             type="NX_CHAR",
             name_type="specified",
@@ -819,8 +796,7 @@ class StressPeaks(Reflections):
             "the :ref:`sample transformations "
             "</NXstress/ENTRY/sample_description/TRANSFORMATIONS-group>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qx",
             type="NX_NUMBER",
             name_type="specified",
@@ -841,8 +817,7 @@ class StressPeaks(Reflections):
             "the :ref:`sample transformations "
             "</NXstress/ENTRY/sample_description/TRANSFORMATIONS-group>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qy",
             type="NX_NUMBER",
             name_type="specified",
@@ -863,8 +838,7 @@ class StressPeaks(Reflections):
             "the :ref:`sample transformations "
             "</NXstress/ENTRY/sample_description/TRANSFORMATIONS-group>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qz",
             type="NX_NUMBER",
             name_type="specified",
@@ -879,8 +853,7 @@ class StressPeaks(Reflections):
         ],
         shape=["*"],
         description=("Diffraction peak position in *c_Unit* units."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center",
             type="NX_NUMBER",
             name_type="specified",
@@ -897,12 +870,12 @@ class StressPeaks(Reflections):
             "Specify the *c_Unit* units (see :ref:`center_type "
             "</NXstress/ENTRY/peaks/center_type-field>`)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="center",
             enumeration=[
                 "degrees",
                 "keV",
@@ -911,7 +884,6 @@ class StressPeaks(Reflections):
                 "microseconds",
                 "''",
             ],
-            parent_field="center",
         ),
     )
     center_errors = Quantity(
@@ -924,8 +896,7 @@ class StressPeaks(Reflections):
             "Uncentrainties on :ref:`center "
             "</NXstress/ENTRY/peaks/center-field>` in *c_Unit* units."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center_errors",
             type="NX_NUMBER",
             name_type="specified",
@@ -942,12 +913,12 @@ class StressPeaks(Reflections):
             "Specify the *c_Unit* units (see :ref:`center_type "
             "</NXstress/ENTRY/peaks/center_type-field>`)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="center_errors",
             enumeration=[
                 "degrees",
                 "keV",
@@ -956,7 +927,6 @@ class StressPeaks(Reflections):
                 "microseconds",
                 "''",
             ],
-            parent_field="center_errors",
         ),
     )
     center_type = Quantity(
@@ -986,8 +956,7 @@ class StressPeaks(Reflections):
             '*center_type="time-of-flight"* then *c_Unit* must have the unit '
             "\\ :math:`\\mu\\mathrm{s}`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center_type",
             type="NX_CHAR",
             name_type="specified",
@@ -1015,8 +984,7 @@ class StressPeaks(Reflections):
             "transformations "
             "</NXstress/ENTRY/sample_description/TRANSFORMATIONS-group>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sx",
             type="NX_NUMBER",
             name_type="specified",
@@ -1037,8 +1005,7 @@ class StressPeaks(Reflections):
             "transformations "
             "</NXstress/ENTRY/sample_description/TRANSFORMATIONS-group>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sy",
             type="NX_NUMBER",
             name_type="specified",
@@ -1059,8 +1026,7 @@ class StressPeaks(Reflections):
             "transformations "
             "</NXstress/ENTRY/sample_description/TRANSFORMATIONS-group>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sz",
             type="NX_NUMBER",
             name_type="specified",

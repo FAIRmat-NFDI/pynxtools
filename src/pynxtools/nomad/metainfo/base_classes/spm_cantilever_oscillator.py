@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_cantilever_oscillator` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_cantilever_oscillator` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -75,8 +82,7 @@ class SpmCantileverOscillator(Object):
             "reference_amplitude, reference_frequency, or reference_phase is "
             "expected."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_amplitude",
             type="NX_NUMBER",
             name_type="specified",
@@ -96,8 +102,7 @@ class SpmCantileverOscillator(Object):
             "reference_amplitude, reference_frequency, or reference_phase is "
             "expected."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -116,8 +121,7 @@ class SpmCantileverOscillator(Object):
             "one from reference_amplitude, reference_frequency, or "
             "reference_phase is expected."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_phase",
             type="NX_NUMBER",
             name_type="specified",
@@ -135,8 +139,7 @@ class SpmCantileverOscillator(Object):
             "The harmonic (e.g., second harmonic of the fundamental frequency) "
             "frequency of the cantilever."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_harmonic",
             type="NX_NUMBER",
             name_type="specified",
@@ -154,8 +157,7 @@ class SpmCantileverOscillator(Object):
             "The phase difference between the reference signal of cantilever and "
             "response signal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_shift",
             type="NX_NUMBER",
             name_type="specified",
@@ -170,8 +172,7 @@ class SpmCantileverOscillator(Object):
         ],
         dimensionality="1 / [time]",
         description=("Shift in the resonance frequency of the cantilever."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_shift",
             type="NX_NUMBER",
             name_type="specified",
@@ -186,8 +187,7 @@ class SpmCantileverOscillator(Object):
         ],
         dimensionality="1 / [time]",
         description=("The cutoff frequency of the cantilever."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_cutoff",
             type="NX_NUMBER",
             name_type="specified",
@@ -202,8 +202,7 @@ class SpmCantileverOscillator(Object):
         ],
         dimensionality="1 / [time]",
         description=("The bandwidth of the resonance frequency."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -222,8 +221,7 @@ class SpmCantileverOscillator(Object):
             "This field is same as the reference amplitude in the non-contact "
             "mode."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_amplitude",
             type="NX_NUMBER",
             name_type="specified",
@@ -242,8 +240,7 @@ class SpmCantileverOscillator(Object):
             "This field is same as the reference frequency in the non-contact "
             "mode"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -258,8 +255,7 @@ class SpmCantileverOscillator(Object):
         ],
         dimensionality="1 / [time]",
         description=("The active frequency of the cantilever to start the experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="active_frequency",
             type="NX_NUMBER",
             name_type="specified",

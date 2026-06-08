@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_bias_spectroscopy` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_bias_spectroscopy` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.circuit import Circuit
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.spm_scan_control import SpmScanControl
@@ -111,8 +118,7 @@ class SpmBiasSpectroscopy(Object):
             "different input variables like bias voltage (constant_spacing) or "
             "height (variadic_spacing) is applied during the measurement."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement_type",
             type="NX_CHAR",
             name_type="specified",
@@ -133,8 +139,7 @@ class SpmBiasSpectroscopy(Object):
             "TiSe2 with layered of evaporated pyrene and annealed at 300K "
             "temperature for 5 min process."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_environment",
             type="NX_CHAR",
             name_type="specified",
@@ -176,8 +181,7 @@ class SpmBiasSpectroscopyCircuit(Circuit):
         ],
         dimensionality="[time]",
         description=("The time or period a bias sweep to be displayed."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="animation_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -195,8 +199,7 @@ class SpmBiasSpectroscopyCircuit(Circuit):
             "The time or period taken by the circuit to measure a full bias "
             "sweep (duration of the voltage-current measurement measurement)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -240,8 +243,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "the response at constant voltage, etc. For STS experiment, the scan "
             "type is usually a single-point scan (trajectory scan)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_type",
             type="NX_CHAR",
             name_type="specified",
@@ -258,8 +260,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "The number of sweeps (a full scan from starting bias to end bias) "
             "taken during the bias spectroscopy."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_sweeps",
             type="NX_NUMBER",
             name_type="specified",
@@ -277,8 +278,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "value. On each sweep usually, the system takes time to settle to "
             "the bias voltage at the next value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="first_settling_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -295,8 +295,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         description=(
             "The time (at the last sweep) to settle for the last value of the sweep."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_settling_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -315,8 +314,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "each sweep usually, the system takes time to settle the bias "
             "voltage at the next value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="settling_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -334,8 +332,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "reach at the desired value). It defines if the tip movement and "
             "voltage sweep are synchronized."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_slew_rate",
             type="NX_NUMBER",
             name_type="specified",
@@ -350,8 +347,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         ],
         dimensionality="[length]",
         description=("The z position after the sweeps are done."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_z",
             type="NX_NUMBER",
             name_type="specified",
@@ -366,8 +362,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         ],
         dimensionality="[time]",
         description=("The total time needed for the entire voltage sweep."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total_spectroscopy_time",
             type="NX_NUMBER",
             name_type="specified",

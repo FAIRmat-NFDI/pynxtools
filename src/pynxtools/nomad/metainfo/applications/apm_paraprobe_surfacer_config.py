@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_surfacer_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_surfacer_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
 )
@@ -79,8 +86,7 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -93,8 +99,7 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +171,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "watertightness and proximity constraints) on the resulting "
             "wrapping."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alpha_value_choice",
             type="NX_CHAR",
             name_type="specified",
@@ -192,8 +196,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "Array of alpha values to use when alpha_value_choice is "
             "set_of_values or when alpha_value_choice is set_of_alpha_wrappings."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alpha_values",
             type="NX_FLOAT",
             name_type="specified",
@@ -213,8 +216,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "set_of_alpha_wrappings. The array of alpha_values and offset_values "
             "define a sequence of (alpha and offset value)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset_values",
             type="NX_FLOAT",
             name_type="specified",
@@ -232,8 +234,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "facets for each alpha complex (for convex hull, alpha shapes, and "
             "wrappings)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="has_exterior_facets",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -249,8 +250,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "Specifies if the tool should check if the alpha complex of exterior "
             "triangular facets is a closed polyhedron."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="has_closure",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -266,8 +266,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "Specifies if the tool should compute all interior tetrahedra of the "
             "alpha complex (currently only for alpha shapes)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="has_interior_tetrahedra",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -280,8 +279,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-surface-meshingid-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",

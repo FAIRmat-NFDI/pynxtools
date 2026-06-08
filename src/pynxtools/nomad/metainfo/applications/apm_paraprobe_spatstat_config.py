@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_spatstat_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_spatstat_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
 )
@@ -82,8 +89,7 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -96,8 +102,7 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -147,8 +152,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             "ions. That is the total number of ions of either type remain the "
             "same but the information about their location is randomized."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="randomize_iontypes",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -192,8 +196,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             "the multiplicity of each ion will be factorized, i.e. how often it "
             "is accounted for."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_query_type_source",
             type="NX_CHAR",
             name_type="specified",
@@ -223,8 +226,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             "usual spatial correlation statistics like the 1NN C-C spatial "
             "statistics."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_query_nuclide_source",
             type="NX_UINT",
             name_type="specified",
@@ -255,8 +257,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             "consider the explanations in ion_query_type_source. These account "
             "for ion_query_type_target as well."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_query_type_target",
             type="NX_CHAR",
             name_type="specified",
@@ -282,8 +283,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             "for iontypes to distinguish as possible targets. See additional "
             "comments under ion_query_isotope_vector_source."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_query_nuclide_target",
             type="NX_UINT",
             name_type="specified",
@@ -297,8 +297,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-spatial-statisticsid-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",

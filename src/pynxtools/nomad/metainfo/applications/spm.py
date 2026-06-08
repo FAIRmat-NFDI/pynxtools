@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.sensor_scan import SensorScan
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -125,8 +132,7 @@ class Spm(SensorScan):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-definition-field"
         ],
         description=("Name of the definition that is used for the application."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -139,8 +145,7 @@ class Spm(SensorScan):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -154,8 +159,7 @@ class Spm(SensorScan):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-experiment-technique-field"
         ],
         description=("The technique of the experiment like STM, STS, AFM."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_technique",
             type="NX_CHAR",
             name_type="specified",
@@ -175,8 +179,7 @@ class Spm(SensorScan):
             "mode, tapping mode or non-contact mode. For general purpose usage, "
             "all scan modes from its sub-techniques are listed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -202,8 +205,7 @@ class Spm(SensorScan):
             "the scan region, e.g. forward, backward, or both (if scan is "
             "repeated). Any lab defined scan type"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_type",
             type="NX_CHAR",
             name_type="specified",
@@ -218,8 +220,7 @@ class Spm(SensorScan):
         description=(
             "The identifier for the experiment which should be unique at least in lab."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_experiment",
             type="NX_CHAR",
             name_type="specified",
@@ -239,8 +240,7 @@ class Spm(SensorScan):
             "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
             "a summary of the discussion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",
@@ -257,8 +257,7 @@ class Spm(SensorScan):
             "group a number of the experiments run upon the same setup and/or "
             "same sample."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_collection",
             type="NX_CHAR",
             name_type="specified",
@@ -270,8 +269,7 @@ class Spm(SensorScan):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-experiment-description-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -284,8 +282,7 @@ class Spm(SensorScan):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-start-time-field"
         ],
         description=("The start time of the experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -298,8 +295,7 @@ class Spm(SensorScan):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-end-time-field"
         ],
         description=("The end time of the experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -348,8 +344,7 @@ class SpmProcess(Process):
             "Commercial or otherwise defined given name of the program (or a "
             "link to the instrument software)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -368,8 +363,7 @@ class SpmProcess(Process):
             "such a way that result files can be created ideally in a "
             "deterministic manner."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -383,8 +377,7 @@ class SpmProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-program-url-attribute"
         ],
         description=("Website of the software."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="program_url",
             type="NX_CHAR",
             name_type="specified",
@@ -420,8 +413,7 @@ class SpmSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-sample-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -456,12 +448,12 @@ class SpmData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-data-data-field"
         ],
+        variable=True,
         description=(
             "The data (e.g. current, voltage, temperature) field that can be "
             "plotted against the axes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="DATA",
             type="NX_NUMBER",
             name_type="any",
@@ -474,9 +466,9 @@ class SpmData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-data-axisname-field"
         ],
+        variable=True,
         description=("The name of the axis that corresponds to the data field."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME",
             type="NX_CHAR_OR_NUMBER",
             name_type="any",
@@ -512,12 +504,12 @@ class SpmReproducibilityIndicators(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-reproducibility-indicators-link-to-field-field"
         ],
+        variable=True,
         description=(
             "A place holder to create link to any field relevant considered as "
             "reproducibility indicators (defined by laboratory)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="LINK_TO_FIELD",
             type="NX_CHAR",
             name_type="any",
@@ -552,12 +544,12 @@ class SpmResolutionIndicators(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-resolution-indicators-link-to-field-field"
         ],
+        variable=True,
         description=(
             "A place holder to create link to any field relevant considered as "
             "reproducibility indicators (defined by laboratory)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="LINK_TO_FIELD",
             type="NX_CHAR",
             name_type="any",

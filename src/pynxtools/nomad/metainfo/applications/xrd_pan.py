@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXxrd_pan` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXxrd_pan` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.xrd import Xrd
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.object import Object
@@ -105,8 +112,7 @@ class XrdPan(Xrd):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-data-file-field"
         ],
         description=("Name of the data file."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data_file",
             type="NX_CHAR",
             name_type="specified",
@@ -119,8 +125,7 @@ class XrdPan(Xrd):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-measurement-type-field"
         ],
         description=("Type of measurement."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement_type",
             type="NX_CHAR",
             name_type="specified",
@@ -133,8 +138,7 @@ class XrdPan(Xrd):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -150,8 +154,7 @@ class XrdPan(Xrd):
         description=(
             "Method used to collect the data default='X-Ray Diffraction (XRD)'"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="method",
             type="NX_CHAR",
             name_type="specified",
@@ -165,8 +168,7 @@ class XrdPan(Xrd):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -178,8 +180,7 @@ class XrdPan(Xrd):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -223,8 +224,7 @@ class XrdPanExperimentConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-beam-attenuation-factors-field"
         ],
         description=("Beam attenuation factors over the path."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beam_attenuation_factors",
             type="NX_CHAR",
             name_type="specified",
@@ -238,8 +238,7 @@ class XrdPanExperimentConfig(Object):
         ],
         dimensionality="[length]",
         description=("Goniometer position X."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="goniometer_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -254,8 +253,7 @@ class XrdPanExperimentConfig(Object):
         ],
         dimensionality="[length]",
         description=("Goniometer position Y."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="goniometer_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -270,8 +268,7 @@ class XrdPanExperimentConfig(Object):
         ],
         dimensionality="[length]",
         description=("Goniometer position Z"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="goniometer_z",
             type="NX_FLOAT",
             name_type="specified",
@@ -286,8 +283,7 @@ class XrdPanExperimentConfig(Object):
         ],
         dimensionality="[time]",
         description=("Total time of count."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="count_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -325,8 +321,7 @@ class XrdPanExperimentResult(Data):
         ],
         shape=["*"],
         description=("Number of scattered electrons per unit time."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_FLOAT",
             name_type="specified",
@@ -341,8 +336,7 @@ class XrdPanExperimentResult(Data):
         dimensionality="[angle]",
         shape=["*"],
         description=("Two-theta (scattering angle) of the diffractogram."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="two_theta",
             type="NX_FLOAT",
             name_type="specified",
@@ -358,8 +352,7 @@ class XrdPanExperimentResult(Data):
         dimensionality="[angle]",
         shape=["*"],
         description=("Incident angle of the diffractogram."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="omega",
             type="NX_FLOAT",
             name_type="specified",
@@ -375,8 +368,7 @@ class XrdPanExperimentResult(Data):
         dimensionality="[angle]",
         shape=["*"],
         description=("The phi range of the diffractogram."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phi",
             type="NX_FLOAT",
             name_type="specified",
@@ -392,8 +384,7 @@ class XrdPanExperimentResult(Data):
         dimensionality="[angle]",
         shape=["*"],
         description=("The chi range of the diffractogram"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chi",
             type="NX_FLOAT",
             name_type="specified",
@@ -409,8 +400,7 @@ class XrdPanExperimentResult(Data):
         description=(
             "The scattering vector component, which is parallel to the sample surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="q_parallel",
             type="NX_FLOAT",
             name_type="specified",
@@ -427,8 +417,7 @@ class XrdPanExperimentResult(Data):
             "The scattering vector component, which is perpendicular to the "
             "sample surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="q_perpendicular",
             type="NX_FLOAT",
             name_type="specified",
@@ -448,8 +437,7 @@ class XrdPanExperimentResult(Data):
             "https://en.wikipedia.org/wiki/Powder_diffraction and "
             "https://theory.labster.com/scattering-vector/"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="q_norm",
             type="NX_FLOAT",
             name_type="specified",
@@ -468,8 +456,7 @@ class XrdPanExperimentResult(Data):
             "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
             "ale in /NXentry/NXinstrument/NXdetector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -486,8 +473,7 @@ class XrdPanExperimentResult(Data):
             "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
             "to data in /Nxentry/Nxinstrument/Nxdetector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -527,8 +513,7 @@ class XrdPanQData(Data):
             "'experiment_result' and should be linked to "
             "/entry[ENTRY]/experiment_result/q_norm."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="q",
             type="NX_FLOAT",
             name_type="specified",
@@ -546,8 +531,7 @@ class XrdPanQData(Data):
             "experiment_result and should be linked to "
             "/entry[ENTRY]/experiment_result/intensity."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_FLOAT",
             name_type="specified",
@@ -566,8 +550,7 @@ class XrdPanQData(Data):
             "the same as 'q_parallel' of experiment_result, and should be linked "
             "to /entry[ENTRY]/experiment_result/q_parallel."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="q_parallel",
             type="NX_FLOAT",
             name_type="specified",
@@ -585,8 +568,7 @@ class XrdPanQData(Data):
             "experiment_result, and should be linked to "
             "/entry[ENTRY]/experiment_result/q_perpendicular."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="q_perpendicular",
             type="NX_FLOAT",
             name_type="specified",
@@ -604,8 +586,7 @@ class XrdPanQData(Data):
             "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
             "ale in /NXentry/NXinstrument/NXdetector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -622,8 +603,7 @@ class XrdPanQData(Data):
             "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
             "to data in /Nxentry/Nxinstrument/Nxdetector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -659,8 +639,7 @@ class XrdPanSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-sample-sample-mode-field"
         ],
         description=("Mode of sample."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -673,8 +652,7 @@ class XrdPanSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-sample-sample-id-field"
         ],
         description=("Id of sample."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_id",
             type="NX_CHAR",
             name_type="specified",
@@ -690,8 +668,7 @@ class XrdPanSample(Sample):
             "Usually in xrd sample are being analyzed, but sample might be "
             "identified by assumed name or given name."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_name",
             type="NX_CHAR",
             name_type="specified",
@@ -704,8 +681,7 @@ class XrdPanSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -723,8 +699,7 @@ class XrdPanSample(Sample):
             "been obtained through an omega-2theta scan like from a traditional "
             "single detector powder diffractometer"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
             name_type="specified",

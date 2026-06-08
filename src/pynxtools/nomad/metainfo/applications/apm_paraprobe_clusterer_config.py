@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_clusterer_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_clusterer_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
 )
@@ -99,8 +106,7 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -113,8 +119,7 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -174,8 +179,7 @@ class ApmParaprobeClustererConfigCamecaToNexus(ApmParaprobeToolParameters):
             "when writing their *.indexed.* cluster results POS files that is "
             "referred to results."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="recover_evaporation_id",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -188,8 +192,7 @@ class ApmParaprobeClustererConfigCamecaToNexus(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-cameca-to-nexus-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",
@@ -249,8 +252,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolParameters):
             "and an O atom. This multiplicity affects the size of the feature "
             "and its chemical composition."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_type_filter",
             type="NX_CHAR",
             name_type="specified",
@@ -271,8 +273,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolParameters):
             "In the simplest case, the matrix contains only the proton number of "
             "the element in the row, all other values set to zero."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_query_nuclide_vector",
             type="NX_UINT",
             name_type="specified",
@@ -286,8 +287,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-cluster-analysisid-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",

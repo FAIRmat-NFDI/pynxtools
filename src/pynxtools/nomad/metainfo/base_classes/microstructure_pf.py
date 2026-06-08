@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure_pf` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure_pf` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -120,8 +127,7 @@ class MicrostructurePfConfiguration(Parameters):
             "pole figure was computed following the notation of the "
             "International Table of Crystallography."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crystal_symmetry_point_group",
             type="NX_CHAR",
             name_type="specified",
@@ -137,8 +143,7 @@ class MicrostructurePfConfiguration(Parameters):
             "Point group of assumed sample symmetries following the notation of "
             "the International Table of Crystallography."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="specimen_symmetry_point_group",
             type="NX_CHAR",
             name_type="specified",
@@ -152,8 +157,7 @@ class MicrostructurePfConfiguration(Parameters):
         ],
         dimensionality="[angle]",
         description=("Halfwidth of the kernel."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="halfwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -170,8 +174,7 @@ class MicrostructurePfConfiguration(Parameters):
             "Miller (:math:`(hkl)[uvw]`) or Miller-Bravais indices used to "
             "specify the pole figure."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="miller_indices",
             type="NX_CHAR",
             name_type="specified",
@@ -185,8 +188,7 @@ class MicrostructurePfConfiguration(Parameters):
         ],
         dimensionality="[angle]",
         description=("Resolution of the kernel."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
             name_type="specified",
@@ -224,8 +226,7 @@ class MicrostructurePfPf(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Pole figure intensity."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -243,8 +244,7 @@ class MicrostructurePfPf(Data):
             "Pixel center along y direction in the equatorial plane of a "
             "stereographic projection of the unit sphere."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_NUMBER",
             name_type="specified",
@@ -262,8 +262,7 @@ class MicrostructurePfPf(Data):
             "Pixel center along x direction in the equatorial plane of a "
             "stereographic projection of the unit sphere."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_NUMBER",
             name_type="specified",

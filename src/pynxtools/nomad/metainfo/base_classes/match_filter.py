@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmatch_filter` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmatch_filter` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:
@@ -74,8 +81,7 @@ class MatchFilter(Parameters):
             "entries with said value to exclude. Entries with all other values "
             "will be included."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="method",
             type="NX_CHAR",
             name_type="specified",
@@ -96,8 +102,7 @@ class MatchFilter(Parameters):
             "with values matching 1, 5 or 6 will be processed. All other entries "
             "will be excluded."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="match",
             type="NX_NUMBER",
             name_type="specified",

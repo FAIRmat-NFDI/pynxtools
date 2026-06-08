@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXcanSAS` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXcanSAS` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -197,8 +204,7 @@ class Cansas(Entry):
             "the default :ref:`NXdata` group. Usually, this will be the name of "
             "the first *SASdata* group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",
@@ -211,8 +217,7 @@ class Cansas(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-cansas-class-attribute"
         ],
         description=("Official canSAS group: **SASentry**"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -230,8 +235,7 @@ class Cansas(Entry):
             "data. This must be a text (not numerical) representation. Such as:: "
             '@version="1.1"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -245,8 +249,7 @@ class Cansas(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this subentry conforms."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -264,8 +267,7 @@ class Cansas(Entry):
             "use this to associate (correlate) multiple *SASdata* elements with "
             "*run* elements."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -283,8 +285,7 @@ class Cansas(Entry):
             "data by its title. Could be the name of the sample, the name for "
             "the measured data, or something else representative."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -301,8 +302,7 @@ class Cansas(Entry):
             "use this to associate (correlate) multiple *SASdata* elements with "
             "*run* elements."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -315,14 +315,14 @@ class Cansas(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-run-field"
         ],
+        variable=True,
         description=(
             "Run identification for this *SASentry*. For many facilities, this "
             "is an integer, such as en experiment number. Use multiple instances "
             "of ``run`` as needed, keeping in mind that HDF5 requires unique "
             "names for all entities in a group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="run",
             type="NX_CHAR",
             name_type="any",
@@ -339,8 +339,7 @@ class Cansas(Entry):
             "use this to associate (correlate) multiple *SASdata* elements with "
             "*run* elements."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -408,8 +407,7 @@ class CansasData(Data):
         description=(
             "Official canSAS group: :index:`NXcanSAS (applications); SASdata`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -423,8 +421,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-signal-attribute"
         ],
         description=("Name of the default data field."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -447,8 +444,7 @@ class CansasData(Data):
             "there are five items in the list, the intensity field of this "
             "example ``I`` must be a five-dimensional array (rank=5)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="I_axes",
             type="NX_CHAR",
             name_type="specified",
@@ -469,8 +465,7 @@ class CansasData(Data):
             "position. Thus, in this example, the ``Q`` data is time-dependent: "
             ":math:`\\vec{Q}(t)`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="Q_indices",
             type="NX_INT",
             name_type="specified",
@@ -491,8 +486,7 @@ class CansasData(Data):
             "*no mask* and ``true`` means *mask* or a more descriptive array as "
             "as defined in :ref:`NXdetector`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="mask",
             type="NX_CHAR",
             name_type="specified",
@@ -511,8 +505,7 @@ class CansasData(Data):
             "@Mask_indices=3,4 which indicates that Q requires two indices from "
             "the :math:`I` data object for Q position."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="Mask_indices",
             type="NX_CHAR",
             name_type="specified",
@@ -525,8 +518,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-timestamp-attribute"
         ],
         description=("ISO-8601 time [#iso8601]_"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="timestamp",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -550,8 +542,7 @@ class CansasData(Data):
             "we may refer to either or both of :math:`|\\vec{Q}|` or "
             ":math:`\\vec{Q}`, depending on the context."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Q",
             type="NX_NUMBER",
             name_type="specified",
@@ -570,14 +561,13 @@ class CansasData(Data):
             "validation software and may not be processed by some analysis "
             "software packages."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/nm", "1/angstrom"],
             parent_field="Q",
+            enumeration=["1/m", "1/nm", "1/angstrom"],
         ),
     )
     Q__uncertainties = Quantity(
@@ -602,8 +592,7 @@ class CansasData(Data):
             "the ``@resolutions`` attribute. It is possible for both "
             "``@resolutions`` and ``uncertainties`` to be reported."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="uncertainties",
             type="NX_CHAR",
             name_type="specified",
@@ -643,8 +632,7 @@ class CansasData(Data):
             "``@uncertainties`` attribute. It is possible for both "
             "``@resolutions`` and ``uncertainties`` to be reported."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="resolutions",
             type="NX_CHAR",
             name_type="specified",
@@ -671,8 +659,7 @@ class CansasData(Data):
             "resolution. In such cases, use additional datasets or a "
             ":ref:`NXnote` subgroup to include that detail."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="resolutions_description",
             type="NX_CHAR",
             name_type="specified",
@@ -713,8 +700,7 @@ class CansasData(Data):
             "data may be presented in other units and still be consistent with "
             "NeXus. See the :ref:`design-units` section."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="I",
             type="NX_NUMBER",
             name_type="specified",
@@ -734,14 +720,13 @@ class CansasData(Data):
             "``arbitrary`` will be changed to ``unknown`` for handling with that "
             "library."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"],
             parent_field="I",
+            enumeration=["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"],
         ),
     )
     I__uncertainties = Quantity(
@@ -761,8 +746,7 @@ class CansasData(Data):
             "1D standard. The NXcanSAS standard allows for the name to be "
             'described using this attribute. Such as:: @uncertainties="Idev"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="uncertainties",
             type="NX_CHAR",
             name_type="specified",
@@ -788,8 +772,7 @@ class CansasData(Data):
             "are not defined by NXcanSAS. The user has the flexibility to use "
             "names different than those shown in this example."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="scaling_factor",
             type="NX_CHAR",
             name_type="specified",
@@ -809,8 +792,7 @@ class CansasData(Data):
             "in the *uncertainties* attribute of *I*, as in:: "
             'I/@uncertainties="Idev"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Idev",
             type="NX_NUMBER",
             name_type="specified",
@@ -831,14 +813,13 @@ class CansasData(Data):
             "``arbitrary`` will be changed to ``unknown`` for handling with that "
             "library."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"],
             parent_field="Idev",
+            enumeration=["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"],
         ),
     )
     Qdev = Quantity(
@@ -854,8 +835,7 @@ class CansasData(Data):
             "recorded in the *resolutions* attribute of *Q*, as in:: "
             'Q/@resolutions="Qdev" or:: Q/@resolutions="dQw", "dQl"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Qdev",
             type="NX_NUMBER",
             name_type="specified",
@@ -873,14 +853,13 @@ class CansasData(Data):
             "terms. Data expressed in other units may not be processed by some "
             "software packages."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/nm", "1/angstrom"],
             parent_field="Qdev",
+            enumeration=["1/m", "1/nm", "1/angstrom"],
         ),
     )
     dQw = Quantity(
@@ -898,8 +877,7 @@ class CansasData(Data):
             "in the *resolutions* attribute of *Q*, as in:: "
             'Q/@resolutions="dQw", "dQl"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dQw",
             type="NX_NUMBER",
             name_type="specified",
@@ -917,14 +895,13 @@ class CansasData(Data):
             "terms. Data expressed in other units may not be processed by some "
             "software packages."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/nm", "1/angstrom"],
             parent_field="dQw",
+            enumeration=["1/m", "1/nm", "1/angstrom"],
         ),
     )
     dQl = Quantity(
@@ -942,8 +919,7 @@ class CansasData(Data):
             "is also recorded in the *resolutions* attribute of *Q*, as in:: "
             'Q/@resolutions="dQw", "dQl"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dQl",
             type="NX_NUMBER",
             name_type="specified",
@@ -961,14 +937,13 @@ class CansasData(Data):
             "terms. Data expressed in other units may not be processed by some "
             "software packages."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/nm", "1/angstrom"],
             parent_field="dQl",
+            enumeration=["1/m", "1/nm", "1/angstrom"],
         ),
     )
     Qmean = Quantity(
@@ -983,8 +958,7 @@ class CansasData(Data):
             "expected that ``Q`` is provided and that both ``Q`` and ``Qmean`` "
             "will have the same units."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Qmean",
             type="NX_NUMBER",
             name_type="specified",
@@ -1002,14 +976,13 @@ class CansasData(Data):
             "terms. Data expressed in other units may not be processed by some "
             "software packages."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["1/m", "1/nm", "1/angstrom"],
             parent_field="Qmean",
+            enumeration=["1/m", "1/nm", "1/angstrom"],
         ),
     )
     ShadowFactor = Quantity(
@@ -1023,8 +996,7 @@ class CansasData(Data):
             "penumbra. Used in data files from NIST/NCNR instruments. See: J.G. "
             "Barker and J.S. Pedersen (1995) *J. Appl. Cryst.* **28**, 105-114."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ShadowFactor",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
@@ -1073,8 +1045,7 @@ class CansasInstrument(Instrument):
         description=(
             "Official canSAS group: :index:`NXcanSAS (applications); SASinstrument`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -1114,8 +1085,7 @@ class CansasSample(Sample):
         description=(
             "Official canSAS group: :index:`NXcanSAS (applications); SASsample`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -1129,8 +1099,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-name-field"
         ],
         description=("**ID**: Text string that identifies this sample."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -1150,8 +1119,7 @@ class CansasSample(Sample):
             "provided elsewhere in the structure, in the "
             "*SAStransmission_spectrum* element."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmission",
             type="NX_NUMBER",
             name_type="specified",
@@ -1166,8 +1134,7 @@ class CansasSample(Sample):
         ],
         dimensionality="[temperature]",
         description=("Temperature of this sample."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -1180,9 +1147,9 @@ class CansasSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-details-field"
         ],
+        variable=True,
         description=("Any additional sample details."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="details",
             type="NX_CHAR",
             name_type="any",
@@ -1196,8 +1163,7 @@ class CansasSample(Sample):
         ],
         dimensionality="[length]",
         description=("Location of the sample in :math:`x`"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_position",
             type="NX_NUMBER",
             name_type="specified",
@@ -1212,8 +1178,7 @@ class CansasSample(Sample):
         ],
         dimensionality="[length]",
         description=("Location of the sample in :math:`y`"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_position",
             type="NX_NUMBER",
             name_type="specified",
@@ -1228,8 +1193,7 @@ class CansasSample(Sample):
         ],
         dimensionality="[angle]",
         description=("Rotation of the sample about the :math:`z` axis (roll)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="roll",
             type="NX_NUMBER",
             name_type="specified",
@@ -1244,8 +1208,7 @@ class CansasSample(Sample):
         ],
         dimensionality="[angle]",
         description=("Rotation of the sample about the :math:`x` axis (roll)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pitch",
             type="NX_NUMBER",
             name_type="specified",
@@ -1260,8 +1223,7 @@ class CansasSample(Sample):
         ],
         dimensionality="[angle]",
         description=("Rotation of the sample about the :math:`y` axis (yaw)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="yaw",
             type="NX_NUMBER",
             name_type="specified",
@@ -1305,8 +1267,7 @@ class CansasProcess(Process):
         description=(
             "Official canSAS group: :index:`NXcanSAS (applications); SASprocess`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -1320,8 +1281,7 @@ class CansasProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-name-field"
         ],
         description=("Optional name for this data processing or analysis step"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -1334,8 +1294,7 @@ class CansasProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-description-field"
         ],
         description=("Optional description for this data processing or analysis step"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1347,14 +1306,14 @@ class CansasProcess(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-term-field"
         ],
+        variable=True,
         description=(
             "Specifies the value of a single variable, parameter, or term (while "
             "defined here as a string, it could be a number) related to the "
             "*SASprocess* step. Note: The name *term* is not required, it could "
             "take any name, as long as the name is unique within this group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="term",
             type="NX_CHAR",
             name_type="any",
@@ -1393,8 +1352,7 @@ class CansasCollection(Collection):
         description=(
             "Official canSAS group: :index:`NXcanSAS (applications); SASnote`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -1438,8 +1396,7 @@ class CansasTransmissionSpectrum(Data):
             "Official canSAS group: :index:`NXcanSAS (applications); "
             "SAStransmission_spectrum`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="canSAS_class",
             type="NX_CHAR",
             name_type="specified",
@@ -1453,8 +1410,7 @@ class CansasTransmissionSpectrum(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-signal-attribute"
         ],
         description=("Name of the default data field."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -1467,8 +1423,7 @@ class CansasTransmissionSpectrum(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-t-axes-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="T_axes",
             type="NX_CHAR",
             name_type="specified",
@@ -1489,8 +1444,7 @@ class CansasTransmissionSpectrum(Data):
             "with the sample and container can measurement with just the "
             "container ====== =============================================="
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -1503,8 +1457,7 @@ class CansasTransmissionSpectrum(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-timestamp-attribute"
         ],
         description=("ISO-8601 time [#iso8601]_"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="timestamp",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -1521,8 +1474,7 @@ class CansasTransmissionSpectrum(Data):
             "Wavelength of the radiation. This array is of the same shape as "
             "``T`` and ``Tdev``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lambda",
             type="NX_NUMBER",
             name_type="specified",
@@ -1540,8 +1492,7 @@ class CansasTransmissionSpectrum(Data):
             "Transmission values (:math:`I/I_0`) as a function of wavelength. "
             "This array is of the same shape as ``lambda`` and ``Tdev``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="T",
             type="NX_NUMBER",
             name_type="specified",
@@ -1562,8 +1513,7 @@ class CansasTransmissionSpectrum(Data):
             "https://github.com/canSAS-org/canSAS2012/issues/7 Typically: "
             '@uncertainties="Tdev"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="uncertainties",
             type="NX_CHAR",
             name_type="specified",
@@ -1584,8 +1534,7 @@ class CansasTransmissionSpectrum(Data):
             'attribute of *T*, as in:: T/@uncertainties="Tdev" This array is '
             "of the same shape as ``lambda`` and ``T``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Tdev",
             type="NX_NUMBER",
             name_type="specified",

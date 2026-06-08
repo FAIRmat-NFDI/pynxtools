@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure_score_results` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure_score_results` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
@@ -161,8 +168,7 @@ class MicrostructureScoreResults(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -176,8 +182,7 @@ class MicrostructureScoreResults(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-identifier-simulation-field"
         ],
         description=("Simulation ID as an alias to refer to this simulation."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_simulation",
             type="NX_UINT",
             name_type="specified",
@@ -192,8 +197,7 @@ class MicrostructureScoreResults(Entry):
         description=(
             "Discouraged free-text field to add further details to the computation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -209,8 +213,7 @@ class MicrostructureScoreResults(Entry):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the simulation was started."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -226,8 +229,7 @@ class MicrostructureScoreResults(Entry):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the simulation ended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -271,8 +273,7 @@ class MicrostructureScoreResultsConfig(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-config-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -284,8 +285,7 @@ class MicrostructureScoreResultsConfig(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-config-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -297,8 +297,7 @@ class MicrostructureScoreResultsConfig(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-config-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -332,8 +331,7 @@ class MicrostructureScoreResultsProgram1(Program):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-program1-program-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -345,8 +343,7 @@ class MicrostructureScoreResultsProgram1(Program):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-program1-program-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -377,8 +374,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -391,8 +387,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-handedness-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="handedness",
             type="NX_CHAR",
             name_type="specified",
@@ -405,8 +400,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-origin-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -419,8 +413,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-x-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -433,8 +426,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-x-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -447,8 +439,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-y-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -461,8 +452,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-y-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -475,8 +465,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-z-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -489,8 +478,7 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-sample-reference-frame-z-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",

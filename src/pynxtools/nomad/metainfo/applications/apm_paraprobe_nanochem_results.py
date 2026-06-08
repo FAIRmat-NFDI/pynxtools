@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_nanochem_results` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_nanochem_results` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
 )
@@ -112,8 +119,7 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -126,8 +132,7 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -183,8 +188,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
             "at the reconstructed location considering that the spatial "
             "resolution of atom probe experiments is limited."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_multiplicity",
             type="NX_UINT",
             name_type="specified",
@@ -203,8 +207,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
             "The multiplicity whereby the ion position is accounted for when the "
             "ion is considered one which is a decorator of the interface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="decorator_multiplicity",
             type="NX_UINT",
             name_type="specified",

@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure_odf` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure_odf` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -150,8 +157,7 @@ class MicrostructureOdfConfiguration(Parameters):
             "here documented phase-dependent ODF was computed following the "
             "notation of the International Table of Crystallography."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crystal_symmetry_point_group",
             type="NX_CHAR",
             name_type="specified",
@@ -168,8 +174,7 @@ class MicrostructureOdfConfiguration(Parameters):
             "following the notation of the International Table of "
             "Crystallography."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="specimen_symmetry_point_group",
             type="NX_CHAR",
             name_type="specified",
@@ -183,8 +188,7 @@ class MicrostructureOdfConfiguration(Parameters):
         ],
         dimensionality="[angle]",
         description=("Halfwidth of the kernel."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kernel_halfwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -198,8 +202,7 @@ class MicrostructureOdfConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-configuration-kernel-name-field"
         ],
         description=("Name of the kernel."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kernel_name",
             type="NX_CHAR",
             name_type="specified",
@@ -213,8 +216,7 @@ class MicrostructureOdfConfiguration(Parameters):
         ],
         dimensionality="[angle]",
         description=("Resolution of the kernel."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
             name_type="specified",
@@ -256,8 +258,7 @@ class MicrostructureOdfCharacteristics(Process):
             "space :math:`\\mathcal{SO(3)}`. The higher it is the texture index "
             "the sharper it is the ODF."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="texture_index",
             type="NX_FLOAT",
             name_type="specified",
@@ -299,8 +300,7 @@ class MicrostructureOdfKthExtrema(Process):
             "decreasing order. Therefore, the global extremum is always the "
             "first entry in location and volume_fraction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extrema",
             type="NX_CHAR",
             name_type="specified",
@@ -315,8 +315,7 @@ class MicrostructureOdfKthExtrema(Process):
         ],
         dimensionality="dimensionless",
         description=("Number of local extrema evaluated"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kth",
             type="NX_UINT",
             name_type="specified",
@@ -334,8 +333,7 @@ class MicrostructureOdfKthExtrema(Process):
             "Disorientation threshold within which intensity of the ODF is "
             "integrated for the component analysis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="theta",
             type="NX_NUMBER",
             name_type="specified",
@@ -355,8 +353,7 @@ class MicrostructureOdfKthExtrema(Process):
             ":math:`\\varphi_2` of the kth-most maxima in decreasing order of "
             "the intensity maximum."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="location",
             type="NX_NUMBER",
             name_type="specified",
@@ -375,8 +372,7 @@ class MicrostructureOdfKthExtrema(Process):
             "orientation space :math:`SO3` about each location (obeying "
             "symmetries) as specified for each location."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="volume_fraction",
             type="NX_NUMBER",
             name_type="specified",
@@ -413,8 +409,7 @@ class MicrostructureOdfSampling(Process):
         ],
         dimensionality="[angle]",
         description=("Sampling resolution"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
             name_type="specified",
@@ -433,8 +428,7 @@ class MicrostructureOdfSampling(Process):
             "Bunge-Euler (i.e. ZXZ convention) locations of each position in "
             "orientation space for which a weight was sampled."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="euler",
             type="NX_NUMBER",
             name_type="specified",
@@ -450,8 +444,7 @@ class MicrostructureOdfSampling(Process):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Weight at each sampled position following the order in euler."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="weight",
             type="NX_NUMBER",
             name_type="specified",
@@ -500,8 +493,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
             "ODF intensity at probed locations relative to the intensity of the "
             "null model of a random texture."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -519,8 +511,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
         description=(
             "Pixel center angular position along the :math:`\\varphi_1` direction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="varphi_one",
             type="NX_NUMBER",
             name_type="specified",
@@ -538,8 +529,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
         description=(
             "Pixel center angular position along the :math:`\\Phi` direction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="capital_phi",
             type="NX_NUMBER",
             name_type="specified",
@@ -557,8 +547,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
         description=(
             "Pixel center angular position along the :math:`\\varphi_2` direction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="varphi_two",
             type="NX_NUMBER",
             name_type="specified",

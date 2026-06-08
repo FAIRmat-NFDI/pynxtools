@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXxkappa` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXxkappa` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,8 +30,16 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.xbase import Xbase
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
@@ -78,14 +86,8 @@ class Xkappa(Xbase):
         repeats=False,
     )
     name_group = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.xkappa.XkappaName",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="name",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     definition = Quantity(
@@ -94,8 +96,7 @@ class Xkappa(Xbase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -108,8 +109,7 @@ class Xkappa(Xbase):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -121,8 +121,7 @@ class Xkappa(Xbase):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -166,8 +165,7 @@ class XkappaSample(Sample):
         description=(
             "This is an array holding the sample rotation angle at each scan point"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -183,8 +181,7 @@ class XkappaSample(Sample):
         dimensionality="[angle]",
         shape=["*"],
         description=("This is an array holding the kappa angle at each scan point"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kappa",
             type="NX_FLOAT",
             name_type="specified",
@@ -200,8 +197,7 @@ class XkappaSample(Sample):
         dimensionality="[angle]",
         shape=["*"],
         description=("This is an array holding the phi angle at each scan point"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phi",
             type="NX_FLOAT",
             name_type="specified",
@@ -216,8 +212,7 @@ class XkappaSample(Sample):
         ],
         dimensionality="[angle]",
         description=("This holds the inclination angle of the kappa arm."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alpha",
             type="NX_FLOAT",
             name_type="specified",
@@ -231,8 +226,7 @@ class XkappaSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -251,8 +245,7 @@ class XkappaSample(Sample):
             "the data. But let us bow to common usage which includes the UB "
             "nearly always."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_matrix",
             type="NX_FLOAT",
             name_type="specified",
@@ -270,8 +263,7 @@ class XkappaSample(Sample):
             "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
             "necessary, but normally written."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell",
             type="NX_FLOAT",
             name_type="specified",
@@ -289,8 +281,7 @@ class XkappaSample(Sample):
         description=(
             "The sample temperature or whatever sensor represents this value best"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -308,8 +299,7 @@ class XkappaSample(Sample):
             "Translation of the sample along the X-direction of the laboratory "
             "coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_translation",
             type="NX_FLOAT",
             name_type="specified",
@@ -327,8 +317,7 @@ class XkappaSample(Sample):
             "Translation of the sample along the Y-direction of the laboratory "
             "coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_translation",
             type="NX_FLOAT",
             name_type="specified",
@@ -346,13 +335,85 @@ class XkappaSample(Sample):
             "Translation of the sample along the Z-direction of the laboratory "
             "coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
             units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XkappaName(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="name",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    polar_angle = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-polar-angle-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="polar_angle",
+            target="/NXentry/NXinstrument/NXdetector/polar_angle",
+            optionality="required",
+        ),
+    )
+    rotation_angle = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-rotation-angle-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="rotation_angle",
+            target="/NXentry/NXsample/rotation_angle",
+            optionality="required",
+        ),
+    )
+    kappa = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-kappa-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="kappa",
+            target="/NXentry/NXsample/kappa",
+            optionality="required",
+        ),
+    )
+    phi = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-phi-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="phi",
+            target="/NXentry/NXsample/phi",
+            optionality="required",
+        ),
+    )
+    data = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-name-data-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="data",
+            target="/NXentry/NXinstrument/NXdetector/data",
+            optionality="required",
         ),
     )
 

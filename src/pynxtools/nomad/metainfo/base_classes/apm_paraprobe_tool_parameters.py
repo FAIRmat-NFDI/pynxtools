@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_tool_parameters` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_tool_parameters` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
@@ -163,8 +170,7 @@ class ApmParaprobeToolParameters(Parameters):
             "Internal identifier used by the tool to refer to an analysis. "
             "Simulation ID an alias."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",
@@ -183,8 +189,7 @@ class ApmParaprobeToolParameters(Parameters):
             "encourage to parameterize such descriptions as much as possible to "
             "support reusage and clearer communication."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -237,8 +242,7 @@ class ApmParaprobeToolParametersReconstruction(Note):
             "Name of the node which resolves the reconstructed ion position "
             "values to use for this analysis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_CHAR",
             name_type="specified",
@@ -254,8 +258,7 @@ class ApmParaprobeToolParametersReconstruction(Note):
             "Name of the node which resolves the mass-to-charge-state-ratio "
             "values to use for this analysis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mass_to_charge",
             type="NX_CHAR",
             name_type="specified",
@@ -303,8 +306,7 @@ class ApmParaprobeToolParametersRanging(Note):
             "Name of the (parent) node directly below which (in the hierarchy) "
             "the ranging definition for (molecular) ions are stored."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ranging_definitions",
             type="NX_CHAR",
             name_type="specified",
@@ -344,8 +346,7 @@ class ApmParaprobeToolParametersSurfaceDistance(Note):
             "values. The tool assumes that the values are stored in the same "
             "order as points (ions)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_CHAR",
             name_type="specified",

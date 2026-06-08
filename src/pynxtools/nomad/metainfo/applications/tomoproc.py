@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXtomoproc` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXtomoproc` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -94,8 +101,7 @@ class Tomoproc(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -108,8 +114,7 @@ class Tomoproc(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -151,8 +156,7 @@ class TomoprocSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -183,8 +187,7 @@ class TomoprocReconstruction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-reconstruction-program-field"
         ],
         description=("Name of the program used for reconstruction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -197,8 +200,7 @@ class TomoprocReconstruction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-reconstruction-version-field"
         ],
         description=("Version of the program used"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -211,8 +213,7 @@ class TomoprocReconstruction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-reconstruction-date-field"
         ],
         description=("Date and time of reconstruction processing."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -248,8 +249,7 @@ class TomoprocData(Data):
             "Please indicate in the unit attribute what physical quantity this "
             "really is."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -261,8 +261,7 @@ class TomoprocData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-data-transform-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="transform",
             type="NX_CHAR",
             name_type="specified",
@@ -275,8 +274,7 @@ class TomoprocData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-data-offset-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_CHAR",
             name_type="specified",
@@ -289,8 +287,7 @@ class TomoprocData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-data-scaling-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="scaling",
             type="NX_CHAR",
             name_type="specified",
@@ -308,8 +305,7 @@ class TomoprocData(Data):
             "This is an array holding the values to use for the x-axis of data. "
             "The units must be appropriate for the measurement."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_FLOAT",
             name_type="specified",
@@ -327,8 +323,7 @@ class TomoprocData(Data):
             "This is an array holding the values to use for the y-axis of data. "
             "The units must be appropriate for the measurement."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_FLOAT",
             name_type="specified",
@@ -346,8 +341,7 @@ class TomoprocData(Data):
             "This is an array holding the values to use for the z-axis of data. "
             "The units must be appropriate for the measurement."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_FLOAT",
             name_type="specified",

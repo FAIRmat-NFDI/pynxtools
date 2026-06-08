@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXtransmission` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXtransmission` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
@@ -105,8 +112,7 @@ class Transmission(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -123,8 +129,7 @@ class Transmission(Entry):
             "Version number to identify which definition of this application "
             "definition was used for this entry/data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -141,8 +146,7 @@ class Transmission(Entry):
             "URL where to find further material (documentation, examples) "
             "relevant to the application definition."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="URL",
             type="NX_CHAR",
             name_type="specified",
@@ -156,8 +160,7 @@ class Transmission(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-start-time-field"
         ],
         description=("Start time of the experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -175,8 +178,7 @@ class Transmission(Entry):
             "by the facility or principle investigator. * The identifier enables "
             "to link experiments to e.g. proposals."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -194,8 +196,7 @@ class Transmission(Entry):
             "of this application definition rather than in this experiment "
             "description."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -239,8 +240,7 @@ class TransmissionAcquisitionProgram(Fabrication):
             "used to generate the result file(s) with measured data and "
             "metadata."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -256,8 +256,7 @@ class TransmissionAcquisitionProgram(Fabrication):
             "Version number of the program that was used to generate the result "
             "file(s) with measured data and metadata."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -270,8 +269,7 @@ class TransmissionAcquisitionProgram(Fabrication):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-acquisition-program-url-attribute"
         ],
         description=("Website of the software"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="url",
             type="NX_CHAR",
             name_type="specified",
@@ -309,8 +307,7 @@ class TransmissionUser(User):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-user-name-field"
         ],
         description=("Name of the user."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -326,8 +323,7 @@ class TransmissionUser(User):
             "Name of the affiliation of the user at the point in time when the "
             "experiment was performed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="affiliation",
             type="NX_CHAR",
             name_type="specified",
@@ -358,8 +354,7 @@ class TransmissionInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-common-beam-depolarizer-field"
         ],
         description=("If true, the incident beam is depolarized."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="common_beam_depolarizer",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -373,8 +368,7 @@ class TransmissionInstrument(Instrument):
         ],
         dimensionality="[angle]",
         description=("Polarizer value inside the beam path"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polarizer",
             type="NX_NUMBER",
             name_type="specified",
@@ -390,8 +384,7 @@ class TransmissionInstrument(Instrument):
         dimensionality="[time]",
         shape=["*"],
         description=("An array of relative scan start time points."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time_points",
             type="NX_NUMBER",
             name_type="specified",
@@ -410,8 +403,7 @@ class TransmissionInstrument(Instrument):
             "dimension is the number of time points. If it has length one the "
             "time_points may be empty."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measured_data",
             type="NX_NUMBER",
             name_type="specified",
@@ -446,8 +438,7 @@ class TransmissionSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-sample-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -487,8 +478,7 @@ class TransmissionData(Data):
             "We recommend to use wavelength as a default attribute, but it can "
             "be replaced by any suitable parameter along the X-axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",

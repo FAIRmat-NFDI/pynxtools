@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_tool_common` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_tool_common` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -143,8 +150,7 @@ class ApmParaprobeToolCommon(Object):
             "might be that the tool has terminated prematurely or another error "
             "occurred."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status",
             type="NX_CHAR",
             name_type="specified",
@@ -162,8 +168,7 @@ class ApmParaprobeToolCommon(Object):
             "Internal identifier used by the tool to refer to an analysis. "
             "Simulation ID is an alias."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",
@@ -205,8 +210,7 @@ class ApmParaprobeToolCommonProfiling(CsProfiling):
         ],
         dimensionality="[time]",
         description=("Wall-clock time."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_FLOAT",
             name_type="specified",

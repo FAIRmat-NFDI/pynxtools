@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXarchive` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXarchive` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -83,8 +90,7 @@ class Archive(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-index-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="index",
             type="NX_CHAR",
             name_type="specified",
@@ -96,8 +102,7 @@ class Archive(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -110,8 +115,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-experiment-identifier-field"
         ],
         description=("unique identifier for the experiment"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -124,8 +128,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-experiment-description-field"
         ],
         description=("Brief description of the experiment and its objectives"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -138,8 +141,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-collection-identifier-field"
         ],
         description=("ID of user or DAQ define group of data files"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -152,8 +154,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-collection-description-field"
         ],
         description=("Brief summary of the collection, including grouping criteria"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_description",
             type="NX_CHAR",
             name_type="specified",
@@ -168,8 +169,7 @@ class Archive(Entry):
         description=(
             "unique identifier for this measurement as provided by the facility"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="entry_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -181,8 +181,7 @@ class Archive(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -194,8 +193,7 @@ class Archive(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-end-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -209,8 +207,7 @@ class Archive(Entry):
         ],
         dimensionality="[time]",
         description=("TODO: needs documentation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="duration",
             type="NX_FLOAT",
             name_type="specified",
@@ -225,8 +222,7 @@ class Archive(Entry):
         ],
         dimensionality="[time]",
         description=("TODO: needs documentation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -240,8 +236,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-run-cycle-field"
         ],
         description=("TODO: needs documentation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="run_cycle",
             type="NX_CHAR",
             name_type="specified",
@@ -256,8 +251,7 @@ class Archive(Entry):
         description=(
             "revision ID of this file, may be after recalibration, reprocessing etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="revision",
             type="NX_CHAR",
             name_type="specified",
@@ -270,8 +264,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -285,8 +278,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-program-field"
         ],
         description=("The program and version used for generating this file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -298,8 +290,7 @@ class Archive(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-program-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -314,8 +305,7 @@ class Archive(Entry):
         ],
         dimensionality="[time]",
         description=("when this file is to be released into PD"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="release_date",
             type="NX_CHAR",
             name_type="specified",
@@ -355,8 +345,7 @@ class ArchiveUser(User):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-user-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -369,8 +358,7 @@ class ArchiveUser(User):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-user-role-field"
         ],
         description=("role of the user"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="role",
             type="NX_CHAR",
             name_type="specified",
@@ -383,8 +371,7 @@ class ArchiveUser(User):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-user-facility-user-id-field"
         ],
         description=("ID of the user in the facility bureaucracy database"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="facility_user_id",
             type="NX_CHAR",
             name_type="specified",
@@ -414,8 +401,7 @@ class ArchiveInstrument(Instrument):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -428,8 +414,7 @@ class ArchiveInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-description-field"
         ],
         description=("Brief description of the instrument"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -460,8 +445,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -474,8 +458,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-sample-id-field"
         ],
         description=("Unique database id of the sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_id",
             type="NX_CHAR",
             name_type="specified",
@@ -487,8 +470,7 @@ class ArchiveSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-description-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -510,8 +492,7 @@ class ArchiveSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -533,8 +514,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-chemical-formula-field"
         ],
         description=("Chemical formula formatted according to CIF conventions"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -547,8 +527,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-preparation-date-field"
         ],
         dimensionality="[time]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preparation_date",
             type="NX_CHAR",
             name_type="specified",
@@ -575,8 +554,7 @@ class ArchiveSample(Sample):
             "Description of the environment the sample is in: air, vacuum, "
             "oxidizing atmosphere, dehydrated, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="situation",
             type="NX_CHAR",
             name_type="specified",
@@ -598,8 +576,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -614,8 +591,7 @@ class ArchiveSample(Sample):
         ],
         dimensionality="[current]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnetic_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -630,8 +606,7 @@ class ArchiveSample(Sample):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="electric_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -646,8 +621,7 @@ class ArchiveSample(Sample):
         ],
         dimensionality="dimensionless",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="stress_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -662,8 +636,7 @@ class ArchiveSample(Sample):
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pressure",
             type="NX_FLOAT",
             name_type="specified",

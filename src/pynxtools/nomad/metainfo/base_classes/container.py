@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXcontainer` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXcontainer` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -149,8 +156,7 @@ class Container(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-name-field"
         ],
         description=("Descriptive name of container."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +172,7 @@ class Container(Component):
             "Verbose description of container and how it fits into the wider "
             "experimental set up."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -197,8 +202,7 @@ class Container(Component):
             "the elements are listed purely in alphabetic order of their symbol. "
             "* This is the *Hill* system used by Chemical Abstracts."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -213,8 +217,7 @@ class Container(Component):
         dimensionality="[mass] / [length] ** 3",
         shape=["*"],
         description=("Density of the material the container is made from."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="density",
             type="NX_FLOAT",
             name_type="specified",
@@ -233,8 +236,7 @@ class Container(Component):
             "Fraction of the volume of the container occupied by the material "
             "forming the container."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="packing_fraction",
             type="NX_FLOAT",
             name_type="specified",
@@ -250,13 +252,31 @@ class Container(Component):
         dimensionality="[mass]",
         shape=["*"],
         description=("Relative molecular mass of container."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_molecular_mass",
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
             units="NX_MASS",
+        ),
+    )
+
+    reference_measurement = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-reference-measurement-link"
+        ],
+        description=(
+            "A link to a full data collection which contains the actual measured "
+            "data for this container within the experimental set up (with no "
+            "sample or inner container(s)). This data set will also include the "
+            "wavelength/energy, measurement time and intensity for which these "
+            "data are valid."
+        ),
+        a_nexus_link=NeXusLink(
+            name="reference_measurement",
+            target="/NXentry",
+            optionality="optional",
         ),
     )
 

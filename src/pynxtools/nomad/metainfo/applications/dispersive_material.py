@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXdispersive_material` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXdispersive_material` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cite import Cite
 from pynxtools.nomad.metainfo.base_classes.dispersion import Dispersion
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -105,8 +112,7 @@ class DispersiveMaterial(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -123,8 +129,7 @@ class DispersiveMaterial(Entry):
             "Version number to identify which definition of this application "
             "definition was used for this entry/data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -141,8 +146,7 @@ class DispersiveMaterial(Entry):
             "URL where to find further material (documentation, examples) "
             "relevant to the application definition"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="URL",
             type="NX_CHAR",
             name_type="specified",
@@ -158,8 +162,7 @@ class DispersiveMaterial(Entry):
         description=(
             "Denotes whether the dispersion is calculated or derived from an experiment"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dispersion_type",
             type="NX_CHAR",
             name_type="specified",
@@ -199,8 +202,7 @@ class DispersiveMaterialSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-sample-chemical-formula-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -218,8 +220,7 @@ class DispersiveMaterialSample(Sample):
             "components, all elements from each component must be included in "
             "`atom_types`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -234,8 +235,7 @@ class DispersiveMaterialSample(Sample):
         description=(
             "The colloquial name of the material, e.g. graphite or diamond for carbon."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="colloquial_name",
             type="NX_CHAR",
             name_type="specified",
@@ -248,8 +248,7 @@ class DispersiveMaterialSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-sample-material-phase-field"
         ],
         description=("The phase of the material"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material_phase",
             type="NX_CHAR",
             name_type="specified",
@@ -267,8 +266,7 @@ class DispersiveMaterialSample(Sample):
             "Additional information about the phase if the material phase is not "
             "from the enumerated list."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material_phase_comment",
             type="NX_CHAR",
             name_type="specified",
@@ -285,8 +283,7 @@ class DispersiveMaterialSample(Sample):
             "as crystalline phase of a crystal (e.g. 4H or 6H for SiC) or if a "
             "measurement was done on a thin film or bulk material."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="additional_phase_information",
             type="NX_CHAR",
             name_type="specified",
@@ -321,8 +318,7 @@ class DispersiveMaterialCite(Cite):
             "A text description of this reference, e.g. `E. Example et al, The "
             "mighty example, An example journal 50 (2023), 100`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="text",
             type="NX_CHAR",
             name_type="specified",
@@ -334,8 +330,7 @@ class DispersiveMaterialCite(Cite):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-references-doi-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="doi",
             type="NX_CHAR",
             name_type="specified",
@@ -373,8 +368,7 @@ class DispersiveMaterialDispersionX(Dispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-model-name-field"
         ],
         description=("The name of this dispersion model."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model_name",
             type="NX_CHAR",
             name_type="specified",
@@ -410,8 +404,7 @@ class DispersiveMaterialDispersionY(Dispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-model-name-field"
         ],
         description=("The name of this dispersion model."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model_name",
             type="NX_CHAR",
             name_type="specified",
@@ -449,8 +442,7 @@ class DispersiveMaterialDispersionZ(Dispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-model-name-field"
         ],
         description=("The name of this dispersion model."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model_name",
             type="NX_CHAR",
             name_type="specified",

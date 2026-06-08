@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXsimilarity_grouping` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXsimilarity_grouping` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -96,8 +103,7 @@ class SimilarityGrouping(Object):
         description=(
             "Number of members in the set which gets partitioned into features."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
             name_type="specified",
@@ -112,8 +118,7 @@ class SimilarityGrouping(Object):
         ],
         dimensionality="dimensionless",
         description=("How many numerical labels does each feature have."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_numeric_labels",
             type="NX_UINT",
             name_type="specified",
@@ -128,8 +133,7 @@ class SimilarityGrouping(Object):
         ],
         dimensionality="dimensionless",
         description=("How many categorical labels does each feature have."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_categorical_labels",
             type="NX_UINT",
             name_type="specified",
@@ -153,8 +157,7 @@ class SimilarityGrouping(Object):
             "-1 and unassigned points to 0. Numerical identifier have to be "
             "strictly increasing."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
             name_type="specified",
@@ -174,8 +177,7 @@ class SimilarityGrouping(Object):
             "clustering algorithms this can for instance encode the "
             "indices_cluster."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="numerical_label",
             type="NX_INT",
             name_type="specified",
@@ -192,8 +194,7 @@ class SimilarityGrouping(Object):
         description=(
             "Matrix of categorical attribute data for each member in the set."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="categorical_label",
             type="NX_CHAR",
             name_type="specified",
@@ -239,8 +240,7 @@ class SimilarityGroupingStatistics(Process):
         ],
         dimensionality="dimensionless",
         description=("Total number of features categorized as unassigned."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unassigned",
             type="NX_UINT",
             name_type="specified",
@@ -255,8 +255,7 @@ class SimilarityGroupingStatistics(Process):
         ],
         dimensionality="dimensionless",
         description=("Total number of features categorized as noise."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="noise",
             type="NX_UINT",
             name_type="specified",
@@ -271,8 +270,7 @@ class SimilarityGroupingStatistics(Process):
         ],
         dimensionality="dimensionless",
         description=("Total number of features."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total",
             type="NX_UINT",
             name_type="specified",
@@ -288,8 +286,7 @@ class SimilarityGroupingStatistics(Process):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Array of numerical identifier of each feature."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_cluster",
             type="NX_INT",
             name_type="specified",
@@ -305,8 +302,7 @@ class SimilarityGroupingStatistics(Process):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Array of number of objects for each feature."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="member_count",
             type="NX_UINT",
             name_type="specified",

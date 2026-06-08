@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXfluo` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXfluo` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,15 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -81,14 +89,8 @@ class Fluo(Entry):
         variable=True,
     )
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.fluo.FluoData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="data",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     title = Quantity(
@@ -96,8 +98,7 @@ class Fluo(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -109,8 +110,7 @@ class Fluo(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -123,8 +123,7 @@ class Fluo(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +165,7 @@ class FluoSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -202,8 +200,7 @@ class FluoMonitor(Monitor):
             "Count to a preset value based on either clock time (timer) or "
             "received monitor counts (monitor)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -217,8 +214,7 @@ class FluoMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-monitor-preset-field"
         ],
         description=("preset value for time or monitor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preset",
             type="NX_FLOAT",
             name_type="specified",
@@ -231,13 +227,52 @@ class FluoMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-monitor-data-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FluoData(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    energy = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-data-energy-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="energy",
+            target="/entry/instrument/fluorescence/energy",
+            optionality="required",
+        ),
+    )
+    data = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-data-data-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="data",
+            target="/entry/instrument/fluorescence/data",
+            optionality="required",
         ),
     )
 
