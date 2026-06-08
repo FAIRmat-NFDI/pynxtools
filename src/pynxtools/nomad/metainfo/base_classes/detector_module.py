@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -79,8 +86,7 @@ class DetectorModule(Object):
             "The :ref:`order <Design-ArrayStorageOrder>` of indices (i, j or i, "
             "j, k) is slow to fast."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data_origin",
             type="NX_INT",
             name_type="specified",
@@ -97,8 +103,7 @@ class DetectorModule(Object):
             "direction. Dimensionality and order of indices is the same as for "
             "data_origin."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data_size",
             type="NX_INT",
             name_type="specified",
@@ -115,8 +120,7 @@ class DetectorModule(Object):
             "Offset of the module in regards to the origin of the detector in an "
             "arbitrary direction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="module_offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -129,14 +133,13 @@ class DetectorModule(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-module-offset-transformation-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="transformation_type",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["translation"],
             parent_field="module_offset",
+            enumeration=["translation"],
         ),
     )
     module_offset__vector = Quantity(
@@ -145,8 +148,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-module-offset-vector-attribute"
         ],
         description=("Three values that define the axis for this transformation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vector",
             type="NX_NUMBER",
             name_type="specified",
@@ -163,8 +165,7 @@ class DetectorModule(Object):
             "A fixed offset applied before the transformation (three vector "
             "components)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -178,8 +179,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-module-offset-offset-units-attribute"
         ],
         description=("Units of the offset."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset_units",
             type="NX_CHAR",
             name_type="specified",
@@ -193,8 +193,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-module-offset-depends-on-attribute"
         ],
         description=("Points to the path of the next element in the geometry chain."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -216,8 +215,7 @@ class DetectorModule(Object):
             "all pixels in this direction have the same value. The direction "
             "itself is given through the vector attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fast_pixel_direction",
             type="NX_NUMBER",
             name_type="specified",
@@ -230,14 +228,13 @@ class DetectorModule(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-fast-pixel-direction-transformation-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="transformation_type",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["translation"],
             parent_field="fast_pixel_direction",
+            enumeration=["translation"],
         ),
     )
     fast_pixel_direction__vector = Quantity(
@@ -246,8 +243,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-fast-pixel-direction-vector-attribute"
         ],
         description=("Three values that define the axis for this transformation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vector",
             type="NX_NUMBER",
             name_type="specified",
@@ -264,8 +260,7 @@ class DetectorModule(Object):
             "A fixed offset applied before the transformation (three vector "
             "components)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -279,8 +274,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-fast-pixel-direction-offset-units-attribute"
         ],
         description=("Units of the offset."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset_units",
             type="NX_CHAR",
             name_type="specified",
@@ -294,8 +288,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-fast-pixel-direction-depends-on-attribute"
         ],
         description=("Points to the path of the next element in the geometry chain."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -317,8 +310,7 @@ class DetectorModule(Object):
             "one value is given, all pixels in this direction have the same "
             "value. The direction itself is given through the vector attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slow_pixel_direction",
             type="NX_NUMBER",
             name_type="specified",
@@ -331,14 +323,13 @@ class DetectorModule(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-slow-pixel-direction-transformation-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="transformation_type",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["translation"],
             parent_field="slow_pixel_direction",
+            enumeration=["translation"],
         ),
     )
     slow_pixel_direction__vector = Quantity(
@@ -347,8 +338,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-slow-pixel-direction-vector-attribute"
         ],
         description=("Three values that define the axis for this transformation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vector",
             type="NX_NUMBER",
             name_type="specified",
@@ -365,8 +355,7 @@ class DetectorModule(Object):
             "A fixed offset applied before the transformation (three vector "
             "components)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -380,8 +369,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-slow-pixel-direction-offset-units-attribute"
         ],
         description=("Units of the offset."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset_units",
             type="NX_CHAR",
             name_type="specified",
@@ -395,8 +383,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-slow-pixel-direction-depends-on-attribute"
         ],
         description=("Points to the path of the next element in the geometry chain."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -410,8 +397,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-depends-on-field"
         ],
         description=("Points to the start of the dependency chain for this module."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

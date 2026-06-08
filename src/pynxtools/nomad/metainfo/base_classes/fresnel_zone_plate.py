@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -67,8 +74,7 @@ class FresnelZonePlate(Component):
             "the focal length of the zone plate (in microns) at an X-ray photon "
             "energy (in electron volts)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="focus_parameters",
             type="NX_FLOAT",
             name_type="specified",
@@ -81,8 +87,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-outer-diameter-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="outer_diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -96,8 +101,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-outermost-zone-width-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="outermost_zone_width",
             type="NX_FLOAT",
             name_type="specified",
@@ -111,8 +115,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-diameter-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="central_stop_diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -126,8 +129,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-fabrication-field"
         ],
         description=("how the zone plate was manufactured"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fabrication",
             type="NX_CHAR",
             name_type="specified",
@@ -141,8 +143,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-zone-height-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="zone_height",
             type="NX_FLOAT",
             name_type="specified",
@@ -156,8 +157,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-zone-material-field"
         ],
         description=("Material of the zones themselves"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="zone_material",
             type="NX_CHAR",
             name_type="specified",
@@ -173,8 +173,7 @@ class FresnelZonePlate(Component):
             "Material present between the zones. This is usually only present "
             'for the "zone doubled" fabrication process'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="zone_support_material",
             type="NX_CHAR",
             name_type="specified",
@@ -186,8 +185,7 @@ class FresnelZonePlate(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="central_stop_material",
             type="NX_CHAR",
             name_type="specified",
@@ -200,8 +198,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-thickness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="central_stop_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -215,8 +212,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-mask-thickness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mask_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -233,8 +229,7 @@ class FresnelZonePlate(Component):
             "If no mask is present, set mask_thickness to 0 and omit the "
             "mask_material field"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mask_material",
             type="NX_CHAR",
             name_type="specified",
@@ -246,8 +241,7 @@ class FresnelZonePlate(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-support-membrane-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="support_membrane_material",
             type="NX_CHAR",
             name_type="specified",
@@ -260,8 +254,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-support-membrane-thickness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="support_membrane_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -278,8 +271,7 @@ class FresnelZonePlate(Component):
             ".. todo:: Add a definition for the reference point of a fresnel "
             "zone plate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
 
@@ -163,8 +170,7 @@ class Detector(Component):
         dimensionality="[time]",
         shape=["*"],
         description=("Total time of flight"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
             name_type="specified",
@@ -177,14 +183,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-time-of-flight-axis-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axis",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["3"],
             parent_field="time_of_flight",
+            enumeration=["3"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -193,14 +198,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-time-of-flight-primary-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="primary",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["1"],
             parent_field="time_of_flight",
+            enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -210,8 +214,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-time-of-flight-long-name-attribute"
         ],
         description=("Total time of flight"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -227,8 +230,7 @@ class Detector(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("In DAQ clock pulses"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="raw_time_of_flight",
             type="NX_INT",
             name_type="specified",
@@ -242,8 +244,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-raw-time-of-flight-frequency-attribute"
         ],
         description=("Clock frequency in Hz"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -259,8 +260,7 @@ class Detector(Component):
         description=(
             "Identifier for detector (pixels) Can be multidimensional, if needed"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_number",
             type="NX_INT",
             name_type="specified",
@@ -303,8 +303,7 @@ class Detector(Component):
             "rank and dimension sizes (see symbol list) shown here are merely "
             "illustrative of coordination between related datasets."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -318,8 +317,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-data-long-name-attribute"
         ],
         description=("Title of measurement"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -333,8 +331,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-data-check-sum-attribute"
         ],
         description=("Integral of data as check of data integrity"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="check_sum",
             type="NX_INT",
             name_type="specified",
@@ -354,8 +351,7 @@ class Detector(Component):
             "standard deviation, which has the same units as the data. The form "
             "data_error is deprecated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data_errors",
             type="NX_NUMBER",
             name_type="specified",
@@ -374,8 +370,7 @@ class Detector(Component):
             "Offset from the detector center in x-direction. Can be "
             "multidimensional when needed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_pixel_offset",
             type="NX_FLOAT",
             name_type="specified",
@@ -388,14 +383,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-offset-axis-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axis",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["1"],
             parent_field="x_pixel_offset",
+            enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -404,14 +398,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-offset-primary-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="primary",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["1"],
             parent_field="x_pixel_offset",
+            enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -421,8 +414,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-offset-long-name-attribute"
         ],
         description=("x-axis offset from detector center"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -441,8 +433,7 @@ class Detector(Component):
             "Offset from the detector center in the y-direction. Can be "
             "multidimensional when different values are required for each pixel."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_pixel_offset",
             type="NX_FLOAT",
             name_type="specified",
@@ -455,14 +446,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-offset-axis-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axis",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["2"],
             parent_field="y_pixel_offset",
+            enumeration=["2"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -471,14 +461,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-offset-primary-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="primary",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["1"],
             parent_field="y_pixel_offset",
+            enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -488,8 +477,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-offset-long-name-attribute"
         ],
         description=("y-axis offset from detector center"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -508,8 +496,7 @@ class Detector(Component):
             "Offset from the detector center in the z-direction. Can be "
             "multidimensional when different values are required for each pixel."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_pixel_offset",
             type="NX_FLOAT",
             name_type="specified",
@@ -522,14 +509,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-z-pixel-offset-axis-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axis",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["3"],
             parent_field="z_pixel_offset",
+            enumeration=["3"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -538,14 +524,13 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-z-pixel-offset-primary-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="primary",
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-            enumeration=["1"],
             parent_field="z_pixel_offset",
+            enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
     )
@@ -555,8 +540,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-z-pixel-offset-long-name-attribute"
         ],
         description=("y-axis offset from detector center"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -579,8 +563,7 @@ class Detector(Component):
             "be specified for each detector pixel. Note, it is recommended to "
             "use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -604,8 +587,7 @@ class Detector(Component):
             "detector pixel. Note, it is recommended to use NXtransformations "
             "instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -629,8 +611,7 @@ class Detector(Component):
             "each detector pixel. Note, it is recommended to use "
             "NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -644,8 +625,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-description-field"
         ],
         description=("name/manufacturer/model/etc. information"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -658,8 +638,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-serial-number-field"
         ],
         description=("Serial number for the detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="serial_number",
             type="NX_CHAR",
             name_type="specified",
@@ -672,8 +651,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-local-name-field"
         ],
         description=("Local name for the detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="local_name",
             type="NX_CHAR",
             name_type="specified",
@@ -688,8 +666,7 @@ class Detector(Component):
         dimensionality="[angle] ** 2",
         shape=["*", "*"],
         description=("Solid angle subtended by the detector at the sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="solid_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -707,8 +684,7 @@ class Detector(Component):
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_pixel_size",
             type="NX_FLOAT",
             name_type="specified",
@@ -726,8 +702,7 @@ class Detector(Component):
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_pixel_size",
             type="NX_FLOAT",
             name_type="specified",
@@ -743,8 +718,7 @@ class Detector(Component):
         dimensionality="[time]",
         shape=["*", "*", "*"],
         description=("Detector dead time"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dead_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -760,8 +734,7 @@ class Detector(Component):
         dimensionality="[mass] / [length] / [time] ** 2",
         shape=["*", "*"],
         description=("Detector gas pressure"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gas_pressure",
             type="NX_FLOAT",
             name_type="specified",
@@ -776,8 +749,7 @@ class Detector(Component):
         ],
         dimensionality="[length]",
         description=("maximum drift space dimension"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detection_gas_path",
             type="NX_FLOAT",
             name_type="specified",
@@ -792,8 +764,7 @@ class Detector(Component):
         ],
         shape=["*", "*"],
         description=("Crate number of detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="crate",
             type="NX_INT",
             name_type="specified",
@@ -806,8 +777,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-crate-local-name-attribute"
         ],
         description=("Equivalent local term"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="local_name",
             type="NX_CHAR",
             name_type="specified",
@@ -822,8 +792,7 @@ class Detector(Component):
         ],
         shape=["*", "*"],
         description=("Slot number of detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slot",
             type="NX_INT",
             name_type="specified",
@@ -836,8 +805,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-slot-local-name-attribute"
         ],
         description=("Equivalent local term"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="local_name",
             type="NX_CHAR",
             name_type="specified",
@@ -852,8 +820,7 @@ class Detector(Component):
         ],
         shape=["*", "*"],
         description=("Input number of detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="input",
             type="NX_INT",
             name_type="specified",
@@ -866,8 +833,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-input-local-name-attribute"
         ],
         description=("Equivalent local term"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="local_name",
             type="NX_CHAR",
             name_type="specified",
@@ -885,8 +851,7 @@ class Detector(Component):
             "scintillator, fission chamber, proportion counter, ion chamber, "
             "ccd, pixel, image plate, CMOS, ..."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -909,8 +874,7 @@ class Detector(Component):
             "case, more than one dimension is needed. Therefore the rank of this "
             "field should be less than or equal to (detector rank + 1)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -929,8 +893,7 @@ class Detector(Component):
             "start time for each frame, with the ``start`` attribute as absolute "
             "reference"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -943,8 +906,7 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-start-time-start-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="start",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -963,8 +925,7 @@ class Detector(Component):
             "stop time for each frame, with the ``start`` attribute as absolute "
             "reference"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="stop_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -977,8 +938,7 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-stop-time-start-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="start",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -994,8 +954,7 @@ class Detector(Component):
         description=(
             "date of last calibration (geometry and/or efficiency) measurements"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="calibration_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -1008,8 +967,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-layout-field"
         ],
         description=("How the detector is represented"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="layout",
             type="NX_CHAR",
             name_type="specified",
@@ -1025,8 +983,7 @@ class Detector(Component):
         dimensionality="[time]",
         shape=["*"],
         description=("Elapsed actual counting time"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="count_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -1045,8 +1002,7 @@ class Detector(Component):
             "example) a tomography experiment, a sequence number is stored with "
             "each image."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_number",
             type="NX_INT",
             name_type="specified",
@@ -1065,8 +1021,7 @@ class Detector(Component):
             "detector. The length can be in physical units or pixels as "
             "documented by the units attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beam_center_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -1086,8 +1041,7 @@ class Detector(Component):
             "detector. The length can be in physical units or pixels as "
             "documented by the units attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beam_center_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -1107,8 +1061,7 @@ class Detector(Component):
             "sample and scans some more frames. Each time with a new data file. "
             "This number helps concatenating such measurements."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frame_start_number",
             type="NX_INT",
             name_type="specified",
@@ -1122,8 +1075,7 @@ class Detector(Component):
         ],
         dimensionality="[length]",
         description=("The diameter of a cylindrical detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -1147,8 +1099,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-acquisition-mode-field"
         ],
         description=("The acquisition mode of the detector."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acquisition_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -1173,8 +1124,7 @@ class Detector(Component):
             "True when the angular calibration has been applied in the "
             "electronics, false otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angular_calibration_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1188,8 +1138,7 @@ class Detector(Component):
         ],
         shape=["*", "*"],
         description=("Angular calibration data."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angular_calibration",
             type="NX_FLOAT",
             name_type="specified",
@@ -1205,8 +1154,7 @@ class Detector(Component):
             "True when the flat field correction has been applied in the "
             "electronics, false otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flatfield_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1220,8 +1168,7 @@ class Detector(Component):
         ],
         shape=["*", "*"],
         description=("Flat field correction data."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flatfield",
             type="NX_FLOAT",
             name_type="specified",
@@ -1238,8 +1185,7 @@ class Detector(Component):
             "Errors of the flat field correction data. The form flatfield_error "
             "is deprecated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flatfield_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1255,8 +1201,7 @@ class Detector(Component):
             "True when the pixel mask correction has been applied in the "
             "electronics, false otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pixel_mask_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1296,8 +1241,7 @@ class Detector(Component):
             "specified in pixel_mask_2. The cumulative mask is the bitwise OR of "
             "pixel_mask and any pixel_mask_N entries."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pixel_mask",
             type="NX_INT",
             name_type="specified",
@@ -1323,8 +1267,7 @@ class Detector(Component):
             "applicable) = 4 In cases where the data is of type :ref:`NXlog` "
             "this can also be an NXlog."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="image_key",
             type="NX_INT",
             name_type="specified",
@@ -1342,8 +1285,7 @@ class Detector(Component):
             "is applied to account for these errors. True when count-rate "
             "correction has been applied, false otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="countrate_correction_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1362,8 +1304,7 @@ class Detector(Component):
             "corrected value :math:`countrate\\_correction\\_lookup\\_table[c]`. "
             ":math:`m` denotes the length of the table."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="countrate_correction_lookup_table",
             type="NX_NUMBER",
             name_type="specified",
@@ -1383,8 +1324,7 @@ class Detector(Component):
             "pixels on edges and corners between chips may have larger sensor "
             "areas and counts may be distributed between their logical pixels."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="virtual_pixel_interpolation_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1401,8 +1341,7 @@ class Detector(Component):
             "single photon counting detectors, this must not align with "
             "traditional integer sizes. This can be 4, 8, 12, 14, 16, ..."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bit_depth_readout",
             type="NX_INT",
             name_type="specified",
@@ -1419,8 +1358,7 @@ class Detector(Component):
             "Time it takes to read the detector (typically milliseconds). This "
             "is important to know for time resolved experiments."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_readout_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1441,8 +1379,7 @@ class Detector(Component):
             "the exposure, including any user set delay.. This is important to "
             "know for time resolved experiments."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="trigger_delay_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1457,8 +1394,7 @@ class Detector(Component):
         ],
         dimensionality="[time]",
         description=("User-specified trigger delay."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="trigger_delay_time_set",
             type="NX_FLOAT",
             name_type="specified",
@@ -1479,8 +1415,7 @@ class Detector(Component):
             "the exposure. It forms the lower boundary of the trigger_delay_time "
             "when the user does not request an additional delay."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="trigger_internal_delay_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1499,8 +1434,7 @@ class Detector(Component):
             "this is the trigger_delay_time + exposure_time + readout_time. This "
             "is important to know for time resolved experiments."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="trigger_dead_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1518,8 +1452,7 @@ class Detector(Component):
         description=(
             "This is time for each frame. This is exposure_time + readout time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frame_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1542,8 +1475,7 @@ class Detector(Component):
             "one of these terms, or to submit additional terms to add to the "
             "list."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gain_setting",
             type="NX_CHAR",
             name_type="specified",
@@ -1564,8 +1496,7 @@ class Detector(Component):
             "underload_value. The precise type should match the type of the "
             "data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="saturation_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -1586,8 +1517,7 @@ class Detector(Component):
             "underload_value. The precise type should match the type of the "
             "data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="underload_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -1605,8 +1535,7 @@ class Detector(Component):
             "This is the number of short exposures used to sum images for an "
             "image."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_cycles",
             type="NX_INT",
             name_type="specified",
@@ -1623,8 +1552,7 @@ class Detector(Component):
             "the detector might sense the output from some converter like a "
             "scintillator. This is the name of this converter material."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sensor_material",
             type="NX_CHAR",
             name_type="specified",
@@ -1642,8 +1570,7 @@ class Detector(Component):
             "the detector might sense the output from some converter like a "
             "scintillator. This is the thickness of this converter material."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sensor_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -1662,8 +1589,7 @@ class Detector(Component):
             "energy range in which they work optimally. This is the energy "
             "setting for this."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="threshold_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -1681,11 +1607,61 @@ class Detector(Component):
             "pixel. In complex geometries the NXoff_geometry groups can be used "
             "to provide an unambiguous reference."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    pixel_shape_off_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
+        description=(
+            "Shape description of each pixel. Use only if all pixels in the "
+            "detector are of uniform shape."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXoff_geometry",
+            group_name="pixel_shape",
+            optionality="optional",
+        ),
+    )
+    pixel_shape_cylindrical_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cylindrical_geometry.CylindricalGeometry",
+        description=(
+            "Shape description of each pixel. Use only if all pixels in the "
+            "detector are of uniform shape and require being described by "
+            "cylinders."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXcylindrical_geometry",
+            group_name="pixel_shape",
+            optionality="optional",
+        ),
+    )
+    detector_shape_off_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
+        description=(
+            "Shape description of the whole detector. Use only if pixels in the "
+            "detector are not of uniform shape."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXoff_geometry",
+            group_name="detector_shape",
+            optionality="optional",
+        ),
+    )
+    detector_shape_cylindrical_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cylindrical_geometry.CylindricalGeometry",
+        description=(
+            "Shape description of the whole detector. Use only if pixels in the "
+            "detector are not of uniform shape and require being described by "
+            "cylinders."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXcylindrical_geometry",
+            group_name="detector_shape",
             optionality="optional",
         ),
     )
@@ -1725,8 +1701,7 @@ class DetectorEfficiency(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-signal-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -1740,8 +1715,7 @@ class DetectorEfficiency(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-axes-attribute"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -1754,8 +1728,7 @@ class DetectorEfficiency(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-wavelength-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="wavelength_indices",
             type="NX_CHAR",
             name_type="specified",
@@ -1771,8 +1744,7 @@ class DetectorEfficiency(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*"],
         description=("efficiency of the detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="efficiency",
             type="NX_FLOAT",
             name_type="specified",
@@ -1796,13 +1768,63 @@ class DetectorEfficiency(Data):
             "for the efficiency field. In this use case, the efficiency and "
             "wavelength arrays must have the same dimensionality."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
             units="NX_WAVELENGTH",
+        ),
+    )
+
+    pixel_shape_off_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
+        description=(
+            "Shape description of each pixel. Use only if all pixels in the "
+            "detector are of uniform shape."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXoff_geometry",
+            group_name="pixel_shape",
+            optionality="optional",
+        ),
+    )
+    pixel_shape_cylindrical_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cylindrical_geometry.CylindricalGeometry",
+        description=(
+            "Shape description of each pixel. Use only if all pixels in the "
+            "detector are of uniform shape and require being described by "
+            "cylinders."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXcylindrical_geometry",
+            group_name="pixel_shape",
+            optionality="optional",
+        ),
+    )
+    detector_shape_off_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
+        description=(
+            "Shape description of the whole detector. Use only if pixels in the "
+            "detector are not of uniform shape."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXoff_geometry",
+            group_name="detector_shape",
+            optionality="optional",
+        ),
+    )
+    detector_shape_cylindrical_geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cylindrical_geometry.CylindricalGeometry",
+        description=(
+            "Shape description of the whole detector. Use only if pixels in the "
+            "detector are not of uniform shape and require being described by "
+            "cylinders."
+        ),
+        a_nexus_choice=NeXusChoice(
+            nx_class="NXcylindrical_geometry",
+            group_name="detector_shape",
+            optionality="optional",
         ),
     )
 

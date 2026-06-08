@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -99,8 +106,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-critical-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="critical_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -114,8 +120,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-bending-radius-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bending_radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -130,8 +135,7 @@ class BendingMagnet(Component):
         ],
         dimensionality="[current]",
         description=("strength of magnetic field of dipole magnets"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnetic_field",
             type="NX_FLOAT",
             name_type="specified",
@@ -148,8 +152,7 @@ class BendingMagnet(Component):
         description=(
             "An array of four numbers giving X+, X-, Y+ and Y- half divergence"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="accepted_photon_beam_divergence",
             type="NX_FLOAT",
             name_type="specified",
@@ -168,8 +171,7 @@ class BendingMagnet(Component):
             "direction. Note, it is recommended to use NXtransformations instead "
             "to place component."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="source_distance_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -188,8 +190,7 @@ class BendingMagnet(Component):
             "direction. Note, it is recommended to use NXtransformations instead "
             "to place component."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="source_distance_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -208,8 +209,7 @@ class BendingMagnet(Component):
             "direction. Note that divergence_x_plus+divergence_x_minus is the "
             "total horizontal beam divergence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="divergence_x_plus",
             type="NX_FLOAT",
             name_type="specified",
@@ -228,8 +228,7 @@ class BendingMagnet(Component):
             "direction. Note that divergence_x_plus+divergence_x_minus is the "
             "total horizontal beam divergence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="divergence_x_minus",
             type="NX_FLOAT",
             name_type="specified",
@@ -248,8 +247,7 @@ class BendingMagnet(Component):
             "Note that divergence_y_plus+divergence_y_minus is the total "
             "vertical beam divergence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="divergence_y_plus",
             type="NX_FLOAT",
             name_type="specified",
@@ -268,8 +266,7 @@ class BendingMagnet(Component):
             "direction. Note that divergence_y_plus+divergence_y_minus is the "
             "total vertical beam divergence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="divergence_y_minus",
             type="NX_FLOAT",
             name_type="specified",
@@ -285,8 +282,7 @@ class BendingMagnet(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a bending magnet."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

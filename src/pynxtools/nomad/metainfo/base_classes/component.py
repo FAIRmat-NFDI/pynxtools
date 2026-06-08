@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -101,8 +108,7 @@ class Component(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcomponent.html#nxcomponent-applied-field"
         ],
         description=("Was the component used?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -115,8 +121,7 @@ class Component(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcomponent.html#nxcomponent-name-field"
         ],
         description=("Name of the component."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -134,8 +139,7 @@ class Component(Object):
             "should not be used, use this free text, although it is not "
             "recommended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -154,8 +158,7 @@ class Component(Object):
             "acting as input. An example usage would be to chain components "
             "and/or beams together to describe the beam path in an experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="inputs",
             type="NX_CHAR",
             name_type="specified",
@@ -173,8 +176,7 @@ class Component(Object):
             "this component. For more information, see :ref:`inputs "
             "</NXcomponent/inputs-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="outputs",
             type="NX_CHAR",
             name_type="specified",
@@ -198,8 +200,7 @@ class Component(Object):
             "operations are stored in a NXtransformations group. But NeXus "
             "allows them to be stored anywhere."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

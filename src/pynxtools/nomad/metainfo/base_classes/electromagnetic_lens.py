@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -74,8 +81,7 @@ class ElectromagneticLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-name-field"
         ],
         description=("Name of the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -93,8 +99,7 @@ class ElectromagneticLens(Component):
             "should not be used, use this free text, although it is not "
             "recommended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -117,8 +122,7 @@ class ElectromagneticLens(Component):
             "technical level possible when no more information is available "
             "physically or accessible legally."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="power_setting",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
@@ -139,8 +143,7 @@ class ElectromagneticLens(Component):
             "microscope but can still be useful to guide users as to how to "
             "repeat the measurement."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -157,8 +160,7 @@ class ElectromagneticLens(Component):
             "Excitation voltage of the lens. For dipoles it is a single number. "
             "For higher order multipoles, it is an array."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
             name_type="specified",
@@ -176,8 +178,7 @@ class ElectromagneticLens(Component):
             "Excitation current of the lens. For dipoles it is a single number. "
             "For higher-order multipoles, it is an array."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current",
             type="NX_NUMBER",
             name_type="specified",
@@ -195,8 +196,7 @@ class ElectromagneticLens(Component):
         description=(
             "Qualitative type of lens with respect to the number of pole pieces."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -220,8 +220,7 @@ class ElectromagneticLens(Component):
         description=(
             "Qualitative description of the lens based on the number of pole pieces."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_poles",
             type="NX_UINT",
             name_type="specified",

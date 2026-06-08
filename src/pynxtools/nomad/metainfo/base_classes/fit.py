@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.peak import Peak
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -126,8 +133,7 @@ class Fit(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-label-field"
         ],
         description=("Human-readable label for this fit procedure."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="label",
             type="NX_CHAR",
             name_type="specified",
@@ -148,8 +154,7 @@ class Fit(Process):
             "often used to guide adjustments to the fitting parameters in the "
             "peak fitting process."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="figure_of_meritMETRIC",
             type="NX_NUMBER",
             name_type="partial",
@@ -168,8 +173,7 @@ class Fit(Process):
             "reduced :math:`\\chi^2`:, :math:`\\chi^2`: per degree of freedom - "
             ":math:`R^2`, the coefficient of determination"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="metric",
             type="NX_CHAR",
             name_type="specified",
@@ -217,8 +221,7 @@ class FitData(Data):
             "Independent variable(s) for this fit procedure, representing the "
             "values to be fitted by the ``global_fit_function``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="input_independent",
             type="NX_NUMBER",
             name_type="specified",
@@ -234,8 +237,7 @@ class FitData(Data):
         description=(
             "Dependent variable(s) for this fit procedure (i.e., the observed data)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="input_dependent",
             type="NX_NUMBER",
             name_type="specified",
@@ -254,8 +256,7 @@ class FitData(Data):
             "fit parameters. This represents the best-fit curve or surface "
             "approximating the input_dependent data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fit_sum",
             type="NX_NUMBER",
             name_type="specified",
@@ -273,8 +274,7 @@ class FitData(Data):
             "the predicted fit values (``fit_sum``). A lower magnitude of "
             "residuals indicates a better fit."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="residual",
             type="NX_NUMBER",
             name_type="specified",
@@ -318,8 +318,7 @@ class FitPeakPEAK(Peak):
             "on the energy scale (see position), the ionization cross section, "
             "and the element probed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_sensitivity_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -339,8 +338,7 @@ class FitPeakPEAK(Peak):
             "additionally dividing by the relative sensitivity factors). Details "
             "shall be given in `global_fit_function`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_area",
             type="NX_NUMBER",
             name_type="specified",

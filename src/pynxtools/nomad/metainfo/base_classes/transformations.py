@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -161,8 +168,7 @@ class Transformations(Object):
             "exposures for the corresponding frames. The end points should be "
             "given in ``AXISNAME_end``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME",
             type="NX_NUMBER",
             name_type="any",
@@ -185,14 +191,13 @@ class Transformations(Object):
             "In this case the value of the ``AXISNAME`` field is not used and "
             "can be set to the number ``NaN``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="transformation_type",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["translation", "rotation"],
             parent_field="AXISNAME",
+            enumeration=["translation", "rotation"],
         ),
     )
     AXISNAME__vector = Quantity(
@@ -227,8 +232,7 @@ class Transformations(Object):
             "using this convention, the transformation matrices in both left- "
             "and right-handed coordinate systems are the same."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vector",
             type="NX_NUMBER",
             name_type="specified",
@@ -248,8 +252,7 @@ class Transformations(Object):
             "``translation`` axis but, for example, as the mechanical offset "
             "from mounting the axis to its dependency."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -265,8 +268,7 @@ class Transformations(Object):
         description=(
             "Units of the offset. Values should be consistent with NX_LENGTH."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset_units",
             type="NX_CHAR",
             name_type="specified",
@@ -287,8 +289,7 @@ class Transformations(Object):
             "explicitly pointing towards the default `NeXus coordinate system "
             "<https://manual.nexusformat.org/design.html#the-nexus-coordinate-system>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -308,8 +309,7 @@ class Transformations(Object):
             "equipment_component label form a logical grouping which can be "
             "combined together into a single change-of-basis operation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="equipment_component",
             type="NX_CHAR",
             name_type="specified",
@@ -329,8 +329,7 @@ class Transformations(Object):
             "values in this field are the end points of the motions that start "
             "at the corresponding positions given in the ``AXISNAME`` field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME_end",
             type="NX_NUMBER",
             name_type="partial",
@@ -354,8 +353,7 @@ class Transformations(Object):
             "``AXISNAME_end``, but there is a possibility of significant "
             "differences. Use of ``AXISNAME_end`` is recommended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME_increment_set",
             type="NX_NUMBER",
             name_type="partial",

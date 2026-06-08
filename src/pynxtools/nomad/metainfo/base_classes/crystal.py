@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -146,8 +153,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-usage-field"
         ],
         description=("How this crystal is used. Choices are in the list."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="usage",
             type="NX_CHAR",
             name_type="specified",
@@ -170,8 +176,7 @@ class Crystal(Component):
             "time of the change: PG (Highly Oriented Pyrolytic Graphite) | Ge | "
             "Si | Cu | Fe3Si | CoFe | Cu2MnAl (Heusler) | Multilayer | Diamond."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -201,8 +206,7 @@ class Crystal(Component):
             "their symbol. * This is the *Hill* system used by Chemical "
             "Abstracts."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -218,8 +222,7 @@ class Crystal(Component):
             "A number which describes if this is the first, second,.. "
             ":math:`n^{th}` crystal in a multi crystal monochromator"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="order_no",
             type="NX_INT",
             name_type="specified",
@@ -235,8 +238,7 @@ class Crystal(Component):
         description=(
             "Cut angle of reflecting Bragg plane and plane of crystal surface"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cut_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -250,8 +252,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-space-group-field"
         ],
         description=("Space group of crystal structure"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="space_group",
             type="NX_CHAR",
             name_type="specified",
@@ -266,8 +267,7 @@ class Crystal(Component):
         dimensionality="[length]",
         shape=["*", 6],
         description=("Unit cell parameters (lengths and angles)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell",
             type="NX_FLOAT",
             name_type="specified",
@@ -282,8 +282,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Unit cell lattice parameter: length of side a"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_a",
             type="NX_FLOAT",
             name_type="specified",
@@ -298,8 +297,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Unit cell lattice parameter: length of side b"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_b",
             type="NX_FLOAT",
             name_type="specified",
@@ -314,8 +312,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Unit cell lattice parameter: length of side c"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_c",
             type="NX_FLOAT",
             name_type="specified",
@@ -330,8 +327,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("Unit cell lattice parameter: angle alpha"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_alpha",
             type="NX_FLOAT",
             name_type="specified",
@@ -346,8 +342,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("Unit cell lattice parameter: angle beta"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_beta",
             type="NX_FLOAT",
             name_type="specified",
@@ -362,8 +357,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("Unit cell lattice parameter: angle gamma"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_gamma",
             type="NX_FLOAT",
             name_type="specified",
@@ -378,8 +372,7 @@ class Crystal(Component):
         ],
         dimensionality="[length] ** 3",
         description=("Volume of the unit cell"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="unit_cell_volume",
             type="NX_FLOAT",
             name_type="specified",
@@ -398,8 +391,7 @@ class Crystal(Component):
             "convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, "
             "457-464"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_matrix",
             type="NX_FLOAT",
             name_type="specified",
@@ -414,8 +406,7 @@ class Crystal(Component):
         dimensionality="[length]",
         shape=["*"],
         description=("Optimum diffracted wavelength"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -430,8 +421,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("spacing between crystal planes of the reflection"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="d_spacing",
             type="NX_FLOAT",
             name_type="specified",
@@ -446,8 +436,7 @@ class Crystal(Component):
         ],
         dimensionality="1 / [length]",
         description=("Scattering vector, Q, of nominal reflection"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_vector",
             type="NX_FLOAT",
             name_type="specified",
@@ -463,8 +452,7 @@ class Crystal(Component):
         dimensionality="dimensionless",
         shape=[3],
         description=("Miller indices (hkl) values of nominal reflection"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflection",
             type="NX_INT",
             name_type="specified",
@@ -482,8 +470,7 @@ class Crystal(Component):
             "Thickness of the crystal. (Required for Laue orientations - see "
             '"usage" field)'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -498,8 +485,7 @@ class Crystal(Component):
         ],
         dimensionality="[mass] / [length] ** 3",
         description=("mass density of the crystal"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="density",
             type="NX_NUMBER",
             name_type="specified",
@@ -514,8 +500,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Horizontal width of individual segment"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="segment_width",
             type="NX_FLOAT",
             name_type="specified",
@@ -530,8 +515,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Vertical height of individual segment"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="segment_height",
             type="NX_FLOAT",
             name_type="specified",
@@ -546,8 +530,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Thickness of individual segment"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="segment_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -562,8 +545,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("Typical gap between adjacent segments"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="segment_gap",
             type="NX_FLOAT",
             name_type="specified",
@@ -578,8 +560,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("number of segment columns in horizontal direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="segment_columns",
             type="NX_FLOAT",
             name_type="specified",
@@ -594,8 +575,7 @@ class Crystal(Component):
         ],
         dimensionality="[length]",
         description=("number of segment rows in vertical direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="segment_rows",
             type="NX_FLOAT",
             name_type="specified",
@@ -610,8 +590,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("horizontal mosaic Full Width Half Maximum"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mosaic_horizontal",
             type="NX_FLOAT",
             name_type="specified",
@@ -626,8 +605,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("vertical mosaic Full Width Half Maximum"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mosaic_vertical",
             type="NX_FLOAT",
             name_type="specified",
@@ -642,8 +620,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("Horizontal curvature of focusing crystal"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="curvature_horizontal",
             type="NX_FLOAT",
             name_type="specified",
@@ -658,8 +635,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("Vertical curvature of focusing crystal"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="curvature_vertical",
             type="NX_FLOAT",
             name_type="specified",
@@ -673,8 +649,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-is-cylindrical-field"
         ],
         description=("Is this crystal bent cylindrically?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_cylindrical",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -688,8 +663,7 @@ class Crystal(Component):
         ],
         dimensionality="[angle]",
         description=("If cylindrical: cylinder orientation angle"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cylindrical_orientation_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -709,8 +683,7 @@ class Crystal(Component):
             "Note: some instrument geometries call this term 2theta. Note: it is "
             "recommended to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -729,8 +702,7 @@ class Crystal(Component):
             "Azimuthal angle at which crystal assembly is positioned. Note: it "
             "is recommended to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -746,8 +718,7 @@ class Crystal(Component):
         dimensionality="[angle]",
         shape=["*"],
         description=("Bragg angle of nominal reflection"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bragg_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -762,8 +733,7 @@ class Crystal(Component):
         ],
         dimensionality="[temperature]",
         description=("average/nominal crystal temperature"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -777,8 +747,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-temperature-coefficient-field"
         ],
         description=("how lattice parameter changes with temperature"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature_coefficient",
             type="NX_FLOAT",
             name_type="specified",
@@ -794,8 +763,7 @@ class Crystal(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a crystal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

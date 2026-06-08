@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -63,8 +70,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The experiments from which the reflection data derives"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiments",
             type="NX_CHAR",
             name_type="specified",
@@ -78,8 +84,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The h component of the miller index"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="h",
             type="NX_NUMBER",
             name_type="specified",
@@ -92,8 +97,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-h-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -108,8 +112,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The k component of the miller index"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="k",
             type="NX_NUMBER",
             name_type="specified",
@@ -122,8 +125,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-k-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -138,8 +140,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The l component of the miller index"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="l",
             type="NX_NUMBER",
             name_type="specified",
@@ -152,8 +153,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-l-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -172,8 +172,7 @@ class Reflections(Object):
             "value is greater than 0, the experiments must link to a "
             "multi-experiment NXmx group"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="id",
             type="NX_INT",
             name_type="specified",
@@ -186,8 +185,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-id-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -205,8 +203,7 @@ class Reflections(Object):
             "The id of the reflection. Multiple partials from the same "
             "reflection should all have the same id"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflection_id",
             type="NX_INT",
             name_type="specified",
@@ -219,8 +216,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-reflection-id-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -235,8 +231,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("Is the reflection entering or exiting the Ewald sphere"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="entering",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -249,8 +244,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-entering-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -265,8 +259,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The detector module on which the reflection was recorded"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="det_module",
             type="NX_INT",
             name_type="specified",
@@ -279,8 +272,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-det-module-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -310,8 +302,7 @@ class Reflections(Object):
             "``failed_during_summation`` 23 ``failed_during_profile_fitting`` 24 "
             "``bad_reference`` === =========================================="
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flags",
             type="NX_INT",
             name_type="specified",
@@ -324,8 +315,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-flags-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -340,8 +330,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The resolution of the reflection"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="d",
             type="NX_FLOAT",
             name_type="specified",
@@ -354,8 +343,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-d-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -373,8 +361,7 @@ class Reflections(Object):
             "The partiality of the reflection. Dividing by this number will "
             "inflate the measured intensity to the full reflection equivalent."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="partiality",
             type="NX_FLOAT",
             name_type="specified",
@@ -387,8 +374,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-partiality-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -406,8 +392,7 @@ class Reflections(Object):
         description=(
             "The frame on which the bragg peak of the reflection is predicted"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="predicted_frame",
             type="NX_FLOAT",
             name_type="specified",
@@ -421,8 +406,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-frame-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -440,8 +424,7 @@ class Reflections(Object):
         description=(
             "The x position at which the bragg peak of the reflection is predicted"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="predicted_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -455,8 +438,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-x-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -474,8 +456,7 @@ class Reflections(Object):
         description=(
             "The y position at which the bragg peak of the reflection is predicted"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="predicted_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -489,8 +470,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-y-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -508,8 +488,7 @@ class Reflections(Object):
         description=(
             "The phi angle at which the bragg peak of the reflection is predicted"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="predicted_phi",
             type="NX_FLOAT",
             name_type="specified",
@@ -523,8 +502,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-phi-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -543,8 +521,7 @@ class Reflections(Object):
             "The x pixel position at which the bragg peak of the reflection is "
             "predicted"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="predicted_px_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -558,8 +535,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-x-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -578,8 +554,7 @@ class Reflections(Object):
             "The y pixel position at which the bragg peak of the reflection is "
             "predicted"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="predicted_px_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -593,8 +568,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-y-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -613,8 +587,7 @@ class Reflections(Object):
             "The estimate of the frame at which the central impact of the "
             "reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_frame",
             type="NX_FLOAT",
             name_type="specified",
@@ -628,8 +601,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -648,8 +620,7 @@ class Reflections(Object):
             "The variance on the estimate of the frame at which the central "
             "impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_frame_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -663,8 +634,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -683,8 +653,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the frame at which the "
             "central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_frame_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -698,8 +667,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -718,8 +686,7 @@ class Reflections(Object):
             "The estimate of the pixel x position at which the central impact of "
             "the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_px_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -733,8 +700,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -753,8 +719,7 @@ class Reflections(Object):
             "The variance on the estimate of the pixel x position at which the "
             "central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_px_x_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -768,8 +733,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -788,8 +752,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the pixel x position at "
             "which the central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_px_x_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -803,8 +766,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -823,8 +785,7 @@ class Reflections(Object):
             "The estimate of the pixel y position at which the central impact of "
             "the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_px_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -838,8 +799,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -858,8 +818,7 @@ class Reflections(Object):
             "The variance on the estimate of the pixel y position at which the "
             "central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_px_y_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -873,8 +832,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -893,8 +851,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the pixel y position at "
             "which the central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_px_y_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -908,8 +865,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -928,8 +884,7 @@ class Reflections(Object):
             "The estimate of the phi angle at which the central impact of the "
             "reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_phi",
             type="NX_FLOAT",
             name_type="specified",
@@ -943,8 +898,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -963,8 +917,7 @@ class Reflections(Object):
             "The variance on the estimate of the phi angle at which the central "
             "impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_phi_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -978,8 +931,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -998,8 +950,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the phi angle at which "
             "the central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_phi_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1013,8 +964,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1033,8 +983,7 @@ class Reflections(Object):
             "The estimate of the x position at which the central impact of the "
             "reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -1048,8 +997,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1068,8 +1016,7 @@ class Reflections(Object):
             "The variance on the estimate of the x position at which the central "
             "impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_x_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -1083,8 +1030,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1103,8 +1049,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the x position at which "
             "the central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_x_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1118,8 +1063,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1138,8 +1082,7 @@ class Reflections(Object):
             "The estimate of the y position at which the central impact of the "
             "reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -1153,8 +1096,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1173,8 +1115,7 @@ class Reflections(Object):
             "The variance on the estimate of the y position at which the central "
             "impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_y_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -1188,8 +1129,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1208,8 +1148,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the y position at which "
             "the central impact of the reflection was recorded"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="observed_y_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1223,8 +1162,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1249,8 +1187,7 @@ class Reflections(Object):
             "pixel y position 4 The lower frame number 5 The upper frame number "
             "===== ==========================="
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bounding_box",
             type="NX_INT",
             name_type="specified",
@@ -1264,8 +1201,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-bounding-box-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1280,8 +1216,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The mean background under the reflection peak"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="background_mean",
             type="NX_FLOAT",
             name_type="specified",
@@ -1294,8 +1229,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-background-mean-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1310,8 +1244,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The estimate of the reflection intensity by profile fitting"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="int_prf",
             type="NX_FLOAT",
             name_type="specified",
@@ -1324,8 +1257,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1343,8 +1275,7 @@ class Reflections(Object):
             "The variance on the estimate of the reflection intensity by profile "
             "fitting"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="int_prf_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -1357,8 +1288,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1376,8 +1306,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the reflection intensity "
             "by profile fitting"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="int_prf_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1390,8 +1319,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1406,8 +1334,7 @@ class Reflections(Object):
         ],
         shape=["*"],
         description=("The estimate of the reflection intensity by summation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="int_sum",
             type="NX_FLOAT",
             name_type="specified",
@@ -1420,8 +1347,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1438,8 +1364,7 @@ class Reflections(Object):
         description=(
             "The variance on the estimate of the reflection intensity by summation"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="int_sum_var",
             type="NX_FLOAT",
             name_type="specified",
@@ -1452,8 +1377,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-var-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1471,8 +1395,7 @@ class Reflections(Object):
             "The standard deviation of the estimate of the reflection intensity "
             "by summation"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="int_sum_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1485,8 +1408,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-errors-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1503,8 +1425,7 @@ class Reflections(Object):
         description=(
             "The LP correction factor to be applied to the reflection intensities"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lp",
             type="NX_FLOAT",
             name_type="specified",
@@ -1517,8 +1438,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-lp-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1536,8 +1456,7 @@ class Reflections(Object):
             "The correlation of the reflection profile with the reference "
             "profile used in profile fitting"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="prf_cc",
             type="NX_FLOAT",
             name_type="specified",
@@ -1550,8 +1469,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-prf-cc-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1570,8 +1488,7 @@ class Reflections(Object):
             "elements of the array are the indices of the adjacent overlapped "
             "reflection"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="overlaps",
             type="NX_INT",
             name_type="specified",
@@ -1584,8 +1501,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-overlaps-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1604,8 +1520,7 @@ class Reflections(Object):
             "Polar angle of reflection centroid, following the NeXus simple "
             "(spherical polar) coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -1619,8 +1534,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-polar-angle-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -1639,8 +1553,7 @@ class Reflections(Object):
             "Azimuthal angle of reflection centroid, following the NeXus simple "
             "(spherical polar) coordinate system"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -1654,8 +1567,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-description-attribute"
         ],
         description=("Describes the dataset"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",

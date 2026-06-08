@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -85,8 +92,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-file-time-attribute"
         ],
         description=("Date and time file was originally created"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="file_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -99,8 +105,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-file-name-attribute"
         ],
         description=("File name of original NeXus file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -113,8 +118,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-file-update-time-attribute"
         ],
         description=("Date and time of last file change at close"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="file_update_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -131,8 +135,7 @@ class Root(Object):
             "different from the version of the base class or application "
             "definition version number."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="NeXus_version",
             type="NX_CHAR",
             name_type="specified",
@@ -150,8 +153,7 @@ class Root(Object):
             "creating this file. If the ``NeXus_release`` attribute contains a "
             "commit distance and hash, this should refer to this repository."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="NeXus_repository",
             type="NX_CHAR",
             name_type="specified",
@@ -180,8 +182,7 @@ class Root(Object):
             "``NeXus_repository`` attribute must be included, specifying the URL "
             "of the repository containing that version."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="NeXus_release",
             type="NX_CHAR",
             name_type="specified",
@@ -194,8 +195,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-hdf-version-attribute"
         ],
         description=("Version of HDF (version 4) library used in writing the file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="HDF_version",
             type="NX_CHAR",
             name_type="specified",
@@ -212,8 +212,7 @@ class Root(Object):
             'attribute is spelled with uppercase "V", different than other '
             "version attributes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="HDF5_Version",
             type="NX_CHAR",
             name_type="specified",
@@ -226,8 +225,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-xml-version-attribute"
         ],
         description=("Version of XML support library used in writing the XML file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="XML_version",
             type="NX_CHAR",
             name_type="specified",
@@ -240,8 +238,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-h5py-version-attribute"
         ],
         description=("Version of h5py Python package used in writing the file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="h5py_version",
             type="NX_CHAR",
             name_type="specified",
@@ -260,8 +257,7 @@ class Root(Object):
             "assumed to be valid, if not only the specified concepts/paths are "
             "assumed to be valid."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="partial",
             type="NX_CHAR",
             name_type="specified",
@@ -274,8 +270,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-creator-attribute"
         ],
         description=("facility or program where file originated"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="creator",
             type="NX_CHAR",
             name_type="specified",
@@ -288,8 +283,7 @@ class Root(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot-creator-version-attribute"
         ],
         description=("Version of facility or program used in writing the file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="creator_version",
             type="NX_CHAR",
             name_type="specified",
@@ -314,8 +308,7 @@ class Root(Object):
             "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
             "a summary of the discussion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",

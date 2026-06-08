@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -71,8 +78,7 @@ class Cite(Object):
             "example: The dataset in this group was normalised using the method "
             "which is described in detail in this reference."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -85,8 +91,7 @@ class Cite(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcite.html#nxcite-url-field"
         ],
         description=("URL referencing the document or data."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="url",
             type="NX_CHAR",
             name_type="specified",
@@ -99,8 +104,7 @@ class Cite(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcite.html#nxcite-doi-field"
         ],
         description=("DOI referencing the document or data."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="doi",
             type="NX_CHAR",
             name_type="specified",
@@ -113,8 +117,7 @@ class Cite(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcite.html#nxcite-endnote-field"
         ],
         description=("Bibliographic reference data in EndNote format."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="endnote",
             type="NX_CHAR",
             name_type="specified",
@@ -127,8 +130,7 @@ class Cite(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcite.html#nxcite-bibtex-field"
         ],
         description=("Bibliographic reference data in BibTeX format."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bibtex",
             type="NX_CHAR",
             name_type="specified",

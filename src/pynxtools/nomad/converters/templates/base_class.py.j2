@@ -35,7 +35,14 @@ from nomad.metainfo import (
     SubSection,
 )
 from nomad.metainfo.data_type import Bytes, Datetime
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 {% if base_class != "BaseSection" %}
 from {{ base_import }} import {{ base_class }}
 {% endif %}
@@ -128,8 +135,8 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
             {{ qty.description }}
         ),
         {% endif %}
-        a_nexus_quantity=NeXusQuantity(
-            kind="{{ qty.node.nx_type }}",
+        {% if qty.node.nx_type == "field" %}
+        a_nexus_field=NeXusField(
             name="{{ qty.node.name }}",
             type="{{ qty.node.dtype }}",
             name_type="{{ qty.node.name_type or 'specified' }}",
@@ -143,9 +150,6 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
             {% if qty.node.open_enum %}
             open_enum=True,
             {% endif %}
-            {% if qty.parent_field %}
-            parent_field="{{ qty.parent_field }}",
-            {% endif %}
             {% if qty.interpretation %}
             interpretation="{{ qty.interpretation }}",
             {% endif %}
@@ -154,6 +158,65 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated and nomad_base_cl
             {% endif %}
             {% if qty.node.deprecated %}
             deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% else %}
+        a_nexus_attribute=NeXusAttribute(
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.parent_field %}
+            parent_field="{{ qty.parent_field }}",
+            {% endif %}
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
+            {% endif %}
+            {% if qty.node.open_enum %}
+            open_enum=True,
+            {% endif %}
+            {% if qty.node.deprecated %}
+            deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% endif %}
+    )
+    {% endfor %}
+
+    {% for lnk in links %}
+    {{ lnk.python_name }} = Quantity(
+        type=str,
+        links=["{{ lnk.node.get_link() }}"],
+        {% if lnk.description %}
+        description=(
+            {{ lnk.description }}
+        ),
+        {% endif %}
+        a_nexus_link=NeXusLink(
+            name="{{ lnk.node.name }}",
+            target="{{ lnk.node.target }}",
+            optionality="{{ lnk.node.optionality }}",
+            {% if lnk.node.deprecated %}
+            deprecated="{{ lnk.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    {% for ch in choices %}
+    {{ ch.python_name }} = SubSection(
+        section_def="{{ ch.section_fqn }}",
+        {% if ch.description %}
+        description=(
+            {{ ch.description }}
+        ),
+        {% endif %}
+        a_nexus_choice=NeXusChoice(
+            nx_class="{{ ch.node.nx_class }}",
+            group_name="{{ ch.group_name }}",
+            optionality="{{ ch.node.optionality }}",
+            {% if ch.node.deprecated %}
+            deprecated="{{ ch.node.deprecated }}",
             {% endif %}
         ),
     )
@@ -220,8 +283,8 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             {{ qty.description }}
         ),
         {% endif %}
-        a_nexus_quantity=NeXusQuantity(
-            kind="{{ qty.node.nx_type }}",
+        {% if qty.node.nx_type == "field" %}
+        a_nexus_field=NeXusField(
             name="{{ qty.node.name }}",
             type="{{ qty.node.dtype }}",
             name_type="{{ qty.node.name_type or 'specified' }}",
@@ -235,9 +298,6 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             {% if qty.node.open_enum %}
             open_enum=True,
             {% endif %}
-            {% if qty.parent_field %}
-            parent_field="{{ qty.parent_field }}",
-            {% endif %}
             {% if qty.interpretation %}
             interpretation="{{ qty.interpretation }}",
             {% endif %}
@@ -246,6 +306,65 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             {% endif %}
             {% if qty.node.deprecated %}
             deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% else %}
+        a_nexus_attribute=NeXusAttribute(
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.parent_field %}
+            parent_field="{{ qty.parent_field }}",
+            {% endif %}
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
+            {% endif %}
+            {% if qty.node.open_enum %}
+            open_enum=True,
+            {% endif %}
+            {% if qty.node.deprecated %}
+            deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% endif %}
+    )
+    {% endfor %}
+
+    {% for lnk in links %}
+    {{ lnk.python_name }} = Quantity(
+        type=str,
+        links=["{{ lnk.node.get_link() }}"],
+        {% if lnk.description %}
+        description=(
+            {{ lnk.description }}
+        ),
+        {% endif %}
+        a_nexus_link=NeXusLink(
+            name="{{ lnk.node.name }}",
+            target="{{ lnk.node.target }}",
+            optionality="{{ lnk.node.optionality }}",
+            {% if lnk.node.deprecated %}
+            deprecated="{{ lnk.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    {% for ch in choices %}
+    {{ ch.python_name }} = SubSection(
+        section_def="{{ ch.section_fqn }}",
+        {% if ch.description %}
+        description=(
+            {{ ch.description }}
+        ),
+        {% endif %}
+        a_nexus_choice=NeXusChoice(
+            nx_class="{{ ch.node.nx_class }}",
+            group_name="{{ ch.group_name }}",
+            optionality="{{ ch.node.optionality }}",
+            {% if ch.node.deprecated %}
+            deprecated="{{ ch.node.deprecated }}",
             {% endif %}
         ),
     )
