@@ -1,28 +1,31 @@
-# NeXus Metainfo Generation (Phase 1)
+# NeXus Metainfo Generation (Phases 1–2)
 
-!!! warning "In development"
-    This page describes a new code generation system currently under active development.
-    The API, file layout, and generated output may change before this feature is
-    officially released.
+!!! note "Stable and in use"
+    Phases 1–2 of the NeXus–NOMAD Metainfo refactor are complete.
+    Phase 1 generated 142 base classes; Phase 2 generated 85 application definitions.
+    The system is production-ready. Future phases (3–5) will migrate the parser and complete cleanup.
 
 ---
 
 ## Overview
 
-The existing pynxtools NOMAD integration compiles all NXDL base classes and
-application definitions from raw XML at import time inside `nomad/schema_packages/schema.py`.
-This approach works but tightly couples NXDL parsing to schema registration, makes the
-generated schema hard to inspect or extend, and produces no persistent Python artifacts
-that domain plugins can build on.
+The NeXus–NOMAD Metainfo refactor replaces the runtime XML compilation in `nomad/schema_packages/schema.py`
+with a **persistent code generator** that reads the NeXus definitions through the `NexusNode` API
+and writes one Python file per NXDL class. Each generated file is a normal importable Python module containing a single NOMAD `Section` class that carries structured annotations connecting every quantity and group back to its NXDL definition.
 
-Phase 1 of the NeXus–NOMAD Metainfo refactor introduces a **code generator** that reads
-the NeXus definitions through the `NexusNode` API and writes one Python file per NXDL
-base class. Each generated file is a normal importable Python module containing a single
-NOMAD `Section` class that carries structured annotations connecting every quantity and
-group back to its NXDL definition.
+### What this provides
 
-The existing `nexus_schema` entry point is untouched. Everything in Phase 1 is purely
-additive.
+- **Importable, type-checkable Python classes**: Each NXDL class becomes a NOMAD `Section` class
+  in a `.py` file, with structured annotations connecting every quantity and group back to NXDL.
+- **Clean naming**: Quantities are named after their NXDL concept (`start_time`, not `start_time__field`).
+- **Two entry points**: `nexus_base_classes` (142 base classes) and `nexus_applications` (85 application definitions).
+- **Application definitions are Entry subclasses**: `Xps(Entry)` instead of wrappers — see [ADR-006](#adr-006-application-definitions).
+- **Backward compatibility**: The old `nexus_schema` entry point is untouched; both systems coexist until Phase 3.
+
+### Current status
+
+- **Phase 1** (complete): 142 NXDL base classes (`category="base"`) generated and tested.
+- **Phase 2** (complete): 85 application definitions (`category="application"`) generated; `nexus_applications` entry point active.
 
 ---
 
@@ -281,16 +284,61 @@ src/pynxtools/nomad/
         templates/
             nexus.py.j2    # Jinja2 template
     metainfo/
-        __init__.py             # public: build_base_classes_package()
-        _package.py             # assembles NOMAD Package
-        base_classes/           # generated .py files (one per NXDL base class)
+        __init__.py             # public API: build_base_classes_package(), build_applications_package()
+        _package.py             # assembles NOMAD Packages
+        base_classes/           # Phase 1: 142 generated base class files
             __init__.py
-            entry.py
-            sample.py
+            entry.py            # Entry(Object, basesections.Measurement)
+            sample.py           # Sample(Object, basesections.CompositeSystem)
             detector.py
             ...
-        applications/           # Phase 2
-        contributed/            # Phase 2
+        applications/           # Phase 2: 85 generated application definition files
+            __init__.py
+            arpes.py            # Arpes(Entry) — application specialization of Entry
+            xps.py              # Xps(Entry) — application specialization of Entry
+            ...
+```
+
+---
+
+## Application Definitions: The XpsEntry Decision {#adr-006-application-definitions}
+
+### The design principle: `Xps(Entry)` not `Xps(Object, Measurement)`
+
+In NeXus, every application definition (e.g. `NXxps.nxdl.xml`) wraps exactly one `NXentry` at
+the root level. This is not a container pattern — application definitions are **constraint templates**
+that describe what an `NXentry` looks like in a specific measurement context.
+
+Therefore, in Python/NOMAD, application definitions inherit from `Entry` directly:
+
+```python
+# Phase 2: generated application definition
+class Xps(Entry):
+    m_def = Section(
+        a_nexus_definition=NeXusDefinition(nx_class="NXxps", category="application"),
+    )
+    # SubSections and Quantities from inside NXxps's NXentry group,
+    # with XPS-specific optionality
+```
+
+**Why this design** (see [ADR-006](../../data-modeling/nexus-metainfo/adr/ADR-006-application-definitions-are-entry-subclasses.md)):
+
+- `Xps` **is** a specialized kind of Entry, not a wrapper around an entry.
+- Parser logic is simpler: directly instantiate `Xps` when an HDF5 file's `NX_class` attribute says `"NXxps"`.
+- Inheritance chain is clear: `BaseSection → Object → Entry → Xps`.
+- 1:1 mapping of NXentry to NOMAD entry is preserved.
+
+**Named concepts** in applications follow the same rule as base classes: a named concept class
+is generated only when a group defines its own quantities. Inherited groups point directly at the
+base class.
+
+```python
+# Generated only if CoordinateSystem has own quantities:
+class XpsCoordinateSystem(CoordinateSystem):
+    # XPS-specific changes to the coordinate_system group
+
+# SubSection on Xps uses it if generated, else references the base:
+coordinate_system = SubSection(section_def=XpsCoordinateSystem)
 ```
 
 ### Example generated file (`entry.py`, excerpt)
@@ -428,10 +476,17 @@ the new output is considered user-added.
 ## CLI
 
 ```bash
-# Generate one class
+# Generate one class (base or application)
 pynx nomad generate-metainfo --nxdl NXentry
+pynx nomad generate-metainfo --nxdl NXarpes
 
-# Generate all base classes in topological (dependency) order
+# Generate all base classes (Phase 1)
+pynx nomad generate-metainfo --all-base
+
+# Generate all application definitions (Phase 2)
+pynx nomad generate-metainfo --all-applications
+
+# Generate all categories (apps first, then base --force for cross-refs)
 pynx nomad generate-metainfo --all
 
 # CI check: fail if committed files differ from what the generator would produce
@@ -439,23 +494,36 @@ pynx nomad generate-metainfo --all --dry-run
 
 # Force regeneration (overwrite existing files)
 pynx nomad generate-metainfo --all --force
+
+# Generate into a different package (e.g. nomad-measurements)
+pynx nomad generate-metainfo --all --output-dir ../nomad-measurements/nexus/metainfo/base_classes
 ```
 
 ---
 
 ## Package assembly
 
-`metainfo/_package.py` imports all generated base class modules and assembles a single
-NOMAD `Package`:
+`metainfo/_package.py` imports all generated modules and assembles NOMAD `Package` objects:
+
+### Base classes package (Phase 1)
 
 ```python
-from pynxtools.nomad.metainfo._package import build_base_classes_package
+from pynxtools.nomad.metainfo import build_base_classes_package
 
-pkg = build_base_classes_package()
-print(len(pkg.section_definitions), "sections")
+pkg_base = build_base_classes_package()
+print(len(pkg_base.section_definitions), "base sections")  # 327 including named concepts
 ```
 
-During `build_base_classes_package()`, `__init_metainfo__()` resolves all `SubSection.section_def`
+### Applications package (Phase 2)
+
+```python
+from pynxtools.nomad.metainfo import build_applications_package
+
+pkg_apps = build_applications_package()
+print(len(pkg_apps.section_definitions), "application sections")  # 345 including named concepts
+```
+
+During package assembly, `__init_metainfo__()` resolves all `SubSection.section_def`
 string FQNs into live class references.
 
 !!! note "Phase 1 limitation"
