@@ -282,7 +282,7 @@ class LauetofName(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-name-data-link"

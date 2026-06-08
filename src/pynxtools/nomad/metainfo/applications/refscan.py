@@ -280,7 +280,7 @@ class RefscanData(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-data-link"

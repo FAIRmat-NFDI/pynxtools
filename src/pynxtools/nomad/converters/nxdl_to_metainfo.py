@@ -539,6 +539,12 @@ def _build_named_concept(
     for child in node.children:
         if child.nx_type == "link":
             python_name = nxdl_to_quantity_name(child.name)
+            # Apply conflict resolution: if the link name collides with an
+            # inherited SubSection or a known field-suffix conflict, rename.
+            if python_name in concept_field_suffix:
+                python_name = field_conflicts_with_group(python_name)
+            elif python_name in concept_ancestor_sub_names:
+                python_name = field_conflicts_with_group(python_name)
             if python_name not in seen:
                 seen.add(python_name)
                 own_links.append(
