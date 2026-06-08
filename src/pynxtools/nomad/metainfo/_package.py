@@ -70,7 +70,7 @@ def _build_package_from_dir(category_dir: Path, package_name: str) -> Package:
         module_name = f"{package_name}.{py_file.stem}"
         mod = importlib.import_module(module_name)
         setattr(mod, "m_package", m_package)
-        for attr_name in getattr(mod, "__all__", dir(mod)):
+        for attr_name in dir(mod):
             obj = getattr(mod, attr_name, None)
             if _is_generated_section(obj, module_name):
                 m_package.section_definitions.append(obj.m_def)
