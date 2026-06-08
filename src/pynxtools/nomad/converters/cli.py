@@ -15,7 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""CLI commands for the NXDL → NOMAD metainfo generator."""
+"""
+CLI commands for the NXDL → NOMAD metainfo generator.
+
+Exposes one symbol consumed by the ``pynx nomad `` group:
+
+``generate-metainfo``
+    Click command for creating the NeXus NOMAD metainfo as Python classes.
+"""
 
 from __future__ import annotations
 
@@ -73,9 +80,10 @@ import click
     metavar="DIR",
     type=click.Path(file_okay=False, path_type=Path),
     help=(
-        "Directory to write generated .py files into. "
-        "Defaults to the category-appropriate internal directory. "
-        "Override when generating into a different package (e.g. nomad-measurements)."
+        "Parent directory for generated .py files; base_classes/ or applications/ "
+        "is appended automatically. Omit to write into the pynxtools-internal "
+        "nomad/metainfo/ directory. Pass an explicit path when generating into a "
+        "different package (e.g. nomad-measurements/src/schema_packages/...)."
     ),
 )
 def generate_metainfo(
@@ -98,8 +106,8 @@ def generate_metainfo(
       pynx nomad generate-metainfo --all-applications
       pynx nomad generate-metainfo --all           # apps first, then base --force
       pynx nomad generate-metainfo --all --dry-run  # CI check
-      pynx nomad generate-metainfo --all-base \\
-          --output-dir ../nomad-measurements/src/nomad_measurements/base
+      pynx nomad generate-metainfo --all \\
+          --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo
     """
     flags = [nx_class, generate_all, generate_all_base, generate_all_applications]
     if sum(bool(f) for f in flags) == 0:

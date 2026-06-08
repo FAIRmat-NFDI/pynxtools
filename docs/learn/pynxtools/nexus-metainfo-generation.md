@@ -346,7 +346,7 @@ coordinate_system = SubSection(section_def=XpsCoordinateSystem)
 ```python
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.basesections import BaseSection
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.user import User
 
@@ -384,8 +384,7 @@ class Entry(Object, basesections.Measurement):
     start_time = Quantity(
         type=Datetime,
         links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-start-time-field"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -598,8 +597,7 @@ emitted as quantities with a double-underscore-separated name:
 ```python
 data__units = Quantity(
     ...,
-    a_nexus_quantity=NeXusQuantity(
-        kind="attribute",
+    a_nexus_attribute=NeXusAttribute(
         name="units",
         parent_field="data",
         ...
