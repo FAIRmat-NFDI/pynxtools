@@ -136,6 +136,7 @@ _NXDL_SPECIAL_NAMES = {
     "NXsimple": str(_NXDL_DATA_DIR / "NXsimple.nxdl.xml"),
     "NXtest": str(_NXDL_DATA_DIR / "NXtest.nxdl.xml"),
     "NXtest_extended": str(_NXDL_DATA_DIR / "NXtest_extended.nxdl.xml"),
+    "NXtestBase": str(_NXDL_DATA_DIR / "NXtestBase.nxdl.xml"),
 }
 
 
