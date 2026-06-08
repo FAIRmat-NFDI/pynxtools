@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXem_calorimetry` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXem_calorimetry` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
@@ -202,8 +209,7 @@ class EmCalorimetry(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -216,8 +222,7 @@ class EmCalorimetry(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-identifier-analysis-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_CHAR",
             name_type="specified",
@@ -260,8 +265,7 @@ class EmCalorimetryProfiling(CsProfiling):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-profiling-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -273,8 +277,7 @@ class EmCalorimetryProfiling(CsProfiling):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-profiling-end-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -287,8 +290,7 @@ class EmCalorimetryProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -323,8 +325,7 @@ class EmCalorimetryProgram1(Program):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-program1-program-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -336,8 +337,7 @@ class EmCalorimetryProgram1(Program):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-program1-program-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -373,8 +373,7 @@ class EmCalorimetrySample(Sample):
             "should be set to false) or a virtual one (in which case "
             "is_simulation should be set to true)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_simulation",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -394,8 +393,7 @@ class EmCalorimetrySample(Sample):
             "management systems an opportunity to parse the relevant elements "
             "without having to interpret these from the resources."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -433,8 +431,7 @@ class EmCalorimetryDiffraction(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-diffraction-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -446,8 +443,7 @@ class EmCalorimetryDiffraction(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-diffraction-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -459,8 +455,7 @@ class EmCalorimetryDiffraction(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-diffraction-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -495,8 +490,7 @@ class EmCalorimetryActuator(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-actuator-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -508,8 +502,7 @@ class EmCalorimetryActuator(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-actuator-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -521,8 +514,7 @@ class EmCalorimetryActuator(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-actuator-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -556,8 +548,7 @@ class EmCalorimetryConfig(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-config-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -569,8 +560,7 @@ class EmCalorimetryConfig(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-config-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -582,8 +572,7 @@ class EmCalorimetryConfig(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-config-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -618,8 +607,7 @@ class EmCalorimetrySynchronization(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-synchronization-sequence-index-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",
@@ -640,8 +628,7 @@ class EmCalorimetrySynchronization(Process):
             "of the sample (e.g. obtained temperature via the actuator) are "
             "reported through delta_time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -655,8 +642,7 @@ class EmCalorimetrySynchronization(Process):
         ],
         dimensionality="dimensionless",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_pattern",
             type="NX_INT",
             name_type="specified",
@@ -677,8 +663,7 @@ class EmCalorimetrySynchronization(Process):
             "pattern is substantial shorter than the time it takes the actuator "
             "to cause a change in stimulus (e.g. temperature)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="delta_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -714,8 +699,7 @@ class EmCalorimetryPatternCenter(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-pattern-center-sequence-index-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",
@@ -730,8 +714,7 @@ class EmCalorimetryPatternCenter(Process):
         dimensionality="[length]",
         shape=["*", 2],
         description=("Computed center for each pattern."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_FLOAT",
             name_type="specified",
@@ -767,8 +750,7 @@ class EmCalorimetryDistortionCorrection(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-distortion-correction-sequence-index-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",
@@ -783,8 +765,7 @@ class EmCalorimetryDistortionCorrection(Process):
         dimensionality="[length]",
         shape=["*", 2],
         description=("Computed center for each pattern."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center",
             type="NX_NUMBER",
             name_type="specified",
@@ -820,8 +801,7 @@ class EmCalorimetryIntegration(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-sequence-index-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",
@@ -851,8 +831,7 @@ class EmCalorimetryBackgroundSubtraction(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-background-subtraction-sequence-index-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",

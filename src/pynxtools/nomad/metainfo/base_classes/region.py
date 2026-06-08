@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXregion` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXregion` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -147,8 +154,7 @@ class Region(Object):
             "This is ``rectangular`` to describe the region as a hyper-rectangle "
             "in the index space of its parent group's data field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="region_type",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +172,7 @@ class Region(Object):
             "field relative to the parent group (so it could be a field in a "
             "subgroup of the parent group)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="parent",
             type="NX_CHAR",
             name_type="specified",
@@ -184,8 +189,7 @@ class Region(Object):
             ":math:`\\boldsymbol{R}` and dimensions :math:`\\boldsymbol{d}`. For "
             "example, this could be ``pixel_mask`` of an :ref:`NXdetector`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="parent_mask",
             type="NX_CHAR",
             name_type="specified",
@@ -203,8 +207,7 @@ class Region(Object):
             "is recommended as it also defines the region rank. If omitted then "
             "defined as an array of zeros."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start",
             type="NX_NUMBER",
             name_type="specified",
@@ -223,8 +226,7 @@ class Region(Object):
             "account the other hyperslab selection fields to span the parent "
             "data field's shape."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="count",
             type="NX_INT",
             name_type="specified",
@@ -241,8 +243,7 @@ class Region(Object):
             "An optional field to define striding used to downsample data. If "
             "omitted then defined as an array of ones."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="stride",
             type="NX_INT",
             name_type="specified",
@@ -263,8 +264,7 @@ class Region(Object):
             "``stride`` then the blocks are contiguous; otherwise the blocks "
             "overlap. If omitted then defined as an array of ones."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="block",
             type="NX_INT",
             name_type="specified",
@@ -285,8 +285,7 @@ class Region(Object):
             "allows the result to fit in the same integer type dataset as the "
             "parent dataset. If omitted then no scaling occurs."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scale",
             type="NX_NUMBER",
             name_type="specified",

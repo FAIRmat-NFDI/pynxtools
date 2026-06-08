@@ -336,7 +336,7 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
     )
     {% endfor %}
 
-    {% for lnk in links %}
+    {% for lnk in concept.links %}
     {{ lnk.python_name }} = Quantity(
         type=str,
         links=["{{ lnk.node.get_link() }}"],

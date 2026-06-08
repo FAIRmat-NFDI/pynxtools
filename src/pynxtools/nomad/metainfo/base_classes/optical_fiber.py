@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXoptical_fiber` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXoptical_fiber` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -99,8 +106,7 @@ class OpticalFiber(Component):
             "which refers to a core diameter of 60 micron, a clad diameter of "
             "100 micron, and a coating diameter of 200 micron."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -117,8 +123,7 @@ class OpticalFiber(Component):
             "Fig. 5 "
             "[here](https://www.photonics.com/Article.aspx?AID=25151&PID=4)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -136,8 +141,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-dispersion-type-field"
         ],
         description=("Type of dispersion."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dispersion_type",
             type="NX_CHAR",
             name_type="specified",
@@ -157,8 +161,7 @@ class OpticalFiber(Component):
             "Spectrum-dependent (or refractive index-dependent) dispersion of "
             "the fiber. Specify in ps/nm*km."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dispersion",
             type="NX_FLOAT",
             name_type="specified",
@@ -173,8 +176,7 @@ class OpticalFiber(Component):
         ],
         dimensionality="[length]",
         description=("Length of the fiber."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_FLOAT",
             name_type="specified",
@@ -192,8 +194,7 @@ class OpticalFiber(Component):
             "Spectral range for which the fiber is designed. Enter the minimum "
             "and maximum values (lower and upper limit) of the wavelength range."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spectral_range",
             type="NX_FLOAT",
             name_type="specified",
@@ -210,8 +211,7 @@ class OpticalFiber(Component):
             "Unit of spectral array (e.g. nanometer or angstrom for wavelength, "
             "or electronvolt for energy etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
@@ -226,8 +226,7 @@ class OpticalFiber(Component):
         ],
         dimensionality="[information] / [time]",
         description=("Transfer rate of the fiber (in GB per second)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transfer_rate",
             type="NX_FLOAT",
             name_type="specified",
@@ -242,8 +241,7 @@ class OpticalFiber(Component):
         ],
         dimensionality="dimensionless",
         description=("Numerical aperture (NA) of the fiber."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="numerical_aperture",
             type="NX_FLOAT",
             name_type="specified",
@@ -261,8 +259,7 @@ class OpticalFiber(Component):
         description=(
             "Wavelength-dependent attenuation of the fiber (specify in dB/km)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="attenuation",
             type="NX_FLOAT",
             name_type="specified",
@@ -276,14 +273,13 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-attenuation-units-attribute"
         ],
         description=("Use dB/km."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["dB/km"],
             parent_field="attenuation",
+            enumeration=["dB/km"],
         ),
     )
     power_loss = Quantity(
@@ -293,8 +289,7 @@ class OpticalFiber(Component):
         ],
         dimensionality="dimensionless",
         description=("Power loss of the fiber in percentage."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="power_loss",
             type="NX_FLOAT",
             name_type="specified",
@@ -309,8 +304,7 @@ class OpticalFiber(Component):
         ],
         dimensionality="[angle]",
         description=("Acceptance angle of the fiber."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acceptance_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -355,8 +349,7 @@ class OpticalFiberCore(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-core-material-field"
         ],
         description=("Specify the material of the core of the fiber."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material",
             type="NX_CHAR",
             name_type="specified",
@@ -370,8 +363,7 @@ class OpticalFiberCore(Sample):
         ],
         dimensionality="[length]",
         description=("Core diameter of the fiber (e.g. given in micrometer)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -390,8 +382,7 @@ class OpticalFiberCore(Sample):
             "Complex index of refraction of the fiber. Specify at given "
             "wavelength (or energy, wavenumber etc.) values."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction",
             type="NX_FLOAT",
             name_type="specified",
@@ -427,8 +418,7 @@ class OpticalFiberCladding(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-cladding-material-field"
         ],
         description=("Specify the material of the core of the fiber."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material",
             type="NX_CHAR",
             name_type="specified",
@@ -442,8 +432,7 @@ class OpticalFiberCladding(Sample):
         ],
         dimensionality="[length]",
         description=("Clad diameter of the fiber (e.g. given in micrometer)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -462,8 +451,7 @@ class OpticalFiberCladding(Sample):
             "Complex index of refraction of the fiber. Specify at given "
             "wavelength (or energy, wavenumber etc.) values."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction",
             type="NX_FLOAT",
             name_type="specified",
@@ -499,8 +487,7 @@ class OpticalFiberCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-coating-material-field"
         ],
         description=("Specify the material of the coating of the fiber."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material",
             type="NX_CHAR",
             name_type="specified",
@@ -514,8 +501,7 @@ class OpticalFiberCoating(Sample):
         ],
         dimensionality="[length]",
         description=("Outer diameter of the fiber (e.g. given in micrometer)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",

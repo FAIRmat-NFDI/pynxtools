@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXlockin` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXlockin` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -101,8 +108,7 @@ class Lockin(Object):
             "\\frac{V_{\\mathrm{ref}}}{V_{\\mathrm{ref}} + "
             "V_{\\mathrm{input}}}$`"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bias_divider",
             type="NX_CHAR",
             name_type="specified",
@@ -115,8 +121,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-modulation-status-field"
         ],
         description=("Switch the lock-in modulation on or off."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="modulation_status",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -133,8 +138,7 @@ class Lockin(Object):
             "bias. The name of the current or voltage signal can be also "
             "specified according to their purpose (e.g., `bias` voltage)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="modulation_signal",
             type="NX_CHAR",
             name_type="specified",
@@ -153,8 +157,7 @@ class Lockin(Object):
             "The frequency of the sine modulation that is used to modulate the "
             "signal in lock-in."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="modulation_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -172,8 +175,7 @@ class Lockin(Object):
             "could be NX_VOLTAGE or NX_CURRENT depending on the type of the "
             "reference signal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_amplitude",
             type="NX_NUMBER",
             name_type="specified",
@@ -188,8 +190,7 @@ class Lockin(Object):
         ],
         dimensionality="1 / [time]",
         description=("Frequency of the reference signal for the lock-in amplifier."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -204,8 +205,7 @@ class Lockin(Object):
         ],
         dimensionality="[angle]",
         description=("Phase of the reference signal set in the lock-in amplifier."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_phase",
             type="NX_NUMBER",
             name_type="specified",
@@ -224,8 +224,7 @@ class Lockin(Object):
             "This is used in two phase lock-in amplifiers. In single phase "
             "lock-in amplifiers, this value is set to zero."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_difference",
             type="NX_NUMBER",
             name_type="specified",
@@ -243,8 +242,7 @@ class Lockin(Object):
             "of the current or voltage signal can be also specified according to "
             "their purpose (e.g., `bias` voltage)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="demodulated_signal",
             type="NX_CHAR",
             name_type="specified",
@@ -260,8 +258,7 @@ class Lockin(Object):
         ],
         dimensionality="1 / [time]",
         description=("The frequency of the demodulated signal."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="demodulated_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -276,8 +273,7 @@ class Lockin(Object):
         ],
         dimensionality="1 / [time]",
         description=("The bandwidth of the modulating signal."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_modulation_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -295,8 +291,7 @@ class Lockin(Object):
             "The bandwidth of the modulating signal over which modulated signal "
             "spreads."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_modulation_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -314,8 +309,7 @@ class Lockin(Object):
             "The bandwidth of the modulating signal over which modulated signal "
             "spreads."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="amplitude_modulation_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -332,8 +326,7 @@ class Lockin(Object):
             "The amplitude of the demodulated signal. Unit could be NX_VOLTAGE "
             "or NX_CURRENT depending on the type of the demodulated signal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="demodulated_amplitude",
             type="NX_NUMBER",
             name_type="specified",
@@ -348,8 +341,7 @@ class Lockin(Object):
         ],
         dimensionality="[angle]",
         description=("The phase of the demodulated signal."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="demodulated_phase",
             type="NX_NUMBER",
             name_type="specified",
@@ -363,8 +355,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-demodulator-channels-field"
         ],
         description=("Comma separated list of the demodulator channels."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="demodulator_channels",
             type="NX_CHAR",
             name_type="specified",
@@ -376,14 +367,14 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-low-passn-field"
         ],
+        variable=True,
         dimensionality="1 / [time]",
         description=(
             "Frequency of the low-pass filter or cut-off frequency. Only signals "
             "below this frequency are passed through the filter. N is envisioned "
             "to represent the channel number e.g., low_pass1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="low_passN",
             type="NX_NUMBER",
             name_type="partial",
@@ -396,14 +387,14 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-high-passn-field"
         ],
+        variable=True,
         dimensionality="1 / [time]",
         description=(
             "Frequency of the high-pass filter or cut-off frequency. Only "
             "signals above this frequency are passed through the filter. N is "
             "envisioned to represent the channel number e.g., high_pass1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="high_passN",
             type="NX_NUMBER",
             name_type="partial",
@@ -416,6 +407,7 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-lp-filter-ordern-field"
         ],
+        variable=True,
         description=(
             "Order of the low-pass filter applied on the input or demodulated "
             "signals (X, Y). Reducing the bandwidth or increasing the order "
@@ -423,8 +415,7 @@ class Lockin(Object):
             "and measurement times. N is envisioned to represent the channel "
             "number e.g., lp_filter_order1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lp_filter_orderN",
             type="NX_NUMBER",
             name_type="partial",
@@ -436,14 +427,14 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-hp-filter-ordern-field"
         ],
+        variable=True,
         description=(
             "Order of the high-pass filter applied on the input or demodulated "
             "signal. This is used mainly to suppress a DC component of the input "
             "signal noise. N is envisioned to represent the channel number e.g., "
             "hp_filter_order1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="hp_filter_orderN",
             type="NX_NUMBER",
             name_type="partial",
@@ -455,14 +446,14 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-ref-offset-phasen-field"
         ],
+        variable=True,
         dimensionality="[angle]",
         description=(
             "An extra phase offset added to the reference signal in modulation "
             "step. N is envisioned to represent the channel number e.g., "
             "hp_filter_order1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ref_offset_phaseN",
             type="NX_NUMBER",
             name_type="partial",
@@ -475,13 +466,13 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-harmonic-ordern-field"
         ],
+        variable=True,
         description=(
             "The reference signal can be a higher harmonic of the modulation "
             "signal. Here the order of the harmonic is stored. N is envisioned "
             "to represent the channel number e.g., harmonic_order1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="harmonic_orderN",
             type="NX_NUMBER",
             name_type="partial",
@@ -497,8 +488,7 @@ class Lockin(Object):
         description=(
             "Ratio of output signal amplitude to input signal amplitude (V/V)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sensitivity_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -511,14 +501,14 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-dc-offset-valuen-field"
         ],
+        variable=True,
         description=(
             "The DC offset of the demodulated signal. This is used to remove the "
             "DC component from the demodulated signal. The same DC offset might "
             "be applied to the input signal in the modulation process. N is "
             "envisioned to represent the channel number e.g., dc_offset_value1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dc_offset_valueN",
             type="NX_NUMBER",
             name_type="partial",

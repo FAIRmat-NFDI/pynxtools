@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXoptical_polarizer` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXoptical_polarizer` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.shape import Shape
@@ -108,8 +115,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-type-field"
         ],
         description=("Type of the polarizer"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -138,8 +144,7 @@ class OpticalPolarizer(Component):
         ],
         dimensionality="[angle]",
         description=("Angle of the polarizer."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polarizer_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -155,8 +160,7 @@ class OpticalPolarizer(Component):
         dimensionality="[angle]",
         shape=[2],
         description=("Acceptance angle of the polarizer (range)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acceptance_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -176,8 +180,7 @@ class OpticalPolarizer(Component):
             "minimum and maximum wavelength (lower and upper limit) of the "
             "range."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_range",
             type="NX_FLOAT",
             name_type="specified",
@@ -193,8 +196,7 @@ class OpticalPolarizer(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Extinction ratio (maximum to minimum transmission)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extinction_ratio",
             type="NX_FLOAT",
             name_type="specified",
@@ -210,8 +212,7 @@ class OpticalPolarizer(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Reflection of the polarizer at given wavelength values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflection",
             type="NX_FLOAT",
             name_type="specified",
@@ -227,8 +228,7 @@ class OpticalPolarizer(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Transmission of the polarizer at given wavelength values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmission",
             type="NX_FLOAT",
             name_type="specified",
@@ -278,8 +278,7 @@ class OpticalPolarizerShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-shape-shape-field"
         ],
         description=("Describe the shape (plate, cube, wedged, prism etc.)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shape",
             type="NX_CHAR",
             name_type="specified",
@@ -307,8 +306,7 @@ class OpticalPolarizerShape(Shape):
             "* For 'other' the parameters may be (A, B, C, ...) with the labels "
             "defined in the sketch plotted in 'SHAPE/sketch'."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="size",
             type="NX_CHAR",
             name_type="specified",
@@ -322,8 +320,7 @@ class OpticalPolarizerShape(Shape):
         ],
         dimensionality="[angle]",
         description=("Wedge angle if 'shape' is 'wedged'."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wedge_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -360,8 +357,7 @@ class OpticalPolarizerSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-substrate-substrate-material-field"
         ],
         description=("Specify the substrate material of the polarizer."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -375,8 +371,7 @@ class OpticalPolarizerSubstrate(Sample):
         ],
         dimensionality="[length]",
         description=("Thickness of the polarizer substrate."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -395,8 +390,7 @@ class OpticalPolarizerSubstrate(Sample):
             "Complex index of refraction of the polarizer material. Specify at "
             "given spectral values (wavelength, energy, wavenumber etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction",
             type="NX_FLOAT",
             name_type="specified",
@@ -438,8 +432,7 @@ class OpticalPolarizerCoatingTYPE(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-coatingtype-material-field"
         ],
         description=("Describe the coating material (e.g. MgF2)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material",
             type="NX_CHAR",
             name_type="specified",
@@ -457,8 +450,7 @@ class OpticalPolarizerCoatingTYPE(Sample):
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (wavelength, energy, wavenumber etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction_coating",
             type="NX_FLOAT",
             name_type="specified",

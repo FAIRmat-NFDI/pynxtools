@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXbeam_splitter` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXbeam_splitter` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.shape import Shape
@@ -131,8 +138,7 @@ class BeamSplitter(Component):
             "splitter is polarizing or not in the field "
             "'polarizing(NX_BOOLEAN)'."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -155,8 +161,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-polarizing-field"
         ],
         description=("Is the beam splitter polarizing?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polarizing",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -172,8 +177,7 @@ class BeamSplitter(Component):
             "Does the beam splitter have multiple outputs (diffractive optical "
             "element), i.e. more than two outputs?"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="multiple_outputs",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -193,8 +197,7 @@ class BeamSplitter(Component):
             "ratios must be consistent with the labels 1, 2, ... N_outputs "
             "defined by the sketch in 'SHAPE/sketch', starting with 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="splitting_ratio",
             type="NX_NUMBER",
             name_type="specified",
@@ -212,8 +215,7 @@ class BeamSplitter(Component):
             "Clear aperture of the device (e.g. 90% of diameter for a disc, or "
             "90% of length and height for square geometry)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="clear_aperture",
             type="NX_FLOAT",
             name_type="specified",
@@ -234,8 +236,7 @@ class BeamSplitter(Component):
             "or additionally, you may define the wavelength range for the "
             "coating in coating/wavelength_range_coating."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_range",
             type="NX_FLOAT",
             name_type="specified",
@@ -256,8 +257,7 @@ class BeamSplitter(Component):
             "order of the ratios must be consistent with the labels 1, 2, ... "
             "N_outputs defined by the sketch in 'SHAPE/sketch', starting with 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="optical_loss",
             type="NX_NUMBER",
             name_type="specified",
@@ -272,8 +272,7 @@ class BeamSplitter(Component):
         ],
         dimensionality="[angle]",
         description=("Optimized angle of incidence for the desired splitting ratio."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -291,8 +290,7 @@ class BeamSplitter(Component):
             "Angle of deflection corresponding to the optimized angle of "
             "incidence defined in incident_angle."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="deflection_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -305,6 +303,7 @@ class BeamSplitter(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-aoi-range-field"
         ],
+        variable=True,
         dimensionality="[angle]",
         shape=[2],
         description=(
@@ -312,8 +311,7 @@ class BeamSplitter(Component):
             "can be operated. Specify the minimum and maximum angles of the "
             "range."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AOI_range",
             type="NX_NUMBER",
             name_type="partial",
@@ -329,8 +327,7 @@ class BeamSplitter(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Reflectance of the beam splitter at given spectral values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflectance",
             type="NX_FLOAT",
             name_type="specified",
@@ -351,8 +348,7 @@ class BeamSplitter(Component):
             "order of the ratios must be consistent with the labels 1, 2, ... "
             "N_outputs defined by the sketch in 'SHAPE/sketch', starting with 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmission",
             type="NX_FLOAT",
             name_type="specified",
@@ -402,8 +398,7 @@ class BeamSplitterShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-shape-shape-field"
         ],
         description=("Describe the shape (plate, cube, wedged, prism etc.)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shape",
             type="NX_CHAR",
             name_type="specified",
@@ -431,8 +426,7 @@ class BeamSplitterShape(Shape):
             "...) with the labels defined in the sketch plotted in "
             "'SHAPE/sketch'."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="size",
             type="NX_CHAR",
             name_type="specified",
@@ -446,8 +440,7 @@ class BeamSplitterShape(Shape):
         ],
         dimensionality="[angle]",
         description=("Wedge angle if 'shape' is 'wedged'."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wedge_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -489,8 +482,7 @@ class BeamSplitterSubstrate(Sample):
             "coating it should be described in coating/coating_material. Is the "
             "material birefringent?"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -510,8 +502,7 @@ class BeamSplitterSubstrate(Sample):
             "thickness (e.g. as in plate beam splitters) the minimum and maximum "
             "values are equal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -531,8 +522,7 @@ class BeamSplitterSubstrate(Sample):
             "at given spectral values (e.g. wavelength, energy, wavenumber "
             "etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction_substrate",
             type="NX_FLOAT",
             name_type="specified",
@@ -575,8 +565,7 @@ class BeamSplitterCoating(Sample):
             "Specify the coating type (e.g. dielectric, anti-reflection (AR), "
             "multilayer coating etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_type",
             type="NX_CHAR",
             name_type="specified",
@@ -589,8 +578,7 @@ class BeamSplitterCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-coating-material-field"
         ],
         description=("Specify the coating material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_CHAR",
             name_type="specified",
@@ -604,8 +592,7 @@ class BeamSplitterCoating(Sample):
         ],
         dimensionality="[length]",
         description=("Thickness of the coating."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -624,8 +611,7 @@ class BeamSplitterCoating(Sample):
             "Wavelength range for which the coating is designed. Enter the "
             "minimum and maximum values of the wavelength range."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_range_coating",
             type="NX_FLOAT",
             name_type="specified",
@@ -644,8 +630,7 @@ class BeamSplitterCoating(Sample):
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (e.g. wavelength, energy, wavenumber etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction_coating",
             type="NX_FLOAT",
             name_type="specified",

@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_scan_region` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_scan_region` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -65,13 +72,13 @@ class SpmScanRegion(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-offset-valuen-field"
         ],
+        variable=True,
         description=(
             "The offset of center of the scan region from the origin along the "
             "specific scan axis. 'N' denotes the name of the specific scan axis. "
             "(Offset, start and end positions are related)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_offset_valueN",
             type="NX_NUMBER",
             name_type="partial",
@@ -84,12 +91,12 @@ class SpmScanRegion(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-rangen-field"
         ],
+        variable=True,
         description=(
             "The range of the scan is the difference start and end values of the "
             "scan region along the dimension 'N'."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_rangeN",
             type="NX_NUMBER",
             name_type="partial",
@@ -102,6 +109,7 @@ class SpmScanRegion(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-anglen-field"
         ],
+        variable=True,
         dimensionality="[angle]",
         description=(
             "The orientation of the scan region or subspace. Usually, the "
@@ -110,8 +118,7 @@ class SpmScanRegion(Object):
             "to the frame of reference. Rename the field describing the angle "
             "with an axis of the spatial space (e.g. scan_angle_x)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_angleN",
             type="NX_NUMBER",
             name_type="partial",
@@ -124,13 +131,13 @@ class SpmScanRegion(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-startn-field"
         ],
+        variable=True,
         description=(
             "The start of the scan is the starting point of the scan region "
             "(phase space or sub-phase space) for each independent scan axis. "
             "For N-dimensional, it is a list of N numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_startN",
             type="NX_NUMBER",
             name_type="partial",
@@ -143,14 +150,14 @@ class SpmScanRegion(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-endn-field"
         ],
+        variable=True,
         description=(
             "The end of the scan is the ending point of the scan region (phase "
             "space or sub-phase space) for each independent scan axis. Note: The "
             "scan_offset and scan_range are equivalent to the scan_start and "
             "scan_end. For N-dimensional, it is a list of N numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_endN",
             type="NX_NUMBER",
             name_type="partial",

@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXsubsampling_filter` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXsubsampling_filter` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:
@@ -78,8 +85,7 @@ class SubsamplingFilter(Parameters):
         ],
         dimensionality="dimensionless",
         description=("Minimum index."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="min",
             type="NX_INT",
             name_type="specified",
@@ -94,8 +100,7 @@ class SubsamplingFilter(Parameters):
         ],
         dimensionality="dimensionless",
         description=("Increment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="increment",
             type="NX_INT",
             name_type="specified",
@@ -110,8 +115,7 @@ class SubsamplingFilter(Parameters):
         ],
         dimensionality="dimensionless",
         description=("Maximum index."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max",
             type="NX_INT",
             name_type="specified",

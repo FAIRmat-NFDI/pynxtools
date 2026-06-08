@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXraman` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXraman` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
 )
@@ -129,8 +136,7 @@ class Raman(OpticalSpectroscopy):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXraman.html#nxraman-entry-definition-field"
         ],
         description=("An application definition for Raman spectroscopy."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -147,8 +153,7 @@ class Raman(OpticalSpectroscopy):
             "Version number to identify which definition of this application "
             "definition was used for this entry/data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -165,8 +170,7 @@ class Raman(OpticalSpectroscopy):
             "URL where to find further material (documentation, examples) "
             "relevant to the application definition."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="URL",
             type="NX_CHAR",
             name_type="specified",
@@ -179,8 +183,7 @@ class Raman(OpticalSpectroscopy):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXraman.html#nxraman-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -197,8 +200,7 @@ class Raman(OpticalSpectroscopy):
             "fundamental characteristics or properties in the experimental "
             "sub-type."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_type",
             type="NX_CHAR",
             name_type="specified",
@@ -212,8 +214,7 @@ class Raman(OpticalSpectroscopy):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXraman.html#nxraman-entry-raman-experiment-type-field"
         ],
         description=("Specify the type of Raman experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="raman_experiment_type",
             type="NX_CHAR",
             name_type="specified",
@@ -246,8 +247,7 @@ class Raman(OpticalSpectroscopy):
             "required to enter at least one of both measurement times, either "
             '"start_time" or "end_time".'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -266,8 +266,7 @@ class Raman(OpticalSpectroscopy):
             "required to enter at least one of both measurement times, either "
             '"start_time" or "end_time".'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -279,8 +278,7 @@ class Raman(OpticalSpectroscopy):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-identifier-experiment-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_experiment",
             type="NX_CHAR",
             name_type="specified",
@@ -301,8 +299,7 @@ class Raman(OpticalSpectroscopy):
             "behind keeping this field for now is to learn how far the current "
             "base classes need extension based on user feedback."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -318,8 +315,7 @@ class Raman(OpticalSpectroscopy):
             "Specify a special property or characteristic of the experiment, "
             "which specifies the generic experiment type."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_sub_type",
             type="NX_CHAR",
             name_type="specified",
@@ -379,8 +375,7 @@ class RamanInstrument(Instrument):
             '"x","y" or "z" Unpolarized light is displayed by "." For '
             "non-orthogonal vectors, use the attribute porto_notation_vectors."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_configuration",
             type="NX_CHAR",
             name_type="specified",
@@ -398,8 +393,7 @@ class RamanInstrument(Instrument):
             "respective vectors. Vectors in the porto notation are defined as "
             "for A, B, C, D above. Linear light polarization is assumed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="porto_notation_vectors",
             type="NX_NUMBER",
             name_type="specified",
@@ -429,8 +423,7 @@ class RamanInstrument(Instrument):
             "angle of in-plane sample rotation (direction along the sample's "
             "surface normal)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_reference_frame",
             type="NX_CHAR",
             name_type="specified",
@@ -445,8 +438,7 @@ class RamanInstrument(Instrument):
         ],
         dimensionality="[angle]",
         description=("Angle between sample incident beam and sample surface."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="omega",
             type="NX_NUMBER",
             name_type="specified",
@@ -461,8 +453,7 @@ class RamanInstrument(Instrument):
         ],
         dimensionality="[angle]",
         description=("Angle between incident and detection beam"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="twotheta",
             type="NX_NUMBER",
             name_type="specified",
@@ -480,8 +471,7 @@ class RamanInstrument(Instrument):
             "Sample tilt between sample normal, and the plane spanned by "
             "detection and incident beam."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chi",
             type="NX_NUMBER",
             name_type="specified",
@@ -498,8 +488,7 @@ class RamanInstrument(Instrument):
         description=(
             "Inplane rotation of the sample, with rotation axis along sample normal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phi",
             type="NX_NUMBER",
             name_type="specified",
@@ -518,8 +507,7 @@ class RamanInstrument(Instrument):
             "reflective (substrate) surface in the sample. These two directions "
             "span the plane of incidence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_incidence",
             type="NX_NUMBER",
             name_type="specified",
@@ -539,8 +527,7 @@ class RamanInstrument(Instrument):
             "in the sample if not equal to the angle(s) of incidence. These two "
             "directions span the plane of detection."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_detection",
             type="NX_NUMBER",
             name_type="specified",
@@ -564,8 +551,7 @@ class RamanInstrument(Instrument):
             "detection beam in the sample surface, but the angle "
             "source-sample-detector is 90°)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_incident_and_detection_beam",
             type="NX_NUMBER",
             name_type="specified",
@@ -585,8 +571,7 @@ class RamanInstrument(Instrument):
             "of the angle to a specific sample property (i.e. crystallographic "
             "axis or sample shape such as wafer flat)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_in_plane_sample_rotation",
             type="NX_NUMBER",
             name_type="specified",
@@ -604,8 +589,7 @@ class RamanInstrument(Instrument):
             "Specify if there is a lateral offset on the sample surface, between "
             "the focal points of the incident beam and the detection beam."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lateral_focal_point_offset",
             type="NX_NUMBER",
             name_type="specified",

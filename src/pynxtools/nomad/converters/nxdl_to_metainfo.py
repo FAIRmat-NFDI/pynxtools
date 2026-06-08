@@ -159,6 +159,7 @@ class NamedConceptContext:
     variable: bool  # Section(variable=True) when name_type="any"/"partial"
     docstring: str | None
     quantities: list[QuantityContext]  # own fields defined inside the group XML
+    links: list[LinkContext]  # own <link> elements defined inside the group XML
     node: NXTreeGroup
 
 
@@ -536,8 +537,21 @@ def _build_named_concept(
     # that genuinely differ from the generic class (new field, different
     # optionality, different type/units/enumeration).
     own_quantities: list[QuantityContext] = []
+    own_links: list[LinkContext] = []
     seen: set[str] = set()
     for child in node.children:
+        if child.nx_type == "link":
+            python_name = nxdl_to_quantity_name(child.name)
+            if python_name not in seen:
+                seen.add(python_name)
+                own_links.append(
+                    LinkContext(
+                        python_name=python_name,
+                        description=_description_string(child),
+                        node=child,
+                    )
+                )
+            continue
         if child.nx_type not in ("field", "attribute") or not isinstance(
             child, (NXTreeField, NXTreeAttribute)
         ):
@@ -581,6 +595,7 @@ def _build_named_concept(
         variable=variable,
         docstring=_plain_description(node),
         quantities=own_quantities,
+        links=own_links,
         node=node,
     )
 
@@ -1051,7 +1066,7 @@ def build_context(nx_name: str) -> dict:
 
             concept = _build_named_concept(concept_name, child)
 
-            if concept.quantities:
+            if concept.quantities or concept.links:
                 named_concepts.append(concept)
                 _parent_category = _nxdl_category(nx_name)
                 target_fqn = f"pynxtools.nomad.metainfo.{_parent_category}.{parent_module}.{concept_name}"

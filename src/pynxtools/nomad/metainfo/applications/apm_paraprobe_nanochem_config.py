@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_nanochem_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_nanochem_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
 )
@@ -159,8 +166,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -173,8 +179,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -233,8 +238,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-method-field"
         ],
         description=("Compute delocalization or load an existent one from input."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="method",
             type="NX_CHAR",
             name_type="specified",
@@ -276,8 +280,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "nullified. Nuclides are identified as hashed nuclide (see "
             ":ref:`NXatom`) for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nuclide_whitelist",
             type="NX_UINT",
             name_type="specified",
@@ -298,8 +301,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "tool performs as many delocalization computations as values are "
             "specified in grid_resolution."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="grid_resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -319,8 +321,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "truncated. Intensity outside the kernel is factorized into the "
             "kernel via a normalization procedure."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kernel_size",
             type="NX_UINT",
             name_type="specified",
@@ -341,8 +342,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "= 2 \\cdot \\sigma_z`). The tool performs as many delocalization "
             "computations as values are specified in kernel_variance."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kernel_variance",
             type="NX_FLOAT",
             name_type="specified",
@@ -362,8 +362,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "compute the total intensity, the composition, or the concentration "
             "of the ions/elements specified by the nuclide_whitelist."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="normalization",
             type="NX_CHAR",
             name_type="specified",
@@ -379,8 +378,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
         description=(
             "Specifies if the tool should report the delocalization 3D field values."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="has_scalar_fields",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -393,8 +391,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-delocalizationid-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",
@@ -465,8 +462,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             "paraprobe-parmsetup-nanochem to match the here required formatting "
             "in control_points."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="initialization",
             type="NX_CHAR",
             name_type="specified",
@@ -485,8 +481,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             "by an iterative loop of isotropic mesh refinement and DCOM step(s), "
             "paired with self-intersection detection."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="method",
             type="NX_CHAR",
             name_type="specified",
@@ -501,8 +496,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
         ],
         dimensionality="dimensionless",
         description=("How many times should the DCOM and mesh refinement be applied?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_iterations",
             type="NX_UINT",
             name_type="specified",
@@ -523,8 +517,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             "be iteratively refined by edge splitting and related mesh "
             "refinement operations."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_edge_length",
             type="NX_FLOAT",
             name_type="specified",
@@ -550,8 +543,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             "controlled manner so that the user can repeat the analyses with "
             "using a different parameterization."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_dcom_radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -576,8 +568,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             "each array those for the second DCOM iteration and so on and so "
             "forth."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_smoothing_step",
             type="NX_UINT",
             name_type="specified",
@@ -591,8 +582,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-interface-meshingid-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",
@@ -659,8 +649,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-distancing-model-field"
         ],
         description=("Which type of distance should be reported for the profile."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distancing_model",
             type="NX_CHAR",
             name_type="specified",
@@ -677,8 +666,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             "For each ROI, along which direction should the cylindrical ROI be "
             "oriented if ROIs are placed at triangles of the feature mesh."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="roi_orientation",
             type="NX_CHAR",
             name_type="specified",
@@ -697,8 +685,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             "the cylindrical ROI be if ROIs are placed at triangles of the "
             "feature mesh."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="roi_cylinder_height",
             type="NX_FLOAT",
             name_type="specified",
@@ -716,8 +703,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             "For each ROI, how wide (in radius) should the cylindrical ROI be if "
             "ROIs are placed at triangles of the feature mesh."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="roi_cylinder_radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -731,8 +717,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-oned-profileid-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",

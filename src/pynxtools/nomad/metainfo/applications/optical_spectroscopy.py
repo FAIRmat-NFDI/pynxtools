@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXoptical_spectroscopy` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXoptical_spectroscopy` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -174,8 +181,7 @@ class OpticalSpectroscopy(Entry):
         description=(
             "An application definition describing a general optical experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -192,8 +198,7 @@ class OpticalSpectroscopy(Entry):
             "Version number to identify which definition of this application "
             "definition was used for this entry/data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -210,8 +215,7 @@ class OpticalSpectroscopy(Entry):
             "URL where to find further material (documentation, examples) "
             "relevant to the application definition."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="URL",
             type="NX_CHAR",
             name_type="specified",
@@ -224,8 +228,7 @@ class OpticalSpectroscopy(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -244,8 +247,7 @@ class OpticalSpectroscopy(Entry):
             "required to enter at least one of both measurement times, either "
             '"start_time" or "end_time".'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -264,8 +266,7 @@ class OpticalSpectroscopy(Entry):
             "required to enter at least one of both measurement times, either "
             '"start_time" or "end_time".'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -277,8 +278,7 @@ class OpticalSpectroscopy(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-identifier-experiment-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_experiment",
             type="NX_CHAR",
             name_type="specified",
@@ -299,8 +299,7 @@ class OpticalSpectroscopy(Entry):
             "behind keeping this field for now is to learn how far the current "
             "base classes need extension based on user feedback."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -319,8 +318,7 @@ class OpticalSpectroscopy(Entry):
             "Raman spectroscopy or ellipsometry use the respective "
             "specializations of NXoptical_spectroscopy."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_type",
             type="NX_CHAR",
             name_type="specified",
@@ -342,8 +340,7 @@ class OpticalSpectroscopy(Entry):
             "Specify a special property or characteristic of the experiment, "
             "which specifies the generic experiment type."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_sub_type",
             type="NX_CHAR",
             name_type="specified",
@@ -389,8 +386,7 @@ class OpticalSpectroscopyBeamRefFrame(CoordinateSystem):
             "origin and base is defined at z=0, where the incident beam hits the "
             "sample at the surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -426,8 +422,7 @@ class OpticalSpectroscopySampleNormalRefFrame(CoordinateSystem):
             "to the sample normal, and the x-y-plane lies inside the sample "
             "surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -490,8 +485,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "angle of in-plane sample rotation (direction along the sample's "
             "surface normal)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_reference_frame",
             type="NX_CHAR",
             name_type="specified",
@@ -506,8 +500,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ],
         dimensionality="[angle]",
         description=("Angle between sample incident beam and sample surface."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="omega",
             type="NX_NUMBER",
             name_type="specified",
@@ -522,8 +515,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ],
         dimensionality="[angle]",
         description=("Angle between incident and detection beam"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="twotheta",
             type="NX_NUMBER",
             name_type="specified",
@@ -541,8 +533,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "Sample tilt between sample normal, and the plane spanned by "
             "detection and incident beam."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chi",
             type="NX_NUMBER",
             name_type="specified",
@@ -559,8 +550,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         description=(
             "Inplane rotation of the sample, with rotation axis along sample normal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phi",
             type="NX_NUMBER",
             name_type="specified",
@@ -579,8 +569,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "reflective (substrate) surface in the sample. These two directions "
             "span the plane of incidence."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_incidence",
             type="NX_NUMBER",
             name_type="specified",
@@ -600,8 +589,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "in the sample if not equal to the angle(s) of incidence. These two "
             "directions span the plane of detection."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_detection",
             type="NX_NUMBER",
             name_type="specified",
@@ -625,8 +613,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "detection beam in the sample surface, but the angle "
             "source-sample-detector is 90°)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_incident_and_detection_beam",
             type="NX_NUMBER",
             name_type="specified",
@@ -646,8 +633,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "of the angle to a specific sample property (i.e. crystallographic "
             "axis or sample shape such as wafer flat)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angle_of_in_plane_sample_rotation",
             type="NX_NUMBER",
             name_type="specified",
@@ -665,8 +651,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "Specify if there is a lateral offset on the sample surface, between "
             "the focal points of the incident beam and the detection beam."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lateral_focal_point_offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -705,8 +690,7 @@ class OpticalSpectroscopySample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -721,8 +705,7 @@ class OpticalSpectroscopySample(Sample):
         description=(
             "Locally unique ID of the sample, used in the research institute or group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_id",
             type="NX_CHAR",
             name_type="specified",
@@ -740,8 +723,7 @@ class OpticalSpectroscopySample(Sample):
             "liquid, gas, pellet, powder. Generic properties of liquids or gases "
             "see NXsample properties."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_form",
             type="NX_CHAR",
             name_type="specified",
@@ -763,8 +745,7 @@ class OpticalSpectroscopySample(Sample):
             "the light incident). The order must be consistent with "
             "layer_structure"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -782,8 +763,7 @@ class OpticalSpectroscopySample(Sample):
             "components, all elements from each component must be included in "
             "'atom_types'."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -801,8 +781,7 @@ class OpticalSpectroscopySample(Sample):
             "preparation, i.e. the last known timestamp when the measured "
             "specimen surface was actively prepared."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preparation_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -822,8 +801,7 @@ class OpticalSpectroscopySample(Sample):
             "specimen viewed for an illumination situation where the nominal "
             "surface normal of the specimen is parallel to the optical axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -840,8 +818,7 @@ class OpticalSpectroscopySample(Sample):
             "If a thickness if given, please specify how this thickness was "
             "estimated or determined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness_determination",
             type="NX_CHAR",
             name_type="specified",
@@ -859,8 +836,7 @@ class OpticalSpectroscopySample(Sample):
             "which the light incident), e.g. native oxide/bulk substrate, or "
             "Si/native oxide/thermal oxide/polymer/peptide."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="layer_structure",
             type="NX_CHAR",
             name_type="specified",
@@ -877,8 +853,7 @@ class OpticalSpectroscopySample(Sample):
             "relative in the laboratory reference frame, incident beam reference "
             "frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sample_orientation",
             type="NX_CHAR",
             name_type="specified",
@@ -894,8 +869,7 @@ class OpticalSpectroscopySample(Sample):
             "If the sample is grown or fixed on a substrate, specify this here "
             "by a free text description."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate",
             type="NX_CHAR",
             name_type="specified",
@@ -941,8 +915,7 @@ class OpticalSpectroscopyData(Data):
         description=(
             "Spectrum, i.e. x-axis of the data (e.g. wavelength, energy etc.)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -955,8 +928,7 @@ class OpticalSpectroscopyData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-data-signal-attribute"
         ],
         description=("Spectrum, i.e. y-axis of the data (e.g. counts, intensity)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -993,8 +965,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
         dimensionality="dimensionless",
         shape=["*", 1, "*"],
         description=("Light loss due to depolarization as a value in [0-1]."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depolarization",
             type="NX_NUMBER",
             name_type="specified",
@@ -1010,8 +981,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
         dimensionality="dimensionless",
         shape=["*", 1, "*"],
         description=("Jones quality factor."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="jones_quality_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -1027,8 +997,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
         dimensionality="dimensionless",
         shape=["*", 1, "*"],
         description=("Reflectivity."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflectivity",
             type="NX_NUMBER",
             name_type="specified",
@@ -1044,8 +1013,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
         dimensionality="dimensionless",
         shape=["*", 1, "*"],
         description=("Transmittance."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmittance",
             type="NX_NUMBER",
             name_type="specified",

@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXxas` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXxas` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
@@ -94,8 +101,7 @@ class Xas(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -107,8 +113,7 @@ class Xas(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -121,8 +126,7 @@ class Xas(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -164,8 +168,7 @@ class XasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -200,8 +203,7 @@ class XasMonitor(Monitor):
             "Count to a preset value based on either clock time (timer) or "
             "received monitor counts (monitor)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -215,8 +217,7 @@ class XasMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-preset-field"
         ],
         description=("preset value for time or monitor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preset",
             type="NX_FLOAT",
             name_type="specified",
@@ -234,8 +235,7 @@ class XasMonitor(Monitor):
             "This field could be a link to "
             "``/NXentry/NXinstrument/incoming_beam:NXdetector/data``"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -279,8 +279,7 @@ class XasData(Data):
             "Detection method used for observing the sample absorption (pick one "
             "from the enumerated list and spell exactly)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
@@ -292,6 +291,29 @@ class XasData(Data):
                 "Fluorescence Yield",
                 "Transmission",
             ],
+        ),
+    )
+
+    energy = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-energy-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="energy",
+            target="/NXentry/NXinstrument/monochromator:NXmonochromator/energy",
+            optionality="required",
+        ),
+    )
+    absorbed_beam = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-absorbed-beam-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="absorbed_beam",
+            target="/NXentry/NXinstrument/absorbed_beam:NXdetector/data",
+            optionality="required",
         ),
     )
 

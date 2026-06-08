@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspe` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspe` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -83,8 +90,7 @@ class Spe(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-program-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program_name",
             type="NX_CHAR",
             name_type="specified",
@@ -97,8 +103,7 @@ class Spe(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -111,8 +116,7 @@ class Spe(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -154,8 +158,7 @@ class SpeNxspeInfo(Collection):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("The fixed energy used for this file."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fixed_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -169,8 +172,7 @@ class SpeNxspeInfo(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-nxspe-info-ki-over-kf-scaling-field"
         ],
         description=("Indicates whether ki/kf scaling has been applied or not."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ki_over_kf_scaling",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -184,8 +186,7 @@ class SpeNxspeInfo(Collection):
         ],
         dimensionality="[angle]",
         description=("Orientation angle as expected in DCS-MSlice"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="psi",
             type="NX_FLOAT",
             name_type="specified",
@@ -217,8 +218,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal",
             type="NX_FLOAT",
             name_type="specified",
@@ -232,8 +232,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-width-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal_width",
             type="NX_FLOAT",
             name_type="specified",
@@ -247,8 +246,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar",
             type="NX_FLOAT",
             name_type="specified",
@@ -262,8 +260,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-width-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polar_width",
             type="NX_FLOAT",
             name_type="specified",
@@ -277,8 +274,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-distance-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -291,8 +287,7 @@ class SpeData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-data-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -304,8 +299,7 @@ class SpeData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-error-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="error",
             type="NX_NUMBER",
             name_type="specified",
@@ -318,8 +312,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -351,8 +344,7 @@ class SpeInstrument(Instrument):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-instrument-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -384,8 +376,7 @@ class SpeSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -398,8 +389,7 @@ class SpeSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-sample-seblock-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="seblock",
             type="NX_CHAR",
             name_type="specified",
@@ -412,8 +402,7 @@ class SpeSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
             name_type="specified",

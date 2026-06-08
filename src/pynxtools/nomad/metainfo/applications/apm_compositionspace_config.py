@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_compositionspace_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_compositionspace_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -143,8 +150,7 @@ class ApmCompositionspaceConfig(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -157,8 +163,7 @@ class ApmCompositionspaceConfig(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -171,8 +176,7 @@ class ApmCompositionspaceConfig(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-identifier-analysis-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
             name_type="specified",
@@ -224,8 +228,7 @@ class ApmCompositionspaceConfigReconstruction(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-reconstruction-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -237,8 +240,7 @@ class ApmCompositionspaceConfigReconstruction(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-reconstruction-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -250,8 +252,7 @@ class ApmCompositionspaceConfigReconstruction(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-reconstruction-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -267,8 +268,7 @@ class ApmCompositionspaceConfigReconstruction(Note):
             "Name of the node which resolves the reconstructed ion position "
             "values to use for this analysis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_CHAR",
             name_type="specified",
@@ -284,8 +284,7 @@ class ApmCompositionspaceConfigReconstruction(Note):
             "Name of the node which resolves the mass-to-charge-state-ratio "
             "values for each reconstructed ion to use for this analysis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mass_to_charge",
             type="NX_CHAR",
             name_type="specified",
@@ -331,8 +330,7 @@ class ApmCompositionspaceConfigRanging(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-ranging-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -344,8 +342,7 @@ class ApmCompositionspaceConfigRanging(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-ranging-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -357,8 +354,7 @@ class ApmCompositionspaceConfigRanging(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-ranging-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -375,8 +371,7 @@ class ApmCompositionspaceConfigRanging(Note):
             "definitions that are applied in this analysis with "
             "CompositionSpace."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ranging_definitions",
             type="NX_CHAR",
             name_type="specified",
@@ -418,8 +413,7 @@ class ApmCompositionspaceConfigVoxelization(Process):
             "Edge length of cubic voxels building the 3D grid that is used for "
             "discretizing the point cloud."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edge_length",
             type="NX_NUMBER",
             name_type="specified",

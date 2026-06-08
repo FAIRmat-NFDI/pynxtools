@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_temperature_sensor` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_temperature_sensor` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 
@@ -89,8 +96,7 @@ class SpmTemperatureSensor(Sensor):
         ],
         dimensionality="[temperature]",
         description=("The obtained average temperature of the sensor."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -108,8 +114,7 @@ class SpmTemperatureSensor(Sensor):
             "The target temperature of the sensor, which is the desired "
             "temperature to be maintained during the experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -127,8 +132,7 @@ class SpmTemperatureSensor(Sensor):
             "The offset temperature of the sensor, which will be added to "
             "obtained correct the measured temperature."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temp_offset_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -141,11 +145,11 @@ class SpmTemperatureSensor(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-temperaturechannel-field"
         ],
+        variable=True,
         description=(
             "The name of the channel that handles the temperature measurement."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="TEMPERATUREchannel",
             type="NX_CHAR",
             name_type="partial",
@@ -190,10 +194,10 @@ class SpmTemperatureSensorData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-data-data-field"
         ],
+        variable=True,
         dimensionality="[temperature]",
         description=("Temperature data collected during the scan."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="DATA",
             type="NX_NUMBER",
             name_type="any",
@@ -206,9 +210,9 @@ class SpmTemperatureSensorData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-data-axisname-field"
         ],
+        variable=True,
         description=("independent axis data like time or position or bias voltage."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME",
             type="NX_NUMBER",
             name_type="any",

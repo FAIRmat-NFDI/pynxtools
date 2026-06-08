@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXrefscan` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXrefscan` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,15 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -81,14 +89,8 @@ class Refscan(Entry):
         repeats=False,
     )
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.refscan.RefscanData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="data",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     title = Quantity(
@@ -96,8 +98,7 @@ class Refscan(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -109,8 +110,7 @@ class Refscan(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-start-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -122,8 +122,7 @@ class Refscan(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-end-time-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -136,8 +135,7 @@ class Refscan(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -178,8 +176,7 @@ class RefscanSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -193,8 +190,7 @@ class RefscanSample(Sample):
         ],
         dimensionality="[angle]",
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -229,8 +225,7 @@ class RefscanControl(Monitor):
             "Count to a preset value based on either clock time (timer) or "
             "received monitor counts (monitor)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -244,8 +239,7 @@ class RefscanControl(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-control-preset-field"
         ],
         description=("preset value for time or monitor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preset",
             type="NX_FLOAT",
             name_type="specified",
@@ -260,13 +254,63 @@ class RefscanControl(Monitor):
         ],
         shape=["*"],
         description=("Monitor counts for each step"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class RefscanData(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-data-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="data",
+            target="/NXentry/NXinstrument/NXdetector/data",
+            optionality="required",
+        ),
+    )
+    rotation_angle = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-rotation-angle-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="rotation_angle",
+            target="/NXentry/NXsample/rotation_angle",
+            optionality="required",
+        ),
+    )
+    polar_angle = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-polar-angle-link"
+        ],
+        a_nexus_link=NeXusLink(
+            name="polar_angle",
+            target="/NXentry/NXinstrument/NXdetector/polar_angle",
+            optionality="required",
         ),
     )
 

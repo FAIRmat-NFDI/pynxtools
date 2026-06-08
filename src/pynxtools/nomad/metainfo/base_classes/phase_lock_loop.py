@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXphase_lock_loop` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXphase_lock_loop` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
 
@@ -132,8 +139,7 @@ class PhaseLockLoop(Component):
             "The center frequency of the PLL is the middle frequency of the "
             "PLL's operating range."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="center_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -152,8 +158,7 @@ class PhaseLockLoop(Component):
             "stable. If phase difference (also called phase error) is calculated "
             "from the input and output signal frequencies."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -172,8 +177,7 @@ class PhaseLockLoop(Component):
             "If phase difference (also called phase error) is calculated from "
             "the input and output signal phases."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -191,8 +195,7 @@ class PhaseLockLoop(Component):
             "The frequency step size of the PLL determines the resolution of "
             "frequency changes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_step",
             type="NX_NUMBER",
             name_type="specified",
@@ -244,8 +247,7 @@ class PhaseLockLoopHardware(Fabrication):
             "defined by the number of poles that exist in the transfer function "
             "of the PLL."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -264,8 +266,7 @@ class PhaseLockLoopHardware(Fabrication):
             "defined as the number of roots of characteristics polynomial of the "
             "PLL circuit."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="order",
             type="NX_NUMBER",
             name_type="specified",
@@ -307,8 +308,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "The input reference frequency to the PLL through the component "
             "Phase-detector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -326,8 +326,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "Measured or target shift in oscillation from the VCO. relative to "
             "the reference signal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency_shift",
             type="NX_NUMBER",
             name_type="specified",
@@ -342,8 +341,7 @@ class PhaseLockLoopPhaseDetector(Component):
         ],
         dimensionality="[angle]",
         description=("Reference phase of the input signal to the phase detector."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_phase",
             type="NX_NUMBER",
             name_type="specified",
@@ -361,8 +359,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "Measured phase error (also called phase difference) between the "
             "reference signal and the VCO output."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="phase_error",
             type="NX_NUMBER",
             name_type="specified",
@@ -381,8 +378,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "much the output voltage changes in response to a phase difference "
             "(V/rad)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Kp_coefficient",
             type="NX_NUMBER",
             name_type="specified",
@@ -424,8 +420,7 @@ class PhaseLockLoopLoopFilter(Component):
             "The Kf coefficient, called loop filter gain, determines the gain of "
             "the loop filter circuit in the PLL."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Kf_coefficient",
             type="NX_NUMBER",
             name_type="specified",
@@ -469,8 +464,7 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             "generate. The range is either the same as the frequency bandwidth "
             "of the PLL or shorter and inside that."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="output_frequency_range",
             type="NX_NUMBER",
             name_type="specified",
@@ -490,8 +484,7 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             "This coefficient is used to adjust the output frequency based on "
             "the input frequency."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Kn_coefficient",
             type="NX_NUMBER",
             name_type="specified",
@@ -509,8 +502,7 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             "much the output frequency changes in response to a change in input "
             "voltage (Hz/V)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Ko_coefficient",
             type="NX_NUMBER",
             name_type="specified",

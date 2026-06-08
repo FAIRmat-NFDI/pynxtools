@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXazint2d` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXazint2d` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -107,8 +114,7 @@ class Azint2d(Entry):
             "more than one :ref:`NXdata` group exists. The value is the name of "
             "the default :ref:`NXdata` group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",
@@ -121,8 +127,7 @@ class Azint2d(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -136,8 +141,7 @@ class Azint2d(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-solid-angle-applied-field"
         ],
         description=("is solid angle correction applied or not."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="solid_angle_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -150,8 +154,7 @@ class Azint2d(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-polarization-applied-field"
         ],
         description=("is polarization correction applied or not."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polarization_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -170,8 +173,7 @@ class Azint2d(Entry):
             "number or weighted contribution of detector pixels to each "
             "integration bin."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="normalization_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -190,8 +192,7 @@ class Azint2d(Entry):
             "fluctuations in the incident beam intensity or, where applicable, "
             "variations in exposure time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="monitor_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -232,8 +233,7 @@ class Azint2dInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-name-field"
         ],
         description=("Name of instrument (beamline) where data was collected."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -264,8 +264,7 @@ class Azint2dReduction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-reduction-program-field"
         ],
         description=("Name of the program that made this file."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -278,8 +277,7 @@ class Azint2dReduction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-reduction-version-field"
         ],
         description=("Version of the program that made this file."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -292,8 +290,7 @@ class Azint2dReduction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-reduction-date-field"
         ],
         description=("Date the file was created."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -308,8 +305,7 @@ class Azint2dReduction(Process):
         description=(
             "Citation or other references for the algorithm used in the processing."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference",
             type="NX_CHAR",
             name_type="specified",
@@ -324,8 +320,7 @@ class Azint2dReduction(Process):
         description=(
             "Notes required to help interpret the data, e.g. on coordinate systems."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="note",
             type="NX_CHAR",
             name_type="specified",
@@ -361,8 +356,7 @@ class Azint2dMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-monitor-data-field"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -400,8 +394,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-axes-attribute"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -413,8 +406,7 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-interpretation-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="interpretation",
             type="NX_CHAR",
             name_type="specified",
@@ -427,8 +419,7 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-signal-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -442,8 +433,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-i-field"
         ],
         shape=["*", "*", "*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="I",
             type="NX_NUMBER",
             name_type="specified",
@@ -455,14 +445,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-i-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["intensity"],
             parent_field="I",
+            enumeration=["intensity"],
         ),
     )
     I__units = Quantity(
@@ -470,14 +459,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-i-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["arbitrary units"],
             parent_field="I",
+            enumeration=["arbitrary units"],
         ),
     )
     I_errors = Quantity(
@@ -486,8 +474,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-i-errors-field"
         ],
         shape=["*", "*", "*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="I_errors",
             type="NX_NUMBER",
             name_type="specified",
@@ -499,14 +486,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-i-errors-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["estimated intensity error"],
             parent_field="I_errors",
+            enumeration=["estimated intensity error"],
         ),
     )
     I_errors__units = Quantity(
@@ -514,14 +500,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-i-errors-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-            enumeration=["arbitrary units"],
             parent_field="I_errors",
+            enumeration=["arbitrary units"],
         ),
     )
     radial_axis = Quantity(
@@ -530,8 +515,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-radial-axis-field"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radial_axis",
             type="NX_NUMBER",
             name_type="specified",
@@ -543,14 +527,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-radial-axis-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["q", "2theta"],
             parent_field="radial_axis",
+            enumeration=["q", "2theta"],
         ),
     )
     radial_axis__units = Quantity(
@@ -558,14 +541,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-radial-axis-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["NX_PER_LENGHT", "NX_WAVENUMBER", "NX_ANGLE"],
             parent_field="radial_axis",
+            enumeration=["NX_PER_LENGHT", "NX_WAVENUMBER", "NX_ANGLE"],
         ),
     )
     radial_axis_edges = Quantity(
@@ -574,8 +556,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-radial-axis-edges-field"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radial_axis_edges",
             type="NX_NUMBER",
             name_type="specified",
@@ -587,14 +568,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-radial-axis-edges-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["q bin edges", "2theta bin edges"],
             parent_field="radial_axis_edges",
+            enumeration=["q bin edges", "2theta bin edges"],
         ),
     )
     radial_axis_edges__units = Quantity(
@@ -602,14 +582,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-radial-axis-edges-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["NX_PER_LENGTH", "NX_WAVENUMBER", "NX_ANGLE"],
             parent_field="radial_axis_edges",
+            enumeration=["NX_PER_LENGTH", "NX_WAVENUMBER", "NX_ANGLE"],
         ),
     )
     norm = Quantity(
@@ -636,8 +615,7 @@ class Azint2dData(Data):
             "used or its parameters. The monitor correction is not included in "
             "the normalization correction and it is specified separately."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="norm",
             type="NX_NUMBER",
             name_type="specified",
@@ -651,16 +629,15 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-norm-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="norm",
             enumeration=[
                 "effective number of pixels contributing to the corresponding bin"
             ],
-            parent_field="norm",
         ),
     )
     norm__units = Quantity(
@@ -668,14 +645,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-norm-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["arbitrary units"],
             parent_field="norm",
+            enumeration=["arbitrary units"],
         ),
     )
     azimuthal_axis = Quantity(
@@ -684,8 +660,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-azimuthal-axis-field"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal_axis",
             type="NX_NUMBER",
             name_type="specified",
@@ -697,14 +672,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-azimuthal-axis-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["azimuthal bin center"],
             parent_field="azimuthal_axis",
+            enumeration=["azimuthal bin center"],
         ),
     )
     azimuthal_axis__units = Quantity(
@@ -712,14 +686,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-azimuthal-axis-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["NX_ANGLE"],
             parent_field="azimuthal_axis",
+            enumeration=["NX_ANGLE"],
         ),
     )
     azimuthal_axis_edges = Quantity(
@@ -728,8 +701,7 @@ class Azint2dData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-azimuthal-axis-edges-field"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="azimuthal_axis_edges",
             type="NX_NUMBER",
             name_type="specified",
@@ -741,14 +713,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-azimuthal-axis-edges-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["azimuthal bin edges"],
             parent_field="azimuthal_axis_edges",
+            enumeration=["azimuthal bin edges"],
         ),
     )
     azimuthal_axis_edges__units = Quantity(
@@ -756,14 +727,13 @@ class Azint2dData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-data-azimuthal-axis-edges-units-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="units",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["NX_ANGLE"],
             parent_field="azimuthal_axis_edges",
+            enumeration=["NX_ANGLE"],
         ),
     )
 

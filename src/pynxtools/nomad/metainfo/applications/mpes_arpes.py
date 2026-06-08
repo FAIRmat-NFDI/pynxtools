@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmpes_arpes` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmpes_arpes` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.mpes import Mpes
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -90,8 +97,7 @@ class MpesArpes(Mpes):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -104,8 +110,7 @@ class MpesArpes(Mpes):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -128,8 +133,7 @@ class MpesArpes(Mpes):
             "https://www.iso.org/standard/74811.html .. _Clause 11: "
             "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:sec:11"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="method",
             type="NX_CHAR",
             name_type="specified",
@@ -141,8 +145,7 @@ class MpesArpes(Mpes):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -159,8 +162,7 @@ class MpesArpes(Mpes):
             "date/time stamp. It is recommended to add an explicit time zone, "
             "otherwise the local time zone is assumed per ISO8601."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -177,8 +179,7 @@ class MpesArpes(Mpes):
             "date/time stamp. It is recommended to add an explicit time zone, "
             "otherwise the local time zone is assumed per ISO8601."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -222,8 +223,7 @@ class MpesArpes(Mpes):
             '"O-KVV" (incorrect separator) - "Fe 2p_3/2" (incorrect '
             'underscore) - "Fe 2p 3/2" (extra space between "p" and "3/2")'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transitions",
             type="NX_CHAR",
             name_type="specified",
@@ -267,8 +267,7 @@ class MpesArpesArpesGeometry(CoordinateSystem):
             "which is defined such that the positive z-axis points towards the "
             "analyzer entry, and the x-axis lies within the beam/analyzer plane."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -299,8 +298,7 @@ class MpesArpesSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-situation-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="situation",
             type="NX_CHAR",
             name_type="specified",
@@ -318,8 +316,7 @@ class MpesArpesSample(Sample):
             "sample surface within the arpes_geometry coordinate system "
             "(sample_azimuth or anything depending on it)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -331,8 +328,7 @@ class MpesArpesSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -344,8 +340,7 @@ class MpesArpesSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-identifier-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -357,8 +352,7 @@ class MpesArpesSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-chemical-formula-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -376,8 +370,7 @@ class MpesArpesSample(Sample):
             "components, all elements from each component must be included in "
             "`atom_types`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -389,8 +382,7 @@ class MpesArpesSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-physical-form-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_form",
             type="NX_CHAR",
             name_type="specified",
@@ -422,8 +414,7 @@ class MpesArpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-signal-attribute"
         ],
         description=("There is a field named data that contains the signal."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -441,8 +432,7 @@ class MpesArpesData(Data):
             "There are three dimensions, one energy and two angular coordinates. "
             "Any coordinates that do not move, are represented by one point."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -454,8 +444,7 @@ class MpesArpesData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-energy-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="energy_indices",
             type="NX_INT",
             name_type="specified",
@@ -467,8 +456,7 @@ class MpesArpesData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular0-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="angular0_indices",
             type="NX_INT",
             name_type="specified",
@@ -480,8 +468,7 @@ class MpesArpesData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular1-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="angular1_indices",
             type="NX_INT",
             name_type="specified",
@@ -495,8 +482,7 @@ class MpesArpesData(Data):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("Values on the energy axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -512,14 +498,13 @@ class MpesArpesData(Data):
         description=(
             "The energy can be either stored as kinetic or as binding energy."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-            enumeration=["kinetic", "binding"],
             parent_field="energy",
+            enumeration=["kinetic", "binding"],
         ),
     )
     angular0 = Quantity(
@@ -529,8 +514,7 @@ class MpesArpesData(Data):
         ],
         dimensionality="[angle]",
         description=("Trace of the first angular axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angular0",
             type="NX_NUMBER",
             name_type="specified",
@@ -548,8 +532,7 @@ class MpesArpesData(Data):
             "Trace of the second axis. Could be linked from the respective "
             "``@reference`` field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="angular1",
             type="NX_NUMBER",
             name_type="specified",
@@ -569,8 +552,7 @@ class MpesArpesData(Data):
             "actual encoder position in NXinstrument or calibrated axes in "
             "NXprocess."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -588,8 +570,7 @@ class MpesArpesData(Data):
             "Calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="photon_energy",
             type="NX_NUMBER",
             name_type="specified",
@@ -612,8 +593,7 @@ class MpesArpesData(Data):
             "``k_parallel`` and ``k_perp`` for the parallel and perpendicular "
             "momenta, respectively. Units are typically 1/angstrom."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kx",
             type="NX_NUMBER",
             name_type="specified",
@@ -632,8 +612,7 @@ class MpesArpesData(Data):
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
             "axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ky",
             type="NX_NUMBER",
             name_type="specified",
@@ -652,8 +631,7 @@ class MpesArpesData(Data):
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
             "axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kz",
             type="NX_NUMBER",
             name_type="specified",
@@ -678,8 +656,7 @@ class MpesArpesData(Data):
             "directly related to its measured momentum outside the material. "
             "Units are typically 1/angstrom."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="k_parallel",
             type="NX_NUMBER",
             name_type="specified",
@@ -703,8 +680,7 @@ class MpesArpesData(Data):
             "accounts for the energy shift due to the material's work function "
             "and electronic structure. Units are typically 1/angstrom."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="k_perpendicular",
             type="NX_NUMBER",
             name_type="specified",
@@ -728,8 +704,7 @@ class MpesArpesData(Data):
             "``spatial1`` could also be the second fast axis in the case of "
             "simultaneous dispersion in two spatial dimensions."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spatial0",
             type="NX_NUMBER",
             name_type="specified",
@@ -749,8 +724,7 @@ class MpesArpesData(Data):
             "</NXmpes/ENTRY/DATA/spatial0-field>` axis. This is typically the "
             "slower scan axis compared to ``spatial0``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spatial1",
             type="NX_NUMBER",
             name_type="specified",
@@ -768,8 +742,7 @@ class MpesArpesData(Data):
             "Calibrated pump-probe delay time. Could be a link to "
             "/entry/instrument/beam_pump/pulse_delay."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="delay",
             type="NX_NUMBER",
             name_type="specified",
@@ -789,8 +762,7 @@ class MpesArpesData(Data):
             "and could be linked from "
             "/entry/sample/temperature_env/temperature_sensor/value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
             name_type="specified",

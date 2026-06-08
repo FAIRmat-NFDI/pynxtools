@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXsqom` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXsqom` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -89,8 +96,7 @@ class Sqom(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -103,8 +109,7 @@ class Sqom(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-definition-field"
         ],
         description=("Official NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -145,8 +150,7 @@ class SqomInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-instrument-name-field"
         ],
         description=("Name of the instrument from which this data was reduced."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -178,8 +182,7 @@ class SqomSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -209,8 +212,7 @@ class SqomReduction(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-reduction-program-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -222,8 +224,7 @@ class SqomReduction(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-reduction-version-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -256,8 +257,7 @@ class SqomData(Data):
         ],
         shape=["*"],
         description=("This is the intensity for each point in QE"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
             name_type="specified",
@@ -272,8 +272,7 @@ class SqomData(Data):
         dimensionality="1 / [length]",
         shape=["*"],
         description=("Positions for the first dimension of Q"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qx",
             type="NX_NUMBER",
             name_type="specified",
@@ -289,8 +288,7 @@ class SqomData(Data):
         dimensionality="1 / [length]",
         shape=["*"],
         description=("Positions for the the second dimension of Q"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qy",
             type="NX_NUMBER",
             name_type="specified",
@@ -306,8 +304,7 @@ class SqomData(Data):
         dimensionality="1 / [length]",
         shape=["*"],
         description=("Positions for the the third dimension of Q"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="qz",
             type="NX_NUMBER",
             name_type="specified",
@@ -323,8 +320,7 @@ class SqomData(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Values for the energy transfer for each point"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="en",
             type="NX_FLOAT",
             name_type="specified",

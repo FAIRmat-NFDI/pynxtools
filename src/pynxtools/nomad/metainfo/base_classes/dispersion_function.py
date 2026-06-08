@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXdispersion_function` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXdispersion_function` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -90,8 +97,7 @@ class DispersionFunction(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-model-name-field"
         ],
         description=("The name of this dispersion model."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model_name",
             type="NX_CHAR",
             name_type="specified",
@@ -107,8 +113,7 @@ class DispersionFunction(Object):
             "This should be a python parsable function. Here we should provide "
             "which keywords are available and a BNF of valid grammar."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="formula",
             type="NX_CHAR",
             name_type="specified",
@@ -121,8 +126,7 @@ class DispersionFunction(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-convention-field"
         ],
         description=("The sign convention being used (n + or - ik)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="convention",
             type="NX_CHAR",
             name_type="specified",
@@ -139,8 +143,7 @@ class DispersionFunction(Object):
             "The identifier used to represent energy in the formula. It is "
             "recommended to use `E`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -154,8 +157,7 @@ class DispersionFunction(Object):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("The minimum energy value at which this formula is valid."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_min",
             type="NX_NUMBER",
             name_type="specified",
@@ -170,8 +172,7 @@ class DispersionFunction(Object):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("The maximum energy value at which this formula is valid."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_max",
             type="NX_NUMBER",
             name_type="specified",
@@ -191,8 +192,7 @@ class DispersionFunction(Object):
             "value to 1 and carry all the unit scaling information in the units "
             "attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
             name_type="specified",
@@ -209,8 +209,7 @@ class DispersionFunction(Object):
             "The identifier used to represent wavelength in the formula. It is "
             "recommended to use `lambda`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -229,8 +228,7 @@ class DispersionFunction(Object):
             "the field value to 1 and carry all the unit scaling information in "
             "the units attribute."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_unit",
             type="NX_NUMBER",
             name_type="specified",
@@ -245,8 +243,7 @@ class DispersionFunction(Object):
         ],
         dimensionality="[length]",
         description=("The minimum wavelength value at which this formula is valid."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_min",
             type="NX_NUMBER",
             name_type="specified",
@@ -261,8 +258,7 @@ class DispersionFunction(Object):
         ],
         dimensionality="[length]",
         description=("The maximum wavelength value at which this formula is valid."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_max",
             type="NX_NUMBER",
             name_type="specified",
@@ -280,8 +276,7 @@ class DispersionFunction(Object):
             "be n for refractive index or eps for dielectric function. The "
             "appropriate token is then to be used inside the formula."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="representation",
             type="NX_CHAR",
             name_type="specified",

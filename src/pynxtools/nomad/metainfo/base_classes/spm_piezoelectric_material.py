@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_piezoelectric_material` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_piezoelectric_material` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.crystal import Crystal
 
 if TYPE_CHECKING:
@@ -70,8 +77,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "The name of the material of the piezo scanner such as Lead "
             "Zirconate Titanates (PZTs)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -84,8 +90,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-identifier-piezo-material-field"
         ],
         description=("The identifier of the piezo material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_piezo_material",
             type="NX_CHAR",
             name_type="specified",
@@ -97,8 +102,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-chemical-formula-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chemical_formula",
             type="NX_CHAR",
             name_type="specified",
@@ -114,8 +118,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "The type of the material of the piezo scanner (e.g. piezoelectric "
             "ceramics, polymer-film piezoelectrics)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -128,8 +131,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-density-field"
         ],
         description=("The density of the piezo material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="density",
             type="NX_NUMBER",
             name_type="specified",
@@ -145,8 +147,7 @@ class SpmPiezoelectricMaterial(Crystal):
         description=(
             "The relative permittivity (dielectric constant) of the piezo material."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_permittivity",
             type="NX_NUMBER",
             name_type="specified",
@@ -159,6 +160,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-d-piezoelectric-constant-field"
         ],
+        variable=True,
         description=(
             "The D_piezoelectric_constant (with substitutable part D) "
             "piezoelectric charge coefficients of the material. The coefficients "
@@ -167,8 +169,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "relative directions of the polarization and the stress (e.g., d33, "
             "d31)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="D_piezoelectric_constant",
             type="NX_NUMBER",
             name_type="partial",
@@ -181,14 +182,14 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-g-voltage-constant-field"
         ],
+        variable=True,
         description=(
             "The constants (with substitutable part G) define the electric field "
             "produced by the external mechanical strain. Different coefficients "
             "correspond to different relative directions of the electric field "
             "and the strain (e.g., g33, g31)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="G_voltage_constant",
             type="NX_NUMBER",
             name_type="partial",
@@ -205,8 +206,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "The electromechanical constant measures the efficiency of the "
             "conversion of mechanical energy into electrical energy."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="K_electromechanical_constant",
             type="NX_NUMBER",
             name_type="specified",
@@ -224,8 +224,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "vector of the piezoelectric material per unit change in "
             "temperature."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="P_pyroelectric_constant",
             type="NX_NUMBER",
             name_type="specified",
@@ -239,8 +238,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-acoustic-impedance-field"
         ],
         description=("The acoustic impedance of the piezo material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acoustic_impedance",
             type="NX_NUMBER",
             name_type="specified",
@@ -254,8 +252,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-young-modulus-field"
         ],
         description=("The Young's modulus of the piezo material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="young_modulus",
             type="NX_NUMBER",
             name_type="specified",
@@ -269,8 +266,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-surface-resistivity-field"
         ],
         description=("The surface resistivity of the piezo material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="surface_resistivity",
             type="NX_NUMBER",
             name_type="specified",
@@ -289,8 +285,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "expecting a range of temperatures in an array [min temperature, max "
             "temperature]."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature_range",
             type="NX_NUMBER",
             name_type="specified",
@@ -308,8 +303,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "The range of temperature where a piezoelectric hard material "
             "transforms into the viscous state."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="glass_transition_temperature",
             type="NX_NUMBER",
             name_type="specified",

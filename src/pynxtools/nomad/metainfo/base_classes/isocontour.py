@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXisocontour` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXisocontour` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -99,8 +106,7 @@ class Isocontour(Object):
         description=(
             "The dimensionality of the space in which the isocontour is embedded."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
             name_type="specified",
@@ -115,8 +121,7 @@ class Isocontour(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXisocontour.html#nxisocontour-isovalue-field"
         ],
         description=("The threshold or iso-contour value."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="isovalue",
             type="NX_NUMBER",
             name_type="specified",

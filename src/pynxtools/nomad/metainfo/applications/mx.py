@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmx` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmx` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -104,8 +111,7 @@ class Mx(Entry):
             "data. This must be a text (not numerical) representation. Such as:: "
             '@version="1.0"'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -118,8 +124,7 @@ class Mx(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -137,8 +142,7 @@ class Mx(Entry):
             "zone of the beamline should be provided in "
             "NXentry/NXinstrument/time_zone."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -159,8 +163,7 @@ class Mx(Entry):
             "aborts or otherwise prevents accurate recording of the end_time, "
             "this field should be omitted."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -179,8 +182,7 @@ class Mx(Entry):
             "NXentry/NXinstrument/time_zone. This field may be filled with a "
             "value estimated before an observed value is available."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time_estimated",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -193,8 +195,7 @@ class Mx(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-definition-field"
         ],
         description=("NeXus NXDL schema to which this file conforms"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -241,8 +242,7 @@ class MxData(Data):
             "This allows for the introduction of the frame number as the first "
             "index."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -277,8 +277,7 @@ class MxData(Data):
             "slowest rank is nP (dimensions (np, 1), (np, i, j) or (np, i, j, "
             "k)). When omitted, the scaling factor is assumed to be 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data_scaling_factor",
             type="NX_NUMBER",
             name_type="specified",
@@ -295,8 +294,7 @@ class MxData(Data):
             "the offset is assumed to be 0. See :ref:`data_scaling_factor "
             "</NXmx/ENTRY/DATA/data_scaling_factor-field>` for more information."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data_offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -328,8 +326,7 @@ class MxSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-sample-name-field"
         ],
         description=("Descriptive name of sample"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -348,8 +345,7 @@ class MxSample(Sample):
             "group. If there is no goniometer, e.g. with a jet, depends_on "
             'should be set to "."'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -362,8 +358,7 @@ class MxSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -403,8 +398,7 @@ class MxInstrument(Instrument):
             "https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_diffrn_source.type.html "
             "is highly recommended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -417,8 +411,7 @@ class MxInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-name-short-name-attribute"
         ],
         description=("Short name for instrument, perhaps the acronym."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",
@@ -432,8 +425,7 @@ class MxInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-time-zone-field"
         ],
         description=("ISO 8601 time_zone offset from UTC."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time_zone",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -474,8 +466,7 @@ class MxSource(Source):
             "https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_diffrn_source.pdbx_synchrotron_site.html "
             "controlled vocabulary is highly recommended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -488,8 +479,7 @@ class MxSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-source-name-short-name-attribute"
         ],
         description=("short name for source, perhaps the acronym"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",

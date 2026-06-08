@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXsts` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXsts` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.applications.spm import Spm
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 
@@ -96,8 +103,7 @@ class Sts(Spm):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsts.html#nxsts-entry-definition-field"
         ],
         description=("Name of the definition that is used for the application."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -110,8 +116,7 @@ class Sts(Spm):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -125,8 +130,7 @@ class Sts(Spm):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsts.html#nxsts-entry-experiment-technique-field"
         ],
         description=("The specific to STM experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_technique",
             type="NX_CHAR",
             name_type="specified",
@@ -143,8 +147,7 @@ class Sts(Spm):
             "The mode between the tip and sample of the tunneling spectroscopy "
             "experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -163,8 +166,7 @@ class Sts(Spm):
             "the scan region, e.g. forward, backward, or both (if scan is "
             "repeated). Any lab defined scan type"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_type",
             type="NX_CHAR",
             name_type="specified",
@@ -179,8 +181,7 @@ class Sts(Spm):
         description=(
             "The identifier for the experiment which should be unique at least in lab."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_experiment",
             type="NX_CHAR",
             name_type="specified",
@@ -200,8 +201,7 @@ class Sts(Spm):
             "https://www.nexusformat.org/2014_How_to_find_default_data.html for "
             "a summary of the discussion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",
@@ -218,8 +218,7 @@ class Sts(Spm):
             "group a number of the experiments run upon the same setup and/or "
             "same sample."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_collection",
             type="NX_CHAR",
             name_type="specified",
@@ -231,8 +230,7 @@ class Sts(Spm):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-experiment-description-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -245,8 +243,7 @@ class Sts(Spm):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-start-time-field"
         ],
         description=("The start time of the experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -259,8 +256,7 @@ class Sts(Spm):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-end-time-field"
         ],
         description=("The end time of the experiment."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -312,8 +308,7 @@ class StsReproducibilityIndicators(Collection):
             "ENTRY[entry]) inside the square bracket would be the `exact` name "
             "of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current",
             type="NX_NUMBER",
             name_type="specified",
@@ -333,8 +328,7 @@ class StsReproducibilityIndicators(Collection):
             "entry in ENTRY[entry]) inside the square bracket would be the "
             "`exact` name of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current_offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -355,8 +349,7 @@ class StsReproducibilityIndicators(Collection):
             "entry in ENTRY[entry]) inside the square bracket would be the "
             "`exact` name of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current_gain",
             type="NX_NUMBER",
             name_type="specified",
@@ -376,8 +369,7 @@ class StsReproducibilityIndicators(Collection):
             "entry in ENTRY[entry]) inside the square bracket would be the "
             "`exact` name of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="modulation_signal_type",
             type="NX_CHAR",
             name_type="specified",
@@ -397,8 +389,7 @@ class StsReproducibilityIndicators(Collection):
             "ENTRY[entry]) inside the square bracket would be the `exact` name "
             "of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -410,12 +401,12 @@ class StsReproducibilityIndicators(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-reproducibility-indicators-link-to-field-field"
         ],
+        variable=True,
         description=(
             "A place holder to create link to any field relevant considered as "
             "reproducibility indicators (defined by laboratory)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="LINK_TO_FIELD",
             type="NX_CHAR",
             name_type="any",
@@ -457,8 +448,7 @@ class StsResolutionIndicators(Collection):
             "ENTRY[entry]) inside the square bracket would be the `exact` name "
             "of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="head_temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -477,8 +467,7 @@ class StsResolutionIndicators(Collection):
             "ENTRY[entry]) inside the square bracket would be the `exact` name "
             "of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cryo_bottom_temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -497,8 +486,7 @@ class StsResolutionIndicators(Collection):
             "ENTRY[entry]) inside the square bracket would be the `exact` name "
             "of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cryo_shield_temperature",
             type="NX_NUMBER",
             name_type="specified",
@@ -518,8 +506,7 @@ class StsResolutionIndicators(Collection):
             "entry in ENTRY[entry]) inside the square bracket would be the "
             "`exact` name of the NXentry group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="modulation_signal_type",
             type="NX_CHAR",
             name_type="specified",
@@ -538,8 +525,7 @@ class StsResolutionIndicators(Collection):
             "group name (could be any meaningful and relevant name e.g. entry in "
             "ENTRY[entry]) inside the"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="modulation_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -551,12 +537,12 @@ class StsResolutionIndicators(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-resolution-indicators-link-to-field-field"
         ],
+        variable=True,
         description=(
             "A place holder to create link to any field relevant considered as "
             "reproducibility indicators (defined by laboratory)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="LINK_TO_FIELD",
             type="NX_CHAR",
             name_type="any",

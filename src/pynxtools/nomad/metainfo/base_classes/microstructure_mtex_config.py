@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure_mtex_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure_mtex_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
@@ -140,8 +147,7 @@ class MicrostructureMtexConfigConventions(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-conventions-x-axis-direction-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_axis_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -154,8 +160,7 @@ class MicrostructureMtexConfigConventions(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-conventions-z-axis-direction-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_axis_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -168,8 +173,7 @@ class MicrostructureMtexConfigConventions(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-conventions-a-axis-direction-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="a_axis_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -182,8 +186,7 @@ class MicrostructureMtexConfigConventions(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-conventions-b-axis-direction-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="b_axis_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -196,8 +199,7 @@ class MicrostructureMtexConfigConventions(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-conventions-euler-angle-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="euler_angle",
             type="NX_CHAR",
             name_type="specified",
@@ -233,8 +235,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-font-size-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="font_size",
             type="NX_NUMBER",
             name_type="specified",
@@ -248,8 +249,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-inner-plot-spacing-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="inner_plot_spacing",
             type="NX_NUMBER",
             name_type="specified",
@@ -263,8 +263,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-outer-plot-spacing-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="outer_plot_spacing",
             type="NX_NUMBER",
             name_type="specified",
@@ -278,8 +277,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-marker-size-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="marker_size",
             type="NX_NUMBER",
             name_type="specified",
@@ -293,8 +291,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-figure-size-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="figure_size",
             type="NX_NUMBER",
             name_type="specified",
@@ -307,8 +304,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-show-micron-bar-field"
         ],
         description=("True, if MTex renders a scale bar with figures."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="show_micron_bar",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -321,8 +317,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-show-coordinates-field"
         ],
         description=("True, if MTex renders a grid with figures."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="show_coordinates",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -337,8 +332,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         description=(
             "Code for the function handle used for annotating pole figure plots."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pf_anno_fun_hdl",
             type="NX_CHAR",
             name_type="specified",
@@ -353,8 +347,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         dimensionality="dimensionless",
         shape=["*", 3],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="color_map",
             type="NX_NUMBER",
             name_type="specified",
@@ -370,8 +363,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         dimensionality="dimensionless",
         shape=["*", 3],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="default_color_map",
             type="NX_NUMBER",
             name_type="specified",
@@ -384,8 +376,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-color-palette-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="color_palette",
             type="NX_CHAR",
             name_type="specified",
@@ -398,8 +389,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-degree-char-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="degree_char",
             type="NX_CHAR",
             name_type="specified",
@@ -412,8 +402,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-arrow-char-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="arrow_char",
             type="NX_CHAR",
             name_type="specified",
@@ -426,8 +415,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-marker-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="marker",
             type="NX_CHAR",
             name_type="specified",
@@ -440,8 +428,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-marker-edge-color-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="marker_edge_color",
             type="NX_CHAR",
             name_type="specified",
@@ -454,8 +441,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-marker-face-color-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="marker_face_color",
             type="NX_CHAR",
             name_type="specified",
@@ -468,8 +454,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-hit-test-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="hit_test",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -504,8 +489,7 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-miscellaneous-mosek-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mosek",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -518,8 +502,7 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-miscellaneous-generating-help-mode-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="generating_help_mode",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -532,8 +515,7 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-miscellaneous-methods-advise-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="methods_advise",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -546,8 +528,7 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-miscellaneous-stop-on-symmetry-mismatch-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="stop_on_symmetry_mismatch",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -560,8 +541,7 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-miscellaneous-inside-poly-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="inside_poly",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -574,8 +554,7 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-miscellaneous-text-interpreter-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="text_interpreter",
             type="NX_CHAR",
             name_type="specified",
@@ -611,8 +590,7 @@ class MicrostructureMtexConfigNumerics(Collection):
         ],
         dimensionality="dimensionless",
         description=("Return value of the Matlab eps command."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="eps",
             type="NX_NUMBER",
             name_type="specified",
@@ -626,8 +604,7 @@ class MicrostructureMtexConfigNumerics(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-fft-accuracy-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fft_accuracy",
             type="NX_NUMBER",
             name_type="specified",
@@ -641,8 +618,7 @@ class MicrostructureMtexConfigNumerics(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-max-stwo-bandwidth-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_stwo_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -656,8 +632,7 @@ class MicrostructureMtexConfigNumerics(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-max-sothree-bandwidth-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_sothree_bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -693,8 +668,7 @@ class MicrostructureMtexConfigSystem(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-system-memory-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="memory",
             type="NX_NUMBER",
             name_type="specified",
@@ -707,8 +681,7 @@ class MicrostructureMtexConfigSystem(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-system-open-gl-bug-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="open_gl_bug",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -721,8 +694,7 @@ class MicrostructureMtexConfigSystem(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-system-save-to-file-field"
         ],
         description=("TODO with MTex developers"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="save_to_file",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -757,8 +729,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-mtex-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mtex",
             type="NX_CHAR",
             name_type="specified",
@@ -771,8 +742,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-data-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_CHAR",
             name_type="specified",
@@ -785,8 +755,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-cif-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cif",
             type="NX_CHAR",
             name_type="specified",
@@ -799,8 +768,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-ebsd-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ebsd",
             type="NX_CHAR",
             name_type="specified",
@@ -813,8 +781,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-pf-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pf",
             type="NX_CHAR",
             name_type="specified",
@@ -827,8 +794,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-odf-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="odf",
             type="NX_CHAR",
             name_type="specified",
@@ -841,8 +807,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-tensor-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tensor",
             type="NX_CHAR",
             name_type="specified",
@@ -855,8 +820,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-example-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="example",
             type="NX_CHAR",
             name_type="specified",
@@ -869,8 +833,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-import-wizard-field"
         ],
         description=("Absolute path to specific component of MTex source code."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="import_wizard",
             type="NX_CHAR",
             name_type="specified",
@@ -886,8 +849,7 @@ class MicrostructureMtexConfigPath(Collection):
             "List of file type suffixes for which MTex assumes texture/pole "
             "figure information."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pf_extensions",
             type="NX_CHAR",
             name_type="specified",
@@ -900,8 +862,7 @@ class MicrostructureMtexConfigPath(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-path-ebsd-extensions-field"
         ],
         description=("List of file type suffixes for which MTex assumes EBSD content."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ebsd_extensions",
             type="NX_CHAR",
             name_type="specified",

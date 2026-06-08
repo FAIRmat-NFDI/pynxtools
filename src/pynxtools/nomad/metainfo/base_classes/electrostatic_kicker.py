@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXelectrostatic_kicker` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXelectrostatic_kicker` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.log import Log
 
@@ -76,8 +83,7 @@ class ElectrostaticKicker(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-description-field"
         ],
         description=("extended description of the kicker."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -93,8 +99,7 @@ class ElectrostaticKicker(Component):
         description=(
             "define position of beamline element relative to production target"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beamline_distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -109,8 +114,7 @@ class ElectrostaticKicker(Component):
         ],
         dimensionality="[time]",
         description=("kicker timing as defined by ``description`` attribute"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="timing",
             type="NX_FLOAT",
             name_type="specified",
@@ -123,8 +127,7 @@ class ElectrostaticKicker(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-timing-description-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -139,8 +142,7 @@ class ElectrostaticKicker(Component):
         ],
         dimensionality="[current]",
         description=("current set on supply."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="set_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -155,8 +157,7 @@ class ElectrostaticKicker(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("voltage set on supply."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="set_voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -203,8 +204,7 @@ class ElectrostaticKickerReadCurrent(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-read-current-value-field"
         ],
         dimensionality="[current]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
             name_type="specified",
@@ -242,8 +242,7 @@ class ElectrostaticKickerReadVoltage(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-read-voltage-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
             name_type="specified",

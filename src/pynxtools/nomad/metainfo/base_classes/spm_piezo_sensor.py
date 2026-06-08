@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_piezo_sensor` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_piezo_sensor` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 
 if TYPE_CHECKING:
@@ -111,8 +118,7 @@ class SpmPiezoSensor(Sensor):
         description=(
             "The x position (e.g., target or averaged target value) of the piezo."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -129,8 +135,7 @@ class SpmPiezoSensor(Sensor):
         description=(
             "The y position (e.g., target or averaged target value) of the piezo."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -147,8 +152,7 @@ class SpmPiezoSensor(Sensor):
         description=(
             "The z position (e.g., target or averaged target value) of the piezo."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -161,13 +165,13 @@ class SpmPiezoSensor(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_sensor.html#nxspm_piezo_sensor-axisoffset-value-field"
         ],
+        variable=True,
         dimensionality="[length]",
         description=(
             "The offset value for the piezo axis (X, Y, or Z) that will be added "
             "to the measured value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISoffset_value",
             type="NX_NUMBER",
             name_type="partial",

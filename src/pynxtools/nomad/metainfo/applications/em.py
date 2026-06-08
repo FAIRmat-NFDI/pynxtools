@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXem` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXem` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cite import Cite
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -382,8 +389,7 @@ class Em(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -400,8 +406,7 @@ class Em(Entry):
             "A (globally) unique persistent identifier for referring to this "
             "experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_experiment",
             type="NX_CHAR",
             name_type="specified",
@@ -416,8 +421,7 @@ class Em(Entry):
         description=(
             "Alias (short name) which scientists can use to refer to this experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -435,8 +439,7 @@ class Em(Entry):
             "using respective groups and fields and base classes instead of "
             "writing prose into the field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -464,8 +467,7 @@ class Em(Entry):
             "of the experiment is possible with start_time and end_time fields "
             "of respective :ref:`NXem_event_data` instances."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -482,8 +484,7 @@ class Em(Entry):
             "the microscope session ended. See docstring of the start_time field "
             "to see how to use the start_time and end_time together."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -525,8 +526,7 @@ class EmCiteID(Cite):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-citeid-author-field"
         ],
         description=("The author(s) of that reference."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="author",
             type="NX_CHAR",
             name_type="specified",
@@ -538,8 +538,7 @@ class EmCiteID(Cite):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-citeid-doi-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="doi",
             type="NX_CHAR",
             name_type="specified",
@@ -578,8 +577,7 @@ class EmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-noteid-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -591,8 +589,7 @@ class EmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-noteid-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -604,8 +601,7 @@ class EmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-noteid-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -617,8 +613,7 @@ class EmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-noteid-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -648,8 +643,7 @@ class EmProject(Project):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-project-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -686,8 +680,8 @@ class EmUserID(User):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-identifiername-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        variable=True,
+        a_nexus_field=NeXusField(
             name="identifierNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -699,12 +693,12 @@ class EmUserID(User):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-identifiername-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="identifierNAME",
             enumeration=[
                 "ARK",
                 "DOI",
@@ -720,7 +714,6 @@ class EmUserID(User):
                 "URN",
             ],
             open_enum=True,
-            parent_field="identifierNAME",
         ),
     )
 
@@ -791,8 +784,7 @@ class EmSampleID(Sample):
             "should be set to false) or a virtual one (in which case "
             "is_simulation should be set to true)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_simulation",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -804,8 +796,7 @@ class EmSampleID(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-physical-form-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_form",
             type="NX_CHAR",
             name_type="specified",
@@ -836,8 +827,7 @@ class EmSampleID(Sample):
             "preparation should be stored in resources referring to "
             "identifier_parent."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_sample",
             type="NX_CHAR",
             name_type="specified",
@@ -849,12 +839,12 @@ class EmSampleID(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-identifier-sample-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="identifier_sample",
             enumeration=[
                 "ARK",
                 "DOI",
@@ -870,7 +860,6 @@ class EmSampleID(Sample):
                 "URN",
             ],
             open_enum=True,
-            parent_field="identifier_sample",
         ),
     )
     identifier_parent = Quantity(
@@ -884,8 +873,7 @@ class EmSampleID(Sample):
             "field is to support functionalities for tracking sample provenance "
             "in a research data management system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_parent",
             type="NX_CHAR",
             name_type="specified",
@@ -897,12 +885,12 @@ class EmSampleID(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-identifier-parent-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="identifier_parent",
             enumeration=[
                 "ARK",
                 "DOI",
@@ -918,7 +906,6 @@ class EmSampleID(Sample):
                 "URN",
             ],
             open_enum=True,
-            parent_field="identifier_parent",
         ),
     )
     preparation_date = Quantity(
@@ -942,8 +929,7 @@ class EmSampleID(Sample):
             "responsibility of the research data management system and not the a "
             "NeXus file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preparation_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -956,8 +942,7 @@ class EmSampleID(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-name-field"
         ],
         description=("Specimen name"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -979,8 +964,7 @@ class EmSampleID(Sample):
             "identifier_parent or walk through eventually deeply nested groups "
             "in individual data instances."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -1002,8 +986,7 @@ class EmSampleID(Sample):
             "specimen viewed for an illumination situation where the nominal "
             "surface normal of the specimen is parallel to the optical axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -1025,8 +1008,7 @@ class EmSampleID(Sample):
             "instances can provide a cleaner description of the relevant "
             "details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="density",
             type="NX_NUMBER",
             name_type="specified",
@@ -1071,8 +1053,7 @@ class EmConsistentRotations(Parameters):
             "Counter_clockwise is equivalent to a right-handed choice. Clockwise "
             "is equivalent to a left-handed choice."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_handedness",
             type="NX_CHAR",
             name_type="specified",
@@ -1090,8 +1071,7 @@ class EmConsistentRotations(Parameters):
             "convention 3 of reference "
             "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1128,8 +1108,7 @@ class EmConsistentRotations(Parameters):
             "possible. Proper Euler angles are distinguished from (improper) "
             "Tait-Bryan angles."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="euler_angle_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1161,8 +1140,7 @@ class EmConsistentRotations(Parameters):
             "convention 5 of reference "
             "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_angle_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1181,8 +1159,7 @@ class EmConsistentRotations(Parameters):
             "convention 6 of reference "
             "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sign_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1215,8 +1192,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -1228,8 +1204,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -1243,8 +1218,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-origin-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -1258,8 +1232,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -1272,8 +1245,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-x-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1287,8 +1259,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -1301,8 +1272,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-y-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1316,8 +1286,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -1330,8 +1299,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-z-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1361,8 +1329,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -1374,8 +1341,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -1398,8 +1364,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "reference frame. If any of these assumptions is not met, the user "
             "is required to explicitly state this."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -1424,8 +1389,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -1442,8 +1406,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing x-axis base vector of the "
             "processing_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1459,8 +1422,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -1477,8 +1439,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing y-axis base vector of the "
             "processing_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1494,8 +1455,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -1512,8 +1472,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing z-axis base vector of the "
             "processing_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1545,8 +1504,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -1558,8 +1516,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -1582,8 +1539,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "reference frame. If any of these assumptions is not met, the user "
             "is required to explicitly state this."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -1608,8 +1564,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -1626,8 +1581,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing x-axis base vector of the "
             "sample_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1643,8 +1597,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -1661,8 +1614,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing y-axis base vector of the "
             "sample_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1678,8 +1630,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -1696,8 +1647,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "Direction of the positively pointing z-axis base vector of the "
             "sample_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1735,8 +1685,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -1748,8 +1697,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -1772,8 +1720,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "these assumptions is not met, the user is required to explicitly "
             "state this."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -1798,8 +1745,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -1816,8 +1762,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "Direction of the positively pointing x-axis base vector of the "
             "detector_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1833,8 +1778,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -1851,8 +1795,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "Direction of the positively pointing y-axis base vector of the "
             "detector_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1868,8 +1811,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -1886,8 +1828,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "Direction of the positively pointing z-axis base vector of the "
             "detector_reference_frame."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",

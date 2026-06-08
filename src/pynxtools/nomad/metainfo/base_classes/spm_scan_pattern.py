@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_scan_pattern` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_scan_pattern` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -90,6 +97,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-scan-speedn-field"
         ],
+        variable=True,
         description=(
             "Define the scan speed in the forward direction along the axis "
             "(except the spiral and trajectory scans), if forward and backward "
@@ -100,8 +108,7 @@ class SpmScanPattern(Object):
             "trajectory line (line between two trajectory points). Spiral scan: "
             "N refers to the nth circle from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_speedN",
             type="NX_NUMBER",
             name_type="partial",
@@ -114,6 +121,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-forward-speedn-field"
         ],
+        variable=True,
         description=(
             "Define the scan speed in the forward directions (except the spiral "
             "and trajectory scans). Rename the field, according to the name of "
@@ -121,8 +129,7 @@ class SpmScanPattern(Object):
             "(line between two trajectory points). Spiral scan: N refers to the "
             "nth circle from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="forward_speedN",
             type="NX_NUMBER",
             name_type="partial",
@@ -135,6 +142,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-backward-speedn-field"
         ],
+        variable=True,
         description=(
             "Define the scan speed in the backward directions (except the spiral "
             "and trajectory scans). Rename the field, according to the name of "
@@ -142,8 +150,7 @@ class SpmScanPattern(Object):
             "(line between two trajectory points). Spiral scan: N refers to the "
             "nth circle from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="backward_speedN",
             type="NX_NUMBER",
             name_type="partial",
@@ -156,14 +163,14 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-channelname-field"
         ],
+        variable=True,
         description=(
             "Name of the channel that leads the scan data. The ending annotation "
             "'NAME' is to represent the name of the channel and/or dimension. "
             "Rename the field, according to the name of the channel and "
             "dimension (e.g. channel_piezo_scanner_x)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="channelNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -175,6 +182,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-scan-pointsn-field"
         ],
+        variable=True,
         description=(
             "Define the total number of points in the given axis the scan to be "
             "performed (except the spiral and trajectory scans). Rename the "
@@ -183,8 +191,7 @@ class SpmScanPattern(Object):
             "trajectory line (line between two trajectory points). Spiral scan: "
             "N refers to the nth circle from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scan_pointsN",
             type="NX_NUMBER",
             name_type="partial",
@@ -196,6 +203,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-steppingn-field"
         ],
+        variable=True,
         description=(
             "The number of steps the probe jumps over the scan steps or points "
             "in the scanning process. This comes into picture, when not every "
@@ -206,8 +214,7 @@ class SpmScanPattern(Object):
             "two trajectory points). Spiral scan: N refers to the nth circle "
             "from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="steppingN",
             type="NX_NUMBER",
             name_type="partial",
@@ -219,6 +226,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-step-sizen-field"
         ],
+        variable=True,
         description=(
             "The size of each step in the scan on each dimension (except the "
             "spiral and trajectory scans). Rename the field, according to the "
@@ -227,8 +235,7 @@ class SpmScanPattern(Object):
             "two trajectory points). Spiral scan: N refers to the nth circle "
             "from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="step_sizeN",
             type="NX_NUMBER",
             name_type="partial",
@@ -241,6 +248,7 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-continuousn-field"
         ],
+        variable=True,
         description=(
             "If the scan probe moves continuously over the scan points or steps, "
             "use True. The default value is True. Usually, continuous scanning "
@@ -250,8 +258,7 @@ class SpmScanPattern(Object):
             "the nth trajectory line (line between two trajectory points). "
             "Spiral scan: N refers to the nth circle from center."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="continuousN",
             type="NX_BOOLEAN",
             name_type="partial",
@@ -267,8 +274,7 @@ class SpmScanPattern(Object):
             "If the scan probe oscillates over the scan point, use True. The "
             "default value is False."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="oscillating",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -281,8 +287,7 @@ class SpmScanPattern(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-oscillation-frequency-field"
         ],
         description=("The number of oscillations on each scanning point per second."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="oscillation_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -299,8 +304,7 @@ class SpmScanPattern(Object):
             "path or lines of the trajectory. Each trajectory line is defined by "
             "two subsequent trajectory points."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_trajectory_points",
             type="NX_NUMBER",
             name_type="specified",
@@ -317,8 +321,7 @@ class SpmScanPattern(Object):
             "The trajectory points (nTraj) are the N-dimensional vectors (nD), "
             "each vector refers to a point in N-dimensional phase space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="trajectory_points",
             type="NX_NUMBER",
             name_type="specified",
@@ -330,13 +333,13 @@ class SpmScanPattern(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-spiral-radiusn-field"
         ],
+        variable=True,
         description=(
             "Define the radius of the spiral circle of scanning. Rename the "
             "field, according to the circle order, the nearest circle to the "
             "center is 0."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spiral_radiusN",
             type="NX_NUMBER",
             name_type="partial",
@@ -383,12 +386,12 @@ class SpmScanPatternData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-data-field"
         ],
+        variable=True,
         description=(
             "The data (e.g. current, voltage, temperature) field that can be "
             "plotted against the axes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="DATA",
             type="NX_NUMBER",
             name_type="any",
@@ -401,9 +404,9 @@ class SpmScanPatternData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-axisname-field"
         ],
+        variable=True,
         description=("The name of the axis that corresponds to the data field."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="AXISNAME",
             type="NX_CHAR_OR_NUMBER",
             name_type="any",

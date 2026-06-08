@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure_score_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure_score_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
@@ -236,8 +243,7 @@ class MicrostructureScoreConfig(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -251,8 +257,7 @@ class MicrostructureScoreConfig(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-identifier-simulation-field"
         ],
         description=("An alias to refer to this simulation."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_simulation",
             type="NX_UINT",
             name_type="specified",
@@ -267,8 +272,7 @@ class MicrostructureScoreConfig(Entry):
         description=(
             "Discouraged free-text field to add further details to the computation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -284,8 +288,7 @@ class MicrostructureScoreConfig(Entry):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the configuration file was created."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -325,8 +328,7 @@ class MicrostructureScoreConfigSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-sample-dimensionality-field"
         ],
         description=("Dimensionality of the simulation."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_CHAR",
             name_type="specified",
@@ -340,8 +342,7 @@ class MicrostructureScoreConfigSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-sample-is-simulation-field"
         ],
         description=("A qualifier whether the sample is a real one or a virtual one."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_simulation",
             type="NX_CHAR",
             name_type="specified",
@@ -362,8 +363,7 @@ class MicrostructureScoreConfigSample(Sample):
             "management systems an opportunity to parse the relevant elements "
             "without having to interpret these from other sources."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -397,8 +397,7 @@ class MicrostructureScoreConfigProgram1(Program):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-program1-program-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -410,8 +409,7 @@ class MicrostructureScoreConfigProgram1(Program):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-program1-program-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -463,8 +461,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
         ],
         dimensionality="[temperature]",
         description=("Empirical melting temperature measured at standard conditions."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="melting_temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -479,8 +476,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
         description=("Shear modulus at zero Kelvin."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shear_modulus_zero",
             type="NX_FLOAT",
             name_type="specified",
@@ -498,8 +494,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "Constant :math:`a` in the Nadal-Le Poac-based model of the "
             "temperature-dependent shear modulus."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nadal_lepoac_a",
             type="NX_FLOAT",
             name_type="specified",
@@ -517,8 +512,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "Constant :math:`\\zeta` in the Nadal-Le Poac-based model of the "
             "temperature- dependent shear modulus."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nadal_lepoac_zeta",
             type="NX_FLOAT",
             name_type="specified",
@@ -533,8 +527,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
         ],
         dimensionality="[length]",
         description=("Magnitude of the Burgers vector at zero Kelvin."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="burgers_vector_zero",
             type="NX_FLOAT",
             name_type="specified",
@@ -551,8 +544,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "Constant :math:`a_2` in the second-order model that is used for "
             "quantifying the temperature-dependent Burgers vector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lattice_expansion_second",
             type="NX_FLOAT",
             name_type="specified",
@@ -569,8 +561,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "Constant :math:`a_1` in the second-order model that is used for "
             "quantifying the temperature-dependent Burgers vector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lattice_expansion_first",
             type="NX_FLOAT",
             name_type="specified",
@@ -588,8 +579,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "Constant :math:`a_0` in the second-order model that is used for "
             "quantifying the temperature-dependent Burgers vector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lattice_expansion_null",
             type="NX_FLOAT",
             name_type="specified",
@@ -634,8 +624,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
             "EBSD orientation map * damask, the result of a simulation from "
             "`DAMASK <https://damask-multiphysics.org>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -654,8 +643,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
             "Extent of each deformed grain in voxel along the x, y, and z "
             "direction when model is cuboidal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
             name_type="specified",
@@ -670,8 +658,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
         ],
         dimensionality="[length]",
         description=("Average spherical diameter when model is poisson_voronoi."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -713,8 +700,7 @@ class MicrostructureScoreConfigNucleation(Parameters):
             "spatially: * csr, complete spatial randomness * custom, "
             "implementation-specific * gb, nuclei placed at grain boundaries"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spatial_distribution",
             type="NX_CHAR",
             name_type="specified",
@@ -731,8 +717,7 @@ class MicrostructureScoreConfigNucleation(Parameters):
             "According to which model will the nuclei start to grow: * "
             "site_saturation, instantaneously"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incubation_time",
             type="NX_CHAR",
             name_type="specified",
@@ -751,8 +736,7 @@ class MicrostructureScoreConfigNucleation(Parameters):
             "ensemble/bunge_euler * random, picking randomly on the SO3 * "
             "damask, picking based on information provided in deformation/damask"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation",
             type="NX_CHAR",
             name_type="specified",
@@ -795,8 +779,7 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
             "are considered as low-angle grain boundaries. Other grain "
             "boundaries are high-angle boundaries."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -833,8 +816,7 @@ class MicrostructureScoreConfigStoredEnergyRecovery(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-stored-energy-recovery-model-field"
         ],
         description=("Which type of recovery model."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -873,8 +855,7 @@ class MicrostructureScoreConfigDispersoidDrag(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-model-field"
         ],
         description=("Which type of drag model."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -907,8 +888,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         ],
         shape=["*"],
         description=("Given name of a texture component."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -927,8 +907,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
             ":math:`\\varphi_2` of the of texture components in sequence of the "
             "name field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bunge_euler",
             type="NX_FLOAT",
             name_type="specified",
@@ -949,8 +928,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
             "symmetries) as specified by bunge_euler indexed in the same "
             "sequence as the bunge_euler and name fields."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="theta",
             type="NX_FLOAT",
             name_type="specified",
@@ -985,8 +963,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-signal-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -999,8 +976,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-axes-attribute"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -1012,8 +988,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-time-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="time_indices",
             type="NX_UINT",
             name_type="specified",
@@ -1025,8 +1000,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-temperature-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="temperature_indices",
             type="NX_UINT",
             name_type="specified",
@@ -1038,8 +1012,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-title-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -1057,8 +1030,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             "Support point of the linearized curve of simulated time matching a "
             "specific support point of the temperature."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1071,8 +1043,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-time-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1088,8 +1059,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         dimensionality="[temperature]",
         shape=["*"],
         description=("Support point of the linearized curve of the temperature."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -1102,8 +1072,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-temperature-long-name-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1142,8 +1111,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
         ],
         dimensionality="dimensionless",
         description=("Maximum recrystallized volume fraction."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -1158,8 +1126,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
         ],
         dimensionality="[time]",
         description=("Maximum simulated physical time."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1174,8 +1141,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
         ],
         dimensionality="dimensionless",
         description=("Maximum number of iteration steps."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_iteration",
             type="NX_UINT",
             name_type="specified",
@@ -1194,8 +1160,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "boundary in the system how much a cell may be consumed in a single "
             "iteration."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_delta_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -1225,8 +1190,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "cells in this front, though, more data have to be collected than "
             "just a grain identifier."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_set",
             type="NX_FLOAT",
             name_type="specified",
@@ -1261,8 +1225,7 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             "Perform a statistical analyses of the results as it was proposed by "
             "M. Kühbach (solitary unit model ensemble approach)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="apply",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1278,8 +1241,7 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
         description=(
             "How many independent cellular automaton domains should be instantiated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_domains",
             type="NX_UINT",
             name_type="specified",
@@ -1298,8 +1260,7 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             "discretized upon during post-processing the results with the "
             "solitary unit modeling approach."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rediscretization",
             type="NX_UINT",
             name_type="specified",

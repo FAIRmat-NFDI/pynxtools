@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXsolenoid_magnet` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXsolenoid_magnet` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.log import Log
 
@@ -76,8 +83,7 @@ class SolenoidMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsolenoid_magnet.html#nxsolenoid_magnet-description-field"
         ],
         description=("extended description of the magnet."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -93,8 +99,7 @@ class SolenoidMagnet(Component):
         description=(
             "define position of beamline element relative to production target"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="beamline_distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -109,8 +114,7 @@ class SolenoidMagnet(Component):
         ],
         dimensionality="[current]",
         description=("current set on supply."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="set_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -157,8 +161,7 @@ class SolenoidMagnetReadCurrent(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsolenoid_magnet.html#nxsolenoid_magnet-read-current-value-field"
         ],
         dimensionality="[current]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
             name_type="specified",
@@ -196,8 +199,7 @@ class SolenoidMagnetReadVoltage(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsolenoid_magnet.html#nxsolenoid_magnet-read-voltage-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
             name_type="specified",

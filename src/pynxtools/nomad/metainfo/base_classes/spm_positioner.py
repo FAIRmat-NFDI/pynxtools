@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_positioner` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_positioner` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.pid_controller import PidController
 from pynxtools.nomad.metainfo.base_classes.positioner import Positioner
 
@@ -155,8 +162,7 @@ class SpmPositionerZController(PidController):
             "controller. Proportional Derivative constant K_d can be expressed "
             "as :math:`K_d = K_p D_t`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="D_t",
             type="NX_NUMBER",
             name_type="specified",
@@ -175,8 +181,7 @@ class SpmPositionerZController(PidController):
             "controller. Proportional Integral constant K_i can be expressed as "
             ":math:`K_i = \\frac{K_p}{I_t}`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="I_t",
             type="NX_NUMBER",
             name_type="specified",
@@ -195,8 +200,7 @@ class SpmPositionerZController(PidController):
             "tip position can also be varied when the z_controller is not "
             "running."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -213,8 +217,7 @@ class SpmPositionerZController(PidController):
             "The set point for the z-controller to be fixed and the target value "
             "could be height or current."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="set_point",
             type="NX_NUMBER",
             name_type="specified",
@@ -232,8 +235,7 @@ class SpmPositionerZController(PidController):
             "OFF. E.g., for constant height mode, the z-controller feedback "
             "system is off."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="feedback_on",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -247,8 +249,7 @@ class SpmPositionerZController(PidController):
         ],
         dimensionality="[length]",
         description=("If the tip is lifted from the stable point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tip_lift",
             type="NX_NUMBER",
             name_type="specified",
@@ -263,8 +264,7 @@ class SpmPositionerZController(PidController):
         ],
         dimensionality="[time]",
         description=("The switch-off delay of the controller from its stable point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="switch_off_delay",
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
@@ -282,8 +282,7 @@ class SpmPositionerZController(PidController):
             "Offset added to the initial averaged tip position on Z-axis before "
             "starting scan."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_offset_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -302,8 +301,7 @@ class SpmPositionerZController(PidController):
             "signal for z-position contains noise, to reduce the noise impacts, "
             "z-position is being averaged over this time window."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_average_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -322,8 +320,7 @@ class SpmPositionerZController(PidController):
             "from on and vice versa. In this time window, controller fixed its "
             "position if feedback changed to off mode."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_controller_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -342,8 +339,7 @@ class SpmPositionerZController(PidController):
             "(mostly case in STS bias spectra) and False refers feedback system "
             "on (mostly case in STM constant current spectra)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_controller_hold",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -360,8 +356,7 @@ class SpmPositionerZController(PidController):
             "The final Z position of the tip after the scan. This parameter is "
             "used to indicate any unexpected displacement of the tip."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_z",
             type="NX_NUMBER",
             name_type="specified",
@@ -378,8 +373,7 @@ class SpmPositionerZController(PidController):
             "Controller label. This label which will be displayed at places "
             "where you can select a channel or controller."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="controller_label",
             type="NX_CHAR",
             name_type="specified",

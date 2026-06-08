@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.apm_measurement import ApmMeasurement
 from pynxtools.nomad.metainfo.base_classes.cite import Cite
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
@@ -441,8 +448,7 @@ class Apm(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-definition-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -455,8 +461,7 @@ class Apm(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-definition-version-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -495,8 +500,7 @@ class Apm(Entry):
             "groups. Such interrupted runs should be stored as individual "
             ":ref:`NXentry` instances in one NeXus file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="run_number",
             type="NX_UINT",
             name_type="specified",
@@ -512,8 +516,7 @@ class Apm(Entry):
         description=(
             "Alias or short name which scientists can use to refer to this experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -531,8 +534,7 @@ class Apm(Entry):
             "using respective groups and fields and base classes instead of "
             "writing prose into the field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -563,8 +565,7 @@ class Apm(Entry):
             "be collected to compute this event chain during the experiment. For "
             "this purpose the :ref:`NXapm_event_data` instance should be used."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -585,8 +586,7 @@ class Apm(Entry):
             "not be interpreted as that the experiment was aborted. Only, the "
             "field ``status`` should be used for communicating such abortion."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -603,8 +603,7 @@ class Apm(Entry):
             "How long did the measurement take e.g. use "
             "CRunHeader.CAnalysis.fElapsedTime"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="elapsed_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -629,8 +628,7 @@ class Apm(Entry):
             "be detrimental to LEAP systems (see `S. Katnagallu et al. "
             "<https://doi.org/10.1017/S1431927621012381>`_)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="operation_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -674,8 +672,7 @@ class ApmCiteID(Cite):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-citeid-author-field"
         ],
         description=("The author(s) of that reference."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="author",
             type="NX_CHAR",
             name_type="specified",
@@ -687,8 +684,7 @@ class ApmCiteID(Cite):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-citeid-doi-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="doi",
             type="NX_CHAR",
             name_type="specified",
@@ -720,8 +716,7 @@ class ApmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-noteid-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -733,8 +728,7 @@ class ApmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-noteid-file-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -746,8 +740,7 @@ class ApmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-noteid-checksum-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -759,8 +752,7 @@ class ApmNoteID(Note):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-noteid-algorithm-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -790,8 +782,7 @@ class ApmProject(Project):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-project-name-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -822,8 +813,8 @@ class ApmUserID(User):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-userid-identifiername-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        variable=True,
+        a_nexus_field=NeXusField(
             name="identifierNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -835,12 +826,12 @@ class ApmUserID(User):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-userid-identifiername-type-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+            parent_field="identifierNAME",
             enumeration=[
                 "ARK",
                 "DOI",
@@ -856,7 +847,6 @@ class ApmUserID(User):
                 "URN",
             ],
             open_enum=True,
-            parent_field="identifierNAME",
         ),
     )
 
@@ -891,8 +881,8 @@ class ApmSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-identifiername-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        variable=True,
+        a_nexus_field=NeXusField(
             name="identifierNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -907,8 +897,7 @@ class ApmSample(Sample):
         description=(
             "False, if the sample is a real one. True, if the sample is a virtual one."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_simulation",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -921,8 +910,7 @@ class ApmSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-alias-field"
         ],
         description=("Given name/alias for the sample."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -944,8 +932,7 @@ class ApmSample(Sample):
             "allows judging if specific features are expected to be found in the "
             "detector hit map."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="grain_diameter",
             type="NX_FLOAT",
             name_type="specified",
@@ -960,8 +947,7 @@ class ApmSample(Sample):
         ],
         dimensionality="[length]",
         description=("Magnitude of the standard deviation of the grain_diameter."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="grain_diameter_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -985,8 +971,7 @@ class ApmSample(Sample):
             "dimensions as heat_treatment_time to store the dependant axes of a "
             "time-temperature curve as well as its first derivative."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="heat_treatment_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -1010,8 +995,7 @@ class ApmSample(Sample):
             "provided, the temperature. Consult the docstring of "
             "heat_treatment_time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="heat_treatment_temperature",
             type="NX_FLOAT",
             name_type="specified",
@@ -1031,8 +1015,7 @@ class ApmSample(Sample):
             "magnitude of the standard derivation of the temperature. Consult "
             "the docstring of heat_treatment_time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="heat_treatment_temperature_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1054,8 +1037,7 @@ class ApmSample(Sample):
             "derivative of the time-temperature curve. Consult the docstring of "
             "heat_treatment_time for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="heat_treatment_quenching_rate",
             type="NX_FLOAT",
             name_type="specified",
@@ -1075,8 +1057,7 @@ class ApmSample(Sample):
             "the time-temperature curve. Consult the docstring of "
             "heat_treatment_time for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="heat_treatment_quenching_rate_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -1113,8 +1094,8 @@ class ApmSpecimen(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-specimen-identifiername-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        variable=True,
+        a_nexus_field=NeXusField(
             name="identifierNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -1130,8 +1111,7 @@ class ApmSpecimen(Sample):
             "False, if the specimen is a real one. True, if the specimen is a "
             "virtual one."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_simulation",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1148,8 +1128,7 @@ class ApmSpecimen(Sample):
             "identifier_parent instead. A single NXentry should be used only for "
             "the characterization of a single specimen."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -1167,8 +1146,7 @@ class ApmSpecimen(Sample):
             "functionalities for tracking sample provenance via a research data "
             "management system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifier_parent",
             type="NX_CHAR",
             name_type="specified",
@@ -1191,8 +1169,7 @@ class ApmSpecimen(Sample):
             "sensitive material such as hydrogen charged specimens or "
             "experiments including tracers with a short half time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="preparation_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -1214,8 +1191,7 @@ class ApmSpecimen(Sample):
             "resources pointed to by identifier_parent or walk through "
             "eventually deeply nested groups in data instances."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="atom_types",
             type="NX_CHAR",
             name_type="specified",
@@ -1231,8 +1207,7 @@ class ApmSpecimen(Sample):
             "True, if the specimen contains a grain or phase boundary. False, if "
             "the specimen is a single crystal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_polycrystalline",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1247,8 +1222,7 @@ class ApmSpecimen(Sample):
         description=(
             "True, if the specimen is amorphous. False, if the specimen is not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="is_amorphous",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -1265,8 +1239,7 @@ class ApmSpecimen(Sample):
             "Ideally measured otherwise best elaborated guess of the initial "
             "radius of the specimen."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="initial_radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -1287,8 +1260,7 @@ class ApmSpecimen(Sample):
             "so that the shank angle is the smallest angle between the specimen "
             "space z-axis and a vector on the lateral surface of the cone."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shank_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -1333,8 +1305,7 @@ class ApmConsistentRotations(Parameters):
             "Counter_clockwise is equivalent to a right-handed choice. Clockwise "
             "is equivalent to a left-handed choice."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_handedness",
             type="NX_CHAR",
             name_type="specified",
@@ -1352,8 +1323,7 @@ class ApmConsistentRotations(Parameters):
             "convention 3 of reference "
             "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1390,8 +1360,7 @@ class ApmConsistentRotations(Parameters):
             "possible. Proper Euler angles are distinguished from Tait-Bryan "
             "angles."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="euler_angle_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1423,8 +1392,7 @@ class ApmConsistentRotations(Parameters):
             "convention 5 of reference "
             "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_angle_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1443,8 +1411,7 @@ class ApmConsistentRotations(Parameters):
             "convention 6 of reference "
             "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sign_convention",
             type="NX_CHAR",
             name_type="specified",
@@ -1526,8 +1493,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-alias-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="alias",
             type="NX_CHAR",
             name_type="specified",
@@ -1539,8 +1505,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -1554,8 +1519,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-origin-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -1569,8 +1533,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -1583,8 +1546,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-x-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1598,8 +1560,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -1612,8 +1573,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-y-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1627,8 +1587,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ],
         dimensionality="[length]",
         shape=[3],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -1641,8 +1600,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-z-direction-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -1672,8 +1630,7 @@ class ApmApmMeasurement(ApmMeasurement):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-status-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status",
             type="NX_CHAR",
             name_type="specified",
@@ -1686,8 +1643,7 @@ class ApmApmMeasurement(ApmMeasurement):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-quality-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="quality",
             type="NX_CHAR",
             name_type="specified",

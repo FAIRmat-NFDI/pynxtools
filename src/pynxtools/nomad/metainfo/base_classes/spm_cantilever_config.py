@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_cantilever_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_cantilever_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -74,8 +81,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-cantilever-coating-field"
         ],
         description=("The coating material of the cantilever."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cantilever_coating",
             type="NX_CHAR",
             name_type="specified",
@@ -87,12 +93,12 @@ class SpmCantileverConfig(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-curvature-radiusn-field"
         ],
+        variable=True,
         description=(
             "The radius of curvature of the cantilever tip. The (substring) N "
             "denotes X or Y."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="curvature_radiusN",
             type="NX_NUMBER",
             name_type="partial",
@@ -109,8 +115,7 @@ class SpmCantileverConfig(Object):
             "The shape of the cantilever as a general text, such as A-shape, "
             "beam, or arrow."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cantilever_type",
             type="NX_CHAR",
             name_type="specified",
@@ -126,8 +131,7 @@ class SpmCantileverConfig(Object):
         description=(
             "Nominal length between base and end of the cantilever in micrometers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cantilever_length",
             type="NX_NUMBER",
             name_type="specified",
@@ -142,8 +146,7 @@ class SpmCantileverConfig(Object):
         ],
         dimensionality="[length]",
         description=("Nominal width of the cantilever in microns."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cantilever_width",
             type="NX_NUMBER",
             name_type="specified",
@@ -158,8 +161,7 @@ class SpmCantileverConfig(Object):
         ],
         dimensionality="[length]",
         description=("Nominal thickness of the cantilever in microns."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cantilever_thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -177,8 +179,7 @@ class SpmCantileverConfig(Object):
             "Nominal free resonance frequency of the cantilever in air i.e., out "
             "of interaction force."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resonance_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -196,8 +197,7 @@ class SpmCantileverConfig(Object):
             "free-oscillation amplitude which is the resulted movement amplitude "
             "without interaction to the surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="amplitude_excitation",
             type="NX_NUMBER",
             name_type="specified",
@@ -212,8 +212,7 @@ class SpmCantileverConfig(Object):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("The Fermi level of the cantilever material."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fermi_level",
             type="NX_NUMBER",
             name_type="specified",
@@ -231,8 +230,7 @@ class SpmCantileverConfig(Object):
             "Nominal free resonance amplitude of the cantilever in air, in nm "
             "i.e., out of interaction force."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resonance_amplitude",
             type="NX_NUMBER",
             name_type="specified",
@@ -246,8 +244,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-spring-constant-field"
         ],
         description=("The spring constant coefficient of the cantilever."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spring_constant",
             type="NX_NUMBER",
             name_type="specified",
@@ -298,8 +295,7 @@ class SpmCantileverConfigCalibration(Calibration):
             "of the cantilever. The sensitivity of the cantilever is calculated "
             "as the ratio of this change to the force causing it."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sensitivity",
             type="NX_NUMBER",
             name_type="specified",

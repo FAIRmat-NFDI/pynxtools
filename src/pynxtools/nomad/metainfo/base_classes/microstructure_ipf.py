@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXmicrostructure_ipf` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXmicrostructure_ipf` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -141,8 +148,7 @@ class MicrostructureIpf(Process):
             "Reference to an instance of :ref:`NXcoordinate_system` in which the "
             "axes axis_z, axis_y, and axis_x are defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -155,8 +161,7 @@ class MicrostructureIpf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-color-model-field"
         ],
         description=("The algorithm whereby orientations are colored."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="color_model",
             type="NX_CHAR",
             name_type="specified",
@@ -174,8 +179,7 @@ class MicrostructureIpf(Process):
         description=(
             "The direction normal vector along which orientations are projected."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="projection_direction",
             type="NX_NUMBER",
             name_type="specified",
@@ -197,8 +201,7 @@ class MicrostructureIpf(Process):
             "nothing is provided, it is assumed that projection_direction is "
             "defined in the McStas coordinate system."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -217,8 +220,7 @@ class MicrostructureIpf(Process):
             "the closed (Euclidean distance) grid point of the input_grid was "
             "taken."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="interpolation",
             type="NX_CHAR",
             name_type="specified",
@@ -299,8 +301,7 @@ class MicrostructureIpfMap(Data):
             "computational methods, or in cases multiple EBSD maps have been "
             "stitched/reconstructed into a three-dimensional map."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -319,8 +320,7 @@ class MicrostructureIpfMap(Data):
             "Pixel center coordinate calibrated for step size along the z axis "
             "of the map."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_z",
             type="NX_NUMBER",
             name_type="specified",
@@ -339,8 +339,7 @@ class MicrostructureIpfMap(Data):
             "Pixel center coordinate calibrated for step size along the y axis "
             "of the map."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_NUMBER",
             name_type="specified",
@@ -359,8 +358,7 @@ class MicrostructureIpfMap(Data):
             "Pixel center coordinate calibrated for step size along the x axis "
             "of the map."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_NUMBER",
             name_type="specified",
@@ -416,8 +414,7 @@ class MicrostructureIpfLegend(Data):
         ],
         shape=["*", "*", 3],
         description=("Inverse pole figure color code for each map coordinate."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -433,8 +430,7 @@ class MicrostructureIpfLegend(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Pixel along the y-axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_NUMBER",
             name_type="specified",
@@ -450,8 +446,7 @@ class MicrostructureIpfLegend(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Pixel along the x-axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_NUMBER",
             name_type="specified",

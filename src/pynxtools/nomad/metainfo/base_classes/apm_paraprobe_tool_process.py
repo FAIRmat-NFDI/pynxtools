@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXapm_paraprobe_tool_process` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_tool_process` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask import (
     CsFilterBooleanMask,
 )
@@ -77,8 +84,7 @@ class ApmParaprobeToolProcess(Process):
         description=(
             "Possibility for leaving a free-text description about this analysis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -126,8 +132,7 @@ class ApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             "Number of ions covered by the mask. By default, the total number of "
             "ions in the dataset."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_ions",
             type="NX_UINT",
             name_type="specified",

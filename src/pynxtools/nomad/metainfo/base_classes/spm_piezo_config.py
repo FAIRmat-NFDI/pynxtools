@@ -17,7 +17,7 @@
 #
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
-# Run `pynx nomad generate-metainfo --nx-class NXspm_piezo_config` to regenerate.
+# Run `pynx nomad generate-metainfo --nxdl NXspm_piezo_config` to regenerate.
 # Additive-only: the generator will never remove or rename existing members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
@@ -33,7 +33,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.spm_piezoelectric_material import (
@@ -118,14 +125,14 @@ class SpmPiezoConfigPiezoMaterial(SpmPiezoelectricMaterial):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-piezo-material-curvature-radiusn-field"
         ],
+        variable=True,
         dimensionality="[length]",
         description=(
             "The N (substring) denotes X or Y. There are 2 parameters in X and Y "
             "directions. It can be set approximately to the length of the piezo "
             "tube along X and Y axis."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="curvature_radiusN",
             type="NX_NUMBER",
             name_type="partial",
@@ -160,8 +167,7 @@ class SpmPiezoConfigCalibration(Calibration):
             "The name of the calibration type, sometimes it is called `active "
             "calibration`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="calibration_type",
             type="NX_CHAR",
             name_type="specified",
@@ -177,8 +183,7 @@ class SpmPiezoConfigCalibration(Calibration):
         description=(
             "A specific name of the calibration (e.g. active type with name 'LHe')."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="calibration_name",
             type="NX_CHAR",
             name_type="specified",
@@ -191,8 +196,7 @@ class SpmPiezoConfigCalibration(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-date-field"
         ],
         description=("The date of the calibration."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="calibration_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -204,6 +208,7 @@ class SpmPiezoConfigCalibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibratedaxis-field"
         ],
+        variable=True,
         description=(
             "The AXIS (substring) denotes X, Y or Z, e.g., calibrated_x. There "
             "are three directions X, Y, and Z for calibration, along with three "
@@ -212,8 +217,7 @@ class SpmPiezoConfigCalibration(Calibration):
             "calibration. Consequently, when any value is changed, one of the "
             "other values will be automatically updated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="calibratedAXIS",
             type="NX_NUMBER",
             name_type="partial",
@@ -225,14 +229,14 @@ class SpmPiezoConfigCalibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-hv-gainn-field"
         ],
+        variable=True,
         description=(
             "The N (substring) denotes X or Y or Z, e.g., hv_gain_x. In some "
             "systems, there is an HV gain readout feature. For these systems, "
             "the HV gain should be automatically adjusted whenever the gain is "
             "changed at the high voltage amplifier."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="hv_gainN",
             type="NX_NUMBER",
             name_type="partial",
@@ -244,14 +248,14 @@ class SpmPiezoConfigCalibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-rangen-field"
         ],
+        variable=True,
         dimensionality="[length]",
         description=(
             "The N (substring) denotes X or Y or Z, e.g., range_x. There are 3 "
             "parameters in X, Y and Z directions. The range is the maximum "
             "distance the piezo can move."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rangeN",
             type="NX_NUMBER",
             name_type="partial",
@@ -264,14 +268,14 @@ class SpmPiezoConfigCalibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-tiltn-field"
         ],
+        variable=True,
         dimensionality="[angle]",
         description=(
             "The N (substring) denotes X and Y directions (e.g., tilt_x), and "
             "for both directions tilt needs to be adjusted according to the "
             "actual surface."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tiltN",
             type="NX_NUMBER",
             name_type="partial",
@@ -287,8 +291,7 @@ class SpmPiezoConfigCalibration(Calibration):
         description=(
             "The drift correction status (true / false) in calibration step of piezo."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="drift_correction_status",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -300,13 +303,13 @@ class SpmPiezoConfigCalibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-driftn-field"
         ],
+        variable=True,
         description=(
             "The N (substring) denotes X, Y and Z directions (e.g., drift_x). "
             "Define the drift speed [m/s] for all three axes. When the "
             "compensation is on, the piezo will start to move at that speed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="driftN",
             type="NX_NUMBER",
             name_type="partial",
