@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -147,8 +154,7 @@ class CorrectorCs(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-applied-field"
         ],
         description=("Was the corrector used?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -202,8 +208,7 @@ class CorrectorCsTableauID(Process):
             "Discouraged free-text field to add further details about the "
             "alignment procedure."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -223,8 +228,7 @@ class CorrectorCsTableauID(Process):
             "Suggestions from the community are welcome here for guiding an "
             "improvement of this base class."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tilt_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -240,8 +244,7 @@ class CorrectorCsTableauID(Process):
         dimensionality="[time]",
         shape=["*"],
         description=("The exposure time of single tilt images."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="exposure_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -260,8 +263,7 @@ class CorrectorCsTableauID(Process):
             "The factor of enlargement of the apparent size, not the physical "
             "size, of an object."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnification",
             type="NX_NUMBER",
             name_type="specified",
@@ -285,8 +287,7 @@ class CorrectorCsTableauID(Process):
             "are also summarized by `Y. Liao "
             "<https://www.globalsino.com/EM/page3740.html>`_."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",

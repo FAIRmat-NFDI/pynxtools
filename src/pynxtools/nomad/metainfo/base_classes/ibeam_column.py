@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.source import Source
 
@@ -223,8 +230,7 @@ class IbeamColumn(Component):
             "the operation_mode is useful in as much as at least some "
             "constraints on how the illumination conditions were is documented."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="operation_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -271,8 +277,7 @@ class IbeamColumnIonSource(Source):
             "Emitter type used to create the ion beam. If the emitter type is "
             "other, give further details in the description field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emitter_type",
             type="NX_CHAR",
             name_type="specified",
@@ -289,8 +294,7 @@ class IbeamColumnIonSource(Source):
             "Ideally, a (globally) unique persistent identifier, link, or text "
             "to a resource which gives further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -303,8 +307,7 @@ class IbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-flux-field"
         ],
         description=("Average/nominal flux"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flux",
             type="NX_NUMBER",
             name_type="specified",
@@ -318,8 +321,7 @@ class IbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-brightness-field"
         ],
         description=("Average/nominal brightness"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="brightness",
             type="NX_NUMBER",
             name_type="specified",
@@ -334,8 +336,7 @@ class IbeamColumnIonSource(Source):
         ],
         dimensionality="[current]",
         description=("Charge current"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current",
             type="NX_NUMBER",
             name_type="specified",
@@ -353,8 +354,7 @@ class IbeamColumnIonSource(Source):
             "Ion acceleration voltage upon source exit and entering the vacuum "
             "flight path."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
             name_type="specified",
@@ -371,8 +371,7 @@ class IbeamColumnIonSource(Source):
         description=(
             "To be defined more specifically. Community suggestions are welcome."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="ion_energy_profile",
             type="NX_NUMBER",
             name_type="specified",

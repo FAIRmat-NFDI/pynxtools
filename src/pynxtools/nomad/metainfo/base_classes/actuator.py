@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -79,8 +86,7 @@ class Actuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXactuator.html#nxactuator-name-field"
         ],
         description=("Name of the actuator"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -93,8 +99,7 @@ class Actuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXactuator.html#nxactuator-short-name-field"
         ],
         description=("Short name of actuator used e.g. on monitor display program"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",
@@ -111,8 +116,7 @@ class Actuator(Component):
             "a path in the NeXus tree structure. For example, this could be an "
             "instance of NXsample or a device on NXinstrument."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="actuation_target",
             type="NX_CHAR",
             name_type="specified",
@@ -130,8 +134,7 @@ class Actuator(Component):
             "conductivity | resistance | voltage | pressure | flow | stress | "
             "strain | shear | surface_pressure"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -148,8 +151,7 @@ class Actuator(Component):
             "but not restrictions): :Temperature: laser | gas lamp | filament | "
             "resistive :Pressure: anvil cell :Voltage: potentiostat"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +168,7 @@ class Actuator(Component):
             "Any output that the actuator produces. For example, a heater can "
             "have the field output_power(NX_NUMBER)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="outputVALUE",
             type="NX_NUMBER",
             name_type="partial",

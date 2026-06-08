@@ -925,7 +925,6 @@ class NexusNode(NodeMixin):
                 nxdl_base=xml_elem.base,
             )
         else:
-            # TODO: Tags: link
             # We don't know the tag, skip processing children of it
             # TODO: Add logging or raise an error as this is not a known nxdl tag
             return None

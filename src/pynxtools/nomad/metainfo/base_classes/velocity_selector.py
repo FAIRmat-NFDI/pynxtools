@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -86,8 +93,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-type-field"
         ],
         description=("velocity selector type"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -101,8 +107,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="1 / [time]",
         description=("velocity selector rotation speed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_speed",
             type="NX_FLOAT",
             name_type="specified",
@@ -117,8 +122,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("radius at beam centre"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -133,8 +137,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("spoke width at beam centre"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="spwidth",
             type="NX_FLOAT",
             name_type="specified",
@@ -149,8 +152,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("rotor length"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="length",
             type="NX_FLOAT",
             name_type="specified",
@@ -165,8 +167,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="dimensionless",
         description=("number of spokes/lamella"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="num",
             type="NX_INT",
             name_type="specified",
@@ -181,8 +182,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[angle]",
         description=("twist angle along axis"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="twist",
             type="NX_FLOAT",
             name_type="specified",
@@ -197,8 +197,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[angle]",
         description=("offset vertical angle"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="table",
             type="NX_FLOAT",
             name_type="specified",
@@ -213,8 +212,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("input beam height"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="height",
             type="NX_FLOAT",
             name_type="specified",
@@ -229,8 +227,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("input beam width"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="width",
             type="NX_FLOAT",
             name_type="specified",
@@ -245,8 +242,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("wavelength"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -261,8 +257,7 @@ class VelocitySelector(Component):
         ],
         dimensionality="[length]",
         description=("deviation FWHM /Wavelength"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_spread",
             type="NX_FLOAT",
             name_type="specified",
@@ -278,8 +273,7 @@ class VelocitySelector(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a velocity selector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

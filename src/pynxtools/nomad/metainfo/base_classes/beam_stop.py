@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -106,8 +113,7 @@ class BeamStop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-description-field"
         ],
         description=("description of beamstop"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -125,8 +131,7 @@ class BeamStop(Component):
             "Size of beamstop. If this is not sufficient to describe the beam "
             "stop use NXoff_geometry instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
             name_type="specified",
@@ -144,8 +149,7 @@ class BeamStop(Component):
             "x position of the beamstop in relation to the detector. Note, it is "
             "recommended to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_FLOAT",
             name_type="specified",
@@ -163,8 +167,7 @@ class BeamStop(Component):
             "y position of the beamstop in relation to the detector. Note, it is "
             "recommended to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_FLOAT",
             name_type="specified",
@@ -182,8 +185,7 @@ class BeamStop(Component):
             "distance of the beamstop to the detector. Note, it is recommended "
             "to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance_to_detector",
             type="NX_FLOAT",
             name_type="specified",
@@ -196,8 +198,7 @@ class BeamStop(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-status-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status",
             type="NX_CHAR",
             name_type="specified",
@@ -216,8 +217,7 @@ class BeamStop(Component):
             "stop pointing towards the source. .. image:: "
             "beam_stop/beam_stop.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
@@ -118,8 +125,7 @@ class Beam(Object):
             "Distance from sample. Note, it is recommended to use "
             "NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -141,8 +147,7 @@ class Beam(Object):
             "usage should follow that of :ref:`incident_wavelength "
             "</NXbeam/incident_wavelength-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -161,8 +166,7 @@ class Beam(Object):
             "incident_energy. The usage of this field should follow that of "
             ":ref:`incident_wavelength </NXbeam/incident_wavelength-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
             name_type="specified",
@@ -181,8 +185,7 @@ class Beam(Object):
             "``incident_energy``. The usage of this field should follow that of "
             ":ref:`incident_wavelength </NXbeam/incident_wavelength-field>`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_energy_weights",
             type="NX_NUMBER",
             name_type="specified",
@@ -200,8 +203,7 @@ class Beam(Object):
         description=(
             "Energy carried by each particle of the beam on leaving the given location"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -217,8 +219,7 @@ class Beam(Object):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Change in particle energy caused by the beamline component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_transfer",
             type="NX_FLOAT",
             name_type="specified",
@@ -253,8 +254,7 @@ class Beam(Object):
             "wavelength value is available along with the original spectrum from "
             "which it was calibrated. Wavelength on entering beamline component"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -275,8 +275,7 @@ class Beam(Object):
             "**m** (slow to fast) of the relative weights of the corresponding "
             "wavelengths in ``incident_wavelength``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_wavelength_weights",
             type="NX_FLOAT",
             name_type="specified",
@@ -297,8 +296,7 @@ class Beam(Object):
             "(slow to fast) of the spreads of the corresponding wavelengths in "
             "incident_wavelength."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_wavelength_spread",
             type="NX_FLOAT",
             name_type="specified",
@@ -322,8 +320,7 @@ class Beam(Object):
             "characterize co-variance terms, so the next moment is the product "
             "of the first two, and so on."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_beam_divergence",
             type="NX_FLOAT",
             name_type="specified",
@@ -346,8 +343,7 @@ class Beam(Object):
             "is [1,0,0]), and the second dimension shall be the normal to the "
             "reference plane (by default it is [0,1,0])."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
             name_type="specified",
@@ -363,8 +359,7 @@ class Beam(Object):
         dimensionality="[length]",
         shape=["*"],
         description=("Wavelength on leaving beamline component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -379,8 +374,7 @@ class Beam(Object):
         ],
         shape=["*", 2],
         description=("Polarization vector on entering beamline component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_polarization",
             type="NX_NUMBER",
             name_type="specified",
@@ -395,8 +389,7 @@ class Beam(Object):
         ],
         shape=["*", 2],
         description=("Polarization vector on leaving beamline component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_polarization",
             type="NX_NUMBER",
             name_type="specified",
@@ -429,8 +422,7 @@ class Beam(Object):
             "rotates clockwise at the sample with respect to time when observed "
             "from the source; V < 0 indicates the opposite rotation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_polarization_stokes",
             type="NX_NUMBER",
             name_type="specified",
@@ -448,8 +440,7 @@ class Beam(Object):
             "Polarization vector on leaving beamline component using Stokes "
             "notation (see incident_polarization_stokes)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_polarization_stokes",
             type="NX_NUMBER",
             name_type="specified",
@@ -465,8 +456,7 @@ class Beam(Object):
         dimensionality="[length]",
         shape=["*"],
         description=("Wavelength spread FWHM of beam leaving this component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_wavelength_spread",
             type="NX_FLOAT",
             name_type="specified",
@@ -482,8 +472,7 @@ class Beam(Object):
         dimensionality="[angle]",
         shape=["*", 2],
         description=("Divergence FWHM of beam leaving this component"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="final_beam_divergence",
             type="NX_FLOAT",
             name_type="specified",
@@ -499,8 +488,7 @@ class Beam(Object):
         dimensionality="1 / [time] / [length] ** 2",
         shape=["*"],
         description=("flux incident on beam plane area"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flux",
             type="NX_FLOAT",
             name_type="specified",
@@ -515,8 +503,7 @@ class Beam(Object):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("Energy of a single pulse at the given location."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -531,8 +518,7 @@ class Beam(Object):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
         description=("Average power at the at the given location."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="average_power",
             type="NX_FLOAT",
             name_type="specified",
@@ -547,8 +533,7 @@ class Beam(Object):
         ],
         dimensionality="[mass] / [time] ** 2",
         description=("Incident energy fluence at the given location."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fluence",
             type="NX_FLOAT",
             name_type="specified",
@@ -563,8 +548,7 @@ class Beam(Object):
         ],
         dimensionality="[time]",
         description=("FWHM duration of the pulses at the given location."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_duration",
             type="NX_FLOAT",
             name_type="specified",
@@ -579,8 +563,7 @@ class Beam(Object):
         ],
         dimensionality="[time]",
         description=("Delay time between two pulses of a pulsed beam."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_delay",
             type="NX_FLOAT",
             name_type="specified",
@@ -600,8 +583,7 @@ class Beam(Object):
             "attribute </NXtransformations/AXISNAME@depends_on-attribute>`. in "
             "NXtransformations."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="reference_beam",
             type="NX_CHAR",
             name_type="specified",
@@ -620,8 +602,7 @@ class Beam(Object):
             "is to be used for ultrashort laser pulses in a FROG "
             "(frequency-resolved optical gating) setup."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frog_trace",
             type="NX_FLOAT",
             name_type="specified",
@@ -640,8 +621,7 @@ class Beam(Object):
             "ultrashort laser pulses in a FROG (frequency-resolved optical "
             "gating) setup."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frog_delays",
             type="NX_FLOAT",
             name_type="specified",
@@ -661,8 +641,7 @@ class Beam(Object):
             "for ultrashort laser pulses in a FROG (frequency-resolved optical "
             "gating) setup."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frog_frequencies",
             type="NX_FLOAT",
             name_type="specified",
@@ -676,8 +655,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-chirp-type-field"
         ],
         description=("The type of chirp implemented"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chirp_type",
             type="NX_CHAR",
             name_type="specified",
@@ -691,8 +669,7 @@ class Beam(Object):
         ],
         dimensionality="[time]",
         description=("Group delay dispersion of the pulse for linear chirp"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chirp_GDD",
             type="NX_FLOAT",
             name_type="specified",
@@ -714,8 +691,7 @@ class Beam(Object):
             "the path to a NXtransformations group. This could represent "
             "redirection of the beam, or a refined beam direction."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -770,8 +746,7 @@ class BeamTransformations(Transformations):
             "``depends_on`` field; also, as this field is a direction, its "
             "``transformation_type`` attribute should be omitted."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="BEAMdirection",
             type="NX_NUMBER",
             name_type="partial",
@@ -786,8 +761,7 @@ class BeamTransformations(Transformations):
         ],
         shape=[3],
         description=("Three values that define the direction of beam vector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vector",
             type="NX_NUMBER",
             name_type="specified",
@@ -805,8 +779,7 @@ class BeamTransformations(Transformations):
             "Three values that define the location of a point through which the "
             "beam passes"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -823,8 +796,7 @@ class BeamTransformations(Transformations):
             "Points to the path to a field defining the location on which this "
             'depends or the string "." for origin.'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -846,8 +818,7 @@ class BeamTransformations(Transformations):
             "Note, as this field is a direction, its ``transformation_type`` "
             "attribute should be omitted."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_plane",
             type="NX_NUMBER",
             name_type="specified",
@@ -864,8 +835,7 @@ class BeamTransformations(Transformations):
         description=(
             "Three values that define the direction of reference plane normal"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="vector",
             type="NX_NUMBER",
             name_type="specified",
@@ -882,8 +852,7 @@ class BeamTransformations(Transformations):
             "Points to the path to a field defining the location on which this "
             'depends or the string "." for origin.'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

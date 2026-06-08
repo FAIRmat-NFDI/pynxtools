@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -193,8 +200,7 @@ class Source(Component):
             "sample. This number should be negative to signify that it is "
             "upstream of the sample."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -208,8 +214,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-name-field"
         ],
         description=("Name of source"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -222,8 +227,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-name-short-name-attribute"
         ],
         description=("short name for source, perhaps the acronym"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",
@@ -240,8 +244,7 @@ class Source(Component):
             "type of radiation source (pick one from the enumerated list and "
             "spell exactly)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -294,8 +297,7 @@ class Source(Component):
             "type of radiation probe (pick one from the enumerated list and "
             "spell exactly)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="probe",
             type="NX_CHAR",
             name_type="specified",
@@ -320,8 +322,7 @@ class Source(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
         description=("Source power"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="power",
             type="NX_FLOAT",
             name_type="specified",
@@ -336,8 +337,7 @@ class Source(Component):
         ],
         dimensionality="[length] * [angle]",
         description=("Source emittance (nm-rad) in X (horizontal) direction."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emittance_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -352,8 +352,7 @@ class Source(Component):
         ],
         dimensionality="[length] * [angle]",
         description=("Source emittance (nm-rad) in Y (horizontal) direction."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emittance_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -368,8 +367,7 @@ class Source(Component):
         ],
         dimensionality="[length]",
         description=("particle beam size in x"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sigma_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -384,8 +382,7 @@ class Source(Component):
         ],
         dimensionality="[length]",
         description=("particle beam size in y"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sigma_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -400,8 +397,7 @@ class Source(Component):
         ],
         dimensionality="1 / [time] / [length] ** 2",
         description=("Source intensity/area (example: s-1 cm-2)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flux",
             type="NX_FLOAT",
             name_type="specified",
@@ -419,8 +415,7 @@ class Source(Component):
             "Source energy. Typically, this would be the energy of the emitted "
             "beam. For storage rings, this would be the particle beam energy."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -435,8 +430,7 @@ class Source(Component):
         ],
         dimensionality="[current]",
         description=("Accelerator, X-ray tube, or storage ring current"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current",
             type="NX_FLOAT",
             name_type="specified",
@@ -451,8 +445,7 @@ class Source(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("Accelerator voltage"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -467,8 +460,7 @@ class Source(Component):
         ],
         dimensionality="1 / [time]",
         description=("Frequency of pulsed source"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="frequency",
             type="NX_FLOAT",
             name_type="specified",
@@ -483,8 +475,7 @@ class Source(Component):
         ],
         dimensionality="[time]",
         description=("Period of pulsed source"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="period",
             type="NX_FLOAT",
             name_type="specified",
@@ -498,8 +489,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-target-material-field"
         ],
         description=("Pulsed source target material"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_material",
             type="NX_CHAR",
             name_type="specified",
@@ -513,8 +503,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-number-of-bunches-field"
         ],
         description=("For storage rings, the number of bunches in use."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_bunches",
             type="NX_INT",
             name_type="specified",
@@ -528,8 +517,7 @@ class Source(Component):
         ],
         dimensionality="[time]",
         description=("For storage rings, temporal length of the bunch"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bunch_length",
             type="NX_FLOAT",
             name_type="specified",
@@ -544,8 +532,7 @@ class Source(Component):
         ],
         dimensionality="[time]",
         description=("For storage rings, time between bunches"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bunch_distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -560,8 +547,7 @@ class Source(Component):
         ],
         dimensionality="[time]",
         description=("temporal width of source pulse"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_width",
             type="NX_FLOAT",
             name_type="specified",
@@ -575,8 +561,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-mode-field"
         ],
         description=("source operating mode"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mode",
             type="NX_CHAR",
             name_type="specified",
@@ -591,8 +576,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-top-up-field"
         ],
         description=("Is the synchrotron operating in top_up mode?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="top_up",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -608,8 +592,7 @@ class Source(Component):
         description=(
             "For storage rings, the current at the end of the most recent injection."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="last_fill",
             type="NX_NUMBER",
             name_type="specified",
@@ -623,8 +606,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-last-fill-time-attribute"
         ],
         description=("date and time of the most recent injection."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -639,8 +621,7 @@ class Source(Component):
         ],
         dimensionality="[length]",
         description=("The wavelength of the radiation emitted by the source."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -655,8 +636,7 @@ class Source(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("For pulsed sources, the energy of a single pulse."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -673,8 +653,7 @@ class Source(Component):
         description=(
             "For pulsed sources, the pulse energy divided by the pulse duration"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="peak_power",
             type="NX_FLOAT",
             name_type="specified",
@@ -688,8 +667,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-anode-material-field"
         ],
         description=("Material of the anode (for X-ray tubes)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="anode_material",
             type="NX_CHAR",
             name_type="specified",
@@ -703,8 +681,7 @@ class Source(Component):
         ],
         dimensionality="[current]",
         description=("Filament current (for X-ray tubes)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="filament_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -719,8 +696,7 @@ class Source(Component):
         ],
         dimensionality="[current]",
         description=("Emission current of the generated beam."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emission_current",
             type="NX_FLOAT",
             name_type="specified",
@@ -735,8 +711,7 @@ class Source(Component):
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
         description=("Gas pressure inside ionization source."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gas_pressure",
             type="NX_FLOAT",
             name_type="specified",
@@ -758,8 +733,7 @@ class Source(Component):
             "supercontinuum crystal that is pumped by a another laser. In case "
             "of a primary source, this field should not be filled."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="previous_source",
             type="NX_CHAR",
             name_type="specified",
@@ -776,8 +750,7 @@ class Source(Component):
             "y axis. The source is considered infinitely thin in the z axis. .. "
             "image:: source/source.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

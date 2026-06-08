@@ -19,11 +19,11 @@
 Generator: NXDL → Python NOMAD metainfo classes via NexusNode.
 
 All NXDL parsing goes through the NexusNode API from
-pynxtools.nexus.nexus_tree. NexusField already resolves dtype,
+pynxtools.nexus.nexus_tree. NXTreeField already resolves dtype,
 units, shape, enumerations, and optionality through the inheritance chain.
 
 generate_tree_from(nx_name) in nexus_tree.py is the single entry point.
-It returns a NexusDefinition root with NexusGroup/NexusField/NexusAttribute
+It returns a NexusDefinition root with NexusGroup/NXTreeField/NXTreeAttribute
 children. No raw XML parsing happens inside this module.
 
 Entry points
@@ -44,9 +44,12 @@ import jinja2
 from toposort import toposort_flatten
 
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
-from pynxtools.nexus.nexus_tree import NexusAttribute, NexusField, generate_tree_from
+from pynxtools.nexus.nexus_tree import NexusAttribute as NXTreeAttribute
 from pynxtools.nexus.nexus_tree import NexusDefinition as NXTreeDefinition
+from pynxtools.nexus.nexus_tree import NexusField as NXTreeField
 from pynxtools.nexus.nexus_tree import NexusGroup as NXTreeGroup
+from pynxtools.nexus.nexus_tree import NexusLink as NXTreeLink
+from pynxtools.nexus.nexus_tree import generate_tree_from
 from pynxtools.nexus.utils import get_nexus_definitions_path
 from pynxtools.nomad.converters._mapping import (
     _DEFAULT_BASE,
@@ -85,14 +88,14 @@ class QuantityContext:
     parent_field: str | None  # parent field name (set for attribute-of-field)
     description: str | None  # stripped <doc> text from the primary NXDL element
     # Field-only NXDL attributes (None for attribute nodes).
-    unit: str | None  # NX unit category, e.g. "NX_ENERGY" — NexusField only
-    interpretation: str | None  # NexusField only
-    long_name: str | None  # NexusField only
+    unit: str | None  # NX unit category, e.g. "NX_ENERGY" — NXTreeField only
+    interpretation: str | None  # NXTreeField only
+    long_name: str | None  # NXTreeField only
     # Scalar-only enum items (None when any item is a list; used for MEnum and annotation).
     # NXDL encodes list-valued enum items as Python list literals, e.g. ['kinetic_energy'].
     scalar_items: list[str] | None
-    # The originating node — NexusField for fields, NexusAttribute for attributes.
-    node: NexusField | NexusAttribute
+    # The originating node — NXTreeField for fields, NXTreeAttribute for attributes.
+    node: NXTreeField | NXTreeAttribute
 
 
 @dataclass
@@ -109,6 +112,26 @@ class SubSectionContext:
     is_named_concept: bool
     # The originating NexusGroup node — all other info is read via node.*
     node: NXTreeGroup
+
+
+@dataclass
+class LinkContext:
+    """A NXDL <link> element — emitted as a Quantity(type=str) with NeXusLink."""
+
+    python_name: str  # nxdl_to_quantity_name(node.name)
+    description: str | None  # <doc> text from the link element
+    node: NXTreeLink
+
+
+@dataclass
+class ChoiceSubSectionContext:
+    """One alternative in a NXDL <choice> block — emitted as a SubSection."""
+
+    python_name: str  # "{choice_name}_{class_suffix}", e.g. "pixel_shape_off_geometry"
+    group_name: str  # the choice's @name, shared across all alternatives
+    section_fqn: str  # fully-qualified string proxy for SubSection.section_def
+    description: str | None  # <doc> from the group element inside the choice
+    node: NXTreeGroup  # the NexusGroup node for this alternative
 
 
 @dataclass
@@ -156,7 +179,7 @@ def _get_dimensionality(nx_units: str | None) -> str | None:
 
 
 # ---------------------------------------------------------------------------
-# Shape conversion: NexusField/NexusAttribute.shape tuple → template list
+# Shape conversion: NXTreeField/NXTreeAttribute.shape tuple → template list
 #
 # None entries in the shape tuple are unbounded or symbolically-named dimensions
 # (e.g. "nP", "nz"). NOMAD does not interpret NeXus symbol names, so every
@@ -165,7 +188,7 @@ def _get_dimensionality(nx_units: str | None) -> str | None:
 # ---------------------------------------------------------------------------
 
 
-def _shape_from_node(node: NexusField | NexusAttribute) -> list[int | str] | None:
+def _shape_from_node(node: NXTreeField | NXTreeAttribute) -> list[int | str] | None:
     if node.shape is None:
         return None
     return [d if d is not None else "*" for d in node.shape]
@@ -310,25 +333,25 @@ def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Build quantity context from a NexusField node
+# Build quantity context from a NXTreeField node
 # ---------------------------------------------------------------------------
 
 
 def _build_quantity_from_node(
-    node: NexusField | NexusAttribute,
+    node: NXTreeField | NXTreeAttribute,
     parent_field: str | None = None,
     python_name_override: str | None = None,
 ) -> QuantityContext:
-    """Build a QuantityContext from a NexusField or NexusAttribute node.
+    """Build a QuantityContext from a NXTreeField or NXTreeAttribute node.
 
     Only the few values that require a non-trivial transformation are stored
     on QuantityContext itself. Everything else is accessed directly through
     the node. Field-only attributes (unit, interpretation, long_name) are
-    extracted here and stored as None for NexusAttribute nodes.
+    extracted here and stored as None for NXTreeAttribute nodes.
     """
     python_name = python_name_override or nxdl_to_quantity_name(node.name)
 
-    if isinstance(node, NexusField):
+    if isinstance(node, NXTreeField):
         # NX_TRANSFORMATION means any length/angle/dimensionless → map to NX_ANY.
         raw_unit = node.unit if node.unit != "NX_TRANSFORMATION" else "NX_ANY"
         unit = raw_unit
@@ -426,10 +449,10 @@ def _build_subsection_from_node(
     )
 
 
-_base_class_qty_cache: dict[str, dict[str, NexusField | NexusAttribute]] = {}
+_base_class_qty_cache: dict[str, dict[str, NXTreeField | NXTreeAttribute]] = {}
 
 
-def _base_class_quantities(nx_class: str) -> dict[str, NexusField | NexusAttribute]:
+def _base_class_quantities(nx_class: str) -> dict[str, NXTreeField | NXTreeAttribute]:
     """Return a name→node lookup of direct fields/attributes in the generic class."""
     if nx_class in _base_class_qty_cache:
         return _base_class_qty_cache[nx_class]
@@ -438,16 +461,16 @@ def _base_class_quantities(nx_class: str) -> dict[str, NexusField | NexusAttribu
     except Exception:
         _base_class_qty_cache[nx_class] = {}
         return {}
-    lookup: dict[str, NexusField | NexusAttribute] = {}
+    lookup: dict[str, NXTreeField | NXTreeAttribute] = {}
     for child in base_root.children:
-        if isinstance(child, (NexusField, NexusAttribute)):
+        if isinstance(child, (NXTreeField, NXTreeAttribute)):
             lookup[child.name] = child
     _base_class_qty_cache[nx_class] = lookup
     return lookup
 
 
 def _qty_differs_from_base(
-    qty: QuantityContext, base_lookup: dict[str, NexusField | NexusAttribute]
+    qty: QuantityContext, base_lookup: dict[str, NXTreeField | NXTreeAttribute]
 ) -> bool:
     """Return True if this quantity is new or has different properties in the base class."""
     base_node = base_lookup.get(qty.node.name)
@@ -460,8 +483,8 @@ def _qty_differs_from_base(
     if qty.node.items != base_node.items:
         return True
     if (
-        isinstance(qty.node, NexusField)
-        and isinstance(base_node, NexusField)
+        isinstance(qty.node, NXTreeField)
+        and isinstance(base_node, NXTreeField)
         and qty.node.unit != base_node.unit
     ):
         return True
@@ -507,7 +530,7 @@ def _build_named_concept(
     seen: set[str] = set()
     for child in node.children:
         if child.nx_type not in ("field", "attribute") or not isinstance(
-            child, (NexusField, NexusAttribute)
+            child, (NXTreeField, NXTreeAttribute)
         ):
             continue
         qty = _build_quantity_from_node(child)
@@ -526,7 +549,7 @@ def _build_named_concept(
         if child.nx_type == "field":
             for attr in child.children:
                 if attr.nx_type != "attribute" or not isinstance(
-                    attr, (NexusField, NexusAttribute)
+                    attr, (NXTreeField, NXTreeAttribute)
                 ):
                     continue
                 attr_key = f"{qty.python_name}__{nxdl_to_quantity_name(attr.name)}"
@@ -832,6 +855,8 @@ def build_context(nx_name: str) -> dict:
     quantities: list[QuantityContext] = []
     subsections: list[SubSectionContext] = []
     named_concepts: list[NamedConceptContext] = []
+    links: list[LinkContext] = []
+    choices: list[ChoiceSubSectionContext] = []
     seen_quantities: set[str] = set()
     seen_subsections: set[str] = set()
     seen_concept: set[str] = set()
@@ -909,7 +934,7 @@ def build_context(nx_name: str) -> dict:
 
             for attr_child in child.children:
                 if attr_child.nx_type != "attribute" or not isinstance(
-                    attr_child, NexusAttribute
+                    attr_child, NXTreeAttribute
                 ):
                     continue
                 attr_key = (
@@ -983,7 +1008,42 @@ def build_context(nx_name: str) -> dict:
                     continue
             seen_subsections.add(ss.python_name)
             subsections.append(ss)
-        # links and choices are skipped in Phase 1
+        elif child.nx_type == "link":
+            python_name = nxdl_to_quantity_name(child.name)
+            if python_name in seen_quantities:
+                continue
+            seen_quantities.add(python_name)
+            links.append(
+                LinkContext(
+                    python_name=python_name,
+                    description=_description_string(child),
+                    node=child,
+                )
+            )
+
+        elif child.nx_type == "choice":
+            # A <choice> block contains NexusGroup children, one per alternative.
+            # Each alternative becomes its own SubSection named
+            # "{choice_name}_{class_suffix}" (e.g. "pixel_shape_off_geometry").
+            for alt_group in child.children:
+                if alt_group.nx_type != "group":
+                    continue
+                if _nxdl_category(alt_group.nx_class) != "base_classes":
+                    continue
+                class_suffix = nxdl_to_quantity_name(alt_group.nx_class[2:])
+                python_name = f"{nxdl_to_quantity_name(child.name)}_{class_suffix}"
+                if python_name in seen_subsections:
+                    continue
+                seen_subsections.add(python_name)
+                choices.append(
+                    ChoiceSubSectionContext(
+                        python_name=python_name,
+                        group_name=child.name,
+                        section_fqn=_section_fqn(alt_group.nx_class),
+                        description=_description_string(alt_group),
+                        node=alt_group,
+                    )
+                )
 
     needs_m_enum = any(
         q.python_type.startswith("MEnum")
@@ -1016,6 +1076,8 @@ def build_context(nx_name: str) -> dict:
         "quantities": quantities,
         "subsections": subsections,
         "named_concepts": named_concepts,
+        "links": links,
+        "choices": choices,
         "concept_imports": sorted(concept_imports),
         "needs_m_enum": needs_m_enum,
     }

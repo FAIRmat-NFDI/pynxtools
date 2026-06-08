@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.circuit import Circuit
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
@@ -122,8 +129,7 @@ class CsProcessorCircuit(Circuit):
             "gpu, (multi-)core general purpose processing unit * fpga, field "
             "programmable gate array"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -138,8 +144,7 @@ class CsProcessorCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_processor.html#nxcs_processor-circuit-clock-speed-field"
         ],
         description=("Clock speed of the circuit"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="clock_speed",
             type="NX_NUMBER",
             name_type="specified",

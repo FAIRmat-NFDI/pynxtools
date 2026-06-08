@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -72,8 +79,7 @@ class CgUnitNormal(Object):
         dimensionality="[length]",
         shape=["*", "*"],
         description=("Direction of each normal - a unit normal."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="normals",
             type="NX_NUMBER",
             name_type="specified",
@@ -94,8 +100,7 @@ class CgUnitNormal(Object):
             "position outside the object. * 0 - undefined * 1 - outer unit "
             "normal vector * 2 - inner unit normal vector"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation",
             type="NX_INT",
             name_type="specified",

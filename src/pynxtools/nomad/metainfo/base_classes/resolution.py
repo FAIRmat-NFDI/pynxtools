@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -132,8 +139,7 @@ class Resolution(Object):
             "The physical quantity of the resolution, e.g., energy, momentum, "
             "time, area, etc."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -146,8 +152,7 @@ class Resolution(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-type-field"
         ],
         description=("The process by which the resolution was determined."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -161,8 +166,7 @@ class Resolution(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-resolution-field"
         ],
         description=("The resolution of the physical quantity."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -176,8 +180,7 @@ class Resolution(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-resolution-errors-field"
         ],
         description=("Standard deviation of the resolution of the physical quantity."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -194,8 +197,7 @@ class Resolution(Object):
             "Ratio of the resolution at a specified measurand value to that "
             "measurand value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -212,8 +214,7 @@ class Resolution(Object):
         description=(
             "Standard deviation of the relative resolution of the physical quantity."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_resolution_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -231,8 +232,7 @@ class Resolution(Object):
             "from a set of symbols as entered by the `formula_...` fields. This "
             "should be an english description of the math used."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution_formula_description",
             type="NX_CHAR",
             name_type="specified",

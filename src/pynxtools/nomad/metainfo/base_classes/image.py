@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -215,8 +222,7 @@ class ImageProcess(Process):
             "Link or name of an :ref:`NXdetector` instance with which the data "
             "were collected."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -256,8 +262,7 @@ class ImageImage1d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -273,8 +278,7 @@ class ImageImage1d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -290,8 +294,7 @@ class ImageImage1d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -310,8 +313,7 @@ class ImageImage1d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -331,8 +333,7 @@ class ImageImage1d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -346,8 +347,7 @@ class ImageImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -388,8 +388,7 @@ class ImageImage2d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -405,8 +404,7 @@ class ImageImage2d(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -422,8 +420,7 @@ class ImageImage2d(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -442,8 +439,7 @@ class ImageImage2d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -463,8 +459,7 @@ class ImageImage2d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -478,8 +473,7 @@ class ImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -499,8 +493,7 @@ class ImageImage2d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -514,8 +507,7 @@ class ImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -556,8 +548,7 @@ class ImageImage3d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -573,8 +564,7 @@ class ImageImage3d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -590,8 +580,7 @@ class ImageImage3d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -610,8 +599,7 @@ class ImageImage3d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -631,8 +619,7 @@ class ImageImage3d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
             name_type="specified",
@@ -646,8 +633,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-k-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -667,8 +653,7 @@ class ImageImage3d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -682,8 +667,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -703,8 +687,7 @@ class ImageImage3d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -718,8 +701,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -760,8 +742,7 @@ class ImageImage4d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -777,8 +758,7 @@ class ImageImage4d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -794,8 +774,7 @@ class ImageImage4d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -814,8 +793,7 @@ class ImageImage4d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -835,8 +813,7 @@ class ImageImage4d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_m",
             type="NX_NUMBER",
             name_type="specified",
@@ -850,8 +827,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-m-long-name-attribute"
         ],
         description=("Point coordinate along the slowest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -871,8 +847,7 @@ class ImageImage4d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
             name_type="specified",
@@ -886,8 +861,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-k-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -907,8 +881,7 @@ class ImageImage4d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -922,8 +895,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -943,8 +915,7 @@ class ImageImage4d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -958,8 +929,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1000,8 +970,7 @@ class ImageStack1d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -1017,8 +986,7 @@ class ImageStack1d(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -1034,8 +1002,7 @@ class ImageStack1d(Data):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -1054,8 +1021,7 @@ class ImageStack1d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -1071,8 +1037,7 @@ class ImageStack1d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
             name_type="specified",
@@ -1086,8 +1051,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-indices-group-long-name-attribute"
         ],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1103,8 +1067,7 @@ class ImageStack1d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Image identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_image",
             type="NX_INT",
             name_type="specified",
@@ -1118,8 +1081,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-indices-image-long-name-attribute"
         ],
         description=("Image identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1139,8 +1101,7 @@ class ImageStack1d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -1154,8 +1115,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1196,8 +1156,7 @@ class ImageStack2d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -1213,8 +1172,7 @@ class ImageStack2d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -1230,8 +1188,7 @@ class ImageStack2d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -1250,8 +1207,7 @@ class ImageStack2d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -1267,8 +1223,7 @@ class ImageStack2d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
             name_type="specified",
@@ -1282,8 +1237,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-indices-group-long-name-attribute"
         ],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1299,8 +1253,7 @@ class ImageStack2d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Image identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_image",
             type="NX_INT",
             name_type="specified",
@@ -1314,8 +1267,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-indices-image-long-name-attribute"
         ],
         description=("Image identifier."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1335,8 +1287,7 @@ class ImageStack2d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -1350,8 +1301,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1371,8 +1321,7 @@ class ImageStack2d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -1386,8 +1335,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1428,8 +1376,7 @@ class ImageStack3d(Data):
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
@@ -1445,8 +1392,7 @@ class ImageStack3d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Real part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
             name_type="specified",
@@ -1462,8 +1408,7 @@ class ImageStack3d(Data):
         dimensionality="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
             name_type="specified",
@@ -1482,8 +1427,7 @@ class ImageStack3d(Data):
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
             name_type="specified",
@@ -1499,8 +1443,7 @@ class ImageStack3d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
             name_type="specified",
@@ -1514,8 +1457,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-indices-group-long-name-attribute"
         ],
         description=("Group identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1531,8 +1473,7 @@ class ImageStack3d(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Image identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_image",
             type="NX_INT",
             name_type="specified",
@@ -1546,8 +1487,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-indices-image-long-name-attribute"
         ],
         description=("Image identifier"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1567,8 +1507,7 @@ class ImageStack3d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
             name_type="specified",
@@ -1582,8 +1521,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-k-long-name-attribute"
         ],
         description=("Point coordinate along the slow dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1603,8 +1541,7 @@ class ImageStack3d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
             name_type="specified",
@@ -1618,8 +1555,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-j-long-name-attribute"
         ],
         description=("Point coordinate along the fast dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",
@@ -1639,8 +1575,7 @@ class ImageStack3d(Data):
             "NX_WAVENUMBER or NX_UNITLESS respectively for images slicing "
             "reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
             name_type="specified",
@@ -1654,8 +1589,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-i-long-name-attribute"
         ],
         description=("Point coordinate along the fastest dimension."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="long_name",
             type="NX_CHAR",
             name_type="specified",

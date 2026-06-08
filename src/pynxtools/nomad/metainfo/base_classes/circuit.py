@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -96,8 +103,7 @@ class Circuit(Component):
             "List of components used in the circuit, e.g., resistors, "
             "capacitors, transistors or any other complex components."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="components",
             type="NX_CHAR",
             name_type="specified",
@@ -113,8 +119,7 @@ class Circuit(Component):
             "Description of how components are interconnected, including "
             "connection points and wiring."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="connections",
             type="NX_CHAR",
             name_type="specified",
@@ -130,8 +135,7 @@ class Circuit(Component):
             "Details of the power source for the circuit, including voltage and "
             "current ratings."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="power_source",
             type="NX_CHAR",
             name_type="specified",
@@ -147,8 +151,7 @@ class Circuit(Component):
             "Type of signal (input signal) the circuit is designed to handle, "
             "e.g., analog, digital, mixed-signal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="signal_type",
             type="NX_CHAR",
             name_type="specified",
@@ -167,8 +170,7 @@ class Circuit(Component):
             "(e.g. running a 100 kHz bandwidth amplifier at low, audio "
             "frequencies 1 - 20,000 Hz)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="operating_frequency",
             type="NX_NUMBER",
             name_type="specified",
@@ -183,8 +185,7 @@ class Circuit(Component):
         ],
         dimensionality="1 / [time]",
         description=("The bandwidth of the frequency response of the circuit."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bandwidth",
             type="NX_NUMBER",
             name_type="specified",
@@ -198,8 +199,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-input-impedance-field"
         ],
         description=("Input impedance of the circuit."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="input_impedance",
             type="NX_NUMBER",
             name_type="specified",
@@ -213,8 +213,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-output-impedance-field"
         ],
         description=("Output impedance of the circuit."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="output_impedance",
             type="NX_NUMBER",
             name_type="specified",
@@ -232,8 +231,7 @@ class Circuit(Component):
             "Gain of the circuit, if applicable, usually all instruments have a "
             "gain which might be important or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gain",
             type="NX_NUMBER",
             name_type="specified",
@@ -250,8 +248,7 @@ class Circuit(Component):
             "Root-mean-square (RMS) noise level (in current or voltage) in the "
             "circuit in voltage or current."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="noise_level",
             type="NX_NUMBER",
             name_type="specified",
@@ -265,8 +262,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-temperature-range-field"
         ],
         description=("Operating temperature range of the circuit."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="temperature_range",
             type="NX_NUMBER",
             name_type="specified",
@@ -280,8 +276,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-offset-field"
         ],
         description=("Offset value for current or voltage."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset",
             type="NX_NUMBER",
             name_type="specified",
@@ -298,8 +293,7 @@ class Circuit(Component):
             "Number of output channels connected to this circuit. Most probably "
             "N_channel."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="output_channels",
             type="NX_NUMBER",
             name_type="specified",
@@ -312,8 +306,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-output-signal-field"
         ],
         description=("Type of output signal, e.g., voltage, current, digital."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="output_signal",
             type="NX_NUMBER",
             name_type="specified",
@@ -327,8 +320,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-power-consumption-field"
         ],
         description=("Power consumption of the circuit per unit time."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="power_consumption",
             type="NX_NUMBER",
             name_type="specified",
@@ -344,8 +336,7 @@ class Circuit(Component):
         description=(
             "Status indicators for the circuit, e.g., LEDs, display readouts."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status_indicators",
             type="NX_CHAR",
             name_type="specified",
@@ -361,8 +352,7 @@ class Circuit(Component):
             "Protection features built into the circuit, e.g., overvoltage "
             "protection, thermal shutdown."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="protection_features",
             type="NX_CHAR",
             name_type="specified",
@@ -379,8 +369,7 @@ class Circuit(Component):
             "Updated rate for several processes using the input signal, e.g., "
             "History Graph, the circuit uses for any such process."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acquisition_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -396,8 +385,7 @@ class Circuit(Component):
         description=(
             "The rate at which the signal changes when ramping from the starting value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="output_slew_rate",
             type="NX_CHAR",
             name_type="specified",

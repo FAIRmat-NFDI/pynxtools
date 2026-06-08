@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -126,8 +133,7 @@ class CgPolygon(CgPrimitive):
         ],
         dimensionality="dimensionless",
         description=("The total number of vertices in the set."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_total_vertices",
             type="NX_UINT",
             name_type="specified",
@@ -143,8 +149,7 @@ class CgPolygon(CgPrimitive):
         dimensionality="[length]",
         shape=["*"],
         description=("For each polygon its accumulated length along its edges."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edge_length",
             type="NX_NUMBER",
             name_type="specified",
@@ -166,8 +171,7 @@ class CgPolygon(CgPrimitive):
             "according to the sequence in the polygons array. Usually, the "
             "winding_order field is required to interpret the value."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="interior_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -183,8 +187,7 @@ class CgPolygon(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Curvature type: * 0 - unspecified, * 1 - convex, * 2 - concave"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shape",
             type="NX_INT",
             name_type="specified",

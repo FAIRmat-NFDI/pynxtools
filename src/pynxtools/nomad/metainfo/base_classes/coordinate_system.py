@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -185,8 +192,7 @@ class CoordinateSystem(Object):
             "piece*, *barycenter of the triangle*, *center of mass of the "
             "stone*."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_CHAR",
             name_type="specified",
@@ -199,8 +205,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-type-field"
         ],
         description=("Coordinate system type."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -215,8 +220,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-x-alias-field"
         ],
         description=("Opportunity to define an alias for the name of the x-axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -234,8 +238,7 @@ class CoordinateSystem(Object):
             "any parent and as such is the world reference frame. Exemplar "
             "values could be direction of gravity."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -256,8 +259,7 @@ class CoordinateSystem(Object):
             "``y``, and ``z`` must constitute a basis, i.e., a set of linearly "
             "independent vectors that span the vector space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
             name_type="specified",
@@ -271,8 +273,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-y-alias-field"
         ],
         description=("Opportunity to define an alias for the name of the y-axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -290,8 +291,7 @@ class CoordinateSystem(Object):
             "any parent and as such is the mighty world reference frame. See "
             "docstring of ``x_direction`` for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -310,8 +310,7 @@ class CoordinateSystem(Object):
             "system. This axis is frequently referred to as the y-axis in "
             "Euclidean space and the j-axis in reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
             name_type="specified",
@@ -325,8 +324,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-z-alias-field"
         ],
         description=("Opportunity to define an alias for the name of the z-axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_alias",
             type="NX_CHAR",
             name_type="specified",
@@ -344,8 +342,7 @@ class CoordinateSystem(Object):
             "any parent and as such is the mighty world reference frame. See "
             "docstring of x_alias for further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z_direction",
             type="NX_CHAR",
             name_type="specified",
@@ -364,8 +361,7 @@ class CoordinateSystem(Object):
             "system. This axis is frequently referred to as the z-axis in "
             "Euclidean space and the k-axis in reciprocal space."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
             name_type="specified",
@@ -383,8 +379,7 @@ class CoordinateSystem(Object):
             "pointing to the last transformation in the transformation chain in "
             "the NXtransformations group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

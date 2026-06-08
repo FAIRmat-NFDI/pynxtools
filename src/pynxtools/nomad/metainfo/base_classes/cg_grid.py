@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -90,8 +97,7 @@ class CgGrid(CgPrimitive):
             "is inherited from the :ref:`NXcg_primitive` class to specify the "
             "coordinate system in which the origin location is defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="origin",
             type="NX_NUMBER",
             name_type="specified",
@@ -107,8 +113,7 @@ class CgGrid(CgPrimitive):
         description=(
             "The symmetry of the lattice defining the shape of the unit cell."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="symmetry",
             type="NX_CHAR",
             name_type="specified",
@@ -124,8 +129,7 @@ class CgGrid(CgPrimitive):
         dimensionality="[length]",
         shape=["*"],
         description=("The unit cell dimensions using crystallographic notation."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cell_dimensions",
             type="NX_NUMBER",
             name_type="specified",
@@ -148,8 +152,7 @@ class CgGrid(CgPrimitive):
             "points outside some masking primitive are removed, this extent "
             "field should not be used. Instead, use the coordinate field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extent",
             type="NX_INT",
             name_type="specified",
@@ -164,8 +167,7 @@ class CgGrid(CgPrimitive):
         ],
         shape=["*", "*"],
         description=("Position of each cell in Euclidean space."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -181,8 +183,7 @@ class CgGrid(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*", "*"],
         description=("Coordinate of each cell with respect to the discrete grid."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coordinate",
             type="NX_INT",
             name_type="specified",
@@ -201,8 +202,7 @@ class CgGrid(CgPrimitive):
             "cuboidal region. In this case six sides can be distinguished, each "
             "making an own boundary."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_boundaries",
             type="NX_UINT",
             name_type="specified",
@@ -220,8 +220,7 @@ class CgGrid(CgPrimitive):
             "Name of domain boundaries of the simulation box/ROI e.g. left, "
             "right, front, back, bottom, top."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="boundaries",
             type="NX_CHAR",
             name_type="specified",
@@ -239,8 +238,7 @@ class CgGrid(CgPrimitive):
             "The boundary conditions for each boundary: 0 - undefined 1 - open 2 "
             "- periodic 3 - mirror 4 - von Neumann 5 - Dirichlet"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="boundary_conditions",
             type="NX_INT",
             name_type="specified",
@@ -269,8 +267,7 @@ class CgGrid(CgPrimitive):
             "an identifier for a paper, technical report, or free-text "
             "description can be used instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="surface_reconstruction",
             type="NX_CHAR",
             name_type="specified",
