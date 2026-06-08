@@ -846,6 +846,14 @@ class Entry(Object, basesections.Measurement, EntryData):
         a_display={"unit": "m"},
     )
 
+    # Non-NXDL quantity added manually — preserved by additive-only generator.
+    # Stores a JSON dict mapping HDF5-relative paths to archive paths,
+    # populated by NexusParserV2 to enable GUI navigation to raw HDF5 data.
+    m_nx_data_path = Quantity(
+        type=str,
+        description="JSON mapping of HDF5 paths (relative to this NXentry) to archive paths.",
+    )
+
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 

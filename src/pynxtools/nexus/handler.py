@@ -172,6 +172,22 @@ class NexusVisitor(ABC):
         The default implementation does nothing.
         """
 
+    def on_prescan_group(
+        self,
+        hdf_path: str,
+        hdf_node: h5py.Group,
+    ) -> None:
+        """Optional pre-scan hook called during :meth:`NexusFileHandler.prescan`.
+
+        Invoked for every HDF5 group in a lightweight pre-pass over the file,
+        before the main :meth:`NexusFileHandler.process` traversal.  Visitors
+        can use this to collect file-level metadata (e.g. application definition
+        names from NXentry ``definition`` fields) without running the full
+        on_group/on_field/on_attribute dispatch.
+
+        The default implementation does nothing.
+        """
+
 
 class NexusFileHandler:
     """
@@ -230,6 +246,37 @@ class NexusFileHandler:
             finally:
                 root.close()
                 _get_inherited_hdf_nodes.cache_clear()
+
+    def prescan(self, visitor: NexusVisitor) -> None:
+        """Quick pre-pass over the file calling :meth:`NexusVisitor.on_prescan_group`.
+
+        Opens the HDF5 file and visits every group (shallow, no field/attribute
+        dispatch) before the main :meth:`process` traversal.  Useful for
+        visitors that need file-level metadata (e.g. application definition
+        names from NXentry ``definition`` fields) before populating the archive.
+
+        Does nothing for visitors that do not override ``on_prescan_group``.
+        """
+        file_path = (
+            self._nxs_file[0] if isinstance(self._nxs_file, list) else self._nxs_file
+        )
+        if self._is_in_memory:
+            in_mem: h5py.File = self._nxs_file  # type: ignore[assignment]
+
+            def _visit(name: str, obj: Any) -> None:
+                if isinstance(obj, h5py.Group):
+                    visitor.on_prescan_group(name, obj)
+
+            in_mem.visititems(_visit)
+        else:
+            with h5py.File(file_path, "r") as root:
+                root.visititems(
+                    lambda name, obj: (
+                        visitor.on_prescan_group(name, obj)
+                        if isinstance(obj, h5py.Group)
+                        else None
+                    )
+                )
 
     def _traverse(self, root: h5py.File, visitor: NexusVisitor) -> None:
         """Run the full traversal and call on_complete."""

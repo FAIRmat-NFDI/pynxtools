@@ -113,6 +113,8 @@ nexus_app = "pynxtools.nomad.apps:nexus_app"
 simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
 nexus_base_classes = "pynxtools.nomad.metainfo:nexus_base_classes"
 nexus_applications = "pynxtools.nomad.metainfo:nexus_applications"
+nexus_parser_v2 = "pynxtools.nomad.parsers:nexus_parser_v2"
+nexus_app_v2 = "pynxtools.nomad.apps.app_v2:nexus_app_v2"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
