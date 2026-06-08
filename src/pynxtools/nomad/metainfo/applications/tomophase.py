@@ -305,7 +305,7 @@ class TomophaseData(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-data-data-link"

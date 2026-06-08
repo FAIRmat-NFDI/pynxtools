@@ -343,7 +343,7 @@ class TofnpdData(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-data-data-link"

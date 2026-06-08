@@ -264,7 +264,7 @@ class FluoData(Data):
             optionality="required",
         ),
     )
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-data-data-link"

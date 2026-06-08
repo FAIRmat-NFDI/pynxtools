@@ -266,7 +266,7 @@ class ScanData(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-data-data-link"

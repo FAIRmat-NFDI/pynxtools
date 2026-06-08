@@ -377,7 +377,7 @@ class XbaseData(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-data-data-link"

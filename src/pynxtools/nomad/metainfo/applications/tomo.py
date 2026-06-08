@@ -295,7 +295,7 @@ class TomoData(Data):
         ),
     )
 
-    data = Quantity(
+    data_quantity = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-data-data-link"
