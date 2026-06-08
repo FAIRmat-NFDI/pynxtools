@@ -33,10 +33,10 @@ import click
 
 @click.command("generate-metainfo")
 @click.option(
-    "--nx-class",
+    "--nxdl",
     "nx_class",
     default=None,
-    metavar="NX_CLASS",
+    metavar="NXDL",
     help="Generate one NXDL class (e.g. NXdetector).",
 )
 @click.option(
@@ -79,11 +79,11 @@ def generate_metainfo(
 ) -> None:
     """Generate Python NOMAD metainfo classes from NXDL definitions.
 
-    Exactly one of --nx-class or --all must be given.
+    Exactly one of --nxdl or --all must be given.
 
     \b
     Examples:
-      pynx nomad generate-metainfo --nx-class NXdetector
+      pynx nomad generate-metainfo --nxdl NXdetector
       pynx nomad generate-metainfo --all
       pynx nomad generate-metainfo --all --dry-run   # CI check: non-zero exit if files differ
       pynx nomad generate-metainfo --all --force      # unconditional overwrite
@@ -91,9 +91,9 @@ def generate_metainfo(
           --output-dir ../nomad-measurements/src/nomad_measurements/base
     """
     if not nx_class and not generate_all:
-        raise click.UsageError("Specify --nx-class NX_CLASS or --all.")
+        raise click.UsageError("Specify --nxdl NXDL or --all.")
     if nx_class and generate_all:
-        raise click.UsageError("--nx-class and --all are mutually exclusive.")
+        raise click.UsageError("--nxdl and --all are mutually exclusive.")
 
     from pynxtools.nomad.converters.nxdl_to_metainfo import (
         generate_all_base_classes,
