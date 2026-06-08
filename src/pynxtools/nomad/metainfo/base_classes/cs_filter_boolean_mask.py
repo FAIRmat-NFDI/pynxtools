@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -84,8 +91,7 @@ class CsFilterBooleanMask(Object):
             "is not provided, it is assumed that the mask applies to its direct "
             "parent."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -99,8 +105,7 @@ class CsFilterBooleanMask(Object):
         ],
         dimensionality="dimensionless",
         description=("Number of objects represented by the mask."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
             name_type="specified",
@@ -118,8 +123,7 @@ class CsFilterBooleanMask(Object):
             "Number of bits assumed matching on a default datatype. (e.g. 8 bits "
             "for a C-style uint8)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bitdepth",
             type="NX_UINT",
             name_type="specified",
@@ -137,8 +141,7 @@ class CsFilterBooleanMask(Object):
             "The content of the mask. If padding is used, padding bits have to "
             "be set to 0."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mask",
             type="NX_UINT",
             name_type="specified",

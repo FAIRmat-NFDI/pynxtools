@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -74,8 +81,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ],
         dimensionality="dimensionless",
         description=("Dimensionality of the primitives described."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
             name_type="specified",
@@ -96,8 +102,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "number of vertices for that face, irrespectively whether vertices "
             "are shared among faces or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_vertices",
             type="NX_UINT",
             name_type="specified",
@@ -117,8 +122,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "number of edges for that face, irrespectively whether edges are "
             "shared across faces or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_edges",
             type="NX_UINT",
             name_type="specified",
@@ -138,8 +142,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "implicitly. Inspect the definition of :ref:`NXcg_primitive` for "
             "further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset_vertex",
             type="NX_INT",
             name_type="specified",
@@ -159,8 +162,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "implicitly. Inspect the definition of :ref:`NXcg_primitive` for "
             "further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset_edge",
             type="NX_INT",
             name_type="specified",
@@ -179,8 +181,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "implicitly. Inspect the definition of :ref:`NXcg_primitive` for "
             "further details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset_face",
             type="NX_INT",
             name_type="specified",
@@ -194,8 +195,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ],
         shape=["*", "*"],
         description=("The position of the vertices."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
             name_type="specified",
@@ -211,8 +211,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier of the incident half-edge."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertex_incident_half_edge",
             type="NX_INT",
             name_type="specified",
@@ -228,8 +227,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier of the (starting)/associated half-edge of the face."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="face_half_edge",
             type="NX_INT",
             name_type="specified",
@@ -248,8 +246,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "The identifier of the vertex from which this half-edge is outwards "
             "pointing."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="half_edge_vertex_origin",
             type="NX_INT",
             name_type="specified",
@@ -265,8 +262,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier of the associated oppositely pointing half-edge."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="half_edge_twin",
             type="NX_INT",
             name_type="specified",
@@ -285,8 +281,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "If the half-edge is a boundary half-edge the incident face "
             "identifier is NULL, i.e. 0."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="half_edge_incident_face",
             type="NX_INT",
             name_type="specified",
@@ -302,8 +297,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier of the next half-edge."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="half_edge_next",
             type="NX_INT",
             name_type="specified",
@@ -319,8 +313,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Identifier of the previous half-edge."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="half_edge_prev",
             type="NX_INT",
             name_type="specified",
@@ -343,8 +336,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "work can e.g. be applied in space-filling tessellations of "
             "microstructural objects like crystals/grains."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="weinberg_vector",
             type="NX_CHAR",
             name_type="specified",

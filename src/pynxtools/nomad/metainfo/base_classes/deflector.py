@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -64,8 +71,7 @@ class Deflector(Component):
         description=(
             "Qualitative type of deflector with respect to the number of pole pieces."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -82,8 +88,7 @@ class Deflector(Component):
             "Colloquial or short name for the deflector. For manufacturer names "
             "and identifiers use ``NXfabrication`` and ``identifierNAME``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -100,8 +105,7 @@ class Deflector(Component):
             "Excitation voltage of the deflector. For dipoles it is a single "
             "number. For higher order multipoles, it is an array."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
             name_type="specified",
@@ -119,8 +123,7 @@ class Deflector(Component):
             "Excitation current of the deflector. For dipoles it is a single "
             "number. For higher orders, it is an array."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current",
             type="NX_NUMBER",
             name_type="specified",
@@ -138,8 +141,7 @@ class Deflector(Component):
             "Spatial offset of the deflector in x direction (perpendicular to "
             "```offset_y```)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset_x",
             type="NX_NUMBER",
             name_type="specified",
@@ -157,8 +159,7 @@ class Deflector(Component):
             "Spatial offset of the deflector in y direction (perpendicular to "
             "```offset_x```)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="offset_y",
             type="NX_NUMBER",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -93,8 +100,7 @@ class OpticalWindow(Aperture):
             "Was a window correction performed? If so, describe the window "
             "correction procedure in ``window_correction/procedure``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="window_effects_corrected",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -107,8 +113,7 @@ class OpticalWindow(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_window.html#nxoptical_window-window-effects-type-field"
         ],
         description=("Type of effects due to this window on the measurement."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="window_effects_type",
             type="NX_CHAR",
             name_type="specified",
@@ -128,8 +133,7 @@ class OpticalWindow(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_window.html#nxoptical_window-material-field"
         ],
         description=("The material of the window."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material",
             type="NX_CHAR",
             name_type="specified",
@@ -153,8 +157,7 @@ class OpticalWindow(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_window.html#nxoptical_window-material-other-field"
         ],
         description=("If you specified 'other' as material, describe here what it is."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="material_other",
             type="NX_CHAR",
             name_type="specified",
@@ -168,8 +171,7 @@ class OpticalWindow(Aperture):
         ],
         dimensionality="[length]",
         description=("Thickness of the window."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -187,8 +189,7 @@ class OpticalWindow(Aperture):
             "Angle of the window normal (outer) vs. the substrate normal "
             "(similar to the angle of incidence)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="orientation_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -239,8 +240,7 @@ class OpticalWindowWindowCorrection(Process):
             "latter case, provide the link to to the reference data in "
             "``reference_data_file``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="procedure",
             type="NX_CHAR",
             name_type="specified",
@@ -262,8 +262,7 @@ class OpticalWindowWindowCorrection(Process):
             "the actual measurement as possible. Ideally, the link uses the "
             "relative path with respect to the actual NeXus file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reference_data_link",
             type="NX_NUMBER",
             name_type="specified",

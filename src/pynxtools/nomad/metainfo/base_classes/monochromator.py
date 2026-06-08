@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -164,8 +171,7 @@ class Monochromator(Component):
         ],
         dimensionality="[length]",
         description=("wavelength selected"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -180,8 +186,7 @@ class Monochromator(Component):
         ],
         dimensionality="[length]",
         description=("wavelength standard deviation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_error",
             type="NX_FLOAT",
             name_type="specified",
@@ -197,8 +202,7 @@ class Monochromator(Component):
         ],
         dimensionality="[length]",
         description=("wavelength standard deviation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -213,8 +217,7 @@ class Monochromator(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("energy selected"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -229,8 +232,7 @@ class Monochromator(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("energy standard deviation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_error",
             type="NX_FLOAT",
             name_type="specified",
@@ -246,8 +248,7 @@ class Monochromator(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("energy standard deviation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -262,8 +263,7 @@ class Monochromator(Component):
         ],
         dimensionality="[mass] * [length] / [time] ** 2",
         description=("Energy dispersion at the exit slit."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy_dispersion",
             type="NX_FLOAT",
             name_type="specified",
@@ -278,8 +278,7 @@ class Monochromator(Component):
         ],
         dimensionality="dimensionless",
         description=("Wavelength dispersion at the exit slit."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength_dispersion",
             type="NX_FLOAT",
             name_type="specified",
@@ -295,8 +294,7 @@ class Monochromator(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a monochromator."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

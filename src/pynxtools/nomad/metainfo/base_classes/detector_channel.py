@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -93,8 +100,7 @@ class DetectorChannel(Object):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("Energy at which a photon will be recorded"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="threshold_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -111,8 +117,7 @@ class DetectorChannel(Object):
             "True when the flat field correction has been applied in the "
             "electronics, false otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flatfield_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -125,8 +130,7 @@ class DetectorChannel(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_channel.html#nxdetector_channel-flatfield-field"
         ],
         description=("Response of each pixel given a constant input"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flatfield",
             type="NX_NUMBER",
             name_type="specified",
@@ -143,8 +147,7 @@ class DetectorChannel(Object):
             "Errors of the flat field correction data. The form flatfield_error "
             "is deprecated."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flatfield_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -160,8 +163,7 @@ class DetectorChannel(Object):
             "True when the pixel mask correction has been applied in the "
             "electronics, false otherwise."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pixel_mask_applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -177,8 +179,7 @@ class DetectorChannel(Object):
             "Custom pixel mask for this channel. May include nP as the first "
             "dimension for masks that vary for each scan point."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pixel_mask",
             type="NX_INT",
             name_type="specified",
@@ -199,8 +200,7 @@ class DetectorChannel(Object):
             "underload_value. The precise type should match the type of the "
             "data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="saturation_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -221,8 +221,7 @@ class DetectorChannel(Object):
             "underload_value. The precise type should match the type of the "
             "data."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="underload_value",
             type="NX_NUMBER",
             name_type="specified",

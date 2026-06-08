@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
@@ -142,8 +149,7 @@ class Manipulator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-name-field"
         ],
         description=("Name of the manipulator."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -156,8 +162,7 @@ class Manipulator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-description-field"
         ],
         description=("A description of the manipulator."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -170,8 +175,7 @@ class Manipulator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-type-field"
         ],
         description=("Type of manipulator, Hexapod, Rod, etc."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -214,8 +218,7 @@ class ManipulatorCryostat(Actuator):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-actuation-target-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="actuation_target",
             type="NX_CHAR",
             name_type="specified",
@@ -250,8 +253,7 @@ class ManipulatorTemperatureSensor(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-temperature-sensor-measurement-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement",
             type="NX_CHAR",
             name_type="specified",
@@ -272,8 +274,7 @@ class ManipulatorTemperatureSensor(Sensor):
             "It can also be a 1D array of measured temperatures (without time "
             "stamps)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
             name_type="specified",
@@ -308,8 +309,7 @@ class ManipulatorSampleHeater(Actuator):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-actuation-target-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="actuation_target",
             type="NX_CHAR",
             name_type="specified",
@@ -328,8 +328,7 @@ class ManipulatorSampleHeater(Actuator):
             "heater power. It can also be a 1D array of heater powers (without "
             "time stamps)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="output_heater_power",
             type="NX_FLOAT",
             name_type="specified",
@@ -364,8 +363,7 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-drain-current-ammeter-measurement-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement",
             type="NX_CHAR",
             name_type="specified",
@@ -386,8 +384,7 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
             "holder. It can also be an 1D array of measured currents (without "
             "time stamps)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
             name_type="specified",
@@ -422,8 +419,7 @@ class ManipulatorSampleBiasPotentiostat(Actuator):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-actuation-target-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="actuation_target",
             type="NX_CHAR",
             name_type="specified",
@@ -458,8 +454,7 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-voltmeter-measurement-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement",
             type="NX_CHAR",
             name_type="specified",
@@ -479,8 +474,7 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
             "scalar voltage measured between sample and sample holder. It can "
             "also be an 1D array of measured voltages (without time stamps)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
             name_type="specified",

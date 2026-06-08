@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.resolution import Resolution
@@ -224,8 +231,7 @@ class Electronanalyzer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-description-field"
         ],
         description=("Free text description of the type of the detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -238,8 +244,7 @@ class Electronanalyzer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-name-field"
         ],
         description=("Name or model of the equipment"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -252,8 +257,7 @@ class Electronanalyzer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-name-short-name-attribute"
         ],
         description=("Acronym or other shorthand name"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",
@@ -295,8 +299,7 @@ class Electronanalyzer(Component):
             ":math:`\\phi_{\\mathrm{spectr.}}` needs to be known to accurately "
             "determine the binding energy scale."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="work_function",
             type="NX_FLOAT",
             name_type="specified",
@@ -314,8 +317,7 @@ class Electronanalyzer(Component):
             "Voltage range of the power supply. This influences the noise of the "
             "supply and thereby the energy resolution."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage_range",
             type="NX_FLOAT",
             name_type="specified",
@@ -349,8 +351,7 @@ class Electronanalyzer(Component):
             "energy_scan_mode=sweep, fast_axes: ['energy', 'kx']; slow_axes: "
             "['energy'] is allowed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="fast_axes",
             type="NX_CHAR",
             name_type="specified",
@@ -368,8 +369,7 @@ class Electronanalyzer(Component):
             "parameter, listed in order of decreasing speed. See fast_axes for "
             "examples."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slow_axes",
             type="NX_CHAR",
             name_type="specified",
@@ -413,8 +413,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-physical-quantity-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -434,8 +433,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
             "standard. .. _10.24: "
             "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:10.24"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -449,8 +447,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-resolution-errors-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -485,8 +482,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-physical-quantity-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -500,8 +496,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-resolution-field"
         ],
         dimensionality="1 / [length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -515,8 +510,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-resolution-errors-field"
         ],
         dimensionality="1 / [length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -551,8 +545,7 @@ class ElectronanalyzerAngularResolution(Resolution):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-physical-quantity-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -566,8 +559,7 @@ class ElectronanalyzerAngularResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-resolution-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -581,8 +573,7 @@ class ElectronanalyzerAngularResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-angular-resolution-resolution-errors-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -622,8 +613,7 @@ class ElectronanalyzerSpatialResolution(Resolution):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-physical-quantity-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="physical_quantity",
             type="NX_CHAR",
             name_type="specified",
@@ -637,8 +627,7 @@ class ElectronanalyzerSpatialResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-resolution-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
             name_type="specified",
@@ -652,8 +641,7 @@ class ElectronanalyzerSpatialResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-spatial-resolution-resolution-errors-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
             name_type="specified",
@@ -705,8 +693,7 @@ class ElectronanalyzerTransmissionFunction(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-signal-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -720,8 +707,7 @@ class ElectronanalyzerTransmissionFunction(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-axes-attribute"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -736,8 +722,7 @@ class ElectronanalyzerTransmissionFunction(Data):
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         shape=["*"],
         description=("Kinetic energy values"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="kinetic_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -753,8 +738,7 @@ class ElectronanalyzerTransmissionFunction(Data):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Relative transmission efficiency for the given kinetic energies"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="relative_intensity",
             type="NX_FLOAT",
             name_type="specified",

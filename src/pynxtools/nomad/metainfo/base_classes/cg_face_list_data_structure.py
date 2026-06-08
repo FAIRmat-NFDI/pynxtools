@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -90,8 +97,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "number of vertices for that face, irrespectively whether vertices "
             "are shared among faces or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_vertices",
             type="NX_UINT",
             name_type="specified",
@@ -111,8 +117,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "number of edges for that face, irrespectively whether edges are "
             "shared across faces or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_edges",
             type="NX_UINT",
             name_type="specified",
@@ -127,8 +132,7 @@ class CgFaceListDataStructure(CgPrimitive):
         ],
         dimensionality="dimensionless",
         description=("Number of faces of the primitives."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_faces",
             type="NX_UINT",
             name_type="specified",
@@ -148,8 +152,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "implicitly. Inspect the definition of NXcg_primitive for further "
             "details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset_vertex",
             type="NX_INT",
             name_type="specified",
@@ -169,8 +172,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "implicitly. Inspect the definition of NXcg_primitive for further "
             "details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset_edge",
             type="NX_INT",
             name_type="specified",
@@ -190,8 +192,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "implicitly. Inspect the definition of NXcg_primitive for further "
             "details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_offset_face",
             type="NX_INT",
             name_type="specified",
@@ -207,8 +208,7 @@ class CgFaceListDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Integer identifier to distinguish all vertices explicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_vertex",
             type="NX_INT",
             name_type="specified",
@@ -224,8 +224,7 @@ class CgFaceListDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Integer used to distinguish all edges explicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_edge",
             type="NX_INT",
             name_type="specified",
@@ -241,8 +240,7 @@ class CgFaceListDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Integer used to distinguish all faces explicitly."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="indices_face",
             type="NX_INT",
             name_type="specified",
@@ -264,8 +262,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "that each vertex is stored even though many vertices may share the "
             "same positions."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertices",
             type="NX_NUMBER",
             name_type="specified",
@@ -281,8 +278,7 @@ class CgFaceListDataStructure(CgPrimitive):
         dimensionality="dimensionless",
         shape=["*", 2],
         description=("The edges are stored as pairs of vertex identifier."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edges",
             type="NX_INT",
             name_type="specified",
@@ -308,8 +304,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "the i-th face on the following index interval of the faces array: "
             ":math:`[\\sum_{i = 0}^{i = n-1}, \\sum_{i=0}^{i = n}]`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="faces",
             type="NX_INT",
             name_type="specified",
@@ -327,8 +322,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "positions and have different identifiers, i.e. no points overlap or "
             "are counted more than once."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertices_are_unique",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -344,8 +338,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "If true, indicates that no edge is stored more than once. Users are "
             "encouraged to consider using a half_edge_data_structure instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edges_are_unique",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -358,8 +351,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-faces-are-unique-field"
         ],
         description=("If true, indicates that no face is stored more than once."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="faces_are_unique",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -377,8 +369,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "Specifies for each face which winding order was used if any: * 0 - "
             "undefined * 1 - counter-clockwise (CCW) * 2 - clock-wise (CW)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="winding_order",
             type="NX_INT",
             name_type="specified",

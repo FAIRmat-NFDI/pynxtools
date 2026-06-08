@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -91,8 +98,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-type-field"
         ],
         description=("Type of the lens (e.g. concave, convex etc.)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -115,8 +121,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-chromatic-field"
         ],
         description=("Is it a chromatic lens?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="chromatic",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -130,8 +135,7 @@ class OpticalLens(Component):
         ],
         dimensionality="[length]",
         description=("Diameter of the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lens_diameter",
             type="NX_NUMBER",
             name_type="specified",
@@ -147,8 +151,7 @@ class OpticalLens(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Reflectance of the lens at given spectral values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="reflectance",
             type="NX_CHAR",
             name_type="specified",
@@ -164,8 +167,7 @@ class OpticalLens(Component):
         dimensionality="dimensionless",
         shape=["*"],
         description=("Transmission of the lens at given spectral values."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmission",
             type="NX_CHAR",
             name_type="specified",
@@ -184,8 +186,7 @@ class OpticalLens(Component):
             "Focal length of the lens on the front side (first value), i.e. "
             "where the beam is incident, and on the back side (second value)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="focal_length",
             type="NX_NUMBER",
             name_type="specified",
@@ -208,8 +209,7 @@ class OpticalLens(Component):
             "light beam is incident, while the back face is the one from which "
             "the light beam exits the lens."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="curvature_radius_FACE",
             type="NX_NUMBER",
             name_type="partial",
@@ -224,8 +224,7 @@ class OpticalLens(Component):
         ],
         dimensionality="dimensionless",
         description=("Abbe number (or V-number) of the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="Abbe_number",
             type="NX_NUMBER",
             name_type="specified",
@@ -239,8 +238,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-numerical-aperture-field"
         ],
         description=("The numerical aperture of the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="numerical_aperture",
             type="NX_NUMBER",
             name_type="specified",
@@ -253,8 +251,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-magnification-field"
         ],
         description=("Magnification of the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnification",
             type="NX_FLOAT",
             name_type="specified",
@@ -299,8 +296,7 @@ class OpticalLensSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-substrate-substrate-material-field"
         ],
         description=("Specify the substrate material of the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -314,8 +310,7 @@ class OpticalLensSubstrate(Sample):
         ],
         dimensionality="[length]",
         description=("Thickness of the lens substrate at the optical axis."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -334,8 +329,7 @@ class OpticalLensSubstrate(Sample):
             "Complex index of refraction of the lens material. Specify at given "
             "wavelength (or energy, wavenumber etc.) values."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction",
             type="NX_NUMBER",
             name_type="specified",
@@ -381,8 +375,7 @@ class OpticalLensSample(Sample):
             "Specify the coating type (e.g. dielectric, anti-reflection (AR), "
             "multilayer coating etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_type",
             type="NX_CHAR",
             name_type="specified",
@@ -395,8 +388,7 @@ class OpticalLensSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-coating-coating-material-field"
         ],
         description=("Describe the coating material (e.g. MgF2)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_CHAR",
             name_type="specified",
@@ -410,8 +402,7 @@ class OpticalLensSample(Sample):
         ],
         dimensionality="[length]",
         description=("Thickness of the coating."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_thickness",
             type="NX_NUMBER",
             name_type="specified",
@@ -430,8 +421,7 @@ class OpticalLensSample(Sample):
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (wavelength, energy, wavenumber etc.)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="index_of_refraction_coating",
             type="NX_NUMBER",
             name_type="specified",

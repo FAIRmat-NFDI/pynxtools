@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -65,8 +72,7 @@ class CsProfilingEvent(Object):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the event tracking started."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -82,8 +88,7 @@ class CsProfilingEvent(Object):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the event tracking ended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -98,8 +103,7 @@ class CsProfilingEvent(Object):
         description=(
             "Free-text description what was monitored/executed during the event."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -119,8 +123,7 @@ class CsProfilingEvent(Object):
             "demand for a more precise record of the wall-clock time. Elapsed "
             "time may contain time portions where resources were idling."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="elapsed_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -144,8 +147,7 @@ class CsProfilingEvent(Object):
             "larger than one. If no GPU is used, number_of_gpus is zero, even "
             "though the hardware may have GPUs installed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_processes",
             type="NX_UINT",
             name_type="specified",
@@ -165,8 +167,7 @@ class CsProfilingEvent(Object):
             "threads used for the high-level threading library used (e.g. "
             "OMP_NUM_THREADS), posix."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_threads",
             type="NX_UINT",
             name_type="specified",
@@ -184,8 +185,7 @@ class CsProfilingEvent(Object):
             "The number of nominal GPUs that the app invoked during the "
             "execution of this event."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_gpus",
             type="NX_UINT",
             name_type="specified",
@@ -202,8 +202,7 @@ class CsProfilingEvent(Object):
         description=(
             "Maximum amount of virtual memory allocated per process during the event."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_virtual_memory_snapshot",
             type="NX_NUMBER",
             name_type="specified",
@@ -220,8 +219,7 @@ class CsProfilingEvent(Object):
         description=(
             "Maximum amount of resident memory allocated per process during the event."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_resident_memory_snapshot",
             type="NX_NUMBER",
             name_type="specified",

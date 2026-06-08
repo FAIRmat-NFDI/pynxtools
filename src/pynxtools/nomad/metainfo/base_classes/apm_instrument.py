@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -215,8 +222,7 @@ class ApmInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-type-field"
         ],
         description=("Which type of instrument."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -259,8 +265,7 @@ class ApmInstrument(Instrument):
             "Location of the lab or place where the instrument is installed. "
             "Using GEOREF is preferred."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="location",
             type="NX_CHAR",
             name_type="specified",
@@ -277,8 +282,7 @@ class ApmInstrument(Instrument):
             "Nominal flight path The value can be extracted from the "
             "CAnalysis.CSpatial.fFlightPath field of a CamecaRoot ROOT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flight_path",
             type="NX_FLOAT",
             name_type="specified",
@@ -292,8 +296,7 @@ class ApmInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-comment-field"
         ],
         description=("Free-text field for additional comments."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -349,8 +352,7 @@ class ApmInstrumentReflectron(Component):
         description=(
             "The maximum voltage applied to the reflectron, relative to system ground."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -388,8 +390,7 @@ class ApmInstrumentLocalElectrode(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("Acceleration voltage"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -414,8 +415,7 @@ class ApmInstrumentLocalElectrode(Component):
             '"custom", a user modified aperture, which is otherwise '
             "non-standard"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="aperture_type",
             type="NX_CHAR",
             name_type="specified",
@@ -459,8 +459,7 @@ class ApmInstrumentIonDetector(Detector):
             "is used primarily by the atom probe group of the GPM in Rouen, "
             "France."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="signal_amplitude",
             type="NX_FLOAT",
             name_type="specified",
@@ -478,8 +477,7 @@ class ApmInstrumentIonDetector(Detector):
             "The value can be extracted from the CRunHeader.fMcpEfficiency field "
             "of a CamecaRoot RHIT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mcp_efficiency",
             type="NX_FLOAT",
             name_type="specified",
@@ -497,8 +495,7 @@ class ApmInstrumentIonDetector(Detector):
             "The value can be extracted from the CRunHeader.fMeshEfficiency "
             "field of a CamecaRoot RHIT file."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mesh_efficiency",
             type="NX_FLOAT",
             name_type="specified",
@@ -544,8 +541,7 @@ class ApmInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-pulse-mode-field"
         ],
         description=("Detail whereby ion extraction is triggered methodologically."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -561,8 +557,7 @@ class ApmInstrumentPulser(Component):
         ],
         dimensionality="1 / [time]",
         description=("Frequency with which the pulser fire(s)."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_frequency",
             type="NX_FLOAT",
             name_type="specified",
@@ -582,8 +577,7 @@ class ApmInstrumentPulser(Component):
             "is applied, this gives nominal pulse fraction (as a function of "
             "standing voltage). Otherwise, this field should not be present."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_fraction",
             type="NX_FLOAT",
             name_type="specified",
@@ -600,8 +594,7 @@ class ApmInstrumentPulser(Component):
         description=(
             "Pulsed voltage, in laser pulsing mode this field can be omitted."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -618,8 +611,7 @@ class ApmInstrumentPulser(Component):
         description=(
             "Absolute number of pulses starting from the beginning of the experiment."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_number",
             type="NX_UINT",
             name_type="specified",
@@ -639,8 +631,7 @@ class ApmInstrumentPulser(Component):
             "instrument. Otherwise, the standing voltage applied to the sample, "
             "relative to system ground."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="standing_voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -676,8 +667,7 @@ class ApmInstrumentAnalysisChamber(Component):
             "The space inside the atom probe along which ions pass nominally "
             "when they leave the specimen and travel to the detector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="flight_path",
             type="NX_FLOAT",
             name_type="specified",
@@ -719,8 +709,7 @@ class ApmInstrumentControl(Parameters):
             "pulser and other components of the instrument are controlled during "
             "evaporation."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="evaporation_control",
             type="NX_CHAR",
             name_type="specified",
@@ -736,8 +725,7 @@ class ApmInstrumentControl(Parameters):
             "Parameter that assure maintenance of a significant yet not too high "
             "ion influx on the detector to avoid detection losses."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_detection_rate",
             type="NX_NUMBER",
             name_type="specified",

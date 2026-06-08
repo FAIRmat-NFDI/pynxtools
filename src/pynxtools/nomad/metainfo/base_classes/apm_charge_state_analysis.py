@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -97,8 +104,7 @@ class ApmChargeStateAnalysis(Process):
             "Signed charge, i.e. integer multiple of the elementary charge of "
             "each candidate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="charge_state",
             type="NX_INT",
             name_type="specified",
@@ -119,8 +125,7 @@ class ApmChargeStateAnalysis(Process):
             "the matrix should be set to 0. Use the hashing rule that is defined "
             "in nuclide_hash of :ref:`NXatom`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
             name_type="specified",
@@ -139,8 +144,7 @@ class ApmChargeStateAnalysis(Process):
             "Accumulated mass of the nuclides in each candidate. Not corrected "
             "for quantum effects."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mass",
             type="NX_FLOAT",
             name_type="specified",
@@ -158,8 +162,7 @@ class ApmChargeStateAnalysis(Process):
         description=(
             "The product of the natural abundances of the nuclides for each candidate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="natural_abundance_product",
             type="NX_FLOAT",
             name_type="specified",
@@ -178,8 +181,7 @@ class ApmChargeStateAnalysis(Process):
             "For each candidate the half life of the nuclide that has the "
             "shortest half life."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shortest_half_life",
             type="NX_FLOAT",
             name_type="specified",
@@ -237,8 +239,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "nuclides reduces the time to perform an exhaustive combinatorial "
             "search."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="nuclides",
             type="NX_UINT",
             name_type="specified",
@@ -257,8 +258,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "{\\frac{m}{q}}_{max}]` within which ions with given "
             "mass-to-charge-state-ratio qualify as candidates."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="mass_to_charge_range",
             type="NX_FLOAT",
             name_type="specified",
@@ -277,8 +277,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "nuclide of each ion needs to be stable such that the ion qualifies "
             "as a candidate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="min_half_life",
             type="NX_FLOAT",
             name_type="specified",
@@ -296,8 +295,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "Parameter that defines the minimum natural abundance of each "
             "nuclide of each ion such that the ion qualifies as a candidate."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="min_abundance",
             type="NX_FLOAT",
             name_type="specified",
@@ -316,8 +314,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "built from different nuclide instances but the charge_state of all "
             "the ions is the same."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sacrifice_isotopic_uniqueness",
             type="NX_BOOLEAN",
             name_type="specified",

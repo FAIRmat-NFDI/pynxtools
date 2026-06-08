@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -88,8 +95,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-type-field"
         ],
         description=("Fermi chopper type"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -103,8 +109,7 @@ class FermiChopper(Component):
         ],
         dimensionality="1 / [time]",
         description=("chopper rotation speed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation_speed",
             type="NX_FLOAT",
             name_type="specified",
@@ -119,8 +124,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[length]",
         description=("radius of chopper"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radius",
             type="NX_FLOAT",
             name_type="specified",
@@ -135,8 +139,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[length]",
         description=("width of an individual slit"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="slit",
             type="NX_FLOAT",
             name_type="specified",
@@ -151,8 +154,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[length]",
         description=("radius of curvature of slits"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="r_slit",
             type="NX_FLOAT",
             name_type="specified",
@@ -167,8 +169,7 @@ class FermiChopper(Component):
         ],
         dimensionality="dimensionless",
         description=("number of slits"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number",
             type="NX_INT",
             name_type="specified",
@@ -183,8 +184,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[length]",
         description=("input beam height"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="height",
             type="NX_FLOAT",
             name_type="specified",
@@ -199,8 +199,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[length]",
         description=("input beam width"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="width",
             type="NX_FLOAT",
             name_type="specified",
@@ -217,8 +216,7 @@ class FermiChopper(Component):
         description=(
             "distance. Note, it is recommended to use NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -233,8 +231,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[length]",
         description=("Wavelength transmitted by chopper"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
             name_type="specified",
@@ -249,8 +246,7 @@ class FermiChopper(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("energy selected"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -264,8 +260,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-absorbing-material-field"
         ],
         description=("absorbing material"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="absorbing_material",
             type="NX_CHAR",
             name_type="specified",
@@ -278,8 +273,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-transmitting-material-field"
         ],
         description=("transmitting material"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="transmitting_material",
             type="NX_CHAR",
             name_type="specified",
@@ -294,8 +288,7 @@ class FermiChopper(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a fermi chopper."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

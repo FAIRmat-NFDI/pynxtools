@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.source import Source
@@ -261,8 +268,7 @@ class EbeamColumn(Component):
             "the operation_mode is useful in as much as at least some "
             "constraints on how the illumination conditions were is documented."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="operation_mode",
             type="NX_CHAR",
             name_type="specified",
@@ -320,8 +326,7 @@ class EbeamColumnElectronSource(Source):
             ".. _Acceleration Voltage: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000004"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
             name_type="specified",
@@ -341,8 +346,7 @@ class EbeamColumnElectronSource(Source):
             "`Extraction Voltage`_ of the EMglossary standard. .. _Extraction "
             "Voltage: https://purls.helmholtz-metadaten.de/emg/EMG_00000025"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="extraction_voltage",
             type="NX_NUMBER",
             name_type="specified",
@@ -362,8 +366,7 @@ class EbeamColumnElectronSource(Source):
             ".. _Emission Current: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000025"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emission_current",
             type="NX_NUMBER",
             name_type="specified",
@@ -383,8 +386,7 @@ class EbeamColumnElectronSource(Source):
             "_Filament Current: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000027"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="filament_current",
             type="NX_NUMBER",
             name_type="specified",
@@ -398,8 +400,7 @@ class EbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-electron-source-probe-field"
         ],
         description=("Type of radiation."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="probe",
             type="NX_CHAR",
             name_type="specified",
@@ -416,8 +417,7 @@ class EbeamColumnElectronSource(Source):
             "Emitter type used to create the beam. If the emitter type is other, "
             "give further details in the description field."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emitter_type",
             type="NX_CHAR",
             name_type="specified",
@@ -432,8 +432,7 @@ class EbeamColumnElectronSource(Source):
         description=(
             "Material of which the emitter is build, e.g. the filament material."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="emitter_material",
             type="NX_CHAR",
             name_type="specified",
@@ -447,8 +446,7 @@ class EbeamColumnElectronSource(Source):
         ],
         dimensionality="[time]",
         description=("How long has the source been in operation."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lifetime",
             type="NX_NUMBER",
             name_type="specified",
@@ -497,8 +495,7 @@ class EbeamColumnMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-monochromator-type-field"
         ],
         description=("Qualitative type of the component."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -519,8 +516,7 @@ class EbeamColumnMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-monochromator-applied-field"
         ],
         description=("Was the corrector used?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -533,8 +529,7 @@ class EbeamColumnMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-monochromator-dispersion-field"
         ],
         description=("Energy dispersion in e.g. µm/eV."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dispersion",
             type="NX_NUMBER",
             name_type="specified",
@@ -549,8 +544,7 @@ class EbeamColumnMonochromator(Monochromator):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("Corresponding voltage for that energy dispersion."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
             name_type="specified",
@@ -599,8 +593,7 @@ class EbeamColumnCorrectorAx(Component):
             "controllable as the control software of the microscope does not "
             "enable or was not configured to display these values for users."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value_x",
             type="NX_NUMBER",
             name_type="specified",
@@ -619,8 +612,7 @@ class EbeamColumnCorrectorAx(Component):
             "controllable as the control software of the microscope does not "
             "enable or was not configured to display these values for users."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value_y",
             type="NX_NUMBER",
             name_type="specified",
@@ -660,8 +652,7 @@ class EbeamColumnPhaseplateID(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-phaseplateid-type-field"
         ],
         description=("Qualitative type"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",

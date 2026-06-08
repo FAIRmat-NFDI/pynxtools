@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -76,8 +83,7 @@ class CgPolyline(CgPrimitive):
             "location of the vertices that are referred to in this NXcg_polyline "
             "instance."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -91,8 +97,7 @@ class CgPolyline(CgPrimitive):
         ],
         dimensionality="dimensionless",
         description=("The total number of vertices that have different positions."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_unique_vertices",
             type="NX_UINT",
             name_type="specified",
@@ -109,8 +114,7 @@ class CgPolyline(CgPrimitive):
         description=(
             "The total number of vertices, irrespective of their eventual uniqueness."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_total_vertices",
             type="NX_UINT",
             name_type="specified",
@@ -129,8 +133,7 @@ class CgPolyline(CgPrimitive):
             "The total number of vertices of each polyline, irrespectively "
             "whether vertices are shared by vertices or not."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_vertices",
             type="NX_UINT",
             name_type="specified",
@@ -155,8 +158,7 @@ class CgPolyline(CgPrimitive):
             "triangles and thus storing multiple copies of their positions is "
             "redundant."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertices",
             type="NX_NUMBER",
             name_type="specified",
@@ -174,8 +176,7 @@ class CgPolyline(CgPrimitive):
             "positions and have different identifiers, i.e. no points overlap or "
             "are counted several times."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertices_are_unique",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -208,8 +209,7 @@ class CgPolyline(CgPrimitive):
             "index interval :math:`[\\sum_{i=0}^{i=N-1} n^v_i, \\sum_{i=0}^{i=N} "
             "n^v_i]`."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="polylines",
             type="NX_INT",
             name_type="specified",

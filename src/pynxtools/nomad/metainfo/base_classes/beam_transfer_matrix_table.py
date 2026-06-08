@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -77,8 +84,7 @@ class BeamTransferMatrixTable(Object):
             "data array. N in the name, is the index number in which order the "
             "given property is listed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="datatype_N",
             type="NX_CHAR",
             name_type="partial",
@@ -98,8 +104,7 @@ class BeamTransferMatrixTable(Object):
             "length ['focal_length_value'] and for orientation matrix ['OM1', "
             "'OM2', 'OM3'] or for jones matrix ['JM1','JM2']"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="matrix_elements",
             type="NX_CHAR",
             name_type="specified",
@@ -132,8 +137,7 @@ class BeamTransferMatrixTable(Object):
             "transfer matrix depends on the parameters. Examples are: 1x1 for "
             "intensity/power 2x2 for jones formalism 3x3 for direction"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="TRANSFER_MATRIX",
             type="NX_NUMBER",
             name_type="any",
@@ -148,8 +152,7 @@ class BeamTransferMatrixTable(Object):
         description=(
             "Specific name of input beam which the transfer matrix table is related to."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="input",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +169,7 @@ class BeamTransferMatrixTable(Object):
             "Specific name of output beam which the transfer matrix table is "
             "related to."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="output",
             type="NX_CHAR",
             name_type="specified",

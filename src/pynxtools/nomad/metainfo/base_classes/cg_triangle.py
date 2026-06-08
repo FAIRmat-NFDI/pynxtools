@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -99,8 +106,7 @@ class CgTriangle(CgPrimitive):
         ],
         dimensionality="dimensionless",
         description=("Number of unique vertices in the triangle set."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_unique_vertices",
             type="NX_INT",
             name_type="specified",
@@ -120,8 +126,7 @@ class CgTriangle(CgPrimitive):
             "reported via traversing the vertices in the sequence as these are "
             "defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="edge_length",
             type="NX_NUMBER",
             name_type="specified",
@@ -141,8 +146,7 @@ class CgTriangle(CgPrimitive):
             "reported for the angle opposite to the respective edges in the "
             "sequence how vertices are defined."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="interior_angle",
             type="NX_NUMBER",
             name_type="specified",

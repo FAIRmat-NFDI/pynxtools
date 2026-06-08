@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -120,8 +127,7 @@ class Mirror(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-type-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -135,8 +141,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-description-field"
         ],
         description=("description of this mirror"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -149,8 +154,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-incident-angle-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -164,8 +168,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-bend-angle-x-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bend_angle_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -179,8 +182,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-bend-angle-y-field"
         ],
         dimensionality="[angle]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bend_angle_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -193,8 +195,7 @@ class Mirror(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-interior-atmosphere-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="interior_atmosphere",
             type="NX_CHAR",
             name_type="specified",
@@ -208,8 +209,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-external-material-field"
         ],
         description=("external material outside substrate"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="external_material",
             type="NX_CHAR",
             name_type="specified",
@@ -226,8 +226,7 @@ class Mirror(Component):
             "The m value for a supermirror, which defines the supermirror regime "
             "in multiples of the critical angle of Nickel."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="m_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -240,8 +239,7 @@ class Mirror(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_CHAR",
             name_type="specified",
@@ -254,8 +252,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_density",
             type="NX_FLOAT",
             name_type="specified",
@@ -269,8 +266,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-thickness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -283,8 +279,7 @@ class Mirror(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-coating-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_CHAR",
             name_type="specified",
@@ -297,8 +292,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-roughness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -312,8 +306,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-coating-roughness-field"
         ],
         dimensionality="[length]",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -326,8 +319,7 @@ class Mirror(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-even-layer-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="even_layer_material",
             type="NX_CHAR",
             name_type="specified",
@@ -340,8 +332,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-even-layer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="even_layer_density",
             type="NX_FLOAT",
             name_type="specified",
@@ -354,8 +345,7 @@ class Mirror(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-odd-layer-material-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="odd_layer_material",
             type="NX_CHAR",
             name_type="specified",
@@ -368,8 +358,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-odd-layer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="odd_layer_density",
             type="NX_FLOAT",
             name_type="specified",
@@ -384,8 +373,7 @@ class Mirror(Component):
         ],
         dimensionality="[length]",
         description=("An array describing the thickness of each layer"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="layer_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -407,8 +395,7 @@ class Mirror(Component):
             "mirror faces negative z values. .. image:: mirror/mirror.png "
             ":width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -77,8 +84,7 @@ class Registration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXregistration.html#nxregistration-applied-field"
         ],
         description=("Has the registration been applied?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="applied",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -94,8 +100,7 @@ class Registration(Process):
             "Specifies the position by pointing to the last transformation in "
             "the transformation chain in the NXtransformations group."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -108,8 +113,7 @@ class Registration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXregistration.html#nxregistration-description-field"
         ],
         description=("Description of the procedures employed."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",

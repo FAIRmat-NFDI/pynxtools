@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -81,8 +88,7 @@ class CgCylinder(CgPrimitive):
             "represent the start of the respective cylinder instances when "
             "inspecting along the direction vector."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="height",
             type="NX_NUMBER",
             name_type="specified",
@@ -97,8 +103,7 @@ class CgCylinder(CgPrimitive):
         ],
         dimensionality="[length]",
         description=("Radius of the cylinder if all have the same radius."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radius",
             type="NX_NUMBER",
             name_type="specified",
@@ -114,8 +119,7 @@ class CgCylinder(CgPrimitive):
         dimensionality="[length]",
         shape=["*"],
         description=("Radii of the cylinder."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="radii",
             type="NX_NUMBER",
             name_type="specified",
@@ -135,8 +139,7 @@ class CgCylinder(CgPrimitive):
             "lower_cap_radius can be used to describe (eventually truncated) "
             "circular cones."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="upper_cap_radii",
             type="NX_NUMBER",
             name_type="specified",
@@ -156,8 +159,7 @@ class CgCylinder(CgPrimitive):
             "upper_cap_radius can be used to describe (eventually truncated) "
             "circular cones."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lower_cap_radii",
             type="NX_NUMBER",
             name_type="specified",
@@ -173,8 +175,7 @@ class CgCylinder(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("Lateral surface area of each cylinder."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lateral_surface_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -190,8 +191,7 @@ class CgCylinder(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("Area of the upper cap of each cylinder."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="upper_cap_surface_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -207,8 +207,7 @@ class CgCylinder(CgPrimitive):
         dimensionality="[length] ** 2",
         shape=["*"],
         description=("Area of the lower cap of each cylinder."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lower_cap_surface_area",
             type="NX_NUMBER",
             name_type="specified",
@@ -226,8 +225,7 @@ class CgCylinder(CgPrimitive):
         description=(
             "Sum of upper and lower cap area and lateral surface area of each cylinder."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total_surface_area",
             type="NX_NUMBER",
             name_type="specified",

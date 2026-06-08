@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -84,8 +91,7 @@ class Attenuator(Component):
             "Distance from sample. Note, it is recommended to use "
             "NXtransformations instead."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
             name_type="specified",
@@ -99,8 +105,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-type-field"
         ],
         description=("Type or composition of attenuator, e.g. polythene"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -114,8 +119,7 @@ class Attenuator(Component):
         ],
         dimensionality="[length]",
         description=("Thickness of attenuator along beam direction"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -130,8 +134,7 @@ class Attenuator(Component):
         ],
         dimensionality="[length] ** 2",
         description=("Scattering cross section (coherent+incoherent)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_cross_section",
             type="NX_FLOAT",
             name_type="specified",
@@ -146,8 +149,7 @@ class Attenuator(Component):
         ],
         dimensionality="[length] ** 2",
         description=("Absorption cross section"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="absorption_cross_section",
             type="NX_FLOAT",
             name_type="specified",
@@ -165,8 +167,7 @@ class Attenuator(Component):
             "The nominal amount of the beam that gets through (transmitted "
             "intensity)/(incident intensity)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="attenuator_transmission",
             type="NX_FLOAT",
             name_type="specified",
@@ -180,8 +181,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-status-field"
         ],
         description=("In or out or moving of the beam"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="status",
             type="NX_CHAR",
             name_type="specified",
@@ -195,8 +195,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-status-time-attribute"
         ],
         description=("time stamp for this observation"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -217,8 +216,7 @@ class Attenuator(Component):
             "unambiguous reference. .. image:: attenuator/attenuator.png :width: "
             "40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

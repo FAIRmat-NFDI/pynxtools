@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -138,8 +145,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-model-field"
         ],
         description=("Sensor identification code/model number"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="model",
             type="NX_CHAR",
             name_type="specified",
@@ -152,8 +158,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-name-field"
         ],
         description=("Name for the sensor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -166,8 +171,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-short-name-field"
         ],
         description=("Short name of sensor used e.g. on monitor display program"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="short_name",
             type="NX_CHAR",
             name_type="specified",
@@ -180,8 +184,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-attached-to-field"
         ],
         description=('where sensor is attached to ("sample" | "can")'),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="attached_to",
             type="NX_CHAR",
             name_type="specified",
@@ -194,8 +197,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-measurement-field"
         ],
         description=("name for measured signal"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="measurement",
             type="NX_CHAR",
             name_type="specified",
@@ -231,8 +233,7 @@ class Sensor(Component):
             "electrode: specify species; e.g. Ca2+ :Magnetic field: Hall "
             ":Surface pressure: wilhelmy plate"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -248,8 +249,7 @@ class Sensor(Component):
             "Is data collection controlled or synchronised to this quantity: "
             '1=no, 0=to "value", 1=to "value_deriv1", etc.'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="run_control",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -262,8 +262,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-high-trip-value-field"
         ],
         description=("Upper control bound of sensor reading if using run_control"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="high_trip_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -277,8 +276,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-low-trip-value-field"
         ],
         description=("Lower control bound of sensor reading if using run_control"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="low_trip_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -293,8 +291,7 @@ class Sensor(Component):
         ],
         shape=["*"],
         description=("nominal setpoint or average value - need [n] as may be a vector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
             name_type="specified",
@@ -311,8 +308,7 @@ class Sensor(Component):
             "Nominal/average first derivative of value e.g. strain rate - same "
             'dimensions as "value" (may be a vector)'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value_deriv1",
             type="NX_FLOAT",
             name_type="specified",
@@ -329,8 +325,7 @@ class Sensor(Component):
             "Nominal/average second derivative of value - same dimensions as "
             '"value" (may be a vector)'
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value_deriv2",
             type="NX_FLOAT",
             name_type="specified",
@@ -352,8 +347,7 @@ class Sensor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-external-field-brief-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="external_field_brief",
             type="NX_CHAR",
             name_type="specified",
@@ -374,8 +368,7 @@ class Sensor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-depends-on-field"
         ],
         description=(".. todo:: Add a definition for the reference point of a sensor."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -227,8 +234,7 @@ class Entry(Object, basesections.Measurement):
             "NeXus identifies the default plottable data, see the :ref:`Find "
             "Plottable Data, v3 <Find-Plottable-Data-v3>` section."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="default",
             type="NX_CHAR",
             name_type="specified",
@@ -241,8 +247,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-idf-version-attribute"
         ],
         description=("ISIS Muon IDF_Version"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="IDF_Version",
             type="NX_CHAR",
             name_type="specified",
@@ -255,8 +260,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-title-field"
         ],
         description=("Extended title for entry"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="title",
             type="NX_CHAR",
             name_type="specified",
@@ -272,8 +276,7 @@ class Entry(Object, basesections.Measurement):
             "Unique identifier for the experiment, defined by the facility, "
             "possibly linked to the proposals"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -286,8 +289,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-experiment-description-field"
         ],
         description=("Brief summary of the experiment, including key objectives."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_description",
             type="NX_CHAR",
             name_type="specified",
@@ -302,8 +304,7 @@ class Entry(Object, basesections.Measurement):
         description=(
             "User or Data Acquisition defined group of NeXus files or NXentry"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -316,8 +317,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-collection-description-field"
         ],
         description=("Brief summary of the collection, including grouping criteria."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_description",
             type="NX_CHAR",
             name_type="specified",
@@ -330,8 +330,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-entry-identifier-field"
         ],
         description=("Unique identifier for the measurement, defined by the facility."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="entry_identifier",
             type="NX_CHAR",
             name_type="specified",
@@ -344,8 +343,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-entry-identifier-uuid-field"
         ],
         description=("UUID identifier for the measurement."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="entry_identifier_uuid",
             type="NX_CHAR",
             name_type="specified",
@@ -358,8 +356,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-entry-identifier-uuid-version-attribute"
         ],
         description=("Version of UUID used"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -373,8 +370,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-experiment-location-field"
         ],
         description=("City and country where the experiment took place"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_location",
             type="NX_CHAR",
             name_type="specified",
@@ -390,8 +386,7 @@ class Entry(Object, basesections.Measurement):
             "Start time of experimental run that includes the current "
             "measurement, for example a beam time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_start_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -407,8 +402,7 @@ class Entry(Object, basesections.Measurement):
             "End time of experimental run that includes the current measurement, "
             "for example a beam time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_end_date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -421,8 +415,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-experiment-institution-field"
         ],
         description=("Name of the institution hosting the facility"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_institution",
             type="NX_CHAR",
             name_type="specified",
@@ -435,8 +428,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-experiment-facility-field"
         ],
         description=("Name of the experimental facility"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_facility",
             type="NX_CHAR",
             name_type="specified",
@@ -449,8 +441,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-experiment-laboratory-field"
         ],
         description=("Name of the laboratory or beamline"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="experiment_laboratory",
             type="NX_CHAR",
             name_type="specified",
@@ -466,8 +457,7 @@ class Entry(Object, basesections.Measurement):
             "Reserved for future use by NIAC. See "
             "https://github.com/nexusformat/definitions/issues/382"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="features",
             type="NX_CHAR",
             name_type="specified",
@@ -491,8 +481,7 @@ class Entry(Object, basesections.Measurement):
             "set of groups, fields, and attributes. *It is advised* to use "
             ":ref:`NXsubentry`, instead, as the overlay position."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
             name_type="specified",
@@ -505,8 +494,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-definition-version-attribute"
         ],
         description=("NXDL version number"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -520,8 +508,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-definition-url-attribute"
         ],
         description=("URL of NXDL file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="URL",
             type="NX_CHAR",
             name_type="specified",
@@ -539,8 +526,7 @@ class Entry(Object, basesections.Measurement):
             "``definition`` field. This contains any locally-defined, additional "
             "fields in the entry."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="definition_local",
             type="NX_CHAR",
             name_type="specified",
@@ -554,8 +540,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-definition-local-version-attribute"
         ],
         description=("NXDL version number"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -569,8 +554,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-definition-local-url-attribute"
         ],
         description=("URL of NXDL file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="URL",
             type="NX_CHAR",
             name_type="specified",
@@ -584,8 +568,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-start-time-field"
         ],
         description=("Starting time of measurement"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -598,8 +581,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-end-time-field"
         ],
         description=("Ending time of measurement"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -613,8 +595,7 @@ class Entry(Object, basesections.Measurement):
         ],
         dimensionality="[time]",
         description=("Duration of measurement"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="duration",
             type="NX_INT",
             name_type="specified",
@@ -632,8 +613,7 @@ class Entry(Object, basesections.Measurement):
             "Time transpired actually collecting data i.e. taking out time when "
             "collection was suspended due to e.g. temperature out of range"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="collection_time",
             type="NX_FLOAT",
             name_type="specified",
@@ -650,8 +630,7 @@ class Entry(Object, basesections.Measurement):
             'Such as "2007-3". Some user facilities organize their beam time '
             "into run cycles."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="run_cycle",
             type="NX_CHAR",
             name_type="specified",
@@ -664,8 +643,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-program-name-field"
         ],
         description=("Name of program used to generate this file"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program_name",
             type="NX_CHAR",
             name_type="specified",
@@ -678,8 +656,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-program-name-version-attribute"
         ],
         description=("Program version number"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -693,8 +670,7 @@ class Entry(Object, basesections.Measurement):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-program-name-configuration-attribute"
         ],
         description=("configuration of the program"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="configuration",
             type="NX_CHAR",
             name_type="specified",
@@ -711,8 +687,7 @@ class Entry(Object, basesections.Measurement):
             "Revision id of the file due to re-calibration, reprocessing, new "
             "analysis, new instrument definition format, ..."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="revision",
             type="NX_CHAR",
             name_type="specified",
@@ -724,8 +699,7 @@ class Entry(Object, basesections.Measurement):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-revision-comment-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="comment",
             type="NX_CHAR",
             name_type="specified",
@@ -747,8 +721,7 @@ class Entry(Object, basesections.Measurement):
             "NXinstrument hierarchy provides this information, this should be a "
             "link."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pre_sample_flightpath",
             type="NX_FLOAT",
             name_type="specified",
@@ -795,8 +768,7 @@ class EntryThumbnail(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-thumbnail-type-attribute"
         ],
         description=("The mime type should be an ``image/*``"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="type",
             type="NX_CHAR",
             name_type="specified",

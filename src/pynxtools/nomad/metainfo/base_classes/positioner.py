@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -76,8 +83,7 @@ class Positioner(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-name-field"
         ],
         description=("symbolic or mnemonic name (one word)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
             name_type="specified",
@@ -90,8 +96,7 @@ class Positioner(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-description-field"
         ],
         description=("description of positioner"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -105,8 +110,7 @@ class Positioner(Component):
         ],
         shape=["*"],
         description=("best known value of positioner - need [n] as may be scanned"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="value",
             type="NX_NUMBER",
             name_type="specified",
@@ -121,8 +125,7 @@ class Positioner(Component):
         ],
         shape=["*"],
         description=("raw value of positioner - need [n] as may be scanned"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="raw_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -139,8 +142,7 @@ class Positioner(Component):
         description=(
             "targeted (commanded) value of positioner - need [n] as may be scanned"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="target_value",
             type="NX_NUMBER",
             name_type="specified",
@@ -155,8 +157,7 @@ class Positioner(Component):
         ],
         shape=["*"],
         description=("maximum allowable difference between target_value and value"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tolerance",
             type="NX_NUMBER",
             name_type="specified",
@@ -170,8 +171,7 @@ class Positioner(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-soft-limit-min-field"
         ],
         description=("minimum allowed limit to set value"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="soft_limit_min",
             type="NX_NUMBER",
             name_type="specified",
@@ -185,8 +185,7 @@ class Positioner(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-soft-limit-max-field"
         ],
         description=("maximum allowed limit to set value"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="soft_limit_max",
             type="NX_NUMBER",
             name_type="specified",
@@ -200,8 +199,7 @@ class Positioner(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-velocity-field"
         ],
         description=("velocity of the positioner (distance moved per unit time)"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="velocity",
             type="NX_NUMBER",
             name_type="specified",
@@ -215,8 +213,7 @@ class Positioner(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-acceleration-time-field"
         ],
         description=("time to ramp the velocity up to full speed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="acceleration_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -232,8 +229,7 @@ class Positioner(Component):
         description=(
             "Hardware device record, e.g. EPICS process variable, taco/tango ..."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="controller_record",
             type="NX_CHAR",
             name_type="specified",
@@ -248,8 +244,7 @@ class Positioner(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a positioner."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

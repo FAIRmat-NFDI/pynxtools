@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -79,8 +86,7 @@ class OffGeometry(Object):
             "origin is the position of each pixel as described by the "
             "``x/y/z_pixel_offset`` datasets in ``NXdetector``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="vertices",
             type="NX_NUMBER",
             name_type="specified",
@@ -98,8 +104,7 @@ class OffGeometry(Object):
             "List of indices of vertices in the ``vertices`` dataset to form "
             "each face, right-hand rule for face normal."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="winding_order",
             type="NX_INT",
             name_type="specified",
@@ -113,8 +118,7 @@ class OffGeometry(Object):
         ],
         shape=["*"],
         description=("The start index in ``winding_order`` for each face."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="faces",
             type="NX_INT",
             name_type="specified",
@@ -137,8 +141,7 @@ class OffGeometry(Object):
             "detecting volume. Can use multiple entries with the same detector "
             "id to define detector volumes."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_faces",
             type="NX_INT",
             name_type="specified",

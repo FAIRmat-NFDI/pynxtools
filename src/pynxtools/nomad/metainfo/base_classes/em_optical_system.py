@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -67,8 +74,7 @@ class EmOpticalSystem(Object):
             "the EMglossary standard. .. _Camera Length: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000008"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="camera_length",
             type="NX_NUMBER",
             name_type="specified",
@@ -86,8 +92,7 @@ class EmOpticalSystem(Object):
             "The factor of enlargement of the apparent size, not the physical "
             "size, of an object."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="magnification",
             type="NX_NUMBER",
             name_type="specified",
@@ -105,8 +110,7 @@ class EmOpticalSystem(Object):
             "The defocus aberration constant (oftentimes referred to as c_1_0). "
             "See respective details in :ref:`NXaberration` class instances."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="defocus",
             type="NX_NUMBER",
             name_type="specified",
@@ -126,8 +130,7 @@ class EmOpticalSystem(Object):
             "Angle`_ of the EMglossary standard. .. _Convergence Angle: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000010"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="semi_convergence_angle",
             type="NX_NUMBER",
             name_type="specified",
@@ -145,8 +148,7 @@ class EmOpticalSystem(Object):
             "The extent of the observable parts of the specimen given the "
             "current magnification and other settings of the instrument."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="field_of_view",
             type="NX_NUMBER",
             name_type="specified",
@@ -168,8 +170,7 @@ class EmOpticalSystem(Object):
             "the EMglossary standard. .. _Working Distance: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000050"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="working_distance",
             type="NX_NUMBER",
             name_type="specified",
@@ -189,8 +190,7 @@ class EmOpticalSystem(Object):
             "the ellipsoidal cross-section with semiaxes values sorted by "
             "decreasing length."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="probe",
             type="NX_NUMBER",
             name_type="specified",
@@ -209,8 +209,7 @@ class EmOpticalSystem(Object):
             "_Probe Current: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000041"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="probe_current",
             type="NX_NUMBER",
             name_type="specified",
@@ -230,8 +229,7 @@ class EmOpticalSystem(Object):
             "for (electron) dose monitoring in an electron microscope. The unit "
             "of the nominal dose rate is e-/(angstrom^2*s)."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dose_management",
             type="NX_CHAR",
             name_type="specified",
@@ -245,8 +243,7 @@ class EmOpticalSystem(Object):
         ],
         dimensionality="1 / [length] ** 2 / [time]",
         description=("Nominal dose rate."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dose_rate",
             type="NX_NUMBER",
             name_type="specified",
@@ -269,8 +266,7 @@ class EmOpticalSystem(Object):
             "reduce but not necessarily eliminate this rotation. See `L. Reimer "
             "<https://doi.org/10.1007/978-3-540-38967-5>`_ for details."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="rotation",
             type="NX_NUMBER",
             name_type="specified",
@@ -290,8 +286,7 @@ class EmOpticalSystem(Object):
             "`Focal Length`_ of the EMglossary standard. .. _Focal Length: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000029"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="focal_length",
             type="NX_NUMBER",
             name_type="specified",
@@ -311,8 +306,7 @@ class EmOpticalSystem(Object):
             "EMglossary standard. .. _Tilt Correction: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000047"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="tilt_correction",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -330,8 +324,7 @@ class EmOpticalSystem(Object):
             "standard. .. _Dynamic Focus Correction: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000016"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dynamic_focus_correction",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -349,8 +342,7 @@ class EmOpticalSystem(Object):
             "Refocusing`_ of the EMglossary standard. .. _Dynamic Refocusing: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000017"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="dynamic_refocusing",
             type="NX_CHAR",
             name_type="specified",

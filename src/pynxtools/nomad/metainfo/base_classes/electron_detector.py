@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 
 if TYPE_CHECKING:
@@ -61,8 +68,7 @@ class ElectronDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectron_detector.html#nxelectron_detector-amplifier-type-field"
         ],
         description=("Type of electron amplifier, MCP, channeltron, etc."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="amplifier_type",
             type="NX_CHAR",
             name_type="specified",
@@ -77,8 +83,7 @@ class ElectronDetector(Detector):
         description=(
             "Description of the electron detector type, DLD, Phosphor+CCD, CMOS."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_type",
             type="NX_CHAR",
             name_type="specified",
@@ -92,8 +97,7 @@ class ElectronDetector(Detector):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("Voltage applied to the electron detector."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="detector_voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -108,8 +112,7 @@ class ElectronDetector(Detector):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("Voltage applied to the amplifier."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="amplifier_voltage",
             type="NX_FLOAT",
             name_type="specified",
@@ -124,8 +127,7 @@ class ElectronDetector(Detector):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         description=("The low voltage of the amplifier might not be the ground."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="amplifier_bias",
             type="NX_FLOAT",
             name_type="specified",

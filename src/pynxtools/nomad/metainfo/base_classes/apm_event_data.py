@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -108,8 +115,7 @@ class ApmEventData(Object):
             "the left bound of the time interval, while the end_time specifies "
             "the end, the right bound of the time interval."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -125,8 +131,7 @@ class ApmEventData(Object):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the snapshot time interval ended."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -152,8 +157,7 @@ class ApmEventData(Object):
             "in time that, relative to the triggering of the pulse, represent an "
             "as close as possible state of the pulse."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="delta_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -171,8 +175,7 @@ class ApmEventData(Object):
             "Integer which defines the first pulse_id. Typically, this is either "
             "zero or one."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_id_offset",
             type="NX_INT",
             name_type="specified",
@@ -197,8 +200,7 @@ class ApmEventData(Object):
             "instead a sequence of :math:`p` values is defined. These integer "
             "values do not need to be sorted."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="pulse_id",
             type="NX_INT",
             name_type="specified",

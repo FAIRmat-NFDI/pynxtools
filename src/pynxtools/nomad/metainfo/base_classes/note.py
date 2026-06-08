@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -64,8 +71,7 @@ class Note(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXnote.html#nxnote-author-field"
         ],
         description=("Author or creator of note"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="author",
             type="NX_CHAR",
             name_type="specified",
@@ -78,8 +84,7 @@ class Note(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXnote.html#nxnote-date-field"
         ],
         description=("Date note created/added"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -95,8 +100,7 @@ class Note(Object):
             "Mime content type of note data field e.g. image/jpeg, text/plain, "
             "text/html"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -111,8 +115,7 @@ class Note(Object):
         description=(
             "Name of original file name if note was read from an external source"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="file_name",
             type="NX_CHAR",
             name_type="specified",
@@ -130,8 +133,7 @@ class Note(Object):
             "serialized. For example, the identifier to a resource in another "
             "database."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="identifierNAME",
             type="NX_CHAR",
             name_type="partial",
@@ -147,8 +149,7 @@ class Note(Object):
             "Value of the hash that is obtained when running algorithm on the "
             "content of the resource referred to by ``identifierNAME``."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="checksum",
             type="NX_CHAR",
             name_type="specified",
@@ -164,8 +165,7 @@ class Note(Object):
             "Name of the algorithm whereby the ``checksum`` was computed. "
             "Examples: md5, sha256"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="algorithm",
             type="NX_CHAR",
             name_type="specified",
@@ -178,8 +178,7 @@ class Note(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXnote.html#nxnote-description-field"
         ],
         description=("Title of an image or other details of the note"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -195,8 +194,7 @@ class Note(Object):
             "Sequence index of note, for placing a sequence of multiple "
             "**NXnote** groups in an order. Starts with 1."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="sequence_index",
             type="NX_POSINT",
             name_type="specified",
@@ -209,8 +207,7 @@ class Note(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXnote.html#nxnote-data-field"
         ],
         description=("Binary note data - if text, line terminator is [CR][LF]."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_BINARY",
             name_type="specified",

@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -88,8 +95,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-lens-geometry-field"
         ],
         description=("Geometry of the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lens_geometry",
             type="NX_CHAR",
             name_type="specified",
@@ -103,8 +109,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-symmetric-field"
         ],
         description=("Is the device symmetric?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="symmetric",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -117,8 +122,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-cylindrical-field"
         ],
         description=("Is the device cylindrical?"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="cylindrical",
             type="NX_BOOLEAN",
             name_type="specified",
@@ -131,8 +135,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-focus-type-field"
         ],
         description=("The type of focus of the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="focus_type",
             type="NX_CHAR",
             name_type="specified",
@@ -147,8 +150,7 @@ class Xraylens(Component):
         ],
         dimensionality="[length]",
         description=("Thickness of the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lens_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -163,8 +165,7 @@ class Xraylens(Component):
         ],
         dimensionality="[length]",
         description=("Length of the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lens_length",
             type="NX_FLOAT",
             name_type="specified",
@@ -179,8 +180,7 @@ class Xraylens(Component):
         ],
         dimensionality="[length]",
         description=("Radius of the curvature as measured in the middle of the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="curvature",
             type="NX_FLOAT",
             name_type="specified",
@@ -195,8 +195,7 @@ class Xraylens(Component):
         ],
         dimensionality="[length]",
         description=("Diameter of the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="aperture",
             type="NX_FLOAT",
             name_type="specified",
@@ -210,8 +209,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-number-of-lenses-field"
         ],
         description=("Number of lenses that make up the compound lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_of_lenses",
             type="NX_INT",
             name_type="specified",
@@ -224,8 +222,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-lens-material-field"
         ],
         description=("Material used to make the lens."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="lens_material",
             type="NX_CHAR",
             name_type="specified",
@@ -238,8 +235,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-gas-field"
         ],
         description=("Gas used to fill the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gas",
             type="NX_CHAR",
             name_type="specified",
@@ -253,8 +249,7 @@ class Xraylens(Component):
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
         description=("Gas pressure in the lens"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="gas_pressure",
             type="NX_FLOAT",
             name_type="specified",
@@ -270,8 +265,7 @@ class Xraylens(Component):
         description=(
             ".. todo:: Add a definition for the reference point of a x-ray lens."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",

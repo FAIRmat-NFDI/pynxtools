@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
 
@@ -123,8 +130,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-description-field"
         ],
         description=("A description of this particular instance of ``NXguide``."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
             name_type="specified",
@@ -138,8 +144,7 @@ class Guide(Component):
         ],
         dimensionality="[angle]",
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="incident_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -154,8 +159,7 @@ class Guide(Component):
         ],
         dimensionality="[angle]",
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bend_angle_x",
             type="NX_FLOAT",
             name_type="specified",
@@ -170,8 +174,7 @@ class Guide(Component):
         ],
         dimensionality="[angle]",
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="bend_angle_y",
             type="NX_FLOAT",
             name_type="specified",
@@ -184,8 +187,7 @@ class Guide(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-interior-atmosphere-field"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="interior_atmosphere",
             type="NX_CHAR",
             name_type="specified",
@@ -199,8 +201,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-external-material-field"
         ],
         description=("external material outside substrate"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="external_material",
             type="NX_CHAR",
             name_type="specified",
@@ -217,8 +218,7 @@ class Guide(Component):
             "The ``m`` value for a supermirror, which defines the supermirror "
             "regime in multiples of the critical angle of Nickel."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="m_value",
             type="NX_FLOAT",
             name_type="specified",
@@ -232,8 +232,7 @@ class Guide(Component):
         ],
         shape=["*"],
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_material",
             type="NX_FLOAT",
             name_type="specified",
@@ -248,8 +247,7 @@ class Guide(Component):
         dimensionality="[length]",
         shape=["*"],
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
             name_type="specified",
@@ -264,8 +262,7 @@ class Guide(Component):
         ],
         shape=["*"],
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_material",
             type="NX_FLOAT",
             name_type="specified",
@@ -280,8 +277,7 @@ class Guide(Component):
         dimensionality="[length]",
         shape=["*"],
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="substrate_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -297,8 +293,7 @@ class Guide(Component):
         dimensionality="[length]",
         shape=["*"],
         description=("TODO: documentation needed"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="coating_roughness",
             type="NX_FLOAT",
             name_type="specified",
@@ -316,8 +311,7 @@ class Guide(Component):
             "number of substrate sections (also called ``nsurf`` as an index in "
             "the ``NXguide`` specification)"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="number_sections",
             type="NX_INT",
             name_type="specified",
@@ -338,8 +332,7 @@ class Guide(Component):
             "it is parallel with z axis and extends in the positive direction of "
             "the z axis. .. image:: guide/guide.png :width: 40%"
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
             name_type="specified",
@@ -382,8 +375,7 @@ class GuideReflectivity(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-signal-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="signal",
             type="NX_CHAR",
             name_type="specified",
@@ -397,8 +389,7 @@ class GuideReflectivity(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-axes-attribute"
         ],
         shape=["*"],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="axes",
             type="NX_CHAR",
             name_type="specified",
@@ -411,8 +402,7 @@ class GuideReflectivity(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-surface-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="surface_indices",
             type="NX_CHAR",
             name_type="specified",
@@ -425,8 +415,7 @@ class GuideReflectivity(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-wavelength-indices-attribute"
         ],
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="wavelength_indices",
             type="NX_CHAR",
             name_type="specified",
@@ -441,8 +430,7 @@ class GuideReflectivity(Data):
         ],
         shape=["*", "*"],
         description=("reflectivity of each surface as a function of wavelength"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
             name_type="specified",
@@ -459,8 +447,7 @@ class GuideReflectivity(Data):
             "List of surfaces. Probably best to use index numbers but the "
             "specification is very loose."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="surface",
             type="NX_NUMBER",
             name_type="specified",
@@ -476,8 +463,7 @@ class GuideReflectivity(Data):
         dimensionality="[length]",
         shape=["*"],
         description=("wavelengths at which reflectivity was measured"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_NUMBER",
             name_type="specified",

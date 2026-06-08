@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -137,8 +144,7 @@ class CsProfiling(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling.html#nxcs_profiling-current-working-directory-field"
         ],
         description=("Path to the directory from which the tool was called."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="current_working_directory",
             type="NX_CHAR",
             name_type="specified",
@@ -151,8 +157,7 @@ class CsProfiling(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling.html#nxcs_profiling-command-line-call-field"
         ],
         description=("Command line call with arguments if applicable."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="command_line_call",
             type="NX_CHAR",
             name_type="specified",
@@ -168,8 +173,7 @@ class CsProfiling(Object):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the app was started."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -185,8 +189,7 @@ class CsProfiling(Object):
             "ISO 8601 time code with local time zone offset to UTC information "
             "included when the app terminated or crashed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="end_time",
             type="NX_DATE_TIME",
             name_type="specified",
@@ -206,8 +209,7 @@ class CsProfiling(Object):
             "discretization, and thus demands a more precise record of the "
             "wall-clock time."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_NUMBER",
             name_type="specified",
@@ -231,8 +233,7 @@ class CsProfiling(Object):
             "than one. If no GPU is used, number_of_gpus is zero, even though "
             "the hardware may have GPUs installed."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_processes",
             type="NX_UINT",
             name_type="specified",
@@ -251,8 +252,7 @@ class CsProfiling(Object):
             "Specifically here the maximum number of threads used for the "
             "high-level threading library used (e.g. OMP_NUM_THREADS), posix."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_threads",
             type="NX_UINT",
             name_type="specified",
@@ -267,8 +267,7 @@ class CsProfiling(Object):
         ],
         dimensionality="dimensionless",
         description=("The number of nominal GPUs that the app invoked at runtime."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="max_gpus",
             type="NX_UINT",
             name_type="specified",

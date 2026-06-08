@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -64,8 +71,7 @@ class Program(Object):
             "Given name of the program. Program can be a commercial one a "
             "script, or a library or a library component."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="program",
             type="NX_CHAR",
             name_type="specified",
@@ -78,8 +84,7 @@ class Program(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXprogram.html#nxprogram-program-version-attribute"
         ],
         description=("Program version plus build number, or commit hash."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="version",
             type="NX_CHAR",
             name_type="specified",
@@ -98,8 +103,7 @@ class Program(Object):
             "program can be found so that the program yields repeatably exactly "
             "the same numerical and categorical results."
         ),
-        a_nexus_quantity=NeXusQuantity(
-            kind="attribute",
+        a_nexus_attribute=NeXusAttribute(
             name="url",
             type="NX_CHAR",
             name_type="specified",

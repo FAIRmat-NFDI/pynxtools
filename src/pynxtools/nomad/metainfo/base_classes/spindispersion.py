@@ -30,7 +30,14 @@ from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup, NeXusQuantity
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -101,8 +108,7 @@ class Spindispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-type-field"
         ],
         description=("Type of spin detector, VLEED, SPLEED, Mott, etc."),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="type",
             type="NX_CHAR",
             name_type="specified",
@@ -116,8 +122,7 @@ class Spindispersion(Component):
         ],
         dimensionality="dimensionless",
         description=("Figure of merit of the spin detector"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="figure_of_merit",
             type="NX_FLOAT",
             name_type="specified",
@@ -132,8 +137,7 @@ class Spindispersion(Component):
         ],
         dimensionality="dimensionless",
         description=("Effective Shermann function, calibrated spin selectivity factor"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="shermann_function",
             type="NX_FLOAT",
             name_type="specified",
@@ -148,8 +152,7 @@ class Spindispersion(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
         description=("Energy of the spin-selective scattering"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_energy",
             type="NX_FLOAT",
             name_type="specified",
@@ -164,8 +167,7 @@ class Spindispersion(Component):
         ],
         dimensionality="[angle]",
         description=("Angle of the spin-selective scattering"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_angle",
             type="NX_FLOAT",
             name_type="specified",
@@ -179,8 +181,7 @@ class Spindispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-scattering-target-field"
         ],
         description=("Name of the target"),
-        a_nexus_quantity=NeXusQuantity(
-            kind="field",
+        a_nexus_field=NeXusField(
             name="scattering_target",
             type="NX_CHAR",
             name_type="specified",
