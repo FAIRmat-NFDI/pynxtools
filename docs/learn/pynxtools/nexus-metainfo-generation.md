@@ -1,9 +1,9 @@
 # NeXus Metainfo Generation
 
-!!! note "Stable and in use"
-    Phases 1–2 of the NeXus–NOMAD Metainfo refactor are complete.
-    Phase 1 generated 142 base classes; Phase 2 generated 85 application definitions.
-    The system is production-ready. Future phases (3–5) will migrate the parser and complete cleanup.
+!!! warning "In development"
+    This page describes a new code generation system currently under active development.
+    The API, file layout, and generated output may change before this feature is
+    officially released.
 
 ---
 
