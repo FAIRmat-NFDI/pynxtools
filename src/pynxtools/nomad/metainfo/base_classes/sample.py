@@ -26,14 +26,17 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
-from nomad.metainfo.data_type import Datetime
+from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
+    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
+    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
