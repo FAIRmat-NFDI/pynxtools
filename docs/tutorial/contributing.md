@@ -142,6 +142,26 @@ A number of examples exist which document how the tools can be used. For a stand
 
 Once you are happy with the changes, please commit them on a separate branch and create a pull request on GitHub. We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted.
 
+### Use of AI tools
+
+We recognize the value of AI-assisted development and do not discourage its use. AI coding assistants can be helpful for tasks such as exploratory code generation, refactoring, and documentation updates.
+
+At the same time, design decisions, software architecture, and acceptance of contributions should remain under human control.
+
+!!! note "Policy under development"
+    A formal policy on AI usage in contributions is still being developed. For now, we encourage judicious use.
+
+For now, contributors are expected to follow these guidelines:
+
+**Declaration of AI usage.**
+If AI tools were used in preparing a contribution, this must be stated in the pull request description. The declaration should name the tool(s) used and briefly describe the scope of their involvement (e.g. "Used GitHub Copilot for initial design of X" or "Used Claude Code to assist with refactoring Y").
+
+**Human authorship and responsibility.**
+All AI-generated content must be reviewed, understood, and validated by the contributing author before submission. The contributor is fully responsible for the correctness, quality, and suitability of the code, regardless of how it was produced. Contributions that are evidently fully AI-produced with no human involvement will not be accepted.
+
+**Code review.**
+AI tools may be used as a supplementary aid during code review, but final review decisions must always be made by a human maintainer. Automated or AI-driven review does not substitute for human judgment on design, correctness, or scientific validity.
+
 ## Developing pynxtools as a NOMAD plugin
 
 If you plan to contribute to the NOMAD plugin functionality of `pynxtools`, it often makes sense to use the NOMAD development environment called `nomad-distro-dev`. You can learn more in the [NOMAD documentation](https://nomad-lab.eu/prod/v1/staging/docs/howto/develop/setup.html#nomad-distro-dev-development-environment-for-the-core-nomad-package-and-nomad-plugins).
