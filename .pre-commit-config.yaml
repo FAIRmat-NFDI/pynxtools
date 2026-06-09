@@ -37,5 +37,6 @@ repos:
           - README.md
           - CITATION.cff
           - docs/**/*
+          - paper/paper.md
           - src/pynxtools/**/*.py
           - tests/**/*.py
