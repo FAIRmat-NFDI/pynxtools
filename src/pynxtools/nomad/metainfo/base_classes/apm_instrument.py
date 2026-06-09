@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -535,6 +533,18 @@ class ApmInstrumentPulser(Component):
         ),
     )
 
+    sourceID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.source.Source",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="sourceID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
     pulse_mode = Quantity(
         type=str,
         links=[
@@ -652,6 +662,17 @@ class ApmInstrumentAnalysisChamber(Component):
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
             name="analysis_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    pressure_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="pressure_sensor",
             name_type="specified",
             optionality="optional",
         ),

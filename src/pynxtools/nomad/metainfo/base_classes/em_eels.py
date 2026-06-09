@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -76,15 +74,62 @@ class EmEels(Process):
         ),
     )
     indexing = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eels.EmEelsIndexing",
         repeats=False,
         description=(
             "Details about computational steps how peaks were indexed as elements."
         ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class EmEelsIndexing(Process):
+    """
+    Details about computational steps how peaks were indexed as elements.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eels.html#nxem_eels-indexing-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="indexing",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    peak = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    spectrum = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspectrum",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )

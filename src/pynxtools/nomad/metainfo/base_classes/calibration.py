@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -92,7 +90,7 @@ class Calibration(Process):
         description=("Additional input axis to be used in the formula."),
     )
     calibration_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationCalibrationParameters",
+        section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationParameters",
         repeats=False,
         description=(
             "Fit coefficients to be used in ``fit_formula_description``. As an "
@@ -408,7 +406,7 @@ class CalibrationFitFormulaInputs(Parameters):
         super().normalize(archive, logger)
 
 
-class CalibrationCalibrationParameters(Parameters):
+class CalibrationParameters(Parameters):
     """
     Fit coefficients to be used in ``fit_formula_description``.
 

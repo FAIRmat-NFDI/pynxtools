@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -195,6 +193,408 @@ class CorrectorCsTableauID(Process):
             nx_class="NXprocess",
             name="tableauID",
             name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    imageID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXimage",
+            name="imageID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    c_1 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_1",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    a_1 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="a_1",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    b_2 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="b_2",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    a_2 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="a_2",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_3 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_3",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    s_3 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="s_3",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    a_3 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="a_3",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    b_4 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="b_4",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    d_4 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="d_4",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    a_4 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="a_4",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    s_5 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="s_5",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    r_5 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="r_5",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    a_6 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="a_6",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_1_0 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_1_0",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_1_2_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_1_2_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_1_2_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_1_2_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_2_1_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_2_1_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_2_1_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_2_1_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_2_3_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_2_3_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_2_3_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_2_3_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_3_0 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_3_0",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_3_2_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_3_2_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_3_2_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_3_2_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_3_4_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_3_4_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_3_4_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_3_4_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_4_1_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_4_1_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_4_1_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_4_1_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_4_3_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_4_3_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_4_3_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_4_3_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_4_5_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_4_5_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_4_5_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_4_5_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_0 = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_0",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_2_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_2_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_2_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_2_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_4_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_4_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_4_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_4_b",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_6_a = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_6_a",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    c_5_6_b = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.aberration.Aberration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaberration",
+            name="c_5_6_b",
+            name_type="specified",
             optionality="optional",
         ),
     )

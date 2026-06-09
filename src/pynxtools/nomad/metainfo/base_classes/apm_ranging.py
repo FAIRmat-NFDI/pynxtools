@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -108,16 +106,10 @@ class ApmRanging(Process):
         ),
     )
     peak_search_and_deconvolution = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_ranging.ApmRangingPeakSearchAndDeconvolution",
         repeats=False,
         description=(
             "How were peaks in the mass-to-charge-state ratio histogram identified."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="peak_search_and_deconvolution",
-            name_type="specified",
-            optionality="optional",
         ),
     )
     peak_identification = SubSection(
@@ -258,6 +250,39 @@ class ApmRangingBackgroundQuantification(Process):
         super().normalize(archive, logger)
 
 
+class ApmRangingPeakSearchAndDeconvolution(Process):
+    """
+    How were peaks in the mass-to-charge-state ratio histogram identified.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_ranging.html#nxapm_ranging-peak-search-and-deconvolution-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="peak_search_and_deconvolution",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    peak = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmRangingPeakIdentification(Process):
     """
     Details about how peaks, with taking into account error models, were
@@ -272,6 +297,18 @@ class ApmRangingPeakIdentification(Process):
             nx_class="NXprocess",
             name="peak_identification",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    atom = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )

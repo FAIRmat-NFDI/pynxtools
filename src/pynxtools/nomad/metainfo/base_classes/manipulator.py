@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -299,6 +297,17 @@ class ManipulatorSampleHeater(Actuator):
         a_nexus_group=NeXusGroup(
             nx_class="NXactuator",
             name="sample_heater",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    output_heater_power_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="output_heater_power_log",
             name_type="specified",
             optionality="optional",
         ),

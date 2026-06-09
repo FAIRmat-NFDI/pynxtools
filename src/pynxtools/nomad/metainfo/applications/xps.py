@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -70,7 +68,7 @@ class Xps(Mpes):
     )
 
     xps_coordinate_system = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xps.XpsXpsCoordinateSystem",
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsCoordinateSystem",
         repeats=False,
         description=(
             "In traditional surface science, a left-handed coordinate system is "
@@ -259,7 +257,7 @@ class Xps(Mpes):
 # =============================================================================
 
 
-class XpsXpsCoordinateSystem(CoordinateSystem):
+class XpsCoordinateSystem(CoordinateSystem):
     """
     In traditional surface science, a left-handed coordinate system is used
     such that the positive z-axis points along the normal of the sample stage,
