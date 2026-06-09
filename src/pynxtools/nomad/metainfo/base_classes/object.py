@@ -26,7 +26,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -46,7 +45,7 @@ if TYPE_CHECKING:
 __all__ = ["Object"]
 
 
-class Object(BaseSection):
+class Object(basesections.BaseSection):
     """
     This is the base object of NeXus. The groups and fields contained within
     this file are allowed to be present in any derived base class.

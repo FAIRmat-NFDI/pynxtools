@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -98,6 +96,18 @@ class EmImgImage(Image):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    microstructure = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
             name=None,
             name_type="any",
             optionality="optional",

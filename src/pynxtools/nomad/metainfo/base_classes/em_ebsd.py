@@ -25,8 +25,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -746,6 +744,69 @@ class EmEbsdIndexing(Process):
             nx_class="NXprocess",
             name="indexing",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    background_correction = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="background_correction",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    binning = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="binning",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    parameter = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="parameter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    phaseID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.phase.Phase",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXphase",
+            name="phaseID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    rotation = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.rotations.Rotations",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXrotations",
+            name="rotation",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    microstructure = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )

@@ -340,6 +340,13 @@ def _concept_class_name_from_parts(
 
     Used when the source is a raw inheritance XML element (via ``group_naming_at``)
     rather than a full NexusGroup node.
+
+    Strips a leading redundant parent prefix from the suffix when the NXDL name
+    itself starts with the parent prefix (e.g. ``xps_coordinate_system`` inside
+    ``Xps`` gives suffix ``XpsCoordinateSystem`` → stripped to ``CoordinateSystem``
+    → final name ``XpsCoordinateSystem``).  The circular-inheritance check in
+    ``build_context`` re-adds the prefix when the resulting concept name would equal
+    the base class name (e.g. ``ApmApmMeasurement`` is intentional).
     """
     if name_type == "any":
         child_suffix = nxdl_to_class_name(nx_class)
@@ -349,6 +356,14 @@ def _concept_class_name_from_parts(
         child_suffix = "".join(
             p.capitalize() for p in name.lower().replace("-", "_").split("_") if p
         )
+    # Strip redundant parent prefix: "Xps" + "XpsCoordinateSystem" → "XpsCoordinateSystem"
+    p = parent_class_name
+    if (
+        child_suffix.startswith(p)
+        and len(child_suffix) > len(p)
+        and child_suffix[len(p)].isupper()
+    ):
+        child_suffix = child_suffix[len(p) :]
     return parent_class_name + child_suffix
 
 
@@ -668,6 +683,10 @@ def _build_named_concept(
         if parent_concept_file is not None
         else frozenset()
     )
+    # Python names inherited from base class quantities — SubSections with the
+    # same name would cause MetainfoError (cannot inherit different property types).
+    base_qty_python_names = {nxdl_to_quantity_name(name) for name in base_lookup}
+
     own_subsections: list[SubSectionContext] = []
     seen_sub: set[str] = set()
     for child in node_children:
@@ -680,6 +699,8 @@ def _build_named_concept(
         sub_section = _build_subsection_from_node(
             child, section_fqn=_section_fqn(child.nx_class)
         )
+        if sub_section.python_name in base_qty_python_names:
+            continue  # would shadow an inherited Quantity with a SubSection
         if sub_section.python_name not in seen_sub:
             seen_sub.add(sub_section.python_name)
             own_subsections.append(sub_section)
@@ -929,10 +950,12 @@ def _base_from_extends(
         else "NXobject"
     )
 
-    # NXobject is the NeXus root — BaseSection only, no generated parent
+    # NXobject is the NeXus root — inherits from the BASESECTIONS_MAP entry.
+    # Use "basesections.ClassName" so the template imports via the module only.
     if nx_name == "NXobject":
-        cls, mod = _split_fqn(_DEFAULT_BASE[0])
-        return cls, mod, False, []
+        nomad_fqns = _nomad_base_for_nx_class(nx_name)
+        _, base_class_name = _split_fqn(nomad_fqns[0])
+        return f"basesections.{base_class_name}", "", False, []
 
     # NOMAD semantic bases for this class (walks up extends chain to BASESECTIONS_MAP)
     nomad_fqns = _nomad_base_for_nx_class(nx_name)
@@ -962,9 +985,10 @@ def _base_from_extends(
             return ext_class, ext_path, True, nomad_fqns
         return ext_class, ext_path, True, []
 
-    # Cross-category parent or self-referential: fall back to NOMAD bases only
-    cls, mod = _split_fqn(nomad_fqns[0]) if nomad_fqns else _split_fqn(_DEFAULT_BASE[0])
-    return cls, mod, False, []
+    # Cross-category parent: fall back to generated Object (no raw NOMAD bases).
+    # Object already inherits from BaseSection so transitivity is preserved.
+    obj_path = _METAINFO_PACKAGE_ROOT + ".base_classes.object"
+    return "Object", obj_path, True, []
 
 
 def build_context(nx_name: str) -> dict:
@@ -1309,6 +1333,12 @@ def build_context(nx_name: str) -> dict:
 
     is_contributed = "contributed_definitions" in (root_node.nxdl_base or "")
 
+    nomad_extra_bases_list = [_split_fqn(fqn) for fqn in nomad_extra_bases]
+    needs_basesections = "basesections." in base_class or any(
+        mod == "nomad.datamodel.metainfo.basesections"
+        for mod, _ in nomad_extra_bases_list
+    )
+
     return {
         "class_name": class_name,
         "nx_name": nx_name,
@@ -1322,7 +1352,8 @@ def build_context(nx_name: str) -> dict:
         "base_class": base_class,
         "base_import": base_import,
         "base_is_generated": base_is_generated,
-        "nomad_extra_bases": [_split_fqn(fqn) for fqn in nomad_extra_bases],
+        "nomad_extra_bases": nomad_extra_bases_list,
+        "needs_basesections": needs_basesections,
         "docstring": docstring,
         "class_doc_url": root_node.get_link(),
         "quantities": quantities,

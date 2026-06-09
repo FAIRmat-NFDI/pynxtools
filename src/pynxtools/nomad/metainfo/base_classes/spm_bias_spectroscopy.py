@@ -28,8 +28,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -227,6 +225,17 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             nx_class="NXspm_scan_control",
             name=None,
             name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    spatial_location = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.coordinate_system.CoordinateSystem",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcoordinate_system",
+            name="spatial_location",
+            name_type="specified",
             optionality="optional",
         ),
     )

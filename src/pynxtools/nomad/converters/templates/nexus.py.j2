@@ -32,9 +32,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 {% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections" %}from {{ mod }} import {{ cls }}
-{% endif %}{% endfor %}from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
-from nomad.metainfo import (
+{% endif %}{% endfor %}{% if needs_basesections %}from nomad.datamodel.metainfo import basesections
+{% endif %}from nomad.metainfo import (
     MEnum,
     Quantity,
     Section,
@@ -49,7 +48,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-{% if base_class != "BaseSection" %}
+{% if base_import %}
 from {{ base_import }} import {{ base_class }}
 {% endif %}
 {% for mod, cls in concept_imports %}

@@ -28,8 +28,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -389,6 +387,17 @@ class BeamSplitterShape(Shape):
             name=None,
             name_type="any",
             optionality="recommended",
+        ),
+    )
+
+    sketch = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="sketch",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
