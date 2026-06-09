@@ -184,10 +184,7 @@ class NamedConceptContext:
     docstring: str | None
     quantities: list[QuantityContext]  # own fields defined inside the group XML
     links: list[LinkContext]  # own <link> elements defined inside the group XML
-<<<<<<< HEAD
     subsections: list[SubSectionContext]  # app-specific child groups not in base class
-=======
->>>>>>> 5c3808aa (fix: named concept classes now collect and emit link quantities)
     node: NXTreeGroup
 
 
