@@ -285,4 +285,3 @@ ylabel
 zaxis
 zenodo
 zstd
-fqns
