@@ -38,10 +38,13 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-from pynxtools.nomad.metainfo.applications.mpes import Mpes
+from pynxtools.nomad.metainfo.applications.mpes import (
+    Mpes,
+    MpesData,
+    MpesInstrument,
+    MpesSample,
+)
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
-from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -71,15 +74,9 @@ class MpesArpes(Mpes):
         repeats=False,
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesSample",
@@ -279,7 +276,37 @@ class MpesArpesArpesGeometry(CoordinateSystem):
         super().normalize(archive, logger)
 
 
-class MpesArpesSample(Sample):
+class MpesArpesInstrument(MpesInstrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    electronanalyzer = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.Electronanalyzer",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectronanalyzer",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MpesArpesSample(MpesSample):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-group"
@@ -289,6 +316,17 @@ class MpesArpesSample(Sample):
             nx_class="NXsample",
             name=None,
             name_type="any",
+            optionality="required",
+        ),
+    )
+
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
             optionality="required",
         ),
     )
@@ -323,78 +361,12 @@ class MpesArpesSample(Sample):
             optionality="required",
         ),
     )
-    name_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-name-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="name",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    identifier = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-identifier-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="identifier",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    chemical_formula = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-chemical-formula-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="chemical_formula",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    atom_types = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-atom-types-field"
-        ],
-        description=(
-            "Array of comma-separated elements from the periodic table that are "
-            "contained in the sample. If the sample substance has multiple "
-            "components, all elements from each component must be included in "
-            "`atom_types`."
-        ),
-        a_nexus_field=NeXusField(
-            name="atom_types",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    physical_form = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-physical-form-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="physical_form",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class MpesArpesData(Data):
+class MpesArpesData(MpesData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-group"
@@ -558,216 +530,6 @@ class MpesArpesData(Data):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
-        ),
-    )
-    photon_energy = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-photon-energy-field"
-        ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        description=(
-            "Calibrated photon energy of the incoming probe beam. Could be a "
-            "link to /entry/instrument/beam_probe/incident_energy."
-        ),
-        a_nexus_field=NeXusField(
-            name="photon_energy",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ENERGY",
-        ),
-    )
-    kx = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kx-field"
-        ],
-        dimensionality="1 / [length]",
-        description=(
-            "Calibrated k-space coordinate in x direction. It is envisioned that "
-            "the axes in momentum space are named ``kx``, ``ky``, and ``kz``. "
-            "Typically, the vectors in momentum space are defined such that "
-            "``kx`` and ``ky`` comprise the parallel component, while ``kz`` is "
-            "the perpendicular component. It is also possible to define "
-            "``k_parallel`` and ``k_perp`` for the parallel and perpendicular "
-            "momenta, respectively. Units are typically 1/angstrom."
-        ),
-        a_nexus_field=NeXusField(
-            name="kx",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_WAVENUMBER",
-        ),
-    )
-    ky = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-ky-field"
-        ],
-        dimensionality="1 / [length]",
-        description=(
-            "Calibrated k-space coordinate in y direction. For more information, "
-            "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
-            "axis."
-        ),
-        a_nexus_field=NeXusField(
-            name="ky",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_WAVENUMBER",
-        ),
-    )
-    kz = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kz-field"
-        ],
-        dimensionality="1 / [length]",
-        description=(
-            "Calibrated k-space coordinate in z direction. For more information, "
-            "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
-            "axis."
-        ),
-        a_nexus_field=NeXusField(
-            name="kz",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_WAVENUMBER",
-        ),
-    )
-    k_parallel = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-parallel-field"
-        ],
-        dimensionality="1 / [length]",
-        description=(
-            "Calibrated parallel component in k-space. ``k_parallel`` and "
-            ":ref:`k_perpendicular </NXmpes/ENTRY/DATA/k_perpendicular-field>` "
-            "describe how the electron's wave vector ``k`` is split into "
-            "components relative to the surface. ``k_parallel`` is the component "
-            "of the electron's wave vector that is parallel to the surface. It "
-            "is conserved during the photoemission process. This means that the "
-            "electron's momentum along the surface inside the material is "
-            "directly related to its measured momentum outside the material. "
-            "Units are typically 1/angstrom."
-        ),
-        a_nexus_field=NeXusField(
-            name="k_parallel",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_WAVENUMBER",
-        ),
-    )
-    k_perpendicular = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-perpendicular-field"
-        ],
-        dimensionality="1 / [length]",
-        description=(
-            "Calibrated perpendicular component in k-space. ``k_perpendicular`` "
-            "is the component that is normal (perpendicular) to the surface. It "
-            "is not conserved during photoemission because the electron "
-            "experiences a potential change when it exits the material into "
-            "vacuum. To determine ``k_perpendicular`` inside the material, one "
-            "typically needs to estimate the inner potential :math:`V_0`, which "
-            "accounts for the energy shift due to the material's work function "
-            "and electronic structure. Units are typically 1/angstrom."
-        ),
-        a_nexus_field=NeXusField(
-            name="k_perpendicular",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_WAVENUMBER",
-        ),
-    )
-    spatial0 = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-spatial0-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "First calibrated spatial coordinate. It is envisioned that the axes "
-            "in angular space are named ``spatial0`` and ``spatial1``. The "
-            "spatial axes should be named in order of decreasing speed, i.e., "
-            "``spatial0`` should be the fastest scan axis and `spatial1`` should "
-            "be the slow-axis spatial coordinate. However, ``spatial`` may also "
-            "be second slow axis if the measurement is spatially integrated and "
-            "``spatial1`` could also be the second fast axis in the case of "
-            "simultaneous dispersion in two spatial dimensions."
-        ),
-        a_nexus_field=NeXusField(
-            name="spatial0",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_LENGTH",
-        ),
-    )
-    spatial1 = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-spatial1-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "Second calibrated spatial coordinate. For more information, see the "
-            "definition of the :ref:`spatial0 "
-            "</NXmpes/ENTRY/DATA/spatial0-field>` axis. This is typically the "
-            "slower scan axis compared to ``spatial0``."
-        ),
-        a_nexus_field=NeXusField(
-            name="spatial1",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_LENGTH",
-        ),
-    )
-    delay = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-delay-field"
-        ],
-        dimensionality="[time]",
-        description=(
-            "Calibrated pump-probe delay time. Could be a link to "
-            "/entry/instrument/beam_pump/pulse_delay."
-        ),
-        a_nexus_field=NeXusField(
-            name="delay",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_TIME",
-        ),
-    )
-    temperature = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-temperature-field"
-        ],
-        dimensionality="[time]",
-        description=(
-            "Calibrated temperature axis in case of experiments where the "
-            "temperature was scanned. This is typically the sample temperature "
-            "and could be linked from "
-            "/entry/sample/temperature_env/temperature_sensor/value."
-        ),
-        a_nexus_field=NeXusField(
-            name="temperature",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_TIME",
         ),
     )
 

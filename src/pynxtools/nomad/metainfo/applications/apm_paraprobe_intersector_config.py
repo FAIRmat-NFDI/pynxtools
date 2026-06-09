@@ -43,9 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
+    ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
 
 if TYPE_CHECKING:
@@ -131,7 +129,7 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
 
 
 class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
-    ApmParaprobeToolParameters
+    ApmParaprobeToolConfigApmParaprobeToolParameters
 ):
     """
     Tracking volume_volume_spatial_correlations (v_v) is the process of
@@ -157,6 +155,27 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             name_type="partial",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    current_set = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="current_set",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    next_set = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="next_set",
+            name_type="specified",
+            optionality="required",
         ),
     )
 
@@ -297,20 +316,6 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
-        ),
-    )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-v-v-spatial-correlationid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
         ),
     )
 

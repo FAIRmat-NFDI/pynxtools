@@ -362,6 +362,17 @@ class DispersiveMaterialDispersionX(Dispersion):
         ),
     )
 
+    plot = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="plot",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
     model_name = Quantity(
         type=str,
         links=[
@@ -395,6 +406,17 @@ class DispersiveMaterialDispersionY(Dispersion):
             name="dispersion_y",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    plot = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="plot",
+            name_type="specified",
+            optionality="recommended",
         ),
     )
 
@@ -433,6 +455,17 @@ class DispersiveMaterialDispersionZ(Dispersion):
             name="dispersion_z",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    plot = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="plot",
+            name_type="specified",
+            optionality="recommended",
         ),
     )
 

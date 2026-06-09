@@ -138,6 +138,27 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
         ),
     )
 
+    knn = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="knn",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    rdf = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="rdf",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     iontypes_randomized = Quantity(
         type=np.int64,
         links=[

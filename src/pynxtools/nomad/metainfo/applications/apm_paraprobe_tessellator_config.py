@@ -43,9 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
+    ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
 
 if TYPE_CHECKING:
@@ -120,7 +118,9 @@ class ApmParaprobeTessellatorConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeTessellatorConfigTessellateID(ApmParaprobeToolParameters):
+class ApmParaprobeTessellatorConfigTessellateID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-group"
@@ -216,20 +216,6 @@ class ApmParaprobeTessellatorConfigTessellateID(ApmParaprobeToolParameters):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
-        ),
-    )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-tessellateid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
         ),
     )
 

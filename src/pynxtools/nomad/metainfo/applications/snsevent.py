@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.event_data import EventData
@@ -74,17 +75,11 @@ class Snsevent(Entry):
     )
 
     DASlogs = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventDaslogs",
         repeats=False,
         description=(
             "Details of all logs, both from cvinfo file and from HistoTool "
             "(frequency and proton_charge)."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="DASlogs",
-            name_type="specified",
-            optionality="required",
         ),
     )
     SNSHistoTool = SubSection(
@@ -322,6 +317,53 @@ class Snsevent(Entry):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class SnseventDaslogs(Collection):
+    """
+    Details of all logs, both from cvinfo file and from HistoTool (frequency
+    and proton_charge).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="DASlogs",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    positioner = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class SnseventSnshistotool(Note):

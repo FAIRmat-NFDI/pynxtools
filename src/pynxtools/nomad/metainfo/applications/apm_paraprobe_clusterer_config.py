@@ -43,9 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
+    ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
 
 if TYPE_CHECKING:
@@ -141,7 +139,9 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeClustererConfigCamecaToNexus(ApmParaprobeToolParameters):
+class ApmParaprobeClustererConfigCamecaToNexus(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     """
     This process maps results from a cluster analysis made with IVAS / AP Suite
     into an interoperable representation. IVAS / AP Suite usually exports such
@@ -186,26 +186,14 @@ class ApmParaprobeClustererConfigCamecaToNexus(ApmParaprobeToolParameters):
             optionality="required",
         ),
     )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-cameca-to-nexus-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolParameters):
+class ApmParaprobeClustererConfigCluster_analysisID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     """
     This process performs a cluster analysis on a reconstructed dataset or a
     ROI within it.
@@ -222,6 +210,27 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolParameters):
             name_type="partial",
             optionality="optional",
             min_occurs=0,
+        ),
+    )
+
+    dbscan = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="dbscan",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    hdbscan = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="hdbscan",
+            name_type="specified",
+            optionality="required",
         ),
     )
 
@@ -278,20 +287,6 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolParameters):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-            units="NX_UNITLESS",
-        ),
-    )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-cluster-analysisid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
             units="NX_UNITLESS",
         ),
     )

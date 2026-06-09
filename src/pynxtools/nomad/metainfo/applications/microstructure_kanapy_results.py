@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.program import Program
 
@@ -112,16 +113,10 @@ class MicrostructureKanapyResults(Entry):
         repeats=False,
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsEnvironment",
         repeats=False,
         description=(
             "Programs and libraries representing the computational environment"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="environment",
-            name_type="specified",
-            optionality="optional",
         ),
     )
     microstructureID = SubSection(
@@ -308,6 +303,40 @@ class MicrostructureKanapyResultsProgram2(Program):
             name_type="specified",
             optionality="recommended",
             parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureKanapyResultsEnvironment(Collection):
+    """
+    Programs and libraries representing the computational environment
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="environment",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    program = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
         ),
     )
 

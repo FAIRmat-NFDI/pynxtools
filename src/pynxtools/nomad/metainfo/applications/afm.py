@@ -41,8 +41,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-from pynxtools.nomad.metainfo.applications.spm import Spm
-from pynxtools.nomad.metainfo.base_classes.collection import Collection
+from pynxtools.nomad.metainfo.applications.spm import (
+    Spm,
+    SpmInstrument,
+    SpmReproducibilityIndicators,
+    SpmResolutionIndicators,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -67,15 +71,9 @@ class Afm(Spm):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmReproducibilityIndicators",
@@ -294,7 +292,47 @@ class Afm(Spm):
 # =============================================================================
 
 
-class AfmReproducibilityIndicators(Collection):
+class AfmInstrument(SpmInstrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    spm_cantilever = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_cantilever.SpmCantilever",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_cantilever",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+    phase_lock_loop = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.phase_lock_loop.PhaseLockLoop",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXphase_lock_loop",
+            name="phase_lock_loop",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmReproducibilityIndicators(SpmReproducibilityIndicators):
     """
     The group of indicators (links to the existing fields in different groups)
     that measure the reproducibility of the experiment.
@@ -307,6 +345,17 @@ class AfmReproducibilityIndicators(Collection):
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name="reproducibility_indicators",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    cantilever_oscillator = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_cantilever_oscillator.SpmCantileverOscillator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_cantilever_oscillator",
+            name="cantilever_oscillator",
             name_type="specified",
             optionality="optional",
         ),
@@ -360,29 +409,12 @@ class AfmReproducibilityIndicators(Collection):
             optionality="optional",
         ),
     )
-    LINK_TO_FIELD = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-reproducibility-indicators-link-to-field-field"
-        ],
-        variable=True,
-        description=(
-            "A place holder to create link to any field relevant considered as "
-            "reproducibility indicators (defined by laboratory)."
-        ),
-        a_nexus_field=NeXusField(
-            name="LINK_TO_FIELD",
-            type="NX_CHAR",
-            name_type="any",
-            optionality="optional",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class AfmResolutionIndicators(Collection):
+class AfmResolutionIndicators(SpmResolutionIndicators):
     """
     The group of indicators (links to the existing fields in different groups)
     that
@@ -477,23 +509,6 @@ class AfmResolutionIndicators(Collection):
             name="amplitude_excitation",
             type="NX_NUMBER",
             name_type="specified",
-            optionality="optional",
-        ),
-    )
-    LINK_TO_FIELD = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-resolution-indicators-link-to-field-field"
-        ],
-        variable=True,
-        description=(
-            "A place holder to create link to any field relevant considered as "
-            "reproducibility indicators (defined by laboratory)."
-        ),
-        a_nexus_field=NeXusField(
-            name="LINK_TO_FIELD",
-            type="NX_CHAR",
-            name_type="any",
             optionality="optional",
         ),
     )

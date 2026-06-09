@@ -41,9 +41,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.microstructure import Microstructure
 from pynxtools.nomad.metainfo.base_classes.note import Note
+from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.program import Program
 
 if TYPE_CHECKING:
@@ -115,16 +118,10 @@ class MicrostructureScoreResults(Entry):
         description=("Name of the program with which the simulation was performed."),
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsEnvironment",
         repeats=False,
         description=(
             "Programs and libraries representing the computational environment"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="environment",
-            name_type="specified",
-            optionality="optional",
         ),
     )
     sample_reference_frame = SubSection(
@@ -132,19 +129,11 @@ class MicrostructureScoreResults(Entry):
         repeats=False,
     )
     discretization = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsDiscretization",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure",
-            name="discretization",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     spatiotemporalID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalID",
         repeats=True,
         variable=True,
         description=(
@@ -153,13 +142,6 @@ class MicrostructureScoreResults(Entry):
             "replicas in parallel. The set of replicas is distributed across MPI "
             "processes. Each such replica is then evolved via OpenMP "
             "multi-threading."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="spatiotemporalID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
         ),
     )
 
@@ -356,6 +338,40 @@ class MicrostructureScoreResultsProgram1(Program):
         super().normalize(archive, logger)
 
 
+class MicrostructureScoreResultsEnvironment(Collection):
+    """
+    Programs and libraries representing the computational environment
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="environment",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
     m_def = Section(
         links=[
@@ -484,6 +500,86 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["north"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsDiscretization(Microstructure):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name="discretization",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    boundary = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_hexahedron.CgHexahedron",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_hexahedron",
+            name="boundary",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalID(Process):
+    """
+    Documentation of the spatiotemporal evolution for each CA domain.
+
+    SCORE is a hybrid parallelized code that can evolve multiple replicas in
+    parallel. The set of replicas is distributed across MPI processes. Each
+    such replica is then evolved via OpenMP multi-threading.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="spatiotemporalID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    summary_statistics = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="summary_statistics",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    microstructureID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name="microstructureID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
         ),
     )
 

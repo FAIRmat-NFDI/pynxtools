@@ -320,6 +320,19 @@ class MxSample(Sample):
         ),
     )
 
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[

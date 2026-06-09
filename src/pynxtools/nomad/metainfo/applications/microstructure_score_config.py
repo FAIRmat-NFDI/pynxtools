@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
@@ -115,16 +116,10 @@ class MicrostructureScoreConfig(Entry):
         description=("Name of the program whereby this config file was created."),
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigEnvironment",
         repeats=False,
         description=(
             "Programs and libraries representing the computational environment"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="environment",
-            name_type="specified",
-            optionality="recommended",
         ),
     )
     material = SubSection(
@@ -422,6 +417,40 @@ class MicrostructureScoreConfigProgram1(Program):
         super().normalize(archive, logger)
 
 
+class MicrostructureScoreConfigEnvironment(Collection):
+    """
+    Programs and libraries representing the computational environment
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="environment",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class MicrostructureScoreConfigMaterial(Parameters):
     """
     (Mechanical) properties of the material which scale the amount of stored
@@ -611,6 +640,37 @@ class MicrostructureScoreConfigDeformation(Parameters):
         ),
     )
 
+    ensemble = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="ensemble",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    ebsd = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="ebsd",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    damask = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="damask",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     model = Quantity(
         type=MEnum(["cuboidal", "poisson_voronoi", "ebsd", "damask"]),
         links=[
@@ -685,6 +745,17 @@ class MicrostructureScoreConfigNucleation(Parameters):
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
             name="nucleation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    ensemble = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="ensemble",
             name_type="specified",
             optionality="required",
         ),
@@ -768,6 +839,27 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
         ),
     )
 
+    sebald_gottstein = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="sebald_gottstein",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    rollett_holm = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="rollett_holm",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     model = Quantity(
         type=MEnum(["sebald_gottstein", "rollett_holm"]),
         links=[
@@ -846,6 +938,17 @@ class MicrostructureScoreConfigDispersoidDrag(Parameters):
             name="dispersoid_drag",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    zener_smith = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="zener_smith",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
@@ -1099,6 +1202,17 @@ class MicrostructureScoreConfigNumerics(Parameters):
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
             name="numerics",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    cell_cache = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="cell_cache",
             name_type="specified",
             optionality="required",
         ),

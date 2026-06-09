@@ -43,9 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
+    ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
 
 if TYPE_CHECKING:
@@ -124,7 +122,9 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters):
+class ApmParaprobeSpatstatConfigSpatial_statisticsID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-group"
@@ -136,6 +136,27 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             name_type="partial",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    random_number_generator = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cs_prng.CsPrng",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_prng",
+            name="random_number_generator",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    statistics = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="statistics",
+            name_type="specified",
+            optionality="required",
         ),
     )
 
@@ -288,20 +309,6 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolParameters)
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-            units="NX_UNITLESS",
-        ),
-    )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-spatial-statisticsid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
             units="NX_UNITLESS",
         ),
     )

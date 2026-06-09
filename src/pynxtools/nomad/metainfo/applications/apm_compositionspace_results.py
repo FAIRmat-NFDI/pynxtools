@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
@@ -92,16 +93,10 @@ class ApmCompositionspaceResults(Entry):
         repeats=False,
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsEnvironment",
         repeats=False,
         description=(
             "Programs and libraries representing the computational environment"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="environment",
-            name_type="specified",
-            optionality="recommended",
         ),
     )
     config = SubSection(
@@ -152,19 +147,11 @@ class ApmCompositionspaceResults(Entry):
         ),
     )
     segmentation = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentation",
         repeats=False,
         description=(
             "Step during which the voxel set is segmented into voxel sets with "
             "different chemical composition."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="segmentation",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
         ),
     )
     clustering = SubSection(
@@ -344,6 +331,40 @@ class ApmCompositionspaceResultsProgram1(Program):
         super().normalize(archive, logger)
 
 
+class ApmCompositionspaceResultsEnvironment(Collection):
+    """
+    Programs and libraries representing the computational environment
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="environment",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    program = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmCompositionspaceResultsConfig(Note):
     """
     Configuration file that was used in this analysis.
@@ -492,6 +513,29 @@ class ApmCompositionspaceResultsVoxelization(Process):
         ),
     )
 
+    grid = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_grid.CgGrid",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    ionID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="ionID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
     sequence_index = Quantity(
         type=MEnum(["1"]),
         links=[
@@ -568,6 +612,53 @@ class ApmCompositionspaceResultsAutophase(Process):
         super().normalize(archive, logger)
 
 
+class ApmCompositionspaceResultsSegmentation(Process):
+    """
+    Step during which the voxel set is segmented into voxel sets with different
+    chemical composition.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="segmentation",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    pca = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="pca",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    ic_opt = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="ic_opt",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmCompositionspaceResultsClustering(Process):
     """
     Step during which the chemically segmented voxel sets are analyzed for
@@ -588,6 +679,17 @@ class ApmCompositionspaceResultsClustering(Process):
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
+        ),
+    )
+
+    ic_opt = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="ic_opt",
+            name_type="specified",
+            optionality="required",
         ),
     )
 

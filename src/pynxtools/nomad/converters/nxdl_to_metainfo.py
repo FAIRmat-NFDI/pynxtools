@@ -67,6 +67,10 @@ _DEFAULT_OUTPUT_DIR = Path(__file__).parents[1] / "metainfo"
 _DEFAULT_BASE_OUTPUT_DIR = _DEFAULT_OUTPUT_DIR / "base_classes"
 _DEFAULT_APPLICATIONS_OUTPUT_DIR = _DEFAULT_OUTPUT_DIR / "applications"
 
+# Python package root for generated FQN strings (e.g. in SubSection section_def=).
+# When the schema moves to nomad-measurements, change this constant and regenerate.
+_METAINFO_PACKAGE_ROOT = "pynxtools.nomad.metainfo"
+
 _jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(str(_TEMPLATE_DIR)),
     trim_blocks=True,
@@ -138,17 +142,19 @@ class ChoiceSubSectionContext:
 
 @dataclass
 class NamedConceptContext:
-    """Section class for a group occurrence that defines its own quantities.
+    """Section class for a group occurrence that defines its own quantities or children.
 
-    Generated only when the NXDL group element specifies fields or attributes
-    that differ from the generic class for the group's nx_type (e.g. changed
-    optionality, extra fields, different enumeration).
+    Generated when the NXDL group element specifies fields/attributes that
+    differ from the generic class (changed optionality, extra fields, different
+    type/units/enumeration) OR has sub-group children with nx_class not present
+    in the base NXDL class (application-specific nested groups, e.g.
+    NXelectronanalyzer inside NXinstrument in NXmpes).
 
     Inherits from the specific generic class (e.g. ``Note`` for NXnote) so that
     all base class quantities are available. The import is wrapped in
     ``try/except ImportError`` in the generated file to handle the rare case of
     circular NXDL group references. The SubSection pointing to this class
-    carries a_nexus_group; this class carries only the differing quantities.
+    carries a_nexus_group; this class carries only the differing members.
     """
 
     class_name: str  # "EntryThumbnail"
@@ -159,6 +165,7 @@ class NamedConceptContext:
     docstring: str | None
     quantities: list[QuantityContext]  # own fields defined inside the group XML
     links: list[LinkContext]  # own <link> elements defined inside the group XML
+    subsections: list[SubSectionContext]  # app-specific child groups not in base class
     node: NXTreeGroup
 
 
@@ -242,7 +249,7 @@ def _section_fqn(nx_class: str) -> str:
     module = _class_module_name(nx_class)
     class_name = nxdl_to_class_name(nx_class)
     category = _nxdl_category(nx_class)
-    return f"pynxtools.nomad.metainfo.{category}.{module}.{class_name}"
+    return f"{_METAINFO_PACKAGE_ROOT}.{category}.{module}.{class_name}"
 
 
 # ---------------------------------------------------------------------------
@@ -321,20 +328,26 @@ def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
     For fixed-name groups (name_type="specified") the full name is used in
     CamelCase, e.g. ``temperature_log`` → ``SampleTemperatureLog``.
     """
-    if node.name_type == "any":
-        child_suffix = nxdl_to_class_name(node.nx_class)
-    elif node.name_type == "partial":
-        # Partial names follow the NeXus convention "fixedPrefixVARIABLE" where
-        # the upper-case suffix marks the user-chosen portion. Capitalize only the
-        # first character and keep the rest verbatim so "peakPEAK" → "PeakPEAK".
-        # This preserves the full name for searchability and distinguishes
-        # FitPeakPEAK (partial) from FitPeak (fixed-name) and FitPeak (any).
-        name = node.name
+    return _concept_class_name_from_parts(
+        parent_class_name, node.name, node.name_type or "specified", node.nx_class
+    )
+
+
+def _concept_class_name_from_parts(
+    parent_class_name: str, name: str, name_type: str, nx_class: str
+) -> str:
+    """Compute concept class name from explicit name/name_type/nx_class parts.
+
+    Used when the source is a raw inheritance XML element (via ``group_naming_at``)
+    rather than a full NexusGroup node.
+    """
+    if name_type == "any":
+        child_suffix = nxdl_to_class_name(nx_class)
+    elif name_type == "partial":
         child_suffix = name[0].upper() + name[1:] if name else ""
     else:
-        # specified — convert "temperature_log" → "TemperatureLog"
         child_suffix = "".join(
-            p.capitalize() for p in node.name.lower().replace("-", "_").split("_") if p
+            p.capitalize() for p in name.lower().replace("-", "_").split("_") if p
         )
     return parent_class_name + child_suffix
 
@@ -459,6 +472,47 @@ def _build_subsection_from_node(
 _base_class_qty_cache: dict[str, dict[str, NXTreeField | NXTreeAttribute]] = {}
 
 
+_base_group_nx_classes_cache: dict[str, frozenset[str]] = {}
+
+
+def _parent_generates_concept(child: NXTreeGroup, parent_app_file: str) -> bool:
+    """Return True if the parent application defines a named concept for ``child``.
+
+    Uses ``child.children_at_definition(parent_app_file)`` — the NexusNode API
+    that selects children defined at a specific NXDL level without re-parsing.
+    """
+    base_group_nx = _base_class_group_nx_classes(child.nx_class)
+    for c in child.children_at_definition(parent_app_file):
+        if c.nx_type in ("field", "attribute", "link"):
+            return True
+        if c.nx_type == "group" and getattr(c, "nx_class", None) not in base_group_nx:
+            return True
+    return False
+
+
+def _base_class_group_nx_classes(nx_class: str) -> frozenset[str]:
+    """Return the set of nx_class strings of direct group children in the base NXDL class.
+
+    Used to detect application-specific sub-groups: if a child group's nx_class
+    is NOT in this set, it's an application-specific addition that warrants a
+    named concept on the parent group.
+    """
+    if nx_class in _base_group_nx_classes_cache:
+        return _base_group_nx_classes_cache[nx_class]
+    try:
+        base_root = generate_tree_from(nx_class)
+    except Exception:
+        _base_group_nx_classes_cache[nx_class] = frozenset()
+        return frozenset()
+    nx_classes: set[str] = set()
+    for child in base_root.children:
+        if isinstance(child, NXTreeGroup) and child.nx_class:
+            nx_classes.add(child.nx_class)
+    result = frozenset(nx_classes)
+    _base_group_nx_classes_cache[nx_class] = result
+    return result
+
+
 def _base_class_quantities(nx_class: str) -> dict[str, NXTreeField | NXTreeAttribute]:
     """Return a name→node lookup of direct fields/attributes in the generic class."""
     if nx_class in _base_class_qty_cache:
@@ -501,6 +555,8 @@ def _qty_differs_from_base(
 def _build_named_concept(
     concept_class_name: str,
     node: NXTreeGroup,
+    base_class_override: tuple[str, str] | None = None,
+    parent_concept_file: str | None = None,
 ) -> NamedConceptContext:
     """Build a NamedConceptContext for a group occurrence.
 
@@ -521,8 +577,11 @@ def _build_named_concept(
         # the parser can extract the prefix matching rule.
         nx_name_literal = f'"{node.name}"'
 
-    base_class_name = nxdl_to_class_name(node.nx_class)
-    base_module = _class_module_name(node.nx_class)
+    if base_class_override is not None:
+        base_class_name, base_module = base_class_override
+    else:
+        base_class_name = nxdl_to_class_name(node.nx_class)
+        base_module = _class_module_name(node.nx_class)
     base_lookup = _base_class_quantities(node.nx_class)
 
     # Collect SubSection names from the full ancestor chain of the base class
@@ -536,7 +595,12 @@ def _build_named_concept(
     own_quantities: list[QuantityContext] = []
     own_links: list[LinkContext] = []
     seen: set[str] = set()
-    for child in node.children:
+    # Use own_children() to restrict to the current NXDL definition level.
+    # This prevents named concepts in derived applications from claiming
+    # members defined in parent applications (e.g. XpsInstrument must not
+    # include quantities from MpesInstrument).
+    node_children = node.own_children()
+    for child in node_children:
         if child.nx_type == "link":
             python_name = nxdl_to_quantity_name(child.name)
             # Apply conflict resolution: if the link name collides with an
@@ -590,6 +654,36 @@ def _build_named_concept(
                 if _qty_differs_from_base(attr_qty, base_lookup):
                     own_quantities.append(attr_qty)
 
+    # Application-specific sub-groups: group children whose nx_class is NOT
+    # present in the base NXDL class AND not already declared by the parent
+    # concept class (if one exists, e.g. MpesInstrument for XpsInstrument).
+    base_group_nx_classes = _base_class_group_nx_classes(node.nx_class)
+    # Sub-groups already covered by the parent concept class (to avoid duplication)
+    parent_concept_nx_classes: frozenset[str] = (
+        frozenset(
+            getattr(c, "nx_class", None)
+            for c in node.children_at_definition(parent_concept_file)
+            if isinstance(c, NXTreeGroup)
+        )
+        if parent_concept_file is not None
+        else frozenset()
+    )
+    own_subsections: list[SubSectionContext] = []
+    seen_sub: set[str] = set()
+    for child in node_children:
+        if not isinstance(child, NXTreeGroup):
+            continue
+        if child.nx_class in base_group_nx_classes:
+            continue  # already covered by the base NX class
+        if child.nx_class in parent_concept_nx_classes:
+            continue  # already declared in parent concept class
+        sub_section = _build_subsection_from_node(
+            child, section_fqn=_section_fqn(child.nx_class)
+        )
+        if sub_section.python_name not in seen_sub:
+            seen_sub.add(sub_section.python_name)
+            own_subsections.append(sub_section)
+
     return NamedConceptContext(
         class_name=concept_class_name,
         base_class_name=base_class_name,
@@ -599,6 +693,7 @@ def _build_named_concept(
         docstring=_plain_description(node),
         quantities=own_quantities,
         links=own_links,
+        subsections=own_subsections,
         node=node,
     )
 
@@ -845,7 +940,7 @@ def _base_from_extends(
 
     if extends_nx_class in ("NXobject", nx_name):
         # Direct child of NXobject — use generated Object as primary NeXus base
-        obj_path = "pynxtools.nomad.metainfo.base_classes.object"
+        obj_path = _METAINFO_PACKAGE_ROOT + ".base_classes.object"
         if nomad_primary != "BaseSection":
             return "Object", obj_path, True, nomad_fqns
         return "Object", obj_path, True, []
@@ -855,7 +950,7 @@ def _base_from_extends(
     if parent_category in ("base_classes", "applications"):
         ext_module = _class_module_name(extends_nx_class)
         ext_class = nxdl_to_class_name(extends_nx_class)
-        ext_path = f"pynxtools.nomad.metainfo.{parent_category}.{ext_module}"
+        ext_path = f"{_METAINFO_PACKAGE_ROOT}.{parent_category}.{ext_module}"
         # Only add NOMAD secondary bases when the parent's chain doesn't already
         # provide them (e.g. ApmRanging extends NXprocess which IS ActivityStep —
         # adding ActivityStep again would create an unresolvable diamond in NOMAD).
@@ -904,6 +999,13 @@ def build_context(nx_name: str) -> dict:
     class_name = nxdl_to_class_name(nx_name)
     parent_module = _class_module_name(nx_name)
 
+    # File path of the direct parent application definition, used to locate
+    # each child group's "parent version" in child.inheritance without re-parsing.
+    _parent_app_file: str | None = None
+    _parent_class_name: str | None = None
+    _parent_module: str | None = None
+    _parent_primary_nxdl: str | None = None  # nxdl_base of groups defined in parent
+
     if _unwrapped_children is not None:
         # Use Entry as Python base (NXentry's generated class), not the extends chain.
         # The extends chain for application defs is always NXobject which would give Object;
@@ -914,17 +1016,25 @@ def build_context(nx_name: str) -> dict:
             else "NXobject"
         )
         if _nxdl_category(_extends_nx_name) == "applications":
-            # Extends another application — use that as base (same unwrapping applies)
+            # Extends another application — use that as base (same unwrapping applies).
+            # Capture parent metadata so we can derive named concept inheritance directly
+            # from child.inheritance (no re-parsing of the parent NXDL).
             (
                 base_class,
                 base_import,
                 base_is_generated,
                 nomad_extra_bases,
             ) = _base_from_extends(nx_name, root_node)
+            # root_node.inheritance[1] is the parent application's definition element
+            if len(root_node.inheritance) > 1:
+                _parent_app_file = root_node.inheritance[1].base
+                _parent_class_name = nxdl_to_class_name(_extends_nx_name)
+                _parent_module = _class_module_name(_extends_nx_name)
+                _parent_primary_nxdl = root_node.inheritance[1].base
         else:
             # Standard application: unwrap NXentry → base is Entry
             base_class = "Entry"
-            base_import = "pynxtools.nomad.metainfo.base_classes.entry"
+            base_import = _METAINFO_PACKAGE_ROOT + ".base_classes.entry"
             base_is_generated = True
             nomad_extra_bases = []
     else:
@@ -1078,24 +1188,57 @@ def build_context(nx_name: str) -> dict:
             if concept_name == nxdl_to_class_name(child.nx_class):
                 concept_name = class_name + nxdl_to_class_name(child.nx_class)
 
-            concept = _build_named_concept(concept_name, child)
+            # If the parent application defines a specialization for this group,
+            # use it as the base instead of the generic NX class.
+            # e.g. XpsInstrument(MpesInstrument) rather than XpsInstrument(Instrument).
+            # Uses child.children (already populated across all inheritance levels by
+            # generate_tree_from + populate_tree_from_parents) filtered by nxdl_base.
+            _base_class_override: tuple[str, str] | None = None
+            if (
+                _parent_app_file is not None
+                and _parent_class_name is not None
+                and _parent_module is not None
+                and child.definition_file_at(1) == _parent_app_file
+                and _parent_generates_concept(child, _parent_app_file)
+            ):
+                # Use group_naming_at(1) — the parent's XML attributes for this group
+                # — to compute the concept name as the parent would have generated it.
+                # This handles variadic-to-specific specialization: the parent may have
+                # a variadic "TASKCONFIG" slot that the derived app fills as "cameca_to_nexus";
+                # we need "ApmParaprobeToolConfigApmParaprobeToolParameters" (parent's name)
+                # not "ApmParaprobeToolConfigCamecaToNexus" (derived app's name).
+                parent_naming = child.group_naming_at(1)
+                if parent_naming is not None:
+                    p_name, p_name_type, p_nx_class = parent_naming
+                    parent_concept_name = _concept_class_name_from_parts(
+                        _parent_class_name, p_name, p_name_type, p_nx_class
+                    )
+                    _base_class_override = (parent_concept_name, _parent_module)
+            concept = _build_named_concept(
+                concept_name,
+                child,
+                base_class_override=_base_class_override,
+                parent_concept_file=_parent_app_file
+                if _base_class_override is not None
+                else None,
+            )
 
-            if concept.quantities or concept.links:
+            if concept.quantities or concept.links or concept.subsections:
                 named_concepts.append(concept)
                 _parent_category = _nxdl_category(nx_name)
-                target_fqn = f"pynxtools.nomad.metainfo.{_parent_category}.{parent_module}.{concept_name}"
+                target_fqn = f"{_METAINFO_PACKAGE_ROOT}.{_parent_category}.{parent_module}.{concept_name}"
 
                 # Track import for concept base class (skip self-referencing groups).
                 if concept.base_module != parent_module:
                     _base_category = _nxdl_category(f"NX{concept.base_module}")
                     import_entry = (
-                        f"pynxtools.nomad.metainfo.{_base_category}.{concept.base_module}",
+                        f"{_METAINFO_PACKAGE_ROOT}.{_base_category}.{concept.base_module}",
                         concept.base_class_name,
                     )
                     if import_entry not in concept_imports:
                         concept_imports.append(import_entry)
 
-                ss = _build_subsection_from_node(
+                sub_section = _build_subsection_from_node(
                     child, section_fqn=target_fqn, is_named_concept=True
                 )
             else:
@@ -1103,17 +1246,17 @@ def build_context(nx_name: str) -> dict:
                 # specified (fixed) name → SubSection points directly to the generic
                 # class via string FQN.
                 target_fqn = _section_fqn(child.nx_class)
-                ss = _build_subsection_from_node(child, section_fqn=target_fqn)
-            if ss.python_name in seen_subsections:
+                sub_section = _build_subsection_from_node(child, section_fqn=target_fqn)
+            if sub_section.python_name in seen_subsections:
                 # Two named groups with the same subsection name — disambiguate.
                 if not child.variadic:
-                    ss.python_name = nxdl_to_subsection_name(
+                    sub_section.python_name = nxdl_to_subsection_name(
                         f"{child.name}_{child.nx_class[2:].lower()}"
                     )
                 else:
                     continue
-            seen_subsections.add(ss.python_name)
-            subsections.append(ss)
+            seen_subsections.add(sub_section.python_name)
+            subsections.append(sub_section)
         elif child.nx_type == "link":
             python_name = nxdl_to_quantity_name(child.name)
             if python_name in seen_quantities:

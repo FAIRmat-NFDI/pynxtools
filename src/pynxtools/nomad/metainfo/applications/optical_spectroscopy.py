@@ -157,15 +157,9 @@ class OpticalSpectroscopy(Entry):
         ),
     )
     measurement_data_calibration_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyMeasurement_data_calibration_TYPE",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="measurement_data_calibration_TYPE",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
     derived_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyDerivedParameters",
@@ -460,6 +454,127 @@ class OpticalSpectroscopyInstrument(Instrument):
             name=None,
             name_type="any",
             optionality="required",
+        ),
+    )
+
+    component = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    optical_lens = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.optical_lens.OpticalLens",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXoptical_lens",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    waveplate = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.waveplate.Waveplate",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXwaveplate",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    optical_window = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.optical_window.OpticalWindow",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXoptical_window",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    polfilter_TYPE = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="polfilter_TYPE",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    spectralfilter_TYPE = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="spectralfilter_TYPE",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    beam_transfer_matrix_table = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.beam_transfer_matrix_table.BeamTransferMatrixTable",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam_transfer_matrix_table",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    sample_stage = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.Manipulator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="sample_stage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    software_TYPE = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="software_TYPE",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+    instrument_calibration_DEVICE = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.calibration.Calibration",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="instrument_calibration_DEVICE",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+    wavelength_resolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="wavelength_resolution",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
@@ -940,6 +1055,35 @@ class OpticalSpectroscopyData(Data):
         super().normalize(archive, logger)
 
 
+class OpticalSpectroscopyMeasurement_data_calibration_TYPE(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-measurement-data-calibration-type-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="measurement_data_calibration_TYPE",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+
+    wavelength_calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.calibration.Calibration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="wavelength_calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class OpticalSpectroscopyDerivedParameters(Process):
     """
     Parameters that are derived from the measured data.
@@ -953,6 +1097,18 @@ class OpticalSpectroscopyDerivedParameters(Process):
             nx_class="NXprocess",
             name="derived_parameters",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    ANALYSIS_program = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="ANALYSIS_program",
+            name_type="partial",
             optionality="optional",
         ),
     )

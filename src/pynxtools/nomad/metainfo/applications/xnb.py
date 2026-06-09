@@ -38,9 +38,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-from pynxtools.nomad.metainfo.applications.xbase import Xbase
-from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -142,7 +140,7 @@ class Xnb(Xbase):
 # =============================================================================
 
 
-class XnbSample(Sample):
+class XnbSample(XbaseSample):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-sample-group"
@@ -173,135 +171,12 @@ class XnbSample(Sample):
             units="NX_ANGLE",
         ),
     )
-    name_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-name-field"
-        ],
-        description=("Descriptive name of sample"),
-        a_nexus_field=NeXusField(
-            name="name",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    orientation_matrix = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-orientation-matrix-field"
-        ],
-        shape=[3, 3],
-        description=(
-            "The orientation matrix according to Busing and Levy conventions. "
-            "This is not strictly necessary as the UB can always be derived from "
-            "the data. But let us bow to common usage which includes the UB "
-            "nearly always."
-        ),
-        a_nexus_field=NeXusField(
-            name="orientation_matrix",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    unit_cell = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-unit-cell-field"
-        ],
-        dimensionality="[length]",
-        shape=[6],
-        description=(
-            "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
-            "necessary, but normally written."
-        ),
-        a_nexus_field=NeXusField(
-            name="unit_cell",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_LENGTH",
-        ),
-    )
-    temperature = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-temperature-field"
-        ],
-        dimensionality="[temperature]",
-        shape=["*"],
-        description=(
-            "The sample temperature or whatever sensor represents this value best"
-        ),
-        a_nexus_field=NeXusField(
-            name="temperature",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_TEMPERATURE",
-        ),
-    )
-    x_translation = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-x-translation-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "Translation of the sample along the X-direction of the laboratory "
-            "coordinate system"
-        ),
-        a_nexus_field=NeXusField(
-            name="x_translation",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_LENGTH",
-        ),
-    )
-    y_translation = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-y-translation-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "Translation of the sample along the Y-direction of the laboratory "
-            "coordinate system"
-        ),
-        a_nexus_field=NeXusField(
-            name="y_translation",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_LENGTH",
-        ),
-    )
-    distance = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-distance-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "Translation of the sample along the Z-direction of the laboratory "
-            "coordinate system"
-        ),
-        a_nexus_field=NeXusField(
-            name="distance",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_LENGTH",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class XnbName(Data):
+class XnbName(XbaseData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-name-group"
@@ -344,17 +219,6 @@ class XnbName(Data):
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",
-            optionality="required",
-        ),
-    )
-    data_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-name-data-link"
-        ],
-        a_nexus_link=NeXusLink(
-            name="data",
-            target="/NXentry/NXinstrument/NXdetector/data",
             optionality="required",
         ),
     )

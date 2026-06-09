@@ -42,6 +42,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.user import User
@@ -109,15 +110,9 @@ class SensorScan(Entry):
         ),
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanSample",
@@ -450,6 +445,36 @@ class SensorScanUser(User):
             name="telephone_number",
             type="NX_CHAR",
             name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SensorScanInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name=None,
+            name_type="any",
             optionality="recommended",
         ),
     )

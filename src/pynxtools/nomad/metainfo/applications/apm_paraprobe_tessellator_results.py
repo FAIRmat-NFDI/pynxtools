@@ -44,6 +44,9 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
 )
+from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
+    ApmParaprobeToolProcess,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -77,7 +80,7 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
     )
 
     tessellationID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process.ApmParaprobeToolProcess",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationID",
         repeats=True,
         variable=True,
         description=(
@@ -89,14 +92,6 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
             "surface of the bounding box. The tool detects if cells make contact "
             "with the walls of this bounding box. The tessellation is computed "
             "without periodic boundary conditions."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_paraprobe_tool_process",
-            name="tessellationID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
         ),
     )
 
@@ -124,6 +119,66 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class ApmParaprobeTessellatorResultsTessellationID(ApmParaprobeToolProcess):
+    """
+    The tool can be used to compute a Voronoi tessellation the entire or of a
+    sub-set of the reconstructed volume. Each point (ion) is wrapped in one
+    (Voronoi) cell. The point cloud in the ROI is wrapped into an axis-aligned
+    bounding box (AABB) that is tight. This means points at the edge of the
+    point cloud can lay on the surface of the bounding box. The tool detects if
+    cells make contact with the walls of this bounding box. The tessellation is
+    computed without periodic boundary conditions.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_process",
+            name="tessellationID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    wall = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_hexahedron.CgHexahedron",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_hexahedron",
+            name="wall",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    voronoi_cells = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_polyhedron.CgPolyhedron",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_polyhedron",
+            name="voronoi_cells",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 

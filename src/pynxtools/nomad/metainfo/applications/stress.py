@@ -396,6 +396,20 @@ class StressInstrument(Instrument):
         ),
     )
 
+    note = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -452,6 +466,32 @@ class StressSample(Sample):
             name_type="any",
             optionality="required",
             min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    gauge_volume = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="gauge_volume",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
             max_occurs=1,
         ),
     )
@@ -522,6 +562,19 @@ class StressProcess(Process):
             name_type="any",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    data_reduction_responsible = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.user.User",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXuser",
+            name="data_reduction_responsible",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
         ),
     )
 

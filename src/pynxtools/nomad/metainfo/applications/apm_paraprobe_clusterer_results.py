@@ -44,6 +44,9 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
 )
+from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
+    ApmParaprobeToolProcess,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -84,16 +87,9 @@ class ApmParaprobeClustererResults(ApmParaprobeToolResults):
         ),
     )
     cluster_analysisID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process.ApmParaprobeToolProcess",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsCluster_analysisID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_paraprobe_tool_process",
-            name="cluster_analysisID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     definition = Quantity(
@@ -120,6 +116,47 @@ class ApmParaprobeClustererResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class ApmParaprobeClustererResultsCluster_analysisID(ApmParaprobeToolProcess):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_process",
+            name="cluster_analysisID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    dbscanID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.similarity_grouping.SimilarityGrouping",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsimilarity_grouping",
+            name="dbscanID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
         ),
     )
 

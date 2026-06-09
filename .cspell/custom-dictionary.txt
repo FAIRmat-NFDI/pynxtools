@@ -5,6 +5,7 @@ Aeschlimann
 BASECLASS
 BASESECTIONS
 Brockhauser
+Cameca
 Carola
 DECTRIS
 Dataconverter
@@ -50,9 +51,11 @@ PATHCONV
 PDBX
 PYNX
 PYNXTOOLS
+Paraprobe
 Pielsticker
 Pincelli
 Plottable
+Prescan
 Prieto
 Pynxtools
 Raman
@@ -62,6 +65,7 @@ Sandor
 Scheidgen
 Shabih
 Sherjeel
+TASKCONFIG
 Tommaso
 UNALLOWED
 Uniquified
@@ -97,6 +101,8 @@ basesections
 blosc
 bulletpoint
 callspec
+cameca
+cands
 caplog
 clevel
 cnxvalidate
@@ -106,6 +112,7 @@ dataconverter
 datamodel
 ddof
 defaultdicts
+defn
 docstrings
 downstreams
 dtype
@@ -125,6 +132,7 @@ flatdict
 flatfield
 fluence
 fourd
+fqns
 fxcef
 gcpl
 genfromtxt
@@ -219,6 +227,7 @@ pathtovalidate
 plottable
 posint
 posteriori
+prescan
 printoptions
 prng
 punx
@@ -273,4 +282,3 @@ ylabel
 zaxis
 zenodo
 zstd
-fqns
