@@ -176,6 +176,6 @@ We acknowledge the following software packages our package depends on: `h5py` [@
 
 # AI Usage Disclosure
 
-No generative AI tools were used in the development of this software. We acknowledge the use of ChatGPT (https://chat.openai.com/) for language refinement and proofreading of this manuscript.
+Most of `pynxtools` was developed before AI assistance became part of the project's development workflow. More recent development has made use of AI-assisted software engineering tools, including Claude Code and GitHub Copilot, for tasks such as exploratory code generation, refactoring, and documentation updates. Development decisions, software design, and acceptance of contributions have so far remained under human control. All AI-generated content has been reviewed, modified where necessary, and validated by the authors prior to integration into the codebase.
 
 # References
