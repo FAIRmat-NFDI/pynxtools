@@ -49,9 +49,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+<<<<<<< HEAD:src/pynxtools/nomad/converters/templates/nexus.py.j2
 {% if nx_category == "application" or nx_name == "NXentry" %}
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 {% endif %}
+=======
+>>>>>>> 0afaefa9 (clean up unneeded import of basesections):src/pynxtools/nomad/converters/templates/base_class.py.j2
 {% if base_import %}
 from {{ base_import }} import {{ base_class }}
 {% endif %}
