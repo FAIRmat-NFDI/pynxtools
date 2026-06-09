@@ -145,6 +145,17 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
         ),
     )
 
+    coprecipitation_analysis = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="coprecipitation_analysis",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     current_to_next_link = Quantity(
         type=np.int64,
         links=[

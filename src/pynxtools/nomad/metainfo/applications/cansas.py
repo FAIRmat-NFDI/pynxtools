@@ -1259,6 +1259,19 @@ class CansasProcess(Process):
         ),
     )
 
+    collection = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
     canSAS_class = Quantity(
         type=MEnum(["SASprocess"]),
         links=[

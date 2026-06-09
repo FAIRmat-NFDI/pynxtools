@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.user import User
 
@@ -103,7 +104,7 @@ class Mpes(Entry):
         ),
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrument",
         repeats=True,
         variable=True,
         description=(
@@ -111,12 +112,6 @@ class Mpes(Entry):
             "parts. This concept is related to term `12.58`_ of the ISO "
             "18115-1:2023 standard. .. _12.58: "
             "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:12.58"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
         ),
     )
     energy_axis_calibration = SubSection(
@@ -457,6 +452,77 @@ class MpesUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MpesInstrument(Instrument):
+    """
+    Description of the photoemission spectrometer and its individual parts.
+
+    This concept is related to term `12.58`_ of the ISO 18115-1:2023 standard.
+
+    .. _12.58:
+    https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:12.58
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    energy_resolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="energy_resolution",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    resolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    electronanalyzer = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.Electronanalyzer",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectronanalyzer",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    manipulator = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.Manipulator",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name=None,
+            name_type="any",
+            optionality="optional",
         ),
     )
 

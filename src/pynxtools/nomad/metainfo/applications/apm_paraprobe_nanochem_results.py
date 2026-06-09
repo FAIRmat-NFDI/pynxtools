@@ -47,6 +47,7 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
 from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
     ApmParaprobeToolProcess,
 )
+from pynxtools.nomad.metainfo.base_classes.delocalization import Delocalization
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -84,16 +85,9 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
     )
 
     delocalizationID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.delocalization.Delocalization",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdelocalization",
-            name="delocalizationID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     interface_meshingID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterface_meshingID",
@@ -101,17 +95,9 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
         variable=True,
     )
     oned_profileID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process.ApmParaprobeToolProcess",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOned_profileID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_paraprobe_tool_process",
-            name="oned_profileID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
 
     definition = Quantity(
@@ -154,6 +140,36 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
+class ApmParaprobeNanochemResultsDelocalizationID(Delocalization):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdelocalization",
+            name="delocalizationID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    window = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask.CsFilterBooleanMask",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="window",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
     m_def = Section(
         links=[
@@ -167,6 +183,29 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
+        ),
+    )
+
+    initial_interface = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="initial_interface",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    mesh_stateID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_triangle.CgTriangle",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_triangle",
+            name="mesh_stateID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
         ),
     )
 
@@ -213,6 +252,37 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
             name_type="specified",
             optionality="optional",
             units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemResultsOned_profileID(ApmParaprobeToolProcess):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_process",
+            name="oned_profileID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    xdmf_cylinder = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_polyhedron.CgPolyhedron",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_polyhedron",
+            name="xdmf_cylinder",
+            name_type="specified",
+            optionality="required",
         ),
     )
 

@@ -43,6 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
@@ -98,18 +99,12 @@ class Xpcs(Entry):
         ),
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrument",
         repeats=False,
         description=(
             "XPCS instrument Metadata. Objects can be entered here directly or "
             "linked from other objects in the NeXus file (such as within "
             "``/entry/instrument``)."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
         ),
     )
     sample = SubSection(
@@ -803,6 +798,43 @@ class XpcsTwotime(Data):
             name_type="specified",
             optionality="optional",
             units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpcsInstrument(Instrument):
+    """
+    XPCS instrument Metadata.
+
+    Objects can be entered here directly or linked from other objects in the
+    NeXus file (such as within ``/entry/instrument``).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    masks = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="masks",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
         ),
     )
 

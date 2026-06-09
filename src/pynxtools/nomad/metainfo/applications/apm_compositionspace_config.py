@@ -117,17 +117,11 @@ class ApmCompositionspaceConfig(Entry):
         ),
     )
     segmentation = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigSegmentation",
         repeats=False,
         description=(
             "Step during which the voxel set is segmented into voxel sets with "
             "different chemical composition."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="segmentation",
-            name_type="specified",
-            optionality="required",
         ),
     )
     clustering = SubSection(
@@ -403,6 +397,17 @@ class ApmCompositionspaceConfigVoxelization(Process):
         ),
     )
 
+    autophase = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="autophase",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     edge_length = Quantity(
         type=np.float64,
         links=[
@@ -419,6 +424,49 @@ class ApmCompositionspaceConfigVoxelization(Process):
             name_type="specified",
             optionality="required",
             units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceConfigSegmentation(Process):
+    """
+    Step during which the voxel set is segmented into voxel sets with different
+    chemical composition.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-segmentation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="segmentation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    pca = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="pca",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    ic_opt = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="ic_opt",
+            name_type="specified",
+            optionality="required",
         ),
     )
 

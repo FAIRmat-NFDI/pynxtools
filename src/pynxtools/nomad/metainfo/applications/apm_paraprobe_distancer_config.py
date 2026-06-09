@@ -43,9 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
+    ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
 
 if TYPE_CHECKING:
@@ -128,7 +126,9 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeDistancerConfigPoint_to_triangleID(ApmParaprobeToolParameters):
+class ApmParaprobeDistancerConfigPoint_to_triangleID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-group"
@@ -197,20 +197,6 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(ApmParaprobeToolParameters)
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-            units="NX_UNITLESS",
-        ),
-    )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-point-to-triangleid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
             units="NX_UNITLESS",
         ),
     )

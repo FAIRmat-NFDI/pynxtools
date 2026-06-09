@@ -43,9 +43,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
+    ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
 
 if TYPE_CHECKING:
@@ -201,7 +199,9 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
+class ApmParaprobeNanochemConfigDelocalizationID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     """
     Discretization and distributing of the ion point cloud on a 3D grid to
     enable analyses at the continuum scale.
@@ -226,6 +226,19 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             nx_class="NXapm_paraprobe_tool_parameters",
             name="delocalizationID",
             name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    isosurfacing = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="isosurfacing",
+            name_type="specified",
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
@@ -385,26 +398,14 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolParameters):
             optionality="required",
         ),
     )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-delocalizationid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
+class ApmParaprobeNanochemConfigInterface_meshingID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     """
     Use a principle component analysis (PCA) to mesh a single free-standing
     interface patch within the reconstructed volume that is decorated by ions
@@ -576,26 +577,14 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolParameters):
             units="NX_UNITLESS",
         ),
     )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-interface-meshingid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
+class ApmParaprobeNanochemConfigOned_profileID(
+    ApmParaprobeToolConfigApmParaprobeToolParameters
+):
     """
     Analysis of one-dimensional profiles in ROIs placed in the dataset. Such
     analyses are useful for quantifying interfacial excess or for performing
@@ -640,6 +629,17 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
+        ),
+    )
+
+    user_defined_roi = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.roi_process.RoiProcess",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXroi_process",
+            name="user_defined_roi",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
@@ -709,20 +709,6 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolParameters):
             name_type="specified",
             optionality="required",
             units="NX_LENGTH",
-        ),
-    )
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-oned-profileid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
         ),
     )
 

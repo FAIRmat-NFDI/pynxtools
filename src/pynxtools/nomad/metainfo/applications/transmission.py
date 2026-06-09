@@ -348,6 +348,17 @@ class TransmissionInstrument(Instrument):
         ),
     )
 
+    common_beam_mask = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.slit.Slit",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXslit",
+            name="common_beam_mask",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     common_beam_depolarizer = Quantity(
         type=bool,
         links=[

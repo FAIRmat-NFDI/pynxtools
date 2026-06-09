@@ -41,11 +41,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-from pynxtools.nomad.metainfo.applications.sensor_scan import SensorScan
+from pynxtools.nomad.metainfo.applications.sensor_scan import (
+    SensorScan,
+    SensorScanInstrument,
+)
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.process import Process
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -77,30 +78,36 @@ class Spm(SensorScan):
     )
 
     process = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmProcess",
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,
         description=(
             "Define data processing (e.g., data analysis, image processing) "
             "program and associated workflow, software and store results."
         ),
-    )
-    instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
-        repeats=True,
-        variable=True,
         a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
+            nx_class="NXprocess",
             name=None,
             name_type="any",
-            optionality="required",
+            optionality="optional",
         ),
     )
+    instrument = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrument",
+        repeats=True,
+        variable=True,
+    )
     sample = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmSample",
+        section_def="pynxtools.nomad.metainfo.base_classes.sample.Sample",
         repeats=True,
         variable=True,
         description=("The sample information."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmData",
@@ -316,108 +323,109 @@ class Spm(SensorScan):
 # =============================================================================
 
 
-class SpmProcess(Process):
-    """
-    Define data processing (e.g., data analysis, image processing) program and
-    associated workflow, software and store results.
-    """
-
+class SpmInstrument(SensorScanInstrument):
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-process-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-group"
         ],
         variable=True,
         a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
+            nx_class="NXinstrument",
             name=None,
             name_type="any",
+            optionality="required",
+        ),
+    )
+
+    real_time_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.rcs.Rcs",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXrcs",
+            name="real_time_controller",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    lockin_amplifier = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.lockin.Lockin",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlockin",
+            name="lockin_amplifier",
+            name_type="specified",
             optionality="optional",
         ),
     )
-
-    program_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-field"
-        ],
-        description=(
-            "Commercial or otherwise defined given name of the program (or a "
-            "link to the instrument software)."
-        ),
-        a_nexus_field=NeXusField(
-            name="program",
-            type="NX_CHAR",
+    piezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="piezo_sensor",
             name_type="specified",
-            optionality="required",
+            optionality="optional",
         ),
     )
-    program_quantity__version = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-version-attribute"
-        ],
-        description=(
-            "Either version with build number, commit hash, or description of an "
-            "(online) repository where the source code of the program and build "
-            "instructions can be found so that the program can be configured in "
-            "such a way that result files can be created ideally in a "
-            "deterministic manner."
-        ),
-        a_nexus_attribute=NeXusAttribute(
-            name="version",
-            type="NX_CHAR",
+    height_piezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="height_piezo_sensor",
             name_type="specified",
-            optionality="required",
-            parent_field="program",
+            optionality="recommended",
         ),
     )
-    program_quantity__program_url = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-program-url-attribute"
-        ],
-        description=("Website of the software."),
-        a_nexus_attribute=NeXusAttribute(
-            name="program_url",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-            parent_field="program",
-        ),
-    )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-class SpmSample(Sample):
-    """
-    The sample information.
-    """
-
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-sample-group"
-        ],
+    XYZpiezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
-            nx_class="NXsample",
-            name=None,
-            name_type="any",
+            nx_class="NXspm_piezo_sensor",
+            name="XYZpiezo_sensor",
+            name_type="partial",
             optionality="optional",
         ),
     )
-
-    name_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-sample-name-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="name",
-            type="NX_CHAR",
+    head_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_temperature_sensor",
+            name="head_temperature_sensor",
             name_type="specified",
-            optionality="required",
+            optionality="recommended",
+        ),
+    )
+    cryo_bottom_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_temperature_sensor",
+            name="cryo_bottom_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    cryo_shield_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_temperature_sensor",
+            name="cryo_shield_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    sample_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_temperature_sensor",
+            name="sample_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
@@ -499,6 +507,18 @@ class SpmReproducibilityIndicators(Collection):
         ),
     )
 
+    collection = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     LINK_TO_FIELD = Quantity(
         type=str,
         links=[
@@ -535,6 +555,18 @@ class SpmResolutionIndicators(Collection):
             nx_class="NXcollection",
             name="resolution_indicators",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    collection = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )

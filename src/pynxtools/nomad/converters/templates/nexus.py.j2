@@ -271,6 +271,28 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         ),
     )
 
+    {% for ss in concept.subsections %}
+    {{ ss.python_name }} = SubSection(
+        section_def="{{ ss.section_fqn }}",
+        repeats={{ ss.repeats }},
+        {% if ss.variable %}
+        variable=True,
+        {% endif %}
+        a_nexus_group=NeXusGroup(
+            nx_class="{{ ss.node.nx_class }}",
+            name={{ ss.nx_name_literal }},
+            name_type="{{ ss.node.name_type or 'specified' }}",
+            optionality="{{ ss.node.optionality }}",
+            {% if ss.node.occurrence_limits[0] is not none %}
+            min_occurs={{ ss.node.occurrence_limits[0] }},
+            {% endif %}
+            {% if ss.node.occurrence_limits[1] is not none %}
+            max_occurs={{ ss.node.occurrence_limits[1] }},
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
     {% for qty in concept.quantities %}
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},

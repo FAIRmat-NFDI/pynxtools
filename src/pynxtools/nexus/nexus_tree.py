@@ -964,6 +964,38 @@ class NexusNode(NodeMixin):
         """Get a child node by its name."""
         return next((c for c in self.children if c.name == name), None)
 
+    def definition_file_at(self, idx: int) -> str | None:
+        """Return the NXDL file path (``elem.base``) for ``inheritance[idx]``, or None."""
+        if idx < len(self.inheritance):
+            return self.inheritance[idx].base
+        return None
+
+    def own_children(self) -> list["NexusNode"]:
+        """Return children defined in the same NXDL file as this node (``self.nxdl_base``).
+
+        After ``generate_tree_from`` + ``populate_tree_from_parents`` all children
+        from the full inheritance chain are present.  ``own_children()`` filters to
+        those whose ``nxdl_base`` matches this node's own definition file — i.e. the
+        direct contributions of the current application or base class, excluding what
+        was inherited from ancestors.
+        """
+        return self.children_at_definition(self.nxdl_base)
+
+    def children_at_definition(self, definition_base: str) -> list["NexusNode"]:
+        """Return children whose ``nxdl_base`` matches ``definition_base``.
+
+        ``generate_tree_from`` + ``populate_tree_from_parents`` populate all
+        children across the full inheritance chain.  Each child carries
+        ``nxdl_base`` — the path of the NXDL file where it is *defined* at
+        this level.  This method filters to children defined at one specific
+        application/base-class level, which is needed to distinguish own
+        contributions from inherited ones without re-parsing the NXDL.
+
+        Typical use: ``child.children_at_definition(root.inheritance[1].base)``
+        returns the children the parent application defines for this group.
+        """
+        return [c for c in self.children if c.nxdl_base == definition_base]
+
     def __repr__(self) -> str:
         if self.nx_type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
@@ -1232,6 +1264,30 @@ class NexusGroup(NexusNode):
             else None,
             max_occurs,
         )
+
+    def group_naming_at(self, idx: int) -> tuple[str, str, str] | None:
+        """Return ``(name, name_type, nx_class)`` as declared at ``inheritance[idx]``.
+
+        Used by the code generator to compute concept class names for the group at a
+        specific inheritance level without constructing a full NexusGroup node.  This
+        is necessary because the group may have a different name at different levels
+        (e.g. a parent application's variadic ``TASKCONFIG`` vs a derived application's
+        specific ``cameca_to_nexus`` — same type, different names).
+
+        Returns None if ``idx`` is out of range.
+        """
+        if idx >= len(self.inheritance):
+            return None
+        xml_elem = self.inheritance[idx]
+        nx_class = xml_elem.attrib.get("type", self.nx_class)
+        name = xml_elem.attrib.get("name")
+        if name is None:
+            # No @name → nameType is implicitly "any"
+            name = strip_nx_prefix(nx_class)
+            name_type = "any"
+        else:
+            name_type = xml_elem.attrib.get("nameType", "specified")
+        return name, name_type, nx_class
 
     def __init__(self, nx_class: str, **data) -> None:
         super().__init__(**data)

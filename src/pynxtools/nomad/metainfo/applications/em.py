@@ -40,10 +40,13 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.cite import Cite
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
+from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
+from pynxtools.nomad.metainfo.base_classes.em_simulation import EmSimulation
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.project import Project
+from pynxtools.nomad.metainfo.base_classes.roi_process import RoiProcess
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.user import User
 
@@ -239,17 +242,11 @@ class Em(Entry):
     )
 
     profiling = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.cs_profiling.CsProfiling",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmProfiling",
         repeats=False,
         description=(
             "The configuration of the software that was used to generate this "
             "NeXus file."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_profiling",
-            name="profiling",
-            name_type="specified",
-            optionality="optional",
         ),
     )
     citeID = SubSection(
@@ -354,33 +351,20 @@ class Em(Entry):
         ),
     )
     simulation = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.em_simulation.EmSimulation",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmEmSimulation",
         repeats=False,
         description=(
             "Documentation for a simulation of electron beam-matter interaction."
         ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_simulation",
-            name="simulation",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     roiID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.roi_process.RoiProcess",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmRoiID",
         repeats=True,
         variable=True,
         description=(
             "This concept is related to term `Region Of Interest`_ of the "
             "EMglossary standard. .. _Region Of Interest: "
             "https://purls.helmholtz-metadaten.de/emg/EMG_00000042"
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXroi_process",
-            name="roiID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
         ),
     )
 
@@ -503,6 +487,41 @@ class Em(Entry):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class EmProfiling(CsProfiling):
+    """
+    The configuration of the software that was used to generate this NeXus
+    file.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-profiling-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_profiling",
+            name="profiling",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class EmCiteID(Cite):
@@ -1835,6 +1854,106 @@ class EmDetector_reference_frameID(CoordinateSystem):
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEmSimulation(EmSimulation):
+    """
+    Documentation for a simulation of electron beam-matter interaction.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-simulation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXem_simulation",
+            name="simulation",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="environment",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmRoiID(RoiProcess):
+    """
+    This concept is related to term `Region Of Interest`_ of the EMglossary
+    standard.
+
+    .. _Region Of Interest:
+    https://purls.helmholtz-metadaten.de/emg/EMG_00000042
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXroi_process",
+            name="roiID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    img = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_img.EmImg",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXem_img",
+            name="img",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    ebsd = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsd",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXem_ebsd",
+            name="ebsd",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    eds = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEds",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXem_eds",
+            name="eds",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    eels = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eels.EmEels",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXem_eels",
+            name="eels",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 

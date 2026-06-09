@@ -44,6 +44,9 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
 )
+from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
+    ApmParaprobeToolProcess,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -75,7 +78,7 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
     )
 
     point_set_wrappingID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process.ApmParaprobeToolProcess",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingID",
         repeats=True,
         variable=True,
         description=(
@@ -89,13 +92,6 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
             "the resulting mesh should be a watertight polyhedron. This "
             "polyhedron is not necessarily convex. For some algorithms there is "
             "no guarantee that the resulting mesh yields a watertight mesh."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_paraprobe_tool_process",
-            name="point_set_wrappingID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
         ),
     )
 
@@ -123,6 +119,62 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class ApmParaprobeSurfacerResultsPoint_set_wrappingID(ApmParaprobeToolProcess):
+    """
+    Paraprobe-surfacer can be used to load a ROI that is the entire or a
+    sub-set of the ion point cloud. In the point_cloud_wrapping process the
+    tool computes a triangulated surface mesh which encloses the ROI/point
+    cloud. This mesh can be seen as a model for the edge of the dataset.
+
+    Different algorithms can be used with paraprobe-surfacer to create this
+    mesh such as convex hulls, alpha-shapes as their generalization, or alpha
+    wrappings.
+
+    Ideally, the resulting mesh should be a watertight polyhedron. This
+    polyhedron is not necessarily convex. For some algorithms there is no
+    guarantee that the resulting mesh yields a watertight mesh.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_process",
+            name="point_set_wrappingID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    alpha_complexID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_alpha_complex.CgAlphaComplex",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_alpha_complex",
+            name="alpha_complexID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
         ),
     )
 

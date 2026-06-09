@@ -40,10 +40,10 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
+    OpticalSpectroscopyData,
+    OpticalSpectroscopyInstrument,
+    OpticalSpectroscopySample,
 )
-from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -335,7 +335,7 @@ class Ellipsometry(OpticalSpectroscopy):
 # =============================================================================
 
 
-class EllipsometryInstrument(Instrument):
+class EllipsometryInstrument(OpticalSpectroscopyInstrument):
     """
     Properties of the ellipsometry equipment.
     """
@@ -381,208 +381,12 @@ class EllipsometryInstrument(Instrument):
             open_enum=True,
         ),
     )
-    angle_reference_frame = Quantity(
-        type=MEnum(["beam centered", "sample-normal centered"]),
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-reference-frame-field"
-        ],
-        description=(
-            "Defines the reference frame which is used to describe the sample "
-            "orientation with respect to the beam directions. A beam centered "
-            "description is the default and uses 4 angles(similar to XRD): - "
-            "Omega (angle between sample surface and incident beam) - 2Theta "
-            "(angle between the transmitted beam and the detection beam) - Chi "
-            "(sample tilt angle, angle between plane#1 and the surface normal, "
-            "plane#1 = spanned by incidence beam and detection and detection. If "
-            "Chi=0°, then plane#1 is the plane of incidence in reflection "
-            "setups) - Phi (inplane rotation of sample, rotation axis is the "
-            "samples surface normal) A sample normal centered description is "
-            "possible as well: - angle of incidence (angle between incident beam "
-            "and sample surface) - angle of detection (angle between detection "
-            "beam and sample surface) - angle of incident and detection beam - "
-            "angle of in-plane sample rotation (direction along the sample's "
-            "surface normal)"
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_reference_frame",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-            enumeration=["beam centered", "sample-normal centered"],
-        ),
-    )
-    omega = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-omega-field"
-        ],
-        dimensionality="[angle]",
-        description=("Angle between sample incident beam and sample surface."),
-        a_nexus_field=NeXusField(
-            name="omega",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    twotheta = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-twotheta-field"
-        ],
-        dimensionality="[angle]",
-        description=("Angle between incident and detection beam"),
-        a_nexus_field=NeXusField(
-            name="twotheta",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    chi = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-chi-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Sample tilt between sample normal, and the plane spanned by "
-            "detection and incident beam."
-        ),
-        a_nexus_field=NeXusField(
-            name="chi",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    phi = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-phi-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Inplane rotation of the sample, with rotation axis along sample normal."
-        ),
-        a_nexus_field=NeXusField(
-            name="phi",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_incidence = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-incidence-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Angle(s) of the incident beam vs. the normal of the bottom "
-            "reflective (substrate) surface in the sample. These two directions "
-            "span the plane of incidence."
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_incidence",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_detection = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-detection-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Detection angle(s) of the beam reflected or scattered off the "
-            "sample vs. the normal of the bottom reflective (substrate) surface "
-            "in the sample if not equal to the angle(s) of incidence. These two "
-            "directions span the plane of detection."
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_detection",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_incident_and_detection_beam = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-incident-and-detection-beam-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Angle between the incident and detection beam. If "
-            "angle_of_detection + angle_of_incidence = "
-            "angle_of_incident_and_detection_beam, then the setup is a "
-            "reflection setup. If angle_of_detection + angle_of_incidence != "
-            "angle_of_incident_and_detection_beam then the setup may be a light "
-            "scattering setup. (i.e. 90° + 90° != 90°, i.e. incident and "
-            "detection beam in the sample surface, but the angle "
-            "source-sample-detector is 90°)"
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_incident_and_detection_beam",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_in_plane_sample_rotation = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-in-plane-sample-rotation-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Angle of the inplane orientation of the sample. This might be an "
-            "arbitrary, angle without specific relation to the sample symmetry, "
-            "of the angle to a specific sample property (i.e. crystallographic "
-            "axis or sample shape such as wafer flat)"
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_in_plane_sample_rotation",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    lateral_focal_point_offset = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-lateral-focal-point-offset-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "Specify if there is a lateral offset on the sample surface, between "
-            "the focal points of the incident beam and the detection beam."
-        ),
-        a_nexus_field=NeXusField(
-            name="lateral_focal_point_offset",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_LENGTH",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class EllipsometrySample(Sample):
+class EllipsometrySample(OpticalSpectroscopySample):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-sample-group"
@@ -612,203 +416,12 @@ class EllipsometrySample(Sample):
             optionality="optional",
         ),
     )
-    name_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-name-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="name",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    sample_id = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-sample-id-field"
-        ],
-        description=(
-            "Locally unique ID of the sample, used in the research institute or group."
-        ),
-        a_nexus_field=NeXusField(
-            name="sample_id",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    physical_form = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-physical-form-field"
-        ],
-        description=(
-            "State the form of the sample, examples are: thin film, single "
-            "crystal, poly crystal, amorphous, single layer, multi layer, "
-            "liquid, gas, pellet, powder. Generic properties of liquids or gases "
-            "see NXsample properties."
-        ),
-        a_nexus_field=NeXusField(
-            name="physical_form",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    chemical_formula = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-chemical-formula-field"
-        ],
-        description=(
-            "Chemical formula of the sample. Use the Hill system (explained "
-            "here: https://en.wikipedia.org/wiki/Chemical_formula#Hill_system) "
-            "to write the chemical formula. In case the sample consists of "
-            "several layers, this should be a list of the chemical formulas of "
-            "the individual layers, where the first entry is the chemical "
-            "formula of the top layer (the one on the front surface, on which "
-            "the light incident). The order must be consistent with "
-            "layer_structure"
-        ),
-        a_nexus_field=NeXusField(
-            name="chemical_formula",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    atom_types = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-atom-types-field"
-        ],
-        description=(
-            "List of comma-separated elements from the periodic table that are "
-            "contained in the sample. If the sample substance has multiple "
-            "components, all elements from each component must be included in "
-            "'atom_types'."
-        ),
-        a_nexus_field=NeXusField(
-            name="atom_types",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-    preparation_date = Quantity(
-        type=Datetime,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-preparation-date-field"
-        ],
-        description=(
-            "ISO 8601 time code with local time zone offset to UTC information "
-            "when the specimen was prepared. Ideally, report the end of the "
-            "preparation, i.e. the last known timestamp when the measured "
-            "specimen surface was actively prepared."
-        ),
-        a_nexus_field=NeXusField(
-            name="preparation_date",
-            type="NX_DATE_TIME",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
-    thickness = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-thickness-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "(Measured) sample thickness. The information is recorded to qualify "
-            "if the light used was likely able to shine through the sample. In "
-            "this case the value should be set to the actual thickness of the "
-            "specimen viewed for an illumination situation where the nominal "
-            "surface normal of the specimen is parallel to the optical axis."
-        ),
-        a_nexus_field=NeXusField(
-            name="thickness",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_LENGTH",
-        ),
-    )
-    thickness_determination = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-thickness-determination-field"
-        ],
-        description=(
-            "If a thickness if given, please specify how this thickness was "
-            "estimated or determined."
-        ),
-        a_nexus_field=NeXusField(
-            name="thickness_determination",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-    layer_structure = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-layer-structure-field"
-        ],
-        description=(
-            "Qualitative description of the layer structure for the sample, "
-            "starting with the top layer (i.e. the one on the front surface, on "
-            "which the light incident), e.g. native oxide/bulk substrate, or "
-            "Si/native oxide/thermal oxide/polymer/peptide."
-        ),
-        a_nexus_field=NeXusField(
-            name="layer_structure",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-    sample_orientation = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-sample-orientation-field"
-        ],
-        description=(
-            "Specify the sample orientation, how is its sample normal oriented "
-            "relative in the laboratory reference frame, incident beam reference "
-            "frame."
-        ),
-        a_nexus_field=NeXusField(
-            name="sample_orientation",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="optional",
-        ),
-    )
-    substrate = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-substrate-field"
-        ],
-        description=(
-            "If the sample is grown or fixed on a substrate, specify this here "
-            "by a free text description."
-        ),
-        a_nexus_field=NeXusField(
-            name="substrate",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class EllipsometryDataCollection(Data):
+class EllipsometryDataCollection(OpticalSpectroscopyData):
     """
     Measured data, data errors, and varied parameters. This may be used to
     describe indirectly derived data or data transformed between different
@@ -827,6 +440,17 @@ class EllipsometryDataCollection(Data):
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="data_collection",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    data_software = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="data_software",
             name_type="specified",
             optionality="optional",
         ),
@@ -1044,35 +668,6 @@ class EllipsometryDataCollection(Data):
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
             optionality="optional",
-        ),
-    )
-    axes = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-data-collection-axes-attribute"
-        ],
-        shape=["*"],
-        description=(
-            "Spectrum, i.e. x-axis of the data (e.g. wavelength, energy etc.)"
-        ),
-        a_nexus_attribute=NeXusAttribute(
-            name="axes",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    signal = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-data-collection-signal-attribute"
-        ],
-        description=("Spectrum, i.e. y-axis of the data (e.g. counts, intensity)"),
-        a_nexus_attribute=NeXusAttribute(
-            name="signal",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
         ),
     )
 

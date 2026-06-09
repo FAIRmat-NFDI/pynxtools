@@ -44,9 +44,6 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
 )
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters import (
-    ApmParaprobeToolParameters,
-)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -72,9 +69,17 @@ class ApmParaprobeSelectorConfig(ApmParaprobeToolConfig):
     )
 
     selectID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_selector_config.ApmParaprobeSelectorConfigSelectID",
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters.ApmParaprobeToolParameters",
         repeats=True,
         variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_parameters",
+            name="selectID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
     )
 
     definition = Quantity(
@@ -101,50 +106,6 @@ class ApmParaprobeSelectorConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
-        ),
-    )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-# =============================================================================
-# Named concept groups — only when the group element defines own quantities that
-# differ from the generic class (changed optionality, extra fields, different
-# type/units/enumeration). These inherit from the specific generic class so all
-# base quantities are available.
-# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
-# =============================================================================
-
-
-class ApmParaprobeSelectorConfigSelectID(ApmParaprobeToolParameters):
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_selector_config.html#nxapm_paraprobe_selector_config-entry-selectid-group"
-        ],
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_paraprobe_tool_parameters",
-            name="selectID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
-    )
-
-    identifier_analysis = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-selectid-identifier-analysis-field"
-        ],
-        dimensionality="dimensionless",
-        a_nexus_field=NeXusField(
-            name="identifier_analysis",
-            type="NX_UINT",
-            name_type="specified",
-            optionality="recommended",
-            units="NX_UNITLESS",
         ),
     )
 

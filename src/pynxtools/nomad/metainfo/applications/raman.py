@@ -40,8 +40,8 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
+    OpticalSpectroscopyInstrument,
 )
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -338,7 +338,7 @@ class Raman(OpticalSpectroscopy):
 # =============================================================================
 
 
-class RamanInstrument(Instrument):
+class RamanInstrument(OpticalSpectroscopyInstrument):
     """
     Metadata of the setup, its optical elements and physical properties which
     defines the Raman measurement.
@@ -399,202 +399,6 @@ class RamanInstrument(Instrument):
             name_type="specified",
             optionality="recommended",
             parent_field="scattering_configuration",
-        ),
-    )
-    angle_reference_frame = Quantity(
-        type=MEnum(["beam centered", "sample-normal centered"]),
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-reference-frame-field"
-        ],
-        description=(
-            "Defines the reference frame which is used to describe the sample "
-            "orientation with respect to the beam directions. A beam centered "
-            "description is the default and uses 4 angles(similar to XRD): - "
-            "Omega (angle between sample surface and incident beam) - 2Theta "
-            "(angle between the transmitted beam and the detection beam) - Chi "
-            "(sample tilt angle, angle between plane#1 and the surface normal, "
-            "plane#1 = spanned by incidence beam and detection and detection. If "
-            "Chi=0°, then plane#1 is the plane of incidence in reflection "
-            "setups) - Phi (inplane rotation of sample, rotation axis is the "
-            "samples surface normal) A sample normal centered description is "
-            "possible as well: - angle of incidence (angle between incident beam "
-            "and sample surface) - angle of detection (angle between detection "
-            "beam and sample surface) - angle of incident and detection beam - "
-            "angle of in-plane sample rotation (direction along the sample's "
-            "surface normal)"
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_reference_frame",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="recommended",
-            enumeration=["beam centered", "sample-normal centered"],
-        ),
-    )
-    omega = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-omega-field"
-        ],
-        dimensionality="[angle]",
-        description=("Angle between sample incident beam and sample surface."),
-        a_nexus_field=NeXusField(
-            name="omega",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    twotheta = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-twotheta-field"
-        ],
-        dimensionality="[angle]",
-        description=("Angle between incident and detection beam"),
-        a_nexus_field=NeXusField(
-            name="twotheta",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    chi = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-chi-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Sample tilt between sample normal, and the plane spanned by "
-            "detection and incident beam."
-        ),
-        a_nexus_field=NeXusField(
-            name="chi",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    phi = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-phi-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Inplane rotation of the sample, with rotation axis along sample normal."
-        ),
-        a_nexus_field=NeXusField(
-            name="phi",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_incidence = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-incidence-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Angle(s) of the incident beam vs. the normal of the bottom "
-            "reflective (substrate) surface in the sample. These two directions "
-            "span the plane of incidence."
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_incidence",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_detection = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-detection-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Detection angle(s) of the beam reflected or scattered off the "
-            "sample vs. the normal of the bottom reflective (substrate) surface "
-            "in the sample if not equal to the angle(s) of incidence. These two "
-            "directions span the plane of detection."
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_detection",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_incident_and_detection_beam = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-incident-and-detection-beam-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Angle between the incident and detection beam. If "
-            "angle_of_detection + angle_of_incidence = "
-            "angle_of_incident_and_detection_beam, then the setup is a "
-            "reflection setup. If angle_of_detection + angle_of_incidence != "
-            "angle_of_incident_and_detection_beam then the setup may be a light "
-            "scattering setup. (i.e. 90° + 90° != 90°, i.e. incident and "
-            "detection beam in the sample surface, but the angle "
-            "source-sample-detector is 90°)"
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_incident_and_detection_beam",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    angle_of_in_plane_sample_rotation = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-in-plane-sample-rotation-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Angle of the inplane orientation of the sample. This might be an "
-            "arbitrary, angle without specific relation to the sample symmetry, "
-            "of the angle to a specific sample property (i.e. crystallographic "
-            "axis or sample shape such as wafer flat)"
-        ),
-        a_nexus_field=NeXusField(
-            name="angle_of_in_plane_sample_rotation",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANGLE",
-        ),
-    )
-    lateral_focal_point_offset = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-lateral-focal-point-offset-field"
-        ],
-        dimensionality="[length]",
-        description=(
-            "Specify if there is a lateral offset on the sample surface, between "
-            "the focal points of the incident beam and the detection beam."
-        ),
-        a_nexus_field=NeXusField(
-            name="lateral_focal_point_offset",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="optional",
-            units="NX_LENGTH",
         ),
     )
 

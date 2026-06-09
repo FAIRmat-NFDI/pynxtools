@@ -41,8 +41,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-from pynxtools.nomad.metainfo.applications.xrd import Xrd
-from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.applications.xrd import Xrd, XrdData
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -218,6 +217,27 @@ class XrdPanExperimentConfig(Object):
         ),
     )
 
+    two_theta = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.object.Object",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXobject",
+            name="two_theta",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    omega = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.object.Object",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXobject",
+            name="omega",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     beam_attenuation_factors = Quantity(
         type=str,
         links=[
@@ -296,7 +316,7 @@ class XrdPanExperimentConfig(Object):
         super().normalize(archive, logger)
 
 
-class XrdPanExperimentResult(Data):
+class XrdPanExperimentResult(XrdData):
     """
     All experiment results data such as scattering angle (2theta), intensity,
     incident angle, scattering vector, etc will be stored here.
@@ -445,47 +465,12 @@ class XrdPanExperimentResult(Data):
             units="NX_ANY",
         ),
     )
-    polar_angle = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-experiment-result-polar-angle-field"
-        ],
-        shape=["*"],
-        description=(
-            "link (suggested "
-            "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
-            "ale in /NXentry/NXinstrument/NXdetector"
-        ),
-        a_nexus_field=NeXusField(
-            name="polar_angle",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    data_quantity = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-experiment-result-data-field"
-        ],
-        shape=["*"],
-        description=(
-            "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
-            "to data in /Nxentry/Nxinstrument/Nxdetector"
-        ),
-        a_nexus_field=NeXusField(
-            name="data",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class XrdPanQData(Data):
+class XrdPanQData(XrdData):
     """
     The desired view for scattering vectors.
     """
@@ -575,41 +560,6 @@ class XrdPanQData(Data):
             optionality="optional",
         ),
     )
-    polar_angle = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-q-data-polar-angle-field"
-        ],
-        shape=["*"],
-        description=(
-            "link (suggested "
-            "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
-            "ale in /NXentry/NXinstrument/NXdetector"
-        ),
-        a_nexus_field=NeXusField(
-            name="polar_angle",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    data_quantity = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-q-data-data-field"
-        ],
-        shape=["*"],
-        description=(
-            "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
-            "to data in /Nxentry/Nxinstrument/Nxdetector"
-        ),
-        a_nexus_field=NeXusField(
-            name="data",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -673,38 +623,6 @@ class XrdPanSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-        ),
-    )
-    name_quantity = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-name-field"
-        ],
-        description=("Descriptive name of sample"),
-        a_nexus_field=NeXusField(
-            name="name",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-    rotation_angle = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-rotation-angle-field"
-        ],
-        dimensionality="[angle]",
-        description=(
-            "Optional rotation angle for the case when the powder diagram has "
-            "been obtained through an omega-2theta scan like from a traditional "
-            "single detector powder diffractometer"
-        ),
-        a_nexus_field=NeXusField(
-            name="rotation_angle",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_ANGLE",
         ),
     )
 

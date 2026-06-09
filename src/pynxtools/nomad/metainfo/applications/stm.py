@@ -41,8 +41,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
-from pynxtools.nomad.metainfo.applications.spm import Spm
-from pynxtools.nomad.metainfo.base_classes.collection import Collection
+from pynxtools.nomad.metainfo.applications.spm import (
+    Spm,
+    SpmInstrument,
+    SpmReproducibilityIndicators,
+    SpmResolutionIndicators,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -67,15 +71,9 @@ class Stm(Spm):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.stm.StmInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stm.StmReproducibilityIndicators",
@@ -273,7 +271,36 @@ class Stm(Spm):
 # =============================================================================
 
 
-class StmReproducibilityIndicators(Collection):
+class StmInstrument(SpmInstrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXstm.html#nxstm-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    lockin_amplifier = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.lockin.Lockin",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlockin",
+            name="lockin_amplifier",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StmReproducibilityIndicators(SpmReproducibilityIndicators):
     """
     The group's concepts hold the link to the related concepts that define the
     reproducibility of the STM experiment.
@@ -286,6 +313,17 @@ class StmReproducibilityIndicators(Collection):
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name="reproducibility_indicators",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    BIAS_SWEEP = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name="BIAS_SWEEP",
             name_type="specified",
             optionality="optional",
         ),
@@ -359,29 +397,12 @@ class StmReproducibilityIndicators(Collection):
             optionality="optional",
         ),
     )
-    LINK_TO_FIELD = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-reproducibility-indicators-link-to-field-field"
-        ],
-        variable=True,
-        description=(
-            "A place holder to create link to any field relevant considered as "
-            "reproducibility indicators (defined by laboratory)."
-        ),
-        a_nexus_field=NeXusField(
-            name="LINK_TO_FIELD",
-            type="NX_CHAR",
-            name_type="any",
-            optionality="optional",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class StmResolutionIndicators(Collection):
+class StmResolutionIndicators(SpmResolutionIndicators):
     """
     The group's concepts hold the link to the related concepts that define the
     resolution of the STM experiment.
@@ -395,6 +416,18 @@ class StmResolutionIndicators(Collection):
             nx_class="NXcollection",
             name="resolution_indicators",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    spm_scan_control = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )
@@ -478,23 +511,6 @@ class StmResolutionIndicators(Collection):
             name="reference_frequency",
             type="NX_NUMBER",
             name_type="specified",
-            optionality="optional",
-        ),
-    )
-    LINK_TO_FIELD = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-resolution-indicators-link-to-field-field"
-        ],
-        variable=True,
-        description=(
-            "A place holder to create link to any field relevant considered as "
-            "reproducibility indicators (defined by laboratory)."
-        ),
-        a_nexus_field=NeXusField(
-            name="LINK_TO_FIELD",
-            type="NX_CHAR",
-            name_type="any",
             optionality="optional",
         ),
     )
