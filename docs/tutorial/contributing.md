@@ -146,7 +146,7 @@ Once you are happy with the changes, please commit them on a separate branch and
 
 We recognize the value of AI-assisted development and do not discourage its use. AI coding assistants can be helpful for tasks such as exploratory code generation, refactoring, and documentation updates.
 
-At the same time, design decisions, software architecture, and acceptance of contributions should remain under human control.
+At the same time, design decisions, software architecture, and acceptance of contributions must remain under human control.
 
 !!! note "Policy under development"
     A formal policy on AI usage in contributions is still being developed. For now, we encourage judicious use.
@@ -154,7 +154,7 @@ At the same time, design decisions, software architecture, and acceptance of con
 For now, contributors are expected to follow these guidelines:
 
 **Declaration of AI usage.**
-If AI tools were used in preparing a contribution, this must be stated in the pull request description. The declaration should name the tool(s) used and briefly describe the scope of their involvement (e.g. "Used GitHub Copilot for initial design of X" or "Used Claude Code to assist with refactoring Y").
+If AI tools were used in preparing a contribution, this must be stated in the pull request description. The declaration must name the tool(s) used and briefly describe the scope of their involvement (e.g. "Used GitHub Copilot for initial design of X" or "Used Claude Code to assist with refactoring Y").
 
 **Human authorship and responsibility.**
 All AI-generated content must be reviewed, understood, and validated by the contributing author before submission. The contributor is fully responsible for the correctness, quality, and suitability of the code, regardless of how it was produced. Contributions that are evidently fully AI-produced with no human involvement will not be accepted.
