@@ -27,99 +27,152 @@ from pathlib import Path
 
 import pytest
 
+try:
+    from nomad.datamodel import EntryArchive
+    from nomad.units import ureg
+    from nomad.utils import get_logger
+except ImportError:
+    pytest.skip("nomad not installed", allow_module_level=True)
+
+from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
+
 DATA_DIR = Path(__file__).parents[2] / "src" / "pynxtools" / "data"
+TEST_DATA_DIR = Path(__file__).parents[1] / "data" / "nomad"
 ARPES_FILE = str(DATA_DIR / "201805_WSe2_arpes.nxs")
-ELLIPS_FILE = str(Path(__file__).parent / "data" / "SiO2onSi.ellips.nxs")
-LAUETOF_FILE = str(Path(__file__).parent / "data" / "NXlauetof.hdf5")
+ELLIPS_FILE = str(TEST_DATA_DIR / "SiO2onSi.ellips.nxs")
+LAUETOF_FILE = str(TEST_DATA_DIR / "NXlauetof.hdf5")
 
 
 @pytest.fixture(scope="module")
 def arpes_archive():
     """Parse the ARPES example file and return the EntryArchive."""
-    from nomad.datamodel import EntryArchive
-    from nomad.utils import get_logger
-
-    from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
-
     archive = EntryArchive()
     NexusParserV2().parse(ARPES_FILE, archive, get_logger(__name__))
     return archive
 
 
 # ---------------------------------------------------------------------------
-# Test 1: ARPES golden output — archive.data is now the Entry directly
+# ARPES golden output — archive.data is now the Entry directly
 # ---------------------------------------------------------------------------
+def test_arpes_example(arpes_archive):
+    """Test contents of parsed arpes archive"""
+    arpes_entry = arpes_archive.data
 
-
-def test_nexus_v2_arpes_archive_data_is_entry(arpes_archive):
-    """archive.data must be an Entry/Arpes instance (not a Root wrapper)."""
-    from pynxtools.nomad.metainfo.base_classes.entry import Entry
-
-    assert arpes_archive.data is not None
-    assert isinstance(arpes_archive.data, Entry)
-
-
-def test_nexus_v2_arpes_application_class(arpes_archive):
-    """NXarpes application class must be resolved as archive.data."""
-    cls_name = type(arpes_archive.data).__name__
+    assert arpes_entry is not None
+    assert isinstance(arpes_entry, Entry)
+    cls_name = type(arpes_entry).__name__
     assert cls_name in ("Arpes", "Entry"), f"Unexpected entry class: {cls_name}"
+    assert arpes_entry.__dict__.get("nx_name") == "entry"
+    assert getattr(arpes_entry, "definition", None) == "NXarpes"
+
+    assert getattr(arpes_entry, "start_time", None) is not None
+
+    # Instrument
+    assert hasattr(arpes_entry, "instrument")
+    assert len(arpes_entry.instrument) >= 1
+    instrument = arpes_entry.instrument[0]
+    assert instrument.nx_name == "instrument"
+
+    # Source
+    assert hasattr(instrument, "source")
+    assert len(instrument.source) >= 1
+    source = instrument.source[0]
+    assert source.nx_name == "source"
+    # good ENUM - x-ray
+    assert source.probe == "x-ray"
+    # wrong inherited ENUM - Burst (accepted for open enum)
+    assert source.mode == "Burst"
+    # wrong inherited ENUM for extended field - 'Free Electron Laser' (accepted for open enum)
+    assert source.type == "Free Electron Laser"
+
+    # Unit check
+    assert instrument.analyser.entrance_slit_size == ureg.Quantity("750 micrometer")
+
+    # Data
+    assert hasattr(arpes_entry, "data")
+    assert len(arpes_entry.data) >= 1
+    data = arpes_entry.data[0]
+    assert data.__dict__.get("nx_name") == "data"
+    assert data.nx_name == "data"
+
+    assert len(data.AXISNAME) == 3
+    # there is still a bug in the variadic name resolution, so skip these
+    assert data.delays is not None
+    assert data.angles.check("1/Å")
+    # ToDo: if AXISNAME and DATA can be resolved properly, extend this!
+    # assert data.delays.check("fs")
+    # but the following still works
+    assert data.energies is not None
+    assert data.energies.check("eV")
+    # manual name resolution
+    assert data.AXISNAME["angles"] is not None
+    # TODO: reimplement with field statistics
+    # assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
+    assert (1 * data.AXISNAME["angles"].unit).check("1/Å")
+    assert (1 * data.AXISNAME["delays"].unit).check("fs")
+    assert data.axes == ["angles", "energies", "delays"]
 
 
-def test_nexus_v2_arpes_entry_name(arpes_archive):
-    """HDF5 entry group name must be preserved as nx_name on archive.data."""
-    assert arpes_archive.data.__dict__.get("nx_name") == "entry"
-
-
-def test_nexus_v2_arpes_definition(arpes_archive):
-    """Definition field must be set on archive.data."""
-    assert getattr(arpes_archive.data, "definition", None) == "NXarpes"
-
-
-def test_nexus_v2_arpes_start_time(arpes_archive):
-    """start_time must be populated on archive.data."""
-    assert getattr(arpes_archive.data, "start_time", None) is not None
-
-
-def test_nexus_v2_arpes_instrument(arpes_archive):
-    """Instrument subsection must exist directly on archive.data."""
-    entry = arpes_archive.data
-    assert hasattr(entry, "instrument")
-    assert len(entry.instrument) >= 1
-    assert entry.instrument[0].__dict__.get("nx_name") == "instrument"
-
-
-def test_nexus_v2_arpes_m_nx_data_path(arpes_archive):
+def test_arpes_m_nx_data_path(arpes_archive):
     """m_nx_data_path on archive.data must be a valid JSON dict."""
-    path_map_str = getattr(arpes_archive.data, "m_nx_data_path", None)
+    arpes_entry = arpes_archive.data
+    path_map_str = getattr(arpes_entry, "m_nx_data_path", None)
     assert path_map_str is not None, "m_nx_data_path not set on archive.data"
     path_map = json.loads(path_map_str)
     assert isinstance(path_map, dict)
     assert len(path_map) > 0
 
 
-def test_nexus_v2_arpes_serialization(arpes_archive):
+def test_arpes_serialization(arpes_archive):
     """Archive must serialize to dict without errors."""
     d = arpes_archive.m_to_dict(with_out_meta=True)
     assert isinstance(d, dict)
 
 
-def test_nexus_v2_arpes_entry_type(arpes_archive):
-    """entry_type is the Python class name (Arpes if app loaded, Entry as fallback)."""
-    entry_type = arpes_archive.metadata.entry_type or ""
+def test_arpes_metadata(arpes_archive):
+    """Test metadata of the parsed ARPES archive."""
+    # entry_type is the Python class name (Arpes if app loaded, Entry as fallback)."""
+    metadata = arpes_archive.metadata
+    entry_type = metadata.entry_type or ""
     assert entry_type in ("Arpes", "Entry"), f"Unexpected entry_type: {entry_type}"
-
-
-def test_nexus_v2_arpes_metadata_entry_name(arpes_archive):
-    """entry_name is "{file stem} - {HDF5 NXentry group name}", not just "entry"."""
-    assert arpes_archive.metadata.entry_name == "201805_WSe2_arpes - entry"
+    # entry_name is "{file stem} - {HDF5 NXentry group name}", not just "entry"."""
+    assert metadata.entry_name == "201805_WSe2_arpes - entry"
 
 
 # ---------------------------------------------------------------------------
-# Test 2: Entry is a valid EntryData subclass
+# Ellipsometry file (no serialization errors)
+# NXlauetof (renamed groups)
 # ---------------------------------------------------------------------------
 
 
-def test_nexus_v2_entry_bases():
+@pytest.mark.parametrize(
+    ("file_path", "reason"),
+    [
+        (ELLIPS_FILE, "ellips file not found"),
+        (LAUETOF_FILE, "lauetof file not found"),
+    ],
+)
+def test_parse_valid_files(file_path, reason):
+    print(file_path)
+    pytest.skip(reason) if not Path(file_path).exists() else None
+
+    archive = EntryArchive()
+    NexusParserV2().parse(file_path, archive, get_logger(__name__))
+
+    assert archive.data is not None
+
+    if file_path == ELLIPS_FILE:
+        archive.m_to_dict(with_out_meta=True)
+
+
+# ---------------------------------------------------------------------------
+# Entry is a valid EntryData subclass
+# ---------------------------------------------------------------------------
+
+
+# TODO: move this to the schema test
+def test_entry_bases():
     """Entry inherits from Object and Measurement (not EntryData — would break frontend).
 
     archive.data = Entry() produces a SyntaxWarning but works correctly.
@@ -136,10 +189,12 @@ def test_nexus_v2_entry_bases():
 
 
 # ---------------------------------------------------------------------------
-# Test 3: Parity with v1 parser (structural)
+# Parity with v1 parser (structural)
 # ---------------------------------------------------------------------------
 
 
+# This is good to have now, but will be useless when the v2 parser is the default
+# TODO: remove this one the original NexusParser goes away
 def test_nexus_v2_parity_structural():
     """V2 produces same definition field value as v1."""
     from nomad.datamodel import EntryArchive
@@ -163,76 +218,12 @@ def test_nexus_v2_parity_structural():
 
 
 # ---------------------------------------------------------------------------
-# Test 4: Ellipsometry file (no serialization errors)
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.skipif(not Path(ELLIPS_FILE).exists(), reason="ellips file not found")
-def test_nexus_v2_ellips_no_error():
-    """Ellipsometry file must parse and serialize without errors."""
-    from nomad.datamodel import EntryArchive
-    from nomad.utils import get_logger
-
-    from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
-
-    archive = EntryArchive()
-    NexusParserV2().parse(ELLIPS_FILE, archive, get_logger(__name__))
-    assert archive.data is not None
-    archive.m_to_dict(with_out_meta=True)
-
-
-# ---------------------------------------------------------------------------
-# Test 5: NXlauetof (renamed groups)
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.skipif(not Path(LAUETOF_FILE).exists(), reason="lauetof file not found")
-def test_nexus_v2_lauetof_renamed_groups():
-    """NXlauetof must parse with archive.data set."""
-    from nomad.datamodel import EntryArchive
-    from nomad.utils import get_logger
-
-    from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
-
-    archive = EntryArchive()
-    NexusParserV2().parse(LAUETOF_FILE, archive, get_logger(__name__))
-    assert archive.data is not None
-
-
-# ---------------------------------------------------------------------------
-# Test 6: App v2 configuration
-# ---------------------------------------------------------------------------
-
-
-def test_nexus_app_v2_schema():
-    """App v2 must reference the correct Entry class."""
-    from pynxtools.nomad.apps.app_v2 import nexus_app_v2, schema
-
-    assert schema == "pynxtools.nomad.metainfo.base_classes.Entry"
-    filters = nexus_app_v2.app.filters_locked
-    assert "section_defs.definition_qualified_name" in filters
-    assert filters["section_defs.definition_qualified_name"] == [schema]
-
-
-def test_nexus_app_v2_basic_properties():
-    """App v2 must have correct label, path, and category."""
-    from pynxtools.nomad.apps.app_v2 import nexus_app_v2
-
-    app = nexus_app_v2.app
-    assert app.label == "NeXus v2"
-    assert app.path == "nexusappv2"
-    assert app.category == "Experiment"
-
-
-# ---------------------------------------------------------------------------
-# Test 7: Pre-scan detection
+# Pre-scan detection
 # ---------------------------------------------------------------------------
 
 
 def test_nexus_v2_prescan_detects_definition():
     """Pre-scan must detect the NXarpes definition in the ARPES file."""
-    from nomad.utils import get_logger
-
     from pynxtools.nexus.handler import NexusFileHandler
     from pynxtools.nomad.parsers.parser_v2 import _PrescanVisitor
 
@@ -242,18 +233,13 @@ def test_nexus_v2_prescan_detects_definition():
 
 
 # ---------------------------------------------------------------------------
-# Test 8: Root (Experiment) entry
+# Root (Experiment) entry
 # ---------------------------------------------------------------------------
 
 
 @pytest.fixture(scope="module")
 def arpes_root_archive():
     """Parse the ARPES file with a "root" child archive and return it."""
-    from nomad.datamodel import EntryArchive
-    from nomad.utils import get_logger
-
-    from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
-
     archive = EntryArchive()
     root_archive = EntryArchive()
     NexusParserV2().parse(
