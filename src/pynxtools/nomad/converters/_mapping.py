@@ -141,6 +141,10 @@ BASESECTIONS_MAP: dict[str, list[str]] = {
         "nomad.datamodel.metainfo.basesections.Measurement",
         "nomad.datamodel.data.EntryData",
     ],
+    "NXroot": [
+        "nomad.datamodel.metainfo.basesections.Experiment",
+        "nomad.datamodel.data.EntryData",
+    ],
     "NXprocess": ["nomad.datamodel.metainfo.basesections.ActivityStep"],
     "NXsample": ["nomad.datamodel.metainfo.basesections.CompositeSystem"],
     "NXsample_component": ["nomad.datamodel.metainfo.basesections.Component"],
