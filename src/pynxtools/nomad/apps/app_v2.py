@@ -18,9 +18,8 @@
 """
 NeXus App v2 — backed by the Phase 2 generated Python metainfo (NexusParserV2).
 
-Near-identical to nexus_app but references Root from the generated base_classes
-package. Column paths use new archive structure (no __field suffix, lowercase
-group names). Refine search paths incrementally against a running NOMAD.
+Column paths use new archive structure (no __field suffix, lowercase
+group names).
 """
 
 try:
@@ -40,55 +39,50 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-schema = "pynxtools.nomad.metainfo.base_classes.entry.Entry"
+schema = "pynxtools.nomad.metainfo.base_classes.Entry"
 
 nexus_app_v2 = AppEntryPoint(
-    name="NeXus App v2",
-    description="NeXus app backed by generated Python metainfo (Phase 3 parser).",
+    name="NeXus App",
+    description="NeXus app backed by generated Python metainfo.",
     app=App(
         label="NeXus v2",
         path="nexusappv2",
         category="Experiment",
-        description="Search app for NeXus data parsed by the Phase 3 annotation-based parser.",
+        description="Search app for NeXus data parsed by the annotation-based parser.",
         readme=(
             "Searches NeXus entries parsed using the generated Python metainfo classes "
-            "(nexus_parser_v2). Uses new archive structure: no __field suffix on quantity "
-            "names, lowercase group names."
+            "(nexus_parser_v2)."
         ),
         search_quantities=SearchQuantities(
             include=[f"*#{schema}"],
         ),
         columns=[
             Column(title="Entry ID", search_quantity="entry_id", selected=True),
+            Column(title="Entry Name", search_quantity="entry_name", selected=True),
             Column(title="File Name", search_quantity="mainfile", selected=True),
             Column(
                 title="Start Time",
-                search_quantity=f"data.entry[*].start_time#{schema}",
-                selected=True,
-            ),
-            Column(
-                title="Description",
-                search_quantity=f"data.entry[*].experiment_description#{schema}",
+                search_quantity=f"data.start_time#{schema}",
                 selected=True,
             ),
             Column(
                 title="Author",
-                search_quantity=f"data.entry[*].user[*].name_quantity#{schema}",
+                search_quantity=f"data.user[*].name_quantity#{schema}",
                 selected=True,
             ),
             Column(
                 title="Sample",
-                search_quantity=f"data.entry[*].sample[*].name_quantity#{schema}",
+                search_quantity=f"data.sample[*].name_quantity#{schema}",
                 selected=True,
             ),
             Column(
                 title="Sample ID",
-                search_quantity=f"data.entry[*].sample[*].identifierNAME#{schema}",
+                search_quantity=f"data.sample[*].identifierNAME#{schema}",
                 selected=False,
             ),
             Column(
                 title="Definition",
-                search_quantity=f"data.entry[*].definition#{schema}",
+                search_quantity=f"data.definition#{schema}",
                 selected=True,
             ),
         ],
@@ -139,7 +133,7 @@ nexus_app_v2 = AppEntryPoint(
                         ),
                         MenuItemTerms(
                             title="NeXus Class",
-                            search_quantity=f"data.entry.definition#{schema}",
+                            search_quantity=f"data.definition#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -151,13 +145,13 @@ nexus_app_v2 = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Name",
-                            search_quantity=f"data.entry.instrument.name_quantity#{schema}",
+                            search_quantity=f"data.instrument.name_quantity#{schema}",
                             width=12,
                             options=12,
                         ),
                         MenuItemTerms(
                             title="Short Name",
-                            search_quantity=f"data.entry.instrument.name_quantity__short_name#{schema}",
+                            search_quantity=f"data.instrument.name_quantity__short_name#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -169,13 +163,13 @@ nexus_app_v2 = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Name",
-                            search_quantity=f"data.entry.sample.name_quantity#{schema}",
+                            search_quantity=f"data.sample.name_quantity#{schema}",
                             width=12,
                             options=12,
                         ),
                         MenuItemTerms(
                             title="Sample ID",
-                            search_quantity=f"data.entry.sample.identifierNAME#{schema}",
+                            search_quantity=f"data.sample.identifierNAME#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -187,7 +181,7 @@ nexus_app_v2 = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Entry Author",
-                            search_quantity=f"data.entry.user.name_quantity#{schema}",
+                            search_quantity=f"data.user.name_quantity#{schema}",
                             width=12,
                             options=5,
                         ),
@@ -199,7 +193,7 @@ nexus_app_v2 = AppEntryPoint(
                         ),
                         MenuItemTerms(
                             title="Affiliation",
-                            search_quantity=f"data.entry.user.affiliation#{schema}",
+                            search_quantity=f"data.user.affiliation#{schema}",
                             width=12,
                             options=5,
                         ),
@@ -207,7 +201,7 @@ nexus_app_v2 = AppEntryPoint(
                 ),
                 MenuItemHistogram(
                     title="Start Time",
-                    x=f"data.entry.start_time#{schema}",
+                    x=f"data.start_time#{schema}",
                     autorange=True,
                 ),
                 MenuItemHistogram(
@@ -249,7 +243,7 @@ nexus_app_v2 = AppEntryPoint(
                     "type": "terms",
                     "show_input": True,
                     "scale": "linear",
-                    "quantity": f"data.entry.definition#{schema}",
+                    "quantity": f"data.definition#{schema}",
                     "title": "NeXus Class",
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 0},
@@ -263,7 +257,7 @@ nexus_app_v2 = AppEntryPoint(
                     "type": "terms",
                     "show_input": True,
                     "scale": "linear",
-                    "quantity": f"data.entry.user.name_quantity#{schema}",
+                    "quantity": f"data.user.name_quantity#{schema}",
                     "title": "Author",
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 4},
@@ -277,7 +271,7 @@ nexus_app_v2 = AppEntryPoint(
                     "type": "terms",
                     "show_input": True,
                     "scale": "linear",
-                    "quantity": f"data.entry.sample.name_quantity#{schema}",
+                    "quantity": f"data.sample.name_quantity#{schema}",
                     "title": "Sample",
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 8},
