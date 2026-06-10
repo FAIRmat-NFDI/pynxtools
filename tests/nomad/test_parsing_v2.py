@@ -104,8 +104,14 @@ def test_nexus_v2_arpes_serialization(arpes_archive):
 
 
 def test_nexus_v2_arpes_entry_type(arpes_archive):
-    """entry_type metadata must mention NXarpes."""
-    assert "NXarpes" in (arpes_archive.metadata.entry_type or "")
+    """entry_type is the Python class name (Arpes if app loaded, Entry as fallback)."""
+    entry_type = arpes_archive.metadata.entry_type or ""
+    assert entry_type in ("Arpes", "Entry"), f"Unexpected entry_type: {entry_type}"
+
+
+def test_nexus_v2_arpes_metadata_entry_name(arpes_archive):
+    """entry_name is "{file stem} - {HDF5 NXentry group name}", not just "entry"."""
+    assert arpes_archive.metadata.entry_name == "201805_WSe2_arpes - entry"
 
 
 # ---------------------------------------------------------------------------
@@ -202,7 +208,7 @@ def test_nexus_app_v2_schema():
     """App v2 must reference the correct Entry class."""
     from pynxtools.nomad.apps.app_v2 import nexus_app_v2, schema
 
-    assert schema == "pynxtools.nomad.metainfo.base_classes.entry.Entry"
+    assert schema == "pynxtools.nomad.metainfo.base_classes.Entry"
     filters = nexus_app_v2.app.filters_locked
     assert "section_defs.definition_qualified_name" in filters
     assert filters["section_defs.definition_qualified_name"] == [schema]
@@ -233,3 +239,49 @@ def test_nexus_v2_prescan_detects_definition():
     prescan = _PrescanVisitor()
     NexusFileHandler(ARPES_FILE).prescan(prescan)
     assert prescan.entry_definitions == {"entry": "NXarpes"}
+
+
+# ---------------------------------------------------------------------------
+# Test 8: Root (Experiment) entry
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def arpes_root_archive():
+    """Parse the ARPES file with a "root" child archive and return it."""
+    from nomad.datamodel import EntryArchive
+    from nomad.utils import get_logger
+
+    from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
+
+    archive = EntryArchive()
+    root_archive = EntryArchive()
+    NexusParserV2().parse(
+        ARPES_FILE,
+        archive,
+        get_logger(__name__),
+        child_archives={"root": root_archive},
+    )
+    return root_archive
+
+
+def test_nexus_v2_root_archive_data_is_root(arpes_root_archive):
+    """The "root" child archive must hold a Root instance grouping all NXentries."""
+    from pynxtools.nomad.metainfo.base_classes.root import Root
+
+    assert isinstance(arpes_root_archive.data, Root)
+    assert arpes_root_archive.data.m_entry_paths == ["entry"]
+
+
+def test_nexus_v2_root_archive_metadata(arpes_root_archive):
+    """Root archive metadata must use the file-grouping naming convention."""
+    assert arpes_root_archive.metadata.entry_name == "201805_WSe2_arpes (NeXus file)"
+    assert arpes_root_archive.results.eln.methods == ["Arpes"]
+
+
+def test_nexus_v2_root_nxroot_attributes(arpes_root_archive):
+    """NXroot HDF5 group attributes (file_name, HDF5_Version, ...) must be parsed."""
+    root = arpes_root_archive.data
+    assert root.file_name == "/home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs"
+    assert root.HDF5_Version == "1.10.5"
+    assert root.file_time is not None
