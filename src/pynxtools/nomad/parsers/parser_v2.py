@@ -33,33 +33,36 @@ Key differences from parser_v1:
 from __future__ import annotations
 
 import json
+import os
 from collections import defaultdict
 from typing import Any
 
 import h5py
 import numpy as np
 
-from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
-from pynxtools.nexus.nexus_tree import NexusNode
-from pynxtools.nexus.schema_resolver import NexusSchemaResolver
-from pynxtools.nomad.parsers._field_io import extract_iuf_scalar, get_field_str
-from pynxtools.units import ureg
-
 try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.results import Material, Results
-    from nomad.metainfo import MSection, SubSection
+    from nomad.datamodel.results import ELN, Material, Results
+    from nomad.metainfo import MSection, Package, SubSection
     from nomad.metainfo.util import MQuantity
     from nomad.parsing import MatchingParser
     from nomad.utils import get_logger
     from pint.errors import UndefinedUnitError
+
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
+from pynxtools.nexus.nexus_tree import NexusNode
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver
+from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.root import Root
+from pynxtools.nomad.parsers._field_io import extract_iuf_scalar, get_field_str
+from pynxtools.units import ureg
 
 # ---------------------------------------------------------------------------
 # _SectionIndex: per-Section-class annotation lookup table
@@ -85,7 +88,7 @@ class _SectionIndex:
     Attribute coverage (set in ``__init__``):
 
     ``nx_class_to_subsections``: dict[str, list[tuple]]
-        Maps NX class string → list of ``(python_name, SubSection, NeXusGroup)`` candidates,
+        Maps NX_class string → list of ``(python_name, SubSection, NeXusGroup)`` candidates,
         sorted by name specificity: "specified" (exact HDF5 name) first, then "partial"
         (prefix match), then "any" (wildcard).  Used by ``find_subsection()``.
 
@@ -155,7 +158,7 @@ class _SectionIndex:
         }
         self.choice_subsections = choice_map
 
-        for qty_name, qty in section_cls.m_def.all_quantities.items():
+        for qty in section_cls.m_def.all_quantities.values():
             field_annotation = qty.m_get_annotations("nexus_field")
             attr_annotation = qty.m_get_annotations("nexus_attribute")
             link_annotation = qty.m_get_annotations("nexus_link")
@@ -205,7 +208,7 @@ class _SectionIndex:
 
 
 # ---------------------------------------------------------------------------
-# Application index: NX class → Python class for all application definitions
+# Application index: NX_class → Python class for all application definitions
 # ---------------------------------------------------------------------------
 
 # Indexed on first parse from the nexus_applications Package (the authoritative
@@ -215,10 +218,10 @@ class _SectionIndex:
 #
 # Keys:   NXDL nx_class string, e.g. "NXarpes"
 # Values: the generated Python class, e.g. Arpes
-# NX class → Python class indexes built once from NOMAD's Package.registry.
+# NX_class → Python class indexes built once from NOMAD's Package.registry.
 # Any NOMAD package loaded via entry points that contains nexus_definition
-# sections is included — package names are NOT hardcoded.
-# In NOMAD context all nexus packages are already in the registry when the
+# sections is included.
+# In NOMAD context all NeXus packages are already in the registry when the
 # parser runs (loaded via the nexus_base_classes / nexus_applications entry
 # points configured in nomad.yaml).
 _APP_INDEX: dict[str, type] | None = None
@@ -232,7 +235,6 @@ def _build_nx_class_index() -> tuple[dict[str, type], dict[str, type | None]]:
         app_index: nx_class → Python class for application/contributed sections
         base_index: nx_class → Python class for ALL sections with nexus_definition
     """
-    from nomad.metainfo.metainfo import Package
 
     app_index: dict[str, type] = {}
     base_index: dict[str, type | None] = {}
@@ -336,7 +338,7 @@ class NomadVisitorV2(NexusVisitor):
     runs ``NexusFileHandler.process(visitor)`` for each one.
 
     Nodes that are not under the ``target_entry_name`` subtree are silently
-    skipped — this follows the same pattern as ``ValidationVisitor``.
+    skipped.
 
     ``archive.data`` is set to the application class (e.g. ``Arpes``) or the
     generic ``Entry`` fallback when the NXentry group is first encountered.
@@ -392,7 +394,11 @@ class NomadVisitorV2(NexusVisitor):
         All deeper groups are resolved via _SectionIndex by their NX_class.
         """
         if hdf_path == "":
-            return  # HDF5 root: no NOMAD section in v2
+            if self._target_entry_name == "":
+                # Root visitor: populate Root() with the NXroot group's own
+                # attributes (file_name, creator, NeXus_version, ...).
+                self._sections[hdf_path] = self._create_root_section()
+            return
 
         group_name = hdf_path.rsplit("/", 1)[-1]
         parent_path = hdf_path.rsplit("/", 1)[0] if "/" in hdf_path else ""
@@ -541,14 +547,18 @@ class NomadVisitorV2(NexusVisitor):
             else None
         )
         if entry_cls is None:
-            from pynxtools.nomad.metainfo.base_classes.entry import Entry
-
             entry_cls = Entry
 
         new_entry = entry_cls()
         new_entry.__dict__["nx_name"] = self._target_entry_name
         self._archive.data = new_entry  # type: ignore[assignment]
         return new_entry
+
+    def _create_root_section(self) -> MSection:
+        """Create the Root section and set as archive.data (root visitor only)."""
+        root_section = Root()
+        self._archive.data = root_section  # type: ignore[assignment]
+        return root_section
 
     def _resolve_or_create_group(
         self,
@@ -798,7 +808,7 @@ class NomadVisitorV2(NexusVisitor):
 
 
 def _get_base_cls(nx_class: str) -> type | None:
-    """Return the generated Python class for a given NX class string.
+    """Return the generated Python class for a given NX_class string.
 
     Looks up the class from NOMAD's loaded Package registry — no module
     imports or filesystem scanning.  Both indexes are built in one pass by
@@ -872,7 +882,7 @@ class NexusParserV2(MatchingParser):
         decoded_buffer: str,
         compression: str | None = None,
     ) -> bool | list[str]:
-        """Return True for single-NXentry files; list of child keys for multi-entry."""
+        """Return list of child keys for every NeXus file (always includes 'root')."""
         if not super().is_mainfile(filename, mime, buffer, decoded_buffer, compression):
             return False
 
@@ -883,11 +893,12 @@ class NexusParserV2(MatchingParser):
         except Exception:
             return True
 
-        if len(entry_names) <= 1:
+        if len(entry_names) == 0:
             return True
 
-        # First entry → main archive; remaining → child archives
-        return entry_names[1:]
+        # First entry → main archive; remaining entries + "root" → child archives.
+        # "root" is always added so every NeXus file gets a grouping Root entry.
+        return entry_names[1:] + ["root"]
 
     def parse(
         self,
@@ -942,7 +953,25 @@ class NexusParserV2(MatchingParser):
 
             self._set_entry_metadata(entry_archive, entry_name, defn, nxs_fname)
 
-        # Chemical formula normalization uses the first entry's refs
+        # Create one Root (Experiment) archive per file that links all NXentry archives.
+        if "root" in child_archives:
+            root_archive = child_archives["root"]
+            root_visitor = NomadVisitorV2(
+                archive=root_archive,
+                target_entry_name="",
+                entry_definition=None,
+                nxs_fname=nxs_fname,
+                logger=logger,
+            )
+            handler.process(root_visitor)
+            self._create_root_entry(
+                root_archive,
+                entry_names,
+                prescan.entry_definitions,
+                nxs_fname,
+            )
+
+        # Chemical formula normalization
         self._normalize_results(archive, all_sample_refs)
 
     def _set_entry_metadata(
@@ -954,15 +983,57 @@ class NexusParserV2(MatchingParser):
     ) -> None:
         if archive.metadata is None:
             archive.metadata = EntryMetadata()
-        # Entry name = HDF5 NXentry group name (e.g. "entry", "entry1")
+        # Entry name = "{file stem} - {HDF5 NXentry group name}", e.g.
+        # "201805_WSe2_arpes - entry". The raw HDF5 group name alone (often just
+        # "entry"/"entry1") is identical across countless NeXus files and would
+        # make NOMAD's entry list unreadable.
         if archive.metadata.entry_name is None:
-            archive.metadata.entry_name = entry_name
+            file_stem = os.path.splitext(os.path.basename(nxs_fname))[0]
+            archive.metadata.entry_name = f"{file_stem} - {entry_name}"
         # Entry type = Python class name (e.g. "Arpes", "Xps")
         if archive.metadata.entry_type is None:
             cls_name = type(archive.data).__name__ if archive.data is not None else None
             archive.metadata.entry_type = cls_name or (entry_definition or "NeXus")
         archive.metadata.domain = "nexus"
         archive.metadata.readonly = True
+
+    def _create_root_entry(
+        self,
+        root_archive: EntryArchive,
+        entry_names: list[str],
+        entry_definitions: dict[str, str | None],
+        nxs_fname: str,
+    ) -> None:
+        """Populate the Root (Experiment) archive that groups all NXentries from this file."""
+
+        # NomadVisitorV2 (target_entry_name="") already set root_archive.data to a
+        # Root() populated with the NXroot HDF5 group's own attributes (file_name,
+        # creator, NeXus_version, ...); reuse it instead of overwriting.
+        root = root_archive.data if isinstance(root_archive.data, Root) else Root()
+        root.m_entry_paths = list(entry_names)
+        root_archive.data = root  # type: ignore[assignment]
+
+        if root_archive.metadata is None:
+            root_archive.metadata = EntryMetadata()
+        file_stem = os.path.splitext(os.path.basename(nxs_fname))[0]
+        root_archive.metadata.entry_name = f"{file_stem} (NeXus file)"
+        root_archive.metadata.entry_type = "Experiment"
+        root_archive.metadata.domain = "nexus"
+        root_archive.metadata.readonly = True
+
+        # Populate results.eln.methods with unique application class names.
+        # Convert "NXxps" → "Xps" using the same nxdl_to_class_name() used by the generator.
+        from pynxtools.nomad.converters._mapping import nxdl_to_class_name
+
+        methods = sorted(
+            {nxdl_to_class_name(d) for d in entry_definitions.values() if d is not None}
+        )
+        if methods:
+            if root_archive.results is None:
+                root_archive.results = Results()
+            if root_archive.results.eln is None:
+                root_archive.results.eln = ELN()
+            root_archive.results.eln.methods = methods
 
     def _normalize_results(
         self, archive: EntryArchive, sample_refs: dict[str, list]
