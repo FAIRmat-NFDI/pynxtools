@@ -953,6 +953,9 @@ class NexusParserV2(MatchingParser):
 
             self._set_entry_metadata(entry_archive, entry_name, defn, nxs_fname)
 
+            # Chemical formula normalization
+            self._normalize_results(entry_archive, visitor.sample_class_refs)
+
         # Create one Root (Experiment) archive per file that links all NXentry archives.
         if "root" in child_archives:
             root_archive = child_archives["root"]
@@ -970,9 +973,8 @@ class NexusParserV2(MatchingParser):
                 prescan.entry_definitions,
                 nxs_fname,
             )
-
-        # Chemical formula normalization
-        self._normalize_results(archive, all_sample_refs)
+            # Chemical formula normalization across all sub-entries
+            self._normalize_results(root_archive, all_sample_refs)
 
     def _set_entry_metadata(
         self,
