@@ -642,6 +642,7 @@ def _build_named_concept(
     module_name: str | None = None,
     category: str | None = None,
     seen_concept: set[str] | None = None,
+    naming_base: str | None = None,
 ) -> tuple[NamedConceptContext, list[NamedConceptContext]]:
     """Build a NamedConceptContext for a group occurrence.
 
@@ -661,8 +662,17 @@ def _build_named_concept(
     second element of the result tuple and must be added to the file's
     named-concept list by the caller. ``seen_concept`` is shared across the
     whole recursion to avoid name collisions between nested concepts.
+
+    ``naming_base`` is the prefix used to derive nested concept names from
+    (defaults to ``concept_class_name``). It differs from
+    ``concept_class_name`` only when this concept itself was re-prefixed to
+    avoid circular inheritance (e.g. ``EmEmMeasurement(EmMeasurement)``):
+    nested concepts are named from the un-doubled ``EmMeasurement`` (giving
+    ``EmMeasurementInstrument``, not ``EmEmMeasurementInstrument``), since
+    they have no analogous collision with their own base class.
     """
     _seen_concept = seen_concept if seen_concept is not None else set()
+    _naming_base = naming_base if naming_base is not None else concept_class_name
     nx_name_type = node.name_type or "specified"
     variable = nx_name_type in ("any", "partial")
 
@@ -801,11 +811,10 @@ def _build_named_concept(
         # for a collision, nothing — the inherited SubSection already applies).
         sub_section: SubSectionContext | None = None
         if module_name is not None and category is not None:
-            child_concept_name = _concept_class_name(concept_class_name, child)
+            child_naming_base = _concept_class_name(_naming_base, child)
+            child_concept_name = child_naming_base
             if child_concept_name == nxdl_to_class_name(child.nx_class):
-                child_concept_name = concept_class_name + nxdl_to_class_name(
-                    child.nx_class
-                )
+                child_concept_name = _naming_base + nxdl_to_class_name(child.nx_class)
             if child_concept_name not in _seen_concept:
                 _seen_concept.add(child_concept_name)
                 nested_concept, nested_extra = _build_named_concept(
@@ -814,6 +823,7 @@ def _build_named_concept(
                     module_name=module_name,
                     category=category,
                     seen_concept=_seen_concept,
+                    naming_base=child_naming_base,
                 )
                 if (
                     nested_concept.quantities
@@ -1346,6 +1356,10 @@ def build_context(nx_name: str) -> dict:
             # Disambiguate by re-prefixing with the full type-based name.
             # e.g. NXapm.measurement (type NXapm_measurement):
             #   concept "ApmMeasurement" == base "ApmMeasurement" → "ApmApmMeasurement"
+            # Nested concepts are named from the un-doubled name (_naming_base):
+            # ApmApmMeasurement's "instrument" child becomes
+            # "ApmMeasurementInstrument", not "ApmApmMeasurementInstrument".
+            _naming_base = concept_name
             if concept_name == nxdl_to_class_name(child.nx_class):
                 concept_name = class_name + nxdl_to_class_name(child.nx_class)
 
@@ -1386,6 +1400,7 @@ def build_context(nx_name: str) -> dict:
                 module_name=parent_module,
                 category=_parent_category,
                 seen_concept=seen_concept,
+                naming_base=_naming_base,
             )
 
             if concept.quantities or concept.links or concept.subsections:
