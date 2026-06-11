@@ -173,6 +173,7 @@ class MicrostructureIpf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-projection-direction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[3],
         description=(
             "The direction normal vector along which orientations are projected."
@@ -275,6 +276,7 @@ class MicrostructureIpfMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-data-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Inverse pole figure color code for each map coordinate. Different "
             "types of AXISNAME dimensional scale axes are found in practice. A "
@@ -313,6 +315,7 @@ class MicrostructureIpfMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-axis-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Pixel center coordinate calibrated for step size along the z axis "
@@ -332,6 +335,7 @@ class MicrostructureIpfMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-axis-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Pixel center coordinate calibrated for step size along the y axis "
@@ -351,6 +355,7 @@ class MicrostructureIpfMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-axis-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Pixel center coordinate calibrated for step size along the x axis "
@@ -426,6 +431,7 @@ class MicrostructureIpfLegend(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-legend-axis-y-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Pixel along the y-axis."),
         a_nexus_field=NeXusField(
@@ -442,6 +448,7 @@ class MicrostructureIpfLegend(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-legend-axis-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Pixel along the x-axis."),
         a_nexus_field=NeXusField(

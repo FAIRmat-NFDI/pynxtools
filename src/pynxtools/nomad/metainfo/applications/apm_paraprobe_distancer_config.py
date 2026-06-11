@@ -168,6 +168,7 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-threshold-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Maximum distance for which distances are computed when *method* is *skin*."
         ),
@@ -185,6 +186,7 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-number-of-triangle-sets-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many triangle sets to consider. Multiple triangle sets can be "
             "defined which are composed into one joint triangle set for the "

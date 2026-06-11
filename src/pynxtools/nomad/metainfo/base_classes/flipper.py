@@ -79,6 +79,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-flip-turns-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Linear density of turns (such as number of turns/cm) in flipping "
             "field coils"
@@ -97,6 +98,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-comp-turns-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Linear density of turns (such as number of turns/cm) in "
             "compensating field coils"
@@ -115,6 +117,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-guide-turns-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Linear density of turns (such as number of turns/cm) in guide field coils"
         ),
@@ -132,6 +135,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-flip-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=('Flipping field coil current in "on" state"'),
         a_nexus_field=NeXusField(
             name="flip_current",
@@ -147,6 +151,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-comp-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=('Compensating field coil current in "on" state"'),
         a_nexus_field=NeXusField(
             name="comp_current",
@@ -162,6 +167,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-guide-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=('Guide field coil current in "on" state'),
         a_nexus_field=NeXusField(
             name="guide_current",
@@ -177,6 +183,7 @@ class Flipper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXflipper.html#nxflipper-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("thickness along path of neutron travel"),
         a_nexus_field=NeXusField(
             name="thickness",

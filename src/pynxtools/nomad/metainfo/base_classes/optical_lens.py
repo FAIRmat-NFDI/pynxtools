@@ -132,6 +132,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-lens-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Diameter of the lens."),
         a_nexus_field=NeXusField(
             name="lens_diameter",
@@ -147,6 +148,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-reflectance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Reflectance of the lens at given spectral values."),
         a_nexus_field=NeXusField(
@@ -163,6 +165,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Transmission of the lens at given spectral values."),
         a_nexus_field=NeXusField(
@@ -179,6 +182,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-focal-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=(
             "Focal length of the lens on the front side (first value), i.e. "
@@ -199,6 +203,7 @@ class OpticalLens(Component):
         ],
         variable=True,
         dimensionality="[length]",
+        unit="m",
         description=(
             "Curvature radius of the lens. Instead of 'FACE' in the name of this "
             "field, the user is advised to specify for which surface (e.g. front "
@@ -221,6 +226,7 @@ class OpticalLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-abbe-number-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Abbe number (or V-number) of the lens."),
         a_nexus_field=NeXusField(
             name="Abbe_number",
@@ -307,6 +313,7 @@ class OpticalLensSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-substrate-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the lens substrate at the optical axis."),
         a_nexus_field=NeXusField(
             name="substrate_thickness",
@@ -322,6 +329,7 @@ class OpticalLensSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-substrate-index-of-refraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the lens material. Specify at given "
@@ -399,6 +407,7 @@ class OpticalLensSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-coating-coating-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the coating."),
         a_nexus_field=NeXusField(
             name="coating_thickness",
@@ -414,6 +423,7 @@ class OpticalLensSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-coating-index-of-refraction-coating-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "

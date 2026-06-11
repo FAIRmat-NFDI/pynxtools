@@ -274,6 +274,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-ion-query-nuclide-vector-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Matrix of nuclide vectors, as many as rows as different candidates "
@@ -356,6 +357,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDDbscan(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-eps-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Array of epsilon (eps) parameter values."),
         a_nexus_field=NeXusField(
@@ -372,6 +374,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDDbscan(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-min-pts-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Array of minimum points (min_pts) parameter values."),
         a_nexus_field=NeXusField(

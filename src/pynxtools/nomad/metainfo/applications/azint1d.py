@@ -283,6 +283,7 @@ class Azint1dInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-instrument-monochromator-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="angstrom",
         description=("Wavelength in angstrom."),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -298,6 +299,7 @@ class Azint1dInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-instrument-monochromator-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="keV",
         description=("Energy in keV."),
         a_nexus_field=NeXusField(
             name="energy",

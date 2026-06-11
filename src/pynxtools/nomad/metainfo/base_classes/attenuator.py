@@ -85,6 +85,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance from sample. Note, it is recommended to use "
             "NXtransformations instead."
@@ -116,6 +117,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of attenuator along beam direction"),
         a_nexus_field=NeXusField(
             name="thickness",
@@ -131,6 +133,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-scattering-cross-section-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         description=("Scattering cross section (coherent+incoherent)"),
         a_nexus_field=NeXusField(
             name="scattering_cross_section",
@@ -146,6 +149,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-absorption-cross-section-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         description=("Absorption cross section"),
         a_nexus_field=NeXusField(
             name="absorption_cross_section",
@@ -161,6 +165,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-attenuator-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The nominal amount of the beam that gets through (transmitted "
             "intensity)/(incident intensity)"

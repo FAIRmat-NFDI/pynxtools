@@ -113,6 +113,7 @@ class SpmPiezoSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_sensor.html#nxspm_piezo_sensor-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The x position (e.g., target or averaged target value) of the piezo."
         ),
@@ -130,6 +131,7 @@ class SpmPiezoSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_sensor.html#nxspm_piezo_sensor-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The y position (e.g., target or averaged target value) of the piezo."
         ),
@@ -147,6 +149,7 @@ class SpmPiezoSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_sensor.html#nxspm_piezo_sensor-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The z position (e.g., target or averaged target value) of the piezo."
         ),
@@ -165,6 +168,7 @@ class SpmPiezoSensor(Sensor):
         ],
         variable=True,
         dimensionality="[length]",
+        unit="m",
         description=(
             "The offset value for the piezo axis (X, Y, or Z) that will be added "
             "to the measured value."

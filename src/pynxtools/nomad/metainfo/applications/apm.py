@@ -492,6 +492,7 @@ class Apm(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-run-number-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The identifier whereby the experiment is referred to in the control "
             "software. It is common practice in atom probe research to refer to "
@@ -616,6 +617,7 @@ class Apm(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "How long did the measurement take e.g. use "
             "CRunHeader.CAnalysis.fElapsedTime"
@@ -1137,6 +1139,7 @@ class ApmSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-grain-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Qualitative information about the grain size, here specifically "
             "described as the equivalent spherical diameter of an assumed "
@@ -1160,6 +1163,7 @@ class ApmSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-grain-diameter-errors-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Magnitude of the standard deviation of the grain_diameter."),
         a_nexus_field=NeXusField(
             name="grain_diameter_errors",
@@ -1175,6 +1179,7 @@ class ApmSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-heat-treatment-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "An array of elapsed time, the independent axis, of a "
             "time-temperature curve. This field can be used in combination with "
@@ -1199,6 +1204,7 @@ class ApmSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-heat-treatment-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "If heat_treatment_time is absent, the temperature of the last heat "
             "treatment step before quenching. Knowledge about this value can "
@@ -1223,6 +1229,7 @@ class ApmSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-heat-treatment-temperature-errors-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "Magnitude of the standard deviation of the "
             "heat_treatment_temperature. If heat_treatment_time is provided, the "
@@ -1372,6 +1379,7 @@ class ApmSampleChemicalCompositionAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-composition-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="composition",
             type="NX_FLOAT",
@@ -1386,6 +1394,7 @@ class ApmSampleChemicalCompositionAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-composition-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="composition_errors",
             type="NX_FLOAT",
@@ -1564,6 +1573,7 @@ class ApmSpecimen(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-specimen-initial-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Ideally measured otherwise best elaborated guess of the initial "
             "radius of the specimen."
@@ -1582,6 +1592,7 @@ class ApmSpecimen(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-specimen-shank-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Ideally measured, otherwise best estimate, of the initial shank "
             "angle. This is a measure of the specimen taper. Define it in such a "
@@ -1861,6 +1872,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -1888,6 +1900,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -1915,6 +1928,7 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -2438,6 +2452,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-flight-path-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="flight_path",
             type="NX_FLOAT",
@@ -3630,6 +3645,7 @@ class ApmApmMeasurementEventIDInstrumentReflectron(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-reflectron-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage",
             type="NX_FLOAT",
@@ -3662,6 +3678,7 @@ class ApmApmMeasurementEventIDInstrumentLocalElectrode(ElectromagneticLens):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-local-electrode-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage",
             type="NX_FLOAT",
@@ -3722,6 +3739,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         a_nexus_field=NeXusField(
             name="pulse_frequency",
             type="NX_FLOAT",
@@ -3736,6 +3754,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-fraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="pulse_fraction",
             type="NX_FLOAT",
@@ -3750,6 +3769,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_voltage",
@@ -3765,6 +3785,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-number-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_number",
@@ -3780,6 +3801,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-standing-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="standing_voltage",
@@ -3816,6 +3838,7 @@ class ApmApmMeasurementEventIDInstrumentPulserSourceID(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
@@ -3830,6 +3853,7 @@ class ApmApmMeasurementEventIDInstrumentPulserSourceID(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         a_nexus_field=NeXusField(
             name="power",
             type="NX_FLOAT",
@@ -3844,6 +3868,7 @@ class ApmApmMeasurementEventIDInstrumentPulserSourceID(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -3918,6 +3943,7 @@ class ApmApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -3992,6 +4018,7 @@ class ApmApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -7929,6 +7956,7 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -8113,6 +8141,7 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -8278,6 +8307,7 @@ class ApmAtom_probeIDRawData(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-number-of-dld-wires-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The number of delay-line-detector (DLD) wires present."),
         a_nexus_field=NeXusField(
             name="number_of_dld_wires",
@@ -8313,6 +8343,7 @@ class ApmAtom_probeIDRawData(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-arrival-time-pairs-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*", "*", 2],
         description=(
             "Raw readings from the analog-to-digital-converter timing circuits "
@@ -8532,6 +8563,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-positions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         description=(
             "Evaluated ion impact coordinates on the detector. Use the "
@@ -8569,6 +8601,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-golden-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             'Number of events of type "golden" when APSuite/IVAS was used as '
             "the software with which the measurement was performed. The value "
@@ -8589,6 +8622,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-incomplete-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             'Number of events of type "incomplete" when APSuite/IVAS was used '
             "as the software with which the measurement was performed. The value "
@@ -8609,6 +8643,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-multiple-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             'Number of events of type "multiple" when APSuite/IVAS was used as '
             "the software with which the measurement was performed. The value "
@@ -8629,6 +8664,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-partials-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             'Number of events of type "partials" when APSuite/IVAS was used as '
             "the software with which the measurement was performed. The value "
@@ -8649,6 +8685,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-record-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of events when APSuite/IVAS was used as the software with "
             "which the measurement was performed. The value can be extracted "
@@ -8695,6 +8732,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Hit quality identifier for each pulse. Identifier has to be within "
@@ -8714,6 +8752,7 @@ class ApmAtom_probeIDHitFinding(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-multiplicity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The number of ions determined to have been collected on the same "
@@ -8910,6 +8949,7 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-evaporation-id-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer which defines the first evaporation_id. Typically, this is "
             "either zero or one."
@@ -8928,6 +8968,7 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-evaporation-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "There are two possibilities to report evaporation_id values: If "
@@ -9081,6 +9122,7 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-number-of-objects-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -9095,6 +9137,7 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="bitdepth",
             type="NX_UINT",
@@ -9109,6 +9152,7 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="mask",
             type="NX_UINT",
@@ -9209,6 +9253,7 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-tof-zero-estimate-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The parameter :math:`t_0`, CAnalysis.CCalibMass.fT0Estimate"),
         a_nexus_field=NeXusField(
             name="tof_zero_estimate",
@@ -9698,6 +9743,7 @@ class ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
@@ -9808,6 +9854,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-reconstructed-positions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="reconstructed_positions",
@@ -9823,6 +9870,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         a_nexus_field=NeXusField(
             name="volume",
             type="NX_FLOAT",
@@ -9837,6 +9885,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-field-of-view-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="field_of_view",
             type="NX_FLOAT",
@@ -10068,6 +10117,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-voltage-filter-initial-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage_filter_initial",
             type="NX_FLOAT",
@@ -10082,6 +10132,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-voltage-filter-final-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage_filter_final",
             type="NX_FLOAT",
@@ -10122,6 +10173,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="efficiency",
             type="NX_FLOAT",
@@ -10136,6 +10188,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-flight-path-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="flight_path",
             type="NX_FLOAT",
@@ -10162,6 +10215,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-image-compression-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="image_compression",
             type="NX_FLOAT",
@@ -10176,6 +10230,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-kfactor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="kfactor",
             type="NX_FLOAT",
@@ -10190,6 +10245,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-shank-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="shank_angle",
             type="NX_FLOAT",
@@ -10204,6 +10260,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-ion-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         a_nexus_field=NeXusField(
             name="ion_volume",
             type="NX_FLOAT",
@@ -10814,6 +10871,7 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-n-mass-to-charge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="n_mass_to_charge",
             type="NX_POSINT",
@@ -11066,6 +11124,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The mass-resolving power (MRP) value `D. Larson et al. "
             "<https://doi.org/10.1007/978-1-4614-8721-0>`_ report Eq. D.8 in "
@@ -11110,6 +11169,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Potential difference :math:`V` at which mrp_value was specified."
         ),
@@ -11127,6 +11187,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-flight-path-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Flight path length :math:`L` at which mrp_value was specified."),
         a_nexus_field=NeXusField(
             name="mrp_flight_path_length",
@@ -11430,6 +11491,7 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-number-of-ion-types-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_ion_types",
             type="NX_UINT",
@@ -11444,6 +11506,7 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-maximum-number-of-atoms-per-molecular-ion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="maximum_number_of_atoms_per_molecular_ion",
             type="NX_UINT",
@@ -11458,6 +11521,7 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-iontypes-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The iontype identifier for each ion that was best matching; stored "
@@ -11563,6 +11627,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
@@ -11578,6 +11643,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="charge_state",
             type="NX_INT",
@@ -11606,6 +11672,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-list-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="nuclide_list",
@@ -11664,6 +11731,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-charge-state-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="charge_state",
@@ -11679,6 +11747,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
@@ -11694,6 +11763,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-mass-field"
         ],
         dimensionality="[mass]",
+        unit="kilogram",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="mass",
@@ -11709,6 +11779,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-natural-abundance-product-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="natural_abundance_product",
@@ -11724,6 +11795,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-shortest-half-life-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="shortest_half_life",
@@ -11759,6 +11831,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-nuclides-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclides",
@@ -11788,6 +11861,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-min-half-life-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="min_half_life",
             type="NX_FLOAT",
@@ -11802,6 +11876,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-min-abundance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="min_abundance",
             type="NX_FLOAT",

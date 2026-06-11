@@ -236,6 +236,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
@@ -507,6 +508,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-hexahedron-set-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -522,6 +524,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-hexahedron-set-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -536,6 +539,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-hexahedron-set-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -602,6 +606,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -617,6 +622,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -631,6 +637,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -659,6 +666,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="height",
@@ -674,6 +682,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-radii-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="radii",
@@ -709,6 +718,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -724,6 +734,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -738,6 +749,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -778,6 +790,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="orientation",
@@ -813,6 +826,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-bitmask-number-of-objects-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -827,6 +841,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-bitmask-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="bitdepth",
             type="NX_UINT",
@@ -841,6 +856,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-bitmask-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="mask",
             type="NX_UINT",
@@ -875,6 +891,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-evaporation-id-filter-min-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="min",
             type="NX_INT",
@@ -889,6 +906,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-evaporation-id-filter-increment-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="increment",
             type="NX_INT",
@@ -903,6 +921,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-evaporation-id-filter-max-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="max",
             type="NX_INT",
@@ -948,6 +967,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersIontypeFilter(MatchFilter)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-iontype-filter-match-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="match",
@@ -996,6 +1016,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersHitMultiplicityFilter(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-hit-multiplicity-filter-match-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="match",
@@ -1152,6 +1173,7 @@ class ApmParaprobeToolConfigCommonProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-common-profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_FLOAT",

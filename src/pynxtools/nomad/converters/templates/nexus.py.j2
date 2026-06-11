@@ -132,6 +132,9 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         {% if qty.dimensionality %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}
+        {% if qty.default_unit %}
+        unit="{{ qty.default_unit }}",
+        {% endif %}
         {% if qty.shape %}
         shape={{ qty.shape }},
         {% endif %}
@@ -301,6 +304,9 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% endif %}
         {% if qty.dimensionality %}
         dimensionality="{{ qty.dimensionality }}",
+        {% endif %}
+        {% if qty.default_unit %}
+        unit="{{ qty.default_unit }}",
         {% endif %}
         {% if qty.shape %}
         shape={{ qty.shape }},

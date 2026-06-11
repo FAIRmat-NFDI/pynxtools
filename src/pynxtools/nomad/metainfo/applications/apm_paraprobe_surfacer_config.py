@@ -220,6 +220,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-offset-values-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Array of offset values to use when alpha_value_choice is "
@@ -329,6 +330,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-preprocessing-kernel-width-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "When using the *percolation* preprocessing, this is the width of "
             "the kernel for identifying which ions are in voxels close to the "

@@ -468,6 +468,7 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-cell-dimensions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="cell_dimensions",
@@ -582,6 +583,7 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Crystal identifier that was assigned to each material point."),
         a_nexus_field=NeXusField(
             name="indices_crystal",
@@ -597,6 +599,7 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Material point barycenter coordinate along z direction."),
         a_nexus_field=NeXusField(
@@ -627,6 +630,7 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Material point barycenter coordinate along y direction."),
         a_nexus_field=NeXusField(
@@ -657,6 +661,7 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Material point barycenter coordinate along x direction."),
         a_nexus_field=NeXusField(
@@ -717,6 +722,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-number-of-crystals-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_crystals",
             type="NX_UINT",
@@ -731,6 +737,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-number-of-phases-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_phases",
             type="NX_UINT",
@@ -745,6 +752,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_crystal",
@@ -760,6 +768,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-indices-phase-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_phase",
@@ -775,6 +784,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="area",
@@ -790,6 +800,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="volume",
@@ -805,6 +816,7 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-bunge-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=("Bunge-Euler angle orientation of each crystal."),
         a_nexus_field=NeXusField(

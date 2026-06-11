@@ -181,6 +181,7 @@ class XkappaInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("The polar_angle (two theta) at each scan point"),
         a_nexus_field=NeXusField(
@@ -215,6 +216,7 @@ class XkappaSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the sample rotation angle at each scan point"
@@ -233,6 +235,7 @@ class XkappaSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-kappa-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("This is an array holding the kappa angle at each scan point"),
         a_nexus_field=NeXusField(
@@ -249,6 +252,7 @@ class XkappaSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("This is an array holding the phi angle at each scan point"),
         a_nexus_field=NeXusField(
@@ -265,6 +269,7 @@ class XkappaSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-alpha-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("This holds the inclination angle of the kappa arm."),
         a_nexus_field=NeXusField(
             name="alpha",

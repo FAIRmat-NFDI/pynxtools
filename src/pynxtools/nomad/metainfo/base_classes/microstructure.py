@@ -387,6 +387,7 @@ class Microstructure(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Measured or simulated physical time stamp for this microstructure "
             "snapshot. Not to be confused with wall-clock timing or profiling "
@@ -406,6 +407,7 @@ class Microstructure(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-iteration-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Iteration or increment counter."),
         a_nexus_field=NeXusField(
             name="iteration",
@@ -453,6 +455,7 @@ class MicrostructureConfiguration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-configuration-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Dimensionality of Euclidean space in which the analysis is "
             "performed. This field can be used e.g. by a research data "
@@ -508,6 +511,7 @@ class MicrostructureConfiguration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-configuration-disorientation-threshold-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Threshold to define at which disorientation angle to assume two "
             "crystalline regions have a significant orientation difference that "
@@ -563,6 +567,7 @@ class MicrostructurePhases(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-phases-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("First identifier whereby to identify phases implicitly."),
         a_nexus_field=NeXusField(
             name="index_offset",
@@ -646,6 +651,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-number-of-crystals-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many crystals are distinguished. Crystals are listed "
             "irrespective of the phase to which these are assigned."
@@ -664,6 +670,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-number-of-phases-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many phases are distinguished. Phases are typically "
             "distinguished based on statistical thermodynamics argument and "
@@ -683,6 +690,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("First identifier whereby to identify crystals implicitly."),
         a_nexus_field=NeXusField(
             name="index_offset",
@@ -698,6 +706,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier whereby to identify each crystal explicitly."),
         a_nexus_field=NeXusField(
@@ -714,6 +723,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-indices-phase-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Identifier whereby to identify phase for each crystal explicitly."
@@ -749,6 +759,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-orientation-spread-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Average disorientation angle for each crystal between individual "
@@ -769,6 +780,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Length of each crystal"),
         a_nexus_field=NeXusField(
@@ -785,6 +797,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("Area of each crystal."),
         a_nexus_field=NeXusField(
@@ -801,6 +814,7 @@ class MicrostructureCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=("Volume of each crystal"),
         a_nexus_field=NeXusField(
@@ -879,6 +893,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-number-of-interfaces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("How many interfaces are distinguished."),
         a_nexus_field=NeXusField(
             name="number_of_interfaces",
@@ -894,6 +909,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("First identifier whereby to identify interfaces implicitly."),
         a_nexus_field=NeXusField(
             name="index_offset",
@@ -909,6 +925,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-interface-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Identifier whereby to identify each interface explicitly. An array "
@@ -928,6 +945,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Set of pairs of indices_crystal values, for each interface one "
@@ -962,6 +980,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-phase-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Set of pairs of indices_phase values, for each interface one value "
@@ -996,6 +1015,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-number-of-triple-junctions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Interfaces can be the physical three-dimensional surfaces or two- "
@@ -1022,6 +1042,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-triple-junction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Set of pairs of indices_triple_junction for each interface. An "
@@ -1104,6 +1125,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The length of each interface if only projections are available. "
@@ -1124,6 +1146,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("The surface area of all interfaces."),
         a_nexus_field=NeXusField(
@@ -1194,6 +1217,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-number-of-junctions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of triple junctions."),
         a_nexus_field=NeXusField(
             name="number_of_junctions",
@@ -1209,6 +1233,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("First identifier to identify triple junctions implicitly."),
         a_nexus_field=NeXusField(
             name="index_offset",
@@ -1224,6 +1249,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-triple-junction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier to identify each triple junction explicitly."),
         a_nexus_field=NeXusField(
@@ -1240,6 +1266,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-location-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Set of identifier for positions whereby to identify the location of "
@@ -1273,6 +1300,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Explicit positions."),
         a_nexus_field=NeXusField(
@@ -1289,6 +1317,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Set of tuples of identifier of crystals connected to the junction "
@@ -1308,6 +1337,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-interface-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Set of tuples of identifier of interfaces connected to the junction "
@@ -1343,6 +1373,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-polyline-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Set of tuples of identifier for polyline segments connected to the "
@@ -1424,6 +1455,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The length of each triple junction. This is not necessarily the "
@@ -1444,6 +1476,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=(
             "The volume about each triple junction. Respective cut-off criteria "
@@ -1511,6 +1544,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-number-of-junctions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of quadruple junctions."),
         a_nexus_field=NeXusField(
             name="number_of_junctions",
@@ -1526,6 +1560,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("First identifier to identify quadruple junctions implicitly."),
         a_nexus_field=NeXusField(
             name="index_offset",
@@ -1541,6 +1576,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-quadruple-junction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier to identify each quadruple junction explicitly."),
         a_nexus_field=NeXusField(
@@ -1557,6 +1593,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-location-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Set of identifier for positions whereby to identify the location of "
@@ -1590,6 +1627,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Explicit positions."),
         a_nexus_field=NeXusField(
@@ -1606,6 +1644,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "Set of tuples of identifier of crystals connected to the junction "
@@ -1642,6 +1681,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-interface-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "Set of tuples of identifier of interfaces connected to the junction "
@@ -1678,6 +1718,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-triple-junction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Set of tuples of identifier for triple junctions connected to the "
@@ -1714,6 +1755,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-phase-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "Set of tuples of identifier for phases of crystals connected to the "

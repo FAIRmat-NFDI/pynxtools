@@ -90,6 +90,7 @@ class Pump(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpump.html#nxpump-base-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         description=(
             "The minimum pressure achievable in a chamber after it has been "
             "pumped down for an extended period."

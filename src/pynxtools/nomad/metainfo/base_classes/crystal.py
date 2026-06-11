@@ -233,6 +233,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-cut-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Cut angle of reflecting Bragg plane and plane of crystal surface"
         ),
@@ -263,6 +264,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 6],
         description=("Unit cell parameters (lengths and angles)"),
         a_nexus_field=NeXusField(
@@ -279,6 +281,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-a-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Unit cell lattice parameter: length of side a"),
         a_nexus_field=NeXusField(
             name="unit_cell_a",
@@ -294,6 +297,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-b-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Unit cell lattice parameter: length of side b"),
         a_nexus_field=NeXusField(
             name="unit_cell_b",
@@ -309,6 +313,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-c-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Unit cell lattice parameter: length of side c"),
         a_nexus_field=NeXusField(
             name="unit_cell_c",
@@ -324,6 +329,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-alpha-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Unit cell lattice parameter: angle alpha"),
         a_nexus_field=NeXusField(
             name="unit_cell_alpha",
@@ -339,6 +345,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-beta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Unit cell lattice parameter: angle beta"),
         a_nexus_field=NeXusField(
             name="unit_cell_beta",
@@ -354,6 +361,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-gamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Unit cell lattice parameter: angle gamma"),
         a_nexus_field=NeXusField(
             name="unit_cell_gamma",
@@ -369,6 +377,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         description=("Volume of the unit cell"),
         a_nexus_field=NeXusField(
             name="unit_cell_volume",
@@ -402,6 +411,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Optimum diffracted wavelength"),
         a_nexus_field=NeXusField(
@@ -418,6 +428,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-d-spacing-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("spacing between crystal planes of the reflection"),
         a_nexus_field=NeXusField(
             name="d_spacing",
@@ -433,6 +444,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-scattering-vector-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=("Scattering vector, Q, of nominal reflection"),
         a_nexus_field=NeXusField(
             name="scattering_vector",
@@ -448,6 +460,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-reflection-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[3],
         description=("Miller indices (hkl) values of nominal reflection"),
         a_nexus_field=NeXusField(
@@ -464,6 +477,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Thickness of the crystal. (Required for Laue orientations - see "
             '"usage" field)'
@@ -482,6 +496,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         description=("mass density of the crystal"),
         a_nexus_field=NeXusField(
             name="density",
@@ -497,6 +512,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-segment-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Horizontal width of individual segment"),
         a_nexus_field=NeXusField(
             name="segment_width",
@@ -512,6 +528,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-segment-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Vertical height of individual segment"),
         a_nexus_field=NeXusField(
             name="segment_height",
@@ -527,6 +544,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-segment-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of individual segment"),
         a_nexus_field=NeXusField(
             name="segment_thickness",
@@ -542,6 +560,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-segment-gap-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Typical gap between adjacent segments"),
         a_nexus_field=NeXusField(
             name="segment_gap",
@@ -557,6 +576,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-segment-columns-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("number of segment columns in horizontal direction"),
         a_nexus_field=NeXusField(
             name="segment_columns",
@@ -572,6 +592,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-segment-rows-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("number of segment rows in vertical direction"),
         a_nexus_field=NeXusField(
             name="segment_rows",
@@ -587,6 +608,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-mosaic-horizontal-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("horizontal mosaic Full Width Half Maximum"),
         a_nexus_field=NeXusField(
             name="mosaic_horizontal",
@@ -602,6 +624,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-mosaic-vertical-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("vertical mosaic Full Width Half Maximum"),
         a_nexus_field=NeXusField(
             name="mosaic_vertical",
@@ -617,6 +640,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-curvature-horizontal-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Horizontal curvature of focusing crystal"),
         a_nexus_field=NeXusField(
             name="curvature_horizontal",
@@ -632,6 +656,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-curvature-vertical-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Vertical curvature of focusing crystal"),
         a_nexus_field=NeXusField(
             name="curvature_vertical",
@@ -660,6 +685,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-cylindrical-orientation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("If cylindrical: cylinder orientation angle"),
         a_nexus_field=NeXusField(
             name="cylindrical_orientation_angle",
@@ -675,6 +701,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Polar (scattering) angle at which crystal assembly is positioned. "
@@ -695,6 +722,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Azimuthal angle at which crystal assembly is positioned. Note: it "
@@ -714,6 +742,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-bragg-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("Bragg angle of nominal reflection"),
         a_nexus_field=NeXusField(
@@ -730,6 +759,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("average/nominal crystal temperature"),
         a_nexus_field=NeXusField(
             name="temperature",

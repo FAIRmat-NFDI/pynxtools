@@ -94,6 +94,7 @@ class CgPolyline(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-number-of-unique-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The total number of vertices that have different positions."),
         a_nexus_field=NeXusField(
             name="number_of_unique_vertices",
@@ -109,6 +110,7 @@ class CgPolyline(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-number-of-total-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The total number of vertices, irrespective of their eventual uniqueness."
         ),
@@ -126,6 +128,7 @@ class CgPolyline(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-number-of-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The total number of vertices of each polyline, irrespectively "
@@ -187,6 +190,7 @@ class CgPolyline(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-polylines-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Sequence of identifier for vertices how they build each polyline. A "

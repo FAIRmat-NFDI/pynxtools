@@ -180,6 +180,7 @@ class SpmBiasSpectroscopyCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-circuit-animation-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The time or period a bias sweep to be displayed."),
         a_nexus_field=NeXusField(
             name="animation_time",
@@ -195,6 +196,7 @@ class SpmBiasSpectroscopyCircuit(Circuit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-circuit-measurement-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The time or period taken by the circuit to measure a full bias "
             "sweep (duration of the voltage-current measurement measurement)."
@@ -304,6 +306,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-first-settling-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The initial time taken to settle the bias voltage at the desired "
             "value. On each sweep usually, the system takes time to settle to "
@@ -323,6 +326,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-end-settling-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The time (at the last sweep) to settle for the last value of the sweep."
         ),
@@ -340,6 +344,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-settling-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The time taken to settle the bias voltage at the desired value. On "
             "each sweep usually, the system takes time to settle the bias "
@@ -377,6 +382,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-final-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The z position after the sweeps are done."),
         a_nexus_field=NeXusField(
             name="final_z",
@@ -392,6 +398,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-total-spectroscopy-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The total time needed for the entire voltage sweep."),
         a_nexus_field=NeXusField(
             name="total_spectroscopy_time",
@@ -430,6 +437,7 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-offset-bias-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The starting voltage of the bias sweep. The range of voltages for "
             "the sweep can be defined with scan voltage offset and scan voltage "
@@ -450,6 +458,7 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-range-bias-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The range of voltages for the sweep can be defined with scan "
             "voltage offset and scan voltage range (difference between minimum "
@@ -469,6 +478,7 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-start-bias-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("The start of the bias scan voltage."),
         a_nexus_field=NeXusField(
             name="scan_start_bias",
@@ -484,6 +494,7 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-end-bias-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("The end value of the bias scan voltage."),
         a_nexus_field=NeXusField(
             name="scan_end_bias",
@@ -550,6 +561,7 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-step-size-bias-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The step size between the two consecutive bias voltage values "
             "during the sweep."
@@ -568,6 +580,7 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-scan-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The time taken by the scanner to scan the entire area."),
         a_nexus_field=NeXusField(
             name="scan_time",

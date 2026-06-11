@@ -200,6 +200,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-eps-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The epsilon (eps) parameter used."),
         a_nexus_field=NeXusField(
             name="eps",
@@ -215,6 +216,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-min-pts-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The minimum points (min_pts) parameter used."),
         a_nexus_field=NeXusField(
             name="min_pts",
@@ -230,6 +232,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of members in the set which is partitioned into features. "
             "Specifically, this is the total number of targets filtered from the "
@@ -251,6 +254,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Which identifier is the first to be used to label a cluster. The "
             "value should be chosen in such a way that special values can be "
@@ -274,6 +278,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-targets-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The evaporation (sequence) id (aka evaporation_id) to figure out "
@@ -295,6 +300,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-number-of-solutions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The number of solutions found for each target. Typically, this "
@@ -317,6 +323,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-model-label-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The raw labels from the DBScan clustering backend process. The "
@@ -340,6 +347,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-core-sample-indices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The raw array of core sample indices which specify which of the "
@@ -359,6 +367,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-numerical-label-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Numerical label for each target (member in the set) aka cluster "
@@ -378,6 +387,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Weights for each target that specifies how probable the target is "
@@ -453,6 +463,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-statistics-number-of-targets-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Total number of targets in the set, i.e. ions that were filtered "
             "and considered in this cluster analysis."
@@ -471,6 +482,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-statistics-number-of-noise-members-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Total number of members in the set which are categorized as noise."
         ),
@@ -488,6 +500,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-statistics-number-of-core-members-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Total number of members in the set which are categorized as a core point."
         ),
@@ -505,6 +518,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-statistics-number-of-features-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Total number of clusters (excluding noise and unassigned)."),
         a_nexus_field=NeXusField(
             name="number_of_features",
@@ -520,6 +534,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-statistics-indices-feature-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Numerical identifier of each feature aka cluster_id."),
         a_nexus_field=NeXusField(
@@ -536,6 +551,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-statistics-number-of-members-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Number of members for each feature."),
         a_nexus_field=NeXusField(

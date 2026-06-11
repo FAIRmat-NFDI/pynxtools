@@ -167,6 +167,7 @@ class Monitor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Distance of monitor from sample"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -242,6 +243,7 @@ class Monitor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Time-of-flight"),
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -257,6 +259,7 @@ class Monitor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Monitor efficiency"),
         a_nexus_field=NeXusField(
             name="efficiency",
@@ -286,6 +289,7 @@ class Monitor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-sampled-fraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Proportion of incident beam sampled by the monitor (0<x<1)"),
         a_nexus_field=NeXusField(
             name="sampled_fraction",
@@ -301,6 +305,7 @@ class Monitor(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-count-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Elapsed actual counting time, can be an array of size ``np`` when "
             "scanning. This is not the difference of the calendar time but the "

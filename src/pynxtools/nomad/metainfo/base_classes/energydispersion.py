@@ -133,6 +133,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-pass-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Mean kinetic energy of the electrons in this energy-dispersive "
             "section of the analyzer. This term should be used for hemispherical "
@@ -154,6 +155,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-kinetic-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Kinetic energy set for this dispersive section. Can be either the "
             "set kinetic energy, or the whole calibrated energy axis of a scan."
@@ -172,6 +174,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-drift-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Drift energy for time-of-flight energy dispersive elements."),
         a_nexus_field=NeXusField(
             name="drift_energy",
@@ -187,6 +190,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-center-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Center of the energy window"),
         a_nexus_field=NeXusField(
             name="center_energy",
@@ -202,6 +206,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-energy-interval-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "The interval of transmitted energies. It can be two different "
             "things depending on whether the scan is fixed or swept. With a "
@@ -224,6 +229,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Diameter of the dispersive orbit"),
         a_nexus_field=NeXusField(
             name="diameter",
@@ -239,6 +245,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Radius of the dispersive orbit"),
         a_nexus_field=NeXusField(
             name="radius",
@@ -275,6 +282,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-tof-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Length of the time-of-flight drift electrode"),
         a_nexus_field=NeXusField(
             name="tof_distance",

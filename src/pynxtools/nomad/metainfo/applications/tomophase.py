@@ -436,6 +436,7 @@ class TomophaseInstrumentSample(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -451,6 +452,7 @@ class TomophaseInstrumentSample(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -466,6 +468,7 @@ class TomophaseInstrumentSample(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=("Distance between detector and sample"),
         a_nexus_field=NeXusField(
@@ -513,6 +516,7 @@ class TomophaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",
@@ -528,6 +532,7 @@ class TomophaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-x-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="x_translation",
@@ -543,6 +548,7 @@ class TomophaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-y-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="y_translation",
@@ -558,6 +564,7 @@ class TomophaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-z-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="z_translation",

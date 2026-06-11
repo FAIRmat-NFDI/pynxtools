@@ -180,6 +180,7 @@ class XeulerInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The polar_angle (two theta) where the detector is placed at each "
@@ -217,6 +218,7 @@ class XeulerSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the sample rotation angle at each scan point"
@@ -235,6 +237,7 @@ class XeulerSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-sample-chi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the chi angle of the eulerian cradle at "
@@ -254,6 +257,7 @@ class XeulerSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-sample-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the phi rotation of the eulerian cradle at "

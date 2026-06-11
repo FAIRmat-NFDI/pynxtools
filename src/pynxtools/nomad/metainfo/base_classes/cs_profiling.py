@@ -200,6 +200,7 @@ class CsProfiling(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling.html#nxcs_profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Wall-clock time how long the app execution took. This may be in "
             "principle end_time minus start_time; however usage of eventually "
@@ -221,6 +222,7 @@ class CsProfiling(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling.html#nxcs_profiling-max-processes-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of nominal processes that the app invoked at runtime. "
             "The main idea behind this field e.g. for apps which use e.g. MPI "
@@ -245,6 +247,7 @@ class CsProfiling(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling.html#nxcs_profiling-max-threads-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of nominal threads that the app invoked at runtime. "
             "Specifically here the maximum number of threads used for the "
@@ -264,6 +267,7 @@ class CsProfiling(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling.html#nxcs_profiling-max-gpus-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The number of nominal GPUs that the app invoked at runtime."),
         a_nexus_field=NeXusField(
             name="max_gpus",

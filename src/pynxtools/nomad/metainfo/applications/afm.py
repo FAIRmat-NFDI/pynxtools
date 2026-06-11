@@ -443,6 +443,7 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-amplitude-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="reference_amplitude",
             type="NX_NUMBER",
@@ -457,6 +458,7 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         a_nexus_field=NeXusField(
             name="reference_frequency",
             type="NX_NUMBER",
@@ -471,6 +473,7 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="reference_phase",
             type="NX_NUMBER",

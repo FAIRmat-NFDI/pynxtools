@@ -164,6 +164,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-iontypes-randomized-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The iontype ID for each ion that was assigned to each ion during "
@@ -210,6 +211,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Right boundary of the binning."),
         a_nexus_field=NeXusField(
@@ -226,6 +228,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-probability-mass-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="probability_mass",
@@ -241,6 +244,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-cumulated-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Cumulated not normalized by total counts."),
         a_nexus_field=NeXusField(
@@ -257,6 +261,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-cumulated-normalized-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Cumulated and normalized by total counts."),
         a_nexus_field=NeXusField(
@@ -295,6 +300,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Right boundary of the binning."),
         a_nexus_field=NeXusField(
@@ -311,6 +317,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-probability-mass-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="probability_mass",
@@ -326,6 +333,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-cumulated-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Cumulated not normalized by total counts."),
         a_nexus_field=NeXusField(
@@ -342,6 +350,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-cumulated-normalized-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Cumulated and normalized by total counts."),
         a_nexus_field=NeXusField(

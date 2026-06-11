@@ -166,6 +166,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("Total time of flight"),
         a_nexus_field=NeXusField(
@@ -226,6 +227,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-raw-time-of-flight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("In DAQ clock pulses"),
         a_nexus_field=NeXusField(
@@ -363,6 +365,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "Offset from the detector center in x-direction. Can be "
@@ -426,6 +429,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "Offset from the detector center in the y-direction. Can be "
@@ -489,6 +493,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-z-pixel-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "Offset from the detector center in the z-direction. Can be "
@@ -552,6 +557,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=(
             "This is the distance to the previous component in the instrument; "
@@ -575,6 +581,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         description=(
             "This is the polar angle of the detector towards the previous "
@@ -599,6 +606,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         description=(
             "This is the azimuthal angle angle of the detector towards the "
@@ -662,6 +670,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-solid-angle-field"
         ],
         dimensionality="[angle] ** 2",
+        unit="steradian",
         shape=["*", "*"],
         description=("Solid angle subtended by the detector at the sample"),
         a_nexus_field=NeXusField(
@@ -678,6 +687,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size."
@@ -696,6 +706,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size"
@@ -714,6 +725,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-dead-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*", "*", "*"],
         description=("Detector dead time"),
         a_nexus_field=NeXusField(
@@ -730,6 +742,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-gas-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         shape=["*", "*"],
         description=("Detector gas pressure"),
         a_nexus_field=NeXusField(
@@ -746,6 +759,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-detection-gas-path-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("maximum drift space dimension"),
         a_nexus_field=NeXusField(
             name="detection_gas_path",
@@ -862,6 +876,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-real-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*", "*", "*"],
         description=(
             "Real-time of the exposure (use this if exposure time varies for "
@@ -886,6 +901,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-start-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "start time for each frame, with the ``start`` attribute as absolute "
@@ -918,6 +934,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-stop-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "stop time for each frame, with the ``start`` attribute as absolute "
@@ -979,6 +996,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-count-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("Elapsed actual counting time"),
         a_nexus_field=NeXusField(
@@ -1013,6 +1031,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-beam-center-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the x position where the direct beam would hit the "
             "detector. This is a length and can be outside of the actual "
@@ -1033,6 +1052,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-beam-center-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the y position where the direct beam would hit the "
             "detector. This is a length and can be outside of the actual "
@@ -1072,6 +1092,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The diameter of a cylindrical detector"),
         a_nexus_field=NeXusField(
             name="diameter",
@@ -1352,6 +1373,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-detector-readout-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time it takes to read the detector (typically milliseconds). This "
             "is important to know for time resolved experiments."
@@ -1370,6 +1392,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-trigger-delay-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time it takes to start exposure after a trigger signal has been "
             "received. This is the reaction time of the detector firmware after "
@@ -1391,6 +1414,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-trigger-delay-time-set-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("User-specified trigger delay."),
         a_nexus_field=NeXusField(
             name="trigger_delay_time_set",
@@ -1406,6 +1430,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-trigger-internal-delay-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time it takes to start exposure after a trigger signal has been "
             "received. This is the reaction time of the detector hardware after "
@@ -1427,6 +1452,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-trigger-dead-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time during which no new trigger signal can be accepted. Typically "
             "this is the trigger_delay_time + exposure_time + readout_time. This "
@@ -1446,6 +1472,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-frame-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "This is time for each frame. This is exposure_time + readout time."
@@ -1563,6 +1590,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-sensor-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "At times, radiation is not directly sensed by the detector. Rather, "
             "the detector might sense the output from some converter like a "
@@ -1582,6 +1610,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-threshold-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Single photon counter detectors can be adjusted for a certain "
             "energy range in which they work optimally. This is the energy "
@@ -1740,6 +1769,7 @@ class DetectorEfficiency(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("efficiency of the detector"),
         a_nexus_field=NeXusField(
@@ -1756,6 +1786,7 @@ class DetectorEfficiency(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=(
             "This field can be two things: #. For a pixel detector it provides "

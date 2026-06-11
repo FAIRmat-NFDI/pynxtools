@@ -533,6 +533,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-q-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); Q Array of :math:`Q` data to "
             "accompany :math:`I`. .. figure:: canSAS/Q-geometry.jpg :width: 60% "
@@ -830,6 +831,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-qdev-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); Qdev Estimated :math:`Q` "
             "**resolution** (usually standard deviation). Must have the same "
@@ -870,6 +872,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-dqw-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); dQw :math:`Q` **resolution** "
             "along the axis of scanning (the high-resolution *slit width* "
@@ -912,6 +915,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-dql-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); dQl :math:`Q` **resolution** "
             "perpendicular to the axis of scanning (the low-resolution *slit "
@@ -954,6 +958,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-qmean-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Mean value of :math:`Q` for this data point. Useful when describing "
             "data that has been binned from higher-resolution data. It is "
@@ -993,6 +998,7 @@ class CansasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-shadowfactor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "A numerical factor applied to pixels affected by the beam stop "
             "penumbra. Used in data files from NIST/NCNR instruments. See: J.G. "
@@ -1193,6 +1199,7 @@ class CansasInstrumentAperture(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-x-gap-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("opening along the :math:`x` axis"),
         a_nexus_field=NeXusField(
             name="x_gap",
@@ -1208,6 +1215,7 @@ class CansasInstrumentAperture(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-y-gap-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("opening along the :math:`y` axis"),
         a_nexus_field=NeXusField(
             name="y_gap",
@@ -1267,6 +1275,7 @@ class CansasInstrumentCollimator(Collimator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-collimator-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Amount/length of collimation inserted (as on a SANS instrument)"),
         a_nexus_field=NeXusField(
             name="length",
@@ -1282,6 +1291,7 @@ class CansasInstrumentCollimator(Collimator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-collimator-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Distance from this collimation element to the sample"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -1350,6 +1360,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-sdd-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance between sample and detector. Note: In NXdetector, the "
             "``distance`` field records the distance to the previous component "
@@ -1373,6 +1384,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-slit-length-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Slit length of the instrument for this detector, expressed in the "
             "same units as :math:`Q`."
@@ -1391,6 +1403,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-x-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Location of the detector in :math:`x`"),
         a_nexus_field=NeXusField(
             name="x_position",
@@ -1406,6 +1419,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-y-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Location of the detector in :math:`y`"),
         a_nexus_field=NeXusField(
             name="y_position",
@@ -1421,6 +1435,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-roll-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation of the detector about the :math:`z` axis (roll)"),
         a_nexus_field=NeXusField(
             name="roll",
@@ -1436,6 +1451,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-pitch-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation of the detector about the :math:`x` axis (roll)"),
         a_nexus_field=NeXusField(
             name="pitch",
@@ -1451,6 +1467,7 @@ class CansasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-yaw-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation of the detector about the :math:`y` axis (yaw)"),
         a_nexus_field=NeXusField(
             name="yaw",
@@ -1585,6 +1602,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-incident-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "wavelength (:math:`\\lambda`) of radiation incident on the sample"
         ),
@@ -1602,6 +1620,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-wavelength-min-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Some facilities specify wavelength using a range. This is the "
             "lowest wavelength in such a range."
@@ -1620,6 +1639,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-wavelength-max-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Some facilities specify wavelength using a range. This is the "
             "highest wavelength in such a range."
@@ -1638,6 +1658,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-incident-wavelength-spread-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Some facilities specify wavelength using a range. This is the width "
             "(FWHM) of such a range."
@@ -1656,6 +1677,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-beam-size-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Size of the incident beam along the x axis."),
         a_nexus_field=NeXusField(
             name="beam_size_x",
@@ -1671,6 +1693,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-beam-size-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Size of the incident beam along the y axis."),
         a_nexus_field=NeXusField(
             name="beam_size_y",
@@ -1739,6 +1762,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Transmission (:math:`I/I_0`) of this sample. There is no *units* "
             "attribute as this number is dimensionless. Note: the ability to "
@@ -1760,6 +1784,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Temperature of this sample."),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -1789,6 +1814,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-x-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Location of the sample in :math:`x`"),
         a_nexus_field=NeXusField(
             name="x_position",
@@ -1804,6 +1830,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-y-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Location of the sample in :math:`y`"),
         a_nexus_field=NeXusField(
             name="y_position",
@@ -1819,6 +1846,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-roll-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation of the sample about the :math:`z` axis (roll)"),
         a_nexus_field=NeXusField(
             name="roll",
@@ -1834,6 +1862,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-pitch-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation of the sample about the :math:`x` axis (roll)"),
         a_nexus_field=NeXusField(
             name="pitch",
@@ -1849,6 +1878,7 @@ class CansasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-yaw-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation of the sample about the :math:`y` axis (yaw)"),
         a_nexus_field=NeXusField(
             name="yaw",
@@ -2155,6 +2185,7 @@ class CansasTransmissionSpectrum(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-lambda-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Wavelength of the radiation. This array is of the same shape as "
             "``T`` and ``Tdev``."
@@ -2173,6 +2204,7 @@ class CansasTransmissionSpectrum(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-t-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Transmission values (:math:`I/I_0`) as a function of wavelength. "
             "This array is of the same shape as ``lambda`` and ``Tdev``."
@@ -2212,6 +2244,7 @@ class CansasTransmissionSpectrum(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-tdev-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             ".. index:: NXcanSAS (applications); Tdev Estimated uncertainty "
             "(usually standard deviation) in :math:`T`. Must have the same units "

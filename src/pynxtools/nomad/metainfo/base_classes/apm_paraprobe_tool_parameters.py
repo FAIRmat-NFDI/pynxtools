@@ -164,6 +164,7 @@ class ApmParaprobeToolParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_parameters.html#nxapm_paraprobe_tool_parameters-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Internal identifier used by the tool to refer to an analysis. "
             "Simulation ID an alias."

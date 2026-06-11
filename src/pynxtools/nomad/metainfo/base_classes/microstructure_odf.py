@@ -185,6 +185,7 @@ class MicrostructureOdfConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-configuration-kernel-halfwidth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Halfwidth of the kernel."),
         a_nexus_field=NeXusField(
             name="kernel_halfwidth",
@@ -213,6 +214,7 @@ class MicrostructureOdfConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-configuration-resolution-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Resolution of the kernel."),
         a_nexus_field=NeXusField(
             name="resolution",
@@ -250,6 +252,7 @@ class MicrostructureOdfCharacteristics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-characteristics-texture-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The texture index :math:`t = \\int_{\\mathcal{SO(3)}} f(R)^{2}dR` "
             "with :math:`f(R)`, denoting the ODF is evaluated in orientation "
@@ -312,6 +315,7 @@ class MicrostructureOdfKthExtrema(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-kth-extrema-kth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of local extrema evaluated"),
         a_nexus_field=NeXusField(
             name="kth",
@@ -327,6 +331,7 @@ class MicrostructureOdfKthExtrema(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-kth-extrema-theta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Disorientation threshold within which intensity of the ODF is "
             "integrated for the component analysis."
@@ -345,6 +350,7 @@ class MicrostructureOdfKthExtrema(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-kth-extrema-location-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "Euler angle representation :math:`\\varphi_1`, :math:`\\Phi`, "
@@ -406,6 +412,7 @@ class MicrostructureOdfSampling(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-sampling-resolution-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Sampling resolution"),
         a_nexus_field=NeXusField(
             name="resolution",
@@ -421,6 +428,7 @@ class MicrostructureOdfSampling(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-sampling-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "Bunge-Euler (i.e. ZXZ convention) locations of each position in "
@@ -440,6 +448,7 @@ class MicrostructureOdfSampling(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-sampling-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Weight at each sampled position following the order in euler."),
         a_nexus_field=NeXusField(
@@ -486,6 +495,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=(
             "ODF intensity at probed locations relative to the intensity of the "
@@ -505,6 +515,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-varphi-one-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Pixel center angular position along the :math:`\\varphi_1` direction."
@@ -523,6 +534,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-capital-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Pixel center angular position along the :math:`\\Phi` direction."
@@ -541,6 +553,7 @@ class MicrostructureOdfPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-varphi-two-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Pixel center angular position along the :math:`\\varphi_2` direction."

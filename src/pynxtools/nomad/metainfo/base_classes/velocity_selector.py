@@ -104,6 +104,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-rotation-speed-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("velocity selector rotation speed"),
         a_nexus_field=NeXusField(
             name="rotation_speed",
@@ -119,6 +120,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("radius at beam centre"),
         a_nexus_field=NeXusField(
             name="radius",
@@ -134,6 +136,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-spwidth-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("spoke width at beam centre"),
         a_nexus_field=NeXusField(
             name="spwidth",
@@ -149,6 +152,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("rotor length"),
         a_nexus_field=NeXusField(
             name="length",
@@ -164,6 +168,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-num-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("number of spokes/lamella"),
         a_nexus_field=NeXusField(
             name="num",
@@ -179,6 +184,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-twist-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("twist angle along axis"),
         a_nexus_field=NeXusField(
             name="twist",
@@ -194,6 +200,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-table-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("offset vertical angle"),
         a_nexus_field=NeXusField(
             name="table",
@@ -209,6 +216,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("input beam height"),
         a_nexus_field=NeXusField(
             name="height",
@@ -224,6 +232,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("input beam width"),
         a_nexus_field=NeXusField(
             name="width",
@@ -239,6 +248,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("wavelength"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -254,6 +264,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-wavelength-spread-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("deviation FWHM /Wavelength"),
         a_nexus_field=NeXusField(
             name="wavelength_spread",

@@ -291,6 +291,7 @@ class FluoInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-monochromator-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",

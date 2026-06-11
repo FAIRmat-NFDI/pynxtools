@@ -209,6 +209,7 @@ class XrdInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-beam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -254,6 +255,7 @@ class XrdInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("The 2-theta range of the diffractogram"),
         a_nexus_field=NeXusField(

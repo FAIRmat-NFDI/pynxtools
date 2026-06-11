@@ -159,6 +159,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-rotation-quaternion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "The set of rotations expressed in quaternion parameterization "
@@ -179,6 +180,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-rotation-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "The set of rotations expressed in Euler angle parameterization "
@@ -219,6 +221,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-orientation-quaternion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "The set of orientations expressed in quaternion parameterization "
@@ -241,6 +244,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-orientation-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "The set of orientations expressed in Euler angle parameterization "
@@ -264,6 +268,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-misorientation-quaternion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "The set of misorientations expressed in quaternion parameterization "
@@ -287,6 +292,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-misorientation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Misorientation angular argument (eventually signed) following the "
@@ -307,6 +313,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-misorientation-axis-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Misorientation axis (normalized) and signed following the same "
@@ -327,6 +334,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-disorientation-quaternion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 4],
         description=(
             "The set of disorientations expressed in quaternion parameterization "
@@ -347,6 +355,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-disorientation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Disorientations angular argument (should not be signed, see `D. "
@@ -369,6 +378,7 @@ class Rotations(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-disorientation-axis-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Disorientations axis (normalized) following the same symmetry "

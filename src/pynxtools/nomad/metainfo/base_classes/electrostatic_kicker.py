@@ -94,6 +94,7 @@ class ElectrostaticKicker(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-beamline-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "define position of beamline element relative to production target"
         ),
@@ -111,6 +112,7 @@ class ElectrostaticKicker(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-timing-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("kicker timing as defined by ``description`` attribute"),
         a_nexus_field=NeXusField(
             name="timing",
@@ -139,6 +141,7 @@ class ElectrostaticKicker(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-set-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("current set on supply."),
         a_nexus_field=NeXusField(
             name="set_current",
@@ -154,6 +157,7 @@ class ElectrostaticKicker(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-set-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("voltage set on supply."),
         a_nexus_field=NeXusField(
             name="set_voltage",
@@ -202,6 +206,7 @@ class ElectrostaticKickerReadCurrent(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-read-current-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
@@ -240,6 +245,7 @@ class ElectrostaticKickerReadVoltage(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-read-voltage-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",

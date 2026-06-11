@@ -315,6 +315,7 @@ class ImageImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -334,6 +335,7 @@ class ImageImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -350,6 +352,7 @@ class ImageImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -366,6 +369,7 @@ class ImageImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -441,6 +445,7 @@ class ImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -460,6 +465,7 @@ class ImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -476,6 +482,7 @@ class ImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -492,6 +499,7 @@ class ImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -601,6 +609,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -620,6 +629,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -636,6 +646,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -652,6 +663,7 @@ class ImageImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -795,6 +807,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -814,6 +827,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -830,6 +844,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -846,6 +861,7 @@ class ImageImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -1023,6 +1039,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -1042,6 +1059,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -1058,6 +1076,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -1074,6 +1093,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -1093,6 +1113,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
@@ -1123,6 +1144,7 @@ class ImageStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-indices-image-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Image identifier"),
         a_nexus_field=NeXusField(
@@ -1209,6 +1231,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -1228,6 +1251,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -1244,6 +1268,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -1260,6 +1285,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -1279,6 +1305,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
@@ -1309,6 +1336,7 @@ class ImageStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-indices-image-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Image identifier"),
         a_nexus_field=NeXusField(
@@ -1429,6 +1457,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
@@ -1448,6 +1477,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -1464,6 +1494,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
@@ -1480,6 +1511,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
@@ -1499,6 +1531,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
@@ -1529,6 +1562,7 @@ class ImageStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-indices-image-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Image identifier"),
         a_nexus_field=NeXusField(

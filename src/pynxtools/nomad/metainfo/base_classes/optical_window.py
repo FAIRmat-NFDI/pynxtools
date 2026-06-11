@@ -168,6 +168,7 @@ class OpticalWindow(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_window.html#nxoptical_window-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the window."),
         a_nexus_field=NeXusField(
             name="thickness",
@@ -183,6 +184,7 @@ class OpticalWindow(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_window.html#nxoptical_window-orientation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angle of the window normal (outer) vs. the substrate normal "
             "(similar to the angle of incidence)."

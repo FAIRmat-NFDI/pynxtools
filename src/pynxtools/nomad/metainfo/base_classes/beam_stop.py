@@ -125,6 +125,7 @@ class BeamStop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Size of beamstop. If this is not sufficient to describe the beam "
             "stop use NXoff_geometry instead."
@@ -143,6 +144,7 @@ class BeamStop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "x position of the beamstop in relation to the detector. Note, it is "
             "recommended to use NXtransformations instead."
@@ -161,6 +163,7 @@ class BeamStop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "y position of the beamstop in relation to the detector. Note, it is "
             "recommended to use NXtransformations instead."
@@ -179,6 +182,7 @@ class BeamStop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-distance-to-detector-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "distance of the beamstop to the detector. Note, it is recommended "
             "to use NXtransformations instead."

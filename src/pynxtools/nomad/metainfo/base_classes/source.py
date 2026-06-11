@@ -193,6 +193,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Effective distance from sample Distance as seen by radiation from "
             "sample. This number should be negative to signify that it is "
@@ -319,6 +320,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         description=("Source power"),
         a_nexus_field=NeXusField(
             name="power",
@@ -334,6 +336,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-emittance-x-field"
         ],
         dimensionality="[length] * [angle]",
+        unit="m * radian",
         description=("Source emittance (nm-rad) in X (horizontal) direction."),
         a_nexus_field=NeXusField(
             name="emittance_x",
@@ -349,6 +352,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-emittance-y-field"
         ],
         dimensionality="[length] * [angle]",
+        unit="m * radian",
         description=("Source emittance (nm-rad) in Y (horizontal) direction."),
         a_nexus_field=NeXusField(
             name="emittance_y",
@@ -364,6 +368,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-sigma-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("particle beam size in x"),
         a_nexus_field=NeXusField(
             name="sigma_x",
@@ -379,6 +384,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-sigma-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("particle beam size in y"),
         a_nexus_field=NeXusField(
             name="sigma_y",
@@ -394,6 +400,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-flux-field"
         ],
         dimensionality="1 / [time] / [length] ** 2",
+        unit="1 / second / m ** 2",
         description=("Source intensity/area (example: s-1 cm-2)"),
         a_nexus_field=NeXusField(
             name="flux",
@@ -409,6 +416,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Source energy. Typically, this would be the energy of the emitted "
             "beam. For storage rings, this would be the particle beam energy."
@@ -427,6 +435,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Accelerator, X-ray tube, or storage ring current"),
         a_nexus_field=NeXusField(
             name="current",
@@ -442,6 +451,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Accelerator voltage"),
         a_nexus_field=NeXusField(
             name="voltage",
@@ -457,6 +467,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("Frequency of pulsed source"),
         a_nexus_field=NeXusField(
             name="frequency",
@@ -472,6 +483,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-period-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Period of pulsed source"),
         a_nexus_field=NeXusField(
             name="period",
@@ -514,6 +526,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-bunch-length-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("For storage rings, temporal length of the bunch"),
         a_nexus_field=NeXusField(
             name="bunch_length",
@@ -529,6 +542,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-bunch-distance-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("For storage rings, time between bunches"),
         a_nexus_field=NeXusField(
             name="bunch_distance",
@@ -544,6 +558,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-pulse-width-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("temporal width of source pulse"),
         a_nexus_field=NeXusField(
             name="pulse_width",
@@ -587,6 +602,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-last-fill-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "For storage rings, the current at the end of the most recent injection."
         ),
@@ -618,6 +634,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The wavelength of the radiation emitted by the source."),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -633,6 +650,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("For pulsed sources, the energy of a single pulse."),
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -648,6 +666,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-peak-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         description=(
             "For pulsed sources, the pulse energy divided by the pulse duration"
         ),
@@ -678,6 +697,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-filament-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Filament current (for X-ray tubes)."),
         a_nexus_field=NeXusField(
             name="filament_current",
@@ -693,6 +713,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-emission-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Emission current of the generated beam."),
         a_nexus_field=NeXusField(
             name="emission_current",
@@ -708,6 +729,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-gas-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         description=("Gas pressure inside ionization source."),
         a_nexus_field=NeXusField(
             name="gas_pressure",

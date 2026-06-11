@@ -274,6 +274,7 @@ class ManipulatorCryostatPidController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-pid-controller-setpoint-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "In case of a fixed or averaged cooling temperature, this is the "
             "scalar temperature setpoint. It can also be a 1D array of "
@@ -311,6 +312,7 @@ class ManipulatorCryostatPidControllerSetpointLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-pid-controller-setpoint-log-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "In the case of an experiment in which the temperature is changed "
             "and the setpoints are recorded with time stamps, this is an array "
@@ -376,6 +378,7 @@ class ManipulatorTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-temperature-sensor-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         description=(
             "In case of a single or averaged temperature measurement, this is "
@@ -415,6 +418,7 @@ class ManipulatorTemperatureSensorValueLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-temperature-sensor-value-log-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "In the case of an experiment in which the temperature changes and "
             "is recorded with time stamps, this is an array of length m of "
@@ -491,6 +495,7 @@ class ManipulatorSampleHeater(Actuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-output-heater-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         description=(
             "In case of a fixed or averaged heating power, this is the scalar "
             "heater power. It can also be a 1D array of heater powers (without "
@@ -528,6 +533,7 @@ class ManipulatorSampleHeaterOutputHeaterPowerLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-output-heater-power-log-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         description=(
             "In the case of an experiment in which the heater power is changed "
             "and recorded with time stamps, this is an array of length m of "
@@ -577,6 +583,7 @@ class ManipulatorSampleHeaterPidController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-pid-controller-setpoint-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "In case of a fixed or averaged temperature, this is the scalar "
             "temperature setpoint. It can also be a 1D array of temperature "
@@ -614,6 +621,7 @@ class ManipulatorSampleHeaterPidControllerSetpointLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-pid-controller-setpoint-log-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "In the case of an experiment in which the temperature is changed "
             "and the setpoints are recorded with time stamps, this is an array "
@@ -679,6 +687,7 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-drain-current-ammeter-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         shape=["*"],
         description=(
             "In case of a single or averaged drain current measurement, this is "
@@ -718,6 +727,7 @@ class ManipulatorDrainCurrentAmmeterValueLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-drain-current-ammeter-value-log-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "In the case of an experiment in which the current changes and is "
             "recorded with time stamps, this is an array of length m of "
@@ -814,6 +824,7 @@ class ManipulatorSampleBiasPotentiostatPidController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-pid-controller-setpoint-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "In case of a fixed or averaged applied bias, this is the scalar "
             "voltage applied between sample and sample holder. It can also be an "
@@ -851,6 +862,7 @@ class ManipulatorSampleBiasPotentiostatPidControllerSetpointLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-pid-controller-setpoint-log-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "In the case of an experiment in which the bias is changed and the "
             "setpoints are recorded with time stamps, this is an array of length "
@@ -916,6 +928,7 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-voltmeter-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         shape=["*"],
         description=(
             "In case of a single or averaged bias measurement, this is the "
@@ -954,6 +967,7 @@ class ManipulatorSampleBiasVoltmeterValueLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-voltmeter-value-log-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "In the case of an experiment in which the bias changes and is "
             "recorded with time stamps, this is an array of length m of "

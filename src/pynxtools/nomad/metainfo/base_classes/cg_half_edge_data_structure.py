@@ -78,6 +78,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Dimensionality of the primitives described."),
         a_nexus_field=NeXusField(
             name="dimensionality",
@@ -94,6 +95,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-number-of-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Number of vertices for each face. Each entry represents the total "
@@ -114,6 +116,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-number-of-edges-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Number of edges for each face. Each entry represents the total "
@@ -134,6 +137,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-index-offset-vertex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer offset whereby the identifier of the first member of the "
             "vertices differs from zero. Identifier can be defined explicitly or "
@@ -154,6 +158,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-index-offset-edge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer offset whereby the identifier of the first member of the "
             "edges differs from zero. Identifier can be defined explicitly or "
@@ -207,6 +212,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-vertex-incident-half-edge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier of the incident half-edge."),
         a_nexus_field=NeXusField(
@@ -223,6 +229,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-face-half-edge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier of the (starting)/associated half-edge of the face."),
         a_nexus_field=NeXusField(
@@ -239,6 +246,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-vertex-origin-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The identifier of the vertex from which this half-edge is outwards "
@@ -258,6 +266,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-twin-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier of the associated oppositely pointing half-edge."),
         a_nexus_field=NeXusField(
@@ -274,6 +283,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-incident-face-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "If the half-edge is a boundary half-edge the incident face "
@@ -293,6 +303,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-next-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier of the next half-edge."),
         a_nexus_field=NeXusField(
@@ -309,6 +320,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-prev-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier of the previous half-edge."),
         a_nexus_field=NeXusField(

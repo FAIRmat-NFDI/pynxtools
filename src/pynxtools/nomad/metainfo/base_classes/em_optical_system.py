@@ -66,6 +66,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-camera-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance which is present between the specimen surface and the "
             "detector plane. This concept is related to term `Camera Length`_ of "
@@ -86,6 +87,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-magnification-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The factor of enlargement of the apparent size, not the physical "
             "size, of an object."
@@ -104,6 +106,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-defocus-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The defocus aberration constant (oftentimes referred to as c_1_0). "
             "See respective details in :ref:`NXaberration` class instances."
@@ -122,6 +125,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-semi-convergence-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The angle which is given by the semi-opening angle of the cone in a "
             "convergent beam. This concept is related to term `Convergence "
@@ -142,6 +146,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-field-of-view-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The extent of the observable parts of the specimen given the "
             "current magnification and other settings of the instrument."
@@ -160,6 +165,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-working-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance which is determined along the optical axis within the "
             "column from (1) the lower end of the final optical element between "
@@ -201,6 +207,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-probe-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Electrical current which arrives at the specimen. This concept is "
             "related to term `Probe Current`_ of the EMglossary standard. .. "
@@ -240,6 +247,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-dose-rate-field"
         ],
         dimensionality="1 / [length] ** 2 / [time]",
+        unit="1/(angstrom^2*s)",
         description=("Nominal dose rate."),
         a_nexus_field=NeXusField(
             name="dose_rate",
@@ -255,6 +263,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-rotation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "In the process of passing through an :ref:`NXelectromagnetic_lens` "
             "electrons are typically accelerated on a helical path about the "
@@ -278,6 +287,7 @@ class EmOpticalSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-focal-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance which lies between the principal plane of the lens and the "
             "focal point along the optical axis. This concept is related to term "

@@ -97,6 +97,7 @@ class ApmChargeStateAnalysis(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-charge-state-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Signed charge, i.e. integer multiple of the elementary charge of "
@@ -116,6 +117,7 @@ class ApmChargeStateAnalysis(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Table of nuclide instances of which each candidate is composed. "
@@ -137,6 +139,7 @@ class ApmChargeStateAnalysis(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-mass-field"
         ],
         dimensionality="[mass]",
+        unit="kilogram",
         shape=["*"],
         description=(
             "Accumulated mass of the nuclides in each candidate. Not corrected "
@@ -156,6 +159,7 @@ class ApmChargeStateAnalysis(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-natural-abundance-product-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The product of the natural abundances of the nuclides for each candidate."
@@ -174,6 +178,7 @@ class ApmChargeStateAnalysis(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-shortest-half-life-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "For each candidate the half life of the nuclide that has the "
@@ -227,6 +232,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-config-nuclides-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Parameter that defines the elements considered in the combinatorial "
@@ -270,6 +276,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-config-min-half-life-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Parameter that defines the minimum half life for how long each "
             "nuclide of each ion needs to be stable such that the ion qualifies "
@@ -289,6 +296,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-config-min-abundance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Parameter that defines the minimum natural abundance of each "
             "nuclide of each ion such that the ion qualifies as a candidate."

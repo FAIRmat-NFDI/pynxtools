@@ -179,6 +179,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-shape-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=("Qualifier for the shape of each hexahedron."),
         a_nexus_field=NeXusField(
@@ -195,6 +196,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Qualifier that is useful in cases when one edge is longer than all "
@@ -216,6 +218,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Qualifier often used to describe the extent of an object in the "
@@ -238,6 +241,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Qualifier often used to describe the extent of an object in the "
@@ -257,6 +261,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=("Volume of each hexahedron."),
         a_nexus_field=NeXusField(
@@ -273,6 +278,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("Total (surface) area (of all six faces) of each hexahedron."),
         a_nexus_field=NeXusField(
@@ -289,6 +295,7 @@ class CgHexahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-face-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*", 6],
         description=("Area of each of the six faces of each hexahedron."),
         a_nexus_field=NeXusField(

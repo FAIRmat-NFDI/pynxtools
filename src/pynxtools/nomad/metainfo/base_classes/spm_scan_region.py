@@ -109,6 +109,7 @@ class SpmScanRegion(Object):
         ],
         variable=True,
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The orientation of the scan region or subspace. Usually, the "
             "scan_offset and scan_range are enough to define the scan region. "

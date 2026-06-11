@@ -166,6 +166,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("average/nominal filter temperature"),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -181,6 +182,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the filter"),
         a_nexus_field=NeXusField(
             name="thickness",
@@ -196,6 +198,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         description=("mass density of the filter"),
         a_nexus_field=NeXusField(
             name="density",
@@ -241,6 +244,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-a-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Unit cell lattice parameter: length of side a"),
         a_nexus_field=NeXusField(
             name="unit_cell_a",
@@ -256,6 +260,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-b-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Unit cell lattice parameter: length of side b"),
         a_nexus_field=NeXusField(
             name="unit_cell_b",
@@ -271,6 +276,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-c-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Unit cell lattice parameter: length of side c"),
         a_nexus_field=NeXusField(
             name="unit_cell_c",
@@ -286,6 +292,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-alpha-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Unit cell lattice parameter: angle alpha"),
         a_nexus_field=NeXusField(
             name="unit_cell_alpha",
@@ -301,6 +308,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-beta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Unit cell lattice parameter: angle beta"),
         a_nexus_field=NeXusField(
             name="unit_cell_beta",
@@ -316,6 +324,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-gamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Unit cell lattice parameter: angle gamma"),
         a_nexus_field=NeXusField(
             name="unit_cell_gamma",
@@ -331,6 +340,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=("Unit cell"),
         a_nexus_field=NeXusField(
@@ -365,6 +375,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-m-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("m value of supermirror filter"),
         a_nexus_field=NeXusField(
             name="m_value",
@@ -393,6 +404,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("substrate thickness of supermirror filter"),
         a_nexus_field=NeXusField(
             name="substrate_thickness",
@@ -421,6 +433,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-substrate-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("substrate roughness (RMS) of supermirror filter"),
         a_nexus_field=NeXusField(
             name="substrate_roughness",
@@ -436,6 +449,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-coating-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("coating roughness (RMS) of supermirror filter"),
         a_nexus_field=NeXusField(

@@ -175,6 +175,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The shortest analytical distance of each point to their "
@@ -194,6 +195,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-indices-triangle-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "For each point the identifier of the triangle for which the "
@@ -213,6 +215,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-indices-point-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "A support field to enable the visualization of each point by an "
@@ -261,6 +264,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMa
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-number-of-triangles-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of triangles covered by the mask."),
         a_nexus_field=NeXusField(
             name="number_of_triangles",
@@ -276,6 +280,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMa
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Bitdepth of the elementary datatype that is used to store the "
             "information content of the mask (typically 8 bit, uint8)."
@@ -294,6 +299,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMa
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The content of the mask. Like for all masks used in the tools of "
@@ -340,6 +346,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-number-of-objects-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -354,6 +361,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="bitdepth",
             type="NX_UINT",
@@ -368,6 +376,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="mask",

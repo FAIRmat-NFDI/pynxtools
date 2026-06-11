@@ -151,6 +151,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-modulation-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The frequency of the sine modulation that is used to modulate the "
             "signal in lock-in."
@@ -187,6 +188,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-reference-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("Frequency of the reference signal for the lock-in amplifier."),
         a_nexus_field=NeXusField(
             name="reference_frequency",
@@ -202,6 +204,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-reference-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Phase of the reference signal set in the lock-in amplifier."),
         a_nexus_field=NeXusField(
             name="reference_phase",
@@ -217,6 +220,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-phase-difference-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Phase difference between the input signal and the reference signal. "
             "This is used in two phase lock-in amplifiers. In single phase "
@@ -255,6 +259,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-demodulated-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The frequency of the demodulated signal."),
         a_nexus_field=NeXusField(
             name="demodulated_frequency",
@@ -270,6 +275,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-frequency-modulation-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The bandwidth of the modulating signal."),
         a_nexus_field=NeXusField(
             name="frequency_modulation_bandwidth",
@@ -285,6 +291,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-phase-modulation-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The bandwidth of the modulating signal over which modulated signal "
             "spreads."
@@ -303,6 +310,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-amplitude-modulation-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The bandwidth of the modulating signal over which modulated signal "
             "spreads."
@@ -338,6 +346,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-demodulated-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("The phase of the demodulated signal."),
         a_nexus_field=NeXusField(
             name="demodulated_phase",
@@ -367,6 +376,7 @@ class Lockin(Object):
         ],
         variable=True,
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "Frequency of the low-pass filter or cut-off frequency. Only signals "
             "below this frequency are passed through the filter. N is envisioned "
@@ -387,6 +397,7 @@ class Lockin(Object):
         ],
         variable=True,
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "Frequency of the high-pass filter or cut-off frequency. Only "
             "signals above this frequency are passed through the filter. N is "
@@ -446,6 +457,7 @@ class Lockin(Object):
         ],
         variable=True,
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "An extra phase offset added to the reference signal in modulation "
             "step. N is envisioned to represent the channel number e.g., "
@@ -483,6 +495,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-sensitivity-factor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Ratio of output signal amplitude to input signal amplitude (V/V)."
         ),

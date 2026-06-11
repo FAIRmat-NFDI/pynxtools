@@ -84,6 +84,7 @@ class Orientation(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXorientation.html#nxorientation-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 6],
         description=(
             "The orientation information is stored as direction cosines. The "

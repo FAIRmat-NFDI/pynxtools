@@ -323,6 +323,7 @@ class StmInstrumentLockinAmplifier(Lockin):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXstm.html#nxstm-entry-instrument-lockin-amplifier-modulation-signal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The type of the signal (voltage or current) subject to modulation."
         ),

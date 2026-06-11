@@ -126,6 +126,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-cantilever-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Nominal length between base and end of the cantilever in micrometers."
         ),
@@ -143,6 +144,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-cantilever-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Nominal width of the cantilever in microns."),
         a_nexus_field=NeXusField(
             name="cantilever_width",
@@ -158,6 +160,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-cantilever-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Nominal thickness of the cantilever in microns."),
         a_nexus_field=NeXusField(
             name="cantilever_thickness",
@@ -173,6 +176,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-resonance-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "Nominal free resonance frequency of the cantilever in air i.e., out "
             "of interaction force."
@@ -209,6 +213,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-fermi-level-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("The Fermi level of the cantilever material."),
         a_nexus_field=NeXusField(
             name="fermi_level",
@@ -224,6 +229,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-resonance-amplitude-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Nominal free resonance amplitude of the cantilever in air, in nm "
             "i.e., out of interaction force."

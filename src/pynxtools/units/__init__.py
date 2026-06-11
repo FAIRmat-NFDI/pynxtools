@@ -74,7 +74,83 @@ class NXUnitSet:
         "NX_WAVENUMBER": "1 / [length]",
     }
 
+    # Default storage unit per `NX_` unit category, used as `Quantity.unit` for
+    # generated metainfo. Dimensionless categories map to "dimensionless" so that
+    # `unit` and `dimensionality` stay consistent (and a subclass overriding only
+    # `dimensionality` does not inherit an incompatible `unit` from its base
+    # quantity). `None` means the category has no meaningful dimensionality check
+    # at all (e.g. 'NX_ANY', 'NX_TRANSFORMATION').
+    default_unit: dict[str, str | None] = {
+        "NX_ANGLE": "radian",
+        "NX_ANY": None,
+        "NX_AREA": "m ** 2",
+        "NX_CHARGE": "coulomb",
+        "NX_COUNT": "dimensionless",
+        "NX_CROSS_SECTION": "m ** 2",
+        "NX_CURRENT": "ampere",
+        "NX_DIMENSIONLESS": "dimensionless",
+        "NX_EMITTANCE": "m * radian",
+        "NX_ENERGY": "joule",
+        "NX_FLUX": "1 / second / m ** 2",
+        "NX_FREQUENCY": "hertz",
+        "NX_LENGTH": "m",
+        "NX_MASS": "kilogram",
+        "NX_MASS_DENSITY": "kilogram / m ** 3",
+        "NX_MOLECULAR_WEIGHT": "kilogram / mol",
+        "NX_PERIOD": "second",
+        "NX_PER_AREA": "1 / m ** 2",
+        "NX_PER_LENGTH": "1 / m",
+        "NX_POWER": "watt",
+        "NX_PRESSURE": "pascal",
+        "NX_PULSES": "dimensionless",
+        "NX_SCATTERING_LENGTH_DENSITY": "1 / m ** 2",
+        "NX_SOLID_ANGLE": "steradian",
+        "NX_TEMPERATURE": "kelvin",
+        "NX_TIME": "second",
+        "NX_TIME_OF_FLIGHT": "second",
+        "NX_TRANSFORMATION": None,
+        "NX_UNITLESS": "dimensionless",
+        "NX_VOLTAGE": "volt",
+        "NX_VOLUME": "m ** 3",
+        "NX_WAVELENGTH": "m",
+        "NX_WAVENUMBER": "1 / m",
+    }
+
     _dimensionalities: dict[str, Any | None] = {}
+    _default_units: dict[str, str | None] = {}
+
+    @classmethod
+    def get_default_unit(cls, nx_unit: str) -> str | None:
+        """
+        Get the default storage unit for a given NeXus unit category or example.
+
+        Mirrors :meth:`get_dimensionality`: if `nx_unit` is a recognized `NX_`
+        unit category, its default unit from `default_unit` is used ('dimensionless'
+        for dimensionless categories, `None` for categories without a meaningful
+        dimensionality check, e.g. 'NX_ANY', 'NX_TRANSFORMATION'). Otherwise
+        `nx_unit` is treated as a concrete example unit given directly in the
+        NXDL (e.g. 'eV', 'mm') and is used as-is if it is a valid pint unit.
+
+        Args:
+            nx_unit (str): The NeXus unit category or a specific unit string.
+
+        Returns:
+            Optional[str]: A pint-parsable unit string, or None if undefined.
+        """
+        if nx_unit in cls._default_units:
+            return cls._default_units[nx_unit]
+
+        if nx_unit in cls.mapping:
+            result = cls.default_unit.get(nx_unit)
+        else:
+            try:
+                ureg(nx_unit)
+                result = nx_unit
+            except (UndefinedUnitError, DefinitionSyntaxError):
+                result = None
+
+        cls._default_units[nx_unit] = result
+        return result
 
     @classmethod
     def get_dimensionality(cls, nx_unit: str) -> Any | None:

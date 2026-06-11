@@ -102,6 +102,7 @@ class CsFilterBooleanMask(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_filter_boolean_mask.html#nxcs_filter_boolean_mask-number-of-objects-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of objects represented by the mask."),
         a_nexus_field=NeXusField(
             name="number_of_objects",
@@ -117,6 +118,7 @@ class CsFilterBooleanMask(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_filter_boolean_mask.html#nxcs_filter_boolean_mask-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of bits assumed matching on a default datatype. (e.g. 8 bits "
             "for a C-style uint8)."
@@ -135,6 +137,7 @@ class CsFilterBooleanMask(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_filter_boolean_mask.html#nxcs_filter_boolean_mask-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The content of the mask. If padding is used, padding bits have to "
             "be set to 0."

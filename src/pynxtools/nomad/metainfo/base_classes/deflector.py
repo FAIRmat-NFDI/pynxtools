@@ -99,6 +99,7 @@ class Deflector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdeflector.html#nxdeflector-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Excitation voltage of the deflector. For dipoles it is a single "
             "number. For higher order multipoles, it is an array."
@@ -117,6 +118,7 @@ class Deflector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdeflector.html#nxdeflector-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Excitation current of the deflector. For dipoles it is a single "
             "number. For higher orders, it is an array."
@@ -135,6 +137,7 @@ class Deflector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdeflector.html#nxdeflector-offset-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Spatial offset of the deflector in x direction (perpendicular to "
             "```offset_y```)."
@@ -153,6 +156,7 @@ class Deflector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdeflector.html#nxdeflector-offset-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Spatial offset of the deflector in y direction (perpendicular to "
             "```offset_x```)."

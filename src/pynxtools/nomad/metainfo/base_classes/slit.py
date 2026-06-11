@@ -90,6 +90,7 @@ class Slit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXslit.html#nxslit-x-gap-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Size of the gap opening in the first dimension of the local "
             "coordinate system."
@@ -108,6 +109,7 @@ class Slit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXslit.html#nxslit-y-gap-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Size of the gap opening in the second dimension of the local "
             "coordinate system."

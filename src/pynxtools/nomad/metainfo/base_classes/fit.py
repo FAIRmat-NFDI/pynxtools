@@ -145,6 +145,7 @@ class Fit(Process):
         ],
         variable=True,
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Figure-of-merit to determine the goodness of fit, i.e., how well "
             "the fit model (i.e., the set of peaks and backgrounds) fits the "
@@ -310,6 +311,7 @@ class FitPeakPEAK(Peak):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-relative-sensitivity-factor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Relative sensitivity for this peak, to be used for quantification "
             "in an NXprocess. As an example, in X-ray spectroscopy could depend "

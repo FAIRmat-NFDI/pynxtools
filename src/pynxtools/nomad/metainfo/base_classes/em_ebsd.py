@@ -550,6 +550,7 @@ class EmEbsdMeasurement(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-measurement-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Physical time since the beginning of a timestamp that is required "
             "to be the same for all experiments in the set. The purpose of this "
@@ -887,6 +888,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-status-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Which return value did the indexing algorithm yield for each scan "
@@ -907,6 +909,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phases-per-scan-point-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "How many phases i.e. crystal structure models were used to index "
@@ -936,6 +939,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phase-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The array phases_per_scan_point details how the phase_id and the "
@@ -971,6 +975,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-matching-phase-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "One-dimensional array, pattern-by-pattern labelling the solutions "
@@ -1010,6 +1015,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-scan-point-positions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         description=(
             "Calibrated center positions of each scan point in the sample "
@@ -1029,6 +1035,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-indexing-rate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Fraction of successfully indexed patterns with a phase not the "
             "null-phase vs the number_of_scan_points."
@@ -1047,6 +1054,7 @@ class EmEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-number-of-scan-points-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of scan points in the original mapping."),
         a_nexus_field=NeXusField(
             name="number_of_scan_points",
@@ -1107,6 +1115,7 @@ class EmEbsdIndexingPhaseID(Phase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-dspacing-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Spacing between the crystallographic planes that are defined via "
@@ -1126,6 +1135,7 @@ class EmEbsdIndexingPhaseID(Phase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-relative-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Relative intensity for the computed diffraction intensity (signal) "
@@ -1145,6 +1155,7 @@ class EmEbsdIndexingPhaseID(Phase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-number-of-scan-points-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "In case the :ref:`NXunit_cell` base class is used with analyzed "
             "orientation maps this field stores how many scan points of the map "
@@ -1164,6 +1175,7 @@ class EmEbsdIndexingPhaseID(Phase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-number-of-planes-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many reflectors for crystallographic planes are distinguished."
         ),
@@ -1181,6 +1193,7 @@ class EmEbsdIndexingPhaseID(Phase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-miller-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 6],
         description=(
             "Miller indices :math:`(hkl)[uvw]` of the planes. The first triplet "
@@ -1251,6 +1264,7 @@ class EmEbsdIndexingRoi(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-data-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Descriptor values displaying the ROI."),
         a_nexus_field=NeXusField(
@@ -1281,6 +1295,7 @@ class EmEbsdIndexingRoi(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Calibrated coordinate along the y-axis."),
         a_nexus_field=NeXusField(
@@ -1311,6 +1326,7 @@ class EmEbsdIndexingRoi(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Calibrated coordinate along the x-axis."),
         a_nexus_field=NeXusField(

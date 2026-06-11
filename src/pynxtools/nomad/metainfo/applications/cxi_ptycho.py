@@ -261,6 +261,7 @@ class CxiPtychoInstrument1Source1(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("This is the energy of the machine, not the beamline."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -444,6 +445,7 @@ class CxiPtychoInstrument1Beam1(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_FLOAT",
@@ -528,6 +530,7 @@ class CxiPtychoInstrument1Detector1(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is an array of shape (npts_x*npts_y, 3) and can be a Virtual "
             "Dataset of x and y"
@@ -602,6 +605,7 @@ class CxiPtychoInstrument1Detector1(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -630,6 +634,7 @@ class CxiPtychoInstrument1Detector1(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -658,6 +663,7 @@ class CxiPtychoInstrument1Detector1(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=("The distance between the detector and the sample"),
         a_nexus_field=NeXusField(

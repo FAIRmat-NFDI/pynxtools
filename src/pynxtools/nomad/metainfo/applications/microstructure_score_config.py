@@ -529,6 +529,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-melting-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Empirical melting temperature measured at standard conditions."),
         a_nexus_field=NeXusField(
             name="melting_temperature",
@@ -544,6 +545,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-shear-modulus-zero-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         description=("Shear modulus at zero Kelvin."),
         a_nexus_field=NeXusField(
             name="shear_modulus_zero",
@@ -559,6 +561,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-nadal-lepoac-a-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Constant :math:`a` in the Nadal-Le Poac-based model of the "
             "temperature-dependent shear modulus."
@@ -577,6 +580,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-nadal-lepoac-zeta-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Constant :math:`\\zeta` in the Nadal-Le Poac-based model of the "
             "temperature- dependent shear modulus."
@@ -595,6 +599,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-burgers-vector-zero-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Magnitude of the Burgers vector at zero Kelvin."),
         a_nexus_field=NeXusField(
             name="burgers_vector_zero",
@@ -644,6 +649,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-lattice-expansion-null-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Constant :math:`a_0` in the second-order model that is used for "
             "quantifying the temperature-dependent Burgers vector."
@@ -738,6 +744,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-extent-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "Extent of each deformed grain in voxel along the x, y, and z "
@@ -757,6 +764,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Average spherical diameter when model is poisson_voronoi."),
         a_nexus_field=NeXusField(
             name="diameter",
@@ -795,6 +803,7 @@ class MicrostructureScoreConfigDeformationEnsemble(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-bunge-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "Set of Bunge-Euler orientations (:math:`\\varphi_1`, :math:`\\Phi`, "
@@ -894,6 +903,7 @@ class MicrostructureScoreConfigDeformationEbsd(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-stepsize-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Extent of the pixel of the EBSD orientation mapping assuming "
@@ -1087,6 +1097,7 @@ class MicrostructureScoreConfigNucleationEnsemble(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-bunge-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "Set of Bunge-Euler orientations (:math:`\\varphi_1`, :math:`\\Phi`, "
@@ -1107,6 +1118,7 @@ class MicrostructureScoreConfigNucleationEnsemble(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-incubation-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Incubation time which is assigned to deformed grains with "
@@ -1360,6 +1372,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-c1-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Mobility scaling factor :math:`c_1`. Typically 0.99 or higher but not 1."
         ),
@@ -1377,6 +1390,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-c2-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Mobility scaling factor :math:`c_2`. Typically 5."),
         a_nexus_field=NeXusField(
             name="c2",
@@ -1392,6 +1406,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-c3-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Mobility scaling factor :math:`c_3`. Typically 9."),
         a_nexus_field=NeXusField(
             name="c3",
@@ -1527,6 +1542,7 @@ class MicrostructureScoreConfigDispersoidDragZenerSmith(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-pre-factor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Configuration-dependent constant which factorizes the drag pressure."
         ),
@@ -1644,6 +1660,7 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Support point of the linearized curve of simulated time matching a "
@@ -1676,6 +1693,7 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Support point of the linearized curve of the average dispersoid radius."
@@ -1739,6 +1757,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-bunge-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "Bunge-Euler angle representation :math:`\\varphi_1`, :math:`\\Phi`, "
@@ -1759,6 +1778,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-theta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Integration radius that constraints the theta angular region of the "
@@ -1863,6 +1883,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Support point of the linearized curve of simulated time matching a "
@@ -1895,6 +1916,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         description=("Support point of the linearized curve of the temperature."),
         a_nexus_field=NeXusField(
@@ -1982,6 +2004,7 @@ class MicrostructureScoreConfigDiscretizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-extent-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[3],
         description=(
             "Extend of each CA domain in voxel along the x, y, and z direction. "
@@ -2004,6 +2027,7 @@ class MicrostructureScoreConfigDiscretizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-cell-dimensions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Edge length of the material point that in SCORE is discretized via "
@@ -2058,6 +2082,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-max-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Maximum recrystallized volume fraction."),
         a_nexus_field=NeXusField(
             name="max_x",
@@ -2073,6 +2098,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-max-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Maximum simulated physical time."),
         a_nexus_field=NeXusField(
             name="max_time",
@@ -2088,6 +2114,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-max-iteration-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Maximum number of iteration steps."),
         a_nexus_field=NeXusField(
             name="max_iteration",
@@ -2103,6 +2130,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-max-delta-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Maximum fraction equivalent to the migration of the fastest grain "
             "boundary in the system how much a cell may be consumed in a single "
@@ -2122,6 +2150,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-x-set-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "List of target values at which recrystallized volume fractions the "
@@ -2175,6 +2204,7 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-initial-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Fraction of the total number of cells in the CA which should "
             "initially be allocated for offering storage for cells making up the "
@@ -2194,6 +2224,7 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-realloc-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "By how much more times should the already allocated memory be "
             "increased to offer space for storing states of cells in the "
@@ -2229,6 +2260,7 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-defragment-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Target values at which recrystallized volume fraction the cache for "
@@ -2285,6 +2317,7 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-solitary-unit-number-of-domains-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many independent cellular automaton domains should be instantiated."
         ),
@@ -2302,6 +2335,7 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-solitary-unit-rediscretization-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Into how many time steps should the real time interval be "
             "discretized upon during post-processing the results with the "

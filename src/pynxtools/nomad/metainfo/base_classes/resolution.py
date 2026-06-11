@@ -209,6 +209,7 @@ class Resolution(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-relative-resolution-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Standard deviation of the relative resolution of the physical quantity."
         ),

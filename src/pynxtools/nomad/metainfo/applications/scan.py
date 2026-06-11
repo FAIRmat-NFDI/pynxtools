@@ -262,6 +262,7 @@ class ScanSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",

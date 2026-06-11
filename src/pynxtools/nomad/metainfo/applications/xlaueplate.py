@@ -169,6 +169,7 @@ class XlaueplateInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaueplate.html#nxxlaueplate-entry-instrument-detector-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The diameter of a cylindrical detector"),
         a_nexus_field=NeXusField(
             name="diameter",

@@ -181,6 +181,7 @@ class XnbInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("The polar_angle (gamma) of the detector for each scan point."),
         a_nexus_field=NeXusField(
@@ -197,6 +198,7 @@ class XnbInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-detector-tilt-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The angle by which the detector has been tilted out of the "
@@ -234,6 +236,7 @@ class XnbSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the sample rotation angle at each scan point"

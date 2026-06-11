@@ -97,6 +97,7 @@ class DispersionTable(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The wavelength array of the tabulated dataset. This is essentially "
@@ -117,6 +118,7 @@ class DispersionTable(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=(
             "The energy array of the tabulated dataset. This is essentially a "
@@ -137,6 +139,7 @@ class DispersionTable(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-refractive-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("The refractive index array of the tabulated dataset."),
         a_nexus_field=NeXusField(
@@ -153,6 +156,7 @@ class DispersionTable(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-dielectric-function-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("The dielectric function of the tabulated dataset."),
         a_nexus_field=NeXusField(

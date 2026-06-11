@@ -102,6 +102,7 @@ class ChemicalComposition(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXchemical_composition.html#nxchemical_composition-total-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Total formula mass or number of atoms, depending on the "
@@ -156,6 +157,7 @@ class ChemicalCompositionAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXchemical_composition.html#nxchemical_composition-element-amount-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Count or weight which, when divided by total yields the composition "
@@ -175,6 +177,7 @@ class ChemicalCompositionAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXchemical_composition.html#nxchemical_composition-element-composition-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Composition value for the element/ion referred to under name. "
             "Composition is reported either normalized for atomic or weight "
@@ -196,6 +199,7 @@ class ChemicalCompositionAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXchemical_composition.html#nxchemical_composition-element-composition-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Magnitude of the standard deviation of the composition."),
         a_nexus_field=NeXusField(
             name="composition_errors",

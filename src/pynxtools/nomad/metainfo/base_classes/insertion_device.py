@@ -123,6 +123,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-gap-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("separation between opposing pairs of magnetic poles"),
         a_nexus_field=NeXusField(
             name="gap",
@@ -138,6 +139,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-taper-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "angular of gap difference between upstream and downstream ends of "
             "the insertion device"
@@ -156,6 +158,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="phase",
             type="NX_FLOAT",
@@ -170,6 +173,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-poles-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("number of poles"),
         a_nexus_field=NeXusField(
             name="poles",
@@ -185,6 +189,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-magnetic-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="magnetic_wavelength",
             type="NX_FLOAT",
@@ -199,6 +204,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-k-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("beam displacement parameter"),
         a_nexus_field=NeXusField(
             name="k",
@@ -214,6 +220,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("length of insertion device"),
         a_nexus_field=NeXusField(
             name="length",
@@ -229,6 +236,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         description=("total power delivered by insertion device"),
         a_nexus_field=NeXusField(
             name="power",
@@ -244,6 +252,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy of peak intensity in output spectrum"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -259,6 +268,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-bandwidth-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("bandwidth of peak energy"),
         a_nexus_field=NeXusField(
             name="bandwidth",
@@ -274,6 +284,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-harmonic-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("harmonic number of peak"),
         a_nexus_field=NeXusField(
             name="harmonic",

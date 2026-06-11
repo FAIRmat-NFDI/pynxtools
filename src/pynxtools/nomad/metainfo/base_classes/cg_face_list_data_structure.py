@@ -89,6 +89,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-number-of-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Number of vertices for each face. Each entry represents the total "
@@ -109,6 +110,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-number-of-edges-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Number of edges for each face. Each entry represents the total "
@@ -129,6 +131,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-number-of-faces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of faces of the primitives."),
         a_nexus_field=NeXusField(
             name="number_of_faces",
@@ -144,6 +147,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-index-offset-vertex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer offset whereby the identifier of the first member of the "
             "vertices differs from zero. Identifier can be defined explicitly or "
@@ -164,6 +168,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-index-offset-edge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer offset whereby the identifier of the first member of the "
             "edges differs from zero. Identifier can be defined explicitly or "
@@ -184,6 +189,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-index-offset-face-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer offset whereby the identifier of the first member of the "
             "faces differs from zero. Identifier can be defined explicitly or "
@@ -204,6 +210,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-indices-vertex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Integer identifier to distinguish all vertices explicitly."),
         a_nexus_field=NeXusField(
@@ -220,6 +227,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-indices-edge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Integer used to distinguish all edges explicitly."),
         a_nexus_field=NeXusField(
@@ -236,6 +244,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-indices-face-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Integer used to distinguish all faces explicitly."),
         a_nexus_field=NeXusField(
@@ -274,6 +283,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-edges-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=("The edges are stored as pairs of vertex identifier."),
         a_nexus_field=NeXusField(
@@ -290,6 +300,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-faces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The faces are stored as a concatenated array of vertex identifier "
@@ -362,6 +373,7 @@ class CgFaceListDataStructure(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-winding-order-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Specifies for each face which winding order was used if any: * 0 - "

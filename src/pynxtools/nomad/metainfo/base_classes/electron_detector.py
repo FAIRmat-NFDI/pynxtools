@@ -94,6 +94,7 @@ class ElectronDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectron_detector.html#nxelectron_detector-detector-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Voltage applied to the electron detector."),
         a_nexus_field=NeXusField(
             name="detector_voltage",
@@ -109,6 +110,7 @@ class ElectronDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectron_detector.html#nxelectron_detector-amplifier-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Voltage applied to the amplifier."),
         a_nexus_field=NeXusField(
             name="amplifier_voltage",
@@ -124,6 +126,7 @@ class ElectronDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectron_detector.html#nxelectron_detector-amplifier-bias-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("The low voltage of the amplifier might not be the ground."),
         a_nexus_field=NeXusField(
             name="amplifier_bias",

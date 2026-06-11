@@ -93,6 +93,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Given numerical identifier for the set. The identifier zero is "
             "reserved for the special unknown ion type."
@@ -127,6 +128,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-charge-field"
         ],
         dimensionality="[current] * [time]",
+        unit="coulomb",
         description=(
             "Signed net (partial) charge of the (molecular) ion. Different "
             "methods for computing charge are in use. Care needs to be exercised "
@@ -148,6 +150,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-charge-state-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Charge reported in multiples of the charge of an electron. For "
             "research using atom probe tomography the value should be set to "
@@ -173,6 +176,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         description=(
             "Assumed volume affected by the set of atoms. Neither individual "
             "atoms nor a set of cluster of these have a volume that is unique as "
@@ -209,6 +213,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-type-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Nuclide information for each atom at locations as detailed by "
@@ -265,6 +270,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-occupancy-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Relative occupancy of the atom position. This field is useful for "
@@ -284,6 +290,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Vector of nuclide hash values. The vector is sorted in decreasing "
@@ -325,6 +332,7 @@ class Atom(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-nuclide-list-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Table which decodes the entries in nuclide_hash into a "

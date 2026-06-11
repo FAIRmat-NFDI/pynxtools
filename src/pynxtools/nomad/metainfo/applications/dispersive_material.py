@@ -464,6 +464,7 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-table-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -479,6 +480,7 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-table-dielectric-function-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="dielectric_function",
@@ -494,6 +496,7 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-table-refractive-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="refractive_index",
@@ -600,6 +603,7 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
@@ -626,6 +630,7 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-wavelength-unit-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="wavelength_unit",
             type="NX_NUMBER",
@@ -859,6 +864,7 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-table-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -874,6 +880,7 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-table-dielectric-function-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="dielectric_function",
@@ -889,6 +896,7 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-table-refractive-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="refractive_index",
@@ -995,6 +1003,7 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
@@ -1021,6 +1030,7 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-wavelength-unit-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="wavelength_unit",
             type="NX_NUMBER",
@@ -1256,6 +1266,7 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-table-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -1271,6 +1282,7 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-table-dielectric-function-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="dielectric_function",
@@ -1286,6 +1298,7 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-table-refractive-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="refractive_index",
@@ -1392,6 +1405,7 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
@@ -1418,6 +1432,7 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-wavelength-unit-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="wavelength_unit",
             type="NX_NUMBER",

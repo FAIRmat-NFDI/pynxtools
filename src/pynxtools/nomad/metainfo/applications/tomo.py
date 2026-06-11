@@ -339,6 +339,7 @@ class TomoSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "In practice this axis is always aligned along one pixel direction "
@@ -360,6 +361,7 @@ class TomoSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-y-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="y_translation",
@@ -375,6 +377,7 @@ class TomoSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-z-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="z_translation",

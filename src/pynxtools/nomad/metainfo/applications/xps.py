@@ -323,6 +323,7 @@ class XpsCoordinateSystem(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -338,6 +339,7 @@ class XpsCoordinateSystem(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -353,6 +355,7 @@ class XpsCoordinateSystem(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -477,6 +480,7 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-work-function-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="work_function",
             type="NX_FLOAT",
@@ -526,6 +530,7 @@ class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-collectioncolumn-magnification-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="magnification",
             type="NX_FLOAT",
@@ -559,6 +564,7 @@ class XpsInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-energydispersion-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="radius",
             type="NX_NUMBER",
@@ -611,6 +617,7 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Polar tilt of the analyzer with respect to the upward z-direction, "
             "defined by the sample stage. The angle between the incoming beam "
@@ -677,6 +684,7 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-azimuth-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Azimuthal rotation of the analyzer from the y-direction defined by "
             "the sample stage."
@@ -836,6 +844,7 @@ class XpsFit(Fit):
         ],
         variable=True,
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="figure_of_meritMETRIC",
             type="NX_NUMBER",
@@ -902,6 +911,7 @@ class XpsFitData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-independent-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Independent variable for this fit procedure. This could be a link "
             "to entry/data/energy."
@@ -1051,6 +1061,7 @@ class XpsFitPeakPEAKData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("This could be a link to entry/data/energy."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1205,6 +1216,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-width-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Width of a peak at a defined fraction of the peak height. Usually, "
             "this will be the Full Width at Half Maximum of the peak (FWHM). For "
@@ -1228,6 +1240,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Position of the peak on the energy axis."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1322,6 +1335,7 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
@@ -1589,6 +1603,7 @@ class XpsSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation about the sample normal."),
         a_nexus_field=NeXusField(
             name="sample_rotation_angle",
@@ -1646,6 +1661,7 @@ class XpsSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-polar-angle-of-tilt-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Polar tilt of the sample with respect to the upward z-direction, "
             "defined by the sample stage."
@@ -1706,6 +1722,7 @@ class XpsSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-tilt-azimuth-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Azimuthal rotation of the sample from the y-direction defined by "
             "the sample stage."
@@ -1788,6 +1805,7 @@ class XpsData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",

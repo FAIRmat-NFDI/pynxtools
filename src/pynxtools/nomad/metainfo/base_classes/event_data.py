@@ -85,6 +85,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-time-offset-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("A list of timestamps for each event as it comes in."),
         a_nexus_field=NeXusField(
@@ -101,6 +102,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "There will be extra information in the NXdetector to convert "
@@ -120,6 +122,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-time-zero-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("The time that each pulse started with respect to the offset"),
         a_nexus_field=NeXusField(
@@ -150,6 +153,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The index into the event_time_offset, event_id pair for the pulse "
@@ -169,6 +173,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-pulse-height-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "If voltages from the ends of the detector are read out this is "
@@ -190,6 +195,7 @@ class EventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-cue-timestamp-zero-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Timestamps matching the corresponding cue_index into the event_id, "
             "event_time_offset pair."

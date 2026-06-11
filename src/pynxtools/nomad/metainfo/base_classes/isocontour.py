@@ -101,6 +101,7 @@ class Isocontour(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXisocontour.html#nxisocontour-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The dimensionality of the space in which the isocontour is embedded."
         ),

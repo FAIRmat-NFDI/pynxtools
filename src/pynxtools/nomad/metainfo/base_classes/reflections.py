@@ -386,6 +386,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-frame-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The frame on which the bragg peak of the reflection is predicted"
@@ -418,6 +419,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The x position at which the bragg peak of the reflection is predicted"
@@ -450,6 +452,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The y position at which the bragg peak of the reflection is predicted"
@@ -482,6 +485,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The phi angle at which the bragg peak of the reflection is predicted"
@@ -514,6 +518,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The x pixel position at which the bragg peak of the reflection is "
@@ -547,6 +552,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-y-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The y pixel position at which the bragg peak of the reflection is "
@@ -580,6 +586,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The estimate of the frame at which the central impact of the "
@@ -613,6 +620,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-var-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The variance on the estimate of the frame at which the central "
@@ -646,6 +654,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The standard deviation of the estimate of the frame at which the "
@@ -679,6 +688,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The estimate of the pixel x position at which the central impact of "
@@ -712,6 +722,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-var-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The variance on the estimate of the pixel x position at which the "
@@ -745,6 +756,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The standard deviation of the estimate of the pixel x position at "
@@ -778,6 +790,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The estimate of the pixel y position at which the central impact of "
@@ -811,6 +824,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-var-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The variance on the estimate of the pixel y position at which the "
@@ -844,6 +858,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The standard deviation of the estimate of the pixel y position at "
@@ -877,6 +892,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The estimate of the phi angle at which the central impact of the "
@@ -910,6 +926,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-var-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The variance on the estimate of the phi angle at which the central "
@@ -943,6 +960,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-errors-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The standard deviation of the estimate of the phi angle at which "
@@ -976,6 +994,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The estimate of the x position at which the central impact of the "
@@ -1009,6 +1028,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-var-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The variance on the estimate of the x position at which the central "
@@ -1042,6 +1062,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-errors-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The standard deviation of the estimate of the x position at which "
@@ -1075,6 +1096,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The estimate of the y position at which the central impact of the "
@@ -1108,6 +1130,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-var-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The variance on the estimate of the y position at which the central "
@@ -1141,6 +1164,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-errors-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The standard deviation of the estimate of the y position at which "
@@ -1174,6 +1198,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-bounding-box-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 6],
         description=(
             "The bounding box around the recorded recorded reflection. Should be "
@@ -1513,6 +1538,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Polar angle of reflection centroid, following the NeXus simple "
@@ -1546,6 +1572,7 @@ class Reflections(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Azimuthal angle of reflection centroid, following the NeXus simple "

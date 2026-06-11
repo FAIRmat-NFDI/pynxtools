@@ -162,6 +162,7 @@ class ApmParaprobeToolCommon(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_common.html#nxapm_paraprobe_tool_common-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Internal identifier used by the tool to refer to an analysis. "
             "Simulation ID is an alias."
@@ -207,6 +208,7 @@ class ApmParaprobeToolCommonProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_common.html#nxapm_paraprobe_tool_common-profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Wall-clock time."),
         a_nexus_field=NeXusField(
             name="total_elapsed_time",

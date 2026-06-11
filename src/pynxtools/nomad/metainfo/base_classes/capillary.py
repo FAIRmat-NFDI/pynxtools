@@ -121,6 +121,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-maximum-incident-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="maximum_incident_angle",
             type="NX_FLOAT",
@@ -135,6 +136,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-accepting-aperture-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="accepting_aperture",
             type="NX_FLOAT",
@@ -149,6 +151,7 @@ class Capillary(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcapillary.html#nxcapillary-working-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="working_distance",
             type="NX_FLOAT",

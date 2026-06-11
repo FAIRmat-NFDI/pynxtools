@@ -115,6 +115,7 @@ class CsPrng(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_prng.html#nxcs_prng-seed-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Parameter of the PRNG controlling its initialization and thus "
             "controlling the specific sequence generated."
@@ -133,6 +134,7 @@ class CsPrng(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_prng.html#nxcs_prng-warmup-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of initial draws from the PRNG after its initialized with "
             "the seed. These initial draws are typically discarded in an effort "

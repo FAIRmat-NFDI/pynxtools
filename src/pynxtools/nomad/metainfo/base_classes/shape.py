@@ -107,6 +107,7 @@ class Shape(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXshape.html#nxshape-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "physical extent of the object along its local axes (after "

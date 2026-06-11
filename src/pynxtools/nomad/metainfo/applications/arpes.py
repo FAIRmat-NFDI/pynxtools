@@ -297,6 +297,7 @@ class ArpesInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-monochromator-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
@@ -396,6 +397,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-entrance-slit-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("size of the entrance slit"),
         a_nexus_field=NeXusField(
             name="entrance_slit_size",
@@ -411,6 +413,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-pass-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy of the electrons on the mean path of the analyser"),
         a_nexus_field=NeXusField(
             name="pass_energy",
@@ -426,6 +429,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-time-per-channel-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("todo: define more clearly"),
         a_nexus_field=NeXusField(
             name="time_per_channel",
@@ -441,6 +445,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-angles-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angular axis of the analyser data which dimension the axis applies "
             "to is defined using the normal NXdata methods."
@@ -459,6 +464,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-energies-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Energy axis of the analyser data which dimension the axis applies "
             "to is defined using the normal NXdata methods."
@@ -551,6 +557,7 @@ class ArpesSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",

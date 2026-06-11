@@ -140,6 +140,7 @@ class EmImgImage(Image):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_img.html#nxem_img-image-half-angle-interval-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[2],
         description=(
             "Annulus inner (first value) and outer (second value) half angle."

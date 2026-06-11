@@ -274,6 +274,7 @@ class ApmInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-flight-path-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Nominal flight path The value can be extracted from the "
             "CAnalysis.CSpatial.fFlightPath field of a CamecaRoot ROOT file."
@@ -345,6 +346,7 @@ class ApmInstrumentReflectron(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-reflectron-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The maximum voltage applied to the reflectron, relative to system ground."
         ),
@@ -385,6 +387,7 @@ class ApmInstrumentLocalElectrode(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-local-electrode-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Acceleration voltage"),
         a_nexus_field=NeXusField(
             name="voltage",
@@ -447,6 +450,7 @@ class ApmInstrumentIonDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-ion-detector-signal-amplitude-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         shape=["*"],
         description=(
             "Amplitude of the signal detected on the multi-channel plate (MCP). "
@@ -469,6 +473,7 @@ class ApmInstrumentIonDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-ion-detector-mcp-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The value can be extracted from the CRunHeader.fMcpEfficiency field "
             "of a CamecaRoot RHIT file."
@@ -487,6 +492,7 @@ class ApmInstrumentIonDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-ion-detector-mesh-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The value can be extracted from the CRunHeader.fMeshEfficiency "
             "field of a CamecaRoot RHIT file."
@@ -564,6 +570,7 @@ class ApmInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-pulse-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("Frequency with which the pulser fire(s)."),
         a_nexus_field=NeXusField(
             name="pulse_frequency",
@@ -579,6 +586,7 @@ class ApmInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-pulse-fraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Fraction of the pulse_voltage that is applied in addition to the "
             "standing_voltage at peak voltage of a pulse. If a standing voltage "
@@ -599,6 +607,7 @@ class ApmInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-pulse-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Pulsed voltage, in laser pulsing mode this field can be omitted."
         ),
@@ -616,6 +625,7 @@ class ApmInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-pulse-number-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Absolute number of pulses starting from the beginning of the experiment."
         ),
@@ -633,6 +643,7 @@ class ApmInstrumentPulser(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-standing-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Direct current voltage between the specimen and the (local "
             "electrode) in the case of local electrode atom probe (LEAP) "
@@ -748,6 +759,7 @@ class ApmInstrumentPulserSourceIDBeamID(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-incidence-vector-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Track time-dependent settings over the course of the measurement "
             "how the laser beam shines on the specimen, i.e. the mean vector is "
@@ -767,6 +779,7 @@ class ApmInstrumentPulserSourceIDBeamID(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-pinhole-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Track time-dependent settings over the course of the measurement "
             "where the laser beam exits the focusing optics."
@@ -785,6 +798,7 @@ class ApmInstrumentPulserSourceIDBeamID(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-spot-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Track time-dependent settings over the course of the measurement "
             "where the laser hits the specimen."
@@ -849,6 +863,7 @@ class ApmInstrumentStageTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-stage-temperature-sensor-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         description=(
             "The value can be extracted from the "
@@ -898,6 +913,7 @@ class ApmInstrumentAnalysisChamber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-flight-path-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The space inside the atom probe along which ions pass nominally "
             "when they leave the specimen and travel to the detector."
@@ -947,6 +963,7 @@ class ApmInstrumentAnalysisChamberPressureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-pressure-sensor-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         shape=["*"],
         description=(
             "The value can be extracted from the "

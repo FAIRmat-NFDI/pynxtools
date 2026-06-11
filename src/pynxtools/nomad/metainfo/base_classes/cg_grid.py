@@ -125,6 +125,7 @@ class CgGrid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-cell-dimensions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("The unit cell dimensions using crystallographic notation."),
         a_nexus_field=NeXusField(
@@ -141,6 +142,7 @@ class CgGrid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-extent-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Number of unit cells along each of the d unit vectors. The total "
@@ -179,6 +181,7 @@ class CgGrid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-coordinate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Coordinate of each cell with respect to the discrete grid."),
         a_nexus_field=NeXusField(
@@ -195,6 +198,7 @@ class CgGrid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-number-of-boundaries-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of boundaries distinguished Most grids discretize a cubic or "
             "cuboidal region. In this case six sides can be distinguished, each "
@@ -231,6 +235,7 @@ class CgGrid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-boundary-conditions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The boundary conditions for each boundary: 0 - undefined 1 - open 2 "

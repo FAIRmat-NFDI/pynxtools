@@ -147,6 +147,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-lens-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the lens"),
         a_nexus_field=NeXusField(
             name="lens_thickness",
@@ -162,6 +163,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-lens-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Length of the lens"),
         a_nexus_field=NeXusField(
             name="lens_length",
@@ -177,6 +179,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-curvature-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Radius of the curvature as measured in the middle of the lens"),
         a_nexus_field=NeXusField(
             name="curvature",
@@ -192,6 +195,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-aperture-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Diameter of the lens."),
         a_nexus_field=NeXusField(
             name="aperture",
@@ -246,6 +250,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-gas-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         description=("Gas pressure in the lens"),
         a_nexus_field=NeXusField(
             name="gas_pressure",

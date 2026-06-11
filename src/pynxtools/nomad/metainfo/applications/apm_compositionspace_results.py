@@ -275,6 +275,7 @@ class ApmCompositionspaceResultsProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_NUMBER",
@@ -601,6 +602,7 @@ class ApmCompositionspaceResultsVoxelization(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Total number of weight (counts for discretization with a "
@@ -639,6 +641,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -654,6 +657,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -695,6 +699,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-cell-dimensions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="cell_dimensions",
@@ -710,6 +715,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-extent-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="extent",
@@ -725,6 +731,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -739,6 +746,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Position of each cell in Euclidean space."),
         a_nexus_field=NeXusField(
@@ -755,6 +763,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-coordinate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Discrete coordinate of each voxel."),
         a_nexus_field=NeXusField(
@@ -771,6 +780,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-indices-voxel-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "For each ion, the identifier of the voxel into which the ion binned."
@@ -822,6 +832,7 @@ class ApmCompositionspaceResultsVoxelizationIonID(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-ionid-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Element-specific weight (counts for discretization with a "
@@ -959,6 +970,7 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-indices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Element identifier stored sorted in descending order of feature "
@@ -992,6 +1004,7 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-importance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Element relative feature importance stored sorted in descending "
@@ -1188,6 +1201,7 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axis-explained-variance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Explained variance values"),
         a_nexus_field=NeXusField(
@@ -1204,6 +1218,7 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axis-pca-dimension-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Elements identifier matching those from ENTRY/voxelization/ionID "
@@ -1304,6 +1319,7 @@ class ApmCompositionspaceResultsSegmentationIcOptCluster_analysisID(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-cluster-analysisid-n-ic-cluster-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("n_components argument of the Gaussian mixture model."),
         a_nexus_field=NeXusField(
             name="n_ic_cluster",
@@ -1319,6 +1335,7 @@ class ApmCompositionspaceResultsSegmentationIcOptCluster_analysisID(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-cluster-analysisid-y-pred-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("y_pred return values of the computation."),
         a_nexus_field=NeXusField(
@@ -1423,6 +1440,7 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-bic-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Bayes information criterion values"),
         a_nexus_field=NeXusField(
@@ -1439,6 +1457,7 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-dimension-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Actual n_ic_cluster values used"),
         a_nexus_field=NeXusField(
@@ -1593,6 +1612,7 @@ class ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID(Proces
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-epsilon-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The maximum distance between voxel pairs in a neighborhood to be "
             "considered connected."
@@ -1611,6 +1631,7 @@ class ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID(Proces
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-min-samples-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of voxels in a neighborhood for a voxel to be considered "
             "as a core point."
@@ -1629,6 +1650,7 @@ class ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID(Proces
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-label-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Raw label return values"),
         a_nexus_field=NeXusField(
@@ -1645,6 +1667,7 @@ class ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID(Proces
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-voxel-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Voxel identifier Using these identifiers correlated element-wise "

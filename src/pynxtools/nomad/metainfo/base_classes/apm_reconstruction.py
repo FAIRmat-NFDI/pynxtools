@@ -136,6 +136,7 @@ class ApmReconstruction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-reconstructed-positions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Three-dimensional positions of the ions in the reconstructed volume."
@@ -188,6 +189,7 @@ class ApmReconstruction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         description=(
             "Sum of ion volumes The value can be extracted from the "
             "CAnalysis.CSpatial.fRecoVolume field of a CamecaRoot ROOT file."
@@ -206,6 +208,7 @@ class ApmReconstruction(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-field-of-view-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The nominal diameter of the specimen ROI which is measured in the "
             "experiment. The physical specimen cannot be measured completely "
@@ -271,6 +274,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-voltage-filter-initial-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Lowest voltage at which an ion that is considered in the "
             "reconstructed volume has been extracted from the specimen."
@@ -289,6 +293,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-voltage-filter-final-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Highest voltage at which an ion that is considered in the "
             "reconstructed volume has been extracted from the specimen."
@@ -343,6 +348,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Assumed detection efficiency The value can be extracted from the "
             "CAnalysis.CSpatial.fEfficiency field of a CamecaRoot ROOT file."
@@ -361,6 +367,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-flight-path-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Nominal flight path The value can be extracted from the "
             "CAnalysis.CSpatial.fFlightPath field of a CamecaRoot ROOT file."
@@ -397,6 +404,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-image-compression-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Image compression factor (ICF) The value can be extracted from the "
             "CAnalysis.CSpatial.fImageCompression field of a CamecaRoot ROOT "
@@ -416,6 +424,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-kfactor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The factor :math:`k` in :math:`R_0 = \\frac{V}{kF}` with "
             ":math:`R_0` tip_radius_zero :math:`V` the voltage and :math:`F` the "
@@ -436,6 +445,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-shank-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Shank angle The value can be extracted from the "
             "CAnalysis.CSpatial.fShankAngle field of a CamecaRoot ROOT file."
@@ -454,6 +464,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-ion-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         description=("Assumed atomic volume"),
         a_nexus_field=NeXusField(
             name="ion_volume",
@@ -469,6 +480,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-tip-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The value can be extracted from the CAnalysis.CSpatial.fTipRadius "
             "field of a CamecaRoot ROOT file."
@@ -487,6 +499,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-tip-radius-zero-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The value can be extracted from the CAnalysis.CSpatial.fTipRadius0 "
             "field of a CamecaRoot ROOT file."
@@ -505,6 +518,7 @@ class ApmReconstructionConfig(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-voltage-zero-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The value can be extracted from the CAnalysis.CSpatial.fVoltage0 "
             "field of a CamecaRoot ROOT file."
@@ -587,6 +601,7 @@ class ApmReconstructionObb(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-obb-xmin-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Minimum coordinate value along the x-direction"),
         a_nexus_field=NeXusField(
             name="xmin",
@@ -602,6 +617,7 @@ class ApmReconstructionObb(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-obb-xmax-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Maximum coordinate value along the x-direction"),
         a_nexus_field=NeXusField(
             name="xmax",
@@ -617,6 +633,7 @@ class ApmReconstructionObb(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-obb-ymin-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Minimum coordinate value along the y-direction"),
         a_nexus_field=NeXusField(
             name="ymin",
@@ -632,6 +649,7 @@ class ApmReconstructionObb(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-obb-ymax-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Maximum coordinate value along the y-direction"),
         a_nexus_field=NeXusField(
             name="ymax",
@@ -647,6 +665,7 @@ class ApmReconstructionObb(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-obb-zmin-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Minimum coordinate value along the z-direction"),
         a_nexus_field=NeXusField(
             name="zmin",
@@ -662,6 +681,7 @@ class ApmReconstructionObb(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-obb-zmax-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Maximum coordinate value along the z-direction"),
         a_nexus_field=NeXusField(
             name="zmax",

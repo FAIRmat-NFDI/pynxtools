@@ -154,6 +154,7 @@ class MicrostructurePfConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-configuration-halfwidth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Halfwidth of the kernel."),
         a_nexus_field=NeXusField(
             name="halfwidth",
@@ -185,6 +186,7 @@ class MicrostructurePfConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-configuration-resolution-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Resolution of the kernel."),
         a_nexus_field=NeXusField(
             name="resolution",
@@ -222,6 +224,7 @@ class MicrostructurePfPf(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Pole figure intensity."),
         a_nexus_field=NeXusField(

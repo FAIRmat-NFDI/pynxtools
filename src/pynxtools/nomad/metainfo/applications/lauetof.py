@@ -167,6 +167,7 @@ class LauetofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         description=("The polar_angle (two theta) where the detector is placed."),
         a_nexus_field=NeXusField(
@@ -183,6 +184,7 @@ class LauetofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         description=("The azimuthal angle where the detector is placed."),
         a_nexus_field=NeXusField(
@@ -227,6 +229,7 @@ class LauetofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -242,6 +245,7 @@ class LauetofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -257,6 +261,7 @@ class LauetofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
@@ -272,6 +277,7 @@ class LauetofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -337,6 +343,7 @@ class LauetofSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-sample-unit-cell-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[6],
         description=(
             "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
@@ -420,6 +427,7 @@ class LauetofControl(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-control-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",

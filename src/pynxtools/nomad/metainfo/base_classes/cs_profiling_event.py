@@ -114,6 +114,7 @@ class CsProfilingEvent(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Wall-clock time how long the event took. This may be in principle "
             "end_time minus start_time; however usage of eventually more precise "
@@ -135,6 +136,7 @@ class CsProfilingEvent(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-processes-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of nominal processes that the app invoked during the "
             "execution of this event. The main idea behind this field e.g. for "
@@ -159,6 +161,7 @@ class CsProfilingEvent(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-threads-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of nominal threads that the app invoked at during the "
             "execution of this event. Specifically here the maximum number of "
@@ -179,6 +182,7 @@ class CsProfilingEvent(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-gpus-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of nominal GPUs that the app invoked during the "
             "execution of this event."

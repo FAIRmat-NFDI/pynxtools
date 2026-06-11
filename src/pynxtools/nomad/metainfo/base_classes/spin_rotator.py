@@ -104,6 +104,7 @@ class SpinRotator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-beamline-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Define position of beamline element relative to production target"
         ),
@@ -121,6 +122,7 @@ class SpinRotator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-set-bfield-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("current set on magnet supply."),
         a_nexus_field=NeXusField(
             name="set_Bfield_current",
@@ -136,6 +138,7 @@ class SpinRotator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-set-efield-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("current set on HT supply."),
         a_nexus_field=NeXusField(
             name="set_Efield_voltage",
@@ -184,6 +187,7 @@ class SpinRotatorReadBfieldCurrent(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-read-bfield-current-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
@@ -222,6 +226,7 @@ class SpinRotatorReadBfieldVoltage(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-read-bfield-voltage-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
@@ -260,6 +265,7 @@ class SpinRotatorReadEfieldCurrent(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-read-efield-current-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
@@ -298,6 +304,7 @@ class SpinRotatorReadEfieldVoltage(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-read-efield-voltage-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",

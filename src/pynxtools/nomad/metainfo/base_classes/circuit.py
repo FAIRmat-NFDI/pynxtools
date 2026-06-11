@@ -162,6 +162,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-operating-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The operating frequency of the circuit, see also bandwidth, which "
             "is possibly but not necessarily centered around this frequency "
@@ -182,6 +183,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The bandwidth of the frequency response of the circuit."),
         a_nexus_field=NeXusField(
             name="bandwidth",
@@ -225,6 +227,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-gain-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Gain of the circuit, if applicable, usually all instruments have a "
             "gain which might be important or not."
@@ -363,6 +366,7 @@ class Circuit(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-acquisition-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Updated rate for several processes using the input signal, e.g., "
             "History Graph, the circuit uses for any such process."

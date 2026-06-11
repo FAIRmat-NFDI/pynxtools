@@ -87,6 +87,7 @@ class Pinhole(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpinhole.html#nxpinhole-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Size of the circular hole defining the transmitted beam size."),
         a_nexus_field=NeXusField(
             name="diameter",

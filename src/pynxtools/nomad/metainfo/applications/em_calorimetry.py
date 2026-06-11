@@ -284,6 +284,7 @@ class EmCalorimetryProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_NUMBER",
@@ -714,6 +715,7 @@ class EmCalorimetrySynchronization(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-synchronization-indices-pattern-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_pattern",
@@ -729,6 +731,7 @@ class EmCalorimetrySynchronization(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-synchronization-delta-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Time difference to start_time. Collecting diffraction pattern also "
@@ -785,6 +788,7 @@ class EmCalorimetryPatternCenter(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-pattern-center-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         description=("Computed center for each pattern."),
         a_nexus_field=NeXusField(
@@ -836,6 +840,7 @@ class EmCalorimetryDistortionCorrection(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-distortion-correction-center-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         description=("Computed center for each pattern."),
         a_nexus_field=NeXusField(
@@ -978,6 +983,7 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Integrated intensity as a function of time and the radial distance "
@@ -1010,6 +1016,7 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-indices-pattern-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Identifier for each pattern."),
         a_nexus_field=NeXusField(
@@ -1067,6 +1074,7 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("Time since start of the in-situ experiment"),
         a_nexus_field=NeXusField(
