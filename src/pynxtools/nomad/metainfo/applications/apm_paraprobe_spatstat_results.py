@@ -45,6 +45,7 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
 from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
     ApmParaprobeToolProcess,
 )
+from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -137,7 +138,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
     )
 
     knn = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -147,7 +148,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
         ),
     )
     rdf = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -179,6 +180,176 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
             name_type="specified",
             optionality="required",
             units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
+    """
+    K-nearest neighbor statistics.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="knn",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("Right boundary of the binning."),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    probability_mass = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-probability-mass-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="probability_mass",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    cumulated = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-cumulated-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Cumulated not normalized by total counts."),
+        a_nexus_field=NeXusField(
+            name="cumulated",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    cumulated_normalized = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-cumulated-normalized-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Cumulated and normalized by total counts."),
+        a_nexus_field=NeXusField(
+            name="cumulated_normalized",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf(Process):
+    """
+    Radial distribution statistics.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="rdf",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("Right boundary of the binning."),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    probability_mass = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-probability-mass-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="probability_mass",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    cumulated = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-cumulated-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Cumulated not normalized by total counts."),
+        a_nexus_field=NeXusField(
+            name="cumulated",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    cumulated_normalized = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-cumulated-normalized-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Cumulated and normalized by total counts."),
+        a_nexus_field=NeXusField(
+            name="cumulated_normalized",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
         ),
     )
 

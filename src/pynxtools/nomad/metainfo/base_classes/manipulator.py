@@ -38,6 +38,8 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.component import Component
+from pynxtools.nomad.metainfo.base_classes.log import Log
+from pynxtools.nomad.metainfo.base_classes.pid_controller import PidController
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 
 if TYPE_CHECKING:
@@ -211,6 +213,18 @@ class ManipulatorCryostat(Actuator):
         ),
     )
 
+    pid_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorCryostatPidController",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     actuation_target = Quantity(
         type=MEnum(["temperature"]),
         links=[
@@ -222,6 +236,92 @@ class ManipulatorCryostat(Actuator):
             name_type="specified",
             optionality="optional",
             enumeration=["temperature"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ManipulatorCryostatPidController(PidController):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-pid-controller-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    setpoint_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorCryostatPidControllerSetpointLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="setpoint_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    setpoint = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-pid-controller-setpoint-field"
+        ],
+        dimensionality="[temperature]",
+        description=(
+            "In case of a fixed or averaged cooling temperature, this is the "
+            "scalar temperature setpoint. It can also be a 1D array of "
+            "temperature setpoints (without time stamps)."
+        ),
+        a_nexus_field=NeXusField(
+            name="setpoint",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TEMPERATURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ManipulatorCryostatPidControllerSetpointLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-pid-controller-setpoint-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="setpoint_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-cryostat-pid-controller-setpoint-log-value-field"
+        ],
+        dimensionality="[temperature]",
+        description=(
+            "In the case of an experiment in which the temperature is changed "
+            "and the setpoints are recorded with time stamps, this is an array "
+            "of temperature setpoints."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TEMPERATURE",
         ),
     )
 
@@ -241,6 +341,17 @@ class ManipulatorTemperatureSensor(Sensor):
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorTemperatureSensorValueLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
             name_type="specified",
             optionality="optional",
         ),
@@ -285,6 +396,43 @@ class ManipulatorTemperatureSensor(Sensor):
         super().normalize(archive, logger)
 
 
+class ManipulatorTemperatureSensorValueLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-temperature-sensor-value-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-temperature-sensor-value-log-value-field"
+        ],
+        dimensionality="[temperature]",
+        description=(
+            "In the case of an experiment in which the temperature changes and "
+            "is recorded with time stamps, this is an array of length m of "
+            "temperatures."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TEMPERATURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ManipulatorSampleHeater(Actuator):
     """
     Device to heat the sample.
@@ -303,12 +451,23 @@ class ManipulatorSampleHeater(Actuator):
     )
 
     output_heater_power_log = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterOutputHeaterPowerLog",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXlog",
             name="output_heater_power_log",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+    pid_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterPidController",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )
@@ -350,6 +509,129 @@ class ManipulatorSampleHeater(Actuator):
         super().normalize(archive, logger)
 
 
+class ManipulatorSampleHeaterOutputHeaterPowerLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-output-heater-power-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="output_heater_power_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-output-heater-power-log-value-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        description=(
+            "In the case of an experiment in which the heater power is changed "
+            "and recorded with time stamps, this is an array of length m of "
+            "temperature setpoints."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_POWER",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ManipulatorSampleHeaterPidController(PidController):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-pid-controller-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    setpoint_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterPidControllerSetpointLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="setpoint_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    setpoint = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-pid-controller-setpoint-field"
+        ],
+        dimensionality="[temperature]",
+        description=(
+            "In case of a fixed or averaged temperature, this is the scalar "
+            "temperature setpoint. It can also be a 1D array of temperature "
+            "setpoints (without time stamps)."
+        ),
+        a_nexus_field=NeXusField(
+            name="setpoint",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TEMPERATURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ManipulatorSampleHeaterPidControllerSetpointLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-pid-controller-setpoint-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="setpoint_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-heater-pid-controller-setpoint-log-value-field"
+        ],
+        dimensionality="[temperature]",
+        description=(
+            "In the case of an experiment in which the temperature is changed "
+            "and the setpoints are recorded with time stamps, this is an array "
+            "of length m of temperature setpoints."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TEMPERATURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ManipulatorDrainCurrentAmmeter(Sensor):
     """
     Ammeter measuring the drain current of the sample and sample holder.
@@ -362,6 +644,17 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="drain_current_ammeter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorDrainCurrentAmmeterValueLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
             name_type="specified",
             optionality="optional",
         ),
@@ -406,6 +699,43 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
         super().normalize(archive, logger)
 
 
+class ManipulatorDrainCurrentAmmeterValueLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-drain-current-ammeter-value-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-drain-current-ammeter-value-log-value-field"
+        ],
+        dimensionality="[current]",
+        description=(
+            "In the case of an experiment in which the current changes and is "
+            "recorded with time stamps, this is an array of length m of "
+            "currents."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_CURRENT",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ManipulatorSampleBiasPotentiostat(Actuator):
     """
     Actuator applying a voltage between sample holder and sample.
@@ -419,6 +749,18 @@ class ManipulatorSampleBiasPotentiostat(Actuator):
             nx_class="NXactuator",
             name="sample_bias_potentiostat",
             name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    pid_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasPotentiostatPidController",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
             optionality="optional",
         ),
     )
@@ -441,6 +783,92 @@ class ManipulatorSampleBiasPotentiostat(Actuator):
         super().normalize(archive, logger)
 
 
+class ManipulatorSampleBiasPotentiostatPidController(PidController):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-pid-controller-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    setpoint_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasPotentiostatPidControllerSetpointLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="setpoint_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    setpoint = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-pid-controller-setpoint-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "In case of a fixed or averaged applied bias, this is the scalar "
+            "voltage applied between sample and sample holder. It can also be an "
+            "1D array of voltage setpoints (without time stamps)."
+        ),
+        a_nexus_field=NeXusField(
+            name="setpoint",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ManipulatorSampleBiasPotentiostatPidControllerSetpointLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-pid-controller-setpoint-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="setpoint_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-potentiostat-pid-controller-setpoint-log-value-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "In the case of an experiment in which the bias is changed and the "
+            "setpoints are recorded with time stamps, this is an array of length "
+            "m of voltage setpoints."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ManipulatorSampleBiasVoltmeter(Sensor):
     """
     Sensor measuring the voltage applied to sample and sample holder.
@@ -453,6 +881,17 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="sample_bias_voltmeter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasVoltmeterValueLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
             name_type="specified",
             optionality="optional",
         ),
@@ -482,6 +921,43 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
             "In case of a single or averaged bias measurement, this is the "
             "scalar voltage measured between sample and sample holder. It can "
             "also be an 1D array of measured voltages (without time stamps)."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ManipulatorSampleBiasVoltmeterValueLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-voltmeter-value-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-voltmeter-value-log-value-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "In the case of an experiment in which the bias changes and is "
+            "recorded with time stamps, this is an array of length m of "
+            "voltages."
         ),
         a_nexus_field=NeXusField(
             name="value",

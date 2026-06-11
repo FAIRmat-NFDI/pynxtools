@@ -37,7 +37,9 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.user import User
@@ -74,14 +76,8 @@ class Tofraw(Entry):
         repeats=False,
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.tofraw.TofrawInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofraw.TofrawSample",
@@ -219,6 +215,142 @@ class TofrawUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TofrawInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.tofraw.TofrawInstrumentDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TofrawInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-data-field"
+        ],
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    detector_number = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-detector-number-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="detector_number",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("distance to sample for each detector"),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    time_of_flight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-time-of-flight-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="time_of_flight",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME_OF_FLIGHT",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("polar angle for each detector element"),
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    azimuthal_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-azimuthal-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("azimuthal angle for each detector element"),
+        a_nexus_field=NeXusField(
+            name="azimuthal_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
         ),
     )
 

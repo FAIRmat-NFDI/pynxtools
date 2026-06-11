@@ -37,6 +37,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.applications.tofraw import Tofraw
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -63,15 +65,9 @@ class Indirecttof(Tofraw):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.indirecttof.IndirecttofInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     title = Quantity(
@@ -152,6 +148,110 @@ class Indirecttof(Tofraw):
         ),
         a_nexus_field=NeXusField(
             name="pre_sample_flightpath",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class IndirecttofInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    analyser = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.indirecttof.IndirecttofInstrumentAnalyser",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="analyser",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class IndirecttofInstrumentAnalyser(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="analyser",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=["*"],
+        description=("analyzed energy"),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("polar angle towards sample"),
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("distance from sample"),
+        a_nexus_field=NeXusField(
+            name="distance",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",

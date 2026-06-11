@@ -39,11 +39,18 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
+from pynxtools.nomad.metainfo.base_classes.grating import Grating
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
+from pynxtools.nomad.metainfo.base_classes.resolution import Resolution
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.slit import Slit
+from pynxtools.nomad.metainfo.base_classes.source import Source
 from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
@@ -346,13 +353,75 @@ class TransmissionInstrument(Instrument):
         ),
     )
 
+    manufacturer = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="manufacturer",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     common_beam_mask = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.slit.Slit",
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentCommonBeamMask",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXslit",
             name="common_beam_mask",
             name_type="specified",
+            optionality="required",
+        ),
+    )
+    ref_attenuator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentRefAttenuator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name="ref_attenuator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    sample_attenuator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSampleAttenuator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name="sample_attenuator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    spectrometer = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometer",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="spectrometer",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
             optionality="required",
         ),
     )
@@ -417,6 +486,523 @@ class TransmissionInstrument(Instrument):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentCommonBeamMask(Slit):
+    """
+    Common beam mask to shape the incident beam
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-common-beam-mask-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXslit",
+            name="common_beam_mask",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    y_gap = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-common-beam-mask-y-gap-field"
+        ],
+        dimensionality="dimensionless",
+        description=("The height of the common beam in percentage of the beam"),
+        a_nexus_field=NeXusField(
+            name="y_gap",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentRefAttenuator(Attenuator):
+    """
+    Attenuator in the reference beam
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-ref-attenuator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name="ref_attenuator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    attenuator_transmission = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-ref-attenuator-attenuator-transmission-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="attenuator_transmission",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentSampleAttenuator(Attenuator):
+    """
+    Attenuator in the sample beam
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-sample-attenuator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name="sample_attenuator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    attenuator_transmission = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-sample-attenuator-attenuator-transmission-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="attenuator_transmission",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentSpectrometer(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="spectrometer",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    spectral_resolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerSpectralResolution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="spectral_resolution",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    grating = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerGrating",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgrating",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-wavelength-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=(
+            "Wavelength value(s) used for the measurement. An array of 1 or more "
+            "elements. Length defines N_wavelenghts"
+        ),
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentSpectrometerSpectralResolution(Resolution):
+    """
+    Overall spectral resolution of this spectrometer. If several gratings are
+    employed the spectral resolution should rather be specified for each
+    grating inside the NXgrating group of this spectrometer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-spectral-resolution-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="spectral_resolution",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    resolution = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-spectral-resolution-resolution-field"
+        ],
+        dimensionality="1 / [length]",
+        a_nexus_field=NeXusField(
+            name="resolution",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVENUMBER",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentSpectrometerGrating(Grating):
+    """
+    Diffraction grating, as could be used in a monochromator. If two or more
+    gratings were used, define the angular dispersion and the wavelength range
+    (min/max wavelength) for each grating and make sure that the wavelength
+    ranges do not overlap. The dispersion should be defined for the entire
+    wavelength range of the experiment.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgrating",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    spectral_resolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerGratingSpectralResolution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="spectral_resolution",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    angular_dispersion = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-angular-dispersion-field"
+        ],
+        dimensionality="dimensionless",
+        description=("Dispersion of the grating in nm/mm used."),
+        a_nexus_field=NeXusField(
+            name="angular_dispersion",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    blaze_wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-blaze-wavelength-field"
+        ],
+        dimensionality="[length]",
+        description=("The blaze wavelength of the grating used."),
+        a_nexus_field=NeXusField(
+            name="blaze_wavelength",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    wavelength_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-wavelength-range-field"
+        ],
+        dimensionality="[length]",
+        shape=[2],
+        description=("Wavelength range in which this grating was used"),
+        a_nexus_field=NeXusField(
+            name="wavelength_range",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentSpectrometerGratingSpectralResolution(Resolution):
+    """
+    Overall spectral resolution of the instrument when this grating is used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-spectral-resolution-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="spectral_resolution",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    resolution = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-spectral-resolution-resolution-field"
+        ],
+        dimensionality="1 / [length]",
+        a_nexus_field=NeXusField(
+            name="resolution",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVENUMBER",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    slit = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentDetectorSlit",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXslit",
+            name="slit",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    wavelength_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-wavelength-range-field"
+        ],
+        dimensionality="[length]",
+        shape=[2],
+        description=("Wavelength range in which this detector was used"),
+        a_nexus_field=NeXusField(
+            name="wavelength_range",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    type = Quantity(
+        type=MEnum(["PMT", "PbS", "InGaAs"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-type-field"
+        ],
+        description=("Detector type"),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["PMT", "PbS", "InGaAs"],
+        ),
+    )
+    response_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-response-time-field"
+        ],
+        dimensionality="[time]",
+        description=("Response time of the detector"),
+        a_nexus_field=NeXusField(
+            name="response_time",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
+    gain = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-gain-field"
+        ],
+        description=("Detector gain"),
+        a_nexus_field=NeXusField(
+            name="gain",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentDetectorSlit(Slit):
+    """
+    Slit setting used for measurement with this detector
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-slit-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXslit",
+            name="slit",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(["fixed", "servo"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-slit-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["fixed", "servo"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class TransmissionInstrumentSource(Source):
+    """
+    The lamp used for illumination
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-type-field"
+        ],
+        description=("The type of lamp, e.g. halogen, D2 etc."),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["halogen", "D2"],
+            open_enum=True,
+        ),
+    )
+    spectrum = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-spectrum-field"
+        ],
+        shape=["*"],
+        description=("The spectrum of the lamp used"),
+        a_nexus_field=NeXusField(
+            name="spectrum",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    wavelength_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-wavelength-range-field"
+        ],
+        dimensionality="[length]",
+        shape=[2],
+        description=("Wavelength range in which the lamp was used"),
+        a_nexus_field=NeXusField(
+            name="wavelength_range",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
         ),
     )
 

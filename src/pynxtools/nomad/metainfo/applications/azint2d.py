@@ -40,7 +40,9 @@ from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.process import Process
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -225,6 +227,29 @@ class Azint2dInstrument(Instrument):
         ),
     )
 
+    monochromator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.azint2d.Azint2dInstrumentMonochromator",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.azint2d.Azint2dInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -243,6 +268,161 @@ class Azint2dInstrument(Instrument):
         super().normalize(archive, logger)
 
 
+class Azint2dInstrumentMonochromator(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-monochromator-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-monochromator-wavelength-field"
+        ],
+        dimensionality="[length]",
+        description=("Wavelength in angstrom."),
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="angstrom",
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-monochromator-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("Energy in keV."),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="keV",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class Azint2dInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-source-name-field"
+        ],
+        description=("Name of laboratory where data was collected."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-source-type-field"
+        ],
+        description=("Type of laboratory where data was collected."),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-source-probe-field"
+        ],
+        description=("Type of probe."),
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class Azint2dReduction(Process):
     m_def = Section(
         links=[
@@ -251,6 +431,17 @@ class Azint2dReduction(Process):
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="reduction",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    input = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="input",
             name_type="specified",
             optionality="required",
         ),

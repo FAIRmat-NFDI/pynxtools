@@ -40,8 +40,11 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.applications.xrd import Xrd, XrdData
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -67,15 +70,9 @@ class XrdPan(Xrd):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     experiment_config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfig",
@@ -198,6 +195,293 @@ class XrdPan(Xrd):
 # =============================================================================
 
 
+class XrdPanInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    xray_tube_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-xray-tube-material-field"
+        ],
+        description=("Type of the X-ray tube."),
+        a_nexus_field=NeXusField(
+            name="xray_tube_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["Cu", "Cr", "Mo", "Fe", "Ag", "In", "Ga"],
+            open_enum=True,
+        ),
+    )
+    xray_tube_current = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-xray-tube-current-field"
+        ],
+        dimensionality="[current]",
+        description=("Current of the X-ray tube."),
+        a_nexus_field=NeXusField(
+            name="xray_tube_current",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_CURRENT",
+        ),
+    )
+    xray_tube_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-xray-tube-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=("Voltage of the X-ray tube."),
+        a_nexus_field=NeXusField(
+            name="xray_tube_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+    )
+    k_alpha_one = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-one-field"
+        ],
+        dimensionality="[length]",
+        description=("Wavelength of the K\\u03b1 1 line."),
+        a_nexus_field=NeXusField(
+            name="k_alpha_one",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    k_alpha_one__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-one-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="k_alpha_one",
+            enumeration=["angstrom"],
+            open_enum=True,
+        ),
+    )
+    k_alpha_two = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-two-field"
+        ],
+        dimensionality="[length]",
+        description=("Wavelength of the K\\u03b1 2 line."),
+        a_nexus_field=NeXusField(
+            name="k_alpha_two",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    k_alpha_two__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-two-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="k_alpha_two",
+            enumeration=["angstrom"],
+            open_enum=True,
+        ),
+    )
+    ratio_k_alphatwo_k_alphaone = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-ratio-k-alphatwo-k-alphaone-field"
+        ],
+        dimensionality="dimensionless",
+        description=("K\\u03b1 2/K\\u03b1 1 intensity ratio."),
+        a_nexus_field=NeXusField(
+            name="ratio_k_alphatwo_k_alphaone",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    kbeta = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-kbeta-field"
+        ],
+        dimensionality="[length]",
+        description=("Wavelength of the K\\u00df line."),
+        a_nexus_field=NeXusField(
+            name="kbeta",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    kbeta__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-kbeta-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="kbeta",
+            enumeration=["angstrom"],
+            open_enum=True,
+        ),
+    )
+    source_peak_wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-source-peak-wavelength-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Wavelength of the X-ray source. Used to convert from 2-theta to Q."
+        ),
+        a_nexus_field=NeXusField(
+            name="source_peak_wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    scan_axis = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-scan-axis-field"
+        ],
+        description=("Axis scanned."),
+        a_nexus_field=NeXusField(
+            name="scan_axis",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    scan_mode = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-scan-mode-field"
+        ],
+        description=("Mode of scan."),
+        a_nexus_field=NeXusField(
+            name="scan_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    integration_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-integration-time-field"
+        ],
+        dimensionality="[time]",
+        description=("Integration time per channel."),
+        a_nexus_field=NeXusField(
+            name="integration_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class XrdPanExperimentConfig(Object):
     """
     Collect user inputs e.g. name or path of the input file.
@@ -216,7 +500,7 @@ class XrdPanExperimentConfig(Object):
     )
 
     two_theta = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.Object",
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfigTwoTheta",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXobject",
@@ -226,7 +510,7 @@ class XrdPanExperimentConfig(Object):
         ),
     )
     omega = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.object.Object",
+        section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfigOmega",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXobject",
@@ -307,6 +591,132 @@ class XrdPanExperimentConfig(Object):
             name_type="specified",
             optionality="required",
             units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanExperimentConfigTwoTheta(Object):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXobject",
+            name="two_theta",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    start = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-start-field"
+        ],
+        dimensionality="[angle]",
+        description=("Starting value of the diffraction angle."),
+        a_nexus_field=NeXusField(
+            name="start",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    end = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-end-field"
+        ],
+        dimensionality="[angle]",
+        description=("Ending value of the diffraction angle."),
+        a_nexus_field=NeXusField(
+            name="end",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    step = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-step-field"
+        ],
+        dimensionality="[angle]",
+        description=("Minimum step size in-between two diffraction angles."),
+        a_nexus_field=NeXusField(
+            name="step",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrdPanExperimentConfigOmega(Object):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXobject",
+            name="omega",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    start = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-start-field"
+        ],
+        dimensionality="[angle]",
+        description=("Starting value of the incident angle."),
+        a_nexus_field=NeXusField(
+            name="start",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    end = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-end-field"
+        ],
+        dimensionality="[angle]",
+        description=("Ending value of the incident angle."),
+        a_nexus_field=NeXusField(
+            name="end",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    step = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-step-field"
+        ],
+        dimensionality="[angle]",
+        description=("Minimum step size in the between two incident angles."),
+        a_nexus_field=NeXusField(
+            name="step",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
         ),
     )
 

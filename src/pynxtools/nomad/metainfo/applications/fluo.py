@@ -37,9 +37,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -66,15 +70,9 @@ class Fluo(Entry):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.fluo.FluoSample",
@@ -141,6 +139,214 @@ class Fluo(Entry):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class FluoInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    monochromator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrumentMonochromator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    fluorescence = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrumentFluorescence",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="fluorescence",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FluoInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-source-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["x-ray"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["x-ray"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FluoInstrumentMonochromator(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-monochromator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-monochromator-wavelength-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVELENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FluoInstrumentFluorescence(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-fluorescence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="fluorescence",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-fluorescence-data-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-fluorescence-energy-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class FluoSample(Sample):

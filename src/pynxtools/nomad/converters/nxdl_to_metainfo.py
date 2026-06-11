@@ -528,6 +528,54 @@ def _base_class_group_nx_classes(nx_class: str) -> frozenset[str]:
     return result
 
 
+def _group_python_name(node: NXTreeGroup) -> str:
+    """Return the Python attribute name a SubSection for ``node`` would get.
+
+    Mirrors the naming rule in ``_build_subsection_from_node``: variadic
+    (``name_type="any"``) groups are named after the NX class stem (e.g.
+    ``"detector"`` for any ``NXdetector``), while specified/partial groups use
+    their NXDL ``name`` directly (e.g. ``"analyser"``).
+    """
+    nx_name_type = node.name_type or "specified"
+    if nx_name_type == "any":
+        stem = (
+            node.nx_class[2:].lower()
+            if node.nx_class.startswith("NX")
+            else node.nx_class.lower()
+        )
+        return nxdl_to_subsection_name(stem)
+    return nxdl_to_subsection_name(node.name)
+
+
+_base_group_python_names_cache: dict[str, frozenset[str]] = {}
+
+
+def _base_class_group_python_names(nx_class: str) -> frozenset[str]:
+    """Return the SubSection python_names of direct group children in the generic class.
+
+    Used to detect whether a child group occurrence inside an application-specific
+    group element (e.g. ``analyser`` inside NXarpes's ``instrument``) is genuinely
+    new — i.e. the generic class has no SubSection under that Python name — versus
+    one that merely re-specifies a slot the generic class already exposes under the
+    same name (e.g. a ``source`` group named "source" where the generic class
+    already has a variadic ``source`` SubSection).
+    """
+    if nx_class in _base_group_python_names_cache:
+        return _base_group_python_names_cache[nx_class]
+    try:
+        base_root = generate_tree_from(nx_class)
+    except Exception:
+        _base_group_python_names_cache[nx_class] = frozenset()
+        return frozenset()
+    names: set[str] = set()
+    for child in base_root.children:
+        if isinstance(child, NXTreeGroup) and child.nx_class:
+            names.add(_group_python_name(child))
+    result = frozenset(names)
+    _base_group_python_names_cache[nx_class] = result
+    return result
+
+
 def _base_class_quantities(nx_class: str) -> dict[str, NXTreeField | NXTreeAttribute]:
     """Return a name→node lookup of direct fields/attributes in the generic class."""
     if nx_class in _base_class_qty_cache:
@@ -548,7 +596,13 @@ def _base_class_quantities(nx_class: str) -> dict[str, NXTreeField | NXTreeAttri
 def _qty_differs_from_base(
     qty: QuantityContext, base_lookup: dict[str, NXTreeField | NXTreeAttribute]
 ) -> bool:
-    """Return True if this quantity is new or has different properties in the base class."""
+    """Return True if this quantity is new or has different properties in the base class.
+
+    Requiredness (optionality) counts as a difference: an application
+    definition tightening a field from "optional"/"recommended" to "required"
+    is itself a meaningful constraint, and the round-trip exporter
+    needs a concrete Quantity declaration to recover it.
+    """
     base_node = base_lookup.get(qty.node.name)
     if base_node is None:
         return True  # quantity not in generic class — genuinely new
@@ -572,15 +626,30 @@ def _build_named_concept(
     node: NXTreeGroup,
     base_class_override: tuple[str, str] | None = None,
     parent_concept_file: str | None = None,
-) -> NamedConceptContext:
+    module_name: str | None = None,
+    category: str | None = None,
+    seen_concept: set[str] | None = None,
+) -> tuple[NamedConceptContext, list[NamedConceptContext]]:
     """Build a NamedConceptContext for a group occurrence.
 
     Collects the fields/attributes defined *inside* the group XML element
-    (one level deep) as own Quantities of the concept class. Returns a
-    context whose ``quantities`` list is empty when the group occurrence
-    adds nothing beyond what the generic class already provides — callers
-    use that to decide whether a named concept class is needed at all.
+    (one level deep) as own Quantities of the concept class. The returned
+    context's ``quantities``/``links``/``subsections`` are empty when the group
+    occurrence adds nothing beyond what the generic class already provides —
+    callers use that to decide whether a named concept class is needed at all.
+
+    ``module_name``/``category`` identify the file the concept will be rendered
+    into (all named concepts for one NXDL class share a single generated file).
+    When given, child sub-groups that introduce a new, specifically-named slot
+    not present on the generic class (e.g. ``analyser`` inside NXarpes's
+    ``instrument``, where the generic ``NXinstrument`` only has a variadic
+    ``detector``) are recursively built via this same function. If such a child
+    itself adds quantities/links/subsections, its concept is returned in the
+    second element of the result tuple and must be added to the file's
+    named-concept list by the caller. ``seen_concept`` is shared across the
+    whole recursion to avoid name collisions between nested concepts.
     """
+    _seen_concept = seen_concept if seen_concept is not None else set()
     nx_name_type = node.name_type or "specified"
     variable = nx_name_type in ("any", "partial")
 
@@ -669,10 +738,13 @@ def _build_named_concept(
                 if _qty_differs_from_base(attr_qty, base_lookup):
                     own_quantities.append(attr_qty)
 
-    # Application-specific sub-groups: group children whose nx_class is NOT
-    # present in the base NXDL class AND not already declared by the parent
-    # concept class (if one exists, e.g. MpesInstrument for XpsInstrument).
-    base_group_nx_classes = _base_class_group_nx_classes(node.nx_class)
+    # Application-specific sub-groups: group children whose Python SubSection
+    # name is NOT already provided by the generic class (a genuinely new,
+    # specifically-named slot — e.g. "analyser" inside NXarpes's "instrument",
+    # where generic NXinstrument only has a variadic "detector") AND not already
+    # declared by the parent concept class (if one exists, e.g. MpesInstrument
+    # for XpsInstrument).
+    base_group_python_names = _base_class_group_python_names(node.nx_class)
     # Sub-groups already covered by the parent concept class (to avoid duplication)
     parent_concept_nx_classes: frozenset[str] = (
         frozenset(
@@ -688,34 +760,86 @@ def _build_named_concept(
     base_qty_python_names = {nxdl_to_quantity_name(name) for name in base_lookup}
 
     own_subsections: list[SubSectionContext] = []
+    extra_concepts: list[NamedConceptContext] = []
     seen_sub: set[str] = set()
     for child in node_children:
         if not isinstance(child, NXTreeGroup):
             continue
-        if child.nx_class in base_group_nx_classes:
-            continue  # already covered by the base NX class
         if child.nx_class in parent_concept_nx_classes:
             continue  # already declared in parent concept class
-        sub_section = _build_subsection_from_node(
-            child, section_fqn=_section_fqn(child.nx_class)
-        )
-        if sub_section.python_name in base_qty_python_names:
+        sub_python_name = _group_python_name(child)
+        if sub_python_name in base_qty_python_names:
             continue  # would shadow an inherited Quantity with a SubSection
-        if sub_section.python_name not in seen_sub:
-            seen_sub.add(sub_section.python_name)
-            own_subsections.append(sub_section)
+        if sub_python_name in seen_sub:
+            continue
+        # If the python_name collides with a SubSection the generic class
+        # already exposes (e.g. "source"/"monochromator" on NXinstrument),
+        # this group is only worth a nested named concept (and an overriding
+        # SubSection) when it genuinely redefines its own quantities/links/
+        # subsections — e.g. NXarpes's instrument/source narrows `probe` to
+        # `["x-ray"]`, warranting ArpesInstrumentSource(Source). Otherwise the
+        # inherited SubSection already covers it and nothing is emitted here.
+        is_collision = sub_python_name in base_group_python_names
 
-    return NamedConceptContext(
-        class_name=concept_class_name,
-        base_class_name=base_class_name,
-        base_module=base_module,
-        nx_name_literal=nx_name_literal,
-        variable=variable,
-        docstring=_plain_description(node),
-        quantities=own_quantities,
-        links=own_links,
-        subsections=own_subsections,
-        node=node,
+        # New, specifically-named sub-group: recursively check whether it adds
+        # quantities/links/subsections of its own beyond its generic class —
+        # if so it gets its own nested named concept; otherwise it just gets a
+        # SubSection pointing at the generic class with this specific name (or,
+        # for a collision, nothing — the inherited SubSection already applies).
+        sub_section: SubSectionContext | None = None
+        if module_name is not None and category is not None:
+            child_concept_name = _concept_class_name(concept_class_name, child)
+            if child_concept_name == nxdl_to_class_name(child.nx_class):
+                child_concept_name = concept_class_name + nxdl_to_class_name(
+                    child.nx_class
+                )
+            if child_concept_name not in _seen_concept:
+                _seen_concept.add(child_concept_name)
+                nested_concept, nested_extra = _build_named_concept(
+                    child_concept_name,
+                    child,
+                    module_name=module_name,
+                    category=category,
+                    seen_concept=_seen_concept,
+                )
+                if (
+                    nested_concept.quantities
+                    or nested_concept.links
+                    or nested_concept.subsections
+                ):
+                    target_fqn = (
+                        f"{_METAINFO_PACKAGE_ROOT}.{category}.{module_name}"
+                        f".{child_concept_name}"
+                    )
+                    extra_concepts.append(nested_concept)
+                    extra_concepts.extend(nested_extra)
+                    sub_section = _build_subsection_from_node(
+                        child, section_fqn=target_fqn, is_named_concept=True
+                    )
+        if sub_section is None:
+            if is_collision:
+                continue  # no own content — inherited SubSection already covers this
+            sub_section = _build_subsection_from_node(
+                child, section_fqn=_section_fqn(child.nx_class)
+            )
+
+        seen_sub.add(sub_python_name)
+        own_subsections.append(sub_section)
+
+    return (
+        NamedConceptContext(
+            class_name=concept_class_name,
+            base_class_name=base_class_name,
+            base_module=base_module,
+            nx_name_literal=nx_name_literal,
+            variable=variable,
+            docstring=_plain_description(node),
+            quantities=own_quantities,
+            links=own_links,
+            subsections=own_subsections,
+            node=node,
+        ),
+        extra_concepts,
     )
 
 
@@ -1238,29 +1362,34 @@ def build_context(nx_name: str) -> dict:
                         _parent_class_name, p_name, p_name_type, p_nx_class
                     )
                     _base_class_override = (parent_concept_name, _parent_module)
-            concept = _build_named_concept(
+            _parent_category = _nxdl_category(nx_name)
+            concept, extra_concepts = _build_named_concept(
                 concept_name,
                 child,
                 base_class_override=_base_class_override,
                 parent_concept_file=_parent_app_file
                 if _base_class_override is not None
                 else None,
+                module_name=parent_module,
+                category=_parent_category,
+                seen_concept=seen_concept,
             )
 
             if concept.quantities or concept.links or concept.subsections:
                 named_concepts.append(concept)
-                _parent_category = _nxdl_category(nx_name)
                 target_fqn = f"{_METAINFO_PACKAGE_ROOT}.{_parent_category}.{parent_module}.{concept_name}"
 
                 # Track import for concept base class (skip self-referencing groups).
-                if concept.base_module != parent_module:
-                    _base_category = _nxdl_category(f"NX{concept.base_module}")
-                    import_entry = (
-                        f"{_METAINFO_PACKAGE_ROOT}.{_base_category}.{concept.base_module}",
-                        concept.base_class_name,
-                    )
-                    if import_entry not in concept_imports:
-                        concept_imports.append(import_entry)
+                for _c in (concept, *extra_concepts):
+                    if _c.base_module != parent_module:
+                        _base_category = _nxdl_category(f"NX{_c.base_module}")
+                        import_entry = (
+                            f"{_METAINFO_PACKAGE_ROOT}.{_base_category}.{_c.base_module}",
+                            _c.base_class_name,
+                        )
+                        if import_entry not in concept_imports:
+                            concept_imports.append(import_entry)
+                named_concepts.extend(extra_concepts)
 
                 sub_section = _build_subsection_from_node(
                     child, section_fqn=target_fqn, is_named_concept=True

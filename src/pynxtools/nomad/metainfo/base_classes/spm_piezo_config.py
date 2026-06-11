@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
 from pynxtools.nomad.metainfo.base_classes.object import Object
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.spm_piezoelectric_material import (
     SpmPiezoelectricMaterial,
 )
@@ -151,6 +152,17 @@ class SpmPiezoConfigCalibration(Calibration):
         a_nexus_group=NeXusGroup(
             nx_class="NXcalibration",
             name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_config.SpmPiezoConfigCalibrationCalibrationParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
             name_type="specified",
             optionality="optional",
         ),
@@ -309,6 +321,70 @@ class SpmPiezoConfigCalibration(Calibration):
         ),
         a_nexus_field=NeXusField(
             name="driftN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmPiezoConfigCalibrationCalibrationParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    coefficientN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-parameters-coefficientn-field"
+        ],
+        variable=True,
+        description=(
+            "The calibration coefficient is the ratio of the actual distance "
+            "moved by the piezo due to the voltage or external force applied to "
+            "the piezo. It is also called first-order correction. The N "
+            "(substring) denotes X and Y directions (e.g., coefficient_x)."
+        ),
+        a_nexus_field=NeXusField(
+            name="coefficientN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    second_order_correctionN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-parameters-second-order-correctionn-field"
+        ],
+        variable=True,
+        description=(
+            "The N (substring) denotes X and Y directions (e.g., "
+            "second_order_correction_x). If you know them, you can enter the 2nd "
+            "order piezo characteristics to compensate the error for that axis. "
+            "The following equation shows the interpretation of the 2nd order "
+            "correction parameters, For the X-piezo: :math:`U_x = \\frac{1}{c_x} "
+            "\\cdot X + c_{xx} \\cdot X^2` with units: :math:`[V] = "
+            "\\frac{[V]}{[m]} \\cdot [m] + \\frac{[V]}{[m^2]} \\cdot [m^2]` "
+            "where cx is the calibration of the piezo X and cxx is the 2nd order "
+            "correction. The unit for the second-order correction is "
+            "(:math:`\\frac{V}{m^2}`)."
+        ),
+        a_nexus_field=NeXusField(
+            name="second_order_correctionN",
             type="NX_NUMBER",
             name_type="partial",
             optionality="optional",

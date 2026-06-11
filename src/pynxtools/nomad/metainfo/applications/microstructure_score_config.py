@@ -39,9 +39,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.cg_grid import CgGrid
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.microstructure import Microstructure
+from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.program import Program
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -196,7 +199,7 @@ class MicrostructureScoreConfig(Entry):
         description=("Desired simulated time-temperature profile"),
     )
     discretization = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDiscretization",
         repeats=False,
         description=(
             "Relevant data to instantiate a starting configuration that is "
@@ -209,12 +212,6 @@ class MicrostructureScoreConfig(Entry):
             "each voxel that may be used as is for each voxel or may need a "
             "pre-processing of the data to coarse-grain material point-specific "
             "values to values averaged per deformed grain."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure",
-            name="discretization",
-            name_type="specified",
-            optionality="required",
         ),
     )
     numerics = SubSection(
@@ -433,7 +430,7 @@ class MicrostructureScoreConfigEnvironment(Collection):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigEnvironmentProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -442,6 +439,51 @@ class MicrostructureScoreConfigEnvironment(Collection):
             name_type="partial",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigEnvironmentProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-environment-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-environment-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-environment-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
         ),
     )
 
@@ -639,7 +681,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
     )
 
     ensemble = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformationEnsemble",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -649,7 +691,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
         ),
     )
     ebsd = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformationEbsd",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -659,7 +701,7 @@ class MicrostructureScoreConfigDeformation(Parameters):
         ),
     )
     damask = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformationDamask",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -729,6 +771,210 @@ class MicrostructureScoreConfigDeformation(Parameters):
         super().normalize(archive, logger)
 
 
+class MicrostructureScoreConfigDeformationEnsemble(Parameters):
+    """
+    Settings for instantiating properties of deformed grains when model is
+    cuboidal or poisson.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="ensemble",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    bunge_euler = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-bunge-euler-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", 3],
+        description=(
+            "Set of Bunge-Euler orientations (:math:`\\varphi_1`, :math:`\\Phi`, "
+            ":math:`\\varphi_2` ) out of which the orientations of deformed "
+            "grains are sampled."
+        ),
+        a_nexus_field=NeXusField(
+            name="bunge_euler",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    stored_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-stored-energy-field"
+        ],
+        shape=["*"],
+        description=(
+            "Set of stored elastic energy quantified as a dislocation density "
+            "which is assigned to deformed grains with orientations from "
+            "bunge_euler with index queries matching for the bunge_euler and "
+            "stored_energy fields."
+        ),
+        a_nexus_field=NeXusField(
+            name="stored_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigDeformationEbsd(Note):
+    """
+    Settings for instantiating properties of deformed grains from an EBSD
+    orientation map when model is cuboidal or poisson.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="ebsd",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    stepsize = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-stepsize-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=(
+            "Extent of the pixel of the EBSD orientation mapping assuming "
+            "square-shaped pixels or cube-shaped voxels respectively."
+        ),
+        a_nexus_field=NeXusField(
+            name="stepsize",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigDeformationDamask(Note):
+    """
+    Settings for instantiating properties of deformed grains and nuclei when
+    model is damask.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-damask-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="damask",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-damask-file-name-field"
+        ],
+        description=(
+            "Name of the DREAM.3D HDF5 file that was instantiated from the a "
+            "previously performed DAMASK simulation."
+        ),
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-damask-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-damask-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class MicrostructureScoreConfigNucleation(Parameters):
     """
     Phenomenological model according to which recrystallization nuclei are
@@ -749,7 +995,7 @@ class MicrostructureScoreConfigNucleation(Parameters):
     )
 
     ensemble = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigNucleationEnsemble",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -818,6 +1064,68 @@ class MicrostructureScoreConfigNucleation(Parameters):
         super().normalize(archive, logger)
 
 
+class MicrostructureScoreConfigNucleationEnsemble(Parameters):
+    """
+    Settings for instantiating properties of nuclei for recrystallizing grains.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="ensemble",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    bunge_euler = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-bunge-euler-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", 3],
+        description=(
+            "Set of Bunge-Euler orientations (:math:`\\varphi_1`, :math:`\\Phi`, "
+            ":math:`\\varphi_2` ) out of which the orientations of "
+            "nuclei/recrystallized grains are sampled."
+        ),
+        a_nexus_field=NeXusField(
+            name="bunge_euler",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    incubation_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-incubation-time-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        description=(
+            "Incubation time which is assigned to deformed grains with "
+            "orientations from bunge_euler with index queries matching for the "
+            "bunge_euler and stored_energy fields."
+        ),
+        a_nexus_field=NeXusField(
+            name="incubation_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
     """
     Model for the assumed mobility of grain boundaries with different
@@ -838,7 +1146,7 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
     )
 
     sebald_gottstein = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -848,7 +1156,7 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
         ),
     )
     rollett_holm = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -875,6 +1183,222 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["sebald_gottstein", "rollett_holm"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
+    """
+    Parameter of the Sebald-Gottstein migration model.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="sebald_gottstein",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    lagb_pre_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-lagb-pre-factor-field"
+        ],
+        description=("Pre-exponential factor for low-angle grain boundaries."),
+        a_nexus_field=NeXusField(
+            name="lagb_pre_factor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    lagb_enthalpy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-lagb-enthalpy-field"
+        ],
+        description=("Migration activation enthalpy for low-angle grain boundaries."),
+        a_nexus_field=NeXusField(
+            name="lagb_enthalpy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    hagb_pre_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-hagb-pre-factor-field"
+        ],
+        description=("Pre-exponential factor for high-angle grain boundaries."),
+        a_nexus_field=NeXusField(
+            name="hagb_pre_factor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    hagb_enthalpy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-hagb-enthalpy-field"
+        ],
+        description=("Migration activation enthalpy for high-angle grain boundaries."),
+        a_nexus_field=NeXusField(
+            name="hagb_enthalpy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    special_pre_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-special-pre-factor-field"
+        ],
+        description=(
+            "Pre-exponential factor for high-angle grain boundaries which in "
+            "bicrystal or other tailored experiments showed a particular high "
+            "mobility."
+        ),
+        a_nexus_field=NeXusField(
+            name="special_pre_factor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    special_enthalpy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-special-enthalpy-field"
+        ],
+        description=(
+            "Migration activation enthalpy for high-angle grain boundaries which "
+            "in bicrystal or other tailored experiments showed a particular high "
+            "mobility."
+        ),
+        a_nexus_field=NeXusField(
+            name="special_enthalpy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
+    """
+    Parameter of the Rollett-Holm migration model.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="rollett_holm",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    m_null = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-m-null-field"
+        ],
+        description=(
+            "Pre-exponential factor for the fastest grain boundary in the system."
+        ),
+        a_nexus_field=NeXusField(
+            name="m_null",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    enthalpy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-enthalpy-field"
+        ],
+        description=(
+            "Migration activation enthalpy for the fastest grain boundary in the "
+            "system."
+        ),
+        a_nexus_field=NeXusField(
+            name="enthalpy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    c1 = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-c1-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Mobility scaling factor :math:`c_1`. Typically 0.99 or higher but not 1."
+        ),
+        a_nexus_field=NeXusField(
+            name="c1",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    c2 = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-c2-field"
+        ],
+        dimensionality="dimensionless",
+        description=("Mobility scaling factor :math:`c_2`. Typically 5."),
+        a_nexus_field=NeXusField(
+            name="c2",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    c3 = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-c3-field"
+        ],
+        dimensionality="dimensionless",
+        description=("Mobility scaling factor :math:`c_3`. Typically 9."),
+        a_nexus_field=NeXusField(
+            name="c3",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 
@@ -940,7 +1464,7 @@ class MicrostructureScoreConfigDispersoidDrag(Parameters):
     )
 
     zener_smith = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDispersoidDragZenerSmith",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -962,6 +1486,219 @@ class MicrostructureScoreConfigDispersoidDrag(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["none", "zener_smith"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigDispersoidDragZenerSmith(Parameters):
+    """
+    Parameter of the Zener-Smith drag model when model is zener_smith.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="zener_smith",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    radius_evolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="radius_evolution",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    pre_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-pre-factor-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Configuration-dependent constant which factorizes the drag pressure."
+        ),
+        a_nexus_field=NeXusField(
+            name="pre_factor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    surface_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-surface-energy-field"
+        ],
+        description=(
+            "Average surface energy of the grain-boundary-dispersoid-surface "
+            "configuration which factorizes the drag pressure."
+        ),
+        a_nexus_field=NeXusField(
+            name="surface_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
+    """
+    Assumed dispersoid mean radius-time profile
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="radius_evolution",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    radius_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-radius-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="radius_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-time-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        description=(
+            "Support point of the linearized curve of simulated time matching a "
+            "specific support point of the average dispersoid radius."
+        ),
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="time",
+        ),
+    )
+    radius = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-radius-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=(
+            "Support point of the linearized curve of the average dispersoid radius."
+        ),
+        a_nexus_field=NeXusField(
+            name="radius",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    radius__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-radius-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="radius",
         ),
     )
 
@@ -1186,6 +1923,105 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         super().normalize(archive, logger)
 
 
+class MicrostructureScoreConfigDiscretization(Microstructure):
+    """
+    Relevant data to instantiate a starting configuration that is typically a
+    microstructure in deformed conditions where (elastic) energy is stored in
+    the form of crystal defects (mostly dislocations). The SCORE model does not
+    resolve individual dislocations but works with one homogenized mean-field
+    density per grain. For simulations that are instantiated from EBSD datasets
+    or crystal plasticity simulations individual values are available for each
+    voxel that may be used as is for each voxel or may need a pre-processing of
+    the data to coarse-grain material point-specific values to values averaged
+    per deformed grain.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name="discretization",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    grid = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDiscretizationGrid",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigDiscretizationGrid(CgGrid):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    extent = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-extent-field"
+        ],
+        dimensionality="dimensionless",
+        shape=[3],
+        description=(
+            "Extend of each CA domain in voxel along the x, y, and z direction. "
+            "Deformation of sheet material is assumed. The x axis is assumed "
+            "pointing along the rolling direction. The y axis is assumed "
+            "pointing along the transverse direction. The z axis is assumed "
+            "pointing along the normal direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="extent",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    cell_dimensions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-cell-dimensions-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=(
+            "Edge length of the material point that in SCORE is discretized via "
+            "equisized cubic voxels."
+        ),
+        a_nexus_field=NeXusField(
+            name="cell_dimensions",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class MicrostructureScoreConfigNumerics(Parameters):
     """
     Criteria which enable to stop the simulation in a controlled manner and
@@ -1206,7 +2042,7 @@ class MicrostructureScoreConfigNumerics(Parameters):
     )
 
     cell_cache = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigNumericsCellCache",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -1304,6 +2140,105 @@ class MicrostructureScoreConfigNumerics(Parameters):
         ),
         a_nexus_field=NeXusField(
             name="x_set",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreConfigNumericsCellCache(Parameters):
+    """
+    Parameter which control the memory management of cells in the
+    recrystallization front.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="cell_cache",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    initial = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-initial-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Fraction of the total number of cells in the CA which should "
+            "initially be allocated for offering storage for cells making up the "
+            "recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="initial",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    realloc = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-realloc-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "By how much more times should the already allocated memory be "
+            "increased to offer space for storing states of cells in the "
+            "recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="realloc",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    defragment = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-defragment-field"
+        ],
+        description=(
+            "Should the cache for cells in the recrystallization front be "
+            "defragmented on-the-fly or not."
+        ),
+        a_nexus_field=NeXusField(
+            name="defragment",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    defragment_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-defragment-x-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Target values at which recrystallized volume fraction the cache for "
+            "cells in the recrystallization front will be defragmented "
+            "on-the-fly. Defragmentation packs active cells closer into main "
+            "memory to reduce cache misses in subsequent evaluations of the "
+            "recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="defragment_x",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",

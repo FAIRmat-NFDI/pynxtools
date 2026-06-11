@@ -36,11 +36,16 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.collimator import Collimator
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.geometry import Geometry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.shape import Shape
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -154,6 +159,37 @@ class SastofInstrument(Instrument):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    collimator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentCollimator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollimator",
+            name="collimator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -165,6 +201,388 @@ class SastofInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SastofInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-source-type-field"
+        ],
+        description=("type of radiation source"),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-source-name-field"
+        ],
+        description=("Name of the radiation source"),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["neutron", "x-ray"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["neutron", "x-ray"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SastofInstrumentCollimator(Collimator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-collimator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollimator",
+            name="collimator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    geometry = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentCollimatorGeometry",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="geometry",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SastofInstrumentCollimatorGeometry(Geometry):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-collimator-geometry-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="geometry",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    shape = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentCollimatorGeometryShape",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SastofInstrumentCollimatorGeometryShape(Shape):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-collimator-geometry-shape-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    shape = Quantity(
+        type=MEnum(["nxcylinder", "nxbox"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-collimator-geometry-shape-shape-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["nxcylinder", "nxbox"],
+        ),
+    )
+    size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-collimator-geometry-shape-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        description=("The collimation length"),
+        a_nexus_field=NeXusField(
+            name="size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SastofInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-data-field"
+        ],
+        shape=["*", "*", "*"],
+        description=(
+            "This is area detector data, of number of x-pixel versus number of "
+            "y-pixels. Since the beam center is to be determined as a step of "
+            "data reduction, it is not necessary to document or assume the "
+            "position of the beam center in acquired data."
+        ),
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    time_of_flight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-time-of-flight-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="time_of_flight",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME_OF_FLIGHT",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*", "*"],
+        description=("The distance between detector and sample"),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    x_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-x-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        description=("Physical size of a pixel in x-direction"),
+        a_nexus_field=NeXusField(
+            name="x_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    y_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-y-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        description=("Size of a pixel in y direction"),
+        a_nexus_field=NeXusField(
+            name="y_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    azimuthal_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-azimuthal-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="azimuthal_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    rotation_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-rotation-angle-field"
+        ],
+        dimensionality="[angle]",
+        a_nexus_field=NeXusField(
+            name="rotation_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    aequatorial_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-aequatorial-angle-field"
+        ],
+        dimensionality="[angle]",
+        a_nexus_field=NeXusField(
+            name="aequatorial_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    beam_center_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-beam-center-x-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "This is the x position where the direct beam would hit the "
+            "detector. This is a length, not a pixel position, and can be "
+            "outside of the actual detector."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    beam_center_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-beam-center-y-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "This is the y position where the direct beam would hit the "
+            "detector. This is a length, not a pixel position, and can be "
+            "outside of the actual detector."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
         ),
     )
 

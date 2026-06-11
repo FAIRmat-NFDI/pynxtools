@@ -45,6 +45,9 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
 from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
     ApmParaprobeToolProcess,
 )
+from pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask import (
+    CsFilterBooleanMask,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -145,6 +148,27 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
         ),
     )
 
+    sign_valid = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="sign_valid",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    window_triangles = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="window_triangles",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     distance = Quantity(
         type=np.float64,
         links=[
@@ -201,6 +225,155 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMask):
+    """
+    A bitmask that identifies which of the distance values is assumed to have a
+    consistent sign because the closest triangle had a consistent outer unit
+    normal defined.
+
+    For points whose bit is set to 0 the distance is correct but the sign is
+    not reliable.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="sign_valid",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    number_of_triangles = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-number-of-triangles-field"
+        ],
+        dimensionality="dimensionless",
+        description=("Number of triangles covered by the mask."),
+        a_nexus_field=NeXusField(
+            name="number_of_triangles",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Bitdepth of the elementary datatype that is used to store the "
+            "information content of the mask (typically 8 bit, uint8)."
+        ),
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-mask-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "The content of the mask. Like for all masks used in the tools of "
+            "the paraprobe-toolbox, padding is used when number_of_objects is "
+            "not an integer multiple of bitdepth. If padding is used, padded "
+            "bits are set to 0."
+        ),
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
+    CsFilterBooleanMask
+):
+    """
+    A bitmask that identifies which of the triangles in the set were considered
+    when certain triangles have been filtered out.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="window_triangles",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-mask-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
             units="NX_UNITLESS",
         ),
     )

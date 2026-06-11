@@ -37,6 +37,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.disk_chopper import DiskChopper
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
@@ -163,6 +165,27 @@ class ReftofInstrument(Instrument):
         ),
     )
 
+    chopper = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofInstrumentChopper",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdisk_chopper",
+            name="chopper",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofInstrumentDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -173,6 +196,149 @@ class ReftofInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ReftofInstrumentChopper(DiskChopper):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-chopper-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdisk_chopper",
+            name="chopper",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-chopper-distance-field"
+        ],
+        dimensionality="[length]",
+        description=("Distance between chopper and sample"),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ReftofInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-data-field"
+        ],
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    time_of_flight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-time-of-flight-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        description=(
+            "Array of time values for each bin in a time-of-flight measurement"
+        ),
+        a_nexus_field=NeXusField(
+            name="time_of_flight",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME_OF_FLIGHT",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    x_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-x-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="x_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    y_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-y-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="y_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
         ),
     )
 

@@ -39,8 +39,10 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -141,6 +143,18 @@ class IqprocInstrument(Instrument):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.iqproc.IqprocInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -152,6 +166,87 @@ class IqprocInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class IqprocInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-instrument-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-instrument-source-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["neutron", "x-ray", "electron"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["neutron", "x-ray", "electron"],
         ),
     )
 
@@ -204,6 +299,27 @@ class IqprocReduction(Process):
         ),
     )
 
+    input = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.iqproc.IqprocReductionInput",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="input",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    output = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="output",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     program_quantity = Quantity(
         type=str,
         links=[
@@ -223,6 +339,41 @@ class IqprocReduction(Process):
         ],
         a_nexus_field=NeXusField(
             name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class IqprocReductionInput(Parameters):
+    """
+    Input parameters for the reduction program used
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-reduction-input-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="input",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    filenames = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-reduction-input-filenames-field"
+        ],
+        description=("Raw data files used to generate this I(Q)"),
+        a_nexus_field=NeXusField(
+            name="filenames",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",

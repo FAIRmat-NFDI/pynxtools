@@ -36,10 +36,14 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.beam import Beam
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.manipulator import Manipulator
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
+from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -141,14 +145,8 @@ class ApmInstrument(Instrument):
         ),
     )
     stage = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.Manipulator",
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentStage",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name="stage",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     analysis_chamber = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentAnalysisChamber",
@@ -534,7 +532,7 @@ class ApmInstrumentPulser(Component):
     )
 
     sourceID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.source.Source",
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulserSourceID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -654,6 +652,222 @@ class ApmInstrumentPulser(Component):
         super().normalize(archive, logger)
 
 
+class ApmInstrumentPulserSourceID(Source):
+    """
+    Group to store details about components that enable laser pulsing
+    strategies.
+
+    When multiple sources are available, these should be named source1,
+    source2; the LEAP 6000 series instruments have two sources. The majority of
+    instruments still has one source. In this case the variable part "ID" can
+    be omitted. Consequently the group should be named "source" when writing
+    instance data.
+
+    Atom probe microscopes use controlled laser, voltage, or a combination of
+    pulsing strategies to trigger ion extraction via exciting and eventual
+    field evaporation field emission of ion at the specimen surface.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="sourceID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    beamID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulserSourceIDBeamID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beamID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    pulse_energy__logged_against = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-pulse-energy-logged-against-attribute"
+        ],
+        description=("Path to pulse_id"),
+        a_nexus_attribute=NeXusAttribute(
+            name="logged_against",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="pulse_energy",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmInstrumentPulserSourceIDBeamID(Beam):
+    """
+    Details about specific positions along the laser beam which illuminates the
+    (atom probe) specimen.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beamID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    incidence_vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-incidence-vector-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Track time-dependent settings over the course of the measurement "
+            "how the laser beam shines on the specimen, i.e. the mean vector is "
+            "parallel to the laser propagation direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="incidence_vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    pinhole_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-pinhole-position-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Track time-dependent settings over the course of the measurement "
+            "where the laser beam exits the focusing optics."
+        ),
+        a_nexus_field=NeXusField(
+            name="pinhole_position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    spot_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-beamid-spot-position-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Track time-dependent settings over the course of the measurement "
+            "where the laser hits the specimen."
+        ),
+        a_nexus_field=NeXusField(
+            name="spot_position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmInstrumentStage(Manipulator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-stage-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="stage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentStageTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmInstrumentStageTemperatureSensor(Sensor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-stage-temperature-sensor-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-stage-temperature-sensor-value-field"
+        ],
+        dimensionality="[temperature]",
+        shape=["*"],
+        description=(
+            "The value can be extracted from the "
+            "CRunHeader.CAnalysis.fSpecimenTemperature field of a CamecaRoot "
+            "RHIT file."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TEMPERATURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmInstrumentAnalysisChamber(Component):
     m_def = Section(
         links=[
@@ -668,7 +882,7 @@ class ApmInstrumentAnalysisChamber(Component):
     )
 
     pressure_sensor = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentAnalysisChamberPressureSensor",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
@@ -694,6 +908,57 @@ class ApmInstrumentAnalysisChamber(Component):
             name_type="specified",
             optionality="optional",
             units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmInstrumentAnalysisChamberPressureSensor(Sensor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-pressure-sensor-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="pressure_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    measurement = Quantity(
+        type=MEnum(["pressure"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-pressure-sensor-measurement-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="measurement",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["pressure"],
+        ),
+    )
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-pressure-sensor-value-field"
+        ],
+        dimensionality="[mass] / [length] / [time] ** 2",
+        shape=["*"],
+        description=(
+            "The value can be extracted from the "
+            "CRunHeader.CLasHeader.fAnalysisPressure field of a CamecaRoot RHIT "
+            "file."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_PRESSURE",
         ),
     )
 

@@ -45,6 +45,7 @@ from pynxtools.nomad.metainfo.applications.spm import (
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
+from pynxtools.nomad.metainfo.base_classes.lockin import Lockin
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -284,13 +285,55 @@ class StmInstrument(SpmInstrument):
     )
 
     lockin_amplifier = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.lockin.Lockin",
+        section_def="pynxtools.nomad.metainfo.applications.stm.StmInstrumentLockinAmplifier",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXlockin",
             name="lockin_amplifier",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StmInstrumentLockinAmplifier(Lockin):
+    """
+    The lock-in amplifier information. The device is being used to extract the
+    very weak signal buried in noisy signals.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXstm.html#nxstm-entry-instrument-lockin-amplifier-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlockin",
+            name="lockin_amplifier",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    modulation_signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXstm.html#nxstm-entry-instrument-lockin-amplifier-modulation-signal-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The type of the signal (voltage or current) subject to modulation."
+        ),
+        a_nexus_field=NeXusField(
+            name="modulation_signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+            enumeration=["voltage", "current", "bias"],
+            open_enum=True,
         ),
     )
 

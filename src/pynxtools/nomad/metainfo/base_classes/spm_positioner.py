@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.pid_controller import PidController
 from pynxtools.nomad.metainfo.base_classes.positioner import Positioner
 
@@ -91,14 +92,8 @@ class SpmPositioner(Positioner):
         ),
     )
     actuator = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_positioner.SpmPositionerActuator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="actuator",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -374,6 +369,34 @@ class SpmPositionerZController(PidController):
         a_nexus_field=NeXusField(
             name="controller_label",
             type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmPositionerActuator(Actuator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-actuator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXactuator",
+            name="actuator",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    feedback = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name="feedback",
             name_type="specified",
             optionality="optional",
         ),

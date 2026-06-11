@@ -39,10 +39,16 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.cg_grid import CgGrid
+from pynxtools.nomad.metainfo.base_classes.cg_hexahedron import CgHexahedron
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.microstructure import Microstructure
+from pynxtools.nomad.metainfo.base_classes.microstructure_feature import (
+    MicrostructureFeature,
+)
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.program import Program
@@ -354,7 +360,7 @@ class MicrostructureScoreResultsEnvironment(Collection):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsEnvironmentProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -363,6 +369,51 @@ class MicrostructureScoreResultsEnvironment(Collection):
             name_type="partial",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsEnvironmentProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-environment-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-environment-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-environment-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
         ),
     )
 
@@ -520,14 +571,214 @@ class MicrostructureScoreResultsDiscretization(Microstructure):
         ),
     )
 
+    grid = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsDiscretizationGrid",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
     boundary = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.cg_hexahedron.CgHexahedron",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsDiscretizationBoundary",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_hexahedron",
             name="boundary",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    dimensionality = Quantity(
+        type=MEnum(["1", "2", "3"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-dimensionality-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="dimensionality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+            enumeration=["1", "2", "3"],
+        ),
+    )
+    cardinality = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-cardinality-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="cardinality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    origin = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-origin-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="origin",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    symmetry = Quantity(
+        type=MEnum(["cubic"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-symmetry-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="symmetry",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["cubic"],
+        ),
+    )
+    cell_dimensions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-cell-dimensions-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="cell_dimensions",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    extent = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-extent-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="extent",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    index_offset_cell = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-index-offset-cell-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="index_offset_cell",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsDiscretizationBoundary(CgHexahedron):
+    """
+    A tight bounding box or sphere or bounding primitive about the grid.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_hexahedron",
+            name="boundary",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    number_of_boundaries = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-number-of-boundaries-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "How many distinct boundaries are distinguished? Most grids "
+            "discretize a cubic or cuboidal region. In this case six sides can "
+            "be distinguished, each making an own boundary."
+        ),
+        a_nexus_field=NeXusField(
+            name="number_of_boundaries",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    boundary_conditions = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-boundary-conditions-field"
+        ],
+        dimensionality="dimensionless",
+        shape=[6],
+        description=(
+            "The boundary conditions for each boundary: * 0 - undefined * 1 - "
+            "open * 2 - periodic * 3 - mirror * 4 - von Neumann * 5 - Dirichlet"
+        ),
+        a_nexus_field=NeXusField(
+            name="boundary_conditions",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    boundaries = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-boundaries-field"
+        ],
+        shape=[6],
+        description=(
+            "Name of the boundaries. Left, right, front, back, bottom, top, The "
+            "field must have as many entries as there are number_of_boundaries."
+        ),
+        a_nexus_field=NeXusField(
+            name="boundaries",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
@@ -559,7 +810,7 @@ class MicrostructureScoreResultsSpatiotemporalID(Process):
     )
 
     summary_statistics = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatistics",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -569,7 +820,7 @@ class MicrostructureScoreResultsSpatiotemporalID(Process):
         ),
     )
     microstructureID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -578,6 +829,942 @@ class MicrostructureScoreResultsSpatiotemporalID(Process):
             name_type="partial",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDSummaryStatistics(Process):
+    """
+    Summary quantities which are the result of some post-processing of the
+    snapshot data (averaging, integrating, interpolating) happening for
+    practical and performance reasons during the simulation. Place used for
+    storing descriptors from continuum mechanics and thermodynamics at the
+    scale of the entire ROI.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="summary_statistics",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    kinetics = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="kinetics",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    stress = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="stress",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    strain = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="strain",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    deformation_gradient = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsDeformationGradient",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="deformation_gradient",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
+    """
+    Evolution of the recrystallized volume fraction over time.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="kinetics",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    iteration_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-iteration-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="iteration_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    temperature_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-temperature-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="temperature_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    x_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-x-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="x_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-time-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        description=(
+            "Evolution of the physical time not to be confused with wall-clock "
+            "time or profiling data."
+        ),
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    iteration = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-iteration-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Iteration or increment counter."),
+        a_nexus_field=NeXusField(
+            name="iteration",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        shape=["*"],
+        description=("Evolution of the simulated temperature over time."),
+        a_nexus_field=NeXusField(
+            name="temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TEMPERATURE",
+        ),
+    )
+    x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-x-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Recrystallized volume fraction."),
+        a_nexus_field=NeXusField(
+            name="x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-stress-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="stress",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(["cauchy"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-stress-type-field"
+        ],
+        description=("Which type of stress."),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["cauchy"],
+        ),
+    )
+    tensor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-stress-tensor-field"
+        ],
+        shape=["*", 3, 3],
+        description=("Applied external stress tensor on the ROI."),
+        a_nexus_field=NeXusField(
+            name="tensor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-strain-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="strain",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-strain-type-field"
+        ],
+        description=("Which type of strain."),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    tensor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-strain-tensor-field"
+        ],
+        shape=["*", 3, 3],
+        description=("Applied external strain tensor on the ROI."),
+        a_nexus_field=NeXusField(
+            name="tensor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsDeformationGradient(
+    Process
+):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-deformation-gradient-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="deformation_gradient",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(["piola"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-deformation-gradient-type-field"
+        ],
+        description=("Which type of deformation gradient."),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["piola"],
+        ),
+    )
+    tensor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-deformation-gradient-tensor-field"
+        ],
+        shape=["*", 3, 3],
+        description=("Applied deformation gradient tensor on the ROI."),
+        a_nexus_field=NeXusField(
+            name="tensor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name="microstructureID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    grid = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDGrid",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    crystals = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_feature",
+            name="crystals",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    recrystallization_front = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizationFront",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_feature",
+            name="recrystallization_front",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-time-field"
+        ],
+        dimensionality="[time]",
+        description=("Simulated physical time for this snapshot."),
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    iteration = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-iteration-field"
+        ],
+        dimensionality="dimensionless",
+        description=("Iteration or increment counter of this snapshot."),
+        a_nexus_field=NeXusField(
+            name="iteration",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        description=("Simulated temperature for this snapshot."),
+        a_nexus_field=NeXusField(
+            name="temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TEMPERATURE",
+        ),
+    )
+    x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-x-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Current recrystallized volume fraction (taking fractional "
+            "infections into account)."
+        ),
+        a_nexus_field=NeXusField(
+            name="x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    x_set = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-x-set-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Target value for which a snapshot was requested for the "
+            "recrystallized volume fraction."
+        ),
+        a_nexus_field=NeXusField(
+            name="x_set",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDGrid(CgGrid):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-grid-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    indices_crystal = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-grid-indices-crystal-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*", "*"],
+        description=("Index for each crystal whereby its metadata can be retrieved."),
+        a_nexus_field=NeXusField(
+            name="indices_crystal",
+            type="NX_INT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    thread_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-grid-thread-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*", "*"],
+        description=(
+            "Identifier of the OpenMP thread that processed this part of the grid."
+        ),
+        a_nexus_field=NeXusField(
+            name="thread_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
+    MicrostructureFeature
+):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_feature",
+            name="crystals",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    representation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-representation-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="representation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    number_of_crystals = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-number-of-crystals-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_crystals",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    number_of_phases = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-number-of-phases-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_phases",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    index_offset_crystal = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-index-offset-crystal-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="index_offset_crystal",
+            type="NX_INT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    indices_crystal = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-indices-crystal-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="indices_crystal",
+            type="NX_INT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    index_offset_phase = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-index-offset-phase-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="index_offset_phase",
+            type="NX_INT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    indices_phase = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-indices-phase-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="indices_phase",
+            type="NX_INT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    volume = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-volume-field"
+        ],
+        dimensionality="[length] ** 3",
+        shape=["*"],
+        description=(
+            "Volume of each grain (partially transformed cells are accounted "
+            "for). Values are reported in multiples of cells, needs "
+            "multiplication with cell volume!"
+        ),
+        a_nexus_field=NeXusField(
+            name="volume",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLUME",
+        ),
+    )
+    bunge_euler = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-bunge-euler-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", 3],
+        description=("Bunge-Euler angle triplets for each grain."),
+        a_nexus_field=NeXusField(
+            name="bunge_euler",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    dislocation_density = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-dislocation-density-field"
+        ],
+        shape=["*"],
+        description=(
+            "Current value for the dislocation density as a measure of the "
+            "remaining stored energy in assumed crystal defects inside each "
+            "grain."
+        ),
+        a_nexus_field=NeXusField(
+            name="dislocation_density",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    is_deformed = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-is-deformed-field"
+        ],
+        shape=["*"],
+        description=("Is the grain deformed."),
+        a_nexus_field=NeXusField(
+            name="is_deformed",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    is_recrystallized = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-is-recrystallized-field"
+        ],
+        shape=["*"],
+        description=("Is the grain recrystallized."),
+        a_nexus_field=NeXusField(
+            name="is_recrystallized",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizationFront(
+    MicrostructureFeature
+):
+    """
+    Details about those cells which in this time step represent the discrete
+    recrystallization front.
+
+    Each CA is processed by a team of OpenMP threads.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure_feature",
+            name="recrystallization_front",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    halo_region = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-halo-region-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Which cells are currently in a halo region of threads. The halo "
+            "region is a layer of cells about the sub-domain of the simulation "
+            "grid evolved by a thread."
+        ),
+        a_nexus_field=NeXusField(
+            name="halo_region",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    mobility_weight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-mobility-weight-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "So-called mobility weight which is a scaling factor to control the "
+            "mobility of the grain boundary that is modelled sweeping cells that "
+            "make the discrete recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="mobility_weight",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    coordinate = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-coordinate-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", 3],
+        description=(
+            "The x, y, z grid coordinates of each cell in the recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="coordinate",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    deformed_grain_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-deformed-grain-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Grain identifier assigned to each cell in the recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="deformed_grain_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    recrystallized_grain_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-recrystallized-grain-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Grain identifier assigned to each nucleus which affected that cell "
+            "in the recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="recrystallized_grain_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    thread_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-thread-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Identifier of the OpenMP thread processing each cell in the "
+            "recrystallization front."
+        ),
+        a_nexus_field=NeXusField(
+            name="thread_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    infection_direction = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-infection-direction-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Hint about the direction from which the cell was infected."),
+        a_nexus_field=NeXusField(
+            name="infection_direction",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    recrystallized_fraction = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-recrystallized-fraction-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("The fraction to which the cell is assumed transformed."),
+        a_nexus_field=NeXusField(
+            name="recrystallized_fraction",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_DIMENSIONLESS",
         ),
     )
 

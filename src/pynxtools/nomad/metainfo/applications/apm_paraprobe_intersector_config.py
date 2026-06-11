@@ -43,6 +43,8 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
+from pynxtools.nomad.metainfo.base_classes.note import Note
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -157,7 +159,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
     )
 
     current_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -167,7 +169,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
         ),
     )
     next_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -314,6 +316,421 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameters):
+    """
+    Current set stores a set of members, meshes of volumetric features, which
+    will be checked for proximity and/or volumetric intersection, to members of
+    the current_set. The meshes were generated as a result of some other
+    meshing process.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="current_set",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    objectID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="objectID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=4,
+        ),
+    )
+
+    set_identifier = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-set-identifier-field"
+        ],
+        description=(
+            "This identifier can be used to label the current set. The label "
+            "effectively can be interpreted as the time/iteration (i.e. "
+            ":math:`k`) step when the current set was taken (see `M. Kühbach et "
+            "al. 2022 <https://arxiv.org/abs/2205.13510>`_)."
+        ),
+        a_nexus_field=NeXusField(
+            name="set_identifier",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    number_of_feature_types = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-number-of-feature-types-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The total number of distinguished feature sets featureID. It is "
+            "assumed that the members within all these featureID sets are "
+            "representing a set together. As an example this set might represent "
+            "all volumetric_features. However, users might have formed a subset "
+            "of this set where individuals were regrouped. For "
+            "paraprobe-nanochem this is the case for objects and proxies. "
+            "Specifically, objects are distinguished further into those far from "
+            "and those close to the edge of the dataset. Similarly, proxies are "
+            "distinguished further into those far from and those close to the "
+            "edge of the dataset. So while these four sub-sets contain different "
+            "so-called types of features, key is that they were all generated "
+            "for one set, here the current_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="number_of_feature_types",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(Note):
+    """
+    Name of the (NeXus)/HDF5 file which contains triangulated surface meshes of
+    the members of the set as instances of NXcg_polyhedron.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="objectID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=4,
+        ),
+    )
+
+    feature_type = Quantity(
+        type=MEnum(
+            [
+                "objects_far_from_edge",
+                "objects_close_to_edge",
+                "proxies_far_from_edge",
+                "proxies_close_to_edge",
+                "other",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-feature-type-field"
+        ],
+        description=("Descriptive category explaining what these features are."),
+        a_nexus_field=NeXusField(
+            name="feature_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "objects_far_from_edge",
+                "objects_close_to_edge",
+                "proxies_far_from_edge",
+                "proxies_close_to_edge",
+                "other",
+            ],
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    geometry = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-geometry-field"
+        ],
+        description=(
+            "Absolute path to the group with geometry data in the HDF5 file "
+            "referred to by path."
+        ),
+        a_nexus_field=NeXusField(
+            name="geometry",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    indices_feature = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-indices-feature-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Array of identifier whereby the path to the geometry data can be "
+            "inferred automatically."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices_feature",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
+    """
+    Next set stores a set of members, meshes of volumetric features, which will
+    be checked for proximity and/or volumetric intersection, to members of the
+    next_set. The meshes were generated as a result of some other meshing
+    process.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="next_set",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    objectID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="objectID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=4,
+        ),
+    )
+
+    set_identifier = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-set-identifier-field"
+        ],
+        description=(
+            "This identifier can be used to label the current set. The label "
+            "effectively can be interpreted as the time/iteration (i.e. :math:`k "
+            "+ 1`) step when the current set was taken (see `M. Kühbach et al. "
+            "2022 <https://arxiv.org/abs/2205.13510>`_)."
+        ),
+        a_nexus_field=NeXusField(
+            name="set_identifier",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    number_of_feature_types = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-number-of-feature-types-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The total number of distinguished feature sets featureID. It is "
+            "assumed that the members within all these featureID sets are "
+            "representing a set together. As an example this set might represent "
+            "all volumetric_features. However, users might have formed a subset "
+            "of this set where individuals were regrouped. For "
+            "paraprobe-nanochem this is the case for objects and proxies. "
+            "Specifically, objects are distinguished further into those far from "
+            "and those close to the edge of the dataset. Similarly, proxies are "
+            "distinguished further into those far from and those close to the "
+            "edge of the dataset. So while these four sub-sets contain different "
+            "so-called types of features key is that they were all generated for "
+            "one set, here the next_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="number_of_feature_types",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="objectID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=4,
+        ),
+    )
+
+    feature_type = Quantity(
+        type=MEnum(
+            [
+                "objects_far_from_edge",
+                "objects_close_to_edge",
+                "proxies_far_from_edge",
+                "proxies_close_to_edge",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-feature-type-field"
+        ],
+        description=("Descriptive category explaining what these features are."),
+        a_nexus_field=NeXusField(
+            name="feature_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "objects_far_from_edge",
+                "objects_close_to_edge",
+                "proxies_far_from_edge",
+                "proxies_close_to_edge",
+            ],
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    geometry = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-geometry-field"
+        ],
+        description=(
+            "Absolute path to the group with geometry data in the HDF5 file "
+            "referred to by path."
+        ),
+        a_nexus_field=NeXusField(
+            name="geometry",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    indices_feature = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-indices-feature-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Array of identifier whereby the path to the geometry data can be "
+            "inferred automatically."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices_feature",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 

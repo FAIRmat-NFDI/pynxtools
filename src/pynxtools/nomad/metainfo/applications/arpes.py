@@ -36,8 +36,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -70,15 +74,9 @@ class Arpes(Entry):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesSample",
@@ -147,6 +145,377 @@ class Arpes(Entry):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class ArpesInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    monochromator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrumentMonochromator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    analyser = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrumentAnalyser",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="analyser",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ArpesInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-source-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["x-ray"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["x-ray"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ArpesInstrumentMonochromator(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-monochromator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-monochromator-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ArpesInstrumentAnalyser(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="analyser",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-data-field"
+        ],
+        shape=["*", "*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    lens_mode = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-lens-mode-field"
+        ],
+        description=("setting for the electron analyser lens"),
+        a_nexus_field=NeXusField(
+            name="lens_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    acquisition_mode = Quantity(
+        type=MEnum(["swept", "fixed"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-acquisition-mode-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="acquisition_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["swept", "fixed"],
+        ),
+    )
+    entrance_slit_shape = Quantity(
+        type=MEnum(["curved", "straight"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-entrance-slit-shape-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="entrance_slit_shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["curved", "straight"],
+        ),
+    )
+    entrance_slit_setting = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-entrance-slit-setting-field"
+        ],
+        description=("dial setting of the entrance slit"),
+        a_nexus_field=NeXusField(
+            name="entrance_slit_setting",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    entrance_slit_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-entrance-slit-size-field"
+        ],
+        dimensionality="[length]",
+        description=("size of the entrance slit"),
+        a_nexus_field=NeXusField(
+            name="entrance_slit_size",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    pass_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-pass-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("energy of the electrons on the mean path of the analyser"),
+        a_nexus_field=NeXusField(
+            name="pass_energy",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    time_per_channel = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-time-per-channel-field"
+        ],
+        dimensionality="[time]",
+        description=("todo: define more clearly"),
+        a_nexus_field=NeXusField(
+            name="time_per_channel",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    angles = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-angles-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Angular axis of the analyser data which dimension the axis applies "
+            "to is defined using the normal NXdata methods."
+        ),
+        a_nexus_field=NeXusField(
+            name="angles",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    energies = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-energies-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=(
+            "Energy axis of the analyser data which dimension the axis applies "
+            "to is defined using the normal NXdata methods."
+        ),
+        a_nexus_field=NeXusField(
+            name="energies",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    sensor_size = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-sensor-size-field"
+        ],
+        shape=[2],
+        description=("number of raw active elements in each dimension"),
+        a_nexus_field=NeXusField(
+            name="sensor_size",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    region_origin = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-region-origin-field"
+        ],
+        shape=[2],
+        description=("origin of rectangular region selected for readout"),
+        a_nexus_field=NeXusField(
+            name="region_origin",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    region_size = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-region-size-field"
+        ],
+        shape=[2],
+        description=("size of rectangular region selected for readout"),
+        a_nexus_field=NeXusField(
+            name="region_size",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class ArpesSample(Sample):

@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
@@ -394,6 +395,18 @@ class ArchiveInstrument(Instrument):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.archive.ArchiveInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -417,6 +430,81 @@ class ArchiveInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ArchiveInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(
+            [
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-Ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-Ray",
+                "Fixed Tube X-Ray",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-Ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-Ray",
+                "Fixed Tube X-Ray",
+            ],
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-source-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["neutron", "x-ray", "electron"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["neutron", "x-ray", "electron"],
         ),
     )
 

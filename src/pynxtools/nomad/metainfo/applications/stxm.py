@@ -37,9 +37,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -83,17 +87,9 @@ class Stxm(Entry):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrument",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmSample",
@@ -172,6 +168,387 @@ class Stxm(Entry):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class StxmInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    monochromator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentMonochromator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    sample_x = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSampleX",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="sample_x",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+    sample_y = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSampleY",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="sample_y",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+    sample_z = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSampleZ",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="sample_z",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StxmInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-source-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StxmInstrumentMonochromator(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-monochromator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-monochromator-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StxmInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-detector-data-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StxmInstrumentSampleX(Detector):
+    """
+    Measurements of the sample position from the x-axis interferometer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-x-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="sample_x",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-x-data-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StxmInstrumentSampleY(Detector):
+    """
+    Measurements of the sample position from the y-axis interferometer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-y-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="sample_y",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-y-data-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StxmInstrumentSampleZ(Detector):
+    """
+    Measurements of the sample position from the z-axis interferometer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-z-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="sample_z",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-z-data-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class StxmSample(Sample):

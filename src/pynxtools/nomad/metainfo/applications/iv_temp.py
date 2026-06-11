@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.applications.sensor_scan import SensorScan
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.environment import Environment
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -307,13 +308,70 @@ class IvTempInstrument(Instrument):
     )
 
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
+        section_def="pynxtools.nomad.metainfo.applications.iv_temp.IvTempInstrumentEnvironment",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXenvironment",
             name=None,
             name_type="any",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class IvTempInstrumentEnvironment(Environment):
+    """
+    Describes an environment setup for a temperature-dependent IV measurement
+    experiment.
+
+    The temperature and voltage must be present as independently scanned
+    controllers and the current sensor must also be present with its readings.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-instrument-environment-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    voltage_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="voltage_controller",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    temperature_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="temperature_controller",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    current_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="current_sensor",
+            name_type="specified",
             optionality="required",
         ),
     )

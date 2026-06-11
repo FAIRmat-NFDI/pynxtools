@@ -40,9 +40,11 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.environment import Environment
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
@@ -466,13 +468,216 @@ class SensorScanInstrument(Instrument):
     )
 
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
+        section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrumentEnvironment",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXenvironment",
             name=None,
             name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SensorScanInstrumentEnvironment(Environment):
+    """
+    Describes an environment setup for the experiment.
+
+    All the setting values of the independently scanned controllers are listed
+    under corresponding NXsensor groups. Similarly, separate NXsensor groups
+    are used to store the readings from each measurement sensor.
+
+    For example, in a temperature-dependent IV measurement, the temperature and
+    voltage must be present as independently scanned controllers and the
+    current sensor must also be present with its readings.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrumentEnvironmentSensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+    pid_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    independent_controllers = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-independent-controllers-field"
+        ],
+        description=(
+            "A list of names of NXsensor groups used as independently scanned "
+            "controllers."
+        ),
+        a_nexus_field=NeXusField(
+            name="independent_controllers",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    measurement_sensors = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-measurement-sensors-field"
+        ],
+        description=("A list of names of NXsensor groups used as measurement sensors."),
+        a_nexus_field=NeXusField(
+            name="measurement_sensors",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SensorScanInstrumentEnvironmentSensor(Sensor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-value-field"
+        ],
+        shape=["*"],
+        description=(
+            "For each point in the scan space, either the nominal setpoint of an "
+            "independently scanned controller or a representative average value "
+            "of a measurement sensor is registered. The length of each sensor's "
+            "data value array stored in this group should be equal to the number "
+            "of scan points probed in this scan. For every scan point [N], the "
+            "corresponding sensor value can be picked from index [N]. This "
+            "allows the scan to be made in any order as the user describes above "
+            "in the experiment. We get matching values simply using the index of "
+            "the scan point."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    value_timestamp = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-value-timestamp-field"
+        ],
+        description=(
+            "Timestamp for when the values provided in the value field were "
+            "registered. Individual readings can be stored with their timestamps "
+            "under value_log. This is to timestamp the nominal setpoint or "
+            "average reading values listed above in the value field."
+        ),
+        a_nexus_field=NeXusField(
+            name="value_timestamp",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    run_control = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-run-control-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="run_control",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    run_control__description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-run-control-description-attribute"
+        ],
+        description=(
+            "Free-text describing the data acquisition control: an internal "
+            "sweep using the built-in functionality of the controller device, or "
+            "a set/wait/read/repeat mechanism."
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="run_control",
+        ),
+    )
+    calibration_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-calibration-time-field"
+        ],
+        description=(
+            "ISO8601 datum when calibration was last performed before this "
+            "measurement. UTC offset should be specified."
+        ),
+        a_nexus_field=NeXusField(
+            name="calibration_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
             optionality="recommended",
         ),
     )

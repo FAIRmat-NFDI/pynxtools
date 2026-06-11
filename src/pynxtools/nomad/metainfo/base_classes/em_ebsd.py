@@ -37,6 +37,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.phase import Phase
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -531,6 +533,17 @@ class EmEbsdMeasurement(Process):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     time = Quantity(
         type=np.float64,
         links=[
@@ -617,6 +630,17 @@ class EmEbsdSimulation(Process):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     depends_on = Quantity(
         type=str,
         links=[
@@ -690,6 +714,17 @@ class EmEbsdCalibration(Process):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     depends_on = Quantity(
         type=str,
         links=[
@@ -748,6 +783,16 @@ class EmEbsdIndexing(Process):
         ),
     )
 
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     background_correction = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=False,
@@ -779,7 +824,7 @@ class EmEbsdIndexing(Process):
         ),
     )
     phaseID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.phase.Phase",
+        section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdIndexingPhaseID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -807,6 +852,16 @@ class EmEbsdIndexing(Process):
             nx_class="NXmicrostructure",
             name=None,
             name_type="any",
+            optionality="optional",
+        ),
+    )
+    roi = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdIndexingRoi",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="roi",
+            name_type="specified",
             optionality="optional",
         ),
     )
@@ -1017,6 +1072,267 @@ class EmEbsdIndexing(Process):
             name_type="specified",
             optionality="optional",
             enumeration=["square", "hexagon", "cube", "other"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEbsdIndexingPhaseID(Phase):
+    """
+    Details for each phase used as a model with which the patterns were
+    indexed. Instances of :ref:`NXunit_cell` in this group must have the group
+    name prefixed with phase. The identifier in the name is an integer. Start
+    counting from 1 because the value 0 is reserved for the special phase that
+    is the null-model, the null phase also known as notIndexed.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXphase",
+            name="phaseID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    dspacing = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-dspacing-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=(
+            "Spacing between the crystallographic planes that are defined via "
+            "``miller``."
+        ),
+        a_nexus_field=NeXusField(
+            name="dspacing",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    relative_intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-relative-intensity-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Relative intensity for the computed diffraction intensity (signal) "
+            "for the plane."
+        ),
+        a_nexus_field=NeXusField(
+            name="relative_intensity",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    number_of_scan_points = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-number-of-scan-points-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "In case the :ref:`NXunit_cell` base class is used with analyzed "
+            "orientation maps this field stores how many scan points of the map "
+            "were identified as matching best with this phase."
+        ),
+        a_nexus_field=NeXusField(
+            name="number_of_scan_points",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    number_of_planes = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-number-of-planes-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "How many reflectors for crystallographic planes are distinguished."
+        ),
+        a_nexus_field=NeXusField(
+            name="number_of_planes",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    miller = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-miller-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", 6],
+        description=(
+            "Miller indices :math:`(hkl)[uvw]` of the planes. The first triplet "
+            "specifies :math:`(hkl)`. The second triplet specifies "
+            ":math:`[uvw]`. Miller indices refer to the Cartesian right-handed "
+            "coordinate system of the unit cell."
+        ),
+        a_nexus_field=NeXusField(
+            name="miller",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEbsdIndexingRoi(Data):
+    """
+    An overview of the entire ROI.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="roi",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    descriptor = Quantity(
+        type=MEnum(["band_contrast", "confidence_index", "mean_angular_deviation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-descriptor-field"
+        ],
+        description=("Descriptor representing the image contrast."),
+        a_nexus_field=NeXusField(
+            name="descriptor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-title-field"
+        ],
+        description=("Title of the default plot."),
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-data-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        description=("Descriptor values displaying the ROI."),
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    data_quantity__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-data-long-name-attribute"
+        ],
+        description=("Descriptor values"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="data",
+        ),
+    )
+    axis_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-y-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("Calibrated coordinate along the y-axis."),
+        a_nexus_field=NeXusField(
+            name="axis_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    axis_y__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-y-long-name-attribute"
+        ],
+        description=("Label for the y axis"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="axis_y",
+        ),
+    )
+    axis_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-x-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("Calibrated coordinate along the x-axis."),
+        a_nexus_field=NeXusField(
+            name="axis_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    axis_x__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-x-long-name-attribute"
+        ],
+        description=("Label for the x axis"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="axis_x",
         ),
     )
 

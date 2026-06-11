@@ -37,6 +37,9 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.applications.tofraw import Tofraw
+from pynxtools.nomad.metainfo.base_classes.disk_chopper import DiskChopper
+from pynxtools.nomad.metainfo.base_classes.fermi_chopper import FermiChopper
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -62,18 +65,12 @@ class Directtof(Tofraw):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.directtof.DirecttofInstrument",
         repeats=True,
         variable=True,
         description=(
             "We definitely want the rotation_speed and energy of the chopper. "
             "Thus either a fermi_chopper or a disk_chopper group is required."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
         ),
     )
 
@@ -159,6 +156,159 @@ class Directtof(Tofraw):
             name_type="specified",
             optionality="required",
             units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class DirecttofInstrument(Instrument):
+    """
+    We definitely want the rotation_speed and energy of the chopper. Thus
+    either a fermi_chopper or a disk_chopper group is required.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    fermi_chopper = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.directtof.DirecttofInstrumentFermiChopper",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfermi_chopper",
+            name="fermi_chopper",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    disk_chopper = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.directtof.DirecttofInstrumentDiskChopper",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdisk_chopper",
+            name="disk_chopper",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class DirecttofInstrumentFermiChopper(FermiChopper):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-fermi-chopper-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfermi_chopper",
+            name="fermi_chopper",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    rotation_speed = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-fermi-chopper-rotation-speed-field"
+        ],
+        dimensionality="1 / [time]",
+        description=("chopper rotation speed"),
+        a_nexus_field=NeXusField(
+            name="rotation_speed",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_FREQUENCY",
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-fermi-chopper-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("energy selected"),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class DirecttofInstrumentDiskChopper(DiskChopper):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-disk-chopper-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdisk_chopper",
+            name="disk_chopper",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    rotation_speed = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-disk-chopper-rotation-speed-field"
+        ],
+        dimensionality="1 / [time]",
+        description=("chopper rotation speed"),
+        a_nexus_field=NeXusField(
+            name="rotation_speed",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_FREQUENCY",
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-disk-chopper-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("energy selected"),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
         ),
     )
 

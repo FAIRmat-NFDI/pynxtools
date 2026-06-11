@@ -43,6 +43,7 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
+from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -212,7 +213,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(
     )
 
     dbscan = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCluster_analysisIDDbscan",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -222,7 +223,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(
         ),
     )
     hdbscan = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCluster_analysisIDHdbscan",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -286,6 +287,205 @@ class ApmParaprobeClustererConfigCluster_analysisID(
             name_type="specified",
             optionality="required",
             units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeClustererConfigCluster_analysisIDDbscan(Process):
+    """
+    Settings for DBScan clustering algorithm. For original details about the
+    algorithm and (performance-relevant) details consider:
+
+    * `M. Ester et al. <https://dx.doi.org/10.5555/3001460.3001507>`_ * `M.
+    Götz et al. <https://dx.doi.org/10.1145/2834892.2834894>`_
+
+    For details about how the DBScan algorithms is the key behind the specific
+    modification known as the maximum-separation method in the atom probe
+    community consider `E. Jägle et al.
+    <https://dx.doi.org/10.1017/S1431927614013294>`_
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="dbscan",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    high_throughput_method = Quantity(
+        type=MEnum(["tuple", "combinatorics"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-high-throughput-method-field"
+        ],
+        description=(
+            "Strategy how a set of cluster analyses with different parameter is "
+            "executed: * For tuple as many runs are performed as parameter "
+            "values have been defined. * For combinatorics individual parameter "
+            "arrays are looped over. As an example we may provide ten entries "
+            "for eps and three entries for min_pts. If high_throughput_method is "
+            "set to tuple, the analysis is invalid because we have an "
+            "insufficient number of min_pts values to pair them with our ten eps "
+            "values. By contrast, if high_throughput_method is set to "
+            "combinatorics, the tool will run three individual min_pts runs for "
+            "each eps value, resulting in a total of 30 analyses. A typical "
+            "example from the literature `M. Kühbach et al. "
+            "<https://dx.doi.org/10.1038/s41524-020-00486-1>`_ can be instructed "
+            "via setting eps to an array of values np.linspace(0.2, 5.0, "
+            "nums=241, endpoint=True), one min_pts value that is equal to 1, and "
+            "high_throughput_method set to combinatorics."
+        ),
+        a_nexus_field=NeXusField(
+            name="high_throughput_method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["tuple", "combinatorics"],
+        ),
+    )
+    eps = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-eps-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        description=("Array of epsilon (eps) parameter values."),
+        a_nexus_field=NeXusField(
+            name="eps",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    min_pts = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-min-pts-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Array of minimum points (min_pts) parameter values."),
+        a_nexus_field=NeXusField(
+            name="min_pts",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
+    """
+    Settings for the HPDBScan clustering algorithm.
+
+    * L. McInnes et al. <https://dx.doi.org/10.21105/joss.00205>`_ *
+    scikit-learn hdbscan library
+    `<https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html>`_
+
+    See also this documentation for details about the parameter. Here we use
+    the terminology of the hdbscan documentation.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="hdbscan",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    high_throughput_method = Quantity(
+        type=MEnum(["tuple", "combinatorics"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-high-throughput-method-field"
+        ],
+        description=(
+            "Strategy how runs with different parameter values are composed, "
+            "following the explanation for high_throughput_method of dbscan."
+        ),
+        a_nexus_field=NeXusField(
+            name="high_throughput_method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["tuple", "combinatorics"],
+        ),
+    )
+    min_cluster_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-min-cluster-size-field"
+        ],
+        shape=["*"],
+        description=("Array of min_cluster_size parameter values."),
+        a_nexus_field=NeXusField(
+            name="min_cluster_size",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    min_samples = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-min-samples-field"
+        ],
+        shape=["*"],
+        description=("Array of min_samples parameter values."),
+        a_nexus_field=NeXusField(
+            name="min_samples",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    cluster_selection_epsilon = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-cluster-selection-epsilon-field"
+        ],
+        shape=["*"],
+        description=("Array of cluster_selection parameter values."),
+        a_nexus_field=NeXusField(
+            name="cluster_selection_epsilon",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    alpha = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-alpha-field"
+        ],
+        shape=["*"],
+        description=("Array of alpha parameter values."),
+        a_nexus_field=NeXusField(
+            name="alpha",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
         ),
     )
 

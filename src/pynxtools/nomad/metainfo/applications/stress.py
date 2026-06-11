@@ -36,11 +36,17 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.beam import Beam
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.note import Note
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.reflections import Reflections
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -395,7 +401,7 @@ class StressInstrument(Instrument):
     )
 
     note = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentNote",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -404,6 +410,43 @@ class StressInstrument(Instrument):
             name_type="any",
             optionality="optional",
             min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    beam_intensity_profile = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentBeamIntensityProfile",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_intensity_profile",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
             max_occurs=1,
         ),
     )
@@ -447,6 +490,528 @@ class StressInstrument(Instrument):
         super().normalize(archive, logger)
 
 
+class StressInstrumentNote(Note):
+    """
+    This group contains information about the geometry and/or efficiency
+    measurement(s).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    calibration_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-calibration-type-field"
+        ],
+        description=("Describe the type of calibration."),
+        a_nexus_field=NeXusField(
+            name="calibration_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(
+            [
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "Metal Jet X-ray",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-source-type-field"
+        ],
+        description=("Type of radiation source"),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "Metal Jet X-ray",
+            ],
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["neutron", "X-ray"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-source-probe-field"
+        ],
+        description=("Type of radiation probe"),
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["neutron", "X-ray"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressInstrumentDetector(Detector):
+    """
+    Zero or more of these groups describe the detectors used in the experiment.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-type-field"
+        ],
+        description=(
+            "Description of type such as \\ :sup:`3`\\ He gas cylinder, \\ "
+            ":sup:`3`\\ He PSD, scintillator, fission chamber, proportion "
+            "counter, ion chamber, CCD, pixel, image plate, CMOS, …"
+        ),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*", "*"],
+        description=(
+            "This is the distance to the previous component in the instrument; "
+            "most often the sample. The usage depends on the nature of the "
+            "detector: Most often it is the distance of the detector assembly. "
+            "But there are irregular detectors. In this case the distance must "
+            "be specified for each detector pixel. Note, it is recommended to "
+            "use NXtransformations instead."
+        ),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    efficiency_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-efficiency-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        description=("efficiency of the detector"),
+        a_nexus_field=NeXusField(
+            name="efficiency",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-wavelength-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        description=(
+            "This field can be two things: 1. For a pixel detector it provides "
+            "the nominal wavelength for which the detector has been calibrated. "
+            "2. For other detectors this field has to be seen together with the "
+            "efficiency field above. For some detectors, the efficiency is "
+            "wavelength dependent. Thus this field provides the wavelength axis "
+            "for the efficiency field. In this use case, the efficiency and "
+            "wavelength arrays must have the same dimensionality."
+        ),
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressInstrumentBeamIntensityProfile(Beam):
+    """
+    Defines the dimensions of the beam profile used for probing the sample
+    which corresponds to or can be used to determine the instrumental gauge
+    volume. A description of the subsequent fields can be found in the folowing
+    figure. The term "primary" in the subsequent fields refers to the beam path
+    between the sample and the source. The term "secondary" refers to the beam
+    path between the sample and the detector(s).
+
+    .. figure:: stress/Beam_profile_sketch3.jpg :width: 70% :alt: Examples for
+    the beam intensity profile.
+
+    Some examples for the beam intensity profile. The 1D description of the
+    beam profile on the right can equally be applied for the horizontal and
+    vertical direction for the primary and the secondary side.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_intensity_profile",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    beam_evaluation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-beam-evaluation-field"
+        ],
+        description=(
+            "If the beam profile was measured, the filename(s) of the "
+            "measurement can be specified here."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_evaluation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_vertical_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-vertical-type-field"
+        ],
+        description=(
+            "Defines the last device right in front of the sample used to shape "
+            "the beam. This could be, for example, a :ref:`(radial) collimator "
+            "<NXcollimator>` or a :ref:`slit <NXslit>`."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_vertical_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_vertical_source_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-vertical-source-width-field"
+        ],
+        description=(
+            "Defines the primary beam size intensity profile on the side closer "
+            "to the source in the vertical direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_vertical_source_width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_vertical_sample_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-vertical-sample-width-field"
+        ],
+        description=(
+            "Defines the primary beam size intensity profile on the side closer "
+            "to the sample in the vertical direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_vertical_sample_width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_vertical_distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-vertical-distance-field"
+        ],
+        description=(
+            "Defines the distance between the center of the gauge volume and the "
+            "beam shaping device."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_vertical_distance",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_vertical_evaluation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-vertical-evaluation-field"
+        ],
+        description=(
+            "Describes how the beam intensity profile in the primary vertical "
+            "direction was determined. Examples of valid entries are: "
+            "``measured``, ``theoretical``, ``estimated``, ..."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_vertical_evaluation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_horizontal_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-horizontal-type-field"
+        ],
+        description=(
+            "Defines the last device right in front of the sample used to shape "
+            "the beam. This could be, for example, a :ref:`(radial) collimator "
+            "<NXcollimator>` or a :ref:`slit <NXslit>`."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_horizontal_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_horizontal_source_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-horizontal-source-width-field"
+        ],
+        description=(
+            "Defines the primary beam size intensity profile on the side closer "
+            "to the source in the horizontal direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_horizontal_source_width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_horizontal_sample_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-horizontal-sample-width-field"
+        ],
+        description=(
+            "Defines the primary beam size intensity profile on the side closer "
+            "to the sample in the horizontal direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_horizontal_sample_width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_horizontal_distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-horizontal-distance-field"
+        ],
+        description=(
+            "Defines the distance between the center of the gauge volume and the "
+            "beam shaping device."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_horizontal_distance",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    primary_horizontal_evaluation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-primary-horizontal-evaluation-field"
+        ],
+        description=(
+            "Describes how the beam intensity profile in the primary horizontal "
+            "direction was determined. Examples of valid entries are: "
+            "``measured``, ``theoretical``, ``estimated``, ..."
+        ),
+        a_nexus_field=NeXusField(
+            name="primary_horizontal_evaluation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    secondary_horizontal_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-secondary-horizontal-type-field"
+        ],
+        description=(
+            "Defines the last device right in front of the sample used to shape "
+            "the beam. This could be, for example, a :ref:`(radial) collimator "
+            "<NXcollimator>` or a :ref:`slit <NXslit>`."
+        ),
+        a_nexus_field=NeXusField(
+            name="secondary_horizontal_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    secondary_horizontal_detector_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-secondary-horizontal-detector-width-field"
+        ],
+        description=(
+            "Defines the secondary beam size intensity profile on the side "
+            "closer to the detector in the horizontal direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="secondary_horizontal_detector_width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    secondary_horizontal_sample_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-secondary-horizontal-sample-width-field"
+        ],
+        description=(
+            "Defines the secondary beam size intensity profile on the side "
+            "closer to the sample in the horizontal direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="secondary_horizontal_sample_width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    secondary_horizontal_distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-secondary-horizontal-distance-field"
+        ],
+        description=(
+            "Defines the distance between the center of the gauge volume and the "
+            "beam shaping device."
+        ),
+        a_nexus_field=NeXusField(
+            name="secondary_horizontal_distance",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    secondary_horizontal_evaluation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-secondary-horizontal-evaluation-field"
+        ],
+        description=(
+            "Describes how the beam intensity profile in the secondary "
+            "horizontal direction was determined. Examples of valid entries are: "
+            "``measured``, ``theoretical``, ``estimated``, ..."
+        ),
+        a_nexus_field=NeXusField(
+            name="secondary_horizontal_evaluation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class StressSample(Sample):
     """
     This is the recommended location for describing parameters associated with
@@ -469,7 +1034,7 @@ class StressSample(Sample):
     )
 
     gauge_volume = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleGaugeVolume",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -543,6 +1108,113 @@ class StressSample(Sample):
         super().normalize(archive, logger)
 
 
+class StressSampleGaugeVolume(Parameters):
+    """
+    The gauge volume can be described with the following parameters: ..
+    figure:: stress/gauge_volume.png :width: 70% :alt: Gauge volume parameters
+    and coordinate system.
+
+    Gauge volume parameters and coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="gauge_volume",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    a = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-a-field"
+        ],
+        dimensionality="[length]",
+        description=("Length of the first diagonal."),
+        a_nexus_field=NeXusField(
+            name="a",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    b = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-b-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Length of the second diagonal normal to :ref:`x "
+            "</NXstress/ENTRY/sample_description/gauge_volume/a-field>`."
+        ),
+        a_nexus_field=NeXusField(
+            name="b",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    c = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-c-field"
+        ],
+        dimensionality="[length]",
+        description=("Height of the gauge volume."),
+        a_nexus_field=NeXusField(
+            name="c",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-depends-on-field"
+        ],
+        description=(
+            "In the local coordinate system, the beam is aligned along the "
+            "X-axis, and the Z-axis is oriented in the opposite direction of "
+            "gravity. The origin is the center to the gauge volume."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class StressProcess(Process):
     """
     Zero or more groups to describe the data processing steps to obtain the
@@ -573,6 +1245,42 @@ class StressProcess(Process):
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
+        ),
+    )
+    peak_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcessPeakParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="peak_parameters",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    background_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcessBackgroundParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="background_parameters",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcessData",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
         ),
     )
 
@@ -710,6 +1418,1016 @@ class StressProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressProcessPeakParameters(Parameters):
+    """
+    This group contains all diffraction peak fit parameters. This information
+    is not required for stress and strain calculations.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="peak_parameters",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    title = Quantity(
+        type=MEnum(
+            [
+                "gaussian",
+                "lorentzian",
+                "voigt",
+                "pseudo-voigt",
+                "split pseudo-voigt",
+                "pearson VII",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-title-field"
+        ],
+        description=("Diffraction peak profile."),
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "gaussian",
+                "lorentzian",
+                "voigt",
+                "pseudo-voigt",
+                "split pseudo-voigt",
+                "pearson VII",
+            ],
+        ),
+    )
+    area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-field"
+        ],
+        shape=["*"],
+        description=(
+            "Diffraction peak area (not including the background) in *y_Unit* units."
+        ),
+        a_nexus_field=NeXusField(
+            name="area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    area__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-units-attribute"
+        ],
+        description=("Specify the *y_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="area",
+        ),
+    )
+    area_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`area "
+            "</NXstress/ENTRY/fit/peak_parameters/area-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="area_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    center = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-field"
+        ],
+        shape=["*"],
+        description=("Diffraction peak position in *x_Unit* units."),
+        a_nexus_field=NeXusField(
+            name="center",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    center__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="center",
+        ),
+    )
+    center_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`center "
+            "</NXstress/ENTRY/fit/peak_parameters/center-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="center_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    height = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-field"
+        ],
+        shape=["*"],
+        description=(
+            "Diffraction peak height (not including the background) in *y_Unit* units."
+        ),
+        a_nexus_field=NeXusField(
+            name="height",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    height__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-units-attribute"
+        ],
+        description=("Specify the *y_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="height",
+        ),
+    )
+    height_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`height "
+            "</NXstress/ENTRY/fit/peak_parameters/height-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="height_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    fwhm = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-field"
+        ],
+        shape=["*"],
+        description=("Diffraction peak full width at half maximum in *x_Unit* units."),
+        a_nexus_field=NeXusField(
+            name="fwhm",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    fwhm__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="fwhm",
+        ),
+    )
+    fwhm_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`fwhm "
+            "</NXstress/ENTRY/fit/peak_parameters/fwhm-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="fwhm_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    fwhm_left = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-field"
+        ],
+        shape=["*"],
+        description=("Left-side FWHM for split profiles in *x_Unit* units."),
+        a_nexus_field=NeXusField(
+            name="fwhm_left",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    fwhm_left__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="fwhm_left",
+        ),
+    )
+    fwhm_left_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`fwhm_left "
+            "</NXstress/ENTRY/fit/peak_parameters/fwhm_left-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="fwhm_left_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    fwhm_right = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-field"
+        ],
+        shape=["*"],
+        description=("Right-side FWHM for split profiles in *x_Unit* units."),
+        a_nexus_field=NeXusField(
+            name="fwhm_right",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    fwhm_right__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="fwhm_right",
+        ),
+    )
+    fwhm_right_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`fwhm_right "
+            "</NXstress/ENTRY/fit/peak_parameters/fwhm_right-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="fwhm_right_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    form_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-form-factor-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "- Voigt or Pseudo-Voigt: Lorentzian fraction - Pearson VII: decay "
+            "parameter - Other profiles: not applicable"
+        ),
+        a_nexus_field=NeXusField(
+            name="form_factor",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    form_factor_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-form-factor-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error value(s) asscociated with :ref:`form_factor "
+            "</NXstress/ENTRY/fit/peak_parameters/form_factor-field>`"
+        ),
+        a_nexus_field=NeXusField(
+            name="form_factor_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    azimuth = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-azimuth-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=(
+            "Angle that defines the position of the integrated sector in the "
+            "diffraction cone for angular-dispersive diffraction or the position "
+            "of the detector for energy-dispersive diffraction."
+        ),
+        a_nexus_field=NeXusField(
+            name="azimuth",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressProcessBackgroundParameters(Parameters):
+    """
+    This group contains all background fit parameters. This information is not
+    required for stress and strain calculations.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="background_parameters",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-title-field"
+        ],
+        description=(
+            "Diffraction background profile. Required when background parameter "
+            "fields are present. Some example values with equations are shown "
+            "below: - ``manual`` : No equations nor variables needed to describe "
+            "this background. - ``linear`` : \\ :math:`\\small background= A0 + "
+            "A1 \\cdot x` - ``5-degree polynomial`` : \\ :math:`\\small "
+            "background= A0 + A1 \\cdot x + A2 \\cdot \\mathrm{x}^{2} + A3 "
+            "\\cdot \\mathrm{x}^{3} + A4 \\cdot \\mathrm{x}^{4} + A5 \\cdot "
+            "\\mathrm{x}^{5}` - ``shape function plus polynomial`` : A shape "
+            "function is not a mathematical function, it contains a manual "
+            "background obtained from a fit and a polynomial part. This allows "
+            "to adapt and modify the fit for subsequent measurements in the same "
+            "measurement campaign. The function describing it is the following: "
+            "\\ :math:`\\small background= as + b \\cdot SHAPE(x-o)` Where SHAPE "
+            "is the name of the variable used to describe the background value "
+            "at the position x. x can be e.g. the scattering angle \\ "
+            ":math:`2\\theta` in degrees."
+        ),
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    A = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-a-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Background parameter(s). For example a second-degree polynomial "
+            "will have fields ``A0``, ``A1`` and ``A2``."
+        ),
+        a_nexus_field=NeXusField(
+            name="A",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    as_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-as-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Background parameter *constant* for SHAPE function."),
+        a_nexus_field=NeXusField(
+            name="as",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    as_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-as-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error associated with background parameter *constant* for SHAPE function."
+        ),
+        a_nexus_field=NeXusField(
+            name="as_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    b = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-b-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Background parameter *amplitude* for SHAPE function."),
+        a_nexus_field=NeXusField(
+            name="b",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    b_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-b-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error associated with background parameter *amplitude* for SHAPE function."
+        ),
+        a_nexus_field=NeXusField(
+            name="b_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    o = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-o-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Background parameter *offset* for SHAPE function."),
+        a_nexus_field=NeXusField(
+            name="o",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    o_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-o-errors-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Error associated with background parameter *offset* for SHAPE function."
+        ),
+        a_nexus_field=NeXusField(
+            name="o_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    background_area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-background-area-field"
+        ],
+        shape=["*"],
+        description=(
+            "The background area in *y_Unit* units, integrated over a confidence "
+            "interval around the center (*0.95* by default)."
+        ),
+        a_nexus_field=NeXusField(
+            name="background_area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    background_area__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-background-area-units-attribute"
+        ],
+        description=("Specify the *y_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="background_area",
+        ),
+    )
+    background_area_interval = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-background-area-interval-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Confidence interval from which the background counts are "
+            "integrated. For example *0.95* means that the background is "
+            "integrated over the range in which the integrated peak area is 95% "
+            "of the total peak area."
+        ),
+        a_nexus_field=NeXusField(
+            name="background_area_interval",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressProcessData(Data):
+    """
+    Diffractogram with fit results in :ref:`peak_parameters
+    </NXstress/ENTRY/fit/peak_parameters-group>` and
+    :ref:`background_parameters
+    </NXstress/ENTRY/fit/background_parameters-group>`. This information is not
+    required for stress and strain calculations.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-axes-attribute"
+        ],
+        shape=["*"],
+        description=(
+            "List of the one to two axes field name(s) to be used by default. "
+            "The axes are further described in the fields DAXIS and XAXIS."
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    DAXIS = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-daxis-field"
+        ],
+        variable=True,
+        shape=["*"],
+        description=(
+            "One or more fields that contain the values for the **n_D** "
+            "dimension. For example the azimuthal positions of different "
+            "energy-dispersive detectors or the average azimuth of different "
+            "azimuthal sections on an area detector."
+        ),
+        a_nexus_field=NeXusField(
+            name="DAXIS",
+            type="NX_CHAR_OR_NUMBER",
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    XAXIS = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-xaxis-field"
+        ],
+        variable=True,
+        shape=["*"],
+        description=(
+            "One or more fields that contain the values for the **n_X** "
+            "dimension in *x_Unit* units. For example: MCA channels, scattering "
+            "angle \\ :math:`2\\theta` in degrees, scattering vector length q in "
+            "\\ :math:`\\mathrm{nm}^{-1}`, ..."
+        ),
+        a_nexus_field=NeXusField(
+            name="XAXIS",
+            type="NX_NUMBER",
+            name_type="any",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    XAXIS__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-xaxis-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="XAXIS",
+        ),
+    )
+    signal = Quantity(
+        type=MEnum(["diffractogram"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-signal-attribute"
+        ],
+        description=("Default field name to be plotted."),
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["diffractogram"],
+        ),
+    )
+    auxiliary_signals = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-auxiliary-signals-attribute"
+        ],
+        description=(
+            "List of additional field names to be plotted. This could be e.g. "
+            "fit, background, residuals, …"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="auxiliary_signals",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    diffractogram = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-field"
+        ],
+        shape=["*", "*"],
+        description=("Diffractogram counts in *y_Unit* units (default signal)"),
+        a_nexus_field=NeXusField(
+            name="diffractogram",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    diffractogram__interpretation = Quantity(
+        type=MEnum(["spectrum"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-interpretation-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="interpretation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="diffractogram",
+            enumeration=["spectrum"],
+        ),
+    )
+    diffractogram__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-units-attribute"
+        ],
+        description=("Specify the *y_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="diffractogram",
+        ),
+    )
+    diffractogram_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-errors-field"
+        ],
+        shape=["*", "*"],
+        description=("Diffractogram counts error in *y_Unit* units (default signal)"),
+        a_nexus_field=NeXusField(
+            name="diffractogram_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    diffractogram_errors__interpretation = Quantity(
+        type=MEnum(["spectrum"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-errors-interpretation-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="interpretation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="diffractogram_errors",
+            enumeration=["spectrum"],
+        ),
+    )
+    diffractogram_errors__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-errors-units-attribute"
+        ],
+        description=("Specify the *y_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="diffractogram_errors",
+        ),
+    )
+    fit = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-field"
+        ],
+        shape=["*", "*"],
+        description=("Diffractogram fit counts (auxiliary signal)."),
+        a_nexus_field=NeXusField(
+            name="fit",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    fit__interpretation = Quantity(
+        type=MEnum(["spectrum"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-interpretation-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="interpretation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="fit",
+            enumeration=["spectrum"],
+        ),
+    )
+    fit__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="fit",
+        ),
+    )
+    fit_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-errors-field"
+        ],
+        shape=["*", "*"],
+        description=("Diffractogram fit counts error (auxiliary signal)."),
+        a_nexus_field=NeXusField(
+            name="fit_errors",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    fit_errors__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-errors-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="fit_errors",
+        ),
+    )
+    background = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-background-field"
+        ],
+        shape=["*", "*"],
+        description=(
+            "In case the diffraction background was manually determined. "
+            "Diffractogram background counts (auxiliary signal)."
+        ),
+        a_nexus_field=NeXusField(
+            name="background",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    background__interpretation = Quantity(
+        type=MEnum(["spectrum"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-background-interpretation-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="interpretation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="background",
+            enumeration=["spectrum"],
+        ),
+    )
+    background__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-background-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="background",
+        ),
+    )
+    residuals = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-residuals-field"
+        ],
+        shape=["*", "*"],
+        description=("Difference between diffractogram and fit (auxiliary signal)."),
+        a_nexus_field=NeXusField(
+            name="residuals",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    residuals__interpretation = Quantity(
+        type=MEnum(["spectrum"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-residuals-interpretation-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="interpretation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="residuals",
+            enumeration=["spectrum"],
+        ),
+    )
+    residuals__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-residuals-units-attribute"
+        ],
+        description=("Specify the *x_Unit* units"),
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="residuals",
         ),
     )
 

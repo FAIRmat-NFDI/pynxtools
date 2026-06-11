@@ -45,6 +45,11 @@ from pynxtools.nomad.metainfo.applications.spm import (
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.spm_cantilever import SpmCantilever
+from pynxtools.nomad.metainfo.base_classes.spm_cantilever_oscillator import (
+    SpmCantileverOscillator,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -304,8 +309,18 @@ class AfmInstrument(SpmInstrument):
         ),
     )
 
+    photo_detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentPhotoDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="photo_detector",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     spm_cantilever = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_cantilever.SpmCantilever",
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentSpmCantilever",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -323,6 +338,145 @@ class AfmInstrument(SpmInstrument):
             name="phase_lock_loop",
             name_type="specified",
             optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentPhotoDetector(Detector):
+    """
+    Information about the quadrant photodiode deflection detector or
+    interferometer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-photo-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="photo_detector",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentSpmCantilever(SpmCantilever):
+    """
+    The cantilever information.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_cantilever",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    cantilever_oscillator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentSpmCantileverCantileverOscillator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_cantilever_oscillator",
+            name="cantilever_oscillator",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
+    """
+    When a cantilever is oscillated close to its resonance, this describes the
+    oscillator properties.
+
+    A cantilever can be used in direct contact mode to detect interaction
+    forces or oscillated close to its resonance frequency. Changes in the
+    oscillation amplitude, phase (between oscillated tail and moving tip) or
+    resonance frequency are very sensitive to changes in the interaction
+    potential field, giving rise of various measurement modes, such as
+    non-contact or intermittent-contact (tapping) modes.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_cantilever_oscillator",
+            name="cantilever_oscillator",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    reference_amplitude = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-amplitude-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="reference_amplitude",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+    reference_frequency = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-frequency-field"
+        ],
+        dimensionality="1 / [time]",
+        a_nexus_field=NeXusField(
+            name="reference_frequency",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_FREQUENCY",
+        ),
+    )
+    reference_phase = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-phase-field"
+        ],
+        dimensionality="[angle]",
+        a_nexus_field=NeXusField(
+            name="reference_phase",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANGLE",
         ),
     )
 

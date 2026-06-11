@@ -42,9 +42,18 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.applications.sensor_scan import (
     SensorScan,
     SensorScanInstrument,
+    SensorScanSample,
 )
+from pynxtools.nomad.metainfo.base_classes.amplifier import Amplifier
+from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.environment import Environment
+from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
+from pynxtools.nomad.metainfo.base_classes.lockin import Lockin
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
+from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
+from pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor import SpmPiezoSensor
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -96,16 +105,10 @@ class Spm(SensorScan):
         variable=True,
     )
     sample = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sample.Sample",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmSample",
         repeats=True,
         variable=True,
         description=("The sample information."),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsample",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmData",
@@ -335,6 +338,26 @@ class SpmInstrument(SensorScanInstrument):
         ),
     )
 
+    hardware = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentHardware",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="hardware",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    software = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSoftware",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="software",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
     real_time_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.rcs.Rcs",
         repeats=False,
@@ -346,7 +369,7 @@ class SpmInstrument(SensorScanInstrument):
         ),
     )
     lockin_amplifier = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.lockin.Lockin",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentLockinAmplifier",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXlockin",
@@ -355,8 +378,30 @@ class SpmInstrument(SensorScanInstrument):
             optionality="optional",
         ),
     )
+    current_sensorTAG = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAG",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="current_sensorTAG",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    voltage_sensorTAG = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAG",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="voltage_sensorTAG",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
     piezo_sensor = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentPiezoSensor",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
@@ -424,6 +469,905 @@ class SpmInstrument(SensorScanInstrument):
             name="sample_temperature_sensor",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+    sample_bias_voltage = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSampleBiasVoltage",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="sample_bias_voltage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentHardware(Fabrication):
+    """
+    The hardware description of core instrument setup of experiment. Usually,
+    the entire instrument is supplied by a single manufacturer. To describe the
+    hardware from any sub-components, use the ``hardware`` group of that
+    sub-component (child group of the NXinstrument group) group.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-hardware-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="hardware",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-hardware-name-field"
+        ],
+        description=("Name of the hardware."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-hardware-vendor-field"
+        ],
+        description=("Company name of the manufacturer."),
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-hardware-model-field"
+        ],
+        description=(
+            "Version or model of the hardware setup provided by the manufacturer."
+        ),
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentSoftware(Fabrication):
+    """
+    The software description of core instrument setup of experiment. Usually,
+    the entire instrument is supplied by a single name/manufacturer/model/etc.
+    To describe the software from any sub-components, use the ``software``
+    group of that component.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-software-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="software",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-software-name-field"
+        ],
+        description=("Name of the software."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-software-vendor-field"
+        ],
+        description=("Company name of the manufacturer."),
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-software-model-field"
+        ],
+        description=("Version or model of the component named by the manufacturer."),
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentLockinAmplifier(Lockin):
+    """
+    The lock-in amplifier information.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-lockin-amplifier-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlockin",
+            name="lockin_amplifier",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    flip_sign = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-lockin-amplifier-flip-sign-field"
+        ],
+        description=(
+            "The sign (1 or -1) that renders the values of the lock-in current "
+            "positive. The calibration procedure with retracted tip is normally "
+            "performed to compensate for the signal phase delay in SPM. The "
+            "procedure yields two possible solutions corresponding to the chosen "
+            "phase, this number should be equal to 1 or -1 depending on which "
+            "solution is chosen (this concept mainly used in STS experiments)."
+        ),
+        a_nexus_field=NeXusField(
+            name="flip_sign",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    active_channel = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-lockin-amplifier-active-channel-field"
+        ],
+        description=(
+            "The name of the active channel of the lock-in amplifier which is "
+            "used for the measurement."
+        ),
+        a_nexus_field=NeXusField(
+            name="active_channel",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentCurrent_sensorTAG(Sensor):
+    """
+    Information for current sensor. Any current sensor such as a
+    current-voltage transimpedance amplifier involved in the experiment or in
+    any special measurement or in any specialized experiment component can be
+    registered under this group.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="current_sensorTAG",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAGCalibration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    amplifier = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAGAmplifier",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXamplifier",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    NAMEcurrent = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-namecurrent-field"
+        ],
+        variable=True,
+        description=(
+            "The name of the current sensor used for specific measurement or in "
+            "component."
+        ),
+        a_nexus_field=NeXusField(
+            name="NAMEcurrent",
+            type="NX_CHAR",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    current = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-current-field"
+        ],
+        dimensionality="[current]",
+        description=(
+            "Name of the current according to the purpose of the measurement. "
+            "E.g., the field can be named as tip_current defining the current "
+            "measured at the tip."
+        ),
+        a_nexus_field=NeXusField(
+            name="current",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_CURRENT",
+        ),
+    )
+    offset_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-offset-value-field"
+        ],
+        dimensionality="[current]",
+        description=("The offset in the tunneling current between tip and sample."),
+        a_nexus_field=NeXusField(
+            name="offset_value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_CURRENT",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentCurrent_sensorTAGCalibration(Calibration):
+    """
+    Calibration data of the current sensor.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-calibration-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-calibration-calibration-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    coefficient = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-calibration-calibration-parameters-coefficient-field"
+        ],
+        description=("The coefficient of the calibration."),
+        a_nexus_field=NeXusField(
+            name="coefficient",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentCurrent_sensorTAGAmplifier(Amplifier):
+    """
+    An amplifier information that amplifies the input signal.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-amplifier-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXamplifier",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    current_gain = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-amplifier-current-gain-field"
+        ],
+        dimensionality="dimensionless",
+        description=("The gain of the current sensor."),
+        a_nexus_field=NeXusField(
+            name="current_gain",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentVoltage_sensorTAG(Sensor):
+    """
+    The sensor information for the voltage device. Any voltage sensor involved
+    in the experiment or in any special measurement or in any specialized
+    experiment component can be registered under this group.
+
+    For this purpose, replace the TAG with the specific name or ID of the
+    voltage sensor.
+
+    Do not register this group for sample bias voltage (DC), for that we have
+    :ref:`sample_bias_voltage
+    </NXspm/entry/instrument/sample_bias_voltage-group>` group.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="voltage_sensorTAG",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAGCalibration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    amplifier = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAGAmplifier",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXamplifier",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    NAMEvoltage = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-namevoltage-field"
+        ],
+        variable=True,
+        description=(
+            "The name of the voltage according to the purpose of the "
+            "measurement. E.g., the field can be named as "
+            "x_source_drain_bias_voltage defining the applied bias along the "
+            "x-axis as source-drain channel, while current (tip current) will be "
+            "measured along the z-axis."
+        ),
+        a_nexus_field=NeXusField(
+            name="NAMEvoltage",
+            type="NX_CHAR",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=("Voltage measured by sensor."),
+        a_nexus_field=NeXusField(
+            name="voltage",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+    offset_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-offset-value-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "The offset voltage. The real voltage is the sum of the voltage and "
+            "the offset voltage."
+        ),
+        a_nexus_field=NeXusField(
+            name="offset_value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentVoltage_sensorTAGCalibration(Calibration):
+    """
+    Calibration data of the voltage sensor.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-calibration-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-calibration-calibration-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    coefficient = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-calibration-calibration-parameters-coefficient-field"
+        ],
+        description=("The coefficient of the calibration."),
+        a_nexus_field=NeXusField(
+            name="coefficient",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentVoltage_sensorTAGAmplifier(Amplifier):
+    """
+    An amplifier information that amplifies the input signal.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-amplifier-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXamplifier",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    voltage_gain = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-amplifier-voltage-gain-field"
+        ],
+        dimensionality="dimensionless",
+        description=("The gain of the voltage sensor."),
+        a_nexus_field=NeXusField(
+            name="voltage_gain",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentPiezoSensor(SpmPiezoSensor):
+    """
+    This piezo sensor group refers to the XYZ (in all directions) piezo sensor.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="piezo_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-x-field"
+        ],
+        dimensionality="[length]",
+        description=("The x position of the piezo."),
+        a_nexus_field=NeXusField(
+            name="x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+    y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-y-field"
+        ],
+        dimensionality="[length]",
+        description=("The y position of the piezo."),
+        a_nexus_field=NeXusField(
+            name="y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+    z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-z-field"
+        ],
+        dimensionality="[length]",
+        description=("The z position of the piezo."),
+        a_nexus_field=NeXusField(
+            name="z",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentSampleBiasVoltage(Sensor):
+    """
+    The DC bias voltage that is applied to the sample (for example in constant-
+    current mode in STM).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="sample_bias_voltage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSampleBiasVoltageCalibration",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    bias_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-bias-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=("The bias voltage (DC) applied to the sample."),
+        a_nexus_field=NeXusField(
+            name="bias_voltage",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+    )
+    bias_offset_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-bias-offset-value-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=("Offset value of the bias voltage."),
+        a_nexus_field=NeXusField(
+            name="bias_offset_value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentSampleBiasVoltageCalibration(Calibration):
+    """
+    Calibration of the bias voltage measurement (V/V).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-calibration-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-calibration-calibration-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    coefficient = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-calibration-calibration-parameters-coefficient-field"
+        ],
+        description=("The coefficient of the calibration."),
+        a_nexus_field=NeXusField(
+            name="coefficient",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmSample(SensorScanSample):
+    """
+    The sample information.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-sample-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsample",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    sample_environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmSampleSampleEnvironment",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="sample_environment",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmSampleSampleEnvironment(Environment):
+    """
+    Information of environment around the sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-sample-sample-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="sample_environment",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    sample_bias_voltage = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="sample_bias_voltage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    sample_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_temperature_sensor",
+            name="sample_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-sample-sample-environment-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        description=(
+            "The single-valued temperature of the sample, also referred to as "
+            "the tip temperature (not head temperature), since the tip and "
+            "sample are in contact or in close proximity. For array like "
+            "temperature data use sample_temperature_sensor group."
+        ),
+        a_nexus_field=NeXusField(
+            name="temperature",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_TEMPERATURE",
         ),
     )
 

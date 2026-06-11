@@ -45,6 +45,14 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
 from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
     ApmParaprobeToolProcess,
 )
+from pynxtools.nomad.metainfo.base_classes.cg_face_list_data_structure import (
+    CgFaceListDataStructure,
+)
+from pynxtools.nomad.metainfo.base_classes.cg_hexahedron import CgHexahedron
+from pynxtools.nomad.metainfo.base_classes.cg_polyhedron import CgPolyhedron
+from pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask import (
+    CsFilterBooleanMask,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -160,7 +168,7 @@ class ApmParaprobeTessellatorResultsTessellationID(ApmParaprobeToolProcess):
     )
 
     wall = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.cg_hexahedron.CgHexahedron",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWall",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_hexahedron",
@@ -170,13 +178,877 @@ class ApmParaprobeTessellatorResultsTessellationID(ApmParaprobeToolProcess):
         ),
     )
     voronoi_cells = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.cg_polyhedron.CgPolyhedron",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDVoronoiCells",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_polyhedron",
             name="voronoi_cells",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+    wall_contact_global = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactGlobal",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_global",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    wall_contact_left = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactLeft",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_left",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    wall_contact_right = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactRight",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_right",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    wall_contact_front = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactFront",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_front",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    wall_contact_rear = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactRear",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_rear",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    wall_contact_bottom = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactBottom",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_bottom",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    wall_contact_top = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactTop",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_top",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWall(CgHexahedron):
+    """
+    The (tight) axis-aligned bounding box about the point cloud.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_hexahedron",
+            name="wall",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    closest_corner = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-closest-corner-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        description=(
+            "Coordinate triplet of the corner that lays closest to the origin of "
+            "the *paraprobe* coordinate system."
+        ),
+        a_nexus_field=NeXusField(
+            name="closest_corner",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    farthest_corner = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-farthest-corner-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        description=(
+            "Coordinate triplet of the corner that lays farthest away from the "
+            "origin of the *paraprobe* coordinate system."
+        ),
+        a_nexus_field=NeXusField(
+            name="farthest_corner",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_polyhedron",
+            name="voronoi_cells",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    polyhedra = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_face_list_data_structure",
+            name="polyhedra",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    dimensionality = Quantity(
+        type=MEnum(["3"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-dimensionality-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="dimensionality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+            enumeration=["3"],
+        ),
+    )
+    cardinality = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-cardinality-field"
+        ],
+        dimensionality="dimensionless",
+        description=("The number of points (and thus cells)."),
+        a_nexus_field=NeXusField(
+            name="cardinality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    volume = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-volume-field"
+        ],
+        dimensionality="[length] ** 3",
+        shape=["*"],
+        description=("Volume of each Voronoi cell."),
+        a_nexus_field=NeXusField(
+            name="volume",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLUME",
+        ),
+    )
+    process_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-process-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Which MPI process computed which Voronoi cell."),
+        a_nexus_field=NeXusField(
+            name="process_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    thread_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-thread-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Which OpenMP thread computed which Voronoi cell."),
+        a_nexus_field=NeXusField(
+            name="thread_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    index_offset = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-index-offset-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="index_offset",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    xdmf_topology = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-xdmf-topology-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Sequence of tuples, concatenated in the order of the Voronoi cells. "
+            "Each tuple contains encodes information to visualize using XDMF: "
+            "Firstly, an XDMF geometric primitive type key. Secondly, the number "
+            "of vertices of the polygon. Third, the sequence of indices_vertex "
+            "which define the facet. Tuples encode faces faster than cells."
+        ),
+        a_nexus_field=NeXusField(
+            name="xdmf_topology",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    xdmf_cell_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-xdmf-cell-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Sequence of cell identifier, concatenated such that each face is "
+            "associated with its cell. Given that paraprobe-tessellator assigns "
+            "each cell the evaporation_id of the ion that the cell wraps this "
+            "information enables the segmentation of the tessellation and thus "
+            "correlate per-ion properties with the volume that each cell "
+            "represents."
+        ),
+        a_nexus_field=NeXusField(
+            name="xdmf_cell_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
+    CgFaceListDataStructure
+):
+    """
+    A simple approach to describe the entire set of polyhedra when the main
+    intention is to store the shape of the polyhedra for visualization
+    purposes.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_face_list_data_structure",
+            name="polyhedra",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    number_of_vertices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-number-of-vertices-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_vertices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    number_of_faces = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-number-of-faces-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_faces",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    indices_offset_vertex = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-indices-offset-vertex-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="indices_offset_vertex",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    indices_offset_face = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-indices-offset-face-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="indices_offset_face",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    vertices = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-vertices-field"
+        ],
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="vertices",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactGlobal(
+    CsFilterBooleanMask
+):
+    """
+    A bitmask that documents which of the cells are likely truncated because
+    they share at least one face with the *aabb* of the point cloud. This field
+    encodes the result of the boolean or operator applied to the value of all
+    six wall_contact groups that document contact in specific outer unit normal
+    directions of the *aabb*.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-global-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_global",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-global-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-global-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-global-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactLeft(CsFilterBooleanMask):
+    """
+    In the spirit of wall_contact_global, the left face of *aabb*. Its outer
+    unit normal points in the opposite direction of the x-axis of the
+    *paraprobe* coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-left-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_left",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-left-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-left-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-left-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactRight(CsFilterBooleanMask):
+    """
+    In the spirit of wall_contact_global, the right face of *aabb*. Its outer
+    unit normal points in the direction of the x-axis of the *paraprobe*
+    coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-right-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_right",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-right-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-right-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-right-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactFront(CsFilterBooleanMask):
+    """
+    In the spirit of wall_contact_global, the front face of *aabb*. Its outer
+    unit normal points in the opposite direction of the y-axis of the
+    *paraprobe* coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-front-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_front",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-front-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-front-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-front-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactRear(CsFilterBooleanMask):
+    """
+    In the spirit of wall_contact_global, the rear face of *aabb*. Its outer
+    unit normal points in the direction of the y-axis of the *paraprobe*
+    coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-rear-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_rear",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-rear-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-rear-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-rear-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactBottom(
+    CsFilterBooleanMask
+):
+    """
+    In the spirit of wall_contact_global, the front face of *aabb*. Its outer
+    unit normal points in the opposite direction of the z-axis of the
+    *paraprobe* coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-bottom-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_bottom",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-bottom-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-bottom-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-bottom-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorResultsTessellationIDWallContactTop(CsFilterBooleanMask):
+    """
+    In the spirit of wall_contact_global, the front face of *aabb*. Its outer
+    unit normal points in the direction of the z-axis of the *paraprobe*
+    coordinate system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-top-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="wall_contact_top",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-top-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-top-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-top-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 

@@ -42,7 +42,18 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_common import (
     ApmParaprobeToolCommon,
 )
+from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
+    ApmParaprobeToolProcess,
+)
+from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
+from pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask import (
+    CsFilterBooleanMask,
+)
+from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.note import Note
+from pynxtools.nomad.metainfo.base_classes.program import Program
+from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -83,17 +94,10 @@ class ApmParaprobeToolResults(Entry):
     )
 
     apm_paraprobe_tool_process = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process.ApmParaprobeToolProcess",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsApmParaprobeToolProcess",
         repeats=True,
         variable=True,
         description=("A specific processing result"),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_paraprobe_tool_process",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     common = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommon",
@@ -139,6 +143,101 @@ class ApmParaprobeToolResults(Entry):
 # =============================================================================
 
 
+class ApmParaprobeToolResultsApmParaprobeToolProcess(ApmParaprobeToolProcess):
+    """
+    A specific processing result
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_paraprobe_tool_process",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    window = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsApmParaprobeToolProcessWindow",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="window",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="window",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    number_of_ions = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-number-of-ions-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_ions",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-mask-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
     m_def = Section(
         links=[
@@ -147,6 +246,61 @@ class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_paraprobe_tool_common",
             name="common",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonConfig",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="config",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    profiling = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonProfiling",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_profiling",
+            name="profiling",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    userID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonUserID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXuser",
+            name="userID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    paraprobe_reference_frame = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonParaprobeReferenceFrame",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcoordinate_system",
+            name="paraprobe_reference_frame",
             name_type="specified",
             optionality="required",
         ),
@@ -177,6 +331,352 @@ class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
             name_type="specified",
             optionality="required",
             units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeToolResultsCommonConfig(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="config",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-config-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-config-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-config-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeToolResultsCommonProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_profiling",
+            name="profiling",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    start_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-start-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="start_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    end_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-end-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="end_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    total_elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-total-elapsed-time-field"
+        ],
+        dimensionality="[time]",
+        a_nexus_field=NeXusField(
+            name="total_elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    max_processes = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-max-processes-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="max_processes",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    max_threads = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-max-threads-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="max_threads",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    max_gpus = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-max-gpus-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="max_gpus",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeToolResultsCommonUserID(User):
+    """
+    If used, metadata of at least the person who performed this analysis.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-userid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXuser",
+            name="userID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-userid-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcoordinate_system",
+            name="paraprobe_reference_frame",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["undefined", "cartesian"],
+            open_enum=True,
+        ),
+    )
+    x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-x-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    x_alias = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-x-alias-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="x_alias",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-y-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    y_alias = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-y-alias-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="y_alias",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-z-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="z",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    z_alias = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-z-alias-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="z_alias",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
         ),
     )
 

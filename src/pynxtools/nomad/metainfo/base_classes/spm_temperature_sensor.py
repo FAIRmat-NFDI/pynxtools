@@ -39,7 +39,9 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 
 if TYPE_CHECKING:
@@ -67,15 +69,9 @@ class SpmTemperatureSensor(Sensor):
     )
 
     calibration = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.calibration.Calibration",
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensorCalibration",
         repeats=False,
         description=("Calibration of the temperature measurement."),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcalibration",
-            name="calibration",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensorData",
@@ -166,6 +162,70 @@ class SpmTemperatureSensor(Sensor):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class SpmTemperatureSensorCalibration(Calibration):
+    """
+    Calibration of the temperature measurement.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-calibration-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcalibration",
+            name="calibration",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    calibration_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensorCalibrationCalibrationParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmTemperatureSensorCalibrationCalibrationParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-calibration-calibration-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="calibration_parameters",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    coefficient = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-calibration-calibration-parameters-coefficient-field"
+        ],
+        description=("The coefficient of the calibration."),
+        a_nexus_field=NeXusField(
+            name="coefficient",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class SpmTemperatureSensorData(Data):
