@@ -697,6 +697,58 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
+def _format_hdf5_group_name(group_name: str, nx_class: str | None) -> str:
+    """Return a renamed group when an NX class is available."""
+    if not nx_class:
+        return group_name
+
+    if nx_class.startswith("NX"):
+        nx_class = nx_class[2:]
+
+    return f"{nx_class.upper()}[{group_name}]"
+
+
+def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
+    """Convert an HDF5 path to the data converter path style.
+
+    Group names that contain an NX_class (or NXclass) attribute are renamed using
+    the class name with the original group name in square brackets:
+    /entry -> /Entry[entry]
+    """
+    parts = []
+    current = h5file
+    for part in path.strip("/").split("/"):
+        if part == "":
+            continue
+        current = current[part]
+        if isinstance(current, h5py.Group):
+            nx_class = decode_if_bytes(
+                current.attrs.get("NX_class") or current.attrs.get("NXclass")
+            )
+            parts.append(_format_hdf5_group_name(part, nx_class))
+        else:
+            parts.append(part)
+    return "/" + "/".join(parts) if parts else "/"
+
+
+def list_hdf5_paths(file_path) -> list[str]:
+    """Return all HDF5 paths and attributes in data converter path style."""
+    paths = []
+    with h5py.File(file_path, "r") as h5file:
+        if h5file.attrs:
+            for attr_name in h5file.attrs:
+                paths.append(f"/@{attr_name}")
+
+        def recurse(name, obj):
+            data_path = convert_hdf5_path_to_data_dict_path(h5file, name)
+            paths.append(data_path)
+            for attr_name in obj.attrs:
+                paths.append(f"{data_path}/@{attr_name}")
+
+        h5file.visititems(recurse)
+    return paths
+
+
 def is_value_valid_element_of_enum(value, elem_list) -> tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options.
 
