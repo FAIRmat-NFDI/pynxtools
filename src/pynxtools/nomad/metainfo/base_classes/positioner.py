@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -61,17 +62,11 @@ class Positioner(Component):
     )
 
     actuator = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.PositionerActuator",
         repeats=False,
         description=(
             "The actuator of the positioner which is responsible for the "
             "movement of the probe."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="actuator",
-            name_type="specified",
-            optionality="optional",
         ),
     )
 
@@ -245,6 +240,48 @@ class Positioner(Component):
         a_nexus_field=NeXusField(
             name="depends_on",
             type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class PositionerActuator(Actuator):
+    """
+    The actuator of the positioner which is responsible for the movement of the
+    probe.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-actuator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXactuator",
+            name="actuator",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    feedback = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name="feedback",
             name_type="specified",
             optionality="optional",
         ),

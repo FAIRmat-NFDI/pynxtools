@@ -37,6 +37,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
+from pynxtools.nomad.metainfo.base_classes.history import History
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -61,18 +62,12 @@ class Spindispersion(Component):
     )
 
     scattering_target_history = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
+        section_def="pynxtools.nomad.metainfo.base_classes.spindispersion.SpindispersionScatteringTargetHistory",
         repeats=False,
         description=(
             "A set of activities that occurred to the ``scattering_target`` "
             "prior to/during the. experiment. For example, this group can be "
             "used to describe the preparation of the ``scattering_target``."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXhistory",
-            name="scattering_target_history",
-            name_type="specified",
-            optionality="optional",
         ),
     )
     deflector = SubSection(
@@ -182,6 +177,49 @@ class Spindispersion(Component):
         a_nexus_field=NeXusField(
             name="scattering_target",
             type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class SpindispersionScatteringTargetHistory(History):
+    """
+    A set of activities that occurred to the ``scattering_target`` prior
+    to/during the. experiment. For example, this group can be used to describe
+    the preparation of the ``scattering_target``.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-scattering-target-history-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name="scattering_target_history",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    preparation = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.activity.Activity",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXactivity",
+            name="preparation",
             name_type="specified",
             optionality="optional",
         ),

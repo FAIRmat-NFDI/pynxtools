@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -123,17 +124,11 @@ class ApmCompositionspaceConfig(Entry):
         ),
     )
     clustering = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigClustering",
         repeats=False,
         description=(
             "Step during which the chemically segmented voxel sets are analyzed "
             "for their spatial organization."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="clustering",
-            name_type="specified",
-            optionality="required",
         ),
     )
 
@@ -396,7 +391,7 @@ class ApmCompositionspaceConfigVoxelization(Process):
     )
 
     autophase = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigVoxelizationAutophase",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -422,6 +417,95 @@ class ApmCompositionspaceConfigVoxelization(Process):
             name_type="specified",
             optionality="required",
             units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceConfigVoxelizationAutophase(Process):
+    """
+    Optional step during which the subsequent segmentation step is prepared
+    with the aim to eventually reduce the dimensionality of the chemical space
+    in which the machine learning model works.
+
+    In this step a supervised reduction of the dimensionality of the chemical
+    space is quantified using the (Gini) feature importance of each element to
+    suggest which columns of the composition matrix should be taken for the
+    subsequent segmentation step.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-autophase-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="autophase",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    random_forest_classifier = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="random_forest_classifier",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    use = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-autophase-use-field"
+        ],
+        description=("Was the automated phase assignment used?"),
+        a_nexus_field=NeXusField(
+            name="use",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    initial_guess = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-autophase-initial-guess-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Estimated guess for which a Gaussian mixture model is evaluated to "
+            "preprocess a result that is subsequently post-processed with a "
+            "random_forest_classifier to lower the number of dimensions in the "
+            "chemical space to the subset of trunc_species many elements with "
+            "the highest feature importance."
+        ),
+        a_nexus_field=NeXusField(
+            name="initial_guess",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    trunc_species = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-autophase-trunc-species-field"
+        ],
+        dimensionality="dimensionless",
+        description=("The number of elements to use for reducing the dimensionality."),
+        a_nexus_field=NeXusField(
+            name="trunc_species",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 
@@ -458,13 +542,157 @@ class ApmCompositionspaceConfigSegmentation(Process):
         ),
     )
     ic_opt = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigSegmentationIcOpt",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="ic_opt",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceConfigSegmentationIcOpt(Process):
+    """
+    The decision is guided through the evaluation of the information criterion
+    minimization.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-segmentation-ic-opt-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="ic_opt",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    gaussian_mixture = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="gaussian_mixture",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    n_max_ic_cluster = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-segmentation-ic-opt-n-max-ic-cluster-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The maximum number of chemical classes to probe with the Gaussian "
+            "mixture model with which the voxel set is segmented into a mixture "
+            "of voxels with that many different chemical compositions."
+        ),
+        a_nexus_field=NeXusField(
+            name="n_max_ic_cluster",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceConfigClustering(Process):
+    """
+    Step during which the chemically segmented voxel sets are analyzed for
+    their spatial organization.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-clustering-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="clustering",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    dbscan = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigClusteringDbscan",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="dbscan",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceConfigClusteringDbscan(Parameters):
+    """
+    Configuration for the DBScan algorithm that is used in the clustering step.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-clustering-dbscan-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="dbscan",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    eps = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-clustering-dbscan-eps-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "The maximum distance between voxel pairs in a neighborhood to be "
+            "considered connected."
+        ),
+        a_nexus_field=NeXusField(
+            name="eps",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    min_samples = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-clustering-dbscan-min-samples-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The number of voxels in a neighborhood for a voxel to be considered "
+            "as a core point."
+        ),
+        a_nexus_field=NeXusField(
+            name="min_samples",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 

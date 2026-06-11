@@ -43,6 +43,8 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
+from pynxtools.nomad.metainfo.base_classes.cs_prng import CsPrng
+from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -138,7 +140,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
     )
 
     random_number_generator = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.cs_prng.CsPrng",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_prng",
@@ -148,7 +150,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
         ),
     )
     statistics = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -308,6 +310,260 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
             name_type="specified",
             optionality="required",
             units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator(CsPrng):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-random-number-generator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_prng",
+            name="random_number_generator",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(["physical", "system_clock", "mt19937", "other"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-random-number-generator-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["physical", "system_clock", "mt19937", "other"],
+        ),
+    )
+    seed = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-random-number-generator-seed-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="seed",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    warmup = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-random-number-generator-warmup-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="warmup",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics(Process):
+    """
+    Specifies which spatial statistics to compute.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="statistics",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    knn = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="knn",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+    rdf = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="rdf",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
+    """
+    Compute k-th nearest neighbour statistics.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="knn",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    kth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-kth-field"
+        ],
+        dimensionality="dimensionless",
+        description=("Order k."),
+        a_nexus_field=NeXusField(
+            name="kth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    min = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-min-field"
+        ],
+        dimensionality="[length]",
+        description=("Minimum value of the histogram binning."),
+        a_nexus_field=NeXusField(
+            name="min",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    increment = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-increment-field"
+        ],
+        dimensionality="[length]",
+        description=("Increment of the histogram binning."),
+        a_nexus_field=NeXusField(
+            name="increment",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    max = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-max-field"
+        ],
+        dimensionality="[length]",
+        description=("Maximum value of the histogram binning."),
+        a_nexus_field=NeXusField(
+            name="max",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
+    """
+    Compute radial distribution function.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="rdf",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    min = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-min-field"
+        ],
+        dimensionality="[length]",
+        description=("Minimum value of the histogram binning."),
+        a_nexus_field=NeXusField(
+            name="min",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    increment = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-increment-field"
+        ],
+        dimensionality="[length]",
+        description=("Increment value of the histogram binning."),
+        a_nexus_field=NeXusField(
+            name="increment",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    max = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-max-field"
+        ],
+        dimensionality="[length]",
+        description=("Maximum value of the histogram binning."),
+        a_nexus_field=NeXusField(
+            name="max",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
         ),
     )
 

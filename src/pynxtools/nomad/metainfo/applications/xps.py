@@ -42,8 +42,16 @@ from pynxtools.nomad.metainfo.applications.mpes import (
     MpesInstrument,
     MpesSample,
 )
+from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.electronanalyzer import Electronanalyzer
+from pynxtools.nomad.metainfo.base_classes.energydispersion import Energydispersion
 from pynxtools.nomad.metainfo.base_classes.fit import Fit
+from pynxtools.nomad.metainfo.base_classes.fit_function import FitFunction
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
+from pynxtools.nomad.metainfo.base_classes.peak import Peak
+from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -401,7 +409,7 @@ class XpsInstrument(MpesInstrument):
     )
 
     electronanalyzer = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.Electronanalyzer",
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -409,6 +417,321 @@ class XpsInstrument(MpesInstrument):
             name=None,
             name_type="any",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentElectronanalyzer(Electronanalyzer):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectronanalyzer",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    collectioncolumn = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerCollectioncolumn",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollectioncolumn",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    energydispersion = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerEnergydispersion",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenergydispersion",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerTransformations",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    work_function = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-work-function-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        a_nexus_field=NeXusField(
+            name="work_function",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-depends-on-field"
+        ],
+        description=(
+            "Reference to the transformation describing the orientation of the "
+            "analyzer relative to a defined coordinate system."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-collectioncolumn-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollectioncolumn",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    magnification = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-collectioncolumn-magnification-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="magnification",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentElectronanalyzerEnergydispersion(Energydispersion):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-energydispersion-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenergydispersion",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    radius = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-energydispersion-radius-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="radius",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+    energy_scan_mode = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-energydispersion-energy-scan-mode-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="energy_scan_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "fixed_analyzer_transmission",
+                "fixed_retardation_ratio",
+                "fixed_energy",
+                "snapshot",
+                "dither",
+            ],
+            open_enum=True,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentElectronanalyzerTransformations(Transformations):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    analyzer_take_off_polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Polar tilt of the analyzer with respect to the upward z-direction, "
+            "defined by the sample stage. The angle between the incoming beam "
+            "and the analyzer is given by beam_analyzer_angle = "
+            "beam_polar_angle_of_incidence + analyzer_take_off_polar_angle. In "
+            "practice, the analyzer axis is often set as the z axis "
+            "(analyzer_take_off_polar_angle = 0), so that beam_analyzer_angle = "
+            "beam_polar_angle_of_incidence. For magic angle configurations, this "
+            "angle is 54.5°."
+        ),
+        a_nexus_field=NeXusField(
+            name="analyzer_take_off_polar_angle",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    analyzer_take_off_polar_angle__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-polar-angle-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="analyzer_take_off_polar_angle",
+            enumeration=["rotation"],
+        ),
+    )
+    analyzer_take_off_polar_angle__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-polar-angle-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="analyzer_take_off_polar_angle",
+        ),
+    )
+    analyzer_take_off_polar_angle__depends_on = Quantity(
+        type=MEnum(["analyzer_take_off_azimuth_angle"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-polar-angle-depends-on-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="analyzer_take_off_polar_angle",
+            enumeration=["analyzer_take_off_azimuth_angle"],
+        ),
+    )
+    analyzer_take_off_azimuth_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-azimuth-angle-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Azimuthal rotation of the analyzer from the y-direction defined by "
+            "the sample stage."
+        ),
+        a_nexus_field=NeXusField(
+            name="analyzer_take_off_azimuth_angle",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    analyzer_take_off_azimuth_angle__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-azimuth-angle-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="analyzer_take_off_azimuth_angle",
+            enumeration=["rotation"],
+        ),
+    )
+    analyzer_take_off_azimuth_angle__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-azimuth-angle-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="analyzer_take_off_azimuth_angle",
+        ),
+    )
+    analyzer_take_off_azimuth_angle__depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-transformations-analyzer-take-off-azimuth-angle-depends-on-attribute"
+        ],
+        description=(
+            "This should point to the coordinate system defined in "
+            "/entry/xps_coordinate_system."
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="analyzer_take_off_azimuth_angle",
         ),
     )
 
@@ -437,6 +760,59 @@ class XpsFit(Fit):
             nx_class="NXfit",
             name=None,
             name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitData",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    peakPEAK = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAK",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="peakPEAK",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    backgroundBACKGROUND = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitBackgroundBACKGROUND",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="backgroundBACKGROUND",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    global_fit_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitGlobalFitFunction",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="global_fit_function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    error_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitErrorFunction",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="error_function",
+            name_type="specified",
             optionality="recommended",
         ),
     )
@@ -486,6 +862,668 @@ class XpsFit(Fit):
         super().normalize(archive, logger)
 
 
+class XpsFitData(Data):
+    """
+    Input data and results of the fit.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    input_dependent = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-dependent-field"
+        ],
+        description=(
+            "Dependent variable for this fit procedure. This could be a link to "
+            "entry/data/data."
+        ),
+        a_nexus_field=NeXusField(
+            name="input_dependent",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    input_independent = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-independent-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=(
+            "Independent variable for this fit procedure. This could be a link "
+            "to entry/data/energy."
+        ),
+        a_nexus_field=NeXusField(
+            name="input_independent",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    fit_sum = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-fit-sum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="fit_sum",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    residual = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-residual-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="residual",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitPeakPEAK(Peak):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="peakPEAK",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAKData",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    function = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAKFunction",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    label = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-label-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="label",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    total_area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-total-area-field"
+        ],
+        description=(
+            "Total area under the peak after background removal. This concept is "
+            "related to term `3.16`_ of the ISO 18115-1:2023 standard. .. _3.16: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:3.16"
+        ),
+        a_nexus_field=NeXusField(
+            name="total_area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    relative_atomic_concentration = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-relative-atomic-concentration-field"
+        ],
+        description=(
+            "Atomic concentration of the species defined by this peak. This "
+            "should be a value between 0 and 1."
+        ),
+        a_nexus_field=NeXusField(
+            name="relative_atomic_concentration",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitPeakPEAKData(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-position-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("This could be a link to entry/data/energy."),
+        a_nexus_field=NeXusField(
+            name="position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-intensity-field"
+        ],
+        description=(
+            "Intensity values of the fitted function at each energy in the "
+            "position field. This concept is related to term `3.15`_ of the ISO "
+            "18115-1:2023 standard. .. _3.15: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:3.15"
+        ),
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitPeakPEAKFunction(FitFunction):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    fit_parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAKFunctionFitParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="fit_parameters",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    function_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-function-type-field"
+        ],
+        description=(
+            "Type of fit function used. The user is encouraged to use one of the "
+            "options defined in the enumeration, but in case none of these fit "
+            "(e.g., in the case of very complex line shapes), a different value "
+            "for the ``function_type`` field can be used. In that case in "
+            "particular, but also if one of the suggested values is used, the "
+            "functional form of the peak should be given by the "
+            "``formula_description`` field. The user is also encouraged to use "
+            "the ``description`` field for describing the fit function in a "
+            "human-readable way."
+        ),
+        a_nexus_field=NeXusField(
+            name="function_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Gaussian",
+                "Lorentzian",
+                "Voigt",
+                "Gaussian-Lorentzian Sum",
+                "Gaussian-Lorentzian Product",
+                "Asymmetric Lorentzian",
+                "Doniach-Sunjic",
+                "Asymmetric Finite",
+            ],
+            open_enum=True,
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-description-field"
+        ],
+        description=("Human-readable description of the peak fit function."),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-formula-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitPeakPEAKFunctionFitParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="fit_parameters",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-area-field"
+        ],
+        description=("Area of the peak."),
+        a_nexus_field=NeXusField(
+            name="area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-width-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=(
+            "Width of a peak at a defined fraction of the peak height. Usually, "
+            "this will be the Full Width at Half Maximum of the peak (FWHM). For "
+            "asymmetric peaks, convenient measures of peak width are the "
+            "half-widths of each side of the peak at half maximum intensity. "
+            "This concept is related to term `3.28`_ of the ISO 18115-1:2023 "
+            "standard. .. _3.28: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:3.28"
+        ),
+        a_nexus_field=NeXusField(
+            name="width",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+    position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-position-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("Position of the peak on the energy axis."),
+        a_nexus_field=NeXusField(
+            name="position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitBackgroundBACKGROUND(Peak):
+    """
+    Functional form of one of the fitted XPS backgrounds.
+
+    This concept is related to term `3.21`_ of the ISO 18115-1:2023 standard.
+
+    .. _3.21:
+    https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:3.21
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="backgroundBACKGROUND",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitBackgroundBACKGROUNDData",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    function = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitBackgroundBACKGROUNDFunction",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    label = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-label-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="label",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitBackgroundBACKGROUNDData(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-position-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        a_nexus_field=NeXusField(
+            name="position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-intensity-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitBackgroundBACKGROUNDFunction(FitFunction):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    function_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-function-function-type-field"
+        ],
+        description=(
+            "Type of fit function used. The user is encouraged to use one of the "
+            "options defined in the enumeration, but in case none of these fit "
+            "(e.g., in the case of very complex line shapes), a different value "
+            "for the ``function_type`` field can be used. In that case in "
+            "particular, but also if one of the suggested values is used, the "
+            "functional form of the background should be given by the "
+            "``formula_description`` field. The user is also encouraged to use "
+            "the ``description`` field for describing the fit function in a "
+            "human-readable way."
+        ),
+        a_nexus_field=NeXusField(
+            name="function_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["Linear", "Shirley", "Tougaard", "Step Down", "Step Up"],
+            open_enum=True,
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-function-description-field"
+        ],
+        description=("Human-readable description of the background fit function."),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-function-formula-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitGlobalFitFunction(FitFunction):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-global-fit-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="global_fit_function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    function_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-global-fit-function-function-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="function_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-global-fit-function-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-global-fit-function-formula-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsFitErrorFunction(FitFunction):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-error-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="error_function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    function_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-error-function-function-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="function_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-error-function-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-error-function-formula-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class XpsSample(MpesSample):
     m_def = Section(
         links=[
@@ -501,7 +1539,7 @@ class XpsSample(MpesSample):
     )
 
     transformations = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsSampleTransformations",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
@@ -525,6 +1563,204 @@ class XpsSample(MpesSample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsSampleTransformations(Transformations):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sample_rotation_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-rotation-angle-field"
+        ],
+        dimensionality="[angle]",
+        description=("Rotation about the sample normal."),
+        a_nexus_field=NeXusField(
+            name="sample_rotation_angle",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    sample_rotation_angle__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-rotation-angle-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_rotation_angle",
+            enumeration=["rotation"],
+        ),
+    )
+    sample_rotation_angle__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-rotation-angle-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_rotation_angle",
+        ),
+    )
+    sample_rotation_angle__depends_on = Quantity(
+        type=MEnum(["sample_normal_polar_angle_of_tilt"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-rotation-angle-depends-on-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_rotation_angle",
+            enumeration=["sample_normal_polar_angle_of_tilt"],
+        ),
+    )
+    sample_normal_polar_angle_of_tilt = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-polar-angle-of-tilt-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Polar tilt of the sample with respect to the upward z-direction, "
+            "defined by the sample stage."
+        ),
+        a_nexus_field=NeXusField(
+            name="sample_normal_polar_angle_of_tilt",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    sample_normal_polar_angle_of_tilt__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-polar-angle-of-tilt-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_normal_polar_angle_of_tilt",
+            enumeration=["rotation"],
+        ),
+    )
+    sample_normal_polar_angle_of_tilt__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-polar-angle-of-tilt-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_normal_polar_angle_of_tilt",
+        ),
+    )
+    sample_normal_polar_angle_of_tilt__depends_on = Quantity(
+        type=MEnum(["sample_normal_tilt_azimuth_angle"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-polar-angle-of-tilt-depends-on-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_normal_polar_angle_of_tilt",
+            enumeration=["sample_normal_tilt_azimuth_angle"],
+        ),
+    )
+    sample_normal_tilt_azimuth_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-tilt-azimuth-angle-field"
+        ],
+        dimensionality="[angle]",
+        description=(
+            "Azimuthal rotation of the sample from the y-direction defined by "
+            "the sample stage."
+        ),
+        a_nexus_field=NeXusField(
+            name="sample_normal_tilt_azimuth_angle",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    sample_normal_tilt_azimuth_angle__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-tilt-azimuth-angle-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_normal_tilt_azimuth_angle",
+            enumeration=["rotation"],
+        ),
+    )
+    sample_normal_tilt_azimuth_angle__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-tilt-azimuth-angle-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_normal_tilt_azimuth_angle",
+        ),
+    )
+    sample_normal_tilt_azimuth_angle__depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-sample-transformations-sample-normal-tilt-azimuth-angle-depends-on-attribute"
+        ],
+        description=(
+            "This should point to the coordinate system defined in "
+            "/entry/xps_coordinate_system."
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="sample_normal_tilt_azimuth_angle",
         ),
     )
 

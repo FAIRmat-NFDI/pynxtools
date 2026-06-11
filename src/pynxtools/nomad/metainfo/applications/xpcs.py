@@ -39,9 +39,12 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.beam import Beam
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
@@ -823,8 +826,29 @@ class XpcsInstrument(Instrument):
         ),
     )
 
+    incident_beam = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentIncidentBeam",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="incident_beam",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
     masks = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentMasks",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -840,6 +864,367 @@ class XpcsInstrument(Instrument):
         super().normalize(archive, logger)
 
 
+class XpcsInstrumentIncidentBeam(Beam):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="incident_beam",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    incident_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=["*"],
+        description=("Incident beam line energy (either keV or eV)."),
+        a_nexus_field=NeXusField(
+            name="incident_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    incident_energy_spread = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-spread-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=(
+            "Spread of incident beam line energy (either keV or eV). This "
+            "quantity is otherwise known as the energy resolution, which is "
+            "related to the longitudinal coherence length."
+        ),
+        a_nexus_field=NeXusField(
+            name="incident_energy_spread",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+    incident_polarization_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-polarization-type-field"
+        ],
+        description=(
+            "Terse description of the incident beam polarization. The value can "
+            "be plain text, such as ``vertical``, ``C+``, ``circular left``."
+        ),
+        a_nexus_field=NeXusField(
+            name="incident_polarization_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpcsInstrumentDetector(Detector):
+    """
+    XPCS data is typically produced by area detector (likely EPICS
+    AreaDetector) as a stack of 2D images. Sometimes this data is represented
+    in different ways (sparse arrays or photon event list), but this detail is
+    left to the analysis software. Therefore, we only include requirements
+    based on full array data.
+
+    We note that the image origin (pixel coordinates (0,0)) are found at the
+    top left of a single 2D image array. This is the standard expected by
+    Coherent X-ray Imaging Data Bank. [#]_ See CXI version 1.6 and Maia, Nature
+    Methods (2012). This seems to be consistent with matplotlib and the
+    practiced implementation of EPICS AreaDetector. However, some exceptions
+    may exists in the CXI documentation (See Fig 11 vs Fig 12).
+
+    Additionally, not all :ref:`NXdetector` dependencies are inherited from
+    AreaDetector or other control systems. ``frame_time`` is used to convert
+    ``delay_difference`` to seconds. ``frame_time`` field could be missing from
+    AreaDetector or may either be `acquire_period` or `acquire_time`, depending
+    on the detector model and the local implementation.
+
+    .. [#] Coherent X-ray Imaging Data Bank: https://cxidb.org/cxi.html
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        description=("Distance between sample and detector."),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    count_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-count-time-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        description=("Exposure time of frames, s."),
+        a_nexus_field=NeXusField(
+            name="count_time",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    frame_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-frame-time-field"
+        ],
+        dimensionality="[time]",
+        description=("Exposure period (time between frame starts) of frames, s"),
+        a_nexus_field=NeXusField(
+            name="frame_time",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    beam_center_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-beam-center-x-field"
+        ],
+        dimensionality="[length]",
+        description=("Position of beam center, x axis, in detector's coordinates."),
+        a_nexus_field=NeXusField(
+            name="beam_center_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    beam_center_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-beam-center-y-field"
+        ],
+        dimensionality="[length]",
+        description=("Position of beam center, y axis, in detector's coordinates."),
+        a_nexus_field=NeXusField(
+            name="beam_center_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    x_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-x-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        description=("Length of pixel in x direction."),
+        a_nexus_field=NeXusField(
+            name="x_pixel_size",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    y_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-y-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        description=("Length of pixel in y direction."),
+        a_nexus_field=NeXusField(
+            name="y_pixel_size",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpcsInstrumentMasks(Note):
+    """
+    Data masks or mappings to regions of interest (roi) for specific :math:`Q`
+    values
+
+    Fields in this ``masks`` group describe regions of interest in the data by
+    either a mask to select pixels or to associate a *map* of rois with a
+    (one-dimensional) *list* of values.
+
+    "roi_maps" provide for representation of pixel binning that are arbitrary
+    and irregular, which is geometry scattering agnostic and most flexible. The
+    maps work as a labeled array for N rois.
+
+    "Dynamic" represents quantities directly related to XPCS and
+    NXxcps/entry/data and NXxpcs/entry/two_time.
+
+    "Static" refers to finer binning used for computation not strictly used for
+    the final XPCS results. Implementation of _static_ binning is left for
+    individual libraries to document. We encourage usage of :ref:`NXcanSAS` to
+    represent standard SAXS results or development of new NeXus definitions for
+    GI-SAXS or other reciprocal space intensity mapping.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="masks",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    dynamic_roi_map = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-dynamic-roi-map-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "roi index array or labeled array The values of this mask index (or "
+            "map to) the :math:`Q` value from the the ``dynamic_q_list`` field. "
+            "Not that the value of ``0`` represents in-action. XPCS computations "
+            "are performed on all pixels with a value > 0. The ``units`` "
+            'attribute should be set to ``"au"`` indicating arbitrary units.'
+        ),
+        a_nexus_field=NeXusField(
+            name="dynamic_roi_map",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    dynamic_q_list = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-dynamic-q-list-field"
+        ],
+        dimensionality="1 / [length]",
+        description=(
+            "1-D list of :math:`Q` values, one for each roi index value. List "
+            "order is determined by the index value of the associated roi map "
+            "starting at ``1``. The only requirement for the list is that it may "
+            "be iterable. Some expected formats are: * iterable list of floats "
+            "(i.e., :math:`Q(r)`) * iterable list of tuples (i.e., :math:`Q(r)`, "
+            ":math:`\\varphi`), but preferable use the separate :math:`\\varphi` "
+            "field below * iterable list of tuples (e.g., (H, K, L); (qx, qy, "
+            "qz); (horizontal_pixel, vertical_pixel)) * iterable list of "
+            "integers (for Nth roi_map value) or strings This format is chosen "
+            "because results plotting packages are not common and simple I/O is "
+            "required by end user. The lists can be accessed as lists, arrays or "
+            "via keys"
+        ),
+        a_nexus_field=NeXusField(
+            name="dynamic_q_list",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_PER_LENGTH",
+        ),
+    )
+    dynamic_phi_list = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-dynamic-phi-list-field"
+        ],
+        dimensionality="1 / [length]",
+        description=(
+            "Array of :math:`\\varphi` value for each pixel. List order is "
+            "determined by the index value of the associated roi map starting at "
+            "``1``."
+        ),
+        a_nexus_field=NeXusField(
+            name="dynamic_phi_list",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_PER_LENGTH",
+        ),
+    )
+    static_roi_map = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-static-roi-map-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "roi index array. The values of this mask index the :math:`|Q|` "
+            "value from the the ``static_q_list`` field. The ``units`` attribute "
+            'should be set to ``"au"`` indicating arbitrary units.'
+        ),
+        a_nexus_field=NeXusField(
+            name="static_roi_map",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    static_q_list = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-static-q-list-field"
+        ],
+        dimensionality="1 / [length]",
+        description=("1-D list of :math:`|Q|` values, 1 for each roi."),
+        a_nexus_field=NeXusField(
+            name="static_q_list",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_PER_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class XpcsSample(Sample):
     m_def = Section(
         links=[
@@ -848,6 +1233,40 @@ class XpcsSample(Sample):
         a_nexus_group=NeXusGroup(
             nx_class="NXsample",
             name="sample",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    position_x = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name="position_x",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    position_y = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name="position_y",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    position_z = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name="position_z",
             name_type="specified",
             optionality="optional",
             min_occurs=0,

@@ -36,12 +36,16 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
+from pynxtools.nomad.metainfo.base_classes.collimator import Collimator
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -1035,6 +1039,55 @@ class CansasInstrument(Instrument):
         ),
     )
 
+    aperture = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentAperture",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaperture",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    collimator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentCollimator",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollimator",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentSource",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
     canSAS_class = Quantity(
         type=MEnum(["SASinstrument"]),
         links=[
@@ -1049,6 +1102,582 @@ class CansasInstrument(Instrument):
             name_type="specified",
             optionality="required",
             enumeration=["SASinstrument"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CansasInstrumentAperture(Aperture):
+    """
+    :ref:`NXaperture` is generic and limits the variation in data files.
+
+    Possible NeXus base class alternatives are: :ref:`NXpinhole` or
+    :ref:`NXslit`.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaperture",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    canSAS_class = Quantity(
+        type=MEnum(["SASaperture"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-cansas-class-attribute"
+        ],
+        description=(
+            "Official canSAS group: :index:`NXcanSAS (applications); SASaperture`"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="canSAS_class",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["SASaperture"],
+        ),
+    )
+    shape = Quantity(
+        type=MEnum(
+            [
+                "straight slit",
+                "curved slit",
+                "pinhole",
+                "circle",
+                "square",
+                "hexagon",
+                "octagon",
+                "bladed",
+                "open",
+                "grid",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-shape-field"
+        ],
+        description=(
+            "describe the type of aperture (pinhole, 4-blade slit, Soller slit, ...)"
+        ),
+        a_nexus_field=NeXusField(
+            name="shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "straight slit",
+                "curved slit",
+                "pinhole",
+                "circle",
+                "square",
+                "hexagon",
+                "octagon",
+                "bladed",
+                "open",
+                "grid",
+            ],
+        ),
+    )
+    x_gap = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-x-gap-field"
+        ],
+        dimensionality="[length]",
+        description=("opening along the :math:`x` axis"),
+        a_nexus_field=NeXusField(
+            name="x_gap",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    y_gap = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-aperture-y-gap-field"
+        ],
+        dimensionality="[length]",
+        description=("opening along the :math:`y` axis"),
+        a_nexus_field=NeXusField(
+            name="y_gap",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CansasInstrumentCollimator(Collimator):
+    """
+    Description of a collimating element (defines the divergence of the beam)
+    in the instrument.
+
+    To document a slit, pinhole, or the beam, refer to the documentation of the
+    ``NXinstrument`` group above.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-collimator-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollimator",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    canSAS_class = Quantity(
+        type=MEnum(["SAScollimation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-collimator-cansas-class-attribute"
+        ],
+        description=(
+            "Official canSAS group: :index:`NXcanSAS (applications); SAScollimation`"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="canSAS_class",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["SAScollimation"],
+        ),
+    )
+    length = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-collimator-length-field"
+        ],
+        dimensionality="[length]",
+        description=("Amount/length of collimation inserted (as on a SANS instrument)"),
+        a_nexus_field=NeXusField(
+            name="length",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-collimator-distance-field"
+        ],
+        dimensionality="[length]",
+        description=("Distance from this collimation element to the sample"),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CansasInstrumentDetector(Detector):
+    """
+    Description of a detector in the instrument.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    canSAS_class = Quantity(
+        type=MEnum(["SASdetector"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-cansas-class-attribute"
+        ],
+        description=(
+            "Official canSAS group: :index:`NXcanSAS (applications); SASdetector`"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="canSAS_class",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["SASdetector"],
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-name-field"
+        ],
+        description=("Identifies the name of this detector"),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    SDD = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-sdd-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Distance between sample and detector. Note: In NXdetector, the "
+            "``distance`` field records the distance to the previous component "
+            "... most often the sample. This use is the same as ``SDD`` for most "
+            "SAS instruments but not all. For example, Bonse-Hart cameras have "
+            "one or more crystals between the sample and detector. We define "
+            "here the field ``SDD`` to document without ambiguity the distance "
+            "between sample and detector."
+        ),
+        a_nexus_field=NeXusField(
+            name="SDD",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    slit_length = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-slit-length-field"
+        ],
+        dimensionality="1 / [length]",
+        description=(
+            "Slit length of the instrument for this detector, expressed in the "
+            "same units as :math:`Q`."
+        ),
+        a_nexus_field=NeXusField(
+            name="slit_length",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_PER_LENGTH",
+        ),
+    )
+    x_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-x-position-field"
+        ],
+        dimensionality="[length]",
+        description=("Location of the detector in :math:`x`"),
+        a_nexus_field=NeXusField(
+            name="x_position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    y_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-y-position-field"
+        ],
+        dimensionality="[length]",
+        description=("Location of the detector in :math:`y`"),
+        a_nexus_field=NeXusField(
+            name="y_position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    roll = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-roll-field"
+        ],
+        dimensionality="[angle]",
+        description=("Rotation of the detector about the :math:`z` axis (roll)"),
+        a_nexus_field=NeXusField(
+            name="roll",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    pitch = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-pitch-field"
+        ],
+        dimensionality="[angle]",
+        description=("Rotation of the detector about the :math:`x` axis (roll)"),
+        a_nexus_field=NeXusField(
+            name="pitch",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    yaw = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-yaw-field"
+        ],
+        dimensionality="[angle]",
+        description=("Rotation of the detector about the :math:`y` axis (yaw)"),
+        a_nexus_field=NeXusField(
+            name="yaw",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CansasInstrumentSource(Source):
+    """
+    Description of the radiation source.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    canSAS_class = Quantity(
+        type=MEnum(["SASsource"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-cansas-class-attribute"
+        ],
+        description=(
+            "Official canSAS group: :index:`NXcanSAS (applications); SASsource`"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="canSAS_class",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["SASsource"],
+        ),
+    )
+    radiation = Quantity(
+        type=MEnum(
+            [
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "neutron",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-radiation-field"
+        ],
+        description=(
+            "Name of the radiation used. Note that this is **not** the name of "
+            "the facility! This field contains a value from either the ``probe`` "
+            "or ``type`` fields in :ref:`NXsource`. Thus, it is redundant with "
+            "existing NeXus structure."
+        ),
+        a_nexus_field=NeXusField(
+            name="radiation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "neutron",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+            deprecated="Use either (or both) ``probe`` or ``type`` fields from ``NXsource`` (issue #765)",
+        ),
+    )
+    beam_shape = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-beam-shape-field"
+        ],
+        description=(
+            "Text description of the shape of the beam (incident on the sample)."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    incident_wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-incident-wavelength-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "wavelength (:math:`\\lambda`) of radiation incident on the sample"
+        ),
+        a_nexus_field=NeXusField(
+            name="incident_wavelength",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    wavelength_min = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-wavelength-min-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Some facilities specify wavelength using a range. This is the "
+            "lowest wavelength in such a range."
+        ),
+        a_nexus_field=NeXusField(
+            name="wavelength_min",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    wavelength_max = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-wavelength-max-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Some facilities specify wavelength using a range. This is the "
+            "highest wavelength in such a range."
+        ),
+        a_nexus_field=NeXusField(
+            name="wavelength_max",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    incident_wavelength_spread = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-incident-wavelength-spread-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "Some facilities specify wavelength using a range. This is the width "
+            "(FWHM) of such a range."
+        ),
+        a_nexus_field=NeXusField(
+            name="incident_wavelength_spread",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    beam_size_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-beam-size-x-field"
+        ],
+        dimensionality="[length]",
+        description=("Size of the incident beam along the x axis."),
+        a_nexus_field=NeXusField(
+            name="beam_size_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    beam_size_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-beam-size-y-field"
+        ],
+        dimensionality="[length]",
+        description=("Size of the incident beam along the y axis."),
+        a_nexus_field=NeXusField(
+            name="beam_size_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
         ),
     )
 
@@ -1258,7 +1887,7 @@ class CansasProcess(Process):
     )
 
     collection = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.cansas.CansasProcessCollection",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1329,6 +1958,51 @@ class CansasProcess(Process):
             type="NX_CHAR",
             name_type="any",
             optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CansasProcessCollection(Collection):
+    """
+    Describes anything about *SASprocess* that is not already described.
+
+    Any content not defined in the canSAS standard can be placed at this point.
+
+    Note: The name of this group is flexible, it could take any name, as long
+    as it is unique within the **NXprocess** group.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-collection-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    canSAS_class = Quantity(
+        type=MEnum(["SASprocessnote"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-collection-cansas-class-attribute"
+        ],
+        description=(
+            "Official canSAS group: :index:`NXcanSAS (applications); SASprocessnote`"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="canSAS_class",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["SASprocessnote"],
         ),
     )
 

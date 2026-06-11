@@ -43,6 +43,7 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -136,7 +137,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
     )
 
     preprocessing = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -280,6 +281,65 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-preprocessing-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="preprocessing",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    method = Quantity(
+        type=MEnum(["default", "percolation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-preprocessing-method-field"
+        ],
+        description=(
+            "Specifies the method that is used to preprocess the point cloud "
+            "prior to the alpha-shape computation. The option *default* "
+            "specifies that no such filtering is applied. The option "
+            "*percolation* specifies that a Hoshen-Kopelman percolation analysis "
+            "is used to identify points that lie closer to the edge of the "
+            "dataset. Details about the methods are reported in `M. Kühbach et "
+            "al. <https://doi.org/10.1038/s41524-020-00486-1>`_."
+        ),
+        a_nexus_field=NeXusField(
+            name="method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["default", "percolation"],
+        ),
+    )
+    kernel_width = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-preprocessing-kernel-width-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "When using the *percolation* preprocessing, this is the width of "
+            "the kernel for identifying which ions are in voxels close to the "
+            "edge of the point cloud."
+        ),
+        a_nexus_field=NeXusField(
+            name="kernel_width",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 

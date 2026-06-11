@@ -38,6 +38,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -164,6 +165,17 @@ class XasprocXasDataReduction(Process):
         ),
     )
 
+    parameters = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xasproc.XasprocXasDataReductionParameters",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="parameters",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     program_quantity = Quantity(
         type=str,
         links=[
@@ -199,6 +211,37 @@ class XasprocXasDataReduction(Process):
         a_nexus_field=NeXusField(
             name="date",
             type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XasprocXasDataReductionParameters(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxasproc.html#nxxasproc-entry-xas-data-reduction-parameters-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="parameters",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    raw_file = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxasproc.html#nxxasproc-entry-xas-data-reduction-parameters-raw-file-field"
+        ],
+        description=("Original raw data file this data was derived from"),
+        a_nexus_field=NeXusField(
+            name="raw_file",
+            type="NX_CHAR",
             name_type="specified",
             optionality="required",
         ),

@@ -36,16 +36,46 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.apm_charge_state_analysis import (
+    ApmChargeStateAnalysis,
+)
+from pynxtools.nomad.metainfo.base_classes.apm_event_data import ApmEventData
+from pynxtools.nomad.metainfo.base_classes.apm_instrument import ApmInstrument
 from pynxtools.nomad.metainfo.base_classes.apm_measurement import ApmMeasurement
+from pynxtools.nomad.metainfo.base_classes.apm_ranging import ApmRanging
+from pynxtools.nomad.metainfo.base_classes.apm_reconstruction import ApmReconstruction
+from pynxtools.nomad.metainfo.base_classes.atom import Atom
+from pynxtools.nomad.metainfo.base_classes.chemical_composition import (
+    ChemicalComposition,
+)
 from pynxtools.nomad.metainfo.base_classes.cite import Cite
+from pynxtools.nomad.metainfo.base_classes.collection import Collection
+from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
+from pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask import (
+    CsFilterBooleanMask,
+)
 from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.electromagnetic_lens import (
+    ElectromagneticLens,
+)
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
+from pynxtools.nomad.metainfo.base_classes.image import Image
+from pynxtools.nomad.metainfo.base_classes.manipulator import Manipulator
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
+from pynxtools.nomad.metainfo.base_classes.peak import Peak
+from pynxtools.nomad.metainfo.base_classes.process import Process
+from pynxtools.nomad.metainfo.base_classes.program import Program
 from pynxtools.nomad.metainfo.base_classes.project import Project
+from pynxtools.nomad.metainfo.base_classes.pump import Pump
 from pynxtools.nomad.metainfo.base_classes.roi_process import RoiProcess
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
+from pynxtools.nomad.metainfo.base_classes.source import Source
 from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
@@ -657,7 +687,7 @@ class ApmProfiling(CsProfiling):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -669,13 +699,154 @@ class ApmProfiling(CsProfiling):
         ),
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingEnvironment",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name="environment",
             name_type="specified",
             optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmProfilingProgramID(Program):
+    """
+    A collection of all programs and libraries which are considered relevant to
+    understand with which software tools this NeXus file instance was
+    generated. Ideally, to enable a binary recreation from the input data.
+
+    Examples include the name and version of the libraries used to write the
+    instance. Ideally, the software which writes these NXprogram instances also
+    includes the version of the set of NeXus classes i.e. the specific set of
+    base classes, application definitions, and contributed definitions with
+    which the here described concepts can be resolved.
+
+    For the `pynxtools library <https://github.com/FAIRmat-NFDI/pynxtools>`_
+    which is used by the `NOMAD <https://nomad-lab.eu/nomad-lab>`_ research
+    data management system, it makes sense to store e.g. the GitHub repository
+    commit and respective submodule references used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmProfilingEnvironment(Collection):
+    """
+    Programs and libraries representing the computational environment
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name="environment",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    program = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingEnvironmentProgram",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmProfilingEnvironmentProgram(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-environment-program-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-environment-program-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-profiling-environment-program-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
         ),
     )
 
@@ -909,7 +1080,7 @@ class ApmSample(Sample):
     )
 
     chemical_composition = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.chemical_composition.ChemicalComposition",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalComposition",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXchemical_composition",
@@ -1106,6 +1277,121 @@ class ApmSample(Sample):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmSampleChemicalComposition(ChemicalComposition):
+    """
+    The chemical composition of the sample.
+
+    Typically, it is assumed that this more macroscopic composition is
+    representative for the material so that the composition of the typically
+    substantially less voluminous specimen probes from the more voluminous
+    sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXchemical_composition",
+            name="chemical_composition",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    atom = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalCompositionAtom",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=118,
+        ),
+    )
+
+    normalization = Quantity(
+        type=MEnum(["atom_percent", "weight_percent"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-normalization-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="normalization",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["atom_percent", "weight_percent"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmSampleChemicalCompositionAtom(Atom):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=118,
+        ),
+    )
+
+    chemical_symbol = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-chemical-symbol-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="chemical_symbol",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    composition = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-composition-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="composition",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    composition_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-composition-errors-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="composition_errors",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_DIMENSIONLESS",
         ),
     )
 
@@ -1668,8 +1954,30 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
 
+    instrument = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrument",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_instrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    eventID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_event_data",
+            name="eventID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
     standing_voltage_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementStandingVoltageTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1679,7 +1987,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pulse_frequency_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPulseFrequencyTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1689,7 +1997,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1699,7 +2007,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_set_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateSetTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1709,7 +2017,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pressure_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPressureTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1719,7 +2027,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_voltage_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenVoltageTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1729,7 +2037,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_temperature_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenTemperatureTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1739,7 +2047,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ambient_temperature_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementAmbientTemperatureTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1749,7 +2057,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     reflectron_voltage_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementReflectronVoltageTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1759,7 +2067,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     xstage_position_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementXstagePositionTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1769,7 +2077,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ystage_position_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementYstagePositionTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1779,7 +2087,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     zstage_position_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementZstagePositionTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1789,7 +2097,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     standing_voltage_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementStandingVoltageSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1799,7 +2107,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pulse_frequency_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPulseFrequencySequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1809,7 +2117,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1819,7 +2127,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_set_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateSetSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1829,7 +2137,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pressure_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPressureSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1839,7 +2147,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_voltage_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenVoltageSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1849,7 +2157,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_temperature_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenTemperatureSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1859,7 +2167,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ambient_temperature_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementAmbientTemperatureSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1869,7 +2177,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     reflectron_voltage_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementReflectronVoltageSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1879,7 +2187,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     xstage_position_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementXstagePositionSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1889,7 +2197,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ystage_position_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementYstagePositionSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1899,7 +2207,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     zstage_position_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementZstagePositionSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1939,6 +2247,5480 @@ class ApmApmMeasurement(ApmMeasurement):
         super().normalize(archive, logger)
 
 
+class ApmApmMeasurementInstrument(ApmInstrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_instrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    reflectron = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentReflectron",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="reflectron",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    local_electrode = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLocalElectrode",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectromagnetic_lens",
+            name="local_electrode",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    ion_detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentIonDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="ion_detector",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    pulser = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulser",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="pulser",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    stage = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentStage",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="stage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    analysis_chamber = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentAnalysisChamber",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="analysis_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    buffer_chamber = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentBufferChamber",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="buffer_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    load_lock_chamber = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLoadLockChamber",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="load_lock_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    getter_pump = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentGetterPump",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpump",
+            name="getter_pump",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    roughening_pump = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentRougheningPump",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpump",
+            name="roughening_pump",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    turbomolecular_pump = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentTurbomolecularPump",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpump",
+            name="turbomolecular_pump",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            enumeration=[
+                "Inspico",
+                "3DAP",
+                "LAWATAP",
+                "LEAP 3000 Si",
+                "LEAP 3000X Si",
+                "LEAP 3000 HR",
+                "LEAP 3000X HR",
+                "LEAP 4000 Si",
+                "LEAP 4000X Si",
+                "LEAP 4000 HR",
+                "LEAP 4000X HR",
+                "LEAP 5000 XS",
+                "LEAP 5000 XR",
+                "LEAP 5000 R",
+                "EIKOS",
+                "EIKOS-UV",
+                "LEAP 6000 XR",
+                "LEAP INVIZO",
+                "Photonic AP",
+                "TeraSAT",
+                "TAPHR",
+                "Modular AP",
+                "Titanium APT",
+                "Extreme UV APT",
+            ],
+            open_enum=True,
+        ),
+    )
+    location = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-location-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="location",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    flight_path = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-flight-path-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="flight_path",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentReflectron(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-reflectron-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="reflectron",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-reflectron-applied-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectromagnetic_lens",
+            name="local_electrode",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLocalElectrodeFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    aperture_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-aperture-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="aperture_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentIonDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="ion_detector",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentIonDetectorFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentPulser(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="pulser",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulserFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    sourceID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulserSourceID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="sourceID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=2,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentPulserFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentPulserSourceID(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="sourceID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=2,
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulserSourceIDFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentStage(Manipulator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="stage",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentStageFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentStageFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentAnalysisChamber(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="analysis_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentAnalysisChamberFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentBufferChamber(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="buffer_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentBufferChamberFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentLoadLockChamber(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="load_lock_chamber",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLoadLockChamberFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentGetterPump(Pump):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpump",
+            name="getter_pump",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentGetterPumpFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentRougheningPump(Pump):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpump",
+            name="roughening_pump",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentRougheningPumpFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentTurbomolecularPump(Pump):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpump",
+            name="turbomolecular_pump",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentTurbomolecularPumpFabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-fabrication-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    vendor = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-fabrication-vendor-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vendor",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    model = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-fabrication-model-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="model",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    serial_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-fabrication-serial-number-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="serial_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventID(ApmEventData):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_event_data",
+            name="eventID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    instrument = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrument",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_instrument",
+            name="instrument",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    start_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-start-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="start_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    end_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-end-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="end_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrument(ApmInstrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_instrument",
+            name="instrument",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    reflectron = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentReflectron",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="reflectron",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    local_electrode = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentLocalElectrode",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectromagnetic_lens",
+            name="local_electrode",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    pulser = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentPulser",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="pulser",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    stage = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentStage",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="stage",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    analysis_chamber = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentAnalysisChamber",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="analysis_chamber",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    control = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentControl",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="control",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentReflectron(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-reflectron-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="reflectron",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-reflectron-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        a_nexus_field=NeXusField(
+            name="voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentLocalElectrode(ElectromagneticLens):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-local-electrode-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXelectromagnetic_lens",
+            name="local_electrode",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-local-electrode-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        a_nexus_field=NeXusField(
+            name="voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentPulser(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="pulser",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sourceID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentPulserSourceID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="sourceID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=2,
+        ),
+    )
+
+    pulse_mode = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-mode-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="pulse_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["laser", "voltage", "laser_and_voltage"],
+            open_enum=True,
+        ),
+    )
+    pulse_frequency = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-frequency-field"
+        ],
+        dimensionality="1 / [time]",
+        a_nexus_field=NeXusField(
+            name="pulse_frequency",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_FREQUENCY",
+        ),
+    )
+    pulse_fraction = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-fraction-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="pulse_fraction",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    pulse_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="pulse_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+    pulse_number = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-number-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="pulse_number",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    standing_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-standing-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="standing_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentPulserSourceID(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="sourceID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=2,
+        ),
+    )
+
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-wavelength-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_WAVELENGTH",
+        ),
+    )
+    power = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-power-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        a_nexus_field=NeXusField(
+            name="power",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_POWER",
+        ),
+    )
+    pulse_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-pulse-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="pulse_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentStage(Manipulator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="stage",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentStageTemperatureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="temperature_sensor",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="temperature_sensor",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    measurement = Quantity(
+        type=MEnum(["temperature"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-measurement-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="measurement",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["temperature"],
+        ),
+    )
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-value-field"
+        ],
+        dimensionality="[temperature]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TEMPERATURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentAnalysisChamber(Component):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="analysis_chamber",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    pressure_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="pressure_sensor",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="pressure_sensor",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    measurement = Quantity(
+        type=MEnum(["pressure"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-measurement-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="measurement",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["pressure"],
+        ),
+    )
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-value-field"
+        ],
+        dimensionality="[mass] / [length] / [time] ** 2",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_PRESSURE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementEventIDInstrumentControl(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-control-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="control",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    evaporation_control = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-control-evaporation-control-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="evaporation_control",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    target_detection_rate = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-control-target-detection-rate-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="target_detection_rate",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementStandingVoltageTime(Data):
+    """
+    Monitoring standing_voltage as a function of elapsed time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="standing_voltage_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    standing_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-standing-voltage-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="standing_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    standing_voltage__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-standing-voltage-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="standing_voltage",
+        ),
+    )
+    standing_voltage__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-standing-voltage-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="standing_voltage",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementPulseFrequencyTime(Data):
+    """
+    Monitoring pulse_frequency as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="pulse_frequency_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    pulse_frequency = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-pulse-frequency-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="pulse_frequency",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    pulse_frequency__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-pulse-frequency-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="pulse_frequency",
+        ),
+    )
+    pulse_frequency__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-pulse-frequency-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="pulse_frequency",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementDetectionRateTime(Data):
+    """
+    Monitoring detection_rate as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="detection_rate_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    detection_rate = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-detection-rate-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="detection_rate",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detection_rate__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-detection-rate-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="detection_rate",
+        ),
+    )
+    detection_rate__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-detection-rate-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="detection_rate",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementDetectionRateSetTime(Data):
+    """
+    Monitoring detection_rate_set as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="detection_rate_set_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    detection_rate_set = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-detection-rate-set-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="detection_rate_set",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detection_rate_set__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-detection-rate-set-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="detection_rate_set",
+        ),
+    )
+    detection_rate_set__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-detection-rate-set-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="detection_rate_set",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementPressureTime(Data):
+    """
+    Monitoring pressure as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="pressure_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    pressure = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-pressure-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="pressure",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    pressure__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-pressure-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="pressure",
+        ),
+    )
+    pressure__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-pressure-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="pressure",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementSpecimenVoltageTime(Data):
+    """
+    Monitoring specimen_voltage as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="specimen_voltage_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    specimen_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-specimen-voltage-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="specimen_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    specimen_voltage__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-specimen-voltage-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="specimen_voltage",
+        ),
+    )
+    specimen_voltage__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-specimen-voltage-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="specimen_voltage",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementSpecimenTemperatureTime(Data):
+    """
+    Monitoring specimen_temperature as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="specimen_temperature_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    specimen_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-specimen-temperature-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="specimen_temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    specimen_temperature__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-specimen-temperature-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="specimen_temperature",
+        ),
+    )
+    specimen_temperature__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-specimen-temperature-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="specimen_temperature",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementAmbientTemperatureTime(Data):
+    """
+    Monitoring ambient_temperature as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="ambient_temperature_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    ambient_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-ambient-temperature-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="ambient_temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    ambient_temperature__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-ambient-temperature-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="ambient_temperature",
+        ),
+    )
+    ambient_temperature__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-ambient-temperature-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="ambient_temperature",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementReflectronVoltageTime(Data):
+    """
+    Monitoring reflectron_voltage as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="reflectron_voltage_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    reflectron_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-reflectron-voltage-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="reflectron_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    reflectron_voltage__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-reflectron-voltage-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="reflectron_voltage",
+        ),
+    )
+    reflectron_voltage__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-reflectron-voltage-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="reflectron_voltage",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementXstagePositionTime(Data):
+    """
+    Monitoring xstage_position as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="xstage_position_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    xstage_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-xstage-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="xstage_position",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    xstage_position__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-xstage-position-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="xstage_position",
+        ),
+    )
+    xstage_position__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-xstage-position-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="xstage_position",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementYstagePositionTime(Data):
+    """
+    Monitoring ystage_position as a function of elapsed_time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="ystage_position_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    ystage_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-ystage-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="ystage_position",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    ystage_position__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-ystage-position-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="ystage_position",
+        ),
+    )
+    ystage_position__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-ystage-position-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="ystage_position",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementZstagePositionTime(Data):
+    """
+    Monitoring zstage_position as a function of elapsed time
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="zstage_position_time",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-elapsed-time-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="elapsed_time_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-elapsed-time-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="elapsed_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    elapsed_time__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-elapsed-time-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="elapsed_time",
+        ),
+    )
+    elapsed_time__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-elapsed-time-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="elapsed_time",
+        ),
+    )
+    zstage_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-zstage-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="zstage_position",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    zstage_position__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-zstage-position-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="zstage_position",
+        ),
+    )
+    zstage_position__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-zstage-position-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="zstage_position",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementStandingVoltageSequence(Data):
+    """
+    Monitoring standing_voltage as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="standing_voltage_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    standing_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-standing-voltage-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="standing_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    standing_voltage__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-standing-voltage-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="standing_voltage",
+        ),
+    )
+    standing_voltage__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-standing-voltage-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="standing_voltage",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementPulseFrequencySequence(Data):
+    """
+    Monitoring pulse_frequency as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="pulse_frequency_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    pulse_frequency = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-pulse-frequency-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="pulse_frequency",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    pulse_frequency__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-pulse-frequency-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="pulse_frequency",
+        ),
+    )
+    pulse_frequency__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-pulse-frequency-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="pulse_frequency",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementDetectionRateSequence(Data):
+    """
+    Monitoring detection_rate as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="detection_rate_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    detection_rate = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-detection-rate-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="detection_rate",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detection_rate__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-detection-rate-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="detection_rate",
+        ),
+    )
+    detection_rate__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-detection-rate-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="detection_rate",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementDetectionRateSetSequence(Data):
+    """
+    Monitoring detection_rate_set as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="detection_rate_set_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    detection_rate_set = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-detection-rate-set-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="detection_rate_set",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detection_rate_set__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-detection-rate-set-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="detection_rate_set",
+        ),
+    )
+    detection_rate_set__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-detection-rate-set-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="detection_rate_set",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementPressureSequence(Data):
+    """
+    Monitoring pressure as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="pressure_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    pressure = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-pressure-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="pressure",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    pressure__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-pressure-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="pressure",
+        ),
+    )
+    pressure__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-pressure-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="pressure",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementSpecimenVoltageSequence(Data):
+    """
+    Monitoring specimen_voltage as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="specimen_voltage_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    specimen_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-specimen-voltage-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="specimen_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    specimen_voltage__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-specimen-voltage-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="specimen_voltage",
+        ),
+    )
+    specimen_voltage__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-specimen-voltage-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="specimen_voltage",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementSpecimenTemperatureSequence(Data):
+    """
+    Monitoring specimen_temperature as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="specimen_temperature_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    specimen_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-specimen-temperature-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="specimen_temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    specimen_temperature__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-specimen-temperature-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="specimen_temperature",
+        ),
+    )
+    specimen_temperature__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-specimen-temperature-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="specimen_temperature",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementAmbientTemperatureSequence(Data):
+    """
+    Monitoring ambient_temperature as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="ambient_temperature_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    ambient_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-ambient-temperature-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="ambient_temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    ambient_temperature__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-ambient-temperature-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="ambient_temperature",
+        ),
+    )
+    ambient_temperature__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-ambient-temperature-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="ambient_temperature",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementReflectronVoltageSequence(Data):
+    """
+    Monitoring reflectron_voltage as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="reflectron_voltage_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    reflectron_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-reflectron-voltage-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="reflectron_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    reflectron_voltage__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-reflectron-voltage-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="reflectron_voltage",
+        ),
+    )
+    reflectron_voltage__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-reflectron-voltage-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="reflectron_voltage",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementXstagePositionSequence(Data):
+    """
+    Monitoring xstage_position as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="xstage_position_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    xstage_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-xstage-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="xstage_position",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    xstage_position__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-xstage-position-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="xstage_position",
+        ),
+    )
+    xstage_position__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-xstage-position-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="xstage_position",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementYstagePositionSequence(Data):
+    """
+    Monitoring ystage_position as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="ystage_position_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    ystage_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-ystage-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="ystage_position",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    ystage_position__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-ystage-position-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="ystage_position",
+        ),
+    )
+    ystage_position__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-ystage-position-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="ystage_position",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmApmMeasurementZstagePositionSequence(Data):
+    """
+    Monitoring zstage_position as a function of event_id
+
+    Sub-sampling should be used for practical purposes. For HITS, ntf TTree
+    objects are used as values for each event are not reliably accessible
+    because these are binarily encoded with a proprietary structure that is not
+    documented publicly. For RHIT, nth TBranch objects are used. Values for
+    each event are available but sub-sampling should still be used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="zstage_position_sequence",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-event-id-indices-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="event_id_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-event-id-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="event_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    event_id__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-event-id-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="event_id",
+        ),
+    )
+    event_id__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-event-id-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="event_id",
+        ),
+    )
+    zstage_position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-zstage-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="zstage_position",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    zstage_position__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-zstage-position-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="zstage_position",
+        ),
+    )
+    zstage_position__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-zstage-position-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="zstage_position",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmAtom_probeID(RoiProcess):
     """
     A region-of-interest analyzed either during or after the session for which
@@ -1964,7 +7746,7 @@ class ApmAtom_probeID(RoiProcess):
     )
 
     initial_specimen = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDInitialSpecimen",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
@@ -1974,7 +7756,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     final_specimen = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDFinalSpecimen",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
@@ -1983,8 +7765,58 @@ class ApmAtom_probeID(RoiProcess):
             optionality="recommended",
         ),
     )
+    raw_data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRawData",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="raw_data",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    hit_finding = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitFinding",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="hit_finding",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    hit_spatial_filtering = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFiltering",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="hit_spatial_filtering",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    voltage_and_bowl = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowl",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="voltage_and_bowl",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    mass_to_charge_conversion = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversion",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="mass_to_charge_conversion",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     reconstruction = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_reconstruction.ApmReconstruction",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstruction",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_reconstruction",
@@ -1994,13 +7826,4000 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     ranging = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.apm_ranging.ApmRanging",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRanging",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_ranging",
             name="ranging",
             name_type="specified",
             optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDInitialSpecimen(Image):
+    """
+    SEM or TEM image of the initial specimen taken before the measurement.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXimage",
+            name="initial_specimen",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    image_2d = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDInitialSpecimenImage2d",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="image_2d",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDInitialSpecimenImage2d(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="image_2d",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    real = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-real-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="real",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    axis_j = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-j-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_j",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    axis_j__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-j-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_j",
+        ),
+    )
+    axis_j__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-j-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_j",
+        ),
+    )
+    axis_i = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-i-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_i",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    axis_i__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-i-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_i",
+        ),
+    )
+    axis_i__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-i-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_i",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDFinalSpecimen(Image):
+    """
+    SEM or TEM image of the final specimen taken after completion of the
+    measurement.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXimage",
+            name="final_specimen",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    image_2d = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDFinalSpecimenImage2d",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="image_2d",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDFinalSpecimenImage2d(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="image_2d",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    real = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-real-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="real",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    axis_j = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-j-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_j",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    axis_j__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-j-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_j",
+        ),
+    )
+    axis_j__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-j-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_j",
+        ),
+    )
+    axis_i = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-i-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_i",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    axis_i__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-i-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_i",
+        ),
+    )
+    axis_i__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-i-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_i",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRawData(Process):
+    """
+    Document the control software that was used on the instrument with which
+    raw data were collected.
+
+    For almost all atom probe instruments, the recorded raw data and metadata
+    follow proprietary semantics. Therefore, this group can currently often not
+    be filled with more than the control software and some pointing to digital
+    artifacts (e.g. proprietary files) that have been collected during the
+    measurement in an effort to document as best as possible all steps of an
+    analysis workflow.
+
+    The physical quantities measured in an atom probe experiment are
+    time-of-flight and tuples of arrival_time_pairs as a function of the event
+    chain on the pulser. From these tuples, hits are computed in a process
+    called hit_finding.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="raw_data",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRawDataProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRawDataSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    number_of_dld_wires = Quantity(
+        type=MEnum(["1", "2", "3"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-number-of-dld-wires-field"
+        ],
+        dimensionality="dimensionless",
+        description=("The number of delay-line-detector (DLD) wires present."),
+        a_nexus_field=NeXusField(
+            name="number_of_dld_wires",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+            enumeration=["1", "2", "3"],
+        ),
+    )
+    dld_wire_names = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-dld-wire-names-field"
+        ],
+        shape=["*", 2],
+        description=(
+            "Alias tuple, typical for the begin and the end of each DLD wire of "
+            "the detector. Order follows arrival_time_pairs. The order of the "
+            "first dimension should match that of the second dimension of the "
+            "arrival_time_pairs field."
+        ),
+        a_nexus_field=NeXusField(
+            name="dld_wire_names",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    arrival_time_pairs = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-arrival-time-pairs-field"
+        ],
+        dimensionality="[time]",
+        shape=["*", "*", 2],
+        description=(
+            "Raw readings from the analog-to-digital-converter timing circuits "
+            "of the detector wires."
+        ),
+        a_nexus_field=NeXusField(
+            name="arrival_time_pairs",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRawDataProgramID(Program):
+    """
+    The control software that was used for running the measurement.
+
+    At least the main software should be reported. If this is the only program
+    to report name the group "program" and use its below fields program and
+    version to detail the version used. E.g. program AP Suite, version 6.3
+
+    It is recommended to report multiple programs though, i.e. also the
+    libraries and dependencies of the software. In the case of AP Suite/IVAS
+    this can be used to document the AP Suite GUI, LAS, CamecaRoot, and
+    CernRoot versions. In this case always name the program groups program1,
+    program2, ... with program one being AP Suite/IVAS.
+
+    In the case of an open-source instrument, like P. Felfer's Oxcart or G.
+    Schmitz's M-TAP instruments, also use program1, program2, ... with program1
+    representing the control software e.g. `M. Monajem and P. Felfer PYCCAPT
+    <https://pyccapt.readthedocs.io/en/latest/>`_. Further instances (program2,
+    ...) can be used to list the dependencies, the python virtual environment.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRawDataSource(Note):
+    """
+    Possibility to point to files that contain raw data.
+
+    Exemplar files that could be pointed to here when working with
+    AMETEK/Cameca instruments are the proprietary STR, RRAW, or HITS files that
+    AP Suite/IVAS generates.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-source-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-source-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-source-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitFinding(Process):
+    """
+    The configuration of a hit finding algorithm and its output.
+
+    Hit finding is the process of deciding which detector signals are
+    significant and assigning specific ions colliding with the detector to each
+    observed event.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="hit_finding",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitFindingProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitFindingConfig",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="config",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    hit_positions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-positions-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", 2],
+        description=(
+            "Evaluated ion impact coordinates on the detector. Use the "
+            "depends_on field to specify which reference frame the positions are "
+            "defined in."
+        ),
+        a_nexus_field=NeXusField(
+            name="hit_positions",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+    hit_positions__depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-positions-depends-on-attribute"
+        ],
+        description=(
+            "Contains the path to an instance of NX_coordinate_system in which "
+            "the positions are defined."
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="hit_positions",
+        ),
+    )
+    total_event_golden = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-golden-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            'Number of events of type "golden" when APSuite/IVAS was used as '
+            "the software with which the measurement was performed. The value "
+            "can be extracted from the CRunHeader.fTotalEventGolden field of a "
+            "CamecaRoot RHIT/HITS file."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_event_golden",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    total_event_incomplete = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-incomplete-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            'Number of events of type "incomplete" when APSuite/IVAS was used '
+            "as the software with which the measurement was performed. The value "
+            "can be extracted from the CRunHeader.fTotalEventIncomplete field of "
+            "a CamecaRoot RHIT/HITS file."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_event_incomplete",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    total_event_multiple = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-multiple-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            'Number of events of type "multiple" when APSuite/IVAS was used as '
+            "the software with which the measurement was performed. The value "
+            "can be extracted from the CRunHeader.fTotalEventMultiple field of a "
+            "CamecaRoot RHIT/HITS file."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_event_multiple",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    total_event_partials = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-partials-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            'Number of events of type "partials" when APSuite/IVAS was used as '
+            "the software with which the measurement was performed. The value "
+            "can be extracted from the CRunHeader.fTotalEventPartials field of a "
+            "CamecaRoot RHIT/HITS file."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_event_partials",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    total_event_record = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-total-event-record-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Number of events when APSuite/IVAS was used as the software with "
+            "which the measurement was performed. The value can be extracted "
+            "from the CRunHeader.fTotalEventRecords field of a CamecaRoot "
+            "RHIT/HITS file."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_event_record",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    hit_quality_type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-type-field"
+        ],
+        shape=["*"],
+        description=(
+            "Hit quality is an integer that specifies which category/type a hit "
+            "was assigned to. This field lists the human-readable, possibly "
+            "though proprietary types distinguished. The indices of this array "
+            "are used in hit_quality to encode hit_quality for each pulse in a "
+            "more efficient way than by repeating the string that is used for "
+            "each type as it is provided in this field. As an example, assume "
+            'two types, "golden" and "partial", are distinguished. If '
+            'hit_quality_type stores the array "golden", "partial", the '
+            "index 0 in hit_quality identifies all those pulses of category "
+            '"golden", while the index 1 in hit_quality identifies all of '
+            'category "partial".'
+        ),
+        a_nexus_field=NeXusField(
+            name="hit_quality_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    hit_quality = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Hit quality identifier for each pulse. Identifier has to be within "
+            "hit_quality_type."
+        ),
+        a_nexus_field=NeXusField(
+            name="hit_quality",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    hit_multiplicity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-multiplicity-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "The number of ions determined to have been collected on the same "
+            "pulse. These ions may hit different pixels, or even the same "
+            "detector pixel. The hit_multiplicity is not related to the makeup "
+            "of the ions and should not be confused with the number of atoms or "
+            "elements that constitute a molecular ion."
+        ),
+        a_nexus_field=NeXusField(
+            name="hit_multiplicity",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitFindingProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitFindingConfig(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="config",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-config-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-config-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-config-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-config-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitSpatialFiltering(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="hit_spatial_filtering",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFilteringProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFilteringSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    hit_filter = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFilteringHitFilter",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="hit_filter",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    evaporation_id_offset = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-evaporation-id-offset-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "Integer which defines the first evaporation_id. Typically, this is "
+            "either zero or one."
+        ),
+        a_nexus_field=NeXusField(
+            name="evaporation_id_offset",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    evaporation_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-evaporation-id-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "There are two possibilities to report evaporation_id values: If "
+            "evaporation_id_offset is provided, the evaporation_id values are "
+            "defined by the sequence :math:`[evaporation\\_id\\_offset, "
+            "evaporation\\_id\\_offset + n]` with :math:`n` the number of ions "
+            "in the reconstructed volume. Alternatively, evaporation_id_offset "
+            "is not provided but instead a a sequence of :math:`n` values is "
+            "defined, these integer values do not need to be sorted."
+        ),
+        a_nexus_field=NeXusField(
+            name="evaporation_id",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitSpatialFilteringProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitSpatialFilteringSource(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-source-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-source-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-source-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcs_filter_boolean_mask",
+            name="hit_filter",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    number_of_objects = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-number-of-objects-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_objects",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-mask-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDVoltageAndBowl(Process):
+    """
+    Configuration of and results obtained from a voltage-and-bowl
+    time-of-flight correction algorithm.
+
+    The voltage-and-bowl correction is a data post-processing step to correct
+    ion impact positions for flight path differences, detector bias, and
+    nonlinearities.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="voltage_and_bowl",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowlProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowlSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowlConfig",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    raw_tof = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-raw-tof-field"
+        ],
+        shape=["*"],
+        description=("Raw time-of-flight data without corrections."),
+        a_nexus_field=NeXusField(
+            name="raw_tof",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    tof_zero_estimate = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-tof-zero-estimate-field"
+        ],
+        dimensionality="[time]",
+        description=("The parameter :math:`t_0`, CAnalysis.CCalibMass.fT0Estimate"),
+        a_nexus_field=NeXusField(
+            name="tof_zero_estimate",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
+    calibrated_tof = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-calibrated-tof-field"
+        ],
+        shape=["*"],
+        description=("Calibrated time-of-flight."),
+        a_nexus_field=NeXusField(
+            name="calibrated_tof",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDVoltageAndBowlProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDVoltageAndBowlSource(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-source-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-source-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-source-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDVoltageAndBowlConfig(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    correction_peak = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-config-correction-peak-field"
+        ],
+        description=(
+            "Reference mass-to-charge state ratio value For example 16 Da as "
+            "mentioned by `T. Blum et al. "
+            "<https://doi.org/10.1002/9781119227250.ch18>`_ (page 371)."
+        ),
+        a_nexus_field=NeXusField(
+            name="correction_peak",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDMassToChargeConversion(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="mass_to_charge_conversion",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionConfig",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    mass_to_charge = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-mass-to-charge-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="mass_to_charge",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDMassToChargeConversionProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDMassToChargeConversionSource(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-source-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-source-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-source-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    mass_resolutionION = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="mass_resolutionION",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+
+    mass_calibration = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-calibration-field"
+        ],
+        description=(
+            "Mass calibration with unit peaks/interp. as mentioned by `T. Blum "
+            "et al. <https://doi.org/10.1002/9781119227250.ch18>`_ (page 371)."
+        ),
+        a_nexus_field=NeXusField(
+            name="mass_calibration",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    mass_resolution = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-field"
+        ],
+        shape=["*"],
+        description=(
+            "Inverse of the mass resolution :math:`\\frac{M}{\\Delta M}` as "
+            "mentioned by `T. Blum et al. "
+            "<https://doi.org/10.1002/9781119227250.ch18>`_ (page 371). Multiple "
+            "values can be reported but reporting each is only useful when "
+            "stating also: * The full width at which :math:`{\\Delta M}_{fw}` "
+            "fraction of maximum this value was defined. Examples are at tenth "
+            ":math:`{\\Delta M}_{10}` or at half maximum (FWHM). Consequently, "
+            "mass_resolution_fw should needs to be a vector of the same length "
+            "and using the same order like used for mass_resolution, i.e. the "
+            "first mass resolution was defined at the maximum as defined by the "
+            "first value from mass_resolution_fw. * The reference molecular ion "
+            "e.g. :math:`^{16}{O_{2}}^{+}` As many instances of "
+            "mass_resolutionION should be used with instances numbered starting "
+            "from 1 up to the length of the mass_resolution vector."
+        ),
+        a_nexus_field=NeXusField(
+            name="mass_resolution",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    mass_resolution_fw = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-fw-field"
+        ],
+        shape=["*"],
+        description=(
+            "The full width at which :math:`{\\Delta M}_{fw}` fraction of "
+            "maximum this value was defined. Examples are at tenth "
+            ":math:`{\\Delta M}_{10}` or at half maximum (FWHM). Consequently, "
+            "mass_resolution_fw should needs to be a vector of the same length "
+            "and using the same order like used for mass_resolution, i.e. the "
+            "first mass resolution was defined at the maximum as defined by the "
+            "first value from mass_resolution_fw."
+        ),
+        a_nexus_field=NeXusField(
+            name="mass_resolution_fw",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION(Atom):
+    """
+    The reference molecular ion e.g. :math:`^{16}{O_{2}}^{+}` As many instances
+    of mass_resolutionION should be used with instances numbered starting from
+    1 up to the length of the mass_resolution vector.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="mass_resolutionION",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+
+    nuclide_hash = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-nuclide-hash-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="nuclide_hash",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstruction(ApmReconstruction):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_reconstruction",
+            name="reconstruction",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    results = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionResults",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="results",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionConfig",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    naive_discretization = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionNaiveDiscretization",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="naive_discretization",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    reconstructed_positions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-reconstructed-positions-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", 3],
+        a_nexus_field=NeXusField(
+            name="reconstructed_positions",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    volume = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-volume-field"
+        ],
+        dimensionality="[length] ** 3",
+        a_nexus_field=NeXusField(
+            name="volume",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_VOLUME",
+        ),
+    )
+    field_of_view = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-field-of-view-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="field_of_view",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionSource(Note):
+    """
+    For LEAP and APSuite/IVAS-based analyses the root file which stores the
+    settings whereby an RHIT/HITS file can be used to regenerate the
+    reconstructed volume that is here referred to.
+
+    The respective RHIT/HITS file should ideally be specified in the serialized
+    group of the hit_finding section of this application definition.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-source-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-source-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-source-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionResults(Note):
+    """
+    For LEAP and APSuite/IVAS-based analyses the resulting typically file with
+    the reconstructed positions and calibrated mass-to-charge- state ratio
+    values.
+
+    For other data collection/analysis software the data artifact which comes
+    closest conceptually to AMETEK/Cameca's typical file formats.
+
+    These are typically exported as a POS, ePOS, APT, ATO, ENV, or HDF5 file,
+    which should be stored alongside this record in the research data
+    management system.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-results-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="results",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-results-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-results-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-results-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-results-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionConfig(Parameters):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    voltage_filter_initial = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-voltage-filter-initial-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        a_nexus_field=NeXusField(
+            name="voltage_filter_initial",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_VOLTAGE",
+        ),
+    )
+    voltage_filter_final = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-voltage-filter-final-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        a_nexus_field=NeXusField(
+            name="voltage_filter_final",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_VOLTAGE",
+        ),
+    )
+    protocol_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-protocol-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="protocol_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            enumeration=["bas", "geiser", "gault", "cameca"],
+            open_enum=True,
+        ),
+    )
+    primary_element = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-primary-element-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="primary_element",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    efficiency = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-efficiency-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="efficiency",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    flight_path = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-flight-path-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="flight_path",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+    evaporation_field = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-evaporation-field-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="evaporation_field",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    image_compression = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-image-compression-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="image_compression",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    kfactor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-kfactor-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="kfactor",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    shank_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-shank-angle-field"
+        ],
+        dimensionality="[angle]",
+        a_nexus_field=NeXusField(
+            name="shank_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANGLE",
+        ),
+    )
+    ion_volume = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-ion-volume-field"
+        ],
+        dimensionality="[length] ** 3",
+        a_nexus_field=NeXusField(
+            name="ion_volume",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_VOLUME",
+        ),
+    )
+    crystallographic_calibration = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-crystallographic-calibration-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="crystallographic_calibration",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    comment = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-comment-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="comment",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionNaiveDiscretization(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="naive_discretization",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionNaiveDiscretizationData",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-intensity-field"
+        ],
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axis_z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-z-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_z",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axis_z__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-z-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_z",
+        ),
+    )
+    axis_z__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-z-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_z",
+        ),
+    )
+    axis_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-y-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axis_y__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-y-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_y",
+        ),
+    )
+    axis_y__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-y-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_y",
+        ),
+    )
+    axis_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-x-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axis_x__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-x-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_x",
+        ),
+    )
+    axis_x__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-x-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_x",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRanging(ApmRanging):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_ranging",
+            name="ranging",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    mass_to_charge_distribution = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingMassToChargeDistribution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="mass_to_charge_distribution",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    background_quantification = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingBackgroundQuantification",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="background_quantification",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    peak_search = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakSearch",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="peak_search",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    peak_identification = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentification",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="peak_identification",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingSource(Note):
+    """
+    The respective ranging definitions file RNG/RRNG/ENV/HDF5.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="source",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-source-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-source-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-source-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="mass_to_charge_distribution",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingMassToChargeDistributionProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    mass_spectrum = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="mass_spectrum",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    min_mass_to_charge = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-min-mass-to-charge-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="min_mass_to_charge",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    max_mass_to_charge = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-max-mass-to-charge-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="max_mass_to_charge",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    n_mass_to_charge = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-n-mass-to-charge-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="n_mass_to_charge",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingMassToChargeDistributionProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="mass_spectrum",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-intensity-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    intensity__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-intensity-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="intensity",
+        ),
+    )
+    axis_mass_to_charge = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axis-mass-to-charge-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="axis_mass_to_charge",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axis_mass_to_charge__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axis-mass-to-charge-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_mass_to_charge",
+        ),
+    )
+    axis_mass_to_charge__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axis-mass-to-charge-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            parent_field="axis_mass_to_charge",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingBackgroundQuantification(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="background_quantification",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingBackgroundQuantificationProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    background = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-background-field"
+        ],
+        description=(
+            "(Out-of-sync, time-independent) background levels in ppm/ns "
+            "reported by e.g. APSuite/IVAS for LEAP systems."
+        ),
+        a_nexus_field=NeXusField(
+            name="background",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    mrp_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-value-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The mass-resolving power (MRP) value `D. Larson et al. "
+            "<https://doi.org/10.1007/978-1-4614-8721-0>`_ report Eq. D.8 in "
+            "page 282: :math:`MRP = \\frac{1}{2\\delta t} \\cdot "
+            "\\sqrt{\\frac{m}{n}\\frac{1}{2eV}L}`, with :math:`\\delta t` "
+            "representing the timing imprecision, :math:`\\frac{m}{n}` the "
+            "mass-to-charge state ratio, :math:`e` the elementary charge, "
+            ":math:`V` the potential difference, and :math:`L` the flight path "
+            "length. Timing imprecision is caused by variations of flight path "
+            "length and voltage, the fact that the precision of electronics is "
+            "finite and a spread of the time-of-departure of individual ions is "
+            "observed."
+        ),
+        a_nexus_field=NeXusField(
+            name="mrp_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    mrp_mass_to_charge = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-mass-to-charge-field"
+        ],
+        description=(
+            "Mass-to-charge state ratio :math:`\\frac{m}{n}` at which mrp_value "
+            "was specified."
+        ),
+        a_nexus_field=NeXusField(
+            name="mrp_mass_to_charge",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    mrp_voltage = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-voltage-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "Potential difference :math:`V` at which mrp_value was specified."
+        ),
+        a_nexus_field=NeXusField(
+            name="mrp_voltage",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_VOLTAGE",
+        ),
+    )
+    mrp_flight_path_length = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-flight-path-length-field"
+        ],
+        dimensionality="[length]",
+        description=("Flight path length :math:`L` at which mrp_value was specified."),
+        a_nexus_field=NeXusField(
+            name="mrp_flight_path_length",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingBackgroundQuantificationProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakSearch(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="peak_search",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakSearchProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    peakID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakSearchPeakID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="peakID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakSearchProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="peakID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    label = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-label-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="label",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    category = Quantity(
+        type=MEnum(["0", "1", "2", "3", "4", "5"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-category-field"
+        ],
+        description=(
+            "Category for the peak offering a qualitative statement of the "
+            "location of the peak in light of limited mass-resolving power that "
+            "is relevant for composition quantification. See `D. Larson et al. "
+            "(p172) <https://doi.org/10.1007/978-1-4614-8721-0>`_ for examples "
+            "of each category: * 0, well-separated, :math:`^{10}B^{+}`, "
+            ":math:`^{28}Si^{2+}` * 1, close, but can be sufficiently separated "
+            "for quantification in a LEAP system, :math:`^{94}Mo^{3+}`, "
+            ":math:`^{63}Cu^{2+}` * 2, closely overlapping, demands better than "
+            "LEAP4000X MRP can provide :math:`^{14}N^{+}`, :math:`^{28}Si^{2+}` "
+            "at different charge states * 3, overlapped exactly due to "
+            "multi-charge molecular species, :math:`^{16}{O_{2}}^{2+}`, "
+            ":math:`^{16}O^{+}` * 4, overlapped, same charge state, cannot as of "
+            "2013 be discriminated with a LEAP4000X, :math:`^{14}{N_{2}}^{+}`, "
+            ":math:`^{28}Si^{+}` * 5, overlapped, same charge state, any "
+            "expectation of resolvability, :math:`^{54}Cr^{2+}`, "
+            ":math:`^{54}Fe^{2+}`"
+        ),
+        a_nexus_field=NeXusField(
+            name="category",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            enumeration=["0", "1", "2", "3", "4", "5"],
+        ),
+    )
+    position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-position-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakIdentification(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="peak_identification",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    programID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationProgramID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    ionID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationIonID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="ionID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=256,
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    number_of_ion_types = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-number-of-ion-types-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="number_of_ion_types",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    maximum_number_of_atoms_per_molecular_ion = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-maximum-number-of-atoms-per-molecular-ion-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="maximum_number_of_atoms_per_molecular_ion",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    iontypes = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-iontypes-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "The iontype identifier for each ion that was best matching; stored "
+            "in the order of the evaporation_id. The value zero is reserved for "
+            "documenting that an ion was unranged. Identifier for ranged ions "
+            "need to start at 1 up to number_of_ion_types."
+        ),
+        a_nexus_field=NeXusField(
+            name="iontypes",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakIdentificationProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
+    """
+    Ions that were ranged.
+
+    The value zero is reserved for documenting that an ion was unranged.
+    Identifier for ranged ions need to start at 1 up to number_of_ion_types.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="ionID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=256,
+        ),
+    )
+
+    charge_state_analysis = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_charge_state_analysis",
+            name="charge_state_analysis",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    nuclide_hash = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-hash-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="nuclide_hash",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    charge_state = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="charge_state",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mass_to_charge_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-mass-to-charge-range-field"
+        ],
+        shape=["*", 2],
+        a_nexus_field=NeXusField(
+            name="mass_to_charge_range",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    nuclide_list = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-list-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", 2],
+        a_nexus_field=NeXusField(
+            name="nuclide_list",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
+    ApmChargeStateAnalysis
+):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXapm_charge_state_analysis",
+            name="charge_state_analysis",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    config = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    charge_state = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-charge-state-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="charge_state",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    nuclide_hash = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-nuclide-hash-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="nuclide_hash",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mass = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-mass-field"
+        ],
+        dimensionality="[mass]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="mass",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_MASS",
+        ),
+    )
+    natural_abundance_product = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-natural-abundance-product-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="natural_abundance_product",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    shortest_half_life = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-shortest-half-life-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="shortest_half_life",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
+    Parameters
+):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXparameters",
+            name="config",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    nuclides = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-nuclides-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="nuclides",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    mass_to_charge_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-mass-to-charge-range-field"
+        ],
+        shape=[2],
+        a_nexus_field=NeXusField(
+            name="mass_to_charge_range",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    min_half_life = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-min-half-life-field"
+        ],
+        dimensionality="[time]",
+        a_nexus_field=NeXusField(
+            name="min_half_life",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    min_abundance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-min-abundance-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="min_abundance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    sacrifice_isotopic_uniqueness = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-sacrifice-isotopic-uniqueness-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sacrifice_isotopic_uniqueness",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
         ),
     )
 

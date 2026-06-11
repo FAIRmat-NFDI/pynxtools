@@ -37,6 +37,9 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.applications.xrot import Xrot
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -65,14 +68,8 @@ class Xlaue(Xrot):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.xlaue.XlaueInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     definition = Quantity(
@@ -111,6 +108,122 @@ class Xlaue(Xrot):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named concept groups — only when the group element defines own quantities that
+# differ from the generic class (changed optionality, extra fields, different
+# type/units/enumeration). These inherit from the specific generic class so all
+# base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class XlaueInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xlaue.XlaueInstrumentSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XlaueInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    distribution = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xlaue.XlaueInstrumentSourceDistribution",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="distribution",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XlaueInstrumentSourceDistribution(Data):
+    """
+    This is the wavelength distribution of the beam
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="distribution",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-data-field"
+        ],
+        shape=["*"],
+        description=('expect ``signal=1 axes="energy"``'),
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_CHAR_OR_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-wavelength-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_CHAR_OR_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVELENGTH",
         ),
     )
 

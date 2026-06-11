@@ -37,9 +37,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -70,14 +74,8 @@ class Xbase(Entry):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseSample",
@@ -149,6 +147,288 @@ class Xbase(Entry):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class XbaseInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    source = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrumentSource",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    monochromator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrumentMonochromator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrumentDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XbaseInstrumentSource(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-source-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-source-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-source-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(["neutron", "x-ray", "electron"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-source-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["neutron", "x-ray", "electron"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XbaseInstrumentMonochromator(Monochromator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-monochromator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonochromator",
+            name="monochromator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-monochromator-wavelength-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVELENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XbaseInstrumentDetector(Detector):
+    """
+    The name of the group is detector if there is only one detector, if there
+    are several, names have to be detector1, detector2, ...detectorn.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-data-field"
+        ],
+        shape=["*", "*", "*"],
+        description=(
+            "The area detector data, the first dimension is always the number of "
+            "scan points, the second and third are the number of pixels in x and "
+            "y. The origin is always assumed to be in the center of the "
+            "detector. maxOccurs is limited to the the number of detectors on "
+            "your instrument."
+        ),
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    data_quantity__signal = Quantity(
+        type=MEnum(["1"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-data-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            parent_field="data",
+            enumeration=["1"],
+        ),
+    )
+    x_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-x-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="x_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    y_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-y-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="y_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    frame_start_number = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-frame-start-number-field"
+        ],
+        description=(
+            "This is the start number of the first frame of a scan. In PX one "
+            "often scans a couple of frames on a give sample, then does "
+            "something else, then returns to the same sample and scans some more "
+            "frames. Each time with a new data file. This number helps "
+            "concatenating such measurements."
+        ),
+        a_nexus_field=NeXusField(
+            name="frame_start_number",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class XbaseSample(Sample):

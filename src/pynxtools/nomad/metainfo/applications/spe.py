@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.fermi_chopper import FermiChopper
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
@@ -337,6 +338,18 @@ class SpeInstrument(Instrument):
         ),
     )
 
+    fermi_chopper = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spe.SpeInstrumentFermiChopper",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfermi_chopper",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     name_quantity = Quantity(
         type=str,
         links=[
@@ -347,6 +360,39 @@ class SpeInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpeInstrumentFermiChopper(FermiChopper):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-instrument-fermi-chopper-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfermi_chopper",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-instrument-fermi-chopper-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
         ),
     )
 

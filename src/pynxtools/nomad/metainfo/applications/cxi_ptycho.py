@@ -39,8 +39,13 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.beam import Beam
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
+from pynxtools.nomad.metainfo.base_classes.source import Source
+from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -169,8 +174,44 @@ class CxiPtychoInstrument1(Instrument):
         ),
     )
 
+    source_1 = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Source1",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source_1",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    beam_1 = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Beam1",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_1",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+    detector_1 = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Detector1",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector_1",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
     monitor = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.monitor.Monitor",
+        section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Monitor",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -180,6 +221,572 @@ class CxiPtychoInstrument1(Instrument):
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CxiPtychoInstrument1Source1(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source_1",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("This is the energy of the machine, not the beamline."),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+    )
+    type = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CxiPtychoInstrument1Beam1(Beam):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_1",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-energy-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    energy__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-energy-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="energy",
+        ),
+    )
+    extent__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-extent-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="extent",
+        ),
+    )
+    incident_beam_divergence__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-beam-divergence-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="incident_beam_divergence",
+        ),
+    )
+    incident_beam_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-beam-energy-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="incident_beam_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    incident_beam_energy__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-beam-energy-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="incident_beam_energy",
+        ),
+    )
+    incident_energy_spread = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-energy-spread-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        a_nexus_field=NeXusField(
+            name="incident_energy_spread",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    incident_energy_spread__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-energy-spread-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="incident_energy_spread",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CxiPtychoInstrument1Detector1(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector_1",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Detector1Transformations",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-axes-attribute"
+        ],
+        description=('should have value "[, data]"'),
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-signal-attribute"
+        ],
+        description=('should have value "data"'),
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    translation = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-translation-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "This is an array of shape (npts_x*npts_y, 3) and can be a Virtual "
+            "Dataset of x and y"
+        ),
+        a_nexus_field=NeXusField(
+            name="translation",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    translation__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-translation-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="translation",
+        ),
+    )
+    translation__axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-translation-axes-attribute"
+        ],
+        description=(
+            'this should take the value "translation:$slowaxisname:$fastaxisname"'
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="translation",
+        ),
+    )
+    translation__interpretation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-translation-interpretation-attribute"
+        ],
+        description=('This should be "image"'),
+        a_nexus_attribute=NeXusAttribute(
+            name="interpretation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="translation",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-data-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    x_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-x-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="x_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    x_pixel_size__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-x-pixel-size-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="x_pixel_size",
+        ),
+    )
+    y_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-y-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="y_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    y_pixel_size__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-y-pixel-size-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="y_pixel_size",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*", "*"],
+        description=("The distance between the detector and the sample"),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    distance__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-distance-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="distance",
+        ),
+    )
+    beam_center_x__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-beam-center-x-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="beam_center_x",
+        ),
+    )
+    beam_center_y__units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-beam-center-y-units-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="beam_center_y",
+        ),
+    )
+
+    data_1 = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-data-1-link"
+        ],
+        description=(
+            "This data must always have shape (npts_x*npts_y, frame_size_x, "
+            "frame_size_y) regardless of the scan pattern. Use hdf5 virtual "
+            "dataset to achieve this."
+        ),
+        a_nexus_link=NeXusLink(
+            name="data_1",
+            target="/NXentry/NXinstrument/NXdetector/data",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CxiPtychoInstrument1Detector1Transformations(Transformations):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-transformations-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-transformations-vector-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class CxiPtychoInstrument1Monitor(Monitor):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-monitor-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmonitor",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    data_quantity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-monitor-data-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
         ),
     )
 

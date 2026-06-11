@@ -39,8 +39,11 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.atom import Atom
+from pynxtools.nomad.metainfo.base_classes.cg_grid import CgGrid
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -347,7 +350,7 @@ class ApmCompositionspaceResultsEnvironment(Collection):
     )
 
     program = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsEnvironmentProgram",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -356,6 +359,51 @@ class ApmCompositionspaceResultsEnvironment(Collection):
             name_type="any",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsEnvironmentProgram(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-environment-program-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-environment-program-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-environment-program-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
         ),
     )
 
@@ -512,7 +560,7 @@ class ApmCompositionspaceResultsVoxelization(Process):
     )
 
     grid = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.cg_grid.CgGrid",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsVoxelizationGrid",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_grid",
@@ -522,7 +570,7 @@ class ApmCompositionspaceResultsVoxelization(Process):
         ),
     )
     ionID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsVoxelizationIonID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -572,6 +620,227 @@ class ApmCompositionspaceResultsVoxelization(Process):
         super().normalize(archive, logger)
 
 
+class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_grid",
+            name="grid",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    dimensionality = Quantity(
+        type=MEnum(["3"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-dimensionality-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="dimensionality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+            enumeration=["3"],
+        ),
+    )
+    cardinality = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-cardinality-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="cardinality",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    origin = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-origin-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="origin",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    symmetry = Quantity(
+        type=MEnum(["cubic"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-symmetry-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="symmetry",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["cubic"],
+        ),
+    )
+    cell_dimensions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-cell-dimensions-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="cell_dimensions",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    extent = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-extent-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="extent",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    index_offset = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-index-offset-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="index_offset",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    position = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-position-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        description=("Position of each cell in Euclidean space."),
+        a_nexus_field=NeXusField(
+            name="position",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    coordinate = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-coordinate-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        description=("Discrete coordinate of each voxel."),
+        a_nexus_field=NeXusField(
+            name="coordinate",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    indices_voxel = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-indices-voxel-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "For each ion, the identifier of the voxel into which the ion binned."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices_voxel",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsVoxelizationIonID(Atom):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-ionid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="ionID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-ionid-name-field"
+        ],
+        description=("Chemical symbol of the element from the periodic table."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    weight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-ionid-weight-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Element-specific weight (counts for discretization with a "
+            "rectangular transfer function) for the occupancy of each voxel with "
+            "atoms of this element."
+        ),
+        a_nexus_field=NeXusField(
+            name="weight",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class ApmCompositionspaceResultsAutophase(Process):
     """
     Optional step during which the subsequent segmentation step is prepared to
@@ -592,6 +861,17 @@ class ApmCompositionspaceResultsAutophase(Process):
         ),
     )
 
+    result = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsAutophaseResult",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     sequence_index = Quantity(
         type=MEnum(["2"]),
         links=[
@@ -603,6 +883,140 @@ class ApmCompositionspaceResultsAutophase(Process):
             name_type="specified",
             optionality="required",
             enumeration=["2"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsAutophaseResult(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    axis_feature_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-indices-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Element identifier stored sorted in descending order of feature "
+            "importance."
+        ),
+        a_nexus_field=NeXusField(
+            name="axis_feature_indices",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    axis_feature_indices__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-indices-long-name-attribute"
+        ],
+        description=("Axis caption"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_feature_indices",
+        ),
+    )
+    axis_feature_importance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-importance-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Element relative feature importance stored sorted in descending "
+            "order of feature importance."
+        ),
+        a_nexus_field=NeXusField(
+            name="axis_feature_importance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    axis_feature_importance__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-importance-long-name-attribute"
+        ],
+        description=("Axis caption"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="axis_feature_importance",
         ),
     )
 
@@ -631,7 +1045,7 @@ class ApmCompositionspaceResultsSegmentation(Process):
     )
 
     pca = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationPca",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -643,13 +1057,396 @@ class ApmCompositionspaceResultsSegmentation(Process):
         ),
     )
     ic_opt = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOpt",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="ic_opt",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsSegmentationPca(Process):
+    """
+    PCA in the chemical space (essentially composition correlation analyses).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="pca",
+            name_type="specified",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=1,
+        ),
+    )
+
+    result = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationPcaResult",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=MEnum(["2", "3"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            enumeration=["2", "3"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsSegmentationPcaResult(Data):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    axis_explained_variance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axis-explained-variance-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Explained variance values"),
+        a_nexus_field=NeXusField(
+            name="axis_explained_variance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+    )
+    axis_pca_dimension = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axis-pca-dimension-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Elements identifier matching those from ENTRY/voxelization/ionID "
+            "used during the principal component analysis."
+        ),
+        a_nexus_field=NeXusField(
+            name="axis_pca_dimension",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsSegmentationIcOpt(Process):
+    """
+    Information criterion minimization.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="ic_opt",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    cluster_analysisID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOptCluster_analysisID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="cluster_analysisID",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    result = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOptResult",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    sequence_index = Quantity(
+        type=MEnum(["3", "4"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-sequence-index-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="sequence_index",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="required",
+            enumeration=["3", "4"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsSegmentationIcOptCluster_analysisID(Process):
+    """
+    Results of the Gaussian mixture analysis for n_components equal to
+    n_ic_cluster.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-cluster-analysisid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="cluster_analysisID",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+
+    n_ic_cluster = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-cluster-analysisid-n-ic-cluster-field"
+        ],
+        dimensionality="dimensionless",
+        description=("n_components argument of the Gaussian mixture model."),
+        a_nexus_field=NeXusField(
+            name="n_ic_cluster",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    y_pred = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-cluster-analysisid-y-pred-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("y_pred return values of the computation."),
+        a_nexus_field=NeXusField(
+            name="y_pred",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
+    """
+    Information criterion as a function of number of n_ic_cluster aka
+    dimensions.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="result",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    axis_aic = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-aic-field"
+        ],
+        shape=["*"],
+        description=("Akaike information criterion values"),
+        a_nexus_field=NeXusField(
+            name="axis_aic",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+    )
+    axis_bic = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-bic-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Bayes information criterion values"),
+        a_nexus_field=NeXusField(
+            name="axis_bic",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    axis_dimension = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-dimension-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Actual n_ic_cluster values used"),
+        a_nexus_field=NeXusField(
+            name="axis_dimension",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 
@@ -681,7 +1478,7 @@ class ApmCompositionspaceResultsClustering(Process):
     )
 
     ic_opt = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOpt",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -702,6 +1499,164 @@ class ApmCompositionspaceResultsClustering(Process):
             name_type="specified",
             optionality="required",
             enumeration=["4", "5"],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsClusteringIcOpt(Process):
+    """
+    Respective DBScan clustering result for each segmentation/ic_opt case.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="ic_opt",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    cluster_analysisID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptCluster_analysisID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="cluster_analysisID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsClusteringIcOptCluster_analysisID(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="cluster_analysisID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    dbscanID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="dbscanID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="dbscanID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    epsilon = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-epsilon-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "The maximum distance between voxel pairs in a neighborhood to be "
+            "considered connected."
+        ),
+        a_nexus_field=NeXusField(
+            name="epsilon",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    min_samples = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-min-samples-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "The number of voxels in a neighborhood for a voxel to be considered "
+            "as a core point."
+        ),
+        a_nexus_field=NeXusField(
+            name="min_samples",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    label = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-label-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Raw label return values"),
+        a_nexus_field=NeXusField(
+            name="label",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    voxel = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-voxel-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=(
+            "Voxel identifier Using these identifiers correlated element-wise "
+            "with the values in the label array specifies for which voxel in the "
+            "grid clusters from this process were found."
+        ),
+        a_nexus_field=NeXusField(
+            name="voxel",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
         ),
     )
 

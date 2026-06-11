@@ -43,6 +43,9 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigApmParaprobeToolParameters,
 )
+from pynxtools.nomad.metainfo.base_classes.cg_cylinder import CgCylinder
+from pynxtools.nomad.metainfo.base_classes.process import Process
+from pynxtools.nomad.metainfo.base_classes.roi_process import RoiProcess
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -231,7 +234,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(
     )
 
     isosurfacing = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -391,6 +394,464 @@ class ApmParaprobeNanochemConfigDelocalizationID(
         ),
         a_nexus_field=NeXusField(
             name="has_scalar_fields",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
+    """
+    Configuration of the set of iso-surfaces to compute using that
+    delocalization. Such iso-surfaces are the starting point for a
+    reconstruction of so-called objects or (microstructural) features. Examples
+    of scientific relevant are (line features e.g. dislocations poles, surface
+    features such as interfaces, i.e. phase and grain boundaries, or volumetric
+    features such as precipitates. Users should be aware that reconstructed
+    datasets in atom probe are a model and may face inaccuracies and artifacts
+    that can be mistaken incorrectly as microstructural features.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="isosurfacing",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    edge_method = Quantity(
+        type=MEnum(["default", "keep_edge_triangles"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-edge-method-field"
+        ],
+        description=(
+            "As it is detailed in `M. Kühbach et al. "
+            "<https://arxiv.org/abs/2205.13510>`_, the handling of triangles at "
+            "the surface (edge) of the dataset requires special attention "
+            "especially for composition-normalized delocalization. Here, it is "
+            "possible that the composition increases towards the edge of the "
+            "dataset because the quotient of two numbers that are both smaller "
+            "than one is larger instead of smaller than the counter. By default, "
+            "the tool uses a modified marching cubes algorithm of Lewiner et al. "
+            "which detects if voxels face such a situation. In this case, no "
+            "triangles are generated for such voxels. Alternatively, "
+            "keep_edge_triangles instructs the tool to not remove triangles at "
+            "the edge of the dataset at the cost of bias. When using this "
+            "keep_edge_triangles users should understand that all features in "
+            "contact with the edge of the dataset get usually artificial "
+            "enlarged. Consequently, triangulated surface meshes of these "
+            "objects are closed during the marching. However, this closure is "
+            "artificial and can bias shape analyses for those objects. This also "
+            "holds for such practices that are offered in proprietary software "
+            "like IVAS / AP Suite. The situation is comparable to analyses of "
+            "grain shapes via orientation microscopy from electron microscopy or "
+            "X-ray diffraction tomography. Features at the edge of the dataset "
+            "may have not been captured fully. Thanks to collaboration with V. "
+            "V. Rielli and S. Primig from the Sydney atom probe group, "
+            "paraprobe-nanochem implements a complete pipeline to process "
+            "features at the edge of the dataset. Specifically, these are "
+            "modelled and replaced with closed polyhedral objects using an "
+            "iterative mesh and hole-filling procedures with fairing operations. "
+            "The tool bookkeeps such objects separately to lead the decision "
+            "whether or not to consider these objects to the user. Users should "
+            "be aware that results from fairing operations should be compared to "
+            "results from analyses where all objects at the edge of the dataset "
+            "have been removed. Furthermore, users should be careful with "
+            "overestimating the statistical significance of their dataset "
+            "especially when using atom probe when they use their atom probe "
+            "result to compare different descriptors. Even though a dataset may "
+            "deliver statistically significant results for compositions, this "
+            "does not necessarily mean that same dataset will also yield "
+            "statistically significant and insignificantly biased results for 3D "
+            "object analyses! Being able to quantify these effects and making "
+            "atom probers aware of these subtleties was one of the main reasons "
+            "why the paraprobe-nanochem tool was implemented."
+        ),
+        a_nexus_field=NeXusField(
+            name="edge_method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["default", "keep_edge_triangles"],
+        ),
+    )
+    edge_threshold = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-edge-threshold-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "The ion-to-surface distance that is used in the analyses of "
+            "features to identify whether these are laying inside the dataset or "
+            "close to the surface (edge) of the dataset. If an object has at "
+            "least one ion with an ion-to-surface-distance below this threshold, "
+            "the object is considered close to the edge of the dataset. The tool "
+            "uses a distance-based approach to solve the in general complicated "
+            "and involved treatment of computing volumetric intersections "
+            "between closed 2-manifolds that are not necessarily convex. The "
+            "main practical reason is that such computational geometry analyses "
+            "face numerical robustness issues as a consequence of which a mesh "
+            "can be detected as being completely inside another mesh although in "
+            "reality it is only :math:`\\epsilon`-close only, i.e. almost "
+            "touching only the edge (e.g. from inside). Practically, humans "
+            "would likely still state in such case that the object is close to "
+            "the edge of the dataset; however mathematically the object is "
+            "indeed completely inside. In short, a distance-based approach is "
+            "rigorous and flexible."
+        ),
+        a_nexus_field=NeXusField(
+            name="edge_threshold",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    phi = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-phi-field"
+        ],
+        description=(
+            "Iso-contour values. For each value, the tool computes an "
+            "iso-surface and performs subsequent analyses for each iso-surface. "
+            "The unit depends on the choice for the normalization of the "
+            "accumulated ion intensity values per voxel: * total, total number "
+            "of ions, irrespective their iontype * candidates, total number of "
+            "ions with type in the isotope_whitelist. * composition, candidates "
+            "but normalized by composition, i.e. at.-% * concentration, "
+            "candidates but normalized by voxel volume, i.e. ions/nm^3"
+        ),
+        a_nexus_field=NeXusField(
+            name="phi",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    has_triangle_soup = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-triangle-soup-field"
+        ],
+        description=(
+            "Specifies if the tool should report the triangle soup which "
+            "represents each triangle of the iso-surface complex. The resulting "
+            "set of triangles is colloquially referred to as a soup because "
+            "different sub-set may not be connected. Each triangle is reported "
+            "with an ID specifying to which triangle cluster (with IDs starting "
+            "at zero) the triangle belongs. The clustering of triangles within "
+            "the soup is performed with a modified DBScan algorithm."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_triangle_soup",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-field"
+        ],
+        description=(
+            "Specifies if the tool should analyze for each cluster of triangles "
+            "how they can be combinatorially processed to describe a closed "
+            "polyhedron. Such a closed polyhedron (not-necessarily convex!) can "
+            "be used to describe objects with relevance in the microstructure. "
+            "Users should be aware that the resulting mesh does not necessarily "
+            "represent the original precipitate. In fact, inaccuracies in the "
+            "reconstructed positions cause inaccuracies in all downstream "
+            "processing operations. Especially the effect on one-dimensional "
+            "spatial statistics like nearest neighbor correlation functions were "
+            "discussed in the literature `B. Gault et al. "
+            "<https://doi.org/10.1017/S1431927621012952>`_. In continuation of "
+            "these thoughts, this applies also to reconstructed objects. A "
+            "well-known example is the discussion of shape deviations of "
+            "scandium-rich precipitates in aluminum alloys which in "
+            "reconstructions may appear as ellipsoids although they should be "
+            "indeed almost spherical provided their size is larger than the "
+            "atomic length scale."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_geometry = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-geometry-field"
+        ],
+        description=(
+            "Specifies if the tool should report a triangulated surface mesh for "
+            "each identified closed polyhedron. It is common that a marching "
+            "cubes algorithm creates iso-surfaces with a fraction of tiny "
+            "sub-complexes (e.g. small isolated tetrahedra). These can be small "
+            "tetrahedra/polyhedra about the center of a voxel of the support "
+            "grid on which marching cubes operates. Such objects may not contain "
+            "an ion; especially when considering that delocalization procedures "
+            "smoothen the positions of the ions. Although these small objects "
+            "are interesting from a numerical point of view, scientists may "
+            "argue they are not worth to be reported because a microstructural "
+            "feature should contain at least a few atoms to become relevant. "
+            "Therefore, paraprobe-nanochem by default does not report closed "
+            "objects which bound a volume that contains no ion."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_geometry",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_properties = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-properties-field"
+        ],
+        description=(
+            "Specifies if the tool should report properties of each closed "
+            "polyhedron, such as volume and other details."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_properties",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_obb = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-obb-field"
+        ],
+        description=(
+            "Specifies if the tool should report for each closed polyhedron an "
+            "approximately optimal bounding box fitted to all triangles of the "
+            "surface mesh of the object and ion positions inside or on the "
+            "surface of the mesh. This bounding box informs about the closed "
+            "object's shape (aspect ratios). Users should be aware that the "
+            "choice of the algorithm to compute the bounding box can have an "
+            "effect on aspect ratio statistics. It is known that computing the "
+            "true optimal bounding box of in 3D is an "
+            ":math:`\\mathcal{O}^3`-time-complex task. The tool uses "
+            "well-established approximate algorithms of the Computational "
+            "Geometry Algorithms Library (CGAL)."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_obb",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_ions = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-ions-field"
+        ],
+        description=(
+            "Specifies if the tool should report for each closed polyhedron all "
+            "evaporation IDs of those ions which lay inside or on the boundary "
+            "of the polyhedron. This information is used by the "
+            "paraprobe-intersector tool to infer if two objects share common "
+            "ions, which is then understood as that the two objects intersect. "
+            "Users should be aware that two arbitrarily closed polyhedra in "
+            "three-dimensional space can intersect but not share a common ion. "
+            "In fact, the volume bounded by the polyhedron has sharp edges and "
+            "flat face(t)s. When taking two objects, an edge of one object may "
+            "for instance pierce into the surface of another object. In this "
+            "case the objects partially overlap / intersect volumetrically; "
+            "however this piercing might be so small or happening in the volume "
+            "between two reconstructed ion positions. Consequently, sharing ions "
+            "is a sufficient but not a necessary condition for interpreting "
+            "(volumetric) intersections between objects. Paraprobe-intersector "
+            "implements a rigorous alternative to handle such intersections "
+            "using a tetrahedralization of closed objects. However, in many "
+            "practical cases, we found through examples that there are polyhedra "
+            "(especially when they are non-convex and have almost point-like) "
+            "connected channels, where tetrahedralization libraries have "
+            "challenges dealing with. In this case, checking intersections via "
+            "shared_ions is a more practical alternative."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_ions",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_edge_contact = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-edge-contact-field"
+        ],
+        description=(
+            "Specifies if the tool should report if a (closed) object has "
+            "contact with the surface aka edge of the dataset. For this the tool "
+            "currently inspects if the shortest distance between the set of "
+            "triangles of the triangulated surface mesh and the triangles of the "
+            "edge model is larger than edge_threshold. If this is the case, the "
+            "object is assumed to be deeply embedded in the interior of the "
+            "dataset. Otherwise, the object is considered to have an edge "
+            "contact, i.e. it shape is likely affected by the edge."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_edge_contact",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_proxy = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-proxy-field"
+        ],
+        description=(
+            "Specifies if the tool should analyze a closed polyhedron (aka "
+            "proxy) for each cluster of triangles whose combinatorial analysis "
+            "according to has_object returned that the object is not a closed "
+            "polyhedron. Such proxies are closed via iterative hole-filling, "
+            "mesh refinement, and fairing operations. Users should be aware that "
+            "the resulting mesh does not necessarily represent the original "
+            "feature. In most cases objects, precipitates in atom probe end up "
+            "as open objects because they have been clipped by the edge of the "
+            "dataset. Using a proxy is in this case a strategy to still be able "
+            "to account for these objects. However, users should make themselves "
+            "familiar with the consequences and potential bias which this can "
+            "introduce into the analysis."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_proxy",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_proxy_geometry = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-proxy-geometry-field"
+        ],
+        description=("Like has_object_geometry but for the proxies."),
+        a_nexus_field=NeXusField(
+            name="has_proxy_geometry",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_proxy_properties = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-proxy-properties-field"
+        ],
+        description=("Like has_object_properties but for the proxies."),
+        a_nexus_field=NeXusField(
+            name="has_proxy_properties",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_proxy_obb = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-proxy-obb-field"
+        ],
+        description=("Like has_object_obb but for the proxies."),
+        a_nexus_field=NeXusField(
+            name="has_proxy_obb",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_proxy_ions = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-proxy-ions-field"
+        ],
+        description=("Like has_object_ions but for the proxies."),
+        a_nexus_field=NeXusField(
+            name="has_proxy_ions",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_proxy_edge_contact = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-proxy-edge-contact-field"
+        ],
+        description=("Like has_object_edge_contact but for the proxies."),
+        a_nexus_field=NeXusField(
+            name="has_proxy_edge_contact",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_proxigram = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-proxigram-field"
+        ],
+        description=(
+            "Specifies if the tool should report for each closed object a "
+            "(cylindrical) region-of-interest (ROI) that gets placed, centered, "
+            "and aligned with the local normal for each triangle of the object."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_proxigram",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    has_object_proxigram_edge_contact = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-has-object-proxigram-edge-contact-field"
+        ],
+        description=(
+            "Specifies if the tool should report for each ROI that was placed at "
+            "a triangle of each object if this ROI intersects with the edge the "
+            "dataset. Currently, the tool supports cylindrical ROIs. A "
+            "computational geometry test is performed to check for a possible "
+            "intersection of each ROI with the triangulated surface mesh that is "
+            "defined via surface. Results of this cylinder-set-of-triangles "
+            "intersection are interpreted as follows: If the cylinder intersects "
+            "with at least one triangle of the surface (mesh) the ROI is assumed "
+            "to make edge contact. Otherwise, the ROI is assumed to make no edge "
+            "contact. Users should note that this approach does not work if the "
+            "ROI is laying completely outside the dataset as also in this case "
+            "the cylinder intersects with any triangle. However, for atom probe "
+            "this case is practically irrelevant provided constructions such as "
+            "alpha shapes or alpha wrappings (such as paraprobe-surfacer does) "
+            "about the ions of the entire reconstructed volume are used."
+        ),
+        a_nexus_field=NeXusField(
+            name="has_object_proxigram_edge_contact",
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
@@ -631,7 +1092,7 @@ class ApmParaprobeNanochemConfigOned_profileID(
     )
 
     user_defined_roi = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.roi_process.RoiProcess",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXroi_process",
@@ -704,6 +1165,118 @@ class ApmParaprobeNanochemConfigOned_profileID(
         a_nexus_field=NeXusField(
             name="roi_cylinder_radius",
             type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi(RoiProcess):
+    """
+    As an alternative mode the tool can be instructed to place ROIs at specific
+    locations into the dataset. This is the programmatic equivalent to the
+    classical approach in atom probe to place ROIs for composition analyses via
+    positioning and rotating them via a graphical user interface (such as in
+    IVAS / AP Suite).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXroi_process",
+            name="user_defined_roi",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    cylinder_set = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_cylinder",
+            name="cylinder_set",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylinder):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_cylinder",
+            name="cylinder_set",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    index_offset = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-index-offset-field"
+        ],
+        dimensionality="dimensionless",
+        a_nexus_field=NeXusField(
+            name="index_offset",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    center = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-center-field"
+        ],
+        shape=["*", 3],
+        a_nexus_field=NeXusField(
+            name="center",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    height = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-height-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", 3],
+        a_nexus_field=NeXusField(
+            name="height",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    radii = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-radii-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="radii",
+            type="NX_NUMBER",
             name_type="specified",
             optionality="required",
             units="NX_LENGTH",

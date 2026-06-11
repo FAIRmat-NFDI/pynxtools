@@ -37,6 +37,9 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
+from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -66,14 +69,8 @@ class Xrot(Xbase):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.xrot.XrotInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotSample",
@@ -134,6 +131,147 @@ class Xrot(Xbase):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class XrotInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrot.XrotInstrumentDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    attenuator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xrot.XrotInstrumentAttenuator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name="attenuator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrotInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", "*", "*"],
+        description=("The polar_angle (two theta) where the detector is placed."),
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    beam_center_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-beam-center-x-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "This is the x position where the direct beam would hit the "
+            "detector. This is a length, not a pixel position, and can be "
+            "outside of the actual detector."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    beam_center_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-beam-center-y-field"
+        ],
+        dimensionality="[length]",
+        description=(
+            "This is the y position where the direct beam would hit the "
+            "detector. This is a length, not a pixel position, and can be "
+            "outside of the actual detector."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XrotInstrumentAttenuator(Attenuator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-attenuator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name="attenuator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    attenuator_transmission = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-attenuator-attenuator-transmission-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="attenuator_transmission",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class XrotSample(XbaseSample):

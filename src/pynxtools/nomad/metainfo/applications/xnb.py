@@ -37,6 +37,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -68,14 +70,8 @@ class Xnb(Xbase):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
+        section_def="pynxtools.nomad.metainfo.applications.xnb.XnbInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xnb.XnbSample",
@@ -136,6 +132,87 @@ class Xnb(Xbase):
 # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class XnbInstrument(Instrument):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinstrument",
+            name="instrument",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xnb.XnbInstrumentDetector",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XnbInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-detector-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name="detector",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=("The polar_angle (gamma) of the detector for each scan point."),
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    tilt_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-detector-tilt-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*"],
+        description=(
+            "The angle by which the detector has been tilted out of the "
+            "scattering plane."
+        ),
+        a_nexus_field=NeXusField(
+            name="tilt_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class XnbSample(XbaseSample):

@@ -39,13 +39,27 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
+from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
+from pynxtools.nomad.metainfo.base_classes.crystal import Crystal
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.disk_chopper import DiskChopper
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.fermi_chopper import FermiChopper
+from pynxtools.nomad.metainfo.base_classes.geometry import Geometry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.base_classes.log import Log
+from pynxtools.nomad.metainfo.base_classes.moderator import Moderator
 from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
 from pynxtools.nomad.metainfo.base_classes.note import Note
+from pynxtools.nomad.metainfo.base_classes.orientation import Orientation
+from pynxtools.nomad.metainfo.base_classes.positioner import Positioner
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
+from pynxtools.nomad.metainfo.base_classes.shape import Shape
+from pynxtools.nomad.metainfo.base_classes.source import Source
+from pynxtools.nomad.metainfo.base_classes.translation import Translation
 from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
@@ -330,7 +344,7 @@ class SnshistoDaslogs(Collection):
     )
 
     log = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.log.Log",
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoDaslogsLog",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -342,7 +356,7 @@ class SnshistoDaslogs(Collection):
         ),
     )
     positioner = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoDaslogsPositioner",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -351,6 +365,268 @@ class SnshistoDaslogs(Collection):
             name_type="any",
             optionality="optional",
             min_occurs=0,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoDaslogsLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    average_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-average-value-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="average_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    average_value_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-average-value-errors-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="average_value_errors",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    duration = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-duration-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="duration",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    maximum_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-maximum-value-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="maximum_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    minimum_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-minimum-value-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="minimum_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-time-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
+        ),
+    )
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-value-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoDaslogsPositioner(Positioner):
+    """
+    Motor logs from cvinfo file.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    average_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-average-value-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="average_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    average_value_error = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-average-value-error-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="average_value_error",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            deprecated="see https://github.com/nexusformat/definitions/issues/821",
+        ),
+    )
+    average_value_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-average-value-errors-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="average_value_errors",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    duration = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-duration-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="duration",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    maximum_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-maximum-value-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="maximum_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    minimum_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-minimum-value-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="minimum_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-time-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-value-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
         ),
     )
 
@@ -593,6 +869,99 @@ class SnshistoInstrument(Instrument):
         ),
     )
 
+    SNS = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentSns",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="SNS",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    detector = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentDetector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+    disk_chopper = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentDiskChopper",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdisk_chopper",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    fermi_chopper = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentFermiChopper",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfermi_chopper",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    moderator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentModerator",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmoderator",
+            name="moderator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    aperture = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentAperture",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaperture",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    attenuator = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentAttenuator",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    crystal = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentCrystal",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcrystal",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
     SNSdetector_calibration_id = Quantity(
         type=str,
         links=[
@@ -652,6 +1021,1228 @@ class SnshistoInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentSns(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-sns-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="SNS",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    frequency = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-sns-frequency-field"
+        ],
+        dimensionality="1 / [time]",
+        a_nexus_field=NeXusField(
+            name="frequency",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_FREQUENCY",
+        ),
+    )
+    name_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-sns-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-sns-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-sns-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "Spallation Neutron Source",
+                "Pulsed Reactor Neutron Source",
+                "Reactor Neutron Source",
+                "Synchrotron X-ray Source",
+                "Pulsed Muon Source",
+                "Rotating Anode X-ray",
+                "Fixed Tube X-ray",
+                "UV Laser",
+                "Free-Electron Laser",
+                "Optical Laser",
+                "Ion Source",
+                "UV Plasma Source",
+                "Metal Jet X-ray",
+                "Laser",
+                "Dye Laser",
+                "Broadband Tunable Light Source",
+                "Halogen Lamp",
+                "LED",
+                "Mercury Cadmium Telluride Lamp",
+                "Deuterium Lamp",
+                "Xenon Lamp",
+                "Globar",
+            ],
+            open_enum=True,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentDetector(Detector):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector",
+            name=None,
+            name_type="any",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    origin = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentDetectorOrigin",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="origin",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    azimuthal_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-azimuthal-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="azimuthal_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    data_quantity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-field"
+        ],
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    data_x_time_of_flight = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-x-time-of-flight-field"
+        ],
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="data_x_time_of_flight",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    data_x_y = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-x-y-field"
+        ],
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="data_x_y",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    data_y_time_of_flight = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-y-time-of-flight-field"
+        ],
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="data_y_time_of_flight",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    pixel_id = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-pixel-id-field"
+        ],
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="pixel_id",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+    )
+    time_of_flight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-time-of-flight-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="time_of_flight",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME_OF_FLIGHT",
+        ),
+    )
+    total_counts = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-total-counts-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="total_counts",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    x_pixel_offset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-x-pixel-offset-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="x_pixel_offset",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    y_pixel_offset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-y-pixel-offset-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="y_pixel_offset",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentDetectorOrigin(Geometry):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="origin",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    orientation = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentDetectorOriginOrientation",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXorientation",
+            name="orientation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    shape = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentDetectorOriginShape",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    translation = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentDetectorOriginTranslation",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtranslation",
+            name="translation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentDetectorOriginOrientation(Orientation):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-orientation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXorientation",
+            name="orientation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-orientation-value-field"
+        ],
+        dimensionality="dimensionless",
+        shape=[6],
+        description=("Six out of nine rotation parameters."),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentDetectorOriginShape(Shape):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-shape-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-shape-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    shape = Quantity(
+        type=MEnum(
+            [
+                "nxflat",
+                "nxcylinder",
+                "nxbox",
+                "nxsphere",
+                "nxcone",
+                "nxelliptical",
+                "nxtoroidal",
+                "nxparabolic",
+                "nxpolynomial",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-shape-shape-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "nxflat",
+                "nxcylinder",
+                "nxbox",
+                "nxsphere",
+                "nxcone",
+                "nxelliptical",
+                "nxtoroidal",
+                "nxparabolic",
+                "nxpolynomial",
+            ],
+        ),
+    )
+    size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-shape-size-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentDetectorOriginTranslation(Translation):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-translation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtranslation",
+            name="translation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-translation-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentDiskChopper(DiskChopper):
+    """
+    Original specification called for NXchopper, which is not a valid NeXus
+    base class. Select either NXdisk_chopper or NXfermi_chopper, as
+    appropriate.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-disk-chopper-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdisk_chopper",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-disk-chopper-distance-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentFermiChopper(FermiChopper):
+    """
+    Original specification called for NXchopper, which is not a valid NeXus
+    base class. Select either NXdisk_chopper or NXfermi_chopper, as
+    appropriate.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-fermi-chopper-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfermi_chopper",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-fermi-chopper-distance-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentModerator(Moderator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-moderator-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmoderator",
+            name="moderator",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    coupling_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-moderator-coupling-material-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="coupling_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-moderator-distance-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+    temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-moderator-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        a_nexus_field=NeXusField(
+            name="temperature",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TEMPERATURE",
+        ),
+    )
+    type = Quantity(
+        type=MEnum(
+            [
+                "H20",
+                "D20",
+                "Liquid H2",
+                "Liquid CH4",
+                "Liquid D2",
+                "Solid D2",
+                "C",
+                "Solid CH4",
+                "Solid H2",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-moderator-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "H20",
+                "D20",
+                "Liquid H2",
+                "Liquid CH4",
+                "Liquid D2",
+                "Solid D2",
+                "C",
+                "Solid CH4",
+                "Solid H2",
+            ],
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentAperture(Aperture):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXaperture",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    origin = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentApertureOrigin",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="origin",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    x_pixel_offset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-x-pixel-offset-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="x_pixel_offset",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentApertureOrigin(Geometry):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="origin",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    orientation = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentApertureOriginOrientation",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXorientation",
+            name="orientation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    shape = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentApertureOriginShape",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    translation = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentApertureOriginTranslation",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtranslation",
+            name="translation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentApertureOriginOrientation(Orientation):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-orientation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXorientation",
+            name="orientation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-orientation-value-field"
+        ],
+        dimensionality="dimensionless",
+        shape=[6],
+        description=("Six out of nine rotation parameters."),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentApertureOriginShape(Shape):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-shape-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-shape-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    shape = Quantity(
+        type=MEnum(
+            [
+                "nxflat",
+                "nxcylinder",
+                "nxbox",
+                "nxsphere",
+                "nxcone",
+                "nxelliptical",
+                "nxtoroidal",
+                "nxparabolic",
+                "nxpolynomial",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-shape-shape-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "nxflat",
+                "nxcylinder",
+                "nxbox",
+                "nxsphere",
+                "nxcone",
+                "nxelliptical",
+                "nxtoroidal",
+                "nxparabolic",
+                "nxpolynomial",
+            ],
+        ),
+    )
+    size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-shape-size-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentApertureOriginTranslation(Translation):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-translation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtranslation",
+            name="translation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-translation-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentAttenuator(Attenuator):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-attenuator-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXattenuator",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-attenuator-distance-field"
+        ],
+        dimensionality="[length]",
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentCrystal(Crystal):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcrystal",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+
+    origin = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentCrystalOrigin",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="origin",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-wavelength-field"
+        ],
+        dimensionality="[length]",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_WAVELENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentCrystalOrigin(Geometry):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXgeometry",
+            name="origin",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    orientation = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentCrystalOriginOrientation",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXorientation",
+            name="orientation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    shape = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentCrystalOriginShape",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    translation = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.snshisto.SnshistoInstrumentCrystalOriginTranslation",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtranslation",
+            name="translation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentCrystalOriginOrientation(Orientation):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-orientation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXorientation",
+            name="orientation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-orientation-value-field"
+        ],
+        dimensionality="dimensionless",
+        shape=[6],
+        description=("Six out of nine rotation parameters."),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentCrystalOriginShape(Shape):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-shape-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXshape",
+            name="shape",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-shape-description-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    shape = Quantity(
+        type=MEnum(
+            [
+                "nxflat",
+                "nxcylinder",
+                "nxbox",
+                "nxsphere",
+                "nxcone",
+                "nxelliptical",
+                "nxtoroidal",
+                "nxparabolic",
+                "nxpolynomial",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-shape-shape-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="shape",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "nxflat",
+                "nxcylinder",
+                "nxbox",
+                "nxsphere",
+                "nxcone",
+                "nxelliptical",
+                "nxtoroidal",
+                "nxparabolic",
+                "nxpolynomial",
+            ],
+        ),
+    )
+    size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-shape-size-field"
+        ],
+        dimensionality="[length]",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SnshistoInstrumentCrystalOriginTranslation(Translation):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-translation-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtranslation",
+            name="translation",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-translation-distance-field"
+        ],
+        dimensionality="[length]",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
         ),
     )
 

@@ -36,6 +36,10 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.atom import Atom
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.image import Image
+from pynxtools.nomad.metainfo.base_classes.peak import Peak
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -116,8 +120,18 @@ class EmEdsIndexing(Process):
         ),
     )
 
+    summary = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingSummary",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="summary",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     peak = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingPeak",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -128,7 +142,7 @@ class EmEdsIndexing(Process):
         ),
     )
     image = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingImage",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -157,6 +171,345 @@ class EmEdsIndexing(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEdsIndexingSummary(Data):
+    """
+    Accumulated intensity over all pixels of the region-of-interest.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="summary",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-intensity-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Accumulated counts"),
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    intensity__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-intensity-long-name-attribute"
+        ],
+        description=("Counts"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="intensity",
+        ),
+    )
+    axis_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-axis-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=["*"],
+        description=("Energy axis"),
+        a_nexus_field=NeXusField(
+            name="axis_energy",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+    axis_energy__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-axis-energy-long-name-attribute"
+        ],
+        description=("Energy"),
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="axis_energy",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEdsIndexingPeak(Peak):
+    """
+    Details about individual indexed peaks.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    atom = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingPeakAtom",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEdsIndexingPeakAtom(Atom):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    energy_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-range-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=[2],
+        description=(
+            "Associated lower :math:`[e_{min}, e_{max}]` bounds of the energy "
+            "which is assumed associated with this peak."
+        ),
+        a_nexus_field=NeXusField(
+            name="energy_range",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        description=("Theoretical energy of the line according to IUPAC."),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+    iupac_line_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-iupac-line-name-field"
+        ],
+        shape=["*"],
+        description=(
+            "IUPAC notation identifier of the line which the peak represents. "
+            "This can be a list of IUPAC notations for (the seldom) case that "
+            "multiple lines are grouped with the same peak."
+        ),
+        a_nexus_field=NeXusField(
+            name="iupac_line_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEdsIndexingImage(Image):
+    """
+    Individual element-specific EDS/EDX/EDXS/SXES mapping
+
+    A composition map is an image whose intensities for each pixel are the
+    accumulated X-ray quanta *under the curve(s)* of a set of peaks.
+
+    These element-specific EDS maps are instances of :ref:`NXimage` that should
+    be named by the element from the atom_types field.
+
+    When signal contributions from several peaks were decomposed users should
+    ideally use a respective number of NXpeak instances to give further context
+    about the individual signal contributions are summarized and shown
+    together, e.g. the combined signal under the curve of carbon and oxygen.
+
+    In this case specify the processing details use peak and weight.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXimage",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    process = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingImageProcess",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    description_quantity = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-description-field"
+        ],
+        description=("Discouraged free-text field to add additional information."),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    iupac_line_candidates = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-iupac-line-candidates-field"
+        ],
+        description=(
+            "Comma-separated list of chemical_symbol-IUPAC X-ray (emission) line "
+            "name that documents which elements and their specific lines are "
+            "theoretically located within the energy_range of the spectrum from "
+            "which the EDS (element) map was computed."
+        ),
+        a_nexus_field=NeXusField(
+            name="iupac_line_candidates",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    energy_range = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-energy-range-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        shape=[2],
+        description=(
+            "Associated :math:`[e_{min}, e_{max}]` bounds of the energy range "
+            "for which spectrum counts were accumulated."
+        ),
+        a_nexus_field=NeXusField(
+            name="energy_range",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmEdsIndexingImageProcess(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    peak = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-peak-field"
+        ],
+        shape=["*"],
+        description=(
+            "A list of :ref:`NXpeak` instance names whose X-ray quanta were "
+            "accumulated for each pixel to obtain an element-specific EDS map."
+        ),
+        a_nexus_field=NeXusField(
+            name="peak",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    weight = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-weight-field"
+        ],
+        dimensionality="dimensionless",
+        description=(
+            "A list of weights by how much the intensity of each peak "
+            "contributes to the intensity of the EDS map."
+        ),
+        a_nexus_field=NeXusField(
+            name="weight",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
         ),
     )
 

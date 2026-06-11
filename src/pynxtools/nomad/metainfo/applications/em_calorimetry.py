@@ -41,6 +41,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.cs_profiling import CsProfiling
+from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -361,7 +362,7 @@ class EmCalorimetryEnvironment(Collection):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryEnvironmentProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -370,6 +371,51 @@ class EmCalorimetryEnvironment(Collection):
             name_type="partial",
             optionality="required",
             min_occurs=1,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmCalorimetryEnvironmentProgramID(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-environment-programid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="programID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-environment-programid-program-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    program__version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-environment-programid-program-version-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="program",
         ),
     )
 
@@ -823,6 +869,20 @@ class EmCalorimetryIntegration(Process):
         ),
     )
 
+    resultBACKGROUND = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryIntegrationResultBACKGROUND",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="resultBACKGROUND",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=2,
+        ),
+    )
+
     sequence_index = Quantity(
         type=np.int64,
         links=[
@@ -833,6 +893,188 @@ class EmCalorimetryIntegration(Process):
             type="NX_POSINT",
             name_type="specified",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmCalorimetryIntegrationResultBACKGROUND(Data):
+    """
+    The integrated intensities:
+
+    * result_with_background * result_without_background
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="resultBACKGROUND",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=2,
+        ),
+    )
+
+    signal = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-signal-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="signal",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    axes = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-axes-attribute"
+        ],
+        shape=["*"],
+        a_nexus_attribute=NeXusAttribute(
+            name="axes",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    AXISNAME_indices = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-axisname-indices-attribute"
+        ],
+        variable=True,
+        a_nexus_attribute=NeXusAttribute(
+            name="AXISNAME_indices",
+            type="NX_UINT",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+    title = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-title-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-intensity-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*", "*"],
+        description=(
+            "Integrated intensity as a function of time and the radial distance "
+            "from the pattern center."
+        ),
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    intensity__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-intensity-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="intensity",
+        ),
+    )
+    indices_pattern = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-indices-pattern-field"
+        ],
+        dimensionality="dimensionless",
+        shape=["*"],
+        description=("Identifier for each pattern."),
+        a_nexus_field=NeXusField(
+            name="indices_pattern",
+            type="NX_INT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    indices_pattern__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-indices-pattern-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="indices_pattern",
+        ),
+    )
+    s = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-s-field"
+        ],
+        shape=["*"],
+        description=("Positions in reciprocal space."),
+        a_nexus_field=NeXusField(
+            name="s",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+    )
+    s__long_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-s-long-name-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="long_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="s",
+        ),
+    )
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-time-field"
+        ],
+        dimensionality="[time]",
+        shape=["*"],
+        description=("Time since start of the in-situ experiment"),
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_TIME",
         ),
     )
 

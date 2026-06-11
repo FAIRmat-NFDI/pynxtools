@@ -42,6 +42,7 @@ from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopyInstrument,
     OpticalSpectroscopySample,
 )
+from pynxtools.nomad.metainfo.base_classes.program import Program
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -444,7 +445,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     )
 
     data_software = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryDataCollectionDataSoftware",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprogram",
@@ -664,6 +665,75 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         a_nexus_field=NeXusField(
             name="reference_data_link",
             type="NX_CHAR_OR_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EllipsometryDataCollectionDataSoftware(Program):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-software-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name="data_software",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    program = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-software-program-field"
+        ],
+        description=(
+            "Commercial or otherwise defined given name of the program that was "
+            "used to generate the result file(s) with measured data and/or "
+            "metadata (in most cases, this is the same as INSTRUMENT/software). "
+            "If home written, one can provide the actual steps in the NOTE "
+            "subfield here."
+        ),
+        a_nexus_field=NeXusField(
+            name="program",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    version = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-software-version-field"
+        ],
+        description=(
+            "Either version with build number, commit hash, or description of a "
+            "(online) repository where the source code of the program and build "
+            "instructions can be found so that the program can be configured in "
+            "such a way that result files can be created ideally in a "
+            "deterministic manner."
+        ),
+        a_nexus_field=NeXusField(
+            name="version",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    URL = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-software-url-attribute"
+        ],
+        description=("Website of the software."),
+        a_nexus_attribute=NeXusAttribute(
+            name="URL",
+            type="NX_CHAR",
             name_type="specified",
             optionality="optional",
         ),

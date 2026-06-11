@@ -37,6 +37,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -211,6 +212,17 @@ class ImageProcess(Process):
         ),
     )
 
+    input = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.image.ImageProcessInput",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="input",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     detector_identifier = Quantity(
         type=str,
         links=[
@@ -222,6 +234,54 @@ class ImageProcess(Process):
         ),
         a_nexus_field=NeXusField(
             name="detector_identifier",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ImageProcessInput(Note):
+    """
+    Resolvable data artifact (e.g. file) from which all values in the
+    :ref:`NXdata` instances in this :ref:`NXimage` were loaded during parsing.
+
+    Possibility to document from which specific other serialized resource as
+    the source pieces of information were processed when using NeXus as a
+    semantic file format to serialize that information differently.
+
+    The group in combination with an added field *context* therein adds
+    context.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-process-input-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="input",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    context = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-process-input-context-field"
+        ],
+        description=(
+            "Reference to a location inside the artifact that points to the "
+            "specific group of values that were processed if the artifacts "
+            "contains several groups of values and thus further resolving of "
+            "ambiguities is required."
+        ),
+        a_nexus_field=NeXusField(
+            name="context",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",

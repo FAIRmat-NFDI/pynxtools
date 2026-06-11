@@ -42,6 +42,8 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo.base_classes.circuit import Circuit
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.spm_scan_control import SpmScanControl
+from pynxtools.nomad.metainfo.base_classes.spm_scan_pattern import SpmScanPattern
+from pynxtools.nomad.metainfo.base_classes.spm_scan_region import SpmScanRegion
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -239,6 +241,26 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
         ),
     )
+    scan_region = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopySpmScanControlScanRegion",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    linear_sweep = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopySpmScanControlLinearSweep",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="linear_sweep",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
 
     scan_type = Quantity(
         type=MEnum(["linear"]),
@@ -377,6 +399,198 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             name_type="specified",
             optionality="optional",
             units="NX_TIME",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
+    """
+    The scan region is the area of phase space or sub-phase space where the
+    scan is performed.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    scan_offset_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-offset-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "The starting voltage of the bias sweep. The range of voltages for "
+            "the sweep can be defined with scan voltage offset and scan voltage "
+            "range (difference between minimum and maximum voltage values in a "
+            "sweep)"
+        ),
+        a_nexus_field=NeXusField(
+            name="scan_offset_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+    scan_range_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-range-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "The range of voltages for the sweep can be defined with scan "
+            "voltage offset and scan voltage range (difference between minimum "
+            "and maximum voltage values in a sweep)"
+        ),
+        a_nexus_field=NeXusField(
+            name="scan_range_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+    scan_start_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-start-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=("The start of the bias scan voltage."),
+        a_nexus_field=NeXusField(
+            name="scan_start_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+    scan_end_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-scan-region-scan-end-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=("The end value of the bias scan voltage."),
+        a_nexus_field=NeXusField(
+            name="scan_end_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
+    """
+    In the linear sweep, the bias voltage is changed linearly from the start
+    value to the end value.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="linear_sweep",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    backward_sweep = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-backward-sweep-field"
+        ],
+        description=(
+            "If the bias voltage sweep is also performed in the opposite direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="backward_sweep",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    scan_points_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-scan-points-bias-field"
+        ],
+        description=("The number of voltage points per sweep."),
+        a_nexus_field=NeXusField(
+            name="scan_points_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    step_size_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-step-size-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        description=(
+            "The step size between the two consecutive bias voltage values "
+            "during the sweep."
+        ),
+        a_nexus_field=NeXusField(
+            name="step_size_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_VOLTAGE",
+        ),
+    )
+    scan_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-scan-time-field"
+        ],
+        dimensionality="[time]",
+        description=("The time taken by the scanner to scan the entire area."),
+        a_nexus_field=NeXusField(
+            name="scan_time",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
+    reset_bias = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-linear-sweep-reset-bias-field"
+        ],
+        description=(
+            "The reset_bias defines whether the bias voltage should be reset to "
+            "the starting value after the sweep is completed."
+        ),
+        a_nexus_field=NeXusField(
+            name="reset_bias",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 

@@ -151,6 +151,17 @@ class ApmRangingMassToChargeDistribution(Process):
         ),
     )
 
+    mass_spectrum = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="mass_spectrum",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     min_mass_to_charge = Quantity(
         type=np.float64,
         links=[
