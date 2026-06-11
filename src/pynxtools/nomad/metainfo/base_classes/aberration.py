@@ -123,6 +123,7 @@ class Aberration(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-delta-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Time elapsed since the last measurement."),
         a_nexus_field=NeXusField(
             name="delta_time",
@@ -138,6 +139,7 @@ class Aberration(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "For the CEOS definitions the C aberrations are radial-symmetric and "
             "have no angle entry, while the A, B, D, S, or R aberrations are "

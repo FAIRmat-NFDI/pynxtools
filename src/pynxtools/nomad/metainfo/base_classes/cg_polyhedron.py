@@ -116,6 +116,7 @@ class CgPolyhedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyhedron.html#nxcg_polyhedron-number-of-faces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The number of faces for each polyhedron. Faces of adjoining "
@@ -135,6 +136,7 @@ class CgPolyhedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyhedron.html#nxcg_polyhedron-face-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("Area of each of faces."),
         a_nexus_field=NeXusField(
@@ -167,6 +169,7 @@ class CgPolyhedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyhedron.html#nxcg_polyhedron-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Length of each edge."),
         a_nexus_field=NeXusField(

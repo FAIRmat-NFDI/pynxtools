@@ -79,6 +79,7 @@ class Translation(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXtranslation.html#nxtranslation-distances-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "(x,y,z) This field describes the lateral movement of a component. "

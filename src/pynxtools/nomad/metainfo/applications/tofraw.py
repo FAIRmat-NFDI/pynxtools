@@ -162,6 +162,7 @@ class Tofraw(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-pre-sample-flightpath-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the flight path before the sample position. This can be "
             "determined by a chopper, by the moderator, or the source itself. In "
@@ -296,6 +297,7 @@ class TofrawInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("distance to sample for each detector"),
         a_nexus_field=NeXusField(
@@ -312,6 +314,7 @@ class TofrawInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -327,6 +330,7 @@ class TofrawInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("polar angle for each detector element"),
         a_nexus_field=NeXusField(
@@ -343,6 +347,7 @@ class TofrawInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("azimuthal angle for each detector element"),
         a_nexus_field=NeXusField(
@@ -454,6 +459,7 @@ class TofrawMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-monitor-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -482,6 +488,7 @@ class TofrawMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-monitor-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -497,6 +504,7 @@ class TofrawMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-monitor-integral-counts-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="integral_counts",
             type="NX_INT",

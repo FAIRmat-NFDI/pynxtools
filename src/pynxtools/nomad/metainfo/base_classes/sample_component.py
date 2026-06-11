@@ -144,6 +144,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-unit-cell-abc-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=("Crystallography unit cell parameters a, b, and c"),
         a_nexus_field=NeXusField(
@@ -160,6 +161,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-unit-cell-alphabetagamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[3],
         description=("Crystallography unit cell parameters alpha, beta, and gamma"),
         a_nexus_field=NeXusField(
@@ -176,6 +178,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-unit-cell-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         description=("Volume of the unit cell"),
         a_nexus_field=NeXusField(
             name="unit_cell_volume",
@@ -191,6 +194,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-sample-orientation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[3],
         description=(
             "This will follow the Busing and Levy convention from Acta.Crysta "
@@ -228,6 +232,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-mass-field"
         ],
         dimensionality="[mass]",
+        unit="kilogram",
         description=("Mass of sample component"),
         a_nexus_field=NeXusField(
             name="mass",
@@ -243,6 +248,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         description=("Density of sample component"),
         a_nexus_field=NeXusField(
             name="density",
@@ -258,6 +264,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-relative-molecular-mass-field"
         ],
         dimensionality="[mass]",
+        unit="kilogram",
         description=("Relative Molecular Mass of sample component"),
         a_nexus_field=NeXusField(
             name="relative_molecular_mass",
@@ -299,6 +306,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-scattering-length-density-field"
         ],
         dimensionality="1 / [length] ** 2",
+        unit="1 / m ** 2",
         description=("Scattering length density of component"),
         a_nexus_field=NeXusField(
             name="scattering_length_density",

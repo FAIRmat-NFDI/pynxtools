@@ -296,6 +296,7 @@ class XbaseInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-monochromator-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
@@ -368,6 +369,7 @@ class XbaseInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -383,6 +385,7 @@ class XbaseInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -398,6 +401,7 @@ class XbaseInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
@@ -482,6 +486,7 @@ class XbaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-unit-cell-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[6],
         description=(
             "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
@@ -501,6 +506,7 @@ class XbaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         description=(
             "The sample temperature or whatever sensor represents this value best"
@@ -519,6 +525,7 @@ class XbaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-x-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Translation of the sample along the X-direction of the laboratory "
             "coordinate system"
@@ -537,6 +544,7 @@ class XbaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-y-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Translation of the sample along the Y-direction of the laboratory "
             "coordinate system"
@@ -555,6 +563,7 @@ class XbaseSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Translation of the sample along the Z-direction of the laboratory "
             "coordinate system"

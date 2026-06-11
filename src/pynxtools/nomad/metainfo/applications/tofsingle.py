@@ -152,6 +152,7 @@ class Tofsingle(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-pre-sample-flightpath-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the flight path before the sample position. This can be "
             "determined by a chopper, by the moderator or the source itself. In "
@@ -274,6 +275,7 @@ class TofsingleInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[1],
         description=("Distance to sample for the center of the detector"),
         a_nexus_field=NeXusField(
@@ -290,6 +292,7 @@ class TofsingleInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -305,6 +308,7 @@ class TofsingleInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("polar angle for each detector element"),
         a_nexus_field=NeXusField(
@@ -321,6 +325,7 @@ class TofsingleInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("azimuthal angle for each detector element"),
         a_nexus_field=NeXusField(
@@ -432,6 +437,7 @@ class TofsingleMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-monitor-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -460,6 +466,7 @@ class TofsingleMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-monitor-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",

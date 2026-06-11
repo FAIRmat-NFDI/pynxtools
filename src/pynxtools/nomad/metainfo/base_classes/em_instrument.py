@@ -431,6 +431,7 @@ class EmInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_instrument.html#nxem_instrument-stageid-tilt1-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The interpretation of this tilt1 value can be contextualized via "
             "the comment attribute. However, it is better to describe the "
@@ -470,6 +471,7 @@ class EmInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_instrument.html#nxem_instrument-stageid-tilt2-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The interpretation of this tilt2 value can be contextualized via "
             "the comment attribute. However, it is better to describe the "
@@ -509,6 +511,7 @@ class EmInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_instrument.html#nxem_instrument-stageid-rotation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The interpretation of this rotation value can be contextualized via "
             "the comment attribute. However, it is better to describe the "
@@ -548,6 +551,7 @@ class EmInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_instrument.html#nxem_instrument-stageid-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "The interpretation of these position values can be contextualized "

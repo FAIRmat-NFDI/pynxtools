@@ -95,6 +95,7 @@ class CgPoint(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_point.html#nxcg_point-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "(Elapsed) time for each point. If the field time is needed "

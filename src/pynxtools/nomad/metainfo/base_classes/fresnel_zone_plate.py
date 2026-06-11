@@ -85,6 +85,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-outer-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="outer_diameter",
             type="NX_FLOAT",
@@ -99,6 +100,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-outermost-zone-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="outermost_zone_width",
             type="NX_FLOAT",
@@ -113,6 +115,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="central_stop_diameter",
             type="NX_FLOAT",
@@ -141,6 +144,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-zone-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="zone_height",
             type="NX_FLOAT",
@@ -196,6 +200,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="central_stop_thickness",
             type="NX_FLOAT",
@@ -210,6 +215,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-mask-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="mask_thickness",
             type="NX_FLOAT",
@@ -252,6 +258,7 @@ class FresnelZonePlate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-support-membrane-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="support_membrane_thickness",
             type="NX_FLOAT",

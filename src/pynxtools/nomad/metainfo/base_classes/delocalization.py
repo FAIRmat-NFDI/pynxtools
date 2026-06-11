@@ -169,6 +169,7 @@ class DelocalizationWeightingModel(MatchFilter):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdelocalization.html#nxdelocalization-weighting-model-match-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "A list of nuclides based on which to evaluate the weight. Nuclides "
@@ -192,6 +193,7 @@ class DelocalizationWeightingModel(MatchFilter):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdelocalization.html#nxdelocalization-weighting-model-mark-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Attribute data for each member of the point cloud. For APM these "
@@ -212,6 +214,7 @@ class DelocalizationWeightingModel(MatchFilter):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdelocalization.html#nxdelocalization-weighting-model-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Weighting factor with which the integrated intensity per grid cell "

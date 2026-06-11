@@ -343,6 +343,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-color-map-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
@@ -359,6 +360,7 @@ class MicrostructureMtexConfigPlotting(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-default-color-map-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
@@ -587,6 +589,7 @@ class MicrostructureMtexConfigNumerics(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-eps-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Return value of the Matlab eps command."),
         a_nexus_field=NeXusField(
             name="eps",

@@ -441,6 +441,7 @@ class Subentry(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsubentry.html#nxsubentry-duration-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Duration of measurement"),
         a_nexus_field=NeXusField(
             name="duration",
@@ -456,6 +457,7 @@ class Subentry(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsubentry.html#nxsubentry-collection-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time transpired actually collecting data i.e. taking out time when "
             "collection was suspended due to e.g. temperature out of range"
@@ -560,6 +562,7 @@ class Subentry(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsubentry.html#nxsubentry-pre-sample-flightpath-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the flightpath before the sample position. This can be "
             "determined by a chopper, by the moderator or the source itself. In "

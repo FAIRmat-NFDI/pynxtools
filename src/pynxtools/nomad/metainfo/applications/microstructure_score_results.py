@@ -615,6 +615,7 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -630,6 +631,7 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -671,6 +673,7 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-cell-dimensions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="cell_dimensions",
@@ -732,6 +735,7 @@ class MicrostructureScoreResultsDiscretizationBoundary(CgHexahedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-number-of-boundaries-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many distinct boundaries are distinguished? Most grids "
             "discretize a cubic or cuboidal region. In this case six sides can "
@@ -751,6 +755,7 @@ class MicrostructureScoreResultsDiscretizationBoundary(CgHexahedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-boundary-conditions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[6],
         description=(
             "The boundary conditions for each boundary: * 0 - undefined * 1 - "
@@ -1010,6 +1015,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Evolution of the physical time not to be confused with wall-clock "
@@ -1029,6 +1035,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-iteration-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Iteration or increment counter."),
         a_nexus_field=NeXusField(
@@ -1045,6 +1052,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         description=("Evolution of the simulated temperature over time."),
         a_nexus_field=NeXusField(
@@ -1061,6 +1069,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Recrystallized volume fraction."),
         a_nexus_field=NeXusField(
@@ -1270,6 +1279,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Simulated physical time for this snapshot."),
         a_nexus_field=NeXusField(
             name="time",
@@ -1285,6 +1295,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-iteration-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Iteration or increment counter of this snapshot."),
         a_nexus_field=NeXusField(
             name="iteration",
@@ -1300,6 +1311,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Simulated temperature for this snapshot."),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -1315,6 +1327,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Current recrystallized volume fraction (taking fractional "
             "infections into account)."
@@ -1333,6 +1346,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-x-set-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Target value for which a snapshot was requested for the "
             "recrystallized volume fraction."
@@ -1369,6 +1383,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-grid-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("Index for each crystal whereby its metadata can be retrieved."),
         a_nexus_field=NeXusField(
@@ -1385,6 +1400,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-grid-thread-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=(
             "Identifier of the OpenMP thread that processed this part of the grid."
@@ -1435,6 +1451,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-number-of-crystals-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_crystals",
             type="NX_UINT",
@@ -1449,6 +1466,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-number-of-phases-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_phases",
             type="NX_UINT",
@@ -1475,6 +1493,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-indices-crystal-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_crystal",
@@ -1502,6 +1521,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-indices-phase-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_phase",
@@ -1517,6 +1537,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=(
             "Volume of each grain (partially transformed cells are accounted "
@@ -1537,6 +1558,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-bunge-euler-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=("Bunge-Euler angle triplets for each grain."),
         a_nexus_field=NeXusField(
@@ -1627,6 +1649,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-halo-region-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Which cells are currently in a halo region of threads. The halo "
@@ -1647,6 +1670,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-mobility-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "So-called mobility weight which is a scaling factor to control the "
@@ -1667,6 +1691,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-coordinate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "The x, y, z grid coordinates of each cell in the recrystallization front."
@@ -1685,6 +1710,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-deformed-grain-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Grain identifier assigned to each cell in the recrystallization front."
@@ -1703,6 +1729,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-recrystallized-grain-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Grain identifier assigned to each nucleus which affected that cell "
@@ -1722,6 +1749,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-thread-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Identifier of the OpenMP thread processing each cell in the "
@@ -1741,6 +1769,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-infection-direction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Hint about the direction from which the cell was infected."),
         a_nexus_field=NeXusField(
@@ -1757,6 +1786,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizatio
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-recrystallization-front-recrystallized-fraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("The fraction to which the cell is assumed transformed."),
         a_nexus_field=NeXusField(

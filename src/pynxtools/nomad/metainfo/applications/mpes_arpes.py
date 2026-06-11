@@ -444,6 +444,7 @@ class MpesArpesInstrumentElectronanalyzerAngularN_resolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-angularn-resolution-resolution-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
@@ -481,6 +482,7 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-transformations-analyzer-rotation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Rotation about the analyzer lens axis. Its zero reference is "
             "defined such that the angular0 axis is increasing towards the "
@@ -545,6 +547,7 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-transformations-analyzer-elevation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Elevation of the effective analyzer acceptance area, e.g. realized "
             "by deflectors, or as one angle in a TOF detector. If a resolved "
@@ -606,6 +609,7 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-transformations-analyzer-dispersion-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "In-plane analyzer coordinate along a dispersive direction, e.g. "
             "along an analyzer slit. If a resolved angle, place the calibrated "
@@ -700,6 +704,7 @@ class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-collectioncolumn-angular-acceptance-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="angular_acceptance",
             type="NX_FLOAT",
@@ -744,6 +749,7 @@ class MpesArpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-energydispersion-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="diameter",
             type="NX_NUMBER",
@@ -872,6 +878,7 @@ class MpesArpesSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-transformations-sample-azimuth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Rotation about the z axis (azimuthal rotation within the sample plane)."
         ),
@@ -931,6 +938,7 @@ class MpesArpesSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-transformations-offset-azimuth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Offset of azimuthal rotation."),
         a_nexus_field=NeXusField(
             name="offset_azimuth",
@@ -988,6 +996,7 @@ class MpesArpesSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-transformations-sample-tilt-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Rotation about the x axis (typically a manipulator tilt)."),
         a_nexus_field=NeXusField(
             name="sample_tilt",
@@ -1045,6 +1054,7 @@ class MpesArpesSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-transformations-offset-tilt-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Offset of tilt rotation."),
         a_nexus_field=NeXusField(
             name="offset_tilt",
@@ -1102,6 +1112,7 @@ class MpesArpesSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-transformations-sample-polar-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Rotation about the y axis (typically the long manipulator axis)."
         ),
@@ -1161,6 +1172,7 @@ class MpesArpesSampleTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-sample-transformations-offset-polar-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Offset of polar rotation."),
         a_nexus_field=NeXusField(
             name="offset_polar",
@@ -1307,6 +1319,7 @@ class MpesArpesData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Values on the energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -1339,6 +1352,7 @@ class MpesArpesData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular0-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Trace of the first angular axis."),
         a_nexus_field=NeXusField(
             name="angular0",
@@ -1354,6 +1368,7 @@ class MpesArpesData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular1-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Trace of the second axis. Could be linked from the respective "
             "``@reference`` field."

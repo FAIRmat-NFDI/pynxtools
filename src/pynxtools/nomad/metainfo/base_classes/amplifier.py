@@ -164,6 +164,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-crosstalk-factor-field"
         ],
         dimensionality="[length] ** 2",
+        unit="db",
         description=(
             "The unwanted coupling between different channels (if active >1). In "
             "ideal amplifier, channels are independent of each other, But due to "
@@ -201,6 +202,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The spectrum of frequency it can amplify, from its lowest to "
             "highest frequency limits. If it is difference of the frequencies, "
@@ -221,6 +223,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-center-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The frequency in the middle of the bandwidth."),
         a_nexus_field=NeXusField(
             name="center_frequency",
@@ -236,6 +239,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-lower-cutoff-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The lower frequency point of the bandwidth where gain drops "
             "significantly (e.g., -3dB point)."
@@ -254,6 +258,7 @@ class Amplifier(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXamplifier.html#nxamplifier-upper-cutoff-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The upper frequency point of the bandwidth where gain drops "
             "significantly (e.g., -3dB point)."

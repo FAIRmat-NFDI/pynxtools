@@ -278,6 +278,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-temperature-range-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "The temperature range of the piezo material. This field is "
             "expecting a range of temperatures in an array [min temperature, max "
@@ -297,6 +298,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-glass-transition-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "The range of temperature where a piezoelectric hard material "
             "transforms into the viscous state."

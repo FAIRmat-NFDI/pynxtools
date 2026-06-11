@@ -119,6 +119,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance from sample. Note, it is recommended to use "
             "NXtransformations instead."
@@ -137,6 +138,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=(
             "Energy carried by each particle of the beam on entering the given "
@@ -159,6 +161,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "The energy spread FWHM for the corresponding energy(ies) in "
             "incident_energy. The usage of this field should follow that of "
@@ -178,6 +181,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-weights-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Relative weights of the corresponding energies in "
             "``incident_energy``. The usage of this field should follow that of "
@@ -197,6 +201,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=(
             "Energy carried by each particle of the beam on leaving the given location"
@@ -215,6 +220,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-energy-transfer-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Change in particle energy caused by the beamline component"),
         a_nexus_field=NeXusField(
@@ -231,6 +237,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "In the case of a monochromatic beam this is the scalar wavelength. "
             "Several other use cases are permitted, depending on the presence or "
@@ -286,6 +293,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-wavelength-spread-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The wavelength spread FWHM for the corresponding wavelength(s) in "
@@ -308,6 +316,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-beam-divergence-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*"],
         description=(
             "Beam crossfire in degrees parallel to the laboratory X axis The "
@@ -332,6 +341,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-extent-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         description=(
             "Size of the beam entering this component. Note this represents a "
@@ -355,6 +365,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Wavelength on leaving beamline component"),
         a_nexus_field=NeXusField(
@@ -452,6 +463,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-wavelength-spread-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Wavelength spread FWHM of beam leaving this component"),
         a_nexus_field=NeXusField(
@@ -468,6 +480,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-beam-divergence-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 2],
         description=("Divergence FWHM of beam leaving this component"),
         a_nexus_field=NeXusField(
@@ -484,6 +497,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-flux-field"
         ],
         dimensionality="1 / [time] / [length] ** 2",
+        unit="1 / second / m ** 2",
         shape=["*"],
         description=("flux incident on beam plane area"),
         a_nexus_field=NeXusField(
@@ -500,6 +514,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Energy of a single pulse at the given location."),
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -515,6 +530,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-average-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         description=("Average power at the at the given location."),
         a_nexus_field=NeXusField(
             name="average_power",
@@ -530,6 +546,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-fluence-field"
         ],
         dimensionality="[mass] / [time] ** 2",
+        unit="mJ/cm^2",
         description=("Incident energy fluence at the given location."),
         a_nexus_field=NeXusField(
             name="fluence",
@@ -545,6 +562,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-pulse-duration-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("FWHM duration of the pulses at the given location."),
         a_nexus_field=NeXusField(
             name="pulse_duration",
@@ -560,6 +578,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-pulse-delay-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Delay time between two pulses of a pulsed beam."),
         a_nexus_field=NeXusField(
             name="pulse_delay",
@@ -613,6 +632,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-frog-delays-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Horizontal axis of a FROG trace, i.e. delay. This is to be used for "
@@ -633,6 +653,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-frog-frequencies-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         shape=["*"],
         description=(
             "Vertical axis of a FROG trace, i.e. frequency. This is to be used "
@@ -666,6 +687,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-chirp-gdd-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Group delay dispersion of the pulse for linear chirp"),
         a_nexus_field=NeXusField(
             name="chirp_GDD",
@@ -737,6 +759,7 @@ class BeamTransformations(Transformations):
         ],
         variable=True,
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Direction of beam vector, its value is ignored. If missing, then "
             "the beam direction is defined as [0,0,1] and passes through the "
@@ -808,6 +831,7 @@ class BeamTransformations(Transformations):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-transformations-reference-plane-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Direction of normal to reference plane used to measure azimuth "
             "relative to the beam, its value is ignored. This also defines the "

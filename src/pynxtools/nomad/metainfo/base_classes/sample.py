@@ -310,6 +310,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Sample temperature. This could be a scanned variable"),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -325,6 +326,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-electric-field-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         shape=["*"],
         description=("Applied electric field"),
         a_nexus_field=NeXusField(
@@ -413,6 +415,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         shape=["*"],
         description=("Applied pressure"),
         a_nexus_field=NeXusField(
@@ -429,6 +432,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-changer-position-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Sample changer position"),
         a_nexus_field=NeXusField(
             name="changer_position",
@@ -444,6 +448,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-abc-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=("Crystallography unit cell parameters a, b, and c"),
         a_nexus_field=NeXusField(
@@ -460,6 +465,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-alphabetagamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[3],
         description=("Crystallography unit cell parameters alpha, beta, and gamma"),
         a_nexus_field=NeXusField(
@@ -476,6 +482,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 6],
         description=("Unit cell parameters (lengths and angles)"),
         a_nexus_field=NeXusField(
@@ -492,6 +499,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=("Volume of the unit cell"),
         a_nexus_field=NeXusField(
@@ -508,6 +516,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-orientation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[3],
         description=(
             "This will follow the Busing-Levy convention: W. R. Busing and H. A. "
@@ -564,6 +573,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-mass-field"
         ],
         dimensionality="[mass]",
+        unit="kilogram",
         shape=["*"],
         description=("Mass of sample"),
         a_nexus_field=NeXusField(
@@ -580,6 +590,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         shape=["*"],
         description=("Density of sample"),
         a_nexus_field=NeXusField(
@@ -596,6 +607,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-relative-molecular-mass-field"
         ],
         dimensionality="[mass]",
+        unit="kilogram",
         shape=["*"],
         description=("Relative Molecular Mass of sample"),
         a_nexus_field=NeXusField(
@@ -740,6 +752,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-concentration-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         shape=["*"],
         description=("Concentration of each component"),
         a_nexus_field=NeXusField(
@@ -770,6 +783,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-scattering-length-density-field"
         ],
         dimensionality="1 / [length] ** 2",
+        unit="1 / m ** 2",
         shape=["*"],
         description=("Scattering length density of each component"),
         a_nexus_field=NeXusField(
@@ -846,6 +860,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-path-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Path length through sample/can for simple case when it does not "
             "vary with scattering direction"
@@ -864,6 +879,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-path-length-window-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Thickness of a beam entry/exit window on the can (mm) - assumed "
             "same for entry and exit"
@@ -882,6 +898,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("sample thickness"),
         a_nexus_field=NeXusField(
             name="thickness",
@@ -924,6 +941,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Optional rotation angle for the case when the powder diagram has "
             "been obtained through an omega-2theta scan like from a traditional "
@@ -944,6 +962,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-x-translation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Translation of the sample along the X-direction of the laboratory "
             "coordinate system Note, it is recommended to use NXtransformations "
@@ -963,6 +982,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Translation of the sample along the Z-direction of the laboratory "
             "coordinate system. Note, it is recommended to use NXtransformations "

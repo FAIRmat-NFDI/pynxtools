@@ -142,6 +142,7 @@ class Directtof(Tofraw):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-pre-sample-flightpath-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the flight path before the sample position. This can be "
             "determined by a chopper, by the moderator, or the source itself. In "
@@ -238,6 +239,7 @@ class DirecttofInstrumentFermiChopper(FermiChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-fermi-chopper-rotation-speed-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("chopper rotation speed"),
         a_nexus_field=NeXusField(
             name="rotation_speed",
@@ -253,6 +255,7 @@ class DirecttofInstrumentFermiChopper(FermiChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-fermi-chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -287,6 +290,7 @@ class DirecttofInstrumentDiskChopper(DiskChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-disk-chopper-rotation-speed-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("chopper rotation speed"),
         a_nexus_field=NeXusField(
             name="rotation_speed",
@@ -302,6 +306,7 @@ class DirecttofInstrumentDiskChopper(DiskChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-disk-chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",

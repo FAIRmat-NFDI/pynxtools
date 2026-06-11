@@ -78,6 +78,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "A direction vector which is parallel to the cylinder/cone axis and "
@@ -100,6 +101,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Radius of the cylinder if all have the same radius."),
         a_nexus_field=NeXusField(
             name="radius",
@@ -115,6 +117,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-radii-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Radii of the cylinder."),
         a_nexus_field=NeXusField(
@@ -131,6 +134,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-upper-cap-radii-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Radii of the upper circular cap. This field, combined with "
@@ -151,6 +155,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-lower-cap-radii-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Radii of the upper circular cap. This field, combined with "
@@ -171,6 +176,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-lateral-surface-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("Lateral surface area of each cylinder."),
         a_nexus_field=NeXusField(
@@ -187,6 +193,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-upper-cap-surface-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("Area of the upper cap of each cylinder."),
         a_nexus_field=NeXusField(
@@ -203,6 +210,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-lower-cap-surface-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=("Area of the lower cap of each cylinder."),
         a_nexus_field=NeXusField(
@@ -219,6 +227,7 @@ class CgCylinder(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_cylinder.html#nxcg_cylinder-total-surface-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=(
             "Sum of upper and lower cap area and lateral surface area of each cylinder."

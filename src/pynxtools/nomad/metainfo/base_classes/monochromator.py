@@ -168,6 +168,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("wavelength selected"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -183,6 +184,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-error-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("wavelength standard deviation"),
         a_nexus_field=NeXusField(
             name="wavelength_error",
@@ -199,6 +201,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-errors-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("wavelength standard deviation"),
         a_nexus_field=NeXusField(
             name="wavelength_errors",
@@ -214,6 +217,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -229,6 +233,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-error-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy standard deviation"),
         a_nexus_field=NeXusField(
             name="energy_error",
@@ -245,6 +250,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-errors-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy standard deviation"),
         a_nexus_field=NeXusField(
             name="energy_errors",
@@ -260,6 +266,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-dispersion-field"
         ],
         dimensionality="[mass] * [length] / [time] ** 2",
+        unit="eV/mm",
         description=("Energy dispersion at the exit slit."),
         a_nexus_field=NeXusField(
             name="energy_dispersion",
@@ -275,6 +282,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-dispersion-field"
         ],
         dimensionality="dimensionless",
+        unit="nm/mm",
         description=("Wavelength dispersion at the exit slit."),
         a_nexus_field=NeXusField(
             name="wavelength_dispersion",

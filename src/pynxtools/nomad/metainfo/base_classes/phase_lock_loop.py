@@ -133,6 +133,7 @@ class PhaseLockLoop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-center-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The center frequency of the PLL is the middle frequency of the "
             "PLL's operating range."
@@ -151,6 +152,7 @@ class PhaseLockLoop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-frequency-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The frequency bandwidth of the PLL is where it responds or is "
             "stable. If phase difference (also called phase error) is calculated "
@@ -170,6 +172,7 @@ class PhaseLockLoop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-phase-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The phase bandwidth of the PLL is where it responds or is stable. "
             "If phase difference (also called phase error) is calculated from "
@@ -189,6 +192,7 @@ class PhaseLockLoop(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-frequency-step-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The frequency step size of the PLL determines the resolution of "
             "frequency changes."
@@ -259,6 +263,7 @@ class PhaseLockLoopHardware(Fabrication):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-hardware-order-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Order of the PLL. This is characteristic of circuit design and is "
             "defined as the number of roots of characteristics polynomial of the "
@@ -302,6 +307,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-phase-detector-reference-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The input reference frequency to the PLL through the component "
             "Phase-detector."
@@ -320,6 +326,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-phase-detector-frequency-shift-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "Measured or target shift in oscillation from the VCO. relative to "
             "the reference signal."
@@ -338,6 +345,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-phase-detector-reference-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Reference phase of the input signal to the phase detector."),
         a_nexus_field=NeXusField(
             name="reference_phase",
@@ -353,6 +361,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-phase-detector-phase-error-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Measured phase error (also called phase difference) between the "
             "reference signal and the VCO output."
@@ -371,6 +380,7 @@ class PhaseLockLoopPhaseDetector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-phase-detector-kp-coefficient-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current] / [angle]",
+        unit="V/rad",
         description=(
             "The gain coefficient of the phase detector which determines how "
             "much the output voltage changes in response to a phase difference "
@@ -414,6 +424,7 @@ class PhaseLockLoopLoopFilter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-loop-filter-kf-coefficient-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The Kf coefficient, called loop filter gain, determines the gain of "
             "the loop filter circuit in the PLL."
@@ -456,6 +467,7 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-voltage-controlled-oscillator-output-frequency-range-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The output frequency range (written in an array of frequencies as "
             "[min, max]) of the VCO which is the range of frequencies it can "
@@ -476,6 +488,7 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-voltage-controlled-oscillator-kn-coefficient-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The Kn coefficient, called the input-output frequency ratio, "
             "relates the input frequency to the output frequency of the VCO. "

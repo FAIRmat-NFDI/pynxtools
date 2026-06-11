@@ -170,6 +170,7 @@ class Snsevent(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-duration-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="duration",
             type="NX_FLOAT",
@@ -232,6 +233,7 @@ class Snsevent(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-proton-charge-field"
         ],
         dimensionality="[current] * [time]",
+        unit="coulomb",
         a_nexus_field=NeXusField(
             name="proton_charge",
             type="NX_FLOAT",
@@ -294,6 +296,7 @@ class Snsevent(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-total-counts-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="total_counts",
             type="NX_UINT",
@@ -308,6 +311,7 @@ class Snsevent(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-total-uncounted-counts-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="total_uncounted_counts",
             type="NX_UINT",
@@ -475,6 +479,7 @@ class SnseventDaslogsLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-log-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time",
@@ -1038,6 +1043,7 @@ class SnseventInstrumentSns(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-sns-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         a_nexus_field=NeXusField(
             name="frequency",
             type="NX_FLOAT",
@@ -1167,6 +1173,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
@@ -1196,6 +1203,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
@@ -1237,6 +1245,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-event-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="event_time_of_flight",
@@ -1265,6 +1274,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -1280,6 +1290,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-pulse-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_time",
@@ -1307,6 +1318,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-x-pixel-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="x_pixel_offset",
@@ -1322,6 +1334,7 @@ class SnseventInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-y-pixel-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="y_pixel_offset",
@@ -1403,6 +1416,7 @@ class SnseventInstrumentDetectorOriginOrientation(Orientation):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-orientation-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
@@ -1484,6 +1498,7 @@ class SnseventInstrumentDetectorOriginShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-shape-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="size",
@@ -1517,6 +1532,7 @@ class SnseventInstrumentDetectorOriginTranslation(Translation):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-translation-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
@@ -1552,6 +1568,7 @@ class SnseventInstrumentDiskChopper(DiskChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-disk-chopper-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1596,6 +1613,7 @@ class SnseventInstrumentModerator(Moderator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-moderator-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1610,6 +1628,7 @@ class SnseventInstrumentModerator(Moderator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-moderator-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
@@ -1690,6 +1709,7 @@ class SnseventInstrumentAperture(Aperture):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-x-pixel-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="x_pixel_offset",
             type="NX_FLOAT",
@@ -1770,6 +1790,7 @@ class SnseventInstrumentApertureOriginOrientation(Orientation):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-orientation-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
@@ -1851,6 +1872,7 @@ class SnseventInstrumentApertureOriginShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-shape-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="size",
@@ -1884,6 +1906,7 @@ class SnseventInstrumentApertureOriginTranslation(Translation):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-translation-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
@@ -1919,6 +1942,7 @@ class SnseventInstrumentAttenuator(Attenuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-attenuator-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1976,6 +2000,7 @@ class SnseventInstrumentCrystal(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -2070,6 +2095,7 @@ class SnseventInstrumentCrystalOriginOrientation(Orientation):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-orientation-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
@@ -2151,6 +2177,7 @@ class SnseventInstrumentCrystalOriginShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-shape-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="size",
@@ -2184,6 +2211,7 @@ class SnseventInstrumentCrystalOriginTranslation(Translation):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-translation-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
@@ -2233,6 +2261,7 @@ class SnseventMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-monitor-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -2260,6 +2289,7 @@ class SnseventMonitor(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-monitor-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",

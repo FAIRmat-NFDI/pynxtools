@@ -98,6 +98,7 @@ class Substance(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsubstance.html#nxsubstance-molecular-mass-field"
         ],
         dimensionality="[mass] / [substance]",
+        unit="kilogram / mol",
         description=("Molecular mass of the substance"),
         a_nexus_field=NeXusField(
             name="molecular_mass",

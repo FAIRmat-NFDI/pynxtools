@@ -419,6 +419,7 @@ class SqomData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qx-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         shape=["*"],
         description=("Positions for the first dimension of Q"),
         a_nexus_field=NeXusField(
@@ -435,6 +436,7 @@ class SqomData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qy-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         shape=["*"],
         description=("Positions for the the second dimension of Q"),
         a_nexus_field=NeXusField(
@@ -451,6 +453,7 @@ class SqomData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qz-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         shape=["*"],
         description=("Positions for the the third dimension of Q"),
         a_nexus_field=NeXusField(
@@ -467,6 +470,7 @@ class SqomData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-en-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Values for the energy transfer for each point"),
         a_nexus_field=NeXusField(

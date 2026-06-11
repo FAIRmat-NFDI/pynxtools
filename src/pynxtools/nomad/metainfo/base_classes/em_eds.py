@@ -201,6 +201,7 @@ class EmEdsIndexingSummary(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Accumulated counts"),
         a_nexus_field=NeXusField(
@@ -231,6 +232,7 @@ class EmEdsIndexingSummary(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -314,6 +316,7 @@ class EmEdsIndexingPeakAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-range-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=[2],
         description=(
             "Associated lower :math:`[e_{min}, e_{max}]` bounds of the energy "
@@ -333,6 +336,7 @@ class EmEdsIndexingPeakAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Theoretical energy of the line according to IUPAC."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -445,6 +449,7 @@ class EmEdsIndexingImage(Image):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-energy-range-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=[2],
         description=(
             "Associated :math:`[e_{min}, e_{max}]` bounds of the energy range "
@@ -500,6 +505,7 @@ class EmEdsIndexingImageProcess(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-weight-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "A list of weights by how much the intensity of each peak "
             "contributes to the intensity of the EDS map."

@@ -105,6 +105,7 @@ class MicrostructureSlipSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-miller-plane-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Array of Miller indices which describe the crystallographic planes."
@@ -123,6 +124,7 @@ class MicrostructureSlipSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-miller-direction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Array of Miller or Miller-Bravais indices that describe the "
@@ -142,6 +144,7 @@ class MicrostructureSlipSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-is-specific-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "For each slip system a marker whether the Miller indices refer to a "

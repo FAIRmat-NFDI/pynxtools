@@ -107,6 +107,7 @@ class CgTetrahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_tetrahedron.html#nxcg_tetrahedron-face-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*", 4],
         description=("Area of each of the four triangular faces of each tetrahedron."),
         a_nexus_field=NeXusField(
@@ -123,6 +124,7 @@ class CgTetrahedron(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_tetrahedron.html#nxcg_tetrahedron-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 6],
         description=("Length of each edge of each tetrahedron."),
         a_nexus_field=NeXusField(

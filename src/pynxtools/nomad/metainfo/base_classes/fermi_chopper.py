@@ -106,6 +106,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-rotation-speed-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("chopper rotation speed"),
         a_nexus_field=NeXusField(
             name="rotation_speed",
@@ -121,6 +122,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("radius of chopper"),
         a_nexus_field=NeXusField(
             name="radius",
@@ -136,6 +138,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-slit-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("width of an individual slit"),
         a_nexus_field=NeXusField(
             name="slit",
@@ -151,6 +154,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-r-slit-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("radius of curvature of slits"),
         a_nexus_field=NeXusField(
             name="r_slit",
@@ -166,6 +170,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-number-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("number of slits"),
         a_nexus_field=NeXusField(
             name="number",
@@ -181,6 +186,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("input beam height"),
         a_nexus_field=NeXusField(
             name="height",
@@ -196,6 +202,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("input beam width"),
         a_nexus_field=NeXusField(
             name="width",
@@ -211,6 +218,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "distance. Note, it is recommended to use NXtransformations instead."
         ),
@@ -228,6 +236,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Wavelength transmitted by chopper"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -243,6 +252,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",

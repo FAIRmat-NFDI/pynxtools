@@ -266,6 +266,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-nuclide-whitelist-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Matrix of nuclides representing how iontypes should be accounted "
@@ -308,6 +309,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-grid-resolution-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Array of edge lengths of the cubic cells used for discretizing the "
@@ -329,6 +331,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-kernel-size-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Half the width of a :math:`{(2 \\cdot n + 1)}^3` cubic kernel of "
             "cubic voxel beyond which the Gaussian Ansatz function will be "
@@ -349,6 +352,7 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-kernel-variance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Array of variance values :math:`\\sigma` of the Gaussian Ansatz "
@@ -492,6 +496,7 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-edge-threshold-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The ion-to-surface distance that is used in the analyses of "
             "features to identify whether these are laying inside the dataset or "
@@ -955,6 +960,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-number-of-iterations-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("How many times should the DCOM and mesh refinement be applied?"),
         a_nexus_field=NeXusField(
             name="number_of_iterations",
@@ -970,6 +976,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-target-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Array of decreasing positive not smaller than one nanometer real "
@@ -991,6 +998,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-target-dcom-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Array of decreasing positive not smaller than one nanometer real "
@@ -1017,6 +1025,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-target-smoothing-step-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Array of integers which specify for each DCOM step how many times "
@@ -1139,6 +1148,7 @@ class ApmParaprobeNanochemConfigOned_profileID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-roi-cylinder-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "For each ROI, how high (projected onto the cylinder axis) should "
             "the cylindrical ROI be if ROIs are placed at triangles of the "
@@ -1158,6 +1168,7 @@ class ApmParaprobeNanochemConfigOned_profileID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-roi-cylinder-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "For each ROI, how wide (in radius) should the cylindrical ROI be if "
             "ROIs are placed at triangles of the feature mesh."
@@ -1230,6 +1241,7 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylind
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -1258,6 +1270,7 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylind
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="height",
@@ -1273,6 +1286,7 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylind
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-radii-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="radii",

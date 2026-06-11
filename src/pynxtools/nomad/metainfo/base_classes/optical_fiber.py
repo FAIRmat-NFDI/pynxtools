@@ -154,6 +154,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-dispersion-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Spectrum-dependent (or refractive index-dependent) dispersion of "
@@ -173,6 +174,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Length of the fiber."),
         a_nexus_field=NeXusField(
             name="length",
@@ -223,6 +225,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-transfer-rate-field"
         ],
         dimensionality="[information] / [time]",
+        unit="GB/s",
         description=("Transfer rate of the fiber (in GB per second)."),
         a_nexus_field=NeXusField(
             name="transfer_rate",
@@ -238,6 +241,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-numerical-aperture-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Numerical aperture (NA) of the fiber."),
         a_nexus_field=NeXusField(
             name="numerical_aperture",
@@ -253,6 +257,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-attenuation-field"
         ],
         dimensionality="[information] / [length]",
+        unit="dB/km",
         shape=["*"],
         description=(
             "Wavelength-dependent attenuation of the fiber (specify in dB/km)."
@@ -286,6 +291,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-power-loss-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Power loss of the fiber in percentage."),
         a_nexus_field=NeXusField(
             name="power_loss",
@@ -301,6 +307,7 @@ class OpticalFiber(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-acceptance-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Acceptance angle of the fiber."),
         a_nexus_field=NeXusField(
             name="acceptance_angle",
@@ -360,6 +367,7 @@ class OpticalFiberCore(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-core-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Core diameter of the fiber (e.g. given in micrometer)."),
         a_nexus_field=NeXusField(
             name="diameter",
@@ -375,6 +383,7 @@ class OpticalFiberCore(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-core-index-of-refraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the fiber. Specify at given "
@@ -429,6 +438,7 @@ class OpticalFiberCladding(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-cladding-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Clad diameter of the fiber (e.g. given in micrometer)."),
         a_nexus_field=NeXusField(
             name="diameter",
@@ -444,6 +454,7 @@ class OpticalFiberCladding(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-cladding-index-of-refraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the fiber. Specify at given "
@@ -498,6 +509,7 @@ class OpticalFiberCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-coating-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Outer diameter of the fiber (e.g. given in micrometer)."),
         a_nexus_field=NeXusField(
             name="diameter",

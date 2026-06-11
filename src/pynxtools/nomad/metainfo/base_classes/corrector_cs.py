@@ -621,6 +621,7 @@ class CorrectorCsTableauID(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-tilt-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "The outer tilt angle of the beam in tableau acquisition. TODO: The "
@@ -642,6 +643,7 @@ class CorrectorCsTableauID(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-exposure-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("The exposure time of single tilt images."),
         a_nexus_field=NeXusField(
@@ -658,6 +660,7 @@ class CorrectorCsTableauID(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-magnification-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The factor of enlargement of the apparent size, not the physical "

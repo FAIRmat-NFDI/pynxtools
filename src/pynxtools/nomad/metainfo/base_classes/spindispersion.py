@@ -114,6 +114,7 @@ class Spindispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-figure-of-merit-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Figure of merit of the spin detector"),
         a_nexus_field=NeXusField(
             name="figure_of_merit",
@@ -129,6 +130,7 @@ class Spindispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-shermann-function-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Effective Shermann function, calibrated spin selectivity factor"),
         a_nexus_field=NeXusField(
             name="shermann_function",
@@ -144,6 +146,7 @@ class Spindispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-scattering-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Energy of the spin-selective scattering"),
         a_nexus_field=NeXusField(
             name="scattering_energy",
@@ -159,6 +162,7 @@ class Spindispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspindispersion.html#nxspindispersion-scattering-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angle of the spin-selective scattering"),
         a_nexus_field=NeXusField(
             name="scattering_angle",

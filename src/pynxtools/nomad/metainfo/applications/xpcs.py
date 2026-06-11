@@ -268,6 +268,7 @@ class XpcsData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-frame-sum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Two-dimensional summation along the frames stack. sum of intensity "
             'v. time (in the units of "frames")'
@@ -286,6 +287,7 @@ class XpcsData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-frame-average-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Two-dimensional average along the frames stack. average intensity "
             'v. time (in the units of "frames")'
@@ -304,6 +306,7 @@ class XpcsData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "normalized intensity auto-correlation function, see Lumma, Rev. "
             "Sci. Instr. (2000), Eq 1 .. math:: g_2(\\boldsymbol Q,t) = \\frac{ "
@@ -365,6 +368,7 @@ class XpcsData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-derr-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "error values for the :math:`g_2` values. The derivation of the "
             "error is left up to the implemented code. Symmetric error will be "
@@ -431,6 +435,7 @@ class XpcsData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-delay-difference-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "delay_difference (also known as delay or lag step) This is "
             'quantized difference so that the "step" between two consecutive '
@@ -609,6 +614,7 @@ class XpcsTwotime(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "frame weighted average along the diagonal direction in "
             "``two_time_corr_func`` The data format and description should be "
@@ -692,6 +698,7 @@ class XpcsTwotime(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-err-from-two-time-corr-func-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "error values for the :math:`g_2` values. The derivation of the "
             "error is left up to the implemented code. Symmetric error will be "
@@ -732,6 +739,7 @@ class XpcsTwotime(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-partials-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "subset of frame weighted average along the diagonal direction in "
             "``two_time_corr_func`` Time slicing along the diagonal can be very "
@@ -788,6 +796,7 @@ class XpcsTwotime(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-err-from-two-time-corr-func-partials-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "error values for the :math:`g_2` values. The derivation of the "
             "error is left up to the implemented code. Symmetric error will be "
@@ -883,6 +892,7 @@ class XpcsInstrumentIncidentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Incident beam line energy (either keV or eV)."),
         a_nexus_field=NeXusField(
@@ -899,6 +909,7 @@ class XpcsInstrumentIncidentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Spread of incident beam line energy (either keV or eV). This "
             "quantity is otherwise known as the energy resolution, which is "
@@ -976,6 +987,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Distance between sample and detector."),
         a_nexus_field=NeXusField(
             name="distance",
@@ -991,6 +1003,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-count-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("Exposure time of frames, s."),
         a_nexus_field=NeXusField(
@@ -1007,6 +1020,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-frame-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Exposure period (time between frame starts) of frames, s"),
         a_nexus_field=NeXusField(
             name="frame_time",
@@ -1022,6 +1036,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-beam-center-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Position of beam center, x axis, in detector's coordinates."),
         a_nexus_field=NeXusField(
             name="beam_center_x",
@@ -1037,6 +1052,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-beam-center-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Position of beam center, y axis, in detector's coordinates."),
         a_nexus_field=NeXusField(
             name="beam_center_y",
@@ -1052,6 +1068,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Length of pixel in x direction."),
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -1067,6 +1084,7 @@ class XpcsInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Length of pixel in y direction."),
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -1124,6 +1142,7 @@ class XpcsInstrumentMasks(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-dynamic-roi-map-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "roi index array or labeled array The values of this mask index (or "
             "map to) the :math:`Q` value from the the ``dynamic_q_list`` field. "
@@ -1145,6 +1164,7 @@ class XpcsInstrumentMasks(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-dynamic-q-list-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "1-D list of :math:`Q` values, one for each roi index value. List "
             "order is determined by the index value of the associated roi map "
@@ -1173,6 +1193,7 @@ class XpcsInstrumentMasks(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-dynamic-phi-list-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Array of :math:`\\varphi` value for each pixel. List order is "
             "determined by the index value of the associated roi map starting at "
@@ -1192,6 +1213,7 @@ class XpcsInstrumentMasks(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-static-roi-map-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "roi index array. The values of this mask index the :math:`|Q|` "
             "value from the the ``static_q_list`` field. The ``units`` attribute "
@@ -1211,6 +1233,7 @@ class XpcsInstrumentMasks(Note):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-masks-static-q-list-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=("1-D list of :math:`|Q|` values, 1 for each roi."),
         a_nexus_field=NeXusField(
             name="static_q_list",
@@ -1279,6 +1302,7 @@ class XpcsSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-sample-temperature-set-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Sample temperature setpoint, (C or K)."),
         a_nexus_field=NeXusField(
             name="temperature_set",
@@ -1294,6 +1318,7 @@ class XpcsSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Sample temperature actual, (C or K)."),
         a_nexus_field=NeXusField(
             name="temperature",

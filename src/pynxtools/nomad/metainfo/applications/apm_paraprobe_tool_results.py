@@ -196,6 +196,7 @@ class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-number-of-ions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_ions",
             type="NX_UINT",
@@ -210,6 +211,7 @@ class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="bitdepth",
             type="NX_UINT",
@@ -224,6 +226,7 @@ class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="mask",
@@ -325,6 +328,7 @@ class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-identifier-analysis-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="identifier_analysis",
             type="NX_UINT",
@@ -480,6 +484,7 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-total-elapsed-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="total_elapsed_time",
             type="NX_FLOAT",
@@ -494,6 +499,7 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-max-processes-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="max_processes",
             type="NX_UINT",
@@ -508,6 +514,7 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-max-threads-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="max_threads",
             type="NX_UINT",
@@ -522,6 +529,7 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-profiling-max-gpus-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="max_gpus",
             type="NX_UINT",
@@ -604,6 +612,7 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -631,6 +640,7 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -658,6 +668,7 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",

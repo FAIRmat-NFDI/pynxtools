@@ -94,6 +94,7 @@ class QuadrupoleMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadrupole_magnet.html#nxquadrupole_magnet-beamline-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Define position of beamline element relative to production target"
         ),
@@ -111,6 +112,7 @@ class QuadrupoleMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadrupole_magnet.html#nxquadrupole_magnet-set-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Current set on supply."),
         a_nexus_field=NeXusField(
             name="set_current",
@@ -159,6 +161,7 @@ class QuadrupoleMagnetReadCurrent(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadrupole_magnet.html#nxquadrupole_magnet-read-current-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",
@@ -197,6 +200,7 @@ class QuadrupoleMagnetReadVoltage(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadrupole_magnet.html#nxquadrupole_magnet-read-voltage-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="value",
             type="NX_CHAR",

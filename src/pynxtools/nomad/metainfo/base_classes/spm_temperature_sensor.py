@@ -89,6 +89,7 @@ class SpmTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("The obtained average temperature of the sensor."),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -104,6 +105,7 @@ class SpmTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-target-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "The target temperature of the sensor, which is the desired "
             "temperature to be maintained during the experiment."
@@ -122,6 +124,7 @@ class SpmTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-temp-offset-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "The offset temperature of the sensor, which will be added to "
             "obtained correct the measured temperature."
@@ -254,6 +257,7 @@ class SpmTemperatureSensorData(Data):
         ],
         variable=True,
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("Temperature data collected during the scan."),
         a_nexus_field=NeXusField(
             name="DATA",

@@ -173,6 +173,7 @@ class SpmScanControl(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_control.html#nxspm_scan_control-scan-time-start-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The start time of the scan."),
         a_nexus_field=NeXusField(
             name="scan_time_start",
@@ -188,6 +189,7 @@ class SpmScanControl(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_control.html#nxspm_scan_control-scan-time-end-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The end time of the scan."),
         a_nexus_field=NeXusField(
             name="scan_time_end",
@@ -242,6 +244,7 @@ class SpmScanControl(Object):
         ],
         variable=True,
         dimensionality="[length]",
+        unit="m",
         description=("Define the accuracy of the scan probe."),
         a_nexus_field=NeXusField(
             name="accuracyN",

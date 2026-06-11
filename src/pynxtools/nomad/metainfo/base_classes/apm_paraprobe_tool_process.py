@@ -126,6 +126,7 @@ class ApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_process.html#nxapm_paraprobe_tool_process-window-number-of-ions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of ions covered by the mask. By default, the total number of "
             "ions in the dataset."

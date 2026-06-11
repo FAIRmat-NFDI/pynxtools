@@ -228,6 +228,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDWindow(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-window-bitdepth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="bitdepth",
             type="NX_UINT",
@@ -242,6 +243,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDWindow(CsFilterBooleanMask):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-window-mask-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="mask",
             type="NX_UINT",
@@ -325,6 +327,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -340,6 +343,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The total number of cells/voxels of the grid."),
         a_nexus_field=NeXusField(
             name="cardinality",
@@ -385,6 +389,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-cell-dimensions-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "The unit cell dimensions according to the coordinate system defined "
@@ -404,6 +409,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-extent-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Number of unit cells along each of the d-dimensional base vectors. "
@@ -428,6 +434,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer which specifies the first index to be used for "
             "distinguishing identifiers for cells. Identifiers are defined "
@@ -450,6 +457,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-kernel-size-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[3],
         description=(
             "Halfwidth of the kernel about the central voxel. The shape of the "
@@ -484,6 +492,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-kernel-sigma-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "Standard deviation :math:`\\sigma_i` of the kernel in each "
@@ -504,6 +513,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-kernel-mu-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "Expectation value :math:`\\mu_i` of the kernel in each dimension in "
@@ -592,6 +602,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBox(CgHexahedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer which specifies the first index to be used for "
             "distinguishing hexahedra. Identifiers are defined either implicitly "
@@ -633,6 +644,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-vertex-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer which specifies the first index to be used for "
             "distinguishing identifiers for vertices. Identifiers are defined "
@@ -655,6 +667,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-face-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer which specifies the first index to be used for "
             "distinguishing identifiers for faces. Identifiers are defined "
@@ -677,6 +690,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[8, 3],
         description=(
             "Positions of the vertices. Users are encouraged to reduce the "
@@ -702,6 +716,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-faces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[6, 4],
         description=(
             "Array of identifiers from vertices which describe each face. The "
@@ -728,6 +743,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[36],
         description=(
             "Six equally formatted sextets chained together. For each sextett "
@@ -750,6 +766,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-number-of-boundaries-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many distinct boundaries are distinguished? Most grids "
             "discretize a cubic or cuboidal region. In this case six sides can "
@@ -787,6 +804,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-boundary-conditions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[6],
         description=(
             "The boundary conditions for each boundary: 0 - undefined 1 - open 2 "
@@ -857,6 +875,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_magn_SUFFIX(Da
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-scalar-field-magn-suffix-xdmf-xyz-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Center of mass positions of each voxel for rendering the scalar "
@@ -876,6 +895,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_magn_SUFFIX(Da
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-scalar-field-magn-suffix-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "XDMF topology for rendering in combination with xdmf_xyz the scalar "
@@ -938,6 +958,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_grad_SUFFIX(Da
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-scalar-field-grad-suffix-xdmf-xyz-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Center of mass positions of each voxel for rendering the scalar "
@@ -957,6 +978,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_grad_SUFFIX(Da
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-scalar-field-grad-suffix-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "XDMF topology for rendering in combination with xdmf_xyz the scalar "
@@ -1020,6 +1042,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -1103,6 +1126,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -1118,6 +1142,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -1132,6 +1157,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -1247,6 +1273,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Positions of the vertices. Users are encouraged to reduce the "
@@ -1270,6 +1297,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-faces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Array of identifiers from vertices which describe each face. The "
@@ -1296,6 +1324,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "A list of as many tuples of XDMF topology key, XDMF number of "
@@ -1316,6 +1345,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="area",
@@ -1331,6 +1361,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Array of edge length values. For each triangle the edge length is "
@@ -1351,6 +1382,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-interior-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 4],
         description=(
             "Array of interior angle values. For each triangle the angle is "
@@ -1372,6 +1404,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-center-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=("The center of mass of each triangle."),
         a_nexus_field=NeXusField(
@@ -1408,6 +1441,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-vertex-normal-normals-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=("Direction of each normal."),
         a_nexus_field=NeXusField(
@@ -1424,6 +1458,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-vertex-normal-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Qualifier how which specifically oriented normal to its primitive "
@@ -1463,6 +1498,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-face-normal-normals-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=("Direction of each normal."),
         a_nexus_field=NeXusField(
@@ -1479,6 +1515,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-face-normal-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Qualifier how which specifically oriented normal to its primitive "
@@ -1606,6 +1643,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-indices-triangle-cluster-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The identifier which the triangle_soup connectivity analysis "
@@ -1626,6 +1664,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-type-dict-keyword-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("The array of keywords of feature_type dictionary."),
         a_nexus_field=NeXusField(
@@ -1658,6 +1697,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-type-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The array of controlled keywords, need to be from "
@@ -1679,6 +1719,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-indices-feature-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("The explicit identifier of features."),
         a_nexus_field=NeXusField(
@@ -1764,6 +1805,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-indices-feature-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Explicit identifier of the feature a sub-set of the indices_feature "
@@ -1783,6 +1825,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=("Volume of the feature. NaN for non-watertight objects."),
         a_nexus_field=NeXusField(
@@ -1834,6 +1877,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-obb-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Edge length of the oriented bounding box from largest to smallest value."
@@ -1852,6 +1896,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-obb-aspect-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Oriented bounding box aspect ratio. YX versus ZY or second-largest "
@@ -1871,6 +1916,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-obb-center-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Position of the geometric center, which often is but not "
@@ -1916,6 +1962,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-obb-hexahedra-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="vertices",
@@ -1931,6 +1978,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-obb-hexahedra-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="xdmf_topology",
@@ -1946,6 +1994,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-obb-hexahedra-indices-feature-xdmf-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_feature_xdmf",
@@ -2013,6 +2062,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-objectid-polyhedron-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="vertices",
@@ -2041,6 +2091,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-objectid-polyhedron-face-normals-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="face_normals",
@@ -2056,6 +2107,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-objectid-polyhedron-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="xdmf_topology",
@@ -2071,6 +2123,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-objectid-polyhedron-xdmf-indices-feature-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="xdmf_indices_feature",
@@ -2086,6 +2139,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-objectid-polyhedron-ion-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Array of evaporation_id / identifier_ion which details which ions "
@@ -2138,6 +2192,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-composition-total-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Total (count) of ions inside or on the surface of the feature "
@@ -2179,6 +2234,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-composition-atom-charge-state-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="charge_state",
             type="NX_INT",
@@ -2193,6 +2249,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-composition-atom-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
@@ -2208,6 +2265,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-composition-atom-nuclide-list-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="nuclide_list",
@@ -2223,6 +2281,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-composition-atom-count-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Count or weight which, when divided by total, yields the "
@@ -2287,6 +2346,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-ion-multiplicity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The multiplicity whereby the ion position is accounted for "
@@ -2313,6 +2373,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-decorator-multiplicity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The multiplicity whereby the ion position is accounted for when the "
@@ -2354,6 +2415,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDInitialInterface(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-initial-interface-point-normal-form-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[4],
         description=(
             "The four parameter :math:`ax + by + cz + d = 0` which define the plane."
@@ -2422,6 +2484,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -2437,6 +2500,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -2451,6 +2515,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -2465,6 +2530,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="area",
@@ -2480,6 +2546,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Array of edge length values. For each triangle the edge length is "
@@ -2500,6 +2567,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-interior-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 4],
         description=(
             "Array of interior angle values. For each triangle the angle is "
@@ -2541,6 +2609,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -2556,6 +2625,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-number-of-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_vertices",
@@ -2571,6 +2641,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-number-of-faces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_faces",
             type="NX_UINT",
@@ -2585,6 +2656,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-index-offset-vertex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset_vertex",
             type="NX_INT",
@@ -2599,6 +2671,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-index-offset-edge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset_edge",
             type="NX_INT",
@@ -2613,6 +2686,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-index-offset-face-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset_face",
             type="NX_INT",
@@ -2627,6 +2701,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-indices-face-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_face",
@@ -2642,6 +2717,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="vertices",
@@ -2657,6 +2733,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-vertex-normal-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=("Direction of each vertex normal."),
         a_nexus_field=NeXusField(
@@ -2673,6 +2750,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-vertex-normal-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Qualifier which details how specifically oriented the face normal "
@@ -2706,6 +2784,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-face-normal-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=("Direction of each face normal."),
         a_nexus_field=NeXusField(
@@ -2722,6 +2801,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-face-normal-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Qualifier which details how specifically oriented the face normal "
@@ -2742,6 +2822,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-mesh-stateid-triangles-xdmf-topology-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="xdmf_topology",
@@ -2825,6 +2906,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -2840,6 +2922,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="cardinality",
             type="NX_POSINT",
@@ -2854,6 +2937,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-center-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Position of the geometric center, which often is but not "
@@ -2873,6 +2957,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-orientation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "The orientation of the ROI defined via a vector which points along "
@@ -2892,6 +2977,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-roi-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("XDMF support to enable coloring each ROI by its identifier."),
         a_nexus_field=NeXusField(
@@ -2908,6 +2994,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-edge-contact-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "XDMF support to enable coloring each ROI whether it has edge "
@@ -2927,6 +3014,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-number-of-atoms-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "XDMF support to enable coloring each ROI by its number of atoms."
@@ -2945,6 +3033,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-number-of-ions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("XDMF support to enable coloring each ROI by its number of ions."),
         a_nexus_field=NeXusField(
@@ -3022,6 +3111,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdgeRoiID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-rois-far-from-edge-roiid-signed-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Sorted in increasing order projected along the positive direction "
@@ -3041,6 +3131,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdgeRoiID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-rois-far-from-edge-roiid-nuclide-hash-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Hashvalue as defined in :ref:`NXatom`."),
         a_nexus_field=NeXusField(

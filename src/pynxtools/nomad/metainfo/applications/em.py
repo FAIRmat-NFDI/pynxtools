@@ -1091,6 +1091,7 @@ class EmSampleID(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "(Measured) sample thickness. The information is recorded to qualify "
             "if the beam used was likely able to shine through the specimen. For "
@@ -1345,6 +1346,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -1372,6 +1374,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -1399,6 +1402,7 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -1502,6 +1506,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -1535,6 +1540,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -1568,6 +1574,7 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -1677,6 +1684,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -1710,6 +1718,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -1743,6 +1752,7 @@ class EmSampleReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -1858,6 +1868,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -1891,6 +1902,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -1924,6 +1936,7 @@ class EmDetector_reference_frameID(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -4943,6 +4956,7 @@ class EmEmMeasurementEventID(EmEventData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-identifier-sample-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="identifier_sample",
             type="NX_CHAR",
@@ -5246,6 +5260,7 @@ class EmEmMeasurementEventIDImageIDImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -5274,6 +5289,7 @@ class EmEmMeasurementEventIDImageIDImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -5302,6 +5318,7 @@ class EmEmMeasurementEventIDImageIDImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -5330,6 +5347,7 @@ class EmEmMeasurementEventIDImageIDImage1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="complex",
@@ -5453,6 +5471,7 @@ class EmEmMeasurementEventIDImageIDImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -5481,6 +5500,7 @@ class EmEmMeasurementEventIDImageIDImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -5509,6 +5529,7 @@ class EmEmMeasurementEventIDImageIDImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -5684,6 +5705,7 @@ class EmEmMeasurementEventIDImageIDImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -5712,6 +5734,7 @@ class EmEmMeasurementEventIDImageIDImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -5740,6 +5763,7 @@ class EmEmMeasurementEventIDImageIDImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -5768,6 +5792,7 @@ class EmEmMeasurementEventIDImageIDImage3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
@@ -5945,6 +5970,7 @@ class EmEmMeasurementEventIDImageIDImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -5973,6 +5999,7 @@ class EmEmMeasurementEventIDImageIDImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -6001,6 +6028,7 @@ class EmEmMeasurementEventIDImageIDImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -6029,6 +6057,7 @@ class EmEmMeasurementEventIDImageIDImage4d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
@@ -6233,6 +6262,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -6261,6 +6291,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -6289,6 +6320,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -6317,6 +6349,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
@@ -6345,6 +6378,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_group",
@@ -6373,6 +6407,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-indices-image-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_image",
@@ -6496,6 +6531,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -6524,6 +6560,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -6552,6 +6589,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -6580,6 +6618,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
@@ -6608,6 +6647,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_group",
@@ -6636,6 +6676,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-indices-image-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_image",
@@ -6786,6 +6827,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-real-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
@@ -6814,6 +6856,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-imag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
@@ -6842,6 +6885,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -6870,6 +6914,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-complex-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
@@ -6898,6 +6943,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_group",
@@ -6926,6 +6972,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-indices-image-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_image",
@@ -7334,6 +7381,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -7362,6 +7410,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -7458,6 +7507,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -7486,6 +7536,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -7514,6 +7565,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -7610,6 +7662,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -7638,6 +7691,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
@@ -7666,6 +7720,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -7694,6 +7749,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -7790,6 +7846,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -7818,6 +7875,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-k-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
@@ -7846,6 +7904,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
@@ -7874,6 +7933,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -7902,6 +7962,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -7998,6 +8059,7 @@ class EmEmMeasurementEventIDSpectrumIDStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -8026,6 +8088,7 @@ class EmEmMeasurementEventIDSpectrumIDStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-indices-spectrum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_spectrum",
@@ -8054,6 +8117,7 @@ class EmEmMeasurementEventIDSpectrumIDStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -8318,6 +8382,7 @@ class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -8346,6 +8411,7 @@ class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-indices-spectrum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_spectrum",
@@ -8374,6 +8440,7 @@ class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
@@ -8402,6 +8469,7 @@ class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -8430,6 +8498,7 @@ class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -8526,6 +8595,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -8554,6 +8624,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-indices-spectrum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_spectrum",
@@ -8582,6 +8653,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-k-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
@@ -8610,6 +8682,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
@@ -8638,6 +8711,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -8666,6 +8740,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -8977,6 +9052,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-electron-source-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
@@ -8991,6 +9067,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-electron-source-extraction-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="extraction_voltage",
             type="NX_NUMBER",
@@ -9005,6 +9082,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-electron-source-emission-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         a_nexus_field=NeXusField(
             name="emission_current",
             type="NX_NUMBER",
@@ -9019,6 +9097,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-electron-source-filament-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         a_nexus_field=NeXusField(
             name="filament_current",
             type="NX_NUMBER",
@@ -9149,6 +9228,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-monochromatorid-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
@@ -10957,6 +11037,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnScanController(ScanController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-scan-controller-dwell-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="dwell_time",
             type="NX_NUMBER",
@@ -11124,6 +11205,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-ion-source-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="voltage",
             type="NX_NUMBER",
@@ -11284,6 +11366,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnScanController(ScanController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-scan-controller-dwell-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="dwell_time",
             type="NX_NUMBER",
@@ -11376,6 +11459,7 @@ class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-tilt1-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="tilt1",
             type="NX_NUMBER",
@@ -11390,6 +11474,7 @@ class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-tilt2-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="tilt2",
             type="NX_NUMBER",
@@ -11404,6 +11489,7 @@ class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-rotation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="rotation",
             type="NX_NUMBER",
@@ -11418,6 +11504,7 @@ class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-position-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="position",
@@ -11463,6 +11550,7 @@ class EmEmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-sample-heater-heater-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Nominal current of the heater."),
         a_nexus_field=NeXusField(
             name="heater_current",
@@ -11478,6 +11566,7 @@ class EmEmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-sample-heater-heater-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Nominal voltage of the heater."),
         a_nexus_field=NeXusField(
             name="heater_voltage",
@@ -11493,6 +11582,7 @@ class EmEmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-sample-heater-heater-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         a_nexus_field=NeXusField(
             name="heater_power",
             type="NX_NUMBER",
@@ -12040,6 +12130,7 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-gnomonic-reference-frame-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="x",
@@ -12068,6 +12159,7 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-gnomonic-reference-frame-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="y",
@@ -12096,6 +12188,7 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-gnomonic-reference-frame-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         a_nexus_field=NeXusField(
             name="z",
@@ -12471,6 +12564,7 @@ class EmRoiIDEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-number-of-scan-points-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_scan_points",
             type="NX_UINT",
@@ -12485,6 +12579,7 @@ class EmRoiIDEbsdIndexing(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-indexing-rate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="indexing_rate",
             type="NX_NUMBER",
@@ -12659,6 +12754,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfiguration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-configuration-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="dimensionality",
             type="NX_POSINT",
@@ -12699,6 +12795,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfiguration(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-configuration-disorientation-threshold-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="disorientation_threshold",
             type="NX_NUMBER",
@@ -12798,6 +12895,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-crystals-number-of-crystals-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_crystals",
             type="NX_UINT",
@@ -12812,6 +12910,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDCrystals(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-crystals-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -12856,6 +12955,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-interfaces-number-of-interfaces-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_interfaces",
             type="NX_UINT",
@@ -12870,6 +12970,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDInterfaces(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-interfaces-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -12914,6 +13015,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-triple-junctions-number-of-junctions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_junctions",
             type="NX_UINT",
@@ -12928,6 +13030,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDTripleJunctions(MicrostructureFeature):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-triple-junctions-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -12972,6 +13075,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDQuadrupleJunctions(MicrostructureFeatur
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-quadruple-junctions-number-of-junctions-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_junctions",
             type="NX_UINT",
@@ -12986,6 +13090,7 @@ class EmRoiIDEbsdIndexingMicrostructureIDQuadrupleJunctions(MicrostructureFeatur
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-microstructureid-quadruple-junctions-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="index_offset",
             type="NX_INT",
@@ -13145,6 +13250,7 @@ class EmRoiIDEbsdIndexingPhaseID(Phase):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-number-of-scan-points-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="number_of_scan_points",
             type="NX_UINT",
@@ -13177,6 +13283,7 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-unit-cell-a-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="a",
             type="NX_NUMBER",
@@ -13191,6 +13298,7 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-unit-cell-b-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="b",
             type="NX_NUMBER",
@@ -13205,6 +13313,7 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-unit-cell-c-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="c",
             type="NX_NUMBER",
@@ -13219,6 +13328,7 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-unit-cell-alpha-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="alpha",
             type="NX_NUMBER",
@@ -13233,6 +13343,7 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-unit-cell-beta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="beta",
             type="NX_NUMBER",
@@ -13247,6 +13358,7 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-unit-cell-gamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="gamma",
             type="NX_NUMBER",
@@ -13327,6 +13439,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfID(MicrostructureIpf):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-projection-direction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[3],
         a_nexus_field=NeXusField(
             name="projection_direction",
@@ -13410,6 +13523,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-data-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -13437,6 +13551,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-axis-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
@@ -13465,6 +13580,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-axis-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
@@ -13493,6 +13609,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-axis-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_z",
@@ -13616,6 +13733,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-axis-x-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
@@ -13644,6 +13762,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-axis-y-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
@@ -13764,6 +13883,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-configuration-kernel-halfwidth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="kernel_halfwidth",
             type="NX_NUMBER",
@@ -13790,6 +13910,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-configuration-resolution-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
@@ -13822,6 +13943,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDCharacteristics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-characteristics-texture-index-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="texture_index",
             type="NX_FLOAT",
@@ -13904,6 +14026,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -13932,6 +14055,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-varphi-one-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="varphi_one",
@@ -13960,6 +14084,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-capital-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="capital_phi",
@@ -13988,6 +14113,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-varphi-two-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="varphi_two",
@@ -14097,6 +14223,7 @@ class EmRoiIDEbsdIndexingRoi(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-data-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -14137,6 +14264,7 @@ class EmRoiIDEbsdIndexingRoi(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-axis-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
@@ -14165,6 +14293,7 @@ class EmRoiIDEbsdIndexingRoi(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-axis-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
@@ -14343,6 +14472,7 @@ class EmRoiIDEdsIndexingSummary(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-summary-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
@@ -14427,6 +14557,7 @@ class EmRoiIDEdsIndexingImage(Image):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-energy-range-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=[2],
         a_nexus_field=NeXusField(
             name="energy_range",
@@ -14510,6 +14641,7 @@ class EmRoiIDEdsIndexingImageImage2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",

@@ -224,6 +224,7 @@ class Aperture(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaperture.html#nxaperture-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The relevant dimension for the aperture, i.e. slit width, pinhole "
             "and iris diameter"

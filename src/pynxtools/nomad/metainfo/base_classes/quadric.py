@@ -69,6 +69,7 @@ class Quadric(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadric.html#nxquadric-parameters-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         shape=[10],
         description=(
             "Ten real values of the matrix that defines the quadric surface in "

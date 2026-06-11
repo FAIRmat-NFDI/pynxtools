@@ -204,6 +204,7 @@ class ApmRangingMassToChargeDistribution(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_ranging.html#nxapm_ranging-mass-to-charge-distribution-n-mass-to-charge-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of bins on the interval :math:`[{\\frac{m}{q}}_{min}, "
             "{\\frac{m}{q}}_{max}]`."
@@ -330,6 +331,7 @@ class ApmRangingPeakIdentification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_ranging.html#nxapm_ranging-peak-identification-number-of-ion-types-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "How many ion types are distinguished. If no ranging was performed, "
             "each ion is of the special unknown type. The iontype ID of this "
@@ -350,6 +352,7 @@ class ApmRangingPeakIdentification(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_ranging.html#nxapm_ranging-peak-identification-maximum-number-of-atoms-per-molecular-ion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Assumed maximum value that suffices to store all relevant molecular "
             "ions, even the most complicated ones that one can typically observe "

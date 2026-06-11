@@ -270,6 +270,7 @@ class SpectrumSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-0d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -300,6 +301,7 @@ class SpectrumSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -352,6 +354,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -382,6 +385,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
         a_nexus_field=NeXusField(
@@ -412,6 +416,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -464,6 +469,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -494,6 +500,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
         a_nexus_field=NeXusField(
@@ -524,6 +531,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
         a_nexus_field=NeXusField(
@@ -554,6 +562,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -606,6 +615,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -636,6 +646,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-k-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the slower dimension"),
         a_nexus_field=NeXusField(
@@ -666,6 +677,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
         a_nexus_field=NeXusField(
@@ -696,6 +708,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
         a_nexus_field=NeXusField(
@@ -726,6 +739,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -778,6 +792,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -808,6 +823,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
@@ -838,6 +854,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-indices-spectrum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Spectrum identifier"),
         a_nexus_field=NeXusField(
@@ -868,6 +885,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -920,6 +938,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -950,6 +969,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
@@ -980,6 +1000,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-indices-spectrum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Spectrum identifier"),
         a_nexus_field=NeXusField(
@@ -1010,6 +1031,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
         a_nexus_field=NeXusField(
@@ -1040,6 +1062,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
         a_nexus_field=NeXusField(
@@ -1070,6 +1093,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -1122,6 +1146,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*", "*", "*", "*"],
         description=("Counts"),
         a_nexus_field=NeXusField(
@@ -1152,6 +1177,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-indices-group-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
@@ -1182,6 +1208,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-indices-spectrum-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Spectrum identifier"),
         a_nexus_field=NeXusField(
@@ -1212,6 +1239,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-k-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the slower dimension"),
         a_nexus_field=NeXusField(
@@ -1242,6 +1270,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-j-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the slow dimension"),
         a_nexus_field=NeXusField(
@@ -1272,6 +1301,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-i-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Point coordinate along the fast dimension"),
         a_nexus_field=NeXusField(
@@ -1302,6 +1332,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(

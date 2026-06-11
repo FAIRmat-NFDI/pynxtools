@@ -302,6 +302,7 @@ class MonopdInstrumentCrystal(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-crystal-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("Optimum diffracted wavelength"),
         a_nexus_field=NeXusField(
@@ -337,6 +338,7 @@ class MonopdInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -402,6 +404,7 @@ class MonopdSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Optional rotation angle for the case when the powder diagram has "
             "been obtained through an omega-2theta scan like from a traditional "

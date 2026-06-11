@@ -153,6 +153,7 @@ class ApmParaprobeRangerResultsIontypesID(ApmParaprobeToolProcess):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-iontypes-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "The iontype (identifier) for each ion that was best matching, "

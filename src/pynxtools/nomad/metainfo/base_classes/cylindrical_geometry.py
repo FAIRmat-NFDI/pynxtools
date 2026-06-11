@@ -76,6 +76,7 @@ class CylindricalGeometry(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcylindrical_geometry.html#nxcylindrical_geometry-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "List of x,y,z coordinates for vertices. The origin of the "

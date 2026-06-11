@@ -161,6 +161,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-current-to-next-link-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "A matrix of indices_feature that specifies which named features "
@@ -181,6 +182,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-current-to-next-link-type-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "For each link/pair in current_to_next a characterization whether "
@@ -201,6 +203,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-next-to-current-link-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "A matrix of indices_feature which specifies which named feature(s) "
@@ -223,6 +226,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-next-to-current-link-type-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "For each link/pair in next_to_current a characterization whether "
@@ -243,6 +247,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-intersection-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         shape=["*"],
         description=(
             "For each pair of links in current_to_next the volume of the "
@@ -310,6 +315,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnal
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-current-set-feature-to-cluster-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Matrix of indices_feature and cluster_id pairs which encodes the "
@@ -330,6 +336,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnal
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-next-set-feature-to-cluster-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Matrix of indices_feature and cluster_id pairs which encodes the "
@@ -350,6 +357,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnal
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-cluster-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("The identifier (names) of the cluster."),
         a_nexus_field=NeXusField(
@@ -366,6 +374,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnal
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-cluster-composition-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 3],
         description=(
             "Pivot table as a matrix. The first column encodes how many members "
@@ -388,6 +397,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnal
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-cluster-statistics-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "Pivot table as a matrix. The first column encodes the different "

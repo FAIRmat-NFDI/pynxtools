@@ -122,6 +122,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-rotation-speed-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "Chopper rotation speed. Positive for anticlockwise rotation when "
             "facing away from the source, negative otherwise."
@@ -153,6 +154,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-slit-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angular opening"),
         a_nexus_field=NeXusField(
             name="slit_angle",
@@ -168,6 +170,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-pair-separation-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Disk spacing in direction of beam"),
         a_nexus_field=NeXusField(
             name="pair_separation",
@@ -183,6 +186,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-slit-edges-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Angle of each edge of every slit from the position of the "
@@ -204,6 +208,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-top-dead-center-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Timestamps of the top-dead-center signal. The times are relative to "
             'the "start" attribute and in the units specified in the "units" '
@@ -237,6 +242,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-beam-position-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angular separation of the center of the beam and the "
             "top-dead-center timestamp sensor, anticlockwise when facing away "
@@ -256,6 +262,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Radius of the disk"),
         a_nexus_field=NeXusField(
             name="radius",
@@ -271,6 +278,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-slit-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Total slit height"),
         a_nexus_field=NeXusField(
             name="slit_height",
@@ -286,6 +294,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Chopper phase angle"),
         a_nexus_field=NeXusField(
             name="phase",
@@ -301,6 +310,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-delay-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time difference between timing system t0 and chopper driving clock signal"
         ),
@@ -334,6 +344,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Effective distance to the origin. Note, it is recommended to use "
             "NXtransformations instead."
@@ -352,6 +363,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-wavelength-range-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=("Low and high values of wavelength range transmitted"),
         a_nexus_field=NeXusField(

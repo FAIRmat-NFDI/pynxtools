@@ -70,6 +70,7 @@ class CgEllipsoid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-semi-axes-value-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Length of the semi-axes (e.g. semi-major and semi-minor "
@@ -90,6 +91,7 @@ class CgEllipsoid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-semi-axes-values-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "Length of the semi-axes if ellipsoids have individually different lengths."
@@ -108,6 +110,7 @@ class CgEllipsoid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("In the case that all ellipsoids are spheres."),
         a_nexus_field=NeXusField(
             name="radius",
@@ -123,6 +126,7 @@ class CgEllipsoid(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-radii-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "In the case that all ellipsoids are spheres whose radii differ. For "

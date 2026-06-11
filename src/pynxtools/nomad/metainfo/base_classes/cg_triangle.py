@@ -103,6 +103,7 @@ class CgTriangle(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_triangle.html#nxcg_triangle-number-of-unique-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Number of unique vertices in the triangle set."),
         a_nexus_field=NeXusField(
             name="number_of_unique_vertices",
@@ -118,6 +119,7 @@ class CgTriangle(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_triangle.html#nxcg_triangle-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "Length of the edges of each triangle. For each triangle values are "
@@ -138,6 +140,7 @@ class CgTriangle(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_triangle.html#nxcg_triangle-interior-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", 3],
         description=(
             "Interior angles of each triangle. For each triangle values are "

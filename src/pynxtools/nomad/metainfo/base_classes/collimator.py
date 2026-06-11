@@ -117,6 +117,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-soller-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angular divergence of Soller collimator"),
         a_nexus_field=NeXusField(
             name="soller_angle",
@@ -132,6 +133,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-divergence-x-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("divergence of collimator in local x direction"),
         a_nexus_field=NeXusField(
             name="divergence_x",
@@ -147,6 +149,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-divergence-y-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("divergence of collimator in local y direction"),
         a_nexus_field=NeXusField(
             name="divergence_y",
@@ -162,6 +165,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("Frequency of oscillating collimator"),
         a_nexus_field=NeXusField(
             name="frequency",
@@ -177,6 +181,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-blade-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("blade thickness"),
         a_nexus_field=NeXusField(
             name="blade_thickness",
@@ -192,6 +197,7 @@ class Collimator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollimator.html#nxcollimator-blade-spacing-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("blade spacing"),
         a_nexus_field=NeXusField(
             name="blade_spacing",

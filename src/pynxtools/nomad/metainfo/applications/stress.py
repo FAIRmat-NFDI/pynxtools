@@ -652,6 +652,7 @@ class StressInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=(
             "This is the distance to the previous component in the instrument; "
@@ -675,6 +676,7 @@ class StressInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("efficiency of the detector"),
         a_nexus_field=NeXusField(
@@ -691,6 +693,7 @@ class StressInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=(
             "This field can be two things: 1. For a pixel detector it provides "
@@ -1151,6 +1154,7 @@ class StressSampleGaugeVolume(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-a-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Length of the first diagonal."),
         a_nexus_field=NeXusField(
             name="a",
@@ -1166,6 +1170,7 @@ class StressSampleGaugeVolume(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-b-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Length of the second diagonal normal to :ref:`x "
             "</NXstress/ENTRY/sample_description/gauge_volume/a-field>`."
@@ -1184,6 +1189,7 @@ class StressSampleGaugeVolume(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-gauge-volume-c-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Height of the gauge volume."),
         a_nexus_field=NeXusField(
             name="c",
@@ -1512,6 +1518,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`area "
@@ -1560,6 +1567,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`center "
@@ -1610,6 +1618,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`height "
@@ -1658,6 +1667,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`fwhm "
@@ -1706,6 +1716,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`fwhm_left "
@@ -1754,6 +1765,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`fwhm_right "
@@ -1773,6 +1785,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-form-factor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "- Voigt or Pseudo-Voigt: Lorentzian fraction - Pearson VII: decay "
@@ -1792,6 +1805,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-form-factor-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`form_factor "
@@ -1811,6 +1825,7 @@ class StressProcessPeakParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-azimuth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Angle that defines the position of the integrated sector in the "
@@ -1886,6 +1901,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-a-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Background parameter(s). For example a second-degree polynomial "
@@ -1905,6 +1921,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-as-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Background parameter *constant* for SHAPE function."),
         a_nexus_field=NeXusField(
@@ -1921,6 +1938,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-as-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error associated with background parameter *constant* for SHAPE function."
@@ -1939,6 +1957,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-b-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Background parameter *amplitude* for SHAPE function."),
         a_nexus_field=NeXusField(
@@ -1955,6 +1974,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-b-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error associated with background parameter *amplitude* for SHAPE function."
@@ -1973,6 +1993,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-o-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Background parameter *offset* for SHAPE function."),
         a_nexus_field=NeXusField(
@@ -1989,6 +2010,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-o-errors-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Error associated with background parameter *offset* for SHAPE function."
@@ -2039,6 +2061,7 @@ class StressProcessBackgroundParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-background-area-interval-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Confidence interval from which the background counts are "
             "integrated. For example *0.95* means that the background is "
@@ -2463,6 +2486,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-h-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("First Miller index."),
         a_nexus_field=NeXusField(
@@ -2479,6 +2503,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-k-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Second Miller index."),
         a_nexus_field=NeXusField(
@@ -2495,6 +2520,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-l-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Third Miller index."),
         a_nexus_field=NeXusField(
@@ -2558,6 +2584,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-qx-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "First component of the *normalized* scattering vector *Q* in the "
@@ -2579,6 +2606,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-qy-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Second component of the *normalized* scattering vector *Q* in the "
@@ -2600,6 +2628,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-qz-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Third component of the *normalized* scattering vector *Q* in the "
@@ -2746,6 +2775,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-sx-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "First component of the sample position in the sample reference "
@@ -2767,6 +2797,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-sy-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "First component of the sample position in the sample reference "
@@ -2788,6 +2819,7 @@ class StressPeaks(Reflections):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-sz-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "First component of the sample position in the sample reference "

@@ -142,6 +142,7 @@ class ApmEventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_event_data.html#nxapm_event_data-delta-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Delta time array which resolves for each pulse_id the time "
@@ -169,6 +170,7 @@ class ApmEventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_event_data.html#nxapm_event_data-pulse-id-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer which defines the first pulse_id. Typically, this is either "
             "zero or one."
@@ -187,6 +189,7 @@ class ApmEventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_event_data.html#nxapm_event_data-pulse-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "An integer to identify a specific pulse in a sequence. There are "

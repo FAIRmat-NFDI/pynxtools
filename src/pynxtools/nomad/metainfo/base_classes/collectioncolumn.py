@@ -122,6 +122,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-extractor-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Voltage applied to the extractor lens"),
         a_nexus_field=NeXusField(
             name="extractor_voltage",
@@ -137,6 +138,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-extractor-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Current necessary to keep the extractor lens at a set voltage. "
             "Variations indicate leakage, field emission or arc currents to the "
@@ -156,6 +158,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-working-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Distance between sample and detector entrance"),
         a_nexus_field=NeXusField(
             name="working_distance",
@@ -201,6 +204,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-angular-acceptance-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Acceptance angle of the collection column. This concept is related "
             "to term `7.4`_ of the ISO 18115-1:2023 standard. .. _7.4: "
@@ -220,6 +224,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-spatial-acceptance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Acceptance length or area of the collection column."),
         a_nexus_field=NeXusField(
             name="spatial_acceptance",
@@ -235,6 +240,7 @@ class Collectioncolumn(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcollectioncolumn.html#nxcollectioncolumn-magnification-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The magnification of the electron lens assembly."),
         a_nexus_field=NeXusField(
             name="magnification",

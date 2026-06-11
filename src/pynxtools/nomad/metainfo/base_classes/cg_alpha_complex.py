@@ -196,6 +196,7 @@ class CgAlphaComplex(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_alpha_complex.html#nxcg_alpha_complex-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The offset distance parameter used when computing alpha_wrappings."
         ),

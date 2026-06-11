@@ -333,6 +333,7 @@ class IbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Charge current"),
         a_nexus_field=NeXusField(
             name="current",
@@ -348,6 +349,7 @@ class IbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Ion acceleration voltage upon source exit and entering the vacuum "
             "flight path."
@@ -366,6 +368,7 @@ class IbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-ion-energy-profile-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "To be defined more specifically. Community suggestions are welcome."
         ),

@@ -407,6 +407,7 @@ class ApmCompositionspaceConfigVoxelization(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Edge length of cubic voxels building the 3D grid that is used for "
             "discretizing the point cloud."
@@ -478,6 +479,7 @@ class ApmCompositionspaceConfigVoxelizationAutophase(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-autophase-initial-guess-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Estimated guess for which a Gaussian mixture model is evaluated to "
             "preprocess a result that is subsequently post-processed with a "
@@ -499,6 +501,7 @@ class ApmCompositionspaceConfigVoxelizationAutophase(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-voxelization-autophase-trunc-species-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The number of elements to use for reducing the dimensionality."),
         a_nexus_field=NeXusField(
             name="trunc_species",
@@ -591,6 +594,7 @@ class ApmCompositionspaceConfigSegmentationIcOpt(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-segmentation-ic-opt-n-max-ic-cluster-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The maximum number of chemical classes to probe with the Gaussian "
             "mixture model with which the voxel set is segmented into a mixture "
@@ -665,6 +669,7 @@ class ApmCompositionspaceConfigClusteringDbscan(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-clustering-dbscan-eps-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The maximum distance between voxel pairs in a neighborhood to be "
             "considered connected."
@@ -683,6 +688,7 @@ class ApmCompositionspaceConfigClusteringDbscan(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config-entry-clustering-dbscan-min-samples-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The number of voxels in a neighborhood for a voxel to be considered "
             "as a core point."

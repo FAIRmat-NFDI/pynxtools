@@ -249,6 +249,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "Basis unit vector along the first axis which spans the coordinate "
@@ -302,6 +303,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "Basis unit vector along the second axis which spans the coordinate "
@@ -353,6 +355,7 @@ class CoordinateSystem(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[3],
         description=(
             "Basis unit vector along the third axis which spans the coordinate "

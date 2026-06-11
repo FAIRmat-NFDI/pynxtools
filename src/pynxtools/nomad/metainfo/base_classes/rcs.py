@@ -119,6 +119,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The frequency of the real-time controller system which indicated "
             "the number of close-loop process (gathering data, process data and "
@@ -138,6 +139,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-measurement-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The time of data measuring in a data lifecycle or process cycle."
         ),
@@ -155,6 +157,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-acquisition-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Data acquisition time in single data lifecycle or process cycle of "
             "the real-time control system."
@@ -173,6 +176,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-animation-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The time of data animation of single in a data lifecycle or process cycle."
         ),
@@ -190,6 +194,7 @@ class Rcs(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-indication-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The time of data indication of the end of process."),
         a_nexus_field=NeXusField(
             name="indication_time",

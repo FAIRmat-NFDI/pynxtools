@@ -75,6 +75,7 @@ class CgUnitNormal(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_unit_normal.html#nxcg_unit_normal-normals-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Direction of each normal - a unit normal."),
         a_nexus_field=NeXusField(
@@ -91,6 +92,7 @@ class CgUnitNormal(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_unit_normal.html#nxcg_unit_normal-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "An indicator which details the orientation of each normal vector in "

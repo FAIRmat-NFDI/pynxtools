@@ -115,6 +115,7 @@ class Moderator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Effective distance as seen by measuring radiation. Note, it is "
             "recommended to use NXtransformations instead."
@@ -168,6 +169,7 @@ class Moderator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-poison-depth-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="poison_depth",
             type="NX_FLOAT",
@@ -221,6 +223,7 @@ class Moderator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmoderator.html#nxmoderator-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=("average/nominal moderator temperature"),
         a_nexus_field=NeXusField(
             name="temperature",

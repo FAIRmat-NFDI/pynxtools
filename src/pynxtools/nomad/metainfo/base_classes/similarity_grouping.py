@@ -98,6 +98,7 @@ class SimilarityGrouping(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Number of members in the set which gets partitioned into features."
         ),
@@ -115,6 +116,7 @@ class SimilarityGrouping(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-number-of-numeric-labels-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("How many numerical labels does each feature have."),
         a_nexus_field=NeXusField(
             name="number_of_numeric_labels",
@@ -130,6 +132,7 @@ class SimilarityGrouping(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-number-of-categorical-labels-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("How many categorical labels does each feature have."),
         a_nexus_field=NeXusField(
             name="number_of_categorical_labels",
@@ -145,6 +148,7 @@ class SimilarityGrouping(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Which numerical index is the first to be used to label a feature. "
             "The value should be chosen in such a way that special values can be "
@@ -169,6 +173,7 @@ class SimilarityGrouping(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-numerical-label-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Matrix of numerical label for each member in the set. For classical "
@@ -237,6 +242,7 @@ class SimilarityGroupingStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-unassigned-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Total number of features categorized as unassigned."),
         a_nexus_field=NeXusField(
             name="unassigned",
@@ -252,6 +258,7 @@ class SimilarityGroupingStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-noise-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Total number of features categorized as noise."),
         a_nexus_field=NeXusField(
             name="noise",
@@ -267,6 +274,7 @@ class SimilarityGroupingStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-total-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Total number of features."),
         a_nexus_field=NeXusField(
             name="total",
@@ -282,6 +290,7 @@ class SimilarityGroupingStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-indices-cluster-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Array of numerical identifier of each feature."),
         a_nexus_field=NeXusField(
@@ -298,6 +307,7 @@ class SimilarityGroupingStatistics(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-member-count-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=("Array of number of objects for each feature."),
         a_nexus_field=NeXusField(

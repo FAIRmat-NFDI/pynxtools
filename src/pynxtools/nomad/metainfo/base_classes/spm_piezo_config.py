@@ -126,6 +126,7 @@ class SpmPiezoConfigPiezoMaterial(SpmPiezoelectricMaterial):
         ],
         variable=True,
         dimensionality="[length]",
+        unit="m",
         description=(
             "The N (substring) denotes X or Y. There are 2 parameters in X and Y "
             "directions. It can be set approximately to the length of the piezo "
@@ -260,6 +261,7 @@ class SpmPiezoConfigCalibration(Calibration):
         ],
         variable=True,
         dimensionality="[length]",
+        unit="m",
         description=(
             "The N (substring) denotes X or Y or Z, e.g., range_x. There are 3 "
             "parameters in X, Y and Z directions. The range is the maximum "
@@ -280,6 +282,7 @@ class SpmPiezoConfigCalibration(Calibration):
         ],
         variable=True,
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The N (substring) denotes X and Y directions (e.g., tilt_x), and "
             "for both directions tilt needs to be adjusted according to the "

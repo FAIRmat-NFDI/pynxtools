@@ -691,6 +691,7 @@ class MpesInstrumentEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-energy-resolution-resolution-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Minimum distinguishable energy separation in the energy spectra. "
             "This concept is related to term `10.24`_ of the ISO 18115-1:2023 "
@@ -1272,6 +1273,7 @@ class MpesInstrumentBeamProbe(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance between the point where the current NXbeam instance is "
             "evaluating the beam properties and the point where the beam "
@@ -1292,6 +1294,7 @@ class MpesInstrumentBeamProbe(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1307,6 +1310,7 @@ class MpesInstrumentBeamProbe(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
@@ -1335,6 +1339,7 @@ class MpesInstrumentBeamProbe(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-extent-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
@@ -1395,6 +1400,7 @@ class MpesInstrumentBeamPump(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance between the point where the current NXbeam instance is "
             "evaluating the beam properties and the point where the beam "
@@ -1415,6 +1421,7 @@ class MpesInstrumentBeamPump(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1430,6 +1437,7 @@ class MpesInstrumentBeamPump(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
@@ -1458,6 +1466,7 @@ class MpesInstrumentBeamPump(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-extent-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
@@ -1522,6 +1531,7 @@ class MpesInstrumentBeam_TYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance between the point where the current NXbeam instance is "
             "evaluating the beam properties and the point where the beam "
@@ -1542,6 +1552,7 @@ class MpesInstrumentBeam_TYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1557,6 +1568,7 @@ class MpesInstrumentBeam_TYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
@@ -1585,6 +1597,7 @@ class MpesInstrumentBeam_TYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-extent-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
@@ -1704,6 +1717,7 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-work-function-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="work_function",
             type="NX_FLOAT",
@@ -1842,6 +1856,7 @@ class MpesInstrumentElectronanalyzerEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-energy-resolution-resolution-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
@@ -2100,6 +2115,7 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-energydispersion-pass-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Only one of ``pass_energy`` or ``drift_energy`` should be supplied. "
             "``pass_energy`` should be used when working with hemispherical "
@@ -2119,6 +2135,7 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-energydispersion-drift-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Only one of ``pass_energy`` or ``drift_energy`` should be supplied. "
             "``drift_energy`` should be used if a TOF is used in the energy "
@@ -2425,6 +2442,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("(Un)calibrated energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -2457,6 +2475,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-photon-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "(Un)calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
@@ -2475,6 +2494,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-kx-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "(Un)calibrated k-space coordinate in x direction. It is envisioned "
             "that the axes in momentum space are named ``kx``, ``ky``, and "
@@ -2499,6 +2519,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-ky-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "(Un)calibrated k-space coordinate in y direction. For more "
             "information, see the definition of the :ref:`kx "
@@ -2519,6 +2540,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-kz-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "(Un)calibrated k-space coordinate in z direction. For more "
             "information, see the definition of the :ref:`kx "
@@ -2539,6 +2561,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-k-parallel-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "(Un)calibrated parallel component in k-space. ``k_parallel`` and "
             ":ref:`k_perpendicular "
@@ -2565,6 +2588,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-k-perpendicular-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "(Un)calibrated perpendicular component in k-space. "
             "``k_perpendicular`` is the component that is normal (perpendicular) "
@@ -2590,6 +2614,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-angular0-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "First (un)calibrated angular coordinate. It is envisioned that the "
             "axes in angular space are named ``angular0`` and ``angular1``. The "
@@ -2614,6 +2639,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-angular1-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Second (un)calibrated angular coordinate. For more information, see "
             "the definition of the :ref:`angular0 "
@@ -2635,6 +2661,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-spatial0-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "First (un)calibrated spatial coordinate. It is envisioned that the "
             "axes in regular space are named ``spatial0`` and ``spatial1``. The "
@@ -2659,6 +2686,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-spatial1-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Second (un)calibrated spatial coordinate. For more information, see "
             "the definition of the :ref:`spatial0 "
@@ -2680,6 +2708,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-delay-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "(Un)calibrated delay time. This is to be used for time-resolved "
             "pump-probe experiments and describes the delay between "
@@ -2700,6 +2729,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-temperature-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "(Un)calibrated temperature axis in case of experiments where the "
             "temperature was scanned. This is typically the sample temperature "
@@ -2856,6 +2886,7 @@ class MpesInstrumentManipulatorTemperatureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-temperature-sensor-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -2926,6 +2957,7 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-heater-output-heater-power-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
         a_nexus_field=NeXusField(
             name="output_heater_power",
             type="NX_FLOAT",
@@ -2959,6 +2991,7 @@ class MpesInstrumentManipulatorSampleHeaterPidController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-heater-pid-controller-setpoint-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="setpoint",
             type="NX_FLOAT",
@@ -3047,6 +3080,7 @@ class MpesInstrumentManipulatorCryostatPidController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-cryostat-pid-controller-setpoint-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="setpoint",
             type="NX_FLOAT",
@@ -3104,6 +3138,7 @@ class MpesInstrumentManipulatorDrainCurrentAmmeter(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-drain-current-ammeter-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -3162,6 +3197,7 @@ class MpesInstrumentManipulatorSampleBiasVoltmeter(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-voltmeter-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -3251,6 +3287,7 @@ class MpesInstrumentManipulatorSampleBiasPotentiostatPidController(PidController
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-potentiostat-pid-controller-setpoint-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         a_nexus_field=NeXusField(
             name="setpoint",
             type="NX_FLOAT",
@@ -3377,6 +3414,7 @@ class MpesInstrumentPressureGauge(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         shape=["*"],
         description=(
             "In case of a single or averaged gas pressure measurement, this is "
@@ -3415,6 +3453,7 @@ class MpesInstrumentPressureGaugeValueLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-value-log-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         description=(
             "In the case of an experiment in which the gas pressure changes and "
             "is recorded, this is an array of length m of gas pressures."
@@ -3492,6 +3531,7 @@ class MpesInstrumentFloodGun(Actuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-flood-gun-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "In case of a fixed or averaged electron current, this is the scalar "
             "current. It can also be an 1D array of output current (without time "
@@ -3529,6 +3569,7 @@ class MpesInstrumentFloodGunCurrentLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-flood-gun-current-log-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "In the case of an experiment in which the electron current is "
             "changed and recorded with time stamps, this is an array of length m "
@@ -3572,6 +3613,7 @@ class MpesInstrumentMonochromator_TYPE(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-monochromator-type-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -3645,6 +3687,7 @@ class MpesEnergyAxisCalibration(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-axis-calibration-calibrated-axis-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=(
             "This is the calibrated energy axis to be used for data plotting."
@@ -3787,6 +3830,7 @@ class MpesEnergyReferencing(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-binding-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "The binding energy (in units of eV) that the specified emission "
             "line appeared at, after adjusting the binding energy scale. This "
@@ -3808,6 +3852,7 @@ class MpesEnergyReferencing(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-offset-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Offset between measured binding energy and calibrated binding "
             "energy of the emission line."
@@ -3826,6 +3871,7 @@ class MpesEnergyReferencing(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-calibrated-axis-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=(
             "This is the calibrated energy axis to be used for data plotting. "
@@ -3936,6 +3982,7 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-transmission-correction-transmission-function-kinetic-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("Kinetic energy values"),
         a_nexus_field=NeXusField(
@@ -3952,6 +3999,7 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-transmission-correction-transmission-function-relative-intensity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Relative transmission efficiency for the given kinetic energies"),
         a_nexus_field=NeXusField(
@@ -4289,6 +4337,7 @@ class MpesSampleTemperatureEnv(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-temperature-env-value-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the temperature. An example would be a room "
@@ -4345,6 +4394,7 @@ class MpesSampleGasPressureEnv(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-gas-pressure-env-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the gas pressure around the sample. An example "
@@ -4416,6 +4466,7 @@ class MpesSampleBiasEnv(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-bias-env-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the bias. Note that this method for recording the "
@@ -4469,6 +4520,7 @@ class MpesSampleDrainCurrentEnv(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-drain-current-env-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the drain current. Note that this method for "
@@ -4523,6 +4575,7 @@ class MpesSampleFloodGunCurrentEnv(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-flood-gun-current-env-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the flood_gun_current. Note that this method for "
@@ -4608,6 +4661,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("Calibrated axis for the energy of the measured electrons."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -4652,6 +4706,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-photon-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=(
             "Calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
@@ -4670,6 +4725,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kx-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Calibrated k-space coordinate in x direction. It is envisioned that "
             "the axes in momentum space are named ``kx``, ``ky``, and ``kz``. "
@@ -4693,6 +4749,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-ky-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Calibrated k-space coordinate in y direction. For more information, "
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
@@ -4712,6 +4769,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kz-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Calibrated k-space coordinate in z direction. For more information, "
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
@@ -4731,6 +4789,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-parallel-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Calibrated parallel component in k-space. ``k_parallel`` and "
             ":ref:`k_perpendicular </NXmpes/ENTRY/DATA/k_perpendicular-field>` "
@@ -4756,6 +4815,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-perpendicular-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         description=(
             "Calibrated perpendicular component in k-space. ``k_perpendicular`` "
             "is the component that is normal (perpendicular) to the surface. It "
@@ -4780,6 +4840,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-angular0-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "First calibrated angular coordinate. It is envisioned that the axes "
             "in angular space are named ``angular0`` and ``angular1``. The "
@@ -4804,6 +4865,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-angular1-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Second calibrated angular coordinate. For more information, see the "
             "definition of the :ref:`angular0 "
@@ -4824,6 +4886,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-spatial0-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "First calibrated spatial coordinate. It is envisioned that the axes "
             "in angular space are named ``spatial0`` and ``spatial1``. The "
@@ -4848,6 +4911,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-spatial1-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Second calibrated spatial coordinate. For more information, see the "
             "definition of the :ref:`spatial0 "
@@ -4868,6 +4932,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-delay-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Calibrated pump-probe delay time. Could be a link to "
             "/entry/instrument/beam_pump/pulse_delay."
@@ -4886,6 +4951,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-temperature-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Calibrated temperature axis in case of experiments where the "
             "temperature was scanned. This is typically the sample temperature "

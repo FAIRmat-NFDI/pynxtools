@@ -225,6 +225,7 @@ class EmEventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_event_data.html#nxem_event_data-identifier-event-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Identifier of a specific state and setting of the microscope."),
         a_nexus_field=NeXusField(
             name="identifier_event",
@@ -240,6 +241,7 @@ class EmEventData(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_event_data.html#nxem_event_data-identifier-sample-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The name of the sample to resolve ambiguities."),
         a_nexus_field=NeXusField(
             name="identifier_sample",

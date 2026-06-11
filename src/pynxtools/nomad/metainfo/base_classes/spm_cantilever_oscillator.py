@@ -73,6 +73,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-reference-amplitude-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The reference amplitude (also called drive amplitude) of the "
             "cantilever. This is the amplitude of the cantilever oscillation "
@@ -94,6 +95,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-reference-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The reference frequency (also called drive frequency or resonance "
             "frequency) of the cantilever. Note: At least one from "
@@ -114,6 +116,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-reference-phase-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The reference phase of the cantilever oscillator. Note: At least "
             "one from reference_amplitude, reference_frequency, or "
@@ -133,6 +136,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-frequency-harmonic-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The harmonic (e.g., second harmonic of the fundamental frequency) "
             "frequency of the cantilever."
@@ -151,6 +155,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-phase-shift-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "The phase difference between the reference signal of cantilever and "
             "response signal."
@@ -169,6 +174,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-frequency-shift-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("Shift in the resonance frequency of the cantilever."),
         a_nexus_field=NeXusField(
             name="frequency_shift",
@@ -184,6 +190,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-frequency-cutoff-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The cutoff frequency of the cantilever."),
         a_nexus_field=NeXusField(
             name="frequency_cutoff",
@@ -199,6 +206,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-frequency-bandwidth-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The bandwidth of the resonance frequency."),
         a_nexus_field=NeXusField(
             name="frequency_bandwidth",
@@ -214,6 +222,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-target-amplitude-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The target amplitude of the cantilever to scan on each scan point. "
             "This field is same as the reference amplitude in the non-contact "
@@ -233,6 +242,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-target-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "The target frequency of the cantilever to scan on each scan point. "
             "This field is same as the reference frequency in the non-contact "
@@ -252,6 +262,7 @@ class SpmCantileverOscillator(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-active-frequency-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=("The active frequency of the cantilever to start the experiment."),
         a_nexus_field=NeXusField(
             name="active_frequency",

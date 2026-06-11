@@ -374,6 +374,7 @@ class MxSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",
@@ -521,6 +522,7 @@ class MxInstrumentAttenuator(Attenuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-attenuator-attenuator-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="attenuator_transmission",
             type="NX_NUMBER",
@@ -713,6 +715,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-time-per-channel-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "For a time-of-flight detector this is the scaling factor to convert "
             "from the numeric value reported to the flight time for a given "
@@ -732,6 +735,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=(
             "Distance from the sample to the beam center. Normally this value is "
@@ -772,6 +776,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-count-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("Elapsed actual counting time."),
         a_nexus_field=NeXusField(
@@ -805,6 +810,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-beam-center-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the x position where the direct beam would hit the "
             "detector. This is a length and can be outside of the actual "
@@ -827,6 +833,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-beam-center-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the y position where the direct beam would hit the "
             "detector. This is a length and can be outside of the actual "
@@ -968,6 +975,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-sensor-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "At times, radiation is not directly sensed by the detector. Rather, "
             "the detector might sense the output from some converter like a "
@@ -1134,6 +1142,7 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-detector-module-fast-pixel-direction-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Values along the direction of :ref:`fastest varying "
             "<Design-ArrayStorageOrder>` pixel direction. The direction itself "
@@ -1206,6 +1215,7 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-detector-module-slow-pixel-direction-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Values along the direction of :ref:`slowest varying "
             "<Design-ArrayStorageOrder>` pixel direction. The direction itself "
@@ -1328,6 +1338,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "In the case of a monochromatic beam this is the scalar wavelength. "
             "Several other use cases are permitted, depending on the presence or "
@@ -1384,6 +1395,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-total-flux-field"
         ],
         dimensionality="1 / [time]",
+        unit="hertz",
         description=(
             "Flux incident on beam plane in photons per second. In other words "
             "this is the :ref:`flux </NXmx/ENTRY/INSTRUMENT/BEAM/flux-field>` "
@@ -1406,6 +1418,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-flux-integrated-field"
         ],
         dimensionality="1 / [length] ** 2",
+        unit="1 / m ** 2",
         description=(
             "Flux density incident on beam plane area in photons per unit area. "
             "In other words this is the :ref:`flux "
@@ -1428,6 +1441,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-total-flux-integrated-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Flux incident on beam plane in photons. In other words this is the "
             ":ref:`flux </NXmx/ENTRY/INSTRUMENT/BEAM/flux-field>` integrated "
@@ -1450,6 +1464,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-beam-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=(
             "Two-element array of FWHM (if Gaussian or Airy function) or "

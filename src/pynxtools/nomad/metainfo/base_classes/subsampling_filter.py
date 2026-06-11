@@ -82,6 +82,7 @@ class SubsamplingFilter(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsubsampling_filter.html#nxsubsampling_filter-min-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Minimum index."),
         a_nexus_field=NeXusField(
             name="min",
@@ -97,6 +98,7 @@ class SubsamplingFilter(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsubsampling_filter.html#nxsubsampling_filter-increment-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Increment."),
         a_nexus_field=NeXusField(
             name="increment",
@@ -112,6 +114,7 @@ class SubsamplingFilter(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsubsampling_filter.html#nxsubsampling_filter-max-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Maximum index."),
         a_nexus_field=NeXusField(
             name="max",

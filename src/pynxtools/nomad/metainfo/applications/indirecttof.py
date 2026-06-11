@@ -138,6 +138,7 @@ class Indirecttof(Tofraw):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-pre-sample-flightpath-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the flight path before the sample position. This can be "
             "determined by a chopper, by the moderator, or the source itself. In "
@@ -216,6 +217,7 @@ class IndirecttofInstrumentAnalyser(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         description=("analyzed energy"),
         a_nexus_field=NeXusField(
@@ -232,6 +234,7 @@ class IndirecttofInstrumentAnalyser(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("polar angle towards sample"),
         a_nexus_field=NeXusField(
@@ -248,6 +251,7 @@ class IndirecttofInstrumentAnalyser(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("distance from sample"),
         a_nexus_field=NeXusField(

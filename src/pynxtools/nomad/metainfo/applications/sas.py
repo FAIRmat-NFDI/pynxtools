@@ -341,6 +341,7 @@ class SasInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-monochromator-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The wavelength (:math:`\\lambda`) of the radiation."),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -465,6 +466,7 @@ class SasInstrumentCollimatorGeometryShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-collimator-geometry-shape-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("The collimation length."),
         a_nexus_field=NeXusField(
@@ -522,6 +524,7 @@ class SasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=("The distance between detector and sample."),
         a_nexus_field=NeXusField(
@@ -538,6 +541,7 @@ class SasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Physical size of a pixel in x-direction."),
         a_nexus_field=NeXusField(
@@ -554,6 +558,7 @@ class SasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Physical size of a pixel in y-direction."),
         a_nexus_field=NeXusField(
@@ -570,6 +575,7 @@ class SasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
@@ -584,6 +590,7 @@ class SasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-aequatorial-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="aequatorial_angle",
             type="NX_FLOAT",
@@ -631,6 +638,7 @@ class SasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-sample-aequatorial-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="aequatorial_angle",
             type="NX_FLOAT",

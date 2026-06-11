@@ -271,6 +271,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-xray-tube-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("Current of the X-ray tube."),
         a_nexus_field=NeXusField(
             name="xray_tube_current",
@@ -286,6 +287,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-xray-tube-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Voltage of the X-ray tube."),
         a_nexus_field=NeXusField(
             name="xray_tube_voltage",
@@ -301,6 +303,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-one-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Wavelength of the K\\u03b1 1 line."),
         a_nexus_field=NeXusField(
             name="k_alpha_one",
@@ -331,6 +334,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-two-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Wavelength of the K\\u03b1 2 line."),
         a_nexus_field=NeXusField(
             name="k_alpha_two",
@@ -361,6 +365,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-ratio-k-alphatwo-k-alphaone-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("K\\u03b1 2/K\\u03b1 1 intensity ratio."),
         a_nexus_field=NeXusField(
             name="ratio_k_alphatwo_k_alphaone",
@@ -376,6 +381,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-kbeta-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Wavelength of the K\\u00df line."),
         a_nexus_field=NeXusField(
             name="kbeta",
@@ -406,6 +412,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-source-peak-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Wavelength of the X-ray source. Used to convert from 2-theta to Q."
         ),
@@ -468,6 +475,7 @@ class XrdPanInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-integration-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Integration time per channel."),
         a_nexus_field=NeXusField(
             name="integration_time",
@@ -539,6 +547,7 @@ class XrdPanExperimentConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-goniometer-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Goniometer position X."),
         a_nexus_field=NeXusField(
             name="goniometer_x",
@@ -554,6 +563,7 @@ class XrdPanExperimentConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-goniometer-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Goniometer position Y."),
         a_nexus_field=NeXusField(
             name="goniometer_y",
@@ -569,6 +579,7 @@ class XrdPanExperimentConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-goniometer-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Goniometer position Z"),
         a_nexus_field=NeXusField(
             name="goniometer_z",
@@ -584,6 +595,7 @@ class XrdPanExperimentConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-count-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Total time of count."),
         a_nexus_field=NeXusField(
             name="count_time",
@@ -617,6 +629,7 @@ class XrdPanExperimentConfigTwoTheta(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-start-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Starting value of the diffraction angle."),
         a_nexus_field=NeXusField(
             name="start",
@@ -632,6 +645,7 @@ class XrdPanExperimentConfigTwoTheta(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-end-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Ending value of the diffraction angle."),
         a_nexus_field=NeXusField(
             name="end",
@@ -647,6 +661,7 @@ class XrdPanExperimentConfigTwoTheta(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-two-theta-step-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Minimum step size in-between two diffraction angles."),
         a_nexus_field=NeXusField(
             name="step",
@@ -680,6 +695,7 @@ class XrdPanExperimentConfigOmega(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-start-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Starting value of the incident angle."),
         a_nexus_field=NeXusField(
             name="start",
@@ -695,6 +711,7 @@ class XrdPanExperimentConfigOmega(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-end-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Ending value of the incident angle."),
         a_nexus_field=NeXusField(
             name="end",
@@ -710,6 +727,7 @@ class XrdPanExperimentConfigOmega(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-config-omega-step-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Minimum step size in the between two incident angles."),
         a_nexus_field=NeXusField(
             name="step",
@@ -762,6 +780,7 @@ class XrdPanExperimentResult(XrdData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-two-theta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("Two-theta (scattering angle) of the diffractogram."),
         a_nexus_field=NeXusField(
@@ -778,6 +797,7 @@ class XrdPanExperimentResult(XrdData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-omega-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("Incident angle of the diffractogram."),
         a_nexus_field=NeXusField(
@@ -794,6 +814,7 @@ class XrdPanExperimentResult(XrdData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("The phi range of the diffractogram."),
         a_nexus_field=NeXusField(
@@ -810,6 +831,7 @@ class XrdPanExperimentResult(XrdData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-chi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=("The chi range of the diffractogram"),
         a_nexus_field=NeXusField(

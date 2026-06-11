@@ -130,6 +130,7 @@ class CgPolygon(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polygon.html#nxcg_polygon-number-of-total-vertices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The total number of vertices in the set."),
         a_nexus_field=NeXusField(
             name="number_of_total_vertices",
@@ -145,6 +146,7 @@ class CgPolygon(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polygon.html#nxcg_polygon-edge-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("For each polygon its accumulated length along its edges."),
         a_nexus_field=NeXusField(
@@ -161,6 +163,7 @@ class CgPolygon(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polygon.html#nxcg_polygon-interior-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Interior angles for each polygon. There are as many values per "
@@ -183,6 +186,7 @@ class CgPolygon(CgPrimitive):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polygon.html#nxcg_polygon-shape-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Curvature type: * 0 - unspecified, * 1 - convex, * 2 - concave"),
         a_nexus_field=NeXusField(

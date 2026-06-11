@@ -104,6 +104,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-critical-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="critical_energy",
             type="NX_FLOAT",
@@ -118,6 +119,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-bending-radius-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="bending_radius",
             type="NX_FLOAT",
@@ -132,6 +134,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-magnetic-field-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("strength of magnetic field of dipole magnets"),
         a_nexus_field=NeXusField(
             name="magnetic_field",
@@ -147,6 +150,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-accepted-photon-beam-divergence-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "An array of four numbers giving X+, X-, Y+ and Y- half divergence"
         ),
@@ -164,6 +168,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-source-distance-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance of source point from particle beam waist in X (horizontal) "
             "direction. Note, it is recommended to use NXtransformations instead "
@@ -183,6 +188,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-source-distance-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Distance of source point from particle beam waist in Y (vertical) "
             "direction. Note, it is recommended to use NXtransformations instead "
@@ -202,6 +208,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-divergence-x-plus-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Accepted photon beam divergence in X+ (horizontal outboard) "
             "direction. Note that divergence_x_plus+divergence_x_minus is the "
@@ -221,6 +228,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-divergence-x-minus-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Accepted photon beam divergence in X- (horizontal inboard) "
             "direction. Note that divergence_x_plus+divergence_x_minus is the "
@@ -240,6 +248,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-divergence-y-plus-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Accepted photon beam divergence in Y+ (vertical upward) direction. "
             "Note that divergence_y_plus+divergence_y_minus is the total "
@@ -259,6 +268,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-divergence-y-minus-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Accepted photon beam divergence in Y- (vertical downward) "
             "direction. Note that divergence_y_plus+divergence_y_minus is the "

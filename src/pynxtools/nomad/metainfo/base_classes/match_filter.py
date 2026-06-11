@@ -93,6 +93,7 @@ class MatchFilter(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmatch_filter.html#nxmatch_filter-match-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Array of values to filter according to method. If the match e.g. "

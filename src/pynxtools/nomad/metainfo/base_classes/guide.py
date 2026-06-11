@@ -141,6 +141,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-incident-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="incident_angle",
@@ -156,6 +157,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-bend-angle-x-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="bend_angle_x",
@@ -171,6 +173,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-bend-angle-y-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="bend_angle_y",
@@ -243,6 +246,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
@@ -273,6 +277,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-substrate-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
@@ -289,6 +294,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-coating-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
@@ -305,6 +311,7 @@ class Guide(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-number-sections-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "number of substrate sections (also called ``nsurf`` as an index in "
             "the ``NXguide`` specification)"
@@ -459,6 +466,7 @@ class GuideReflectivity(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=("wavelengths at which reflectivity was measured"),
         a_nexus_field=NeXusField(

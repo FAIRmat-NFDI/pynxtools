@@ -157,6 +157,7 @@ class Waveplate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-diameter-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Diameter of the waveplate (if the waveplate is circular)."),
         a_nexus_field=NeXusField(
             name="diameter",
@@ -172,6 +173,7 @@ class Waveplate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-clear-aperture-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Clear aperture of the device (e.g. 90% of diameter for a disc or "
             "90% of length/height for square geometry)."
@@ -190,6 +192,7 @@ class Waveplate(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-reflectance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Average reflectance of the waveplate in percentage."),
         a_nexus_field=NeXusField(
             name="reflectance",
@@ -254,6 +257,7 @@ class WaveplateSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-substrate-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the waveplate substrate."),
         a_nexus_field=NeXusField(
             name="substrate_thickness",
@@ -269,6 +273,7 @@ class WaveplateSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-substrate-index-of-refraction-substrate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the waveplate substrate. Specify at "
@@ -341,6 +346,7 @@ class WaveplateCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-coating-coating-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the coating."),
         a_nexus_field=NeXusField(
             name="coating_thickness",
@@ -373,6 +379,7 @@ class WaveplateCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-coating-index-of-refraction-coating-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "

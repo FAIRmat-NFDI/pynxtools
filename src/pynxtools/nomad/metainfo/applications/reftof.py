@@ -222,6 +222,7 @@ class ReftofInstrumentChopper(DiskChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-chopper-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Distance between chopper and sample"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -269,6 +270,7 @@ class ReftofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=(
             "Array of time values for each bin in a time-of-flight measurement"
@@ -287,6 +289,7 @@ class ReftofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
@@ -302,6 +305,7 @@ class ReftofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -317,6 +321,7 @@ class ReftofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -332,6 +337,7 @@ class ReftofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -378,6 +384,7 @@ class ReftofSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
@@ -455,6 +462,7 @@ class ReftofControl(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Time channels"),
         a_nexus_field=NeXusField(
             name="time_of_flight",

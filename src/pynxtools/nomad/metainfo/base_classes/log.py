@@ -91,6 +91,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             'Time of logged entry. The times are relative to the "start" '
             'attribute and in the units specified in the "units" attribute. '
@@ -273,6 +274,7 @@ class Log(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-timestamp-zero-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Timestamps matching the corresponding cue_index into the time, value pair."
         ),

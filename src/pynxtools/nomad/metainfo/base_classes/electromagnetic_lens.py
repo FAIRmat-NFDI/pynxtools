@@ -154,6 +154,7 @@ class ElectromagneticLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Excitation voltage of the lens. For dipoles it is a single number. "
             "For higher order multipoles, it is an array."
@@ -172,6 +173,7 @@ class ElectromagneticLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Excitation current of the lens. For dipoles it is a single number. "
             "For higher-order multipoles, it is an array."
@@ -215,6 +217,7 @@ class ElectromagneticLens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-number-of-poles-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Qualitative description of the lens based on the number of pole pieces."
         ),

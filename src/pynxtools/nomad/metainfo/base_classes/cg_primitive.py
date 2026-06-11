@@ -121,6 +121,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-dimensionality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The dimensionality of the primitive set with value up to d."),
         a_nexus_field=NeXusField(
             name="dimensionality",
@@ -137,6 +138,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-cardinality-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The cardinality of the primitive set. Value should be equal to c."
         ),
@@ -154,6 +156,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-index-offset-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Integer offset whereby the identifier of the first member of the "
             "set differs from zero. Indices can be used as identifiers and thus "
@@ -224,6 +227,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-shape-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Shape of each primitive"),
         a_nexus_field=NeXusField(
@@ -240,6 +244,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-length-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Length of each primitive Often the term is associated with the "
@@ -260,6 +265,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-width-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Width of each primitive Often the term is associated with the "
@@ -280,6 +286,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-height-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Height of each primitive Often the term is associated with the "
@@ -337,6 +344,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         shape=["*"],
         description=(
             "Alias for surface_area of each primitive. Set to NaN if does not "
@@ -356,6 +364,7 @@ class CgPrimitive(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-orientation-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Direction unit vector which points along the longest principal axis "

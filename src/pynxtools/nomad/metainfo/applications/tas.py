@@ -272,6 +272,7 @@ class TasInstrumentMonochromator(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-monochromator-ei-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="ei",
@@ -287,6 +288,7 @@ class TasInstrumentMonochromator(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-monochromator-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",
@@ -320,6 +322,7 @@ class TasInstrumentAnalyser(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-analyser-ef-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="ef",
@@ -335,6 +338,7 @@ class TasInstrumentAnalyser(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-analyser-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",
@@ -350,6 +354,7 @@ class TasInstrumentAnalyser(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-analyser-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -398,6 +403,7 @@ class TasInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -445,6 +451,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-qh-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="qh",
@@ -460,6 +467,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-qk-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="qk",
@@ -475,6 +483,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-ql-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="ql",
@@ -490,6 +499,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-en-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="en",
@@ -505,6 +515,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",
@@ -520,6 +531,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -535,6 +547,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-sgu-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="sgu",
@@ -550,6 +563,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-sgl-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="sgl",
@@ -565,6 +579,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-unit-cell-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[6],
         a_nexus_field=NeXusField(
             name="unit_cell",
@@ -580,6 +595,7 @@ class TasSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-orientation-matrix-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[9],
         a_nexus_field=NeXusField(
             name="orientation_matrix",

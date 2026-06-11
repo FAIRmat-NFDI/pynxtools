@@ -237,6 +237,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-ion-query-nuclide-source-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Matrix of isotope vectors, as many as rows as different candidates "
@@ -298,6 +299,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-ion-query-nuclide-target-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Matrix of isotope vectors, as many as rows as different candidates "
@@ -443,6 +445,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-kth-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Order k."),
         a_nexus_field=NeXusField(
             name="kth",
@@ -458,6 +461,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-min-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Minimum value of the histogram binning."),
         a_nexus_field=NeXusField(
             name="min",
@@ -473,6 +477,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-increment-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Increment of the histogram binning."),
         a_nexus_field=NeXusField(
             name="increment",
@@ -488,6 +493,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-knn-max-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Maximum value of the histogram binning."),
         a_nexus_field=NeXusField(
             name="max",
@@ -527,6 +533,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-min-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Minimum value of the histogram binning."),
         a_nexus_field=NeXusField(
             name="min",
@@ -542,6 +549,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-increment-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Increment value of the histogram binning."),
         a_nexus_field=NeXusField(
             name="increment",
@@ -557,6 +565,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-statistics-rdf-max-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Maximum value of the histogram binning."),
         a_nexus_field=NeXusField(
             name="max",

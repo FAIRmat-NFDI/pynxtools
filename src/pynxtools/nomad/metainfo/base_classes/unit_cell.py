@@ -115,6 +115,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-a-b-c-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Geometry of the unit cell quantified via parameters a, b, and c."
@@ -133,6 +134,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-a-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Geometry of the unit cell quantified individually via parameter a."
         ),
@@ -150,6 +152,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-b-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Geometry of the unit cell quantified individually via parameter b."
         ),
@@ -167,6 +170,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-c-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Geometry of the unit cell quantified individually via parameter c."
         ),
@@ -184,6 +188,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-alpha-beta-gamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "Geometry of the unit cell quantified via parameters alpha, beta, "
@@ -203,6 +208,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-alpha-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Geometry of the unit cell quantified individually via parameter alpha."
         ),
@@ -220,6 +226,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-beta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Geometry of the unit cell quantified individually via parameter beta."
         ),
@@ -237,6 +244,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-gamma-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Geometry of the unit cell quantified individually via parameter gamma."
         ),
@@ -373,6 +381,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-area-field"
         ],
         dimensionality="[length] ** 2",
+        unit="m ** 2",
         description=("Area of the unit cell if dimensionality is 2."),
         a_nexus_field=NeXusField(
             name="area",
@@ -388,6 +397,7 @@ class UnitCell(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-volume-field"
         ],
         dimensionality="[length] ** 3",
+        unit="m ** 3",
         description=("Volume of the unit cell if dimensionality is 3."),
         a_nexus_field=NeXusField(
             name="volume",

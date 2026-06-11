@@ -150,6 +150,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-d-t-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The derivative time constant of the derivative part of the PID "
             "controller. Proportional Derivative constant K_d can be expressed "
@@ -169,6 +170,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-i-t-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The integral time constant of the integral part of the PID "
             "controller. Proportional Integral constant K_i can be expressed as "
@@ -188,6 +190,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "To indicate the relative tip position z between tip and sample. The "
             "tip position can also be varied when the z_controller is not "
@@ -241,6 +244,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-tip-lift-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("If the tip is lifted from the stable point."),
         a_nexus_field=NeXusField(
             name="tip_lift",
@@ -256,6 +260,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-switch-off-delay-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("The switch-off delay of the controller from its stable point."),
         a_nexus_field=NeXusField(
             name="switch_off_delay",
@@ -271,6 +276,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-z-offset-value-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Offset added to the initial averaged tip position on Z-axis before "
             "starting scan."
@@ -289,6 +295,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-z-average-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "The averaging time for stabilizing the Z position. Usually, the "
             "signal for z-position contains noise, to reduce the noise impacts, "
@@ -308,6 +315,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-z-controller-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time taken by the Z controller to switch mode e.g., feedback off "
             "from on and vice versa. In this time window, controller fixed its "
@@ -345,6 +353,7 @@ class SpmPositionerZController(PidController):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-final-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The final Z position of the tip after the scan. This parameter is "
             "used to indicate any unexpected displacement of the tip."

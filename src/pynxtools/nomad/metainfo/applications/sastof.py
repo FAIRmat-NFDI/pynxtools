@@ -378,6 +378,7 @@ class SastofInstrumentCollimatorGeometryShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-collimator-geometry-shape-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("The collimation length"),
         a_nexus_field=NeXusField(
@@ -432,6 +433,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -447,6 +449,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*", "*"],
         description=("The distance between detector and sample"),
         a_nexus_field=NeXusField(
@@ -463,6 +466,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-x-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Physical size of a pixel in x-direction"),
         a_nexus_field=NeXusField(
@@ -479,6 +483,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-y-pixel-size-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", "*"],
         description=("Size of a pixel in y direction"),
         a_nexus_field=NeXusField(
@@ -495,6 +500,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -510,6 +516,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-azimuthal-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
@@ -525,6 +532,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
@@ -539,6 +547,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-aequatorial-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="aequatorial_angle",
             type="NX_FLOAT",
@@ -553,6 +562,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-beam-center-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the x position where the direct beam would hit the "
             "detector. This is a length, not a pixel position, and can be "
@@ -572,6 +582,7 @@ class SastofInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-beam-center-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the y position where the direct beam would hit the "
             "detector. This is a length, not a pixel position, and can be "
@@ -622,6 +633,7 @@ class SastofSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-sample-aequatorial-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="aequatorial_angle",
             type="NX_FLOAT",
@@ -699,6 +711,7 @@ class SastofControl(Monitor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-control-time-of-flight-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",

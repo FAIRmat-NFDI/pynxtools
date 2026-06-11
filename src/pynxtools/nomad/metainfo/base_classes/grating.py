@@ -118,6 +118,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-angles-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[2],
         description=(
             "Blaze or trapezoidal angles, with the angle of the upstream facing "
@@ -138,6 +139,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-period-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "List of polynomial coefficients describing the spatial separation "
@@ -159,6 +161,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-duty-cycle-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="duty_cycle",
             type="NX_FLOAT",
@@ -173,6 +176,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-depth-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="depth",
             type="NX_FLOAT",
@@ -187,6 +191,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-diffraction-order-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="diffraction_order",
             type="NX_INT",
@@ -201,6 +206,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-deflection-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angle between the incident beam and the utilised outgoing beam."),
         a_nexus_field=NeXusField(
             name="deflection_angle",
@@ -241,6 +247,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         a_nexus_field=NeXusField(
             name="substrate_density",
             type="NX_FLOAT",
@@ -255,6 +262,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
@@ -281,6 +289,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="substrate_roughness",
             type="NX_FLOAT",
@@ -295,6 +304,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-coating-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="coating_roughness",
             type="NX_FLOAT",
@@ -309,6 +319,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-layer-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("An array describing the thickness of each layer"),
         a_nexus_field=NeXusField(
             name="layer_thickness",

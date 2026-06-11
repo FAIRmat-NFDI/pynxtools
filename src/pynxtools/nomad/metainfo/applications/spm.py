@@ -740,6 +740,7 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Name of the current according to the purpose of the measurement. "
             "E.g., the field can be named as tip_current defining the current "
@@ -759,6 +760,7 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-offset-value-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=("The offset in the tunneling current between tip and sample."),
         a_nexus_field=NeXusField(
             name="offset_value",
@@ -861,6 +863,7 @@ class SpmInstrumentCurrent_sensorTAGAmplifier(Amplifier):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-amplifier-current-gain-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The gain of the current sensor."),
         a_nexus_field=NeXusField(
             name="current_gain",
@@ -950,6 +953,7 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Voltage measured by sensor."),
         a_nexus_field=NeXusField(
             name="voltage",
@@ -965,6 +969,7 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-offset-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The offset voltage. The real voltage is the sum of the voltage and "
             "the offset voltage."
@@ -1070,6 +1075,7 @@ class SpmInstrumentVoltage_sensorTAGAmplifier(Amplifier):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-amplifier-voltage-gain-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The gain of the voltage sensor."),
         a_nexus_field=NeXusField(
             name="voltage_gain",
@@ -1107,6 +1113,7 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The x position of the piezo."),
         a_nexus_field=NeXusField(
             name="x",
@@ -1122,6 +1129,7 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The y position of the piezo."),
         a_nexus_field=NeXusField(
             name="y",
@@ -1137,6 +1145,7 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-piezo-sensor-z-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The z position of the piezo."),
         a_nexus_field=NeXusField(
             name="z",
@@ -1186,6 +1195,7 @@ class SpmInstrumentSampleBiasVoltage(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-bias-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("The bias voltage (DC) applied to the sample."),
         a_nexus_field=NeXusField(
             name="bias_voltage",
@@ -1201,6 +1211,7 @@ class SpmInstrumentSampleBiasVoltage(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-bias-offset-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Offset value of the bias voltage."),
         a_nexus_field=NeXusField(
             name="bias_offset_value",
@@ -1356,6 +1367,7 @@ class SpmSampleSampleEnvironment(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-sample-sample-environment-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         description=(
             "The single-valued temperature of the sample, also referred to as "
             "the tip temperature (not head temperature), since the tip and "

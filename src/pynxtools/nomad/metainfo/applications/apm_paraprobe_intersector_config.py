@@ -272,6 +272,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-threshold-proximity-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "The maximum Euclidean distance between two objects below which they "
             "are considered within proximity."
@@ -382,6 +383,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameter
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-number-of-feature-types-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The total number of distinguished feature sets featureID. It is "
             "assumed that the members within all these featureID sets are "
@@ -516,6 +518,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-indices-feature-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Array of identifier whereby the path to the geometry data can be "
@@ -593,6 +596,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-number-of-feature-types-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The total number of distinguished feature sets featureID. It is "
             "assumed that the members within all these featureID sets are "
@@ -720,6 +724,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-indices-feature-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Array of identifier whereby the path to the geometry data can be "

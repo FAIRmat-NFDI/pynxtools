@@ -75,6 +75,7 @@ class OffGeometry(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoff_geometry.html#nxoff_geometry-vertices-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 3],
         description=(
             "List of x,y,z coordinates for vertices. The origin of the "

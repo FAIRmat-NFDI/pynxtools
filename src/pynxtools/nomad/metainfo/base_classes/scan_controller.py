@@ -127,6 +127,7 @@ class ScanController(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXscan_controller.html#nxscan_controller-dwell-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time period during which the beam remains at one position. This "
             "concept is related to term `Dwell Time`_ of the EMglossary "
@@ -147,6 +148,7 @@ class ScanController(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXscan_controller.html#nxscan_controller-flyback-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=(
             "Time period during which the beam moves from the final position of "
             "one scan line to the starting position of the subsequent scan line. "

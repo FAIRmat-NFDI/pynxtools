@@ -114,6 +114,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-module-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Offset of the module in regards to the origin of the detector in an "
             "arbitrary direction."
@@ -205,6 +206,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-fast-pixel-direction-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Values along the direction of :ref:`fastest varying "
             "<Design-ArrayStorageOrder>` :index:`pixel direction<dimension; "
@@ -300,6 +302,7 @@ class DetectorModule(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_module.html#nxdetector_module-slow-pixel-direction-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Values along the direction of :ref:`slowest "
             "varying<Design-ArrayStorageOrder>` :index:`pixel "

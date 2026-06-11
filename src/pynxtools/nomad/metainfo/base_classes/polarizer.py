@@ -92,6 +92,7 @@ class Polarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpolarizer.html#nxpolarizer-reflection-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[3],
         description=("[hkl] values of nominal reflection"),
         a_nexus_field=NeXusField(
@@ -108,6 +109,7 @@ class Polarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpolarizer.html#nxpolarizer-efficiency-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("polarizing efficiency"),
         a_nexus_field=NeXusField(
             name="efficiency",

@@ -188,6 +188,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-splitting-ratio-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Beam splitting ratio(s) for the various outputs (i.e. the paths of "
@@ -209,6 +210,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-clear-aperture-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Clear aperture of the device (e.g. 90% of diameter for a disc, or "
             "90% of length and height for square geometry)."
@@ -227,6 +229,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-wavelength-range-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=(
             "Wavelength range for which the beam splitter is designed. Enter the "
@@ -248,6 +251,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-optical-loss-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=(
             "Optical loss of the beam splitter for the various outputs (i.e. the "
@@ -269,6 +273,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-incident-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Optimized angle of incidence for the desired splitting ratio."),
         a_nexus_field=NeXusField(
             name="incident_angle",
@@ -284,6 +289,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-deflection-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angle of deflection corresponding to the optimized angle of "
             "incidence defined in incident_angle."
@@ -303,6 +309,7 @@ class BeamSplitter(Component):
         ],
         variable=True,
         dimensionality="[angle]",
+        unit="radian",
         shape=[2],
         description=(
             "Range of the angles of incidence (AOI) for which the beam splitter "
@@ -323,6 +330,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-reflectance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Reflectance of the beam splitter at given spectral values."),
         a_nexus_field=NeXusField(
@@ -339,6 +347,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Transmission at given spectral values for the various outputs (i.e. "
@@ -448,6 +457,7 @@ class BeamSplitterShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-shape-wedge-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Wedge angle if 'shape' is 'wedged'."),
         a_nexus_field=NeXusField(
             name="wedge_angle",
@@ -504,6 +514,7 @@ class BeamSplitterSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-substrate-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=(
             "Thickness of the beam splitter substrate. Define the minimum and "
@@ -525,6 +536,7 @@ class BeamSplitterSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-substrate-index-of-refraction-substrate-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the beam splitter substrate. Specify "
@@ -600,6 +612,7 @@ class BeamSplitterCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-coating-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the coating."),
         a_nexus_field=NeXusField(
             name="coating_thickness",
@@ -615,6 +628,7 @@ class BeamSplitterCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-wavelength-range-coating-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=(
             "Wavelength range for which the coating is designed. Enter the "
@@ -634,6 +648,7 @@ class BeamSplitterCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-index-of-refraction-coating-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "

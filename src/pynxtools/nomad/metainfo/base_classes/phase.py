@@ -136,6 +136,7 @@ class Phase(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXphase.html#nxphase-phase-id-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "Identifier for each phase. The value 0 is reserved for the unknown "
             "phase that represents the null-model (no sufficiently significant "

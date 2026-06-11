@@ -156,6 +156,7 @@ class SpeNxspeInfo(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-nxspe-info-fixed-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("The fixed energy used for this file."),
         a_nexus_field=NeXusField(
             name="fixed_energy",
@@ -184,6 +185,7 @@ class SpeNxspeInfo(Collection):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-nxspe-info-psi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Orientation angle as expected in DCS-MSlice"),
         a_nexus_field=NeXusField(
             name="psi",
@@ -217,6 +219,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="azimuthal",
             type="NX_FLOAT",
@@ -231,6 +234,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-width-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="azimuthal_width",
             type="NX_FLOAT",
@@ -245,6 +249,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="polar",
             type="NX_FLOAT",
@@ -259,6 +264,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-width-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="polar_width",
             type="NX_FLOAT",
@@ -273,6 +279,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-distance-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -311,6 +318,7 @@ class SpeData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -387,6 +395,7 @@ class SpeInstrumentFermiChopper(FermiChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-instrument-fermi-chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
@@ -420,6 +429,7 @@ class SpeSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_NUMBER",
@@ -446,6 +456,7 @@ class SpeSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="temperature",
             type="NX_NUMBER",

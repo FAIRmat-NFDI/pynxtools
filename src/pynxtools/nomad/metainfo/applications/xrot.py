@@ -190,6 +190,7 @@ class XrotInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-polar-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*", "*", "*"],
         description=("The polar_angle (two theta) where the detector is placed."),
         a_nexus_field=NeXusField(
@@ -206,6 +207,7 @@ class XrotInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-beam-center-x-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the x position where the direct beam would hit the "
             "detector. This is a length, not a pixel position, and can be "
@@ -225,6 +227,7 @@ class XrotInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-detector-beam-center-y-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "This is the y position where the direct beam would hit the "
             "detector. This is a length, not a pixel position, and can be "
@@ -293,6 +296,7 @@ class XrotSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-sample-rotation-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the sample rotation start angle at each "
@@ -312,6 +316,7 @@ class XrotSample(XbaseSample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-sample-rotation-angle-step-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=["*"],
         description=(
             "This is an array holding the step made for sample rotation angle at "

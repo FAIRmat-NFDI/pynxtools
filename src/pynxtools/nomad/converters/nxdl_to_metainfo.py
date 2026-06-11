@@ -90,6 +90,7 @@ class QuantityContext:
     python_name: str  # nxdl_to_quantity_name(node.name), may have "__" suffix
     python_type: str  # "MEnum([...])" or nx_type_to_source(node.dtype)
     dimensionality: str | None  # NXUnitSet.get_dimensionality(node.unit)
+    default_unit: str | None  # NXUnitSet.get_default_unit(node.unit)
     shape: list[int | str] | None  # _shape_from_node(node): tuple → list with "*"
     parent_field: str | None  # parent field name (set for attribute-of-field)
     description: str | None  # stripped <doc> text from the primary NXDL element
@@ -186,6 +187,15 @@ def _get_dimensionality(nx_units: str | None) -> str | None:
         return str(dim) if dim is not None else None
     except Exception:
         return None
+
+
+def _get_default_unit(nx_units: str | None) -> str | None:
+    """Return the default storage unit for a NXDL unit category, if any."""
+    if not nx_units:
+        return None
+    if nx_units == "NX_TRANSFORMATION":
+        nx_units = "NX_ANY"
+    return NXUnitSet.get_default_unit(nx_units)
 
 
 # ---------------------------------------------------------------------------
@@ -391,12 +401,14 @@ def _build_quantity_from_node(
         raw_unit = node.unit if node.unit != "NX_TRANSFORMATION" else "NX_ANY"
         unit = raw_unit
         dimensionality = _get_dimensionality(raw_unit)
+        default_unit = _get_default_unit(raw_unit)
         shape = _shape_from_node(node)
         interpretation = node.interpretation
         long_name = node.long_name
     else:
         unit = None
         dimensionality = None
+        default_unit = None
         shape = _shape_from_node(node)
         interpretation = None
         long_name = None
@@ -416,6 +428,7 @@ def _build_quantity_from_node(
         python_name=python_name,
         python_type=python_type,
         dimensionality=dimensionality,
+        default_unit=default_unit,
         shape=shape,
         parent_field=parent_field,
         description=_description_string(node),

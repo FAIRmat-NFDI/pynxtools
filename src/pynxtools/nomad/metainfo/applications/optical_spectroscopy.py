@@ -716,6 +716,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-omega-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angle between sample incident beam and sample surface."),
         a_nexus_field=NeXusField(
             name="omega",
@@ -731,6 +732,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-twotheta-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angle between incident and detection beam"),
         a_nexus_field=NeXusField(
             name="twotheta",
@@ -746,6 +748,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-chi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Sample tilt between sample normal, and the plane spanned by "
             "detection and incident beam."
@@ -764,6 +767,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-phi-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Inplane rotation of the sample, with rotation axis along sample normal."
         ),
@@ -781,6 +785,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-incidence-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angle(s) of the incident beam vs. the normal of the bottom "
             "reflective (substrate) surface in the sample. These two directions "
@@ -800,6 +805,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-detection-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Detection angle(s) of the beam reflected or scattered off the "
             "sample vs. the normal of the bottom reflective (substrate) surface "
@@ -820,6 +826,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-incident-and-detection-beam-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angle between the incident and detection beam. If "
             "angle_of_detection + angle_of_incidence = "
@@ -844,6 +851,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-angle-of-in-plane-sample-rotation-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angle of the inplane orientation of the sample. This might be an "
             "arbitrary, angle without specific relation to the sample symmetry, "
@@ -864,6 +872,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-lateral-focal-point-offset-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Specify if there is a lateral offset on the sample surface, between "
             "the focal points of the incident beam and the detection beam."
@@ -969,6 +978,7 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-beam-type-extent-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
@@ -1019,6 +1029,7 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-beam-type-linear-beam-sample-polarization-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Angle of the linear polarized light, with respect to a fixed "
             "arbitrary defined 0° position. Note that the zero reference should "
@@ -1378,6 +1389,7 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-generic-beam-sample-angle-type-polar-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Rotation about the y axis (polar rotation within the sample plane)."
         ),
@@ -1439,6 +1451,7 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-generic-beam-sample-angle-type-azimuth-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=(
             "Rotation about the z axis (azimuthal rotation within the sample plane)."
         ),
@@ -2319,6 +2332,7 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-wavelength-resolution-resolution-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "Minimum distinguishable wavelength separation of peaks in spectra."
         ),
@@ -2487,6 +2501,7 @@ class OpticalSpectroscopySample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=(
             "(Measured) sample thickness. The information is recorded to qualify "
             "if the light used was likely able to shine through the sample. In "
@@ -2699,6 +2714,7 @@ class OpticalSpectroscopySampleEnvironment(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-environment-sample-medium-refractive-indices-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Array of pairs of complex refractive indices n + ik of the medium "
@@ -2877,6 +2893,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-depolarization-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 1, "*"],
         description=("Light loss due to depolarization as a value in [0-1]."),
         a_nexus_field=NeXusField(
@@ -2893,6 +2910,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-jones-quality-factor-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 1, "*"],
         description=("Jones quality factor."),
         a_nexus_field=NeXusField(
@@ -2909,6 +2927,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-reflectivity-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 1, "*"],
         description=("Reflectivity."),
         a_nexus_field=NeXusField(
@@ -2925,6 +2944,7 @@ class OpticalSpectroscopyDerivedParameters(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-transmittance-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 1, "*"],
         description=("Transmittance."),
         a_nexus_field=NeXusField(

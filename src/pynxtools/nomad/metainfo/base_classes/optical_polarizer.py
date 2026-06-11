@@ -141,6 +141,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-polarizer-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Angle of the polarizer."),
         a_nexus_field=NeXusField(
             name="polarizer_angle",
@@ -156,6 +157,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-acceptance-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         shape=[2],
         description=("Acceptance angle of the polarizer (range)."),
         a_nexus_field=NeXusField(
@@ -172,6 +174,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-wavelength-range-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=(
             "Wavelength range for which the polarizer is designed. Enter the "
@@ -192,6 +195,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-extinction-ratio-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Extinction ratio (maximum to minimum transmission)."),
         a_nexus_field=NeXusField(
@@ -208,6 +212,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-reflection-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Reflection of the polarizer at given wavelength values."),
         a_nexus_field=NeXusField(
@@ -224,6 +229,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         description=("Transmission of the polarizer at given wavelength values."),
         a_nexus_field=NeXusField(
@@ -328,6 +334,7 @@ class OpticalPolarizerShape(Shape):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-shape-wedge-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Wedge angle if 'shape' is 'wedged'."),
         a_nexus_field=NeXusField(
             name="wedge_angle",
@@ -379,6 +386,7 @@ class OpticalPolarizerSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-substrate-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("Thickness of the polarizer substrate."),
         a_nexus_field=NeXusField(
             name="substrate_thickness",
@@ -394,6 +402,7 @@ class OpticalPolarizerSubstrate(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-substrate-index-of-refraction-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the polarizer material. Specify at "
@@ -454,6 +463,7 @@ class OpticalPolarizerCoatingTYPE(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-coatingtype-index-of-refraction-coating-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "

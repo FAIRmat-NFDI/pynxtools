@@ -152,6 +152,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-incident-angle-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="incident_angle",
             type="NX_FLOAT",
@@ -166,6 +167,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-bend-angle-x-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="bend_angle_x",
             type="NX_FLOAT",
@@ -180,6 +182,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-bend-angle-y-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         a_nexus_field=NeXusField(
             name="bend_angle_y",
             type="NX_FLOAT",
@@ -220,6 +223,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-m-value-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "The m value for a supermirror, which defines the supermirror regime "
             "in multiples of the critical angle of Nickel."
@@ -250,6 +254,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         a_nexus_field=NeXusField(
             name="substrate_density",
             type="NX_FLOAT",
@@ -264,6 +269,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="substrate_thickness",
             type="NX_FLOAT",
@@ -290,6 +296,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="substrate_roughness",
             type="NX_FLOAT",
@@ -304,6 +311,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-coating-roughness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         a_nexus_field=NeXusField(
             name="coating_roughness",
             type="NX_FLOAT",
@@ -330,6 +338,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-even-layer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         a_nexus_field=NeXusField(
             name="even_layer_density",
             type="NX_FLOAT",
@@ -356,6 +365,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-odd-layer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
+        unit="kilogram / m ** 3",
         a_nexus_field=NeXusField(
             name="odd_layer_density",
             type="NX_FLOAT",
@@ -370,6 +380,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-layer-thickness-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("An array describing the thickness of each layer"),
         a_nexus_field=NeXusField(
             name="layer_thickness",

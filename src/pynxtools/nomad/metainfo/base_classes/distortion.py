@@ -84,6 +84,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-symmetry-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=(
             "For `symmetry-guided distortion correction`_, where a pattern of "
             "features is mapped to the regular geometric structure expected from "
@@ -105,6 +106,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-original-centre-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=[2],
         description=(
             "For symmetry-guided distortion correction. Here we record the "
@@ -124,6 +126,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-original-points-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", 2],
         description=(
             "For symmetry-guided distortion correction. Here we record the "
@@ -143,6 +146,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-cdeform-field-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Column deformation field for general non-rigid distortion "
@@ -163,6 +167,7 @@ class Distortion(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-rdeform-field-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*", "*"],
         description=(
             "Row deformation field for general non-rigid distortion corrections. "

@@ -318,6 +318,7 @@ class EbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-electron-source-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "The potential difference between anode and cathode. This concept is "
             "related to term `Acceleration Voltage`_ of the EMglossary standard. "
@@ -338,6 +339,7 @@ class EbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-electron-source-extraction-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=(
             "Voltage which is used to create an electric field that draws "
             "particles from the source. This concept is related to term "
@@ -358,6 +360,7 @@ class EbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-electron-source-emission-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Electrical current which is released from the source. This concept "
             "is related to term `Emission Current`_ of the EMglossary standard. "
@@ -378,6 +381,7 @@ class EbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-electron-source-filament-current-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         description=(
             "Electrical current which flows through the source. This concept is "
             "related to term `Filament Current`_ of the EMglossary standard. .. "
@@ -443,6 +447,7 @@ class EbeamColumnElectronSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-electron-source-lifetime-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("How long has the source been in operation."),
         a_nexus_field=NeXusField(
             name="lifetime",
@@ -553,6 +558,7 @@ class EbeamColumnMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-monochromator-voltage-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         description=("Corresponding voltage for that energy dispersion."),
         a_nexus_field=NeXusField(
             name="voltage",

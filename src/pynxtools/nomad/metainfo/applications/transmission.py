@@ -445,6 +445,7 @@ class TransmissionInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-polarizer-field"
         ],
         dimensionality="[angle]",
+        unit="radian",
         description=("Polarizer value inside the beam path"),
         a_nexus_field=NeXusField(
             name="polarizer",
@@ -460,6 +461,7 @@ class TransmissionInstrument(Instrument):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-time-points-field"
         ],
         dimensionality="[time]",
+        unit="second",
         shape=["*"],
         description=("An array of relative scan start time points."),
         a_nexus_field=NeXusField(
@@ -516,6 +518,7 @@ class TransmissionInstrumentCommonBeamMask(Slit):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-common-beam-mask-y-gap-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("The height of the common beam in percentage of the beam"),
         a_nexus_field=NeXusField(
             name="y_gap",
@@ -553,6 +556,7 @@ class TransmissionInstrumentRefAttenuator(Attenuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-ref-attenuator-attenuator-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="attenuator_transmission",
             type="NX_FLOAT",
@@ -589,6 +593,7 @@ class TransmissionInstrumentSampleAttenuator(Attenuator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-sample-attenuator-attenuator-transmission-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="attenuator_transmission",
             type="NX_FLOAT",
@@ -643,6 +648,7 @@ class TransmissionInstrumentSpectrometer(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=["*"],
         description=(
             "Wavelength value(s) used for the measurement. An array of 1 or more "
@@ -686,6 +692,7 @@ class TransmissionInstrumentSpectrometerSpectralResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-spectral-resolution-resolution-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
@@ -738,6 +745,7 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-angular-dispersion-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("Dispersion of the grating in nm/mm used."),
         a_nexus_field=NeXusField(
             name="angular_dispersion",
@@ -753,6 +761,7 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-blaze-wavelength-field"
         ],
         dimensionality="[length]",
+        unit="m",
         description=("The blaze wavelength of the grating used."),
         a_nexus_field=NeXusField(
             name="blaze_wavelength",
@@ -768,6 +777,7 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-wavelength-range-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=("Wavelength range in which this grating was used"),
         a_nexus_field=NeXusField(
@@ -806,6 +816,7 @@ class TransmissionInstrumentSpectrometerGratingSpectralResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-spectral-resolution-resolution-field"
         ],
         dimensionality="1 / [length]",
+        unit="1 / m",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
@@ -850,6 +861,7 @@ class TransmissionInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-wavelength-range-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=("Wavelength range in which this detector was used"),
         a_nexus_field=NeXusField(
@@ -880,6 +892,7 @@ class TransmissionInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-response-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("Response time of the detector"),
         a_nexus_field=NeXusField(
             name="response_time",
@@ -995,6 +1008,7 @@ class TransmissionInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-wavelength-range-field"
         ],
         dimensionality="[length]",
+        unit="m",
         shape=[2],
         description=("Wavelength range in which the lamp was used"),
         a_nexus_field=NeXusField(

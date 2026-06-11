@@ -205,6 +205,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-duration-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("TODO: needs documentation"),
         a_nexus_field=NeXusField(
             name="duration",
@@ -220,6 +221,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-collection-time-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("TODO: needs documentation"),
         a_nexus_field=NeXusField(
             name="collection_time",
@@ -303,6 +305,7 @@ class Archive(Entry):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-release-date-field"
         ],
         dimensionality="[time]",
+        unit="second",
         description=("when this file is to be released into PD"),
         a_nexus_field=NeXusField(
             name="release_date",
@@ -613,6 +616,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-preparation-date-field"
         ],
         dimensionality="[time]",
+        unit="second",
         a_nexus_field=NeXusField(
             name="preparation_date",
             type="NX_CHAR",
@@ -662,6 +666,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-temperature-field"
         ],
         dimensionality="[temperature]",
+        unit="kelvin",
         a_nexus_field=NeXusField(
             name="temperature",
             type="NX_FLOAT",
@@ -676,6 +681,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-magnetic-field-field"
         ],
         dimensionality="[current]",
+        unit="ampere",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="magnetic_field",
@@ -691,6 +697,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-electric-field-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="electric_field",
@@ -706,6 +713,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-stress-field-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="stress_field",
@@ -721,6 +729,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
+        unit="pascal",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pressure",
