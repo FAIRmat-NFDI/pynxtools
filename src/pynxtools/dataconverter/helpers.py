@@ -758,6 +758,8 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
 
             # attributes live on the object; produce values with '@' before attr
             for attr_name in obj.attrs:
+                if attr_name.startswith("NX_") or attr_name.startswith("nx_"):
+                    continue
                 attr_name_dec = decode_if_bytes(attr_name)
                 attr_key = f"{data_path}/@{attr_name_dec}"
                 mapping[attr_key] = f"@data:{hdf5_base}@{attr_name_dec}"
