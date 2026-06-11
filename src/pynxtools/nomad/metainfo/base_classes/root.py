@@ -376,7 +376,6 @@ class Root(Object, basesections.Experiment, EntryData):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
         if not self.m_entry_paths:
             return
         try:
@@ -403,3 +402,5 @@ class Root(Object, basesections.Experiment, EntryData):
             self.steps = new_steps
         except Exception as e:
             logger.warning("Could not resolve NXentry references for Root: %s", e)
+
+        super().normalize(archive, logger)
