@@ -1983,7 +1983,7 @@ class EmEmMeasurement(EmMeasurement):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrument",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrument",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXem_instrument",
@@ -1993,7 +1993,7 @@ class EmEmMeasurement(EmMeasurement):
         ),
     )
     eventID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2009,7 +2009,7 @@ class EmEmMeasurement(EmMeasurement):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrument(EmInstrument):
+class EmMeasurementInstrument(EmInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-group"
@@ -2023,7 +2023,7 @@ class EmEmMeasurementInstrument(EmInstrument):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2033,7 +2033,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2044,7 +2044,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     ebeam_column = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumn",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXebeam_column",
@@ -2054,7 +2054,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     ibeam_column = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumn",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXibeam_column",
@@ -2066,7 +2066,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     detectorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentDetectorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentDetectorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2078,7 +2078,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     gas_injector = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentGasInjector",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentGasInjector",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2088,7 +2088,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     stageID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentStageID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentStageID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2100,7 +2100,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     nanoprobeID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentNanoprobeID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentNanoprobeID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2111,7 +2111,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         ),
     )
     pumpID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentPumpID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentPumpID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2176,7 +2176,7 @@ class EmEmMeasurementInstrument(EmInstrument):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentFabrication(Fabrication):
+class EmMeasurementInstrumentFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-fabrication-group"
@@ -2230,7 +2230,7 @@ class EmEmMeasurementInstrumentFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentProgramID(Program):
+class EmMeasurementInstrumentProgramID(Program):
     """
     Details about the control program used for operating the microscope.
     """
@@ -2278,7 +2278,7 @@ class EmEmMeasurementInstrumentProgramID(Program):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
+class EmMeasurementInstrumentEbeamColumn(EbeamColumn):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-group"
@@ -2292,7 +2292,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2302,7 +2302,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     electron_source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnElectronSource",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnElectronSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",
@@ -2312,7 +2312,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     lensID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnLensID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnLensID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2324,7 +2324,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     apertureID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnApertureID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnApertureID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2336,7 +2336,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     deflectorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnDeflectorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnDeflectorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2348,7 +2348,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     blankerID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnBlankerID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBlankerID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2360,7 +2360,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     monochromatorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnMonochromatorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2372,7 +2372,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     corrector_csID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnCorrector_csID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrector_csID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2384,7 +2384,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     corrector_ax = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnCorrectorAx",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAx",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2396,7 +2396,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     biprismID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnBiprismID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBiprismID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2408,7 +2408,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     phaseplateID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnPhaseplateID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnPhaseplateID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2456,7 +2456,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     scan_controller = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnScanController",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnScanController",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXscan_controller",
@@ -2470,7 +2470,7 @@ class EmEmMeasurementInstrumentEbeamColumn(EbeamColumn):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-fabrication-group"
@@ -2524,7 +2524,7 @@ class EmEmMeasurementInstrumentEbeamColumnFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnElectronSource(Source):
+class EmMeasurementInstrumentEbeamColumnElectronSource(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-electron-source-group"
@@ -2538,7 +2538,7 @@ class EmEmMeasurementInstrumentEbeamColumnElectronSource(Source):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnElectronSourceFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnElectronSourceFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2578,7 +2578,7 @@ class EmEmMeasurementInstrumentEbeamColumnElectronSource(Source):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnElectronSourceFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnElectronSourceFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-electron-source-fabrication-group"
@@ -2632,7 +2632,7 @@ class EmEmMeasurementInstrumentEbeamColumnElectronSourceFabrication(Fabrication)
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
+class EmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-lensid-group"
@@ -2648,7 +2648,7 @@ class EmEmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnLensIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnLensIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2675,7 +2675,7 @@ class EmEmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnLensIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnLensIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-lensid-fabrication-group"
@@ -2729,7 +2729,7 @@ class EmEmMeasurementInstrumentEbeamColumnLensIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnApertureID(Aperture):
+class EmMeasurementInstrumentEbeamColumnApertureID(Aperture):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-apertureid-group"
@@ -2745,7 +2745,7 @@ class EmEmMeasurementInstrumentEbeamColumnApertureID(Aperture):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnApertureIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnApertureIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2772,7 +2772,7 @@ class EmEmMeasurementInstrumentEbeamColumnApertureID(Aperture):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnApertureIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnApertureIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-apertureid-fabrication-group"
@@ -2826,7 +2826,7 @@ class EmEmMeasurementInstrumentEbeamColumnApertureIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
+class EmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-deflectorid-group"
@@ -2842,7 +2842,7 @@ class EmEmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnDeflectorIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnDeflectorIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2869,7 +2869,7 @@ class EmEmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnDeflectorIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnDeflectorIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-deflectorid-fabrication-group"
@@ -2923,7 +2923,7 @@ class EmEmMeasurementInstrumentEbeamColumnDeflectorIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
+class EmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-blankerid-group"
@@ -2939,7 +2939,7 @@ class EmEmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnBlankerIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBlankerIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2966,7 +2966,7 @@ class EmEmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnBlankerIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnBlankerIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-blankerid-fabrication-group"
@@ -3020,7 +3020,7 @@ class EmEmMeasurementInstrumentEbeamColumnBlankerIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnMonochromatorID(Monochromator):
+class EmMeasurementInstrumentEbeamColumnMonochromatorID(Monochromator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-monochromatorid-group"
@@ -3036,7 +3036,7 @@ class EmEmMeasurementInstrumentEbeamColumnMonochromatorID(Monochromator):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3080,7 +3080,7 @@ class EmEmMeasurementInstrumentEbeamColumnMonochromatorID(Monochromator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-monochromatorid-fabrication-group"
@@ -3134,7 +3134,7 @@ class EmEmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication(Fabrication
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnCorrector_csID(CorrectorCs):
+class EmMeasurementInstrumentEbeamColumnCorrector_csID(CorrectorCs):
     """
     A spherical aberration corrector is a typical component in a transmission
     electron microscope. Many instruments have only one, in this case the
@@ -3157,7 +3157,7 @@ class EmEmMeasurementInstrumentEbeamColumnCorrector_csID(CorrectorCs):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3185,7 +3185,7 @@ class EmEmMeasurementInstrumentEbeamColumnCorrector_csID(CorrectorCs):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-csid-fabrication-group"
@@ -3239,7 +3239,7 @@ class EmEmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication(Fabrication)
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
+class EmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-group"
@@ -3255,7 +3255,7 @@ class EmEmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnCorrectorAxFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3269,7 +3269,7 @@ class EmEmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-fabrication-group"
@@ -3323,7 +3323,7 @@ class EmEmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnBiprismID(Component):
+class EmMeasurementInstrumentEbeamColumnBiprismID(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-biprismid-group"
@@ -3339,7 +3339,7 @@ class EmEmMeasurementInstrumentEbeamColumnBiprismID(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnBiprismIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBiprismIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3353,7 +3353,7 @@ class EmEmMeasurementInstrumentEbeamColumnBiprismID(Component):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnBiprismIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnBiprismIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-biprismid-fabrication-group"
@@ -3407,7 +3407,7 @@ class EmEmMeasurementInstrumentEbeamColumnBiprismIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnPhaseplateID(Component):
+class EmMeasurementInstrumentEbeamColumnPhaseplateID(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-phaseplateid-group"
@@ -3423,7 +3423,7 @@ class EmEmMeasurementInstrumentEbeamColumnPhaseplateID(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3452,7 +3452,7 @@ class EmEmMeasurementInstrumentEbeamColumnPhaseplateID(Component):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-phaseplateid-fabrication-group"
@@ -3506,7 +3506,7 @@ class EmEmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnScanController(ScanController):
+class EmMeasurementInstrumentEbeamColumnScanController(ScanController):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-scan-controller-group"
@@ -3520,7 +3520,7 @@ class EmEmMeasurementInstrumentEbeamColumnScanController(ScanController):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentEbeamColumnScanControllerFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnScanControllerFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3534,7 +3534,7 @@ class EmEmMeasurementInstrumentEbeamColumnScanController(ScanController):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentEbeamColumnScanControllerFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnScanControllerFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-scan-controller-fabrication-group"
@@ -3588,7 +3588,7 @@ class EmEmMeasurementInstrumentEbeamColumnScanControllerFabrication(Fabrication)
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
+class EmMeasurementInstrumentIbeamColumn(IbeamColumn):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-group"
@@ -3604,7 +3604,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3614,7 +3614,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     ion_source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnIonSource",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnIonSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",
@@ -3624,7 +3624,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     lensID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnLensID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnLensID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3636,7 +3636,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     apertureID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnApertureID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnApertureID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3648,7 +3648,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     deflectorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnDeflectorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnDeflectorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3660,7 +3660,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     blankerID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnBlankerID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnBlankerID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3672,7 +3672,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     monochromatorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnMonochromatorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3720,7 +3720,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     scan_controller = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnScanController",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnScanController",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXscan_controller",
@@ -3734,7 +3734,7 @@ class EmEmMeasurementInstrumentIbeamColumn(IbeamColumn):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-fabrication-group"
@@ -3788,7 +3788,7 @@ class EmEmMeasurementInstrumentIbeamColumnFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnIonSource(Source):
+class EmMeasurementInstrumentIbeamColumnIonSource(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-ion-source-group"
@@ -3802,7 +3802,7 @@ class EmEmMeasurementInstrumentIbeamColumnIonSource(Source):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnIonSourceFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnIonSourceFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3830,7 +3830,7 @@ class EmEmMeasurementInstrumentIbeamColumnIonSource(Source):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnIonSourceFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnIonSourceFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-ion-source-fabrication-group"
@@ -3884,7 +3884,7 @@ class EmEmMeasurementInstrumentIbeamColumnIonSourceFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
+class EmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-lensid-group"
@@ -3900,7 +3900,7 @@ class EmEmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnLensIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnLensIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3927,7 +3927,7 @@ class EmEmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnLensIDFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnLensIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-lensid-fabrication-group"
@@ -3981,7 +3981,7 @@ class EmEmMeasurementInstrumentIbeamColumnLensIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnApertureID(Aperture):
+class EmMeasurementInstrumentIbeamColumnApertureID(Aperture):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-apertureid-group"
@@ -3997,7 +3997,7 @@ class EmEmMeasurementInstrumentIbeamColumnApertureID(Aperture):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnApertureIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnApertureIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4024,7 +4024,7 @@ class EmEmMeasurementInstrumentIbeamColumnApertureID(Aperture):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnApertureIDFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnApertureIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-apertureid-fabrication-group"
@@ -4078,7 +4078,7 @@ class EmEmMeasurementInstrumentIbeamColumnApertureIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
+class EmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-deflectorid-group"
@@ -4094,7 +4094,7 @@ class EmEmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnDeflectorIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnDeflectorIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4121,7 +4121,7 @@ class EmEmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnDeflectorIDFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnDeflectorIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-deflectorid-fabrication-group"
@@ -4175,7 +4175,7 @@ class EmEmMeasurementInstrumentIbeamColumnDeflectorIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
+class EmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-blankerid-group"
@@ -4191,7 +4191,7 @@ class EmEmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnBlankerIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnBlankerIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4218,7 +4218,7 @@ class EmEmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnBlankerIDFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnBlankerIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-blankerid-fabrication-group"
@@ -4272,7 +4272,7 @@ class EmEmMeasurementInstrumentIbeamColumnBlankerIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
+class EmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-monochromatorid-group"
@@ -4288,7 +4288,7 @@ class EmEmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4327,7 +4327,7 @@ class EmEmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-monochromatorid-fabrication-group"
@@ -4381,7 +4381,7 @@ class EmEmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication(Fabrication
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnScanController(ScanController):
+class EmMeasurementInstrumentIbeamColumnScanController(ScanController):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-scan-controller-group"
@@ -4395,7 +4395,7 @@ class EmEmMeasurementInstrumentIbeamColumnScanController(ScanController):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentIbeamColumnScanControllerFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnScanControllerFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4409,7 +4409,7 @@ class EmEmMeasurementInstrumentIbeamColumnScanController(ScanController):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentIbeamColumnScanControllerFabrication(Fabrication):
+class EmMeasurementInstrumentIbeamColumnScanControllerFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-scan-controller-fabrication-group"
@@ -4463,7 +4463,7 @@ class EmEmMeasurementInstrumentIbeamColumnScanControllerFabrication(Fabrication)
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentDetectorID(Detector):
+class EmMeasurementInstrumentDetectorID(Detector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-detectorid-group"
@@ -4479,7 +4479,7 @@ class EmEmMeasurementInstrumentDetectorID(Detector):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentDetectorIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentDetectorIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4506,7 +4506,7 @@ class EmEmMeasurementInstrumentDetectorID(Detector):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentDetectorIDFabrication(Fabrication):
+class EmMeasurementInstrumentDetectorIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-detectorid-fabrication-group"
@@ -4560,7 +4560,7 @@ class EmEmMeasurementInstrumentDetectorIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentGasInjector(Component):
+class EmMeasurementInstrumentGasInjector(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-gas-injector-group"
@@ -4574,7 +4574,7 @@ class EmEmMeasurementInstrumentGasInjector(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentGasInjectorFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentGasInjectorFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4588,7 +4588,7 @@ class EmEmMeasurementInstrumentGasInjector(Component):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentGasInjectorFabrication(Fabrication):
+class EmMeasurementInstrumentGasInjectorFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-gas-injector-fabrication-group"
@@ -4642,7 +4642,7 @@ class EmEmMeasurementInstrumentGasInjectorFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentStageID(Manipulator):
+class EmMeasurementInstrumentStageID(Manipulator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-stageid-group"
@@ -4658,7 +4658,7 @@ class EmEmMeasurementInstrumentStageID(Manipulator):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentStageIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentStageIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4685,7 +4685,7 @@ class EmEmMeasurementInstrumentStageID(Manipulator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentStageIDFabrication(Fabrication):
+class EmMeasurementInstrumentStageIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-stageid-fabrication-group"
@@ -4739,7 +4739,7 @@ class EmEmMeasurementInstrumentStageIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentNanoprobeID(Manipulator):
+class EmMeasurementInstrumentNanoprobeID(Manipulator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-nanoprobeid-group"
@@ -4754,7 +4754,7 @@ class EmEmMeasurementInstrumentNanoprobeID(Manipulator):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementInstrumentNanoprobeIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentNanoprobeIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -4768,7 +4768,7 @@ class EmEmMeasurementInstrumentNanoprobeID(Manipulator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentNanoprobeIDFabrication(Fabrication):
+class EmMeasurementInstrumentNanoprobeIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-nanoprobeid-fabrication-group"
@@ -4822,7 +4822,7 @@ class EmEmMeasurementInstrumentNanoprobeIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementInstrumentPumpID(Pump):
+class EmMeasurementInstrumentPumpID(Pump):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-pumpid-group"
@@ -4865,7 +4865,7 @@ class EmEmMeasurementInstrumentPumpID(Pump):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventID(EmEventData):
+class EmMeasurementEventID(EmEventData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-group"
@@ -4881,7 +4881,7 @@ class EmEmMeasurementEventID(EmEventData):
     )
 
     imageID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -4893,7 +4893,7 @@ class EmEmMeasurementEventID(EmEventData):
         ),
     )
     spectrumID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -4905,7 +4905,7 @@ class EmEmMeasurementEventID(EmEventData):
         ),
     )
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrument",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrument",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXem_instrument",
@@ -4970,7 +4970,7 @@ class EmEmMeasurementEventID(EmEventData):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageID(Image):
+class EmMeasurementEventIDImageID(Image):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-group"
@@ -4986,7 +4986,7 @@ class EmEmMeasurementEventIDImageID(Image):
     )
 
     process = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDProcess",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDProcess",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -4997,7 +4997,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     image_1d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDImage1d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage1d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5007,7 +5007,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     image_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDImage2d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5017,7 +5017,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     image_3d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDImage3d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage3d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5027,7 +5027,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     image_4d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDImage4d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage4d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5037,7 +5037,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     stack_1d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDStack1d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDStack1d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5047,7 +5047,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     stack_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDStack2d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDStack2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5057,7 +5057,7 @@ class EmEmMeasurementEventIDImageID(Image):
         ),
     )
     stack_3d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDStack3d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDStack3d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -5071,7 +5071,7 @@ class EmEmMeasurementEventIDImageID(Image):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDProcess(Process):
+class EmMeasurementEventIDImageIDProcess(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-process-group"
@@ -5086,7 +5086,7 @@ class EmEmMeasurementEventIDImageIDProcess(Process):
     )
 
     input = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDImageIDProcessInput",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDProcessInput",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -5113,7 +5113,7 @@ class EmEmMeasurementEventIDImageIDProcess(Process):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDProcessInput(Note):
+class EmMeasurementEventIDImageIDProcessInput(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-process-input-group"
@@ -5191,7 +5191,7 @@ class EmEmMeasurementEventIDImageIDProcessInput(Note):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDImage1d(Data):
+class EmMeasurementEventIDImageIDImage1d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-group"
@@ -5402,7 +5402,7 @@ class EmEmMeasurementEventIDImageIDImage1d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDImage2d(Data):
+class EmMeasurementEventIDImageIDImage2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-group"
@@ -5636,7 +5636,7 @@ class EmEmMeasurementEventIDImageIDImage2d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDImage3d(Data):
+class EmMeasurementEventIDImageIDImage3d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-group"
@@ -5901,7 +5901,7 @@ class EmEmMeasurementEventIDImageIDImage3d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDImage4d(Data):
+class EmMeasurementEventIDImageIDImage4d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-group"
@@ -6193,7 +6193,7 @@ class EmEmMeasurementEventIDImageIDImage4d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDStack1d(Data):
+class EmMeasurementEventIDImageIDStack1d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-group"
@@ -6462,7 +6462,7 @@ class EmEmMeasurementEventIDImageIDStack1d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDStack2d(Data):
+class EmMeasurementEventIDImageIDStack2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-group"
@@ -6758,7 +6758,7 @@ class EmEmMeasurementEventIDImageIDStack2d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDImageIDStack3d(Data):
+class EmMeasurementEventIDImageIDStack3d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-group"
@@ -7081,7 +7081,7 @@ class EmEmMeasurementEventIDImageIDStack3d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumID(Spectrum):
+class EmMeasurementEventIDSpectrumID(Spectrum):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-group"
@@ -7097,7 +7097,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
     )
 
     process = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDProcess",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDProcess",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -7108,7 +7108,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     spectrum_0d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDSpectrum0d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum0d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7118,7 +7118,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     spectrum_1d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDSpectrum1d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum1d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7128,7 +7128,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     spectrum_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDSpectrum2d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7138,7 +7138,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     spectrum_3d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDSpectrum3d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum3d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7148,7 +7148,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     stack_0d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDStack0d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack0d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7158,7 +7158,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     stack_1d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDStack1d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack1d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7168,7 +7168,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     stack_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDStack2d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7178,7 +7178,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
     stack_3d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDStack3d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack3d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -7192,7 +7192,7 @@ class EmEmMeasurementEventIDSpectrumID(Spectrum):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDProcess(Process):
+class EmMeasurementEventIDSpectrumIDProcess(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-process-group"
@@ -7207,7 +7207,7 @@ class EmEmMeasurementEventIDSpectrumIDProcess(Process):
     )
 
     input = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDSpectrumIDProcessInput",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDProcessInput",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -7234,7 +7234,7 @@ class EmEmMeasurementEventIDSpectrumIDProcess(Process):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDProcessInput(Note):
+class EmMeasurementEventIDSpectrumIDProcessInput(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-process-input-group"
@@ -7312,7 +7312,7 @@ class EmEmMeasurementEventIDSpectrumIDProcessInput(Note):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDSpectrum0d(Data):
+class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-group"
@@ -7438,7 +7438,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum0d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDSpectrum1d(Data):
+class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-group"
@@ -7593,7 +7593,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum1d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDSpectrum2d(Data):
+class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-group"
@@ -7777,7 +7777,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum2d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
+class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-group"
@@ -7990,7 +7990,7 @@ class EmEmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDStack0d(Data):
+class EmMeasurementEventIDSpectrumIDStack0d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-group"
@@ -8145,7 +8145,7 @@ class EmEmMeasurementEventIDSpectrumIDStack0d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDStack1d(Data):
+class EmMeasurementEventIDSpectrumIDStack1d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-group"
@@ -8313,7 +8313,7 @@ class EmEmMeasurementEventIDSpectrumIDStack1d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
+class EmMeasurementEventIDSpectrumIDStack2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-group"
@@ -8526,7 +8526,7 @@ class EmEmMeasurementEventIDSpectrumIDStack2d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
+class EmMeasurementEventIDSpectrumIDStack3d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-group"
@@ -8768,7 +8768,7 @@ class EmEmMeasurementEventIDSpectrumIDStack3d(Data):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrument(EmInstrument):
+class EmMeasurementEventIDInstrument(EmInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-group"
@@ -8782,7 +8782,7 @@ class EmEmMeasurementEventIDInstrument(EmInstrument):
     )
 
     ebeam_column = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumn",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXebeam_column",
@@ -8792,7 +8792,7 @@ class EmEmMeasurementEventIDInstrument(EmInstrument):
         ),
     )
     ibeam_column = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentIbeamColumn",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXibeam_column",
@@ -8812,7 +8812,7 @@ class EmEmMeasurementEventIDInstrument(EmInstrument):
         ),
     )
     detectorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentDetectorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentDetectorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -8824,7 +8824,7 @@ class EmEmMeasurementEventIDInstrument(EmInstrument):
         ),
     )
     stageID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentStageID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentStageID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -8876,7 +8876,7 @@ class EmEmMeasurementEventIDInstrument(EmInstrument):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
+class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-group"
@@ -8890,7 +8890,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
     )
 
     electron_source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnElectronSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",
@@ -8900,7 +8900,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     lensID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnLensID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnLensID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -8912,7 +8912,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     apertureID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnApertureID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnApertureID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -8936,7 +8936,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     monochromatorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnMonochromatorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -8948,7 +8948,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     corrector_csID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -8960,7 +8960,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     corrector_ax = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrectorAx",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -9006,7 +9006,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         ),
     )
     scan_controller = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnScanController",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnScanController",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXscan_controller",
@@ -9033,7 +9033,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
+class EmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-electron-source-group"
@@ -9111,7 +9111,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnLensID(ElectromagneticLens):
+class EmMeasurementEventIDInstrumentEbeamColumnLensID(ElectromagneticLens):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-lensid-group"
@@ -9144,7 +9144,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnLensID(ElectromagneticLens):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnApertureID(Aperture):
+class EmMeasurementEventIDInstrumentEbeamColumnApertureID(Aperture):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-apertureid-group"
@@ -9182,7 +9182,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnApertureID(Aperture):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
+class EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-monochromatorid-group"
@@ -9242,7 +9242,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csID(CorrectorCs):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csID(CorrectorCs):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-group"
@@ -9258,7 +9258,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csID(CorrectorCs):
     )
 
     tableauID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -9287,7 +9287,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csID(CorrectorCs):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-group"
@@ -9303,7 +9303,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
     )
 
     c_1 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC1",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC1",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9313,7 +9313,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     a_1 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA1",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA1",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9323,7 +9323,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     b_2 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB2",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB2",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9333,7 +9333,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     a_2 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA2",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA2",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9343,7 +9343,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_3 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC3",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC3",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9353,7 +9353,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     s_3 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS3",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS3",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9363,7 +9363,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     a_3 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA3",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA3",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9373,7 +9373,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     b_4 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB4",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB4",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9383,7 +9383,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     d_4 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDD4",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDD4",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9393,7 +9393,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     a_4 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA4",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA4",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9403,7 +9403,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC5",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC5",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9413,7 +9413,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     s_5 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS5",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS5",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9423,7 +9423,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     r_5 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDR5",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDR5",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9433,7 +9433,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     a_6 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA6",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA6",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9443,7 +9443,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_1_0 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC10",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC10",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9453,7 +9453,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_1_2_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9463,7 +9463,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_1_2_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9473,7 +9473,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_2_1_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9483,7 +9483,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_2_1_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9493,7 +9493,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_2_3_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9503,7 +9503,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_2_3_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9513,7 +9513,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_3_0 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC30",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC30",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9523,7 +9523,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_3_2_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9533,7 +9533,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_3_2_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9543,7 +9543,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_3_4_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9553,7 +9553,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_3_4_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9563,7 +9563,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_4_1_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9573,7 +9573,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_4_1_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9583,7 +9583,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_4_3_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9593,7 +9593,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_4_3_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9603,7 +9603,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_4_5_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9613,7 +9613,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_4_5_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9623,7 +9623,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_0 = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC50",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC50",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9633,7 +9633,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_2_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9643,7 +9643,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_2_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9653,7 +9653,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_4_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9663,7 +9663,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_4_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9673,7 +9673,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_6_a = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56A",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56A",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9683,7 +9683,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         ),
     )
     c_5_6_b = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56B",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56B",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXaberration",
@@ -9697,7 +9697,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauID(Process
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC1(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC1(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-1-group"
@@ -9728,7 +9728,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC1(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA1(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA1(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-a-1-group"
@@ -9759,7 +9759,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA1(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB2(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB2(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-b-2-group"
@@ -9790,7 +9790,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB2(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA2(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA2(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-a-2-group"
@@ -9821,7 +9821,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA2(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC3(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC3(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-3-group"
@@ -9852,7 +9852,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC3(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS3(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS3(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-s-3-group"
@@ -9883,7 +9883,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS3(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA3(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA3(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-a-3-group"
@@ -9914,7 +9914,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA3(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB4(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB4(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-b-4-group"
@@ -9945,7 +9945,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB4(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDD4(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDD4(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-d-4-group"
@@ -9976,7 +9976,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDD4(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA4(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA4(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-a-4-group"
@@ -10007,7 +10007,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA4(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC5(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC5(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-group"
@@ -10038,7 +10038,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC5(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS5(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS5(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-s-5-group"
@@ -10069,7 +10069,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS5(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDR5(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDR5(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-r-5-group"
@@ -10100,7 +10100,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDR5(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA6(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA6(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-a-6-group"
@@ -10131,7 +10131,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA6(Aberr
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC10(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC10(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-1-0-group"
@@ -10162,9 +10162,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC10(Aber
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-1-2-a-group"
@@ -10195,9 +10193,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-1-2-b-group"
@@ -10228,9 +10224,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-2-1-a-group"
@@ -10261,9 +10255,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-2-1-b-group"
@@ -10294,9 +10286,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-2-3-a-group"
@@ -10327,9 +10317,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-2-3-b-group"
@@ -10360,7 +10348,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC30(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC30(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-3-0-group"
@@ -10391,9 +10379,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC30(Aber
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-3-2-a-group"
@@ -10424,9 +10410,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-3-2-b-group"
@@ -10457,9 +10441,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-3-4-a-group"
@@ -10490,9 +10472,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-3-4-b-group"
@@ -10523,9 +10503,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-4-1-a-group"
@@ -10556,9 +10534,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-4-1-b-group"
@@ -10589,9 +10565,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-4-3-a-group"
@@ -10622,9 +10596,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-4-3-b-group"
@@ -10655,9 +10627,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-4-5-a-group"
@@ -10688,9 +10658,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-4-5-b-group"
@@ -10721,7 +10689,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC50(Aberration):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC50(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-0-group"
@@ -10752,9 +10720,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC50(Aber
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-2-a-group"
@@ -10785,9 +10751,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-2-b-group"
@@ -10818,9 +10782,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-4-a-group"
@@ -10851,9 +10813,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-4-b-group"
@@ -10884,9 +10844,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56A(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56A(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-6-a-group"
@@ -10917,9 +10875,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56A(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56B(
-    Aberration
-):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56B(Aberration):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-csid-tableauid-c-5-6-b-group"
@@ -10950,7 +10906,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56B(
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-ax-group"
@@ -11006,7 +10962,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentEbeamColumnScanController(ScanController):
+class EmMeasurementEventIDInstrumentEbeamColumnScanController(ScanController):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-scan-controller-group"
@@ -11051,7 +11007,7 @@ class EmEmMeasurementEventIDInstrumentEbeamColumnScanController(ScanController):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
+class EmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-group"
@@ -11065,7 +11021,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
     )
 
     ion_source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentIbeamColumnIonSource",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnIonSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",
@@ -11075,7 +11031,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     lensID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentIbeamColumnLensID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnLensID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11087,7 +11043,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     apertureID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentIbeamColumnApertureID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnApertureID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11111,7 +11067,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     monochromatorID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentIbeamColumnMonochromatorID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11159,7 +11115,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
         ),
     )
     scan_controller = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentIbeamColumnScanController",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnScanController",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXscan_controller",
@@ -11186,7 +11142,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
+class EmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-ion-source-group"
@@ -11232,7 +11188,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentIbeamColumnLensID(ElectromagneticLens):
+class EmMeasurementEventIDInstrumentIbeamColumnLensID(ElectromagneticLens):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-lensid-group"
@@ -11265,7 +11221,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnLensID(ElectromagneticLens):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentIbeamColumnApertureID(Aperture):
+class EmMeasurementEventIDInstrumentIbeamColumnApertureID(Aperture):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-apertureid-group"
@@ -11303,7 +11259,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnApertureID(Aperture):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentIbeamColumnMonochromatorID(Monochromator):
+class EmMeasurementEventIDInstrumentIbeamColumnMonochromatorID(Monochromator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-monochromatorid-group"
@@ -11335,7 +11291,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnMonochromatorID(Monochromator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentIbeamColumnScanController(ScanController):
+class EmMeasurementEventIDInstrumentIbeamColumnScanController(ScanController):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ibeam-column-scan-controller-group"
@@ -11380,7 +11336,7 @@ class EmEmMeasurementEventIDInstrumentIbeamColumnScanController(ScanController):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentDetectorID(Detector):
+class EmMeasurementEventIDInstrumentDetectorID(Detector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-detectorid-group"
@@ -11415,7 +11371,7 @@ class EmEmMeasurementEventIDInstrumentDetectorID(Detector):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
+class EmMeasurementEventIDInstrumentStageID(Manipulator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-group"
@@ -11431,7 +11387,7 @@ class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
     )
 
     sample_heater = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurementEventIDInstrumentStageIDSampleHeater",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentStageIDSampleHeater",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXactuator",
@@ -11519,7 +11475,7 @@ class EmEmMeasurementEventIDInstrumentStageID(Manipulator):
         super().normalize(archive, logger)
 
 
-class EmEmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
+class EmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-sample-heater-group"
@@ -11614,7 +11570,7 @@ class EmEmSimulation(EmSimulation):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmSimulationProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11625,7 +11581,7 @@ class EmEmSimulation(EmSimulation):
         ),
     )
     environment = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmSimulationEnvironment",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationEnvironment",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
@@ -11645,7 +11601,7 @@ class EmEmSimulation(EmSimulation):
         ),
     )
     results = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmSimulationResults",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationResults",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -11659,7 +11615,7 @@ class EmEmSimulation(EmSimulation):
         super().normalize(archive, logger)
 
 
-class EmEmSimulationProgramID(Program):
+class EmSimulationProgramID(Program):
     """
     The program with which the simulation was performed.
     """
@@ -11707,7 +11663,7 @@ class EmEmSimulationProgramID(Program):
         super().normalize(archive, logger)
 
 
-class EmEmSimulationEnvironment(Collection):
+class EmSimulationEnvironment(Collection):
     """
     Programs and libraries representing the computational environment
     """
@@ -11725,7 +11681,7 @@ class EmEmSimulationEnvironment(Collection):
     )
 
     program = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmEmSimulationEnvironmentProgram",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationEnvironmentProgram",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11741,7 +11697,7 @@ class EmEmSimulationEnvironment(Collection):
         super().normalize(archive, logger)
 
 
-class EmEmSimulationEnvironmentProgram(Program):
+class EmSimulationEnvironmentProgram(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-simulation-environment-program-group"
@@ -11786,7 +11742,7 @@ class EmEmSimulationEnvironmentProgram(Program):
         super().normalize(archive, logger)
 
 
-class EmEmSimulationResults(Process):
+class EmSimulationResults(Process):
     """
     Results of the simulation
     """

@@ -1969,7 +1969,7 @@ class ApmApmMeasurement(ApmMeasurement):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrument",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrument",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_instrument",
@@ -1979,7 +1979,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     eventID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1991,7 +1991,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     standing_voltage_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementStandingVoltageTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementStandingVoltageTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2001,7 +2001,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pulse_frequency_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPulseFrequencyTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPulseFrequencyTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2011,7 +2011,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2021,7 +2021,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_set_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateSetTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateSetTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2031,7 +2031,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pressure_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPressureTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPressureTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2041,7 +2041,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_voltage_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenVoltageTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenVoltageTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2051,7 +2051,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_temperature_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenTemperatureTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenTemperatureTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2061,7 +2061,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ambient_temperature_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementAmbientTemperatureTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementAmbientTemperatureTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2071,7 +2071,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     reflectron_voltage_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementReflectronVoltageTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementReflectronVoltageTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2081,7 +2081,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     xstage_position_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementXstagePositionTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementXstagePositionTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2091,7 +2091,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ystage_position_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementYstagePositionTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementYstagePositionTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2101,7 +2101,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     zstage_position_time = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementZstagePositionTime",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementZstagePositionTime",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2111,7 +2111,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     standing_voltage_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementStandingVoltageSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementStandingVoltageSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2121,7 +2121,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pulse_frequency_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPulseFrequencySequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPulseFrequencySequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2131,7 +2131,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2141,7 +2141,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     detection_rate_set_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementDetectionRateSetSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateSetSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2151,7 +2151,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     pressure_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementPressureSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPressureSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2161,7 +2161,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_voltage_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenVoltageSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenVoltageSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2171,7 +2171,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     specimen_temperature_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementSpecimenTemperatureSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenTemperatureSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2181,7 +2181,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ambient_temperature_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementAmbientTemperatureSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementAmbientTemperatureSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2191,7 +2191,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     reflectron_voltage_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementReflectronVoltageSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementReflectronVoltageSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2201,7 +2201,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     xstage_position_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementXstagePositionSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementXstagePositionSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2211,7 +2211,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     ystage_position_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementYstagePositionSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementYstagePositionSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2221,7 +2221,7 @@ class ApmApmMeasurement(ApmMeasurement):
         ),
     )
     zstage_position_sequence = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementZstagePositionSequence",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementZstagePositionSequence",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -2261,7 +2261,7 @@ class ApmApmMeasurement(ApmMeasurement):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrument(ApmInstrument):
+class ApmMeasurementInstrument(ApmInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-group"
@@ -2275,7 +2275,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2285,7 +2285,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     reflectron = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentReflectron",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentReflectron",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2295,7 +2295,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     local_electrode = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLocalElectrode",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLocalElectrode",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXelectromagnetic_lens",
@@ -2305,7 +2305,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     ion_detector = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentIonDetector",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentIonDetector",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdetector",
@@ -2315,7 +2315,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     pulser = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulser",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulser",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2325,7 +2325,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     stage = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentStage",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentStage",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmanipulator",
@@ -2335,7 +2335,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     analysis_chamber = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentAnalysisChamber",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentAnalysisChamber",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2345,7 +2345,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     buffer_chamber = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentBufferChamber",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentBufferChamber",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2355,7 +2355,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     load_lock_chamber = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLoadLockChamber",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLoadLockChamber",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -2365,7 +2365,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     getter_pump = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentGetterPump",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentGetterPump",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXpump",
@@ -2375,7 +2375,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     roughening_pump = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentRougheningPump",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentRougheningPump",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXpump",
@@ -2385,7 +2385,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         ),
     )
     turbomolecular_pump = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentTurbomolecularPump",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentTurbomolecularPump",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXpump",
@@ -2466,7 +2466,7 @@ class ApmApmMeasurementInstrument(ApmInstrument):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentFabrication(Fabrication):
+class ApmMeasurementInstrumentFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-fabrication-group"
@@ -2520,7 +2520,7 @@ class ApmApmMeasurementInstrumentFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentReflectron(Component):
+class ApmMeasurementInstrumentReflectron(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-reflectron-group"
@@ -2550,7 +2550,7 @@ class ApmApmMeasurementInstrumentReflectron(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
+class ApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-group"
@@ -2564,7 +2564,7 @@ class ApmApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLocalElectrodeFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLocalElectrodeFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2603,7 +2603,7 @@ class ApmApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
+class ApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-fabrication-group"
@@ -2657,7 +2657,7 @@ class ApmApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentIonDetector(Detector):
+class ApmMeasurementInstrumentIonDetector(Detector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-group"
@@ -2671,7 +2671,7 @@ class ApmApmMeasurementInstrumentIonDetector(Detector):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentIonDetectorFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentIonDetectorFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2685,7 +2685,7 @@ class ApmApmMeasurementInstrumentIonDetector(Detector):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
+class ApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-ion-detector-fabrication-group"
@@ -2739,7 +2739,7 @@ class ApmApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentPulser(Component):
+class ApmMeasurementInstrumentPulser(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-group"
@@ -2753,7 +2753,7 @@ class ApmApmMeasurementInstrumentPulser(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulserFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulserFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2763,7 +2763,7 @@ class ApmApmMeasurementInstrumentPulser(Component):
         ),
     )
     sourceID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulserSourceID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulserSourceID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2780,7 +2780,7 @@ class ApmApmMeasurementInstrumentPulser(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentPulserFabrication(Fabrication):
+class ApmMeasurementInstrumentPulserFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-fabrication-group"
@@ -2834,7 +2834,7 @@ class ApmApmMeasurementInstrumentPulserFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentPulserSourceID(Source):
+class ApmMeasurementInstrumentPulserSourceID(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-group"
@@ -2851,7 +2851,7 @@ class ApmApmMeasurementInstrumentPulserSourceID(Source):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentPulserSourceIDFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulserSourceIDFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2865,7 +2865,7 @@ class ApmApmMeasurementInstrumentPulserSourceID(Source):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
+class ApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-pulser-sourceid-fabrication-group"
@@ -2919,7 +2919,7 @@ class ApmApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentStage(Manipulator):
+class ApmMeasurementInstrumentStage(Manipulator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-group"
@@ -2933,7 +2933,7 @@ class ApmApmMeasurementInstrumentStage(Manipulator):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentStageFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentStageFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -2947,7 +2947,7 @@ class ApmApmMeasurementInstrumentStage(Manipulator):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentStageFabrication(Fabrication):
+class ApmMeasurementInstrumentStageFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-stage-fabrication-group"
@@ -3001,7 +3001,7 @@ class ApmApmMeasurementInstrumentStageFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentAnalysisChamber(Component):
+class ApmMeasurementInstrumentAnalysisChamber(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-group"
@@ -3015,7 +3015,7 @@ class ApmApmMeasurementInstrumentAnalysisChamber(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentAnalysisChamberFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentAnalysisChamberFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3029,7 +3029,7 @@ class ApmApmMeasurementInstrumentAnalysisChamber(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
+class ApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-analysis-chamber-fabrication-group"
@@ -3083,7 +3083,7 @@ class ApmApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentBufferChamber(Component):
+class ApmMeasurementInstrumentBufferChamber(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-group"
@@ -3097,7 +3097,7 @@ class ApmApmMeasurementInstrumentBufferChamber(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentBufferChamberFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentBufferChamberFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3111,7 +3111,7 @@ class ApmApmMeasurementInstrumentBufferChamber(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
+class ApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-buffer-chamber-fabrication-group"
@@ -3165,7 +3165,7 @@ class ApmApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentLoadLockChamber(Component):
+class ApmMeasurementInstrumentLoadLockChamber(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-group"
@@ -3179,7 +3179,7 @@ class ApmApmMeasurementInstrumentLoadLockChamber(Component):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentLoadLockChamberFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLoadLockChamberFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3193,7 +3193,7 @@ class ApmApmMeasurementInstrumentLoadLockChamber(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
+class ApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-load-lock-chamber-fabrication-group"
@@ -3247,7 +3247,7 @@ class ApmApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentGetterPump(Pump):
+class ApmMeasurementInstrumentGetterPump(Pump):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-group"
@@ -3261,7 +3261,7 @@ class ApmApmMeasurementInstrumentGetterPump(Pump):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentGetterPumpFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentGetterPumpFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3275,7 +3275,7 @@ class ApmApmMeasurementInstrumentGetterPump(Pump):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
+class ApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-getter-pump-fabrication-group"
@@ -3329,7 +3329,7 @@ class ApmApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentRougheningPump(Pump):
+class ApmMeasurementInstrumentRougheningPump(Pump):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-group"
@@ -3343,7 +3343,7 @@ class ApmApmMeasurementInstrumentRougheningPump(Pump):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentRougheningPumpFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentRougheningPumpFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3357,7 +3357,7 @@ class ApmApmMeasurementInstrumentRougheningPump(Pump):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
+class ApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-roughening-pump-fabrication-group"
@@ -3411,7 +3411,7 @@ class ApmApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentTurbomolecularPump(Pump):
+class ApmMeasurementInstrumentTurbomolecularPump(Pump):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-group"
@@ -3425,7 +3425,7 @@ class ApmApmMeasurementInstrumentTurbomolecularPump(Pump):
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementInstrumentTurbomolecularPumpFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentTurbomolecularPumpFabrication",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3439,7 +3439,7 @@ class ApmApmMeasurementInstrumentTurbomolecularPump(Pump):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
+class ApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-turbomolecular-pump-fabrication-group"
@@ -3493,7 +3493,7 @@ class ApmApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventID(ApmEventData):
+class ApmMeasurementEventID(ApmEventData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-group"
@@ -3509,7 +3509,7 @@ class ApmApmMeasurementEventID(ApmEventData):
     )
 
     instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrument",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrument",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_instrument",
@@ -3548,7 +3548,7 @@ class ApmApmMeasurementEventID(ApmEventData):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrument(ApmInstrument):
+class ApmMeasurementEventIDInstrument(ApmInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-group"
@@ -3562,7 +3562,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
     )
 
     reflectron = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentReflectron",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentReflectron",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -3572,7 +3572,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
         ),
     )
     local_electrode = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentLocalElectrode",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentLocalElectrode",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXelectromagnetic_lens",
@@ -3582,7 +3582,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
         ),
     )
     pulser = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentPulser",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentPulser",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -3592,7 +3592,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
         ),
     )
     stage = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentStage",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentStage",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmanipulator",
@@ -3602,7 +3602,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
         ),
     )
     analysis_chamber = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentAnalysisChamber",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentAnalysisChamber",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
@@ -3612,7 +3612,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
         ),
     )
     control = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentControl",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentControl",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -3626,7 +3626,7 @@ class ApmApmMeasurementEventIDInstrument(ApmInstrument):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentReflectron(Component):
+class ApmMeasurementEventIDInstrumentReflectron(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-reflectron-group"
@@ -3659,7 +3659,7 @@ class ApmApmMeasurementEventIDInstrumentReflectron(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentLocalElectrode(ElectromagneticLens):
+class ApmMeasurementEventIDInstrumentLocalElectrode(ElectromagneticLens):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-local-electrode-group"
@@ -3692,7 +3692,7 @@ class ApmApmMeasurementEventIDInstrumentLocalElectrode(ElectromagneticLens):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentPulser(Component):
+class ApmMeasurementEventIDInstrumentPulser(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-group"
@@ -3706,7 +3706,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
     )
 
     sourceID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentPulserSourceID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentPulserSourceID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3816,7 +3816,7 @@ class ApmApmMeasurementEventIDInstrumentPulser(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentPulserSourceID(Source):
+class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-group"
@@ -3883,7 +3883,7 @@ class ApmApmMeasurementEventIDInstrumentPulserSourceID(Source):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentStage(Manipulator):
+class ApmMeasurementEventIDInstrumentStage(Manipulator):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-group"
@@ -3897,7 +3897,7 @@ class ApmApmMeasurementEventIDInstrumentStage(Manipulator):
     )
 
     temperature_sensor = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentStageTemperatureSensor",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentStageTemperatureSensor",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
@@ -3911,7 +3911,7 @@ class ApmApmMeasurementEventIDInstrumentStage(Manipulator):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
+class ApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-group"
@@ -3958,7 +3958,7 @@ class ApmApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentAnalysisChamber(Component):
+class ApmMeasurementEventIDInstrumentAnalysisChamber(Component):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-group"
@@ -3972,7 +3972,7 @@ class ApmApmMeasurementEventIDInstrumentAnalysisChamber(Component):
     )
 
     pressure_sensor = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
@@ -3986,7 +3986,7 @@ class ApmApmMeasurementEventIDInstrumentAnalysisChamber(Component):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
+class ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-group"
@@ -4033,7 +4033,7 @@ class ApmApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementEventIDInstrumentControl(Parameters):
+class ApmMeasurementEventIDInstrumentControl(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-control-group"
@@ -4076,7 +4076,7 @@ class ApmApmMeasurementEventIDInstrumentControl(Parameters):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementStandingVoltageTime(Data):
+class ApmMeasurementStandingVoltageTime(Data):
     """
     Monitoring standing_voltage as a function of elapsed time
 
@@ -4229,7 +4229,7 @@ class ApmApmMeasurementStandingVoltageTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementPulseFrequencyTime(Data):
+class ApmMeasurementPulseFrequencyTime(Data):
     """
     Monitoring pulse_frequency as a function of elapsed_time
 
@@ -4382,7 +4382,7 @@ class ApmApmMeasurementPulseFrequencyTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementDetectionRateTime(Data):
+class ApmMeasurementDetectionRateTime(Data):
     """
     Monitoring detection_rate as a function of elapsed_time
 
@@ -4535,7 +4535,7 @@ class ApmApmMeasurementDetectionRateTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementDetectionRateSetTime(Data):
+class ApmMeasurementDetectionRateSetTime(Data):
     """
     Monitoring detection_rate_set as a function of elapsed_time
 
@@ -4688,7 +4688,7 @@ class ApmApmMeasurementDetectionRateSetTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementPressureTime(Data):
+class ApmMeasurementPressureTime(Data):
     """
     Monitoring pressure as a function of elapsed_time
 
@@ -4841,7 +4841,7 @@ class ApmApmMeasurementPressureTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementSpecimenVoltageTime(Data):
+class ApmMeasurementSpecimenVoltageTime(Data):
     """
     Monitoring specimen_voltage as a function of elapsed_time
 
@@ -4994,7 +4994,7 @@ class ApmApmMeasurementSpecimenVoltageTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementSpecimenTemperatureTime(Data):
+class ApmMeasurementSpecimenTemperatureTime(Data):
     """
     Monitoring specimen_temperature as a function of elapsed_time
 
@@ -5147,7 +5147,7 @@ class ApmApmMeasurementSpecimenTemperatureTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementAmbientTemperatureTime(Data):
+class ApmMeasurementAmbientTemperatureTime(Data):
     """
     Monitoring ambient_temperature as a function of elapsed_time
 
@@ -5300,7 +5300,7 @@ class ApmApmMeasurementAmbientTemperatureTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementReflectronVoltageTime(Data):
+class ApmMeasurementReflectronVoltageTime(Data):
     """
     Monitoring reflectron_voltage as a function of elapsed_time
 
@@ -5453,7 +5453,7 @@ class ApmApmMeasurementReflectronVoltageTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementXstagePositionTime(Data):
+class ApmMeasurementXstagePositionTime(Data):
     """
     Monitoring xstage_position as a function of elapsed_time
 
@@ -5606,7 +5606,7 @@ class ApmApmMeasurementXstagePositionTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementYstagePositionTime(Data):
+class ApmMeasurementYstagePositionTime(Data):
     """
     Monitoring ystage_position as a function of elapsed_time
 
@@ -5759,7 +5759,7 @@ class ApmApmMeasurementYstagePositionTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementZstagePositionTime(Data):
+class ApmMeasurementZstagePositionTime(Data):
     """
     Monitoring zstage_position as a function of elapsed time
 
@@ -5912,7 +5912,7 @@ class ApmApmMeasurementZstagePositionTime(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementStandingVoltageSequence(Data):
+class ApmMeasurementStandingVoltageSequence(Data):
     """
     Monitoring standing_voltage as a function of event_id
 
@@ -6065,7 +6065,7 @@ class ApmApmMeasurementStandingVoltageSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementPulseFrequencySequence(Data):
+class ApmMeasurementPulseFrequencySequence(Data):
     """
     Monitoring pulse_frequency as a function of event_id
 
@@ -6218,7 +6218,7 @@ class ApmApmMeasurementPulseFrequencySequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementDetectionRateSequence(Data):
+class ApmMeasurementDetectionRateSequence(Data):
     """
     Monitoring detection_rate as a function of event_id
 
@@ -6371,7 +6371,7 @@ class ApmApmMeasurementDetectionRateSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementDetectionRateSetSequence(Data):
+class ApmMeasurementDetectionRateSetSequence(Data):
     """
     Monitoring detection_rate_set as a function of event_id
 
@@ -6524,7 +6524,7 @@ class ApmApmMeasurementDetectionRateSetSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementPressureSequence(Data):
+class ApmMeasurementPressureSequence(Data):
     """
     Monitoring pressure as a function of event_id
 
@@ -6677,7 +6677,7 @@ class ApmApmMeasurementPressureSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementSpecimenVoltageSequence(Data):
+class ApmMeasurementSpecimenVoltageSequence(Data):
     """
     Monitoring specimen_voltage as a function of event_id
 
@@ -6830,7 +6830,7 @@ class ApmApmMeasurementSpecimenVoltageSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementSpecimenTemperatureSequence(Data):
+class ApmMeasurementSpecimenTemperatureSequence(Data):
     """
     Monitoring specimen_temperature as a function of event_id
 
@@ -6983,7 +6983,7 @@ class ApmApmMeasurementSpecimenTemperatureSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementAmbientTemperatureSequence(Data):
+class ApmMeasurementAmbientTemperatureSequence(Data):
     """
     Monitoring ambient_temperature as a function of event_id
 
@@ -7136,7 +7136,7 @@ class ApmApmMeasurementAmbientTemperatureSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementReflectronVoltageSequence(Data):
+class ApmMeasurementReflectronVoltageSequence(Data):
     """
     Monitoring reflectron_voltage as a function of event_id
 
@@ -7289,7 +7289,7 @@ class ApmApmMeasurementReflectronVoltageSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementXstagePositionSequence(Data):
+class ApmMeasurementXstagePositionSequence(Data):
     """
     Monitoring xstage_position as a function of event_id
 
@@ -7442,7 +7442,7 @@ class ApmApmMeasurementXstagePositionSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementYstagePositionSequence(Data):
+class ApmMeasurementYstagePositionSequence(Data):
     """
     Monitoring ystage_position as a function of event_id
 
@@ -7595,7 +7595,7 @@ class ApmApmMeasurementYstagePositionSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmApmMeasurementZstagePositionSequence(Data):
+class ApmMeasurementZstagePositionSequence(Data):
     """
     Monitoring zstage_position as a function of event_id
 
