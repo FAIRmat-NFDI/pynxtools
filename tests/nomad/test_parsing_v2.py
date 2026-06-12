@@ -23,18 +23,29 @@ One NomadVisitorV2 per NXentry group; multi-NXentry files produce multiple archi
 """
 
 import json
+import logging
+import os
+import shutil
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any
 
+import h5py
 import pytest
+import structlog
 
 try:
     from nomad.datamodel import EntryArchive
+    from nomad.datamodel.data import EntryData
+    from nomad.datamodel.metainfo.basesections import Experiment, Measurement
     from nomad.units import ureg
     from nomad.utils import get_logger
 except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
 
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
+from pynxtools.nomad.metainfo.base_classes.object import Object
+from pynxtools.nomad.metainfo.base_classes.root import Root
 from pynxtools.nomad.parsers.parser_v2 import NexusParserV2
 
 DATA_DIR = Path(__file__).parents[2] / "src" / "pynxtools" / "data"
@@ -43,6 +54,10 @@ ARPES_FILE = str(DATA_DIR / "201805_WSe2_arpes.nxs")
 ELLIPS_FILE = str(TEST_DATA_DIR / "SiO2onSi.ellips.nxs")
 LAUETOF_FILE = str(TEST_DATA_DIR / "NXlauetof.hdf5")
 
+# ---------------------------------------------------------------------------
+# Fixtures and helper functions
+# ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module")
 def arpes_archive():
@@ -50,6 +65,47 @@ def arpes_archive():
     archive = EntryArchive()
     NexusParserV2().parse(ARPES_FILE, archive, get_logger(__name__))
     return archive
+
+
+def extend_nexus_file(key_to_data: Mapping[str, Any], filename: Path):
+    """Add fields, attributes, and/or empty groups to an existing NeXus file.
+
+    A key with ``data in (None, "")`` creates the full group path (including its
+    last segment) without writing a field. Otherwise the last path segment is the
+    field to write, or — if it starts with ``@`` — the attribute to set on the
+    last group.
+    """
+    with h5py.File(filename, "a") as f:
+        for key, data in key_to_data.items():
+            paths = key.split("/")[1:]
+            group_only = data in (None, "")
+            is_attr = not group_only and paths[-1].startswith("@")
+
+            group_paths = paths if group_only else paths[:-1]
+            leaf = None if group_only else paths[-1].lstrip("@")
+
+            current = f["/"]
+            for grp in group_paths:
+                instance_name = grp
+                nx_class = None
+                if "[" in grp:
+                    instance_name = grp[grp.index("[") + 1 : grp.index("]")]
+                    nx_class = "NX" + grp[: grp.index("[")].lower()
+
+                if instance_name not in current:
+                    current = current.create_group(instance_name)
+                    if nx_class:
+                        current.attrs["NX_class"] = nx_class
+                else:
+                    current = current[instance_name]
+
+            if leaf is None:
+                continue
+
+            if is_attr:
+                current.attrs[leaf] = data
+            else:
+                current.create_dataset(leaf, data=data)
 
 
 # ---------------------------------------------------------------------------
@@ -149,12 +205,11 @@ def test_arpes_metadata(arpes_archive):
 @pytest.mark.parametrize(
     ("file_path", "reason"),
     [
-        (ELLIPS_FILE, "ellips file not found"),
-        (LAUETOF_FILE, "lauetof file not found"),
+        pytest.param(ELLIPS_FILE, "ellips file not found", id="ellips"),
+        pytest.param(LAUETOF_FILE, "lauetof file not found", id="lauetof"),
     ],
 )
 def test_parse_valid_files(file_path, reason):
-    print(file_path)
     pytest.skip(reason) if not Path(file_path).exists() else None
 
     archive = EntryArchive()
@@ -165,27 +220,148 @@ def test_parse_valid_files(file_path, reason):
     if file_path == ELLIPS_FILE:
         archive.m_to_dict(with_out_meta=True)
 
+    elif file_path == LAUETOF_FILE:
+        # Check some specific fields to ensure correct parsing of renamed groups
+        # and links
+        lauetof_obj = archive.data
+        assert lauetof_obj.name_group.time_of_flight == ureg.Quantity("1.0*second")
+        assert lauetof_obj.sample.name == "SAMPLE-CHAR-DATA"
+
+
+@pytest.mark.parametrize(
+    "data_to_add, results",
+    [
+        # Simple valid single formula
+        pytest.param(
+            {"/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "BrBaHCoCIH"},
+            {
+                "data.sample[0].chemical_formula": "BrBaHCoCIH",
+                "results.material.chemical_formula_anonymous": "A2BCDEF",
+                "results.material.chemical_formula_descriptive": "BrBaHCoCIH",
+                "results.material.chemical_formula_hill": "CH2BaBrCoI",
+                "results.material.chemical_formula_iupac": "BaCoCH2IBr",
+                "results.material.chemical_formula_reduced": "BaBrCCoH2I",
+                "results.material.elements": ["Ba", "Br", "C", "Co", "H", "I"],
+            },
+            id="single-valid-formula",
+        ),
+        # No chemical formula → should log warning and leave material empty
+        pytest.param(
+            {},  # no formula field
+            {
+                "results.material": None,
+            },
+            id="no-formula-warning",
+        ),
+        # Multiple chemical formulas → should merge elements
+        pytest.param(
+            {
+                "/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "NaCl",
+                "/ENTRY[entry]/SAMPLE[sample]/atom_types": ["Na", "Cl", "O"],
+                "/ENTRY[entry]/SAMPLE[sample]/SAMPLE_COMPONENT[component]/chemical_formula": "H2O",
+            },
+            {
+                "data.sample[0].chemical_formula": "NaCl",
+                "results.material.elements": ["Cl", "H", "Na", "O"],
+            },
+            id="multiple-formulas-merge-elements",
+        ),
+        # Invalid atom types ignored.
+        # TODO: Reactivate when atom_types is part of NXsample.
+        # Works for NXapm (which has ENTRY/SAMPLE/atom_types) though.
+        # pytest.param(
+        #     {
+        #         "/ENTRY[entry]/SAMPLE[sample]/atom_types": ["Na", "NotAnElement", "Fe"],
+        #     },
+        #     {
+        #         "results.material.elements": ["Na", "Fe"],
+        #     },
+        #     id="invalid-atom-types-ignored",
+        # ),
+        # Chemical formula from NXsubstance
+        # TODO: Reactivate when NXsubstance is actively used (i.e., added to NXsample)
+        # Works if you add NXsubstance inside NXsample
+        # pytest.param(
+        #     {
+        #         "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/molecular_formula_hill": "H2O",
+        #     },
+        #     {
+        #         "results.material.chemical_formula_descriptive": "H2O",
+        #         "results.material.elements": ["H", "O"],
+        #     },
+        #     id="nxsubstance-formula",
+        # ),
+    ],
+)
+def test_sample_normalizer(
+    data_to_add: dict[str, Any], results: dict[str, Any], tmp_path, caplog, request
+):
+    """Test chemical formula normalization and UTF-8 decoding."""
+    archive = EntryArchive()
+
+    example_data = Path.cwd() / Path("src/pynxtools/data/201805_WSe2_arpes.nxs")
+
+    nxs_file = tmp_path / f"{request.node.callspec.id}.nxs"
+    shutil.copy(example_data, nxs_file)
+    extend_nexus_file(data_to_add, nxs_file)
+
+    # Set level of all structlog loggers to "INFO"
+    structlog.configure(
+        wrapper_class=structlog.make_filtering_bound_logger(logging.INFO)
+    )
+    NexusParserV2().parse(str(nxs_file), archive, get_logger(__name__))
+
+    # Dynamically evaluate each expected path and compare
+    failures = []
+
+    for path_str, expected_value in results.items():
+        actual_value = eval(f"archive.{path_str}")
+
+        if actual_value != expected_value:
+            failures.append(
+                f"{path_str}: expected {expected_value!r}, got {actual_value!r}"
+            )
+
+    assert not failures, "Validation failures:\n" + "\n".join(failures)
+
+
+# ---------------------------------------------------------------------------
+# Extension and string decoding
+# ---------------------------------------------------------------------------
+
+
+def test_nexus_string_decode_to_utf8(tmp_path):
+    """Test that Nexus string fields are decoded to UTF-8 correctly."""
+    archive = EntryArchive()
+
+    modified_file = Path(tmp_path) / ("nexus_string_to_utf8_.nxs")
+    shutil.copy(ARPES_FILE, modified_file)
+
+    data_to_add = {
+        "/ENTRY[entry]/USER[user]/name": ["Any name", "name González (HU)", "straße"]
+    }
+    extend_nexus_file(data_to_add, modified_file)
+    NexusParserV2().parse(str(modified_file), archive, get_logger(__name__))
+    obj = archive.data
+    assert obj.user[0].name_quantity == "['Any name', 'name González (HU)', 'straße']"
+
 
 # ---------------------------------------------------------------------------
 # Entry is a valid EntryData subclass
 # ---------------------------------------------------------------------------
 
 
-# TODO: move this to the schema test
-def test_entry_bases():
-    """Entry inherits from Object and Measurement (not EntryData — would break frontend).
-
-    archive.data = Entry() produces a SyntaxWarning but works correctly.
-    EntryData.m_def has no m_package, so including it in base_sections breaks
-    NOMAD's frontend schema resolution (_allBaseSections JS error).
-    """
-    from nomad.datamodel.metainfo.basesections import Measurement
-
-    from pynxtools.nomad.metainfo.base_classes.entry import Entry
-    from pynxtools.nomad.metainfo.base_classes.object import Object
-
-    assert issubclass(Entry, Object)
-    assert issubclass(Entry, Measurement)
+@pytest.mark.parametrize(
+    ("cls", "expected_bases"),
+    [
+        pytest.param(Entry, (Object, Measurement, EntryData), id="entry"),
+        pytest.param(Root, (Object, Experiment, EntryData), id="root"),
+    ],
+)
+def test_base_classes(cls, expected_bases):
+    """Ensure schema root sections inherit from the intended NOMAD base sections."""
+    for base in expected_bases:
+        assert issubclass(cls, base)
 
 
 # ---------------------------------------------------------------------------
