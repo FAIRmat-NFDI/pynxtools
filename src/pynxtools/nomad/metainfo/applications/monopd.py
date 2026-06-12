@@ -502,10 +502,13 @@ class MonopdData(Data):
     )
 
     polar_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-data-polar-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         description=("Link to polar angle in /NXentry/NXinstrument/NXdetector"),
         a_nexus_link=NeXusLink(
             name="polar_angle",
@@ -514,10 +517,11 @@ class MonopdData(Data):
         ),
     )
     data_quantity = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-data-data-link"
         ],
+        shape=["*"],
         description=("Link to data in /NXentry/NXinstrument/NXdetector"),
         a_nexus_link=NeXusLink(
             name="data",

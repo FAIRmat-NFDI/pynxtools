@@ -193,8 +193,17 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
 
     {% for lnk in links %}
     {{ lnk.python_name }} = Quantity(
-        type=str,
+        type={{ lnk.target_quantity.python_type if lnk.target_quantity else "str" }},
         links=["{{ lnk.node.get_link() }}"],
+        {% if lnk.target_quantity and lnk.target_quantity.dimensionality %}
+        dimensionality="{{ lnk.target_quantity.dimensionality }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
+        unit="{{ lnk.target_quantity.default_unit }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.shape %}
+        shape={{ lnk.target_quantity.shape }},
+        {% endif %}
         {% if lnk.description %}
         description=(
             {{ lnk.description }}
@@ -366,8 +375,17 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
 
     {% for lnk in concept.links %}
     {{ lnk.python_name }} = Quantity(
-        type=str,
+        type={{ lnk.target_quantity.python_type if lnk.target_quantity else "str" }},
         links=["{{ lnk.node.get_link() }}"],
+        {% if lnk.target_quantity and lnk.target_quantity.dimensionality %}
+        dimensionality="{{ lnk.target_quantity.dimensionality }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
+        unit="{{ lnk.target_quantity.default_unit }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.shape %}
+        shape={{ lnk.target_quantity.shape }},
+        {% endif %}
         {% if lnk.description %}
         description=(
             {{ lnk.description }}

@@ -715,7 +715,7 @@ class CxiPtychoInstrument1Detector1(Detector):
     )
 
     data_1 = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-data-1-link"
         ],
