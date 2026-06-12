@@ -28,7 +28,6 @@ try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
     from nomad.metainfo import MEnum, MSection
     from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
@@ -62,7 +61,7 @@ def _to_group_name(nx_node: ET._Element):
 def _to_section(
     hdf_name: str | None,
     nx_def: str,
-    nx_node: ET.Element | None,  # noqa: UP045
+    nx_node: ET._Element | None,  # noqa: UP045
     current: MSection,
     nx_root,
 ) -> MSection:
