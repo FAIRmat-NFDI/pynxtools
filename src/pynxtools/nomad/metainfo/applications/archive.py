@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
@@ -65,6 +66,7 @@ class Archive(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXarchive",
             category="application",

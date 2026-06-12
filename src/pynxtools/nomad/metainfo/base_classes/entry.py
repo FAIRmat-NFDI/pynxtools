@@ -38,6 +38,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -61,6 +62,7 @@ class Entry(Object, basesections.Measurement, EntryData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXentry",
             category="base",

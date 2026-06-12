@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.aberration import Aberration
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
@@ -271,6 +272,7 @@ class Em(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXem",
             category="application",

@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.collimator import Collimator
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
@@ -66,6 +67,7 @@ class Sastof(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXsastof",
             category="application",

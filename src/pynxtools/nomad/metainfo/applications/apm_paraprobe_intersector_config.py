@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigApmParaprobeToolParameters,
@@ -63,6 +64,7 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXapm_paraprobe_intersector_config",
             category="application",

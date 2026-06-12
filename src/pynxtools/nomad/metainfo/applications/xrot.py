@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
 from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
@@ -61,6 +62,7 @@ class Xrot(Xbase):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXxrot",
             category="application",

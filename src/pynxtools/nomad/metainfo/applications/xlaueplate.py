@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xlaue import Xlaue
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -59,6 +60,7 @@ class Xlaueplate(Xlaue):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaueplate.html#nxxlaueplate"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXxlaueplate",
             category="application",
