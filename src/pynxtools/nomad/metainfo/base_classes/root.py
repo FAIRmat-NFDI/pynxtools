@@ -25,16 +25,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-<<<<<<< HEAD
+from nomad.datamodel.data import EntryData
+from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
-=======
-from nomad.datamodel.data import EntryData
-from nomad.datamodel.metainfo import basesections
->>>>>>> 01c8486c (feat: group NXentries per file via a Root (Experiment) entry)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 

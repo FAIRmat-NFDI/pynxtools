@@ -158,7 +158,10 @@ class _SectionIndex:
         }
         self.choice_subsections = choice_map
 
-        for qty in section_cls.m_def.all_quantities.values():
+        all_quantities = section_cls.m_def.all_quantities
+        shadow_map: dict[str, str] = {}
+
+        for qty in all_quantities.values():
             field_annotation = qty.m_get_annotations("nexus_field")
             attr_annotation = qty.m_get_annotations("nexus_attribute")
             link_annotation = qty.m_get_annotations("nexus_link")
@@ -174,10 +177,26 @@ class _SectionIndex:
             elif link_annotation:
                 link_map[link_annotation.name] = qty
 
+            # Conflict-renamed quantities (e.g. "name_quantity" for NXDL "name",
+            # see naming convention §5) shadow an inherited NOMAD-native quantity
+            # of the un-suffixed name. Record that mapping so _populate_field can
+            # mirror the parsed value into the NOMAD-native quantity too.
+            if (
+                field_annotation or attr_annotation or link_annotation
+            ) and qty.name.endswith("_quantity"):
+                shadowed = all_quantities.get(qty.name[: -len("_quantity")])
+                if shadowed is not None and not (
+                    shadowed.m_get_annotations("nexus_field")
+                    or shadowed.m_get_annotations("nexus_attribute")
+                    or shadowed.m_get_annotations("nexus_link")
+                ):
+                    shadow_map[qty.name] = shadowed.name
+
         self.field_map = field_map
         self.attr_map = attr_map
         self.field_attr_map = field_attr_map
         self.link_map = link_map
+        self.shadow_map = shadow_map
 
     def find_subsection(
         self, nx_class: str, hdf_name: str
@@ -221,9 +240,12 @@ class _SectionIndex:
 # NX_class → Python class indexes built once from NOMAD's Package.registry.
 # Any NOMAD package loaded via entry points that contains nexus_definition
 # sections is included.
-# In NOMAD context all NeXus packages are already in the registry when the
-# parser runs (loaded via the nexus_base_classes / nexus_applications entry
-# points configured in nomad.yaml).
+#
+# In NOMAD context the nexus_base_classes / nexus_applications entry points
+# (configured in nomad.yaml) populate Package.registry before the parser runs.
+# Outside that context (e.g. standalone tests), build_base_classes_package()/
+# build_applications_package() are called explicitly below — both are memorized,
+# so this is a no-op once the entry points have already loaded them.
 _APP_INDEX: dict[str, type] | None = None
 _BASE_CLS_BY_NX: dict[str, type | None] | None = None
 
@@ -235,6 +257,13 @@ def _build_nx_class_index() -> tuple[dict[str, type], dict[str, type | None]]:
         app_index: nx_class → Python class for application/contributed sections
         base_index: nx_class → Python class for ALL sections with nexus_definition
     """
+    from pynxtools.nomad.metainfo import (
+        build_applications_package,
+        build_base_classes_package,
+    )
+
+    build_base_classes_package()
+    build_applications_package()
 
     app_index: dict[str, type] = {}
     base_index: dict[str, type | None] = {}
@@ -667,7 +696,9 @@ class NomadVisitorV2(NexusVisitor):
     ) -> None:
         """Populate one NOMAD quantity from an HDF5 dataset."""
         link_ann = qty.m_get_annotations("nexus_link")
-        if link_ann is not None:
+        if link_ann is not None and qty.type is str:
+            # Link target type could not be resolved at generation time; fall
+            # back to recording the resolved HDF5 path of the link target.
             try:
                 value = hdf_node.name
                 if qty.use_full_storage:
@@ -676,6 +707,10 @@ class NomadVisitorV2(NexusVisitor):
             except Exception as e:
                 self._logger.debug("Error setting link %s: %s", hdf_field_name, e)
             return
+
+        # Link targets with a resolved numeric/typed Quantity are populated
+        # like a regular field below — h5py transparently dereferences the
+        # link, so hdf_node is already the target dataset's real data.
 
         if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
             self._logger.debug(
@@ -737,6 +772,8 @@ class NomadVisitorV2(NexusVisitor):
             else:
                 value = np.array([value])
 
+        shadow_value = value
+
         if qty.use_full_storage:
             value = MQuantity.wrap(value, hdf_field_name)
 
@@ -755,10 +792,20 @@ class NomadVisitorV2(NexusVisitor):
         )
         self._path_map[rel_path] = _archive_path_for(current) + "." + qty.name
 
+        idx = _SectionIndex.for_cls(type(current))
+
+        # Mirror conflict-renamed quantities (e.g. "name_quantity") into the
+        # NOMAD-native quantity they shadow (e.g. "name").
+        shadow_name = idx.shadow_map.get(qty.name)
+        if shadow_name is not None:
+            shadow_qty = type(current).m_def.all_quantities[shadow_name]
+            try:
+                current.m_set(shadow_qty, shadow_value)
+            except Exception:
+                pass
+
         if qty.variable:
-            name_qty = _SectionIndex.for_cls(type(current)).field_map.get(
-                concept_name + "__name"
-            )
+            name_qty = idx.field_map.get(concept_name + "__name")
             if name_qty is not None:
                 try:
                     name_val = MQuantity.wrap(hdf_field_name, hdf_field_name + "__name")
