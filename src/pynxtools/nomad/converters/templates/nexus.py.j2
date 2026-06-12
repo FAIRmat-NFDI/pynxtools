@@ -48,6 +48,9 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+{% if nx_category == "application" or nx_name == "NXentry" %}
+from pynxtools.nomad.metainfo._category import ExperimentCategory
+{% endif %}
 {% if base_import %}
 from {{ base_import }} import {{ base_class }}
 {% endif %}
@@ -69,6 +72,9 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
 
     m_def = Section(
         links=["{{ class_doc_url }}"],
+        {% if nx_category == "application" or nx_name == "NXentry" %}
+        categories=[ExperimentCategory],
+        {% endif %}
         a_nexus_definition=NeXusDefinition(
             nx_class="{{ nx_name }}",
             category="{{ nx_category }}",

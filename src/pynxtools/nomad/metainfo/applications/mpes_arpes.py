@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.mpes import (
     Mpes,
     MpesData,
@@ -67,6 +68,7 @@ class MpesArpes(Mpes):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXmpes_arpes",
             category="application",

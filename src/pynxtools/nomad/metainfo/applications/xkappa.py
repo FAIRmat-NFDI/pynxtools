@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
@@ -62,6 +63,7 @@ class Xkappa(Xbase):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXxkappa",
             category="application",

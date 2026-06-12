@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
 from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
@@ -79,6 +80,7 @@ class Snshisto(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXsnshisto",
             category="application",

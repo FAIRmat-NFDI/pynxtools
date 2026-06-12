@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
@@ -69,6 +70,7 @@ class ApmCompositionspaceConfig(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_config.html#nxapm_compositionspace_config"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXapm_compositionspace_config",
             category="application",

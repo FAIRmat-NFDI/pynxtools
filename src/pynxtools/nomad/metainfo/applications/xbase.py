@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -62,6 +63,7 @@ class Xbase(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXxbase",
             category="application",

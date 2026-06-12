@@ -39,6 +39,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.cg_grid import CgGrid
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -68,6 +69,7 @@ class MicrostructureScoreConfig(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXmicrostructure_score_config",
             category="application",

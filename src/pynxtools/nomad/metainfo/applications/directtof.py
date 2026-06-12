@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.tofraw import Tofraw
 from pynxtools.nomad.metainfo.base_classes.disk_chopper import DiskChopper
 from pynxtools.nomad.metainfo.base_classes.fermi_chopper import FermiChopper
@@ -58,6 +59,7 @@ class Directtof(Tofraw):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXdirecttof",
             category="application",

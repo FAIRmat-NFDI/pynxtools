@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
 from pynxtools.nomad.metainfo.base_classes.collimator import Collimator
@@ -127,6 +128,7 @@ class Cansas(Entry):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXcanSAS",
             category="application",

@@ -36,6 +36,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
     OpticalSpectroscopyInstrument,
@@ -109,6 +110,7 @@ class Raman(OpticalSpectroscopy):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXraman.html#nxraman"
         ],
+        categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXraman",
             category="application",
