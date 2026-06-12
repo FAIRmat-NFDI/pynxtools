@@ -954,7 +954,9 @@ class NexusParserV2(MatchingParser):
             self._set_entry_metadata(entry_archive, entry_name, defn, nxs_fname)
 
             # Chemical formula normalization
-            self._normalize_results(entry_archive, visitor.sample_class_refs)
+            self._normalize_chemical_formula(
+                entry_archive, visitor.sample_class_refs, logger
+            )
 
         # Create one Root (Experiment) archive per file that links all NXentry archives.
         if "root" in child_archives:
@@ -974,7 +976,7 @@ class NexusParserV2(MatchingParser):
                 nxs_fname,
             )
             # Chemical formula normalization across all sub-entries
-            self._normalize_results(root_archive, all_sample_refs)
+            self._normalize_chemical_formula(root_archive, all_sample_refs, logger)
 
     def _set_entry_metadata(
         self,
@@ -1037,35 +1039,82 @@ class NexusParserV2(MatchingParser):
                 root_archive.results.eln = ELN()
             root_archive.results.eln.methods = methods
 
-    def _normalize_results(
-        self, archive: EntryArchive, sample_refs: dict[str, list]
+    def _normalize_chemical_formula(
+        self, archive: EntryArchive, sample_refs: dict[str, list], logger: Any
     ) -> None:
+        """Derive results.material from sample chemical formula and element information.
+
+        Sources, in order of precedence for the descriptive formula:
+        - ``NXsample.chemical_formula``
+        - ``NXsample_component.chemical_formula``
+        - ``NXsubstance.molecular_formula_hill``
+        ``NXsample.atom_types`` contributes additional elements that are merged
+        into ``results.material.elements`` alongside any formula-derived elements.
+        """
+        element_set: set[str] = set()
+        chemical_formulas: set[str] = set()
+
+        for sample in sample_refs.get("NXsample", []):
+            atom_types = getattr(sample, "atom_types", None)
+            if atom_types is not None:
+                if isinstance(atom_types, str):
+                    atom_types = atom_types.replace(" ", "").split(",")
+                for symbol in atom_types:
+                    if symbol in chemical_symbols[1:]:
+                        element_set.add(symbol)
+                    else:
+                        logger.warning(
+                            f"Ignoring {symbol} as it is not for an element from "
+                            "the periodic table"
+                        )
+
+            formula = getattr(sample, "chemical_formula", None)
+            if formula:
+                chemical_formulas.add(str(formula))
+
+        for component in sample_refs.get("NXsample_component", []):
+            formula = getattr(component, "chemical_formula", None)
+            if formula:
+                chemical_formulas.add(str(formula))
+
+        for substance in sample_refs.get("NXsubstance", []):
+            formula = getattr(substance, "molecular_formula_hill", None)
+            if formula:
+                chemical_formulas.add(str(formula))
+
         if archive.results is None:
             archive.results = Results()
-        if archive.results.material is None:
-            archive.results.material = Material()
 
-        formulas: set[str] = set()
-        for sample in sample_refs.get("NXsample", []):
-            val = getattr(sample, "chemical_formula", None)
-            if val is not None:
-                formulas.add(str(val))
-        for substance in sample_refs.get("NXsubstance", []):
-            val = getattr(substance, "molecular_formula_hill", None)
-            if val is not None:
-                formulas.add(str(val))
-
-        if not formulas:
+        if not chemical_formulas and not element_set:
+            logger.warning("No chemical formula found")
             return
 
-        elements: set[str] = set()
-        for formula_str in formulas:
-            try:
-                formula = Formula(formula_str)
-                elements.update(formula.elements())
-            except Exception:
-                pass
+        material = archive.results.material
+        if material is None:
+            material = archive.results.material = Material()
 
-        if elements:
-            valid = [e for e in elements if e in chemical_symbols]
-            archive.results.material.elements = valid
+        if len(chemical_formulas) == 1 and not element_set:
+            material.chemical_formula_descriptive = chemical_formulas.pop()
+        else:
+            if len(chemical_formulas) > 1:
+                logger.warning(
+                    f"Multiple chemical formulas found: {chemical_formulas}.\n"
+                    "Cannot build a comprehensive chemical formula for the entry, "
+                    "but will try to extract atomic elements."
+                )
+            for formula_str in chemical_formulas:
+                element_set.update(Formula(formula_str).elements())
+
+            material.elements = sorted(
+                (set(material.elements) | element_set) & set(chemical_symbols[1:])
+            )
+
+        try:
+            if material.chemical_formula_descriptive:
+                Formula(material.chemical_formula_descriptive).populate(
+                    material, overwrite=True
+                )
+        except Exception as e:
+            logger.warning(
+                "Could not normalize chemical formula(s) in Material", exc_info=e
+            )
