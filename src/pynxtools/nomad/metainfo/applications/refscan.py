@@ -491,10 +491,11 @@ class RefscanData(Data):
     )
 
     data_quantity = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-data-link"
         ],
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -502,10 +503,13 @@ class RefscanData(Data):
         ),
     )
     rotation_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-rotation-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",
@@ -513,10 +517,13 @@ class RefscanData(Data):
         ),
     )
     polar_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-polar-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="polar_angle",
             target="/NXentry/NXinstrument/NXdetector/polar_angle",

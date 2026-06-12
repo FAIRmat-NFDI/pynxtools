@@ -268,10 +268,13 @@ class XnbName(XbaseData):
     )
 
     polar_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-name-polar-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="polar_angle",
             target="/NXentry/NXinstrument/NXdetector/polar_angle",
@@ -290,10 +293,13 @@ class XnbName(XbaseData):
         ),
     )
     rotation_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-name-rotation-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",

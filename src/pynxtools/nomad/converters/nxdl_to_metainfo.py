@@ -123,11 +123,23 @@ class SubSectionContext:
 
 @dataclass
 class LinkContext:
-    """A NXDL <link> element — emitted as a Quantity(type=str) with NeXusLink."""
+    """A NXDL <link> element — emitted as a Quantity with NeXusLink.
+
+    The Quantity's type/dimensionality/unit/shape are taken from the field or
+    attribute the link's ``target`` path resolves to (via
+    ``_resolve_link_quantity``), so e.g. a link to a NX_FLOAT field with unit
+    category NX_TIME_OF_FLIGHT becomes ``Quantity(type=np.float64, unit="s")``,
+    not a bare ``type=str``. When the target cannot be resolved within the
+    application's tree, ``target_quantity`` is None and the link falls back to
+    ``type=str``.
+    """
 
     python_name: str  # nxdl_to_quantity_name(node.name)
     description: str | None  # <doc> text from the link element
     node: NXTreeLink
+    # QuantityContext built from the resolved target field/attribute, or None
+    # if node.target could not be resolved within the application's tree.
+    target_quantity: QuantityContext | None = None
 
 
 @dataclass
@@ -212,6 +224,72 @@ def _shape_from_node(node: NXTreeField | NXTreeAttribute) -> list[int | str] | N
     if node.shape is None:
         return None
     return [d if d is not None else "*" for d in node.shape]
+
+
+# ---------------------------------------------------------------------------
+# <link target="..."> resolution
+#
+# Link targets are absolute NXDL concept paths, e.g.
+# "/NXentry/NXinstrument/NXdetector/time_of_flight": each segment up to the
+# last names a group's nx_class; the last segment names a field or attribute
+# on that group. Resolution walks root_node.children (the application's
+# NXentry-unwrapped tree) by nx_class, then looks up the final field/attribute
+# by name.
+# ---------------------------------------------------------------------------
+
+
+def _resolve_link_target_node(
+    root_node: NXTreeDefinition, target: str
+) -> NXTreeField | NXTreeAttribute | None:
+    """Resolve a <link target="/NXentry/.../field_name"> path to its field/attribute node.
+
+    Returns None if any path segment cannot be matched — links to NX classes
+    outside this application's tree (or to concepts not yet represented in
+    the tree) simply fall back to type=str in the generated Quantity.
+    """
+    segments = [s for s in target.split("/") if s]
+    if not segments:
+        return None
+
+    children = root_node.children
+    node: NXTreeField | NXTreeAttribute | NXTreeGroup | None = None
+    for i, segment in enumerate(segments):
+        is_last = i == len(segments) - 1
+        if is_last:
+            match = next(
+                (
+                    c
+                    for c in children
+                    if c.nx_type in ("field", "attribute") and c.name == segment
+                ),
+                None,
+            )
+        else:
+            candidates = [
+                c for c in children if c.nx_type == "group" and c.nx_class == segment
+            ]
+            # Prefer the specifically-named group over a variadic placeholder
+            # (e.g. "instrument" over "INSTRUMENT", both NXinstrument).
+            match = next(
+                (c for c in candidates if c.name_type == "specified"), None
+            ) or (candidates[0] if candidates else None)
+        if match is None:
+            return None
+        node = match
+        if not is_last:
+            children = node.children
+
+    return node if isinstance(node, (NXTreeField, NXTreeAttribute)) else None
+
+
+def _resolve_link_quantity(
+    root_node: NXTreeDefinition, link_node: NXTreeLink, python_name: str
+) -> QuantityContext | None:
+    """Build a QuantityContext from a <link>'s target field/attribute, if resolvable."""
+    target_node = _resolve_link_target_node(root_node, link_node.target)
+    if target_node is None:
+        return None
+    return _build_quantity_from_node(target_node, python_name_override=python_name)
 
 
 # ---------------------------------------------------------------------------
@@ -637,6 +715,7 @@ def _qty_differs_from_base(
 def _build_named_concept(
     concept_class_name: str,
     node: NXTreeGroup,
+    root_node: NXTreeDefinition,
     base_class_override: tuple[str, str] | None = None,
     parent_concept_file: str | None = None,
     module_name: str | None = None,
@@ -723,6 +802,9 @@ def _build_named_concept(
                         python_name=python_name,
                         description=_description_string(child),
                         node=child,
+                        target_quantity=_resolve_link_quantity(
+                            root_node, child, python_name
+                        ),
                     )
                 )
             continue
@@ -820,6 +902,7 @@ def _build_named_concept(
                 nested_concept, nested_extra = _build_named_concept(
                     child_concept_name,
                     child,
+                    root_node,
                     module_name=module_name,
                     category=category,
                     seen_concept=_seen_concept,
@@ -1393,6 +1476,7 @@ def build_context(nx_name: str) -> dict:
             concept, extra_concepts = _build_named_concept(
                 concept_name,
                 child,
+                root_node,
                 base_class_override=_base_class_override,
                 parent_concept_file=_parent_app_file
                 if _base_class_override is not None
@@ -1448,6 +1532,9 @@ def build_context(nx_name: str) -> dict:
                     python_name=python_name,
                     description=_description_string(child),
                     node=child,
+                    target_quantity=_resolve_link_quantity(
+                        root_node, child, python_name
+                    ),
                 )
             )
 

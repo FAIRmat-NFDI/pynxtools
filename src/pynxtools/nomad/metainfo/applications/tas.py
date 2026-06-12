@@ -717,10 +717,13 @@ class TasData(Data):
         ),
     )
     en = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-en-link"
         ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="en",
             target="/NXentry/NXsample/en",
@@ -728,10 +731,13 @@ class TasData(Data):
         ),
     )
     qh = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-qh-link"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="qh",
             target="/NXentry/NXsample/qh",
@@ -739,10 +745,13 @@ class TasData(Data):
         ),
     )
     qk = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-qk-link"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="qk",
             target="/NXentry/NXsample/qk",
@@ -750,10 +759,13 @@ class TasData(Data):
         ),
     )
     ql = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-ql-link"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="ql",
             target="/NXentry/NXsample/ql",
@@ -761,10 +773,11 @@ class TasData(Data):
         ),
     )
     data_quantity = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-data-link"
         ],
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

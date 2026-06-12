@@ -763,10 +763,11 @@ class SnseventData(Data):
     )
 
     data_x_y = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-data-data-x-y-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_x_y",
             target="/NXentry/NXinstrument/NXdetector/data_x_y",
@@ -774,10 +775,13 @@ class SnseventData(Data):
         ),
     )
     x_pixel_offset = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-data-x-pixel-offset-link"
         ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="x_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/x_pixel_offset",
@@ -785,10 +789,13 @@ class SnseventData(Data):
         ),
     )
     y_pixel_offset = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-data-y-pixel-offset-link"
         ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="y_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/y_pixel_offset",
@@ -816,10 +823,11 @@ class SnseventEventData(EventData):
     )
 
     event_index = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-event-index-link"
         ],
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="event_index",
             target="/NXentry/NXinstrument/NXdetector/event_index",
@@ -827,10 +835,11 @@ class SnseventEventData(EventData):
         ),
     )
     event_pixel_id = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-event-pixel-id-link"
         ],
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="event_pixel_id",
             target="/NXentry/NXinstrument/NXdetector/event_pixel_id",
@@ -838,10 +847,13 @@ class SnseventEventData(EventData):
         ),
     )
     event_time_of_flight = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-event-time-of-flight-link"
         ],
+        dimensionality="[time]",
+        unit="second",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="event_time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/event_time_of_flight",
@@ -849,10 +861,13 @@ class SnseventEventData(EventData):
         ),
     )
     pulse_time = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-pulse-time-link"
         ],
+        dimensionality="[time]",
+        unit="second",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="pulse_time",
             target="/NXentry/NXinstrument/NXdetector/pulse_time",

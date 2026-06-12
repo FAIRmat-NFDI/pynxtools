@@ -290,10 +290,13 @@ class XeulerName(XbaseData):
     )
 
     polar_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-name-polar-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="polar_angle",
             target="/NXentry/NXinstrument/NXdetector/polar_angle",
@@ -301,10 +304,13 @@ class XeulerName(XbaseData):
         ),
     )
     rotation_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-name-rotation-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",
@@ -312,10 +318,13 @@ class XeulerName(XbaseData):
         ),
     )
     chi = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-name-chi-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="chi",
             target="/NXentry/NXsample/chi",
@@ -323,10 +332,13 @@ class XeulerName(XbaseData):
         ),
     )
     phi = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-name-phi-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="phi",
             target="/NXentry/NXsample/phi",

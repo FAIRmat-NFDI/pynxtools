@@ -758,10 +758,11 @@ class SnshistoData(Data):
     )
 
     data_quantity = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-link"
         ],
+        shape=["*", "*", "*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -769,10 +770,11 @@ class SnshistoData(Data):
         ),
     )
     data_x_time_of_flight = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-x-time-of-flight-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_x_time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/data_x_time_of_flight",
@@ -780,10 +782,11 @@ class SnshistoData(Data):
         ),
     )
     data_x_y = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-x-y-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_x_y",
             target="/NXentry/NXinstrument/NXdetector/data_x_y",
@@ -791,10 +794,11 @@ class SnshistoData(Data):
         ),
     )
     data_y_time_of_flight = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-y-time-of-flight-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_y_time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/data_y_time_of_flight",
@@ -802,10 +806,11 @@ class SnshistoData(Data):
         ),
     )
     pixel_id = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-pixel-id-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="pixel_id",
             target="/NXentry/NXinstrument/NXdetector/pixel_id",
@@ -813,10 +818,13 @@ class SnshistoData(Data):
         ),
     )
     time_of_flight = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-time-of-flight-link"
         ],
+        dimensionality="[time]",
+        unit="second",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/time_of_flight",
@@ -824,7 +832,7 @@ class SnshistoData(Data):
         ),
     )
     total_counts = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-total-counts-link"
         ],
@@ -835,10 +843,13 @@ class SnshistoData(Data):
         ),
     )
     x_pixel_offset = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-x-pixel-offset-link"
         ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="x_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/x_pixel_offset",
@@ -846,10 +857,13 @@ class SnshistoData(Data):
         ),
     )
     y_pixel_offset = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-y-pixel-offset-link"
         ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="y_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/y_pixel_offset",

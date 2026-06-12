@@ -349,10 +349,13 @@ class XrotName(XbaseData):
     )
 
     rotation_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-name-rotation-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",

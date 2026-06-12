@@ -298,10 +298,13 @@ class XkappaName(XbaseData):
     )
 
     polar_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-polar-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="polar_angle",
             target="/NXentry/NXinstrument/NXdetector/polar_angle",
@@ -309,10 +312,13 @@ class XkappaName(XbaseData):
         ),
     )
     rotation_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-rotation-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",
@@ -320,10 +326,13 @@ class XkappaName(XbaseData):
         ),
     )
     kappa = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-kappa-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="kappa",
             target="/NXentry/NXsample/kappa",
@@ -331,10 +340,13 @@ class XkappaName(XbaseData):
         ),
     )
     phi = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-phi-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="phi",
             target="/NXentry/NXsample/phi",

@@ -325,10 +325,11 @@ class ScanData(Data):
     )
 
     data_quantity = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-data-data-link"
         ],
+        shape=["*", "*", "*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -336,10 +337,13 @@ class ScanData(Data):
         ),
     )
     rotation_angle = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-data-rotation-angle-link"
         ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",

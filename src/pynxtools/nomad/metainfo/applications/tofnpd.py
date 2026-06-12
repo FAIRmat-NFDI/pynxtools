@@ -482,10 +482,11 @@ class TofnpdData(Data):
     )
 
     data_quantity = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-data-data-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -493,10 +494,11 @@ class TofnpdData(Data):
         ),
     )
     detector_number = Quantity(
-        type=str,
+        type=np.int64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-data-detector-number-link"
         ],
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="detector_number",
             target="/NXentry/NXinstrument/NXdetector/detector_number",
@@ -504,10 +506,13 @@ class TofnpdData(Data):
         ),
     )
     time_of_flight = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-data-time-of-flight-link"
         ],
+        dimensionality="[time]",
+        unit="second",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/time_of_flight",

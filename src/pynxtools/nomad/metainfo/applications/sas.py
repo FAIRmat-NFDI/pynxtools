@@ -749,10 +749,11 @@ class SasData(Data):
     )
 
     data_quantity = Quantity(
-        type=str,
+        type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-data-data-link"
         ],
+        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
