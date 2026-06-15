@@ -154,20 +154,18 @@ def prioritized_axes_heuristic(
     * tuple[int, ...], explicit chunk size
     * True, the fallback to h5py guess_chunk auto-chunking."""
     if not isinstance(data, np.ndarray):  # only np.ndarray supported
-        logger.info(f"chunk strategy h5py auto used for non-numpy array")
+        logger.info("chunk strategy h5py auto used for non-numpy array")
         return True
     shape: tuple[int, ...] = np.shape(data)
     if any(extent == 0 for extent in shape):  # unlimited axis not supported
-        logger.info(f"chunk strategy h5py auto used for datasets with unlimited axes")
+        logger.info("chunk strategy h5py auto used for datasets with unlimited axes")
         return True
     if set(priority) != set(range(len(priority))):  # all dim indices need to be present
-        logger.info(
-            f"chunk strategy h5py auto used for incorrect axes priority setting"
-        )
+        logger.info("chunk strategy h5py auto used for incorrect axes priority setting")
         return True
     if len(priority) != len(shape):  # need a priority for each axis
         logger.info(
-            f"chunk strategy h5py auto used for incorrect axes priority setting"
+            "chunk strategy h5py auto used for incomplete axis priority setting"
         )
         return True
     if len(shape) == 0:
@@ -246,7 +244,7 @@ def prioritized_axes_heuristic(
 
             # can't figure something out that is anywhere smarter, go with h5py chunking heuristic
             logger.debug(
-                f"chunk strategy h5py auto, no more axes can be splitted to reduce byte_per_chunk"
+                "chunk strategy h5py auto, no more axes can be splitted to reduce byte_per_chunk"
             )
             return True
 
@@ -255,7 +253,7 @@ def prioritized_axes_heuristic(
             f"chunk strategy custom {tuple(int(extent) for extent in chunk_shape)} for shape {shape} with byte_per_item {byte_per_item} using chunk_shape {chunk_shape}, byte_per_chunk {byte_per_chunk}"
         )
         return tuple(int(extent) for extent in chunk_shape)
-    logger.debug(f"chunk strategy h5py auto used")
+    logger.debug("chunk strategy h5py auto used")
     return True
 
 
