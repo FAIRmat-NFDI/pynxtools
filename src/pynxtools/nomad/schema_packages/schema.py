@@ -81,6 +81,14 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+ONTOLOGY_SERVICE_AVAILABLE = True
+# try:
+#     from nomad_ontology_service import * #TODO: we should not import everything here, but we need the ONTOLOGY_SERVICE_AVAILABLE flag and the config for the base path
+#     ONTOLOGY_SERVICE_AVAILABLE = True
+# except ImportError as exc:
+#     ONTOLOGY_SERVICE_AVAILABLE = False
+
+
 from pynxtools import NX_DOC_BASES, get_definitions_url, get_nexus_version
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad import (
@@ -88,6 +96,7 @@ from pynxtools.nomad import (
     NX_TYPES,
     REPLACEMENT_FOR_NX,
     _rename_nx_for_nomad,
+    ensure_ontology_initialization,
     get_package_filepath,
     get_quantity_base_name,
 )
@@ -263,20 +272,35 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                     if hasattr(entry, "definition__field") and entry.definition__field:
                         # Directly use entry.definition__field as class_name
                         class_name = entry.definition__field.strip()
-                        base = config.services.api_base_path.rstrip("/")
-                        url = f"http://localhost:8000{base}/ontology_service/superclasses/{class_name}"
-                        response = requests.get(url)
-                        if response.status_code == 200:
-                            superclasses = response.json().get("superclasses", [])
-                            if archive.results.eln.methods is None:
-                                archive.results.eln.methods = []
-                            for superclass in superclasses:
-                                if superclass not in archive.results.eln.methods:
-                                    archive.results.eln.methods.append(superclass)
+
+                        if ONTOLOGY_SERVICE_AVAILABLE:
+                            try:
+                                ep = config.get_plugin_entry_point(
+                                    "nomad_ontology_service:ontology_service"
+                                )
+                                base = config.services.api_base_path.rstrip("/")
+                                prefix = ep.prefix.strip("/")
+                                ontology_name = ep.ontologies[0].name
+                                #print prefix and ontology_name for debugging
+                                print(f"Ontology service base: {base}, prefix: {prefix}, ontology: {ontology_name}")
+                                url = f"http://localhost:8000{base}/{prefix}/{ontology_name}/superclasses/{class_name}"
+                                response = requests.get(url)
+                                if response.status_code == 200:
+                                    superclasses = response.json().get("superclasses", [])
+                                    if archive.results.eln.methods is None:
+                                        archive.results.eln.methods = []
+                                    for superclass in superclasses:
+                                        if superclass not in archive.results.eln.methods:
+                                            archive.results.eln.methods.append(superclass)
+                                else:
+                                    logger.warning(
+                                        f"Failed to fetch superclasses: {response.status_code} - {response.text}"
+                                    )
+                                    archive.results.eln.methods.append(class_name)
+                            except Exception as e:
+                                logger.warning(f"Ontology service error: {e}")
+                                archive.results.eln.methods.append(class_name)
                         else:
-                            logger.warning(
-                                f"Failed to fetch superclasses: {response.status_code} - {response.text}"
-                            )
                             archive.results.eln.methods.append(class_name)
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
@@ -1216,3 +1240,9 @@ def init_nexus_metainfo():
 
 
 init_nexus_metainfo()
+
+#ensure that the ontology is initialized for the ontology service, if it is available
+try:
+    ensure_ontology_initialization()
+except Exception:
+    logger_.warning("Could not initialize ontology for ontology service", exc_info=True)
