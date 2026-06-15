@@ -68,8 +68,6 @@ dependencies = [
     "cachetools",
     "structlog",
     "Jinja2",
-    "owlready2",
-    "fastapi",
     "pygit2", # transitive from NeXusOntology submodule
 ]
 
@@ -79,6 +77,7 @@ dependencies = [
 
 [project.optional-dependencies]
 nomad = ["nomad-lab >= 1.4.0", "ruff>=0.15.0"]
+ontology = ["nomad-ontology-service"]
 docs = [
     "mkdocs",
     "markdown-exec[ansi]",
@@ -146,7 +145,7 @@ nexus_base_classes = "pynxtools.nomad.metainfo:nexus_base_classes"
 nexus_applications = "pynxtools.nomad.metainfo:nexus_applications"
 nexus_parser_v2 = "pynxtools.nomad.parsers:nexus_parser_v2"
 nexus_app_v2 = "pynxtools.nomad.apps.app_v2:nexus_app_v2"
-ontology_service = "pynxtools.nomad.apis:ontology_service"
+#ontology_service = "pynxtools.nomad.apis:ontology_service"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
