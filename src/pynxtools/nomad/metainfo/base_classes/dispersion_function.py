@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -101,6 +106,9 @@ class DispersionFunction(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula = Quantity(
         type=str,
@@ -117,6 +125,9 @@ class DispersionFunction(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     convention = Quantity(
         type=MEnum(["n + ik", "n - ik"]),
@@ -130,6 +141,9 @@ class DispersionFunction(Object):
             name_type="specified",
             optionality="optional",
             enumeration=["n + ik", "n - ik"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     energy_identifier = Quantity(
@@ -147,6 +161,9 @@ class DispersionFunction(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     energy_min = Quantity(
         type=np.float64,
@@ -163,6 +180,10 @@ class DispersionFunction(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy_max = Quantity(
         type=np.float64,
@@ -179,6 +200,10 @@ class DispersionFunction(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy_unit = Quantity(
         type=np.float64,
@@ -200,6 +225,10 @@ class DispersionFunction(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     wavelength_identifier = Quantity(
         type=str,
@@ -215,6 +244,9 @@ class DispersionFunction(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     wavelength_unit = Quantity(
@@ -237,6 +269,10 @@ class DispersionFunction(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_min = Quantity(
         type=np.float64,
@@ -253,6 +289,10 @@ class DispersionFunction(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_max = Quantity(
         type=np.float64,
@@ -269,6 +309,10 @@ class DispersionFunction(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     representation = Quantity(
         type=MEnum(["n", "eps"]),
@@ -286,6 +330,9 @@ class DispersionFunction(Object):
             name_type="specified",
             optionality="optional",
             enumeration=["n", "eps"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -94,6 +99,9 @@ class ChemicalComposition(Object):
             name_type="specified",
             optionality="optional",
             enumeration=["atom_percent", "weight_percent"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     total = Quantity(
@@ -192,6 +200,10 @@ class ChemicalCompositionAtom(Atom):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     composition_errors = Quantity(
         type=np.float64,
@@ -208,6 +220,10 @@ class ChemicalCompositionAtom(Atom):
             optionality="recommended",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

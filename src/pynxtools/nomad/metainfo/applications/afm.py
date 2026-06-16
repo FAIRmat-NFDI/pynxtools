@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -110,6 +115,10 @@ class Afm(Spm):
             optionality="required",
             enumeration=["NXafm"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXafm",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -122,6 +131,9 @@ class Afm(Spm):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_technique = Quantity(
@@ -136,6 +148,10 @@ class Afm(Spm):
             name_type="specified",
             optionality="required",
             enumeration=["AFM"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="AFM",
         ),
     )
     scan_mode = Quantity(
@@ -175,6 +191,9 @@ class Afm(Spm):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     scan_type = Quantity(
         type=str,
@@ -192,6 +211,9 @@ class Afm(Spm):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -206,6 +228,9 @@ class Afm(Spm):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     default = Quantity(
@@ -227,6 +252,9 @@ class Afm(Spm):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_collection = Quantity(
         type=str,
@@ -244,6 +272,9 @@ class Afm(Spm):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -255,6 +286,9 @@ class Afm(Spm):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -269,6 +303,9 @@ class Afm(Spm):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -281,6 +318,9 @@ class Afm(Spm):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -453,6 +493,10 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -468,6 +512,10 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             optionality="recommended",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     reference_phase = Quantity(
         type=np.float64,
@@ -483,6 +531,10 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             optionality="recommended",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -533,6 +585,9 @@ class AfmReproducibilityIndicators(SpmReproducibilityIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cryo_bottom_temperature = Quantity(
         type=np.float64,
@@ -549,6 +604,9 @@ class AfmReproducibilityIndicators(SpmReproducibilityIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cryo_shield_temperature = Quantity(
         type=np.float64,
@@ -564,6 +622,9 @@ class AfmReproducibilityIndicators(SpmReproducibilityIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -604,6 +665,9 @@ class AfmResolutionIndicators(SpmResolutionIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cryo_bottom_temperature = Quantity(
         type=np.float64,
@@ -619,6 +683,9 @@ class AfmResolutionIndicators(SpmResolutionIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     cryo_shield_temperature = Quantity(
@@ -636,6 +703,9 @@ class AfmResolutionIndicators(SpmResolutionIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cantilever_config = Quantity(
         type=np.float64,
@@ -652,6 +722,9 @@ class AfmResolutionIndicators(SpmResolutionIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     amplitude_excitation = Quantity(
         type=np.float64,
@@ -667,6 +740,9 @@ class AfmResolutionIndicators(SpmResolutionIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

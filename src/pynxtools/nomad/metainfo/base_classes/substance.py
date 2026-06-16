@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -91,6 +96,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     molecular_mass = Quantity(
         type=np.float64,
@@ -107,6 +115,10 @@ class Substance(Object):
             optionality="optional",
             units="NX_MOLECULAR_WEIGHT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / mol"},
     )
     molecular_formula_hill = Quantity(
         type=str,
@@ -136,6 +148,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_cas = Quantity(
         type=str,
@@ -152,6 +167,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_cas__type = Quantity(
         type=MEnum(["URL"]),
@@ -165,6 +183,10 @@ class Substance(Object):
             optionality="optional",
             parent_field="identifier_cas",
             enumeration=["URL"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="URL",
         ),
     )
     identifier_cas__cas_number = Quantity(
@@ -180,6 +202,9 @@ class Substance(Object):
             optionality="optional",
             parent_field="identifier_cas",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_cas__cas_name = Quantity(
         type=str,
@@ -193,6 +218,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
             parent_field="identifier_cas",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_inchi_str = Quantity(
@@ -215,6 +243,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_inchi_key = Quantity(
         type=str,
@@ -231,6 +262,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_iupac_name = Quantity(
         type=str,
@@ -246,6 +280,9 @@ class Substance(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_smiles = Quantity(
@@ -264,6 +301,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_canonical_smiles = Quantity(
         type=str,
@@ -276,6 +316,9 @@ class Substance(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_pub_chem = Quantity(
@@ -298,6 +341,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_pub_chem__pub_chem_link = Quantity(
         type=str,
@@ -311,6 +357,9 @@ class Substance(Object):
             name_type="specified",
             optionality="optional",
             parent_field="identifier_pub_chem",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

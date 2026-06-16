@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -213,6 +218,10 @@ class Stress(Entry):
             optionality="required",
             enumeration=["NXstress"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXstress",
+        ),
     )
     title = Quantity(
         type=str,
@@ -225,6 +234,9 @@ class Stress(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_identifier = Quantity(
@@ -242,6 +254,9 @@ class Stress(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_description = Quantity(
@@ -263,6 +278,9 @@ class Stress(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -280,6 +298,9 @@ class Stress(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -295,6 +316,9 @@ class Stress(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     collection_identifier = Quantity(
@@ -314,6 +338,9 @@ class Stress(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     collection_description = Quantity(
         type=str,
@@ -330,6 +357,9 @@ class Stress(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     processing_type = Quantity(
@@ -355,6 +385,9 @@ class Stress(Entry):
                 "sin2psi",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     measurement_direction = Quantity(
         type=MEnum(["radial", "longitudinal", "normal", "tangential", "multiple"]),
@@ -371,6 +404,9 @@ class Stress(Entry):
             name_type="specified",
             optionality="optional",
             enumeration=["radial", "longitudinal", "normal", "tangential", "multiple"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -469,6 +505,9 @@ class StressInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity__short_name = Quantity(
         type=str,
@@ -485,6 +524,9 @@ class StressInstrument(Instrument):
             name_type="specified",
             optionality="optional",
             parent_field="name",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -524,6 +566,9 @@ class StressInstrumentNote(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -578,6 +623,9 @@ class StressInstrumentSource(Source):
                 "Metal Jet X-ray",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     probe = Quantity(
         type=MEnum(["neutron", "X-ray"]),
@@ -591,6 +639,9 @@ class StressInstrumentSource(Source):
             name_type="specified",
             optionality="required",
             enumeration=["neutron", "X-ray"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -646,6 +697,9 @@ class StressInstrumentDetector(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     distance = Quantity(
@@ -765,6 +819,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     primary_vertical_type = Quantity(
         type=str,
@@ -782,6 +839,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     primary_vertical_source_width = Quantity(
         type=np.float64,
@@ -797,6 +857,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     primary_vertical_sample_width = Quantity(
@@ -814,6 +877,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     primary_vertical_distance = Quantity(
         type=np.float64,
@@ -829,6 +895,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     primary_vertical_evaluation = Quantity(
@@ -847,6 +916,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     primary_horizontal_type = Quantity(
         type=str,
@@ -864,6 +936,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     primary_horizontal_source_width = Quantity(
         type=np.float64,
@@ -879,6 +954,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     primary_horizontal_sample_width = Quantity(
@@ -896,6 +974,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     primary_horizontal_distance = Quantity(
         type=np.float64,
@@ -911,6 +992,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     primary_horizontal_evaluation = Quantity(
@@ -929,6 +1013,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     secondary_horizontal_type = Quantity(
         type=str,
@@ -946,6 +1033,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     secondary_horizontal_detector_width = Quantity(
         type=np.float64,
@@ -961,6 +1051,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     secondary_horizontal_sample_width = Quantity(
@@ -978,6 +1071,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     secondary_horizontal_distance = Quantity(
         type=np.float64,
@@ -993,6 +1089,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     secondary_horizontal_evaluation = Quantity(
@@ -1010,6 +1109,9 @@ class StressInstrumentBeamIntensityProfile(Beam):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1076,6 +1178,9 @@ class StressSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     stress_field__direction = Quantity(
         type=MEnum(["x", "y", "z"]),
@@ -1089,6 +1194,9 @@ class StressSample(Sample):
             optionality="required",
             parent_field="stress_field",
             enumeration=["x", "y", "z"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     depends_on = Quantity(
@@ -1106,6 +1214,9 @@ class StressSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1165,6 +1276,10 @@ class StressSampleGaugeVolume(Parameters):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     b = Quantity(
         type=np.float64,
@@ -1184,6 +1299,10 @@ class StressSampleGaugeVolume(Parameters):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     c = Quantity(
         type=np.float64,
@@ -1200,6 +1319,10 @@ class StressSampleGaugeVolume(Parameters):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     depends_on = Quantity(
         type=str,
@@ -1216,6 +1339,9 @@ class StressSampleGaugeVolume(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1307,6 +1433,9 @@ class StressProcess(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     date = Quantity(
         type=Datetime,
@@ -1322,6 +1451,9 @@ class StressProcess(Process):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     program_quantity = Quantity(
@@ -1339,6 +1471,9 @@ class StressProcess(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     integration_type = Quantity(
         type=str,
@@ -1352,6 +1487,9 @@ class StressProcess(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     bins = Quantity(
         type=str,
@@ -1364,6 +1502,9 @@ class StressProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fit_type = Quantity(
@@ -1382,6 +1523,9 @@ class StressProcess(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     fit_range = Quantity(
         type=str,
@@ -1394,6 +1538,9 @@ class StressProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     goodness_of_fit = Quantity(
@@ -1409,6 +1556,9 @@ class StressProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     normalization = Quantity(
@@ -1426,6 +1576,9 @@ class StressProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1482,6 +1635,9 @@ class StressProcessPeakParameters(Parameters):
                 "pearson VII",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     area = Quantity(
         type=np.float64,
@@ -1512,6 +1668,9 @@ class StressProcessPeakParameters(Parameters):
             name_type="specified",
             optionality="required",
             parent_field="area",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     area_errors = Quantity(
@@ -1561,6 +1720,9 @@ class StressProcessPeakParameters(Parameters):
             name_type="specified",
             optionality="required",
             parent_field="center",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     center_errors = Quantity(
@@ -1613,6 +1775,9 @@ class StressProcessPeakParameters(Parameters):
             optionality="required",
             parent_field="height",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     height_errors = Quantity(
         type=np.float64,
@@ -1661,6 +1826,9 @@ class StressProcessPeakParameters(Parameters):
             name_type="specified",
             optionality="required",
             parent_field="fwhm",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fwhm_errors = Quantity(
@@ -1711,6 +1879,9 @@ class StressProcessPeakParameters(Parameters):
             optionality="required",
             parent_field="fwhm_left",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     fwhm_left_errors = Quantity(
         type=np.float64,
@@ -1759,6 +1930,9 @@ class StressProcessPeakParameters(Parameters):
             name_type="specified",
             optionality="required",
             parent_field="fwhm_right",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fwhm_right_errors = Quantity(
@@ -1895,6 +2069,9 @@ class StressProcessBackgroundParameters(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     A = Quantity(
@@ -2056,6 +2233,9 @@ class StressProcessBackgroundParameters(Parameters):
             optionality="required",
             parent_field="background_area",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     background_area_interval = Quantity(
         type=np.float64,
@@ -2077,6 +2257,10 @@ class StressProcessBackgroundParameters(Parameters):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2177,6 +2361,9 @@ class StressProcessData(Data):
             optionality="required",
             parent_field="XAXIS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     signal = Quantity(
         type=MEnum(["diffractogram"]),
@@ -2190,6 +2377,10 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             enumeration=["diffractogram"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="diffractogram",
         ),
     )
     auxiliary_signals = Quantity(
@@ -2206,6 +2397,9 @@ class StressProcessData(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     diffractogram = Quantity(
@@ -2236,6 +2430,10 @@ class StressProcessData(Data):
             parent_field="diffractogram",
             enumeration=["spectrum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="spectrum",
+        ),
     )
     diffractogram__units = Quantity(
         type=str,
@@ -2249,6 +2447,9 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             parent_field="diffractogram",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     diffractogram_errors = Quantity(
@@ -2279,6 +2480,10 @@ class StressProcessData(Data):
             parent_field="diffractogram_errors",
             enumeration=["spectrum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="spectrum",
+        ),
     )
     diffractogram_errors__units = Quantity(
         type=str,
@@ -2292,6 +2497,9 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             parent_field="diffractogram_errors",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fit = Quantity(
@@ -2322,6 +2530,10 @@ class StressProcessData(Data):
             parent_field="fit",
             enumeration=["spectrum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="spectrum",
+        ),
     )
     fit__units = Quantity(
         type=str,
@@ -2335,6 +2547,9 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             parent_field="fit",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fit_errors = Quantity(
@@ -2364,6 +2579,9 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             parent_field="fit_errors",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     background = Quantity(
@@ -2397,6 +2615,10 @@ class StressProcessData(Data):
             parent_field="background",
             enumeration=["spectrum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="spectrum",
+        ),
     )
     background__units = Quantity(
         type=str,
@@ -2410,6 +2632,9 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             parent_field="background",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     residuals = Quantity(
@@ -2440,6 +2665,10 @@ class StressProcessData(Data):
             parent_field="residuals",
             enumeration=["spectrum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="spectrum",
+        ),
     )
     residuals__units = Quantity(
         type=str,
@@ -2453,6 +2682,9 @@ class StressProcessData(Data):
             name_type="specified",
             optionality="required",
             parent_field="residuals",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2685,6 +2917,9 @@ class StressPeaks(Reflections):
                 "''",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     center_errors = Quantity(
         type=np.float64,
@@ -2728,6 +2963,9 @@ class StressPeaks(Reflections):
                 "''",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     center_type = Quantity(
         type=MEnum(
@@ -2769,6 +3007,9 @@ class StressPeaks(Reflections):
                 "channel",
                 "time-of-flight",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     sx = Quantity(

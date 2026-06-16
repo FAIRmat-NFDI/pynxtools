@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -143,6 +148,10 @@ class MicrostructureKanapyResults(Entry):
             optionality="required",
             enumeration=["NXmicrostructure_kanapy_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXmicrostructure_kanapy_results",
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -158,6 +167,9 @@ class MicrostructureKanapyResults(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -170,6 +182,9 @@ class MicrostructureKanapyResults(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -181,6 +196,9 @@ class MicrostructureKanapyResults(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -221,6 +239,9 @@ class MicrostructureKanapyResultsProgram1(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -234,6 +255,9 @@ class MicrostructureKanapyResultsProgram1(Program):
             optionality="required",
             parent_field="program",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__url = Quantity(
         type=str,
@@ -246,6 +270,9 @@ class MicrostructureKanapyResultsProgram1(Program):
             name_type="specified",
             optionality="recommended",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -277,6 +304,9 @@ class MicrostructureKanapyResultsProgram2(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -290,6 +320,9 @@ class MicrostructureKanapyResultsProgram2(Program):
             optionality="required",
             parent_field="program",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__url = Quantity(
         type=str,
@@ -302,6 +335,9 @@ class MicrostructureKanapyResultsProgram2(Program):
             name_type="specified",
             optionality="recommended",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -369,6 +405,9 @@ class MicrostructureKanapyResultsEnvironmentProgram(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -381,6 +420,9 @@ class MicrostructureKanapyResultsEnvironmentProgram(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -463,6 +505,9 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cell_dimensions = Quantity(
         type=np.float64,
@@ -506,6 +551,10 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
             optionality="required",
             enumeration=["cubic"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="cubic",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -539,6 +588,9 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -578,6 +630,9 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_crystal = Quantity(
         type=np.int64,
@@ -594,6 +649,10 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     z = Quantity(
         type=np.float64,
@@ -624,6 +683,9 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             name_type="specified",
             optionality="required",
             parent_field="z",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     y = Quantity(
@@ -656,6 +718,9 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             parent_field="y",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     x = Quantity(
         type=np.float64,
@@ -687,6 +752,9 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             parent_field="x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -717,6 +785,9 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_crystals = Quantity(
         type=np.int64,
@@ -732,6 +803,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_phases = Quantity(
         type=np.int64,
@@ -747,6 +822,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_crystal = Quantity(
         type=np.int64,

@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -102,6 +107,10 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_intersector_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_intersector_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -114,6 +123,9 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -215,6 +227,10 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             optionality="required",
             enumeration=["shared_ion"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="shared_ion",
+        ),
     )
     analyze_intersection = Quantity(
         type=bool,
@@ -229,6 +245,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     analyze_proximity = Quantity(
@@ -245,6 +264,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     analyze_coprecipitation = Quantity(
@@ -267,6 +289,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     threshold_proximity = Quantity(
         type=np.float64,
@@ -286,6 +311,10 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     has_current_to_next_links = Quantity(
         type=bool,
@@ -303,6 +332,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_next_to_current_links = Quantity(
         type=bool,
@@ -319,6 +351,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -378,6 +413,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameter
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     number_of_feature_types = Quantity(
         type=np.int64,
@@ -407,6 +445,10 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameter
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -461,6 +503,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
                 "other",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -472,6 +517,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -485,6 +533,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -496,6 +547,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     geometry = Quantity(
@@ -512,6 +566,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_feature = Quantity(
@@ -591,6 +648,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     number_of_feature_types = Quantity(
         type=np.int64,
@@ -620,6 +680,10 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -667,6 +731,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note
                 "proxies_close_to_edge",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -678,6 +745,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -691,6 +761,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -702,6 +775,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     geometry = Quantity(
@@ -718,6 +794,9 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_feature = Quantity(

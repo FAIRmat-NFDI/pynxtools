@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -72,6 +77,9 @@ class ElectronDetector(Detector):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detector_type = Quantity(
         type=str,
@@ -86,6 +94,9 @@ class ElectronDetector(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     detector_voltage = Quantity(
@@ -103,6 +114,10 @@ class ElectronDetector(Detector):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     amplifier_voltage = Quantity(
         type=np.float64,
@@ -119,6 +134,10 @@ class ElectronDetector(Detector):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     amplifier_bias = Quantity(
         type=np.float64,
@@ -135,6 +154,10 @@ class ElectronDetector(Detector):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

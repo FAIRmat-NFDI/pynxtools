@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -97,6 +102,10 @@ class Attenuator(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     type = Quantity(
         type=str,
@@ -109,6 +118,9 @@ class Attenuator(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     thickness = Quantity(
@@ -126,6 +138,10 @@ class Attenuator(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     scattering_cross_section = Quantity(
         type=np.float64,
@@ -142,6 +158,10 @@ class Attenuator(Component):
             optionality="optional",
             units="NX_CROSS_SECTION",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 2"},
     )
     absorption_cross_section = Quantity(
         type=np.float64,
@@ -158,6 +178,10 @@ class Attenuator(Component):
             optionality="optional",
             units="NX_CROSS_SECTION",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 2"},
     )
     attenuator_transmission = Quantity(
         type=np.float64,
@@ -177,6 +201,10 @@ class Attenuator(Component):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     status = Quantity(
         type=MEnum(["in", "out", "moving"]),
@@ -191,6 +219,9 @@ class Attenuator(Component):
             optionality="optional",
             enumeration=["in", "out", "moving"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     status__time = Quantity(
         type=Datetime,
@@ -204,6 +235,9 @@ class Attenuator(Component):
             name_type="specified",
             optionality="optional",
             parent_field="status",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     depends_on = Quantity(
@@ -224,6 +258,9 @@ class Attenuator(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -272,6 +277,9 @@ class EbeamColumn(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -332,6 +340,10 @@ class EbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     extraction_voltage = Quantity(
         type=np.float64,
@@ -353,6 +365,10 @@ class EbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     emission_current = Quantity(
         type=np.float64,
@@ -374,6 +390,10 @@ class EbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     filament_current = Quantity(
         type=np.float64,
@@ -395,6 +415,10 @@ class EbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     probe = Quantity(
         type=MEnum(["electron"]),
@@ -408,6 +432,10 @@ class EbeamColumnElectronSource(Source):
             name_type="specified",
             optionality="optional",
             enumeration=["electron"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="electron",
         ),
     )
     emitter_type = Quantity(
@@ -425,6 +453,9 @@ class EbeamColumnElectronSource(Source):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     emitter_material = Quantity(
         type=str,
@@ -439,6 +470,9 @@ class EbeamColumnElectronSource(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     lifetime = Quantity(
@@ -456,6 +490,10 @@ class EbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -524,6 +562,9 @@ class EbeamColumnMonochromator(Monochromator):
                 "sector_analyzer",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     applied = Quantity(
         type=bool,
@@ -536,6 +577,9 @@ class EbeamColumnMonochromator(Monochromator):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     dispersion = Quantity(
@@ -550,6 +594,9 @@ class EbeamColumnMonochromator(Monochromator):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     voltage = Quantity(
@@ -567,6 +614,10 @@ class EbeamColumnMonochromator(Monochromator):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -616,6 +667,9 @@ class EbeamColumnCorrectorAx(Component):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     value_y = Quantity(
         type=np.float64,
@@ -634,6 +688,9 @@ class EbeamColumnCorrectorAx(Component):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -675,6 +732,9 @@ class EbeamColumnPhaseplateID(Component):
             optionality="optional",
             enumeration=["thin_film", "electrostatic"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

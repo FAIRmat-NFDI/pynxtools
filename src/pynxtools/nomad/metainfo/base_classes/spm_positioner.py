@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -163,6 +168,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     I_t = Quantity(
         type=np.float64,
@@ -183,6 +192,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     z = Quantity(
         type=np.float64,
@@ -203,6 +216,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     set_point = Quantity(
         type=np.float64,
@@ -219,6 +236,9 @@ class SpmPositionerZController(PidController):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     feedback_on = Quantity(
@@ -237,6 +257,9 @@ class SpmPositionerZController(PidController):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     tip_lift = Quantity(
         type=np.float64,
@@ -253,6 +276,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     switch_off_delay = Quantity(
         type=np.float64,
@@ -269,6 +296,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     z_offset_value = Quantity(
         type=np.float64,
@@ -288,6 +319,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     z_average_time = Quantity(
         type=np.float64,
@@ -308,6 +343,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     z_controller_time = Quantity(
         type=np.float64,
@@ -328,6 +367,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     z_controller_hold = Quantity(
         type=bool,
@@ -345,6 +388,9 @@ class SpmPositionerZController(PidController):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     final_z = Quantity(
@@ -365,6 +411,10 @@ class SpmPositionerZController(PidController):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     controller_label = Quantity(
         type=str,
@@ -380,6 +430,9 @@ class SpmPositionerZController(PidController):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

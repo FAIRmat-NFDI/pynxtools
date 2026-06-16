@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -93,6 +98,9 @@ class Xasproc(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXxasproc"]),
@@ -106,6 +114,10 @@ class Xasproc(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXxasproc"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXxasproc",
         ),
     )
 
@@ -147,6 +159,9 @@ class XasprocSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -190,6 +205,9 @@ class XasprocXasDataReduction(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     version = Quantity(
         type=str,
@@ -203,6 +221,9 @@ class XasprocXasDataReduction(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     date = Quantity(
         type=Datetime,
@@ -215,6 +236,9 @@ class XasprocXasDataReduction(Process):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -246,6 +270,9 @@ class XasprocXasDataReductionParameters(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

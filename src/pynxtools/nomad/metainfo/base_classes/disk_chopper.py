@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -115,6 +120,9 @@ class DiskChopper(Component):
             optionality="optional",
             enumeration=["Chopper type single", "contra_rotating_pair", "synchro_pair"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     rotation_speed = Quantity(
         type=np.float64,
@@ -134,6 +142,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     slits = Quantity(
         type=np.int64,
@@ -146,6 +158,9 @@ class DiskChopper(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     slit_angle = Quantity(
@@ -163,6 +178,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     pair_separation = Quantity(
         type=np.float64,
@@ -179,6 +198,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     slit_edges = Quantity(
         type=np.float64,
@@ -222,6 +245,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     top_dead_center__start = Quantity(
         type=Datetime,
@@ -234,6 +261,9 @@ class DiskChopper(Component):
             name_type="specified",
             optionality="optional",
             parent_field="top_dead_center",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     beam_position = Quantity(
@@ -255,6 +285,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     radius = Quantity(
         type=np.float64,
@@ -271,6 +305,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     slit_height = Quantity(
         type=np.float64,
@@ -287,6 +325,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     phase = Quantity(
         type=np.float64,
@@ -303,6 +345,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     delay = Quantity(
         type=np.float64,
@@ -321,6 +367,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     ratio = Quantity(
         type=np.int64,
@@ -336,6 +386,9 @@ class DiskChopper(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     distance = Quantity(
@@ -356,6 +409,10 @@ class DiskChopper(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_range = Quantity(
         type=np.float64,
@@ -394,6 +451,9 @@ class DiskChopper(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -114,6 +119,9 @@ class CsMemoryCircuit(Circuit):
             enumeration=["ddr4", "ddr5"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     max_physical_capacity = Quantity(
         type=np.int64,
@@ -127,6 +135,9 @@ class CsMemoryCircuit(Circuit):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

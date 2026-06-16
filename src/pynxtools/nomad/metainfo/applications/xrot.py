@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -96,6 +101,10 @@ class Xrot(Xbase):
             optionality="required",
             enumeration=["NXxrot"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXxrot",
+        ),
     )
     title = Quantity(
         type=str,
@@ -108,6 +117,9 @@ class Xrot(Xbase):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -119,6 +131,9 @@ class Xrot(Xbase):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -222,6 +237,10 @@ class XrotInstrumentDetector(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_center_y = Quantity(
         type=np.float64,
@@ -242,6 +261,10 @@ class XrotInstrumentDetector(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -272,6 +295,9 @@ class XrotInstrumentAttenuator(Attenuator):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

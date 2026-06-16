@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -212,6 +217,10 @@ class EmCalorimetry(Entry):
             optionality="required",
             enumeration=["NXem_calorimetry"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXem_calorimetry",
+        ),
     )
     identifier_analysis = Quantity(
         type=str,
@@ -223,6 +232,9 @@ class EmCalorimetry(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -267,6 +279,9 @@ class EmCalorimetryProfiling(CsProfiling):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -278,6 +293,9 @@ class EmCalorimetryProfiling(CsProfiling):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     total_elapsed_time = Quantity(
@@ -294,6 +312,10 @@ class EmCalorimetryProfiling(CsProfiling):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -328,6 +350,9 @@ class EmCalorimetryProgram1(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -340,6 +365,9 @@ class EmCalorimetryProgram1(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -407,6 +435,9 @@ class EmCalorimetryEnvironmentProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -419,6 +450,9 @@ class EmCalorimetryEnvironmentProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -455,6 +489,9 @@ class EmCalorimetrySample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     atom_types = Quantity(
         type=str,
@@ -474,6 +511,9 @@ class EmCalorimetrySample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -513,6 +553,9 @@ class EmCalorimetryDiffraction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -525,6 +568,9 @@ class EmCalorimetryDiffraction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -536,6 +582,9 @@ class EmCalorimetryDiffraction(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -572,6 +621,9 @@ class EmCalorimetryActuator(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -584,6 +636,9 @@ class EmCalorimetryActuator(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -595,6 +650,9 @@ class EmCalorimetryActuator(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -630,6 +688,9 @@ class EmCalorimetryConfig(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -642,6 +703,9 @@ class EmCalorimetryConfig(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -653,6 +717,9 @@ class EmCalorimetryConfig(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -689,6 +756,9 @@ class EmCalorimetrySynchronization(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -709,6 +779,9 @@ class EmCalorimetrySynchronization(Process):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     indices_pattern = Quantity(
@@ -783,6 +856,9 @@ class EmCalorimetryPatternCenter(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     position = Quantity(
         type=np.float64,
@@ -834,6 +910,9 @@ class EmCalorimetryDistortionCorrection(Process):
             type="NX_POSINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     center = Quantity(
@@ -901,6 +980,9 @@ class EmCalorimetryIntegration(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -940,6 +1022,9 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -978,6 +1063,9 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -1011,6 +1099,9 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_pattern = Quantity(
         type=np.int64,
@@ -1041,6 +1132,9 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             parent_field="indices_pattern",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     s = Quantity(
         type=np.float64,
@@ -1068,6 +1162,9 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             name_type="specified",
             optionality="required",
             parent_field="s",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(
@@ -1115,6 +1212,9 @@ class EmCalorimetryBackgroundSubtraction(Process):
             type="NX_POSINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

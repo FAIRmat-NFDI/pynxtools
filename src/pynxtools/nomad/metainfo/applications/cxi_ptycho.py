@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -108,6 +113,9 @@ class CxiPtycho(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -120,6 +128,9 @@ class CxiPtycho(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -131,6 +142,9 @@ class CxiPtycho(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     definition = Quantity(
@@ -145,6 +159,10 @@ class CxiPtycho(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXcxi_ptycho"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXcxi_ptycho",
         ),
     )
 
@@ -256,6 +274,9 @@ class CxiPtychoInstrument1Source1(Source):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     energy = Quantity(
         type=np.float64,
@@ -272,6 +293,10 @@ class CxiPtychoInstrument1Source1(Source):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     probe = Quantity(
         type=MEnum(
@@ -306,6 +331,9 @@ class CxiPtychoInstrument1Source1(Source):
                 "positron",
                 "proton",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     type = Quantity(
@@ -344,6 +372,9 @@ class CxiPtychoInstrument1Source1(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -376,6 +407,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     energy__units = Quantity(
         type=str,
@@ -388,6 +422,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             name_type="specified",
             optionality="optional",
             parent_field="energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     extent__units = Quantity(
@@ -402,6 +439,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             optionality="optional",
             parent_field="extent",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     incident_beam_divergence__units = Quantity(
         type=str,
@@ -415,6 +455,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             optionality="optional",
             parent_field="incident_beam_divergence",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     incident_beam_energy = Quantity(
         type=np.float64,
@@ -426,6 +469,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     incident_beam_energy__units = Quantity(
@@ -439,6 +485,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             name_type="specified",
             optionality="optional",
             parent_field="incident_beam_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     incident_energy_spread = Quantity(
@@ -455,6 +504,10 @@ class CxiPtychoInstrument1Beam1(Beam):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     incident_energy_spread__units = Quantity(
         type=str,
@@ -467,6 +520,9 @@ class CxiPtychoInstrument1Beam1(Beam):
             name_type="specified",
             optionality="optional",
             parent_field="incident_energy_spread",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -512,6 +568,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     signal = Quantity(
         type=str,
@@ -524,6 +583,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     translation = Quantity(
@@ -544,6 +606,10 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     translation__units = Quantity(
         type=str,
@@ -556,6 +622,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             name_type="specified",
             optionality="optional",
             parent_field="translation",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     translation__axes = Quantity(
@@ -573,6 +642,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="optional",
             parent_field="translation",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     translation__interpretation = Quantity(
         type=str,
@@ -587,6 +659,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="optional",
             parent_field="translation",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     data_quantity = Quantity(
         type=np.int64,
@@ -599,6 +674,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     x_pixel_size = Quantity(
@@ -629,6 +707,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="optional",
             parent_field="x_pixel_size",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     y_pixel_size = Quantity(
         type=np.float64,
@@ -657,6 +738,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             name_type="specified",
             optionality="optional",
             parent_field="y_pixel_size",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     distance = Quantity(
@@ -688,6 +772,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="optional",
             parent_field="distance",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     beam_center_x__units = Quantity(
         type=str,
@@ -701,6 +788,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="optional",
             parent_field="beam_center_x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     beam_center_y__units = Quantity(
         type=str,
@@ -713,6 +803,9 @@ class CxiPtychoInstrument1Detector1(Detector):
             name_type="specified",
             optionality="optional",
             parent_field="beam_center_y",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -762,6 +855,9 @@ class CxiPtychoInstrument1Detector1Transformations(Transformations):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -795,6 +891,9 @@ class CxiPtychoInstrument1Monitor(Monitor):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

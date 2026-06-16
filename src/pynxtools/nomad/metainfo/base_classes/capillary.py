@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -98,6 +103,9 @@ class Capillary(Component):
             optionality="optional",
             enumeration=["single_bounce", "polycapillary", "conical_capillary"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     manufacturer = Quantity(
         type=str,
@@ -114,6 +122,9 @@ class Capillary(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     maximum_incident_angle = Quantity(
         type=np.float64,
@@ -129,6 +140,10 @@ class Capillary(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     accepting_aperture = Quantity(
         type=np.float64,
@@ -144,6 +159,10 @@ class Capillary(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     working_distance = Quantity(
         type=np.float64,
@@ -159,6 +178,10 @@ class Capillary(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     focal_size = Quantity(
         type=np.float64,
@@ -171,6 +194,9 @@ class Capillary(Component):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     depends_on = Quantity(
@@ -186,6 +212,9 @@ class Capillary(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

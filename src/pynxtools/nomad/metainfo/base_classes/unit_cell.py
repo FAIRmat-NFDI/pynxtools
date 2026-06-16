@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -94,6 +99,9 @@ class UnitCell(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     dimensionality = Quantity(
         type=MEnum(["1", "2", "3"]),
@@ -107,6 +115,9 @@ class UnitCell(Object):
             name_type="specified",
             optionality="optional",
             enumeration=["1", "2", "3"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     a_b_c = Quantity(
@@ -145,6 +156,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     b = Quantity(
         type=np.float64,
@@ -163,6 +178,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     c = Quantity(
         type=np.float64,
@@ -181,6 +200,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     alpha_beta_gamma = Quantity(
         type=np.float64,
@@ -219,6 +242,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     beta = Quantity(
         type=np.float64,
@@ -237,6 +264,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     gamma = Quantity(
         type=np.float64,
@@ -255,6 +286,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     crystal_system = Quantity(
         type=MEnum(
@@ -292,6 +327,9 @@ class UnitCell(Object):
                 "cubic",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     laue_group = Quantity(
         type=str,
@@ -306,6 +344,9 @@ class UnitCell(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     point_group = Quantity(
@@ -322,6 +363,9 @@ class UnitCell(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     space_group = Quantity(
         type=str,
@@ -336,6 +380,9 @@ class UnitCell(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     is_centrosymmetric = Quantity(
@@ -358,6 +405,9 @@ class UnitCell(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     is_chiral = Quantity(
         type=bool,
@@ -373,6 +423,9 @@ class UnitCell(Object):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     area = Quantity(
@@ -390,6 +443,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_AREA",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 2"},
     )
     volume = Quantity(
         type=np.float64,
@@ -406,6 +463,10 @@ class UnitCell(Object):
             optionality="optional",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

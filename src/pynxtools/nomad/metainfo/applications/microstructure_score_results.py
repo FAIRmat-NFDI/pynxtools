@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -163,6 +168,10 @@ class MicrostructureScoreResults(Entry):
             optionality="required",
             enumeration=["NXmicrostructure_score_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXmicrostructure_score_results",
+        ),
     )
     identifier_simulation = Quantity(
         type=np.int64,
@@ -175,6 +184,9 @@ class MicrostructureScoreResults(Entry):
             type="NX_UINT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     description_quantity = Quantity(
@@ -190,6 +202,9 @@ class MicrostructureScoreResults(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -207,6 +222,9 @@ class MicrostructureScoreResults(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -222,6 +240,9 @@ class MicrostructureScoreResults(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -267,6 +288,9 @@ class MicrostructureScoreResultsConfig(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -279,6 +303,9 @@ class MicrostructureScoreResultsConfig(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -290,6 +317,9 @@ class MicrostructureScoreResultsConfig(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -325,6 +355,9 @@ class MicrostructureScoreResultsProgram1(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -337,6 +370,9 @@ class MicrostructureScoreResultsProgram1(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -404,6 +440,9 @@ class MicrostructureScoreResultsEnvironmentProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -416,6 +455,9 @@ class MicrostructureScoreResultsEnvironmentProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -448,6 +490,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["cartesian"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="cartesian",
+        ),
     )
     handedness = Quantity(
         type=MEnum(["right_handed"]),
@@ -460,6 +506,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["right_handed"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="right_handed",
         ),
     )
     origin = Quantity(
@@ -474,6 +524,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["front_bottom_left"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="front_bottom_left",
+        ),
     )
     x_alias = Quantity(
         type=MEnum(["rolling_direction"]),
@@ -486,6 +540,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["rolling_direction"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rolling_direction",
         ),
     )
     x_direction = Quantity(
@@ -500,6 +558,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["east"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="east",
+        ),
     )
     y_alias = Quantity(
         type=MEnum(["transverse_direction"]),
@@ -512,6 +574,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["transverse_direction"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="transverse_direction",
         ),
     )
     y_direction = Quantity(
@@ -526,6 +592,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["in"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="in",
+        ),
     )
     z_alias = Quantity(
         type=MEnum(["normal_direction"]),
@@ -539,6 +609,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["normal_direction"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="normal_direction",
+        ),
     )
     z_direction = Quantity(
         type=MEnum(["north"]),
@@ -551,6 +625,10 @@ class MicrostructureScoreResultsSampleReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["north"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="north",
         ),
     )
 
@@ -626,6 +704,9 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -641,6 +722,10 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     origin = Quantity(
         type=np.float64,
@@ -667,6 +752,10 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             name_type="specified",
             optionality="required",
             enumeration=["cubic"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="cubic",
         ),
     )
     cell_dimensions = Quantity(
@@ -696,6 +785,9 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     index_offset_cell = Quantity(
         type=np.int64,
@@ -707,6 +799,9 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -750,6 +845,10 @@ class MicrostructureScoreResultsDiscretizationBoundary(CgHexahedron):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     boundary_conditions = Quantity(
         type=np.int64,
@@ -937,6 +1036,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -962,6 +1064,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     iteration_indices = Quantity(
         type=np.int64,
@@ -973,6 +1078,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     temperature_indices = Quantity(
@@ -986,6 +1094,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     x_indices = Quantity(
         type=np.int64,
@@ -998,6 +1109,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -1009,6 +1123,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(
@@ -1113,6 +1230,10 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
             optionality="required",
             enumeration=["cauchy"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="cauchy",
+        ),
     )
     tensor = Quantity(
         type=np.float64,
@@ -1158,6 +1279,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     tensor = Quantity(
@@ -1207,6 +1331,10 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsDeformationGrad
             name_type="specified",
             optionality="required",
             enumeration=["piola"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="piola",
         ),
     )
     tensor = Quantity(
@@ -1290,6 +1418,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     iteration = Quantity(
         type=np.int64,
@@ -1306,6 +1438,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     temperature = Quantity(
         type=np.float64,
@@ -1322,6 +1458,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             optionality="required",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     x = Quantity(
         type=np.float64,
@@ -1341,6 +1481,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     x_set = Quantity(
         type=np.float64,
@@ -1360,6 +1504,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1446,6 +1594,9 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_crystals = Quantity(
         type=np.int64,
@@ -1461,6 +1612,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             optionality="recommended",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_phases = Quantity(
         type=np.int64,
@@ -1476,6 +1631,10 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             optionality="recommended",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_crystal = Quantity(
         type=np.int64,
@@ -1487,6 +1646,9 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             type="NX_INT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     indices_crystal = Quantity(
@@ -1515,6 +1677,9 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
             type="NX_INT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     indices_phase = Quantity(

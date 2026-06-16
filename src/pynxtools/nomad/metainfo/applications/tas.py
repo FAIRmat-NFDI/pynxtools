@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -109,6 +114,9 @@ class Tas(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -120,6 +128,9 @@ class Tas(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     definition = Quantity(
@@ -134,6 +145,10 @@ class Tas(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXtas"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXtas",
         ),
     )
 
@@ -236,6 +251,9 @@ class TasInstrumentSource(Source):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     probe = Quantity(
         type=MEnum(["neutron", "x-ray"]),
@@ -248,6 +266,9 @@ class TasInstrumentSource(Source):
             name_type="specified",
             optionality="required",
             enumeration=["neutron", "x-ray"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -446,6 +467,9 @@ class TasSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     qh = Quantity(
         type=np.float64,
@@ -642,6 +666,9 @@ class TasMonitor(Monitor):
             optionality="required",
             enumeration=["monitor", "timer"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     preset = Quantity(
         type=np.float64,
@@ -655,6 +682,9 @@ class TasMonitor(Monitor):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_quantity = Quantity(

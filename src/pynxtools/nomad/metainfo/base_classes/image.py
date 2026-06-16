@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -238,6 +243,9 @@ class ImageProcess(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -285,6 +293,9 @@ class ImageProcessInput(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -416,6 +427,9 @@ class ImageImage1d(Data):
             optionality="optional",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -546,6 +560,9 @@ class ImageImage2d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -579,6 +596,9 @@ class ImageImage2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -710,6 +730,9 @@ class ImageImage3d(Data):
             optionality="optional",
             parent_field="axis_k",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -744,6 +767,9 @@ class ImageImage3d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -777,6 +803,9 @@ class ImageImage3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -908,6 +937,9 @@ class ImageImage4d(Data):
             optionality="optional",
             parent_field="axis_m",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_k = Quantity(
         type=np.float64,
@@ -941,6 +973,9 @@ class ImageImage4d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_k",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -976,6 +1011,9 @@ class ImageImage4d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -1009,6 +1047,9 @@ class ImageImage4d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1137,6 +1178,9 @@ class ImageStack1d(Data):
             optionality="optional",
             parent_field="indices_group",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_image = Quantity(
         type=np.int64,
@@ -1167,6 +1211,9 @@ class ImageStack1d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="indices_image",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -1201,6 +1248,9 @@ class ImageStack1d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1329,6 +1379,9 @@ class ImageStack2d(Data):
             optionality="optional",
             parent_field="indices_group",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_image = Quantity(
         type=np.int64,
@@ -1359,6 +1412,9 @@ class ImageStack2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="indices_image",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -1394,6 +1450,9 @@ class ImageStack2d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -1427,6 +1486,9 @@ class ImageStack2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1555,6 +1617,9 @@ class ImageStack3d(Data):
             optionality="optional",
             parent_field="indices_group",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_image = Quantity(
         type=np.int64,
@@ -1585,6 +1650,9 @@ class ImageStack3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="indices_image",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_k = Quantity(
@@ -1620,6 +1688,9 @@ class ImageStack3d(Data):
             optionality="optional",
             parent_field="axis_k",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -1654,6 +1725,9 @@ class ImageStack3d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -1687,6 +1761,9 @@ class ImageStack3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -108,6 +113,9 @@ class Arpes(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -119,6 +127,9 @@ class Arpes(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     definition = Quantity(
@@ -133,6 +144,10 @@ class Arpes(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXarpes"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXarpes",
         ),
     )
 
@@ -249,6 +264,9 @@ class ArpesInstrumentSource(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -260,6 +278,9 @@ class ArpesInstrumentSource(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     probe = Quantity(
@@ -273,6 +294,10 @@ class ArpesInstrumentSource(Source):
             name_type="specified",
             optionality="required",
             enumeration=["x-ray"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="x-ray",
         ),
     )
 
@@ -307,6 +332,10 @@ class ArpesInstrumentMonochromator(Monochromator):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -352,6 +381,9 @@ class ArpesInstrumentAnalyser(Detector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     acquisition_mode = Quantity(
         type=MEnum(["swept", "fixed"]),
@@ -364,6 +396,9 @@ class ArpesInstrumentAnalyser(Detector):
             name_type="specified",
             optionality="required",
             enumeration=["swept", "fixed"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     entrance_slit_shape = Quantity(
@@ -378,6 +413,9 @@ class ArpesInstrumentAnalyser(Detector):
             optionality="required",
             enumeration=["curved", "straight"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     entrance_slit_setting = Quantity(
         type=np.float64,
@@ -391,6 +429,9 @@ class ArpesInstrumentAnalyser(Detector):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     entrance_slit_size = Quantity(
@@ -408,6 +449,10 @@ class ArpesInstrumentAnalyser(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     pass_energy = Quantity(
         type=np.float64,
@@ -424,6 +469,10 @@ class ArpesInstrumentAnalyser(Detector):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     time_per_channel = Quantity(
         type=np.float64,
@@ -440,6 +489,10 @@ class ArpesInstrumentAnalyser(Detector):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     angles = Quantity(
         type=np.float64,
@@ -459,6 +512,10 @@ class ArpesInstrumentAnalyser(Detector):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     energies = Quantity(
         type=np.float64,
@@ -478,6 +535,10 @@ class ArpesInstrumentAnalyser(Detector):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     sensor_size = Quantity(
         type=np.int64,
@@ -552,6 +613,9 @@ class ArpesSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     temperature = Quantity(
         type=np.float64,
@@ -567,6 +631,10 @@ class ArpesSample(Sample):
             optionality="required",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

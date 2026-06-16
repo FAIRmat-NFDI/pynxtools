@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -96,6 +101,10 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_spatstat_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_spatstat_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -108,6 +117,9 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -181,6 +193,9 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     ion_query_type_source = Quantity(
         type=MEnum(
@@ -231,6 +246,9 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
                 "resolve_element",
                 "resolve_isotope",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     ion_query_nuclide_source = Quantity(
@@ -294,6 +312,9 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
                 "resolve_isotope",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     ion_query_nuclide_target = Quantity(
         type=np.int64,
@@ -346,6 +367,9 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator(CsPrng
             optionality="required",
             enumeration=["physical", "system_clock", "mt19937", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     seed = Quantity(
         type=np.float64,
@@ -358,6 +382,9 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator(CsPrng
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     warmup = Quantity(
         type=np.float64,
@@ -369,6 +396,9 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator(CsPrng
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -456,6 +486,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     min = Quantity(
         type=np.float64,
@@ -472,6 +506,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     increment = Quantity(
         type=np.float64,
@@ -488,6 +526,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     max = Quantity(
         type=np.float64,
@@ -504,6 +546,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -544,6 +590,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     increment = Quantity(
         type=np.float64,
@@ -560,6 +610,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     max = Quantity(
         type=np.float64,
@@ -576,6 +630,10 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

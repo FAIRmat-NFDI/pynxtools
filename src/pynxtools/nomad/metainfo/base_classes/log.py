@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -108,6 +113,10 @@ class Log(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     time__start = Quantity(
         type=Datetime,
@@ -121,6 +130,9 @@ class Log(Object):
             optionality="optional",
             parent_field="time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     time__scaling_factor = Quantity(
         type=np.float64,
@@ -133,6 +145,9 @@ class Log(Object):
             name_type="specified",
             optionality="optional",
             parent_field="time",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     value = Quantity(
@@ -154,6 +169,9 @@ class Log(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     raw_value = Quantity(
         type=np.float64,
@@ -168,6 +186,9 @@ class Log(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -181,6 +202,9 @@ class Log(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     average_value = Quantity(
         type=np.float64,
@@ -193,6 +217,9 @@ class Log(Object):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     average_value_error = Quantity(
@@ -211,6 +238,9 @@ class Log(Object):
             units="NX_ANY",
             deprecated="see: https://github.com/nexusformat/definitions/issues/639",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     average_value_errors = Quantity(
         type=np.float64,
@@ -227,6 +257,9 @@ class Log(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     minimum_value = Quantity(
         type=np.float64,
@@ -239,6 +272,9 @@ class Log(Object):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     maximum_value = Quantity(
@@ -253,6 +289,9 @@ class Log(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     duration = Quantity(
         type=np.float64,
@@ -266,6 +305,9 @@ class Log(Object):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     cue_timestamp_zero = Quantity(
@@ -285,6 +327,10 @@ class Log(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     cue_timestamp_zero__start = Quantity(
         type=Datetime,
@@ -299,6 +345,9 @@ class Log(Object):
             optionality="optional",
             parent_field="cue_timestamp_zero",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     cue_timestamp_zero__scaling_factor = Quantity(
         type=np.float64,
@@ -312,6 +361,9 @@ class Log(Object):
             name_type="specified",
             optionality="optional",
             parent_field="cue_timestamp_zero",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     cue_index = Quantity(
@@ -328,6 +380,9 @@ class Log(Object):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

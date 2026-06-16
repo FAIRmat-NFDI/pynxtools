@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -134,6 +139,9 @@ class OpticalPolarizer(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     polarizer_angle = Quantity(
         type=np.float64,
@@ -150,6 +158,10 @@ class OpticalPolarizer(Component):
             optionality="recommended",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     acceptance_angle = Quantity(
         type=np.float64,
@@ -301,6 +313,9 @@ class OpticalPolarizerShape(Shape):
             enumeration=["cube", "cylinder", "plate", "prism", "wedged"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     size = Quantity(
         type=str,
@@ -343,6 +358,10 @@ class OpticalPolarizerShape(Shape):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -379,6 +398,9 @@ class OpticalPolarizerSubstrate(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     substrate_thickness = Quantity(
         type=np.float64,
@@ -395,6 +417,10 @@ class OpticalPolarizerSubstrate(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
         type=np.float64,
@@ -455,6 +481,9 @@ class OpticalPolarizerCoatingTYPE(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     index_of_refraction_coating = Quantity(

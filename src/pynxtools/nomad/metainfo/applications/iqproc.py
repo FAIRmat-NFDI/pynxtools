@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -103,6 +108,9 @@ class Iqproc(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXiqproc"]),
@@ -116,6 +124,10 @@ class Iqproc(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXiqproc"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXiqproc",
         ),
     )
 
@@ -168,6 +180,9 @@ class IqprocInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -225,6 +240,9 @@ class IqprocInstrumentSource(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -236,6 +254,9 @@ class IqprocInstrumentSource(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     probe = Quantity(
@@ -249,6 +270,9 @@ class IqprocInstrumentSource(Source):
             name_type="specified",
             optionality="required",
             enumeration=["neutron", "x-ray", "electron"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -281,6 +305,9 @@ class IqprocSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -333,6 +360,9 @@ class IqprocReduction(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     version = Quantity(
         type=str,
@@ -344,6 +374,9 @@ class IqprocReduction(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -379,6 +412,9 @@ class IqprocReductionInput(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -448,6 +484,9 @@ class IqprocData(Data):
             name_type="specified",
             optionality="required",
             parent_field="variable",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     qx = Quantity(

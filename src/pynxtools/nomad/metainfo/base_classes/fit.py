@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -137,6 +142,9 @@ class Fit(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     figure_of_meritMETRIC = Quantity(
         type=np.float64,
@@ -178,6 +186,9 @@ class Fit(Process):
             name_type="specified",
             optionality="optional",
             parent_field="figure_of_meritMETRIC",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -227,6 +238,9 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     input_dependent = Quantity(
         type=np.float64,
@@ -242,6 +256,9 @@ class FitData(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     fit_sum = Quantity(
@@ -262,6 +279,9 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     residual = Quantity(
         type=np.float64,
@@ -279,6 +299,9 @@ class FitData(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -325,6 +348,10 @@ class FitPeakPEAK(Peak):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     relative_area = Quantity(
         type=np.float64,
@@ -344,6 +371,9 @@ class FitPeakPEAK(Peak):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

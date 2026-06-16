@@ -26,6 +26,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -255,6 +260,9 @@ class Object(basesections.BaseSection):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     default = Quantity(
         type=str,
@@ -275,6 +283,9 @@ class Object(basesections.BaseSection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

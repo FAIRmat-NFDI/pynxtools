@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -123,6 +128,10 @@ class Mx(Entry):
             optionality="optional",
             enumeration=["1.0"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1.0",
+        ),
     )
     title = Quantity(
         type=str,
@@ -134,6 +143,9 @@ class Mx(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -152,6 +164,9 @@ class Mx(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     end_time = Quantity(
@@ -174,6 +189,9 @@ class Mx(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time_estimated = Quantity(
         type=Datetime,
@@ -193,6 +211,9 @@ class Mx(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXmx"]),
@@ -206,6 +227,10 @@ class Mx(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXmx"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXmx",
         ),
     )
 
@@ -253,6 +278,9 @@ class MxData(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     data_scaling_factor = Quantity(
         type=np.float64,
@@ -288,6 +316,9 @@ class MxData(Data):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     data_offset = Quantity(
         type=np.float64,
@@ -304,6 +335,9 @@ class MxData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -350,6 +384,9 @@ class MxSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     depends_on = Quantity(
         type=str,
@@ -369,6 +406,9 @@ class MxSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     temperature = Quantity(
         type=np.float64,
@@ -384,6 +424,10 @@ class MxSample(Sample):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -470,6 +514,9 @@ class MxInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity__short_name = Quantity(
         type=str,
@@ -484,6 +531,9 @@ class MxInstrument(Instrument):
             optionality="optional",
             parent_field="name",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     time_zone = Quantity(
         type=Datetime,
@@ -496,6 +546,9 @@ class MxInstrument(Instrument):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -532,6 +585,10 @@ class MxInstrumentAttenuator(Attenuator):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -591,6 +648,9 @@ class MxInstrumentDetectorGroup(DetectorGroup):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     group_index = Quantity(
@@ -697,6 +757,9 @@ class MxInstrumentDetector(Detector):
             optionality="recommended",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -709,6 +772,9 @@ class MxInstrumentDetector(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time_per_channel = Quantity(
@@ -729,6 +795,9 @@ class MxInstrumentDetector(Detector):
             name_type="specified",
             optionality="optional",
             units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     distance = Quantity(
@@ -771,6 +840,9 @@ class MxInstrumentDetector(Detector):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     count_time = Quantity(
         type=np.float64,
@@ -805,6 +877,9 @@ class MxInstrumentDetector(Detector):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     beam_center_x = Quantity(
         type=np.float64,
@@ -828,6 +903,10 @@ class MxInstrumentDetector(Detector):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_center_y = Quantity(
         type=np.float64,
@@ -851,6 +930,10 @@ class MxInstrumentDetector(Detector):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     flatfield = Quantity(
         type=np.float64,
@@ -866,6 +949,9 @@ class MxInstrumentDetector(Detector):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     flatfield_error = Quantity(
@@ -884,6 +970,9 @@ class MxInstrumentDetector(Detector):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     flatfield_errors = Quantity(
         type=np.float64,
@@ -899,6 +988,9 @@ class MxInstrumentDetector(Detector):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pixel_mask = Quantity(
@@ -953,6 +1045,9 @@ class MxInstrumentDetector(Detector):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     sensor_material = Quantity(
         type=str,
@@ -969,6 +1064,9 @@ class MxInstrumentDetector(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     sensor_thickness = Quantity(
@@ -990,6 +1088,10 @@ class MxInstrumentDetector(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1049,6 +1151,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     data_size = Quantity(
         type=np.int64,
@@ -1065,6 +1170,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_stride = Quantity(
@@ -1084,6 +1192,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     module_offset__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -1098,6 +1209,10 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             parent_field="module_offset",
             enumeration=["translation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="translation",
+        ),
     )
     module_offset__vector = Quantity(
         type=np.float64,
@@ -1110,6 +1225,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
             parent_field="module_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     module_offset__offset = Quantity(
@@ -1124,6 +1242,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             optionality="required",
             parent_field="module_offset",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     module_offset__depends_on = Quantity(
         type=str,
@@ -1136,6 +1257,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
             parent_field="module_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fast_pixel_direction = Quantity(
@@ -1157,6 +1281,10 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     fast_pixel_direction__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -1171,6 +1299,10 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             parent_field="fast_pixel_direction",
             enumeration=["translation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="translation",
+        ),
     )
     fast_pixel_direction__vector = Quantity(
         type=np.float64,
@@ -1183,6 +1315,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
             parent_field="fast_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     fast_pixel_direction__offset = Quantity(
@@ -1197,6 +1332,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             optionality="required",
             parent_field="fast_pixel_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     fast_pixel_direction__depends_on = Quantity(
         type=str,
@@ -1209,6 +1347,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
             parent_field="fast_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     slow_pixel_direction = Quantity(
@@ -1230,6 +1371,10 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     slow_pixel_direction__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -1244,6 +1389,10 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             parent_field="slow_pixel_direction",
             enumeration=["translation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="translation",
+        ),
     )
     slow_pixel_direction__vector = Quantity(
         type=np.float64,
@@ -1256,6 +1405,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
             parent_field="slow_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     slow_pixel_direction__offset = Quantity(
@@ -1270,6 +1422,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             optionality="required",
             parent_field="slow_pixel_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     slow_pixel_direction__depends_on = Quantity(
         type=str,
@@ -1282,6 +1437,9 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
             name_type="specified",
             optionality="required",
             parent_field="slow_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1333,6 +1491,9 @@ class MxInstrumentBeam(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     incident_wavelength = Quantity(
         type=np.float64,
@@ -1369,6 +1530,10 @@ class MxInstrumentBeam(Beam):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_wavelength_weight = Quantity(
         type=np.float64,
@@ -1389,6 +1554,9 @@ class MxInstrumentBeam(Beam):
             name_type="specified",
             optionality="optional",
             deprecated="use incident_wavelength_weights, see https://github.com/nexusformat/definitions/issues/837",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     total_flux = Quantity(
@@ -1413,6 +1581,10 @@ class MxInstrumentBeam(Beam):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     flux_integrated = Quantity(
         type=np.float64,
@@ -1436,6 +1608,10 @@ class MxInstrumentBeam(Beam):
             optionality="optional",
             units="NX_PER_AREA",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m ** 2"},
     )
     total_flux_integrated = Quantity(
         type=np.float64,
@@ -1459,6 +1635,10 @@ class MxInstrumentBeam(Beam):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     incident_beam_size = Quantity(
         type=np.float64,
@@ -1497,6 +1677,9 @@ class MxInstrumentBeam(Beam):
             name_type="specified",
             optionality="recommended",
             enumeration=["Gaussian", "Airy", "top-hat", "rectangular"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     incident_polarisation_stokes = Quantity(
@@ -1574,6 +1757,9 @@ class MxSource(Source):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity__short_name = Quantity(
         type=str,
@@ -1587,6 +1773,9 @@ class MxSource(Source):
             name_type="specified",
             optionality="optional",
             parent_field="name",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

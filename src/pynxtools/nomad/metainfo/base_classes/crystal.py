@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -158,6 +163,9 @@ class Crystal(Component):
             optionality="optional",
             enumeration=["Bragg", "Laue"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -179,6 +187,9 @@ class Crystal(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     chemical_formula = Quantity(
@@ -210,6 +221,9 @@ class Crystal(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     order_no = Quantity(
         type=np.int64,
@@ -225,6 +239,9 @@ class Crystal(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     cut_angle = Quantity(
@@ -244,6 +261,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     space_group = Quantity(
         type=str,
@@ -256,6 +277,9 @@ class Crystal(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     unit_cell = Quantity(
@@ -290,6 +314,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     unit_cell_b = Quantity(
         type=np.float64,
@@ -306,6 +334,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     unit_cell_c = Quantity(
         type=np.float64,
@@ -322,6 +354,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     unit_cell_alpha = Quantity(
         type=np.float64,
@@ -338,6 +374,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     unit_cell_beta = Quantity(
         type=np.float64,
@@ -354,6 +394,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     unit_cell_gamma = Quantity(
         type=np.float64,
@@ -370,6 +414,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     unit_cell_volume = Quantity(
         type=np.float64,
@@ -386,6 +434,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     orientation_matrix = Quantity(
         type=np.float64,
@@ -437,6 +489,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     scattering_vector = Quantity(
         type=np.float64,
@@ -453,6 +509,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     reflection = Quantity(
         type=np.int64,
@@ -489,6 +549,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     density = Quantity(
         type=np.float64,
@@ -505,6 +569,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_MASS_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / m ** 3"},
     )
     segment_width = Quantity(
         type=np.float64,
@@ -521,6 +589,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     segment_height = Quantity(
         type=np.float64,
@@ -537,6 +609,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     segment_thickness = Quantity(
         type=np.float64,
@@ -553,6 +629,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     segment_gap = Quantity(
         type=np.float64,
@@ -569,6 +649,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     segment_columns = Quantity(
         type=np.float64,
@@ -585,6 +669,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     segment_rows = Quantity(
         type=np.float64,
@@ -601,6 +689,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     mosaic_horizontal = Quantity(
         type=np.float64,
@@ -617,6 +709,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     mosaic_vertical = Quantity(
         type=np.float64,
@@ -633,6 +729,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     curvature_horizontal = Quantity(
         type=np.float64,
@@ -649,6 +749,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     curvature_vertical = Quantity(
         type=np.float64,
@@ -665,6 +769,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     is_cylindrical = Quantity(
         type=bool,
@@ -677,6 +785,9 @@ class Crystal(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     cylindrical_orientation_angle = Quantity(
@@ -694,6 +805,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     polar_angle = Quantity(
         type=np.float64,
@@ -768,6 +883,10 @@ class Crystal(Component):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     temperature_coefficient = Quantity(
         type=np.float64,
@@ -781,6 +900,9 @@ class Crystal(Component):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     depends_on = Quantity(
@@ -796,6 +918,9 @@ class Crystal(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

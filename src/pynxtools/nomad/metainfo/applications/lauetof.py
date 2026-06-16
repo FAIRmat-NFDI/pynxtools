@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -101,6 +106,10 @@ class Lauetof(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXlauetof"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXlauetof",
         ),
     )
 
@@ -224,6 +233,10 @@ class LauetofInstrumentDetector(Detector):
             parent_field="data",
             enumeration=["1"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
+        ),
     )
     x_pixel_size = Quantity(
         type=np.float64,
@@ -319,6 +332,9 @@ class LauetofSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     orientation_matrix = Quantity(
         type=np.float64,
@@ -393,6 +409,9 @@ class LauetofControl(Monitor):
             optionality="required",
             enumeration=["monitor", "timer"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     preset = Quantity(
         type=np.float64,
@@ -406,6 +425,9 @@ class LauetofControl(Monitor):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_quantity = Quantity(

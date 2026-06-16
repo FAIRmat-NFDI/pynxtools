@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -97,6 +102,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -108,6 +116,9 @@ class Archive(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_identifier = Quantity(
@@ -122,6 +133,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -134,6 +148,9 @@ class Archive(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     collection_identifier = Quantity(
@@ -148,6 +165,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     collection_description = Quantity(
         type=str,
@@ -160,6 +180,9 @@ class Archive(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     entry_identifier = Quantity(
@@ -176,6 +199,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -188,6 +214,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -199,6 +228,9 @@ class Archive(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     duration = Quantity(
@@ -216,6 +248,10 @@ class Archive(Entry):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     collection_time = Quantity(
         type=np.float64,
@@ -232,6 +268,10 @@ class Archive(Entry):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     run_cycle = Quantity(
         type=str,
@@ -244,6 +284,9 @@ class Archive(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     revision = Quantity(
@@ -260,6 +303,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXarchive"]),
@@ -274,6 +320,10 @@ class Archive(Entry):
             optionality="required",
             enumeration=["NXarchive"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXarchive",
+        ),
     )
     program = Quantity(
         type=str,
@@ -287,6 +337,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -299,6 +352,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     release_date = Quantity(
@@ -315,6 +371,9 @@ class Archive(Entry):
             name_type="specified",
             optionality="required",
             units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -355,6 +414,9 @@ class ArchiveUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     role = Quantity(
         type=str,
@@ -368,6 +430,9 @@ class ArchiveUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     facility_user_id = Quantity(
         type=str,
@@ -380,6 +445,9 @@ class ArchiveUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -423,6 +491,9 @@ class ArchiveInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -435,6 +506,9 @@ class ArchiveInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -486,6 +560,9 @@ class ArchiveInstrumentSource(Source):
                 "Fixed Tube X-Ray",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -497,6 +574,9 @@ class ArchiveInstrumentSource(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     probe = Quantity(
@@ -510,6 +590,9 @@ class ArchiveInstrumentSource(Source):
             name_type="specified",
             optionality="required",
             enumeration=["neutron", "x-ray", "electron"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -542,6 +625,9 @@ class ArchiveSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     sample_id = Quantity(
         type=str,
@@ -555,6 +641,9 @@ class ArchiveSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -566,6 +655,9 @@ class ArchiveSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     type = Quantity(
@@ -598,6 +690,9 @@ class ArchiveSample(Sample):
                 "sample_environment",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     chemical_formula = Quantity(
         type=str,
@@ -610,6 +705,9 @@ class ArchiveSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     preparation_date = Quantity(
@@ -625,6 +723,9 @@ class ArchiveSample(Sample):
             name_type="specified",
             optionality="required",
             units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     situation = Quantity(
@@ -661,6 +762,9 @@ class ArchiveSample(Sample):
                 "other",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     temperature = Quantity(
         type=np.float64,
@@ -676,6 +780,10 @@ class ArchiveSample(Sample):
             optionality="required",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     magnetic_field_quantity = Quantity(
         type=np.float64,

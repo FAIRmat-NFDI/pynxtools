@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -145,6 +150,10 @@ class PhaseLockLoop(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     frequency_bandwidth = Quantity(
         type=np.float64,
@@ -165,6 +174,10 @@ class PhaseLockLoop(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     phase_bandwidth = Quantity(
         type=np.float64,
@@ -185,6 +198,10 @@ class PhaseLockLoop(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     frequency_step = Quantity(
         type=np.float64,
@@ -204,6 +221,10 @@ class PhaseLockLoop(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -256,6 +277,9 @@ class PhaseLockLoopHardware(Fabrication):
             optionality="optional",
             enumeration=["type-1", "type-2", "type-3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     order = Quantity(
         type=np.float64,
@@ -276,6 +300,10 @@ class PhaseLockLoopHardware(Fabrication):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -319,6 +347,10 @@ class PhaseLockLoopPhaseDetector(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     frequency_shift = Quantity(
         type=np.float64,
@@ -338,6 +370,10 @@ class PhaseLockLoopPhaseDetector(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     reference_phase = Quantity(
         type=np.float64,
@@ -354,6 +390,10 @@ class PhaseLockLoopPhaseDetector(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     phase_error = Quantity(
         type=np.float64,
@@ -373,6 +413,10 @@ class PhaseLockLoopPhaseDetector(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     Kp_coefficient = Quantity(
         type=np.float64,
@@ -393,6 +437,10 @@ class PhaseLockLoopPhaseDetector(Component):
             optionality="optional",
             units="V/rad",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "V/rad"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -436,6 +484,10 @@ class PhaseLockLoopLoopFilter(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -481,6 +533,10 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     Kn_coefficient = Quantity(
         type=np.float64,
@@ -502,6 +558,10 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     Ko_coefficient = Quantity(
         type=np.float64,
@@ -519,6 +579,9 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

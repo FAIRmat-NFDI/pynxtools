@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -140,6 +145,10 @@ class CgFaceListDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_vertex = Quantity(
         type=np.int64,
@@ -161,6 +170,10 @@ class CgFaceListDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_edge = Quantity(
         type=np.int64,
@@ -182,6 +195,10 @@ class CgFaceListDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_face = Quantity(
         type=np.int64,
@@ -203,6 +220,10 @@ class CgFaceListDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_vertex = Quantity(
         type=np.int64,
@@ -337,6 +358,9 @@ class CgFaceListDataStructure(CgPrimitive):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     edges_are_unique = Quantity(
         type=bool,
@@ -353,6 +377,9 @@ class CgFaceListDataStructure(CgPrimitive):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     faces_are_unique = Quantity(
         type=bool,
@@ -365,6 +392,9 @@ class CgFaceListDataStructure(CgPrimitive):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     winding_order = Quantity(

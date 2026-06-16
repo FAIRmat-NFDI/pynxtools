@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -106,6 +111,10 @@ class ApmParaprobeDistancerResults(ApmParaprobeToolResults):
             optionality="required",
             enumeration=["NXapm_paraprobe_distancer_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_distancer_results",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -118,6 +127,9 @@ class ApmParaprobeDistancerResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -275,6 +287,10 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMa
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -294,6 +310,10 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMa
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -356,6 +376,10 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -371,6 +395,10 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,

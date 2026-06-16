@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -106,6 +111,10 @@ class Stm(Spm):
             optionality="required",
             enumeration=["NXstm"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXstm",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -118,6 +127,9 @@ class Stm(Spm):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     scan_mode = Quantity(
@@ -136,6 +148,9 @@ class Stm(Spm):
             optionality="required",
             enumeration=["constant height", "constant current"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     experiment_technique = Quantity(
         type=MEnum(["STM"]),
@@ -149,6 +164,10 @@ class Stm(Spm):
             name_type="specified",
             optionality="required",
             enumeration=["STM"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="STM",
         ),
     )
     scan_type = Quantity(
@@ -167,6 +186,9 @@ class Stm(Spm):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -181,6 +203,9 @@ class Stm(Spm):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     default = Quantity(
@@ -202,6 +227,9 @@ class Stm(Spm):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_collection = Quantity(
         type=str,
@@ -219,6 +247,9 @@ class Stm(Spm):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -230,6 +261,9 @@ class Stm(Spm):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -244,6 +278,9 @@ class Stm(Spm):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -256,6 +293,9 @@ class Stm(Spm):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -338,6 +378,9 @@ class StmInstrumentLockinAmplifier(Lockin):
             enumeration=["voltage", "current", "bias"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -389,6 +432,9 @@ class StmReproducibilityIndicators(SpmReproducibilityIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     current_offset = Quantity(
         type=np.float64,
@@ -405,6 +451,9 @@ class StmReproducibilityIndicators(SpmReproducibilityIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     modulation_signal_type = Quantity(
@@ -423,6 +472,9 @@ class StmReproducibilityIndicators(SpmReproducibilityIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -439,6 +491,9 @@ class StmReproducibilityIndicators(SpmReproducibilityIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -491,6 +546,9 @@ class StmResolutionIndicators(SpmResolutionIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cryo_bottom_temperature = Quantity(
         type=np.float64,
@@ -507,6 +565,9 @@ class StmResolutionIndicators(SpmResolutionIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     cryo_shield_temperature = Quantity(
         type=np.float64,
@@ -522,6 +583,9 @@ class StmResolutionIndicators(SpmResolutionIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     modulation_signal_type = Quantity(
@@ -540,6 +604,9 @@ class StmResolutionIndicators(SpmResolutionIndicators):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -556,6 +623,9 @@ class StmResolutionIndicators(SpmResolutionIndicators):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

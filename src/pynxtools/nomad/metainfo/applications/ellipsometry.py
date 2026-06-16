@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -146,6 +151,10 @@ class Ellipsometry(OpticalSpectroscopy):
             optionality="required",
             enumeration=["NXellipsometry"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXellipsometry",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -162,6 +171,9 @@ class Ellipsometry(OpticalSpectroscopy):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition__URL = Quantity(
@@ -180,6 +192,9 @@ class Ellipsometry(OpticalSpectroscopy):
             optionality="required",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -191,6 +206,9 @@ class Ellipsometry(OpticalSpectroscopy):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_type = Quantity(
@@ -209,6 +227,10 @@ class Ellipsometry(OpticalSpectroscopy):
             name_type="specified",
             optionality="required",
             enumeration=["ellipsometry"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="ellipsometry",
         ),
     )
     ellipsometry_experiment_type = Quantity(
@@ -232,6 +254,9 @@ class Ellipsometry(OpticalSpectroscopy):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -250,6 +275,9 @@ class Ellipsometry(OpticalSpectroscopy):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     end_time = Quantity(
@@ -270,6 +298,9 @@ class Ellipsometry(OpticalSpectroscopy):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -281,6 +312,9 @@ class Ellipsometry(OpticalSpectroscopy):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_description = Quantity(
@@ -303,6 +337,9 @@ class Ellipsometry(OpticalSpectroscopy):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_sub_type = Quantity(
         type=str,
@@ -320,6 +357,9 @@ class Ellipsometry(OpticalSpectroscopy):
             optionality="optional",
             enumeration=["time resolved", "imaging", "pump-probe"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -381,6 +421,9 @@ class EllipsometryInstrument(OpticalSpectroscopyInstrument):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -415,6 +458,9 @@ class EllipsometrySample(OpticalSpectroscopySample):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -472,6 +518,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     data_type = Quantity(
         type=MEnum(
@@ -513,6 +562,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
                 "raw data",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     NAME_spectrum = Quantity(
         type=np.float64,
@@ -551,6 +603,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="optional",
             parent_field="NAME_spectrum",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     measured_data = Quantity(
@@ -596,6 +651,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             optionality="optional",
             parent_field="measured_data",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measured_data_errors = Quantity(
         type=np.float64,
@@ -631,6 +689,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="optional",
             parent_field="measured_data_errors",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     varied_parameter_link = Quantity(
@@ -670,6 +731,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -707,6 +771,9 @@ class EllipsometryDataCollectionDataSoftware(Program):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     version = Quantity(
         type=str,
@@ -726,6 +793,9 @@ class EllipsometryDataCollectionDataSoftware(Program):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     URL = Quantity(
         type=str,
@@ -738,6 +808,9 @@ class EllipsometryDataCollectionDataSoftware(Program):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

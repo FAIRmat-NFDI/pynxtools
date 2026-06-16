@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -143,6 +148,10 @@ class Raman(OpticalSpectroscopy):
             optionality="required",
             enumeration=["NXraman"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXraman",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -159,6 +168,9 @@ class Raman(OpticalSpectroscopy):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition__URL = Quantity(
@@ -177,6 +189,9 @@ class Raman(OpticalSpectroscopy):
             optionality="required",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -188,6 +203,9 @@ class Raman(OpticalSpectroscopy):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_type = Quantity(
@@ -206,6 +224,10 @@ class Raman(OpticalSpectroscopy):
             name_type="specified",
             optionality="required",
             enumeration=["Raman spectroscopy"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="Raman spectroscopy",
         ),
     )
     raman_experiment_type = Quantity(
@@ -234,6 +256,9 @@ class Raman(OpticalSpectroscopy):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -252,6 +277,9 @@ class Raman(OpticalSpectroscopy):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     end_time = Quantity(
@@ -272,6 +300,9 @@ class Raman(OpticalSpectroscopy):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -283,6 +314,9 @@ class Raman(OpticalSpectroscopy):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_description = Quantity(
@@ -305,6 +339,9 @@ class Raman(OpticalSpectroscopy):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_sub_type = Quantity(
         type=str,
@@ -322,6 +359,9 @@ class Raman(OpticalSpectroscopy):
             optionality="optional",
             enumeration=["time resolved", "imaging", "pump-probe"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -380,6 +420,9 @@ class RamanInstrument(OpticalSpectroscopyInstrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     scattering_configuration__porto_notation_vectors = Quantity(

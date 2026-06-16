@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -251,6 +256,9 @@ class ApmInstrument(Instrument):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     location = Quantity(
         type=str,
@@ -266,6 +274,9 @@ class ApmInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     flight_path = Quantity(
@@ -286,6 +297,10 @@ class ApmInstrument(Instrument):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     comment = Quantity(
         type=str,
@@ -298,6 +313,9 @@ class ApmInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -357,6 +375,10 @@ class ApmInstrumentReflectron(Component):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -396,6 +418,10 @@ class ApmInstrumentLocalElectrode(Component):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     aperture_type = Quantity(
         type=MEnum(["n/a", "conical", "feedthrough", "custom"]),
@@ -420,6 +446,9 @@ class ApmInstrumentLocalElectrode(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["n/a", "conical", "feedthrough", "custom"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -485,6 +514,10 @@ class ApmInstrumentIonDetector(Detector):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mesh_efficiency = Quantity(
         type=np.float64,
@@ -504,6 +537,10 @@ class ApmInstrumentIonDetector(Detector):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -563,6 +600,9 @@ class ApmInstrumentPulser(Component):
             enumeration=["laser", "voltage", "laser_and_voltage"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pulse_frequency = Quantity(
         type=np.float64,
@@ -579,6 +619,10 @@ class ApmInstrumentPulser(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     pulse_fraction = Quantity(
         type=np.float64,
@@ -600,6 +644,10 @@ class ApmInstrumentPulser(Component):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     pulse_voltage = Quantity(
         type=np.float64,
@@ -618,6 +666,10 @@ class ApmInstrumentPulser(Component):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     pulse_number = Quantity(
         type=np.int64,
@@ -636,6 +688,10 @@ class ApmInstrumentPulser(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     standing_voltage = Quantity(
         type=np.float64,
@@ -657,6 +713,10 @@ class ApmInstrumentPulser(Component):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -728,6 +788,9 @@ class ApmInstrumentPulserSourceID(Source):
             optionality="optional",
             parent_field="pulse_energy",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -772,6 +835,10 @@ class ApmInstrumentPulserSourceIDBeamID(Beam):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     pinhole_position = Quantity(
         type=np.float64,
@@ -791,6 +858,10 @@ class ApmInstrumentPulserSourceIDBeamID(Beam):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     spot_position = Quantity(
         type=np.float64,
@@ -810,6 +881,10 @@ class ApmInstrumentPulserSourceIDBeamID(Beam):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -925,6 +1000,10 @@ class ApmInstrumentAnalysisChamber(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -955,6 +1034,10 @@ class ApmInstrumentAnalysisChamberPressureSensor(Sensor):
             name_type="specified",
             optionality="optional",
             enumeration=["pressure"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="pressure",
         ),
     )
     value = Quantity(
@@ -1018,6 +1101,9 @@ class ApmInstrumentControl(Parameters):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     target_detection_rate = Quantity(
         type=np.float64,
@@ -1034,6 +1120,9 @@ class ApmInstrumentControl(Parameters):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

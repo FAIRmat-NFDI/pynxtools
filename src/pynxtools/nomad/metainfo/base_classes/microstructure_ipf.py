@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -152,6 +157,9 @@ class MicrostructureIpf(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     color_model = Quantity(
         type=MEnum(["tsl", "mtex"]),
@@ -165,6 +173,9 @@ class MicrostructureIpf(Process):
             name_type="specified",
             optionality="optional",
             enumeration=["tsl", "mtex"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     projection_direction = Quantity(
@@ -207,6 +218,9 @@ class MicrostructureIpf(Process):
             optionality="optional",
             parent_field="projection_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     interpolation = Quantity(
         type=MEnum(["nearest_neighbour"]),
@@ -225,6 +239,10 @@ class MicrostructureIpf(Process):
             name_type="specified",
             optionality="optional",
             enumeration=["nearest_neighbour"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="nearest_neighbour",
         ),
     )
 
@@ -308,6 +326,10 @@ class MicrostructureIpfMap(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     axis_z = Quantity(
         type=np.float64,

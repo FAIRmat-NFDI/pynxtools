@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -112,6 +117,10 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_clusterer_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_clusterer_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -124,6 +133,9 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -185,6 +197,9 @@ class ApmParaprobeClustererConfigCamecaToNexus(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -269,6 +284,10 @@ class ApmParaprobeClustererConfigCluster_analysisID(
             optionality="required",
             enumeration=["resolve_element"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="resolve_element",
+        ),
     )
     ion_query_nuclide_vector = Quantity(
         type=np.int64,
@@ -352,6 +371,9 @@ class ApmParaprobeClustererConfigCluster_analysisIDDbscan(Process):
             optionality="required",
             enumeration=["tuple", "combinatorics"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     eps = Quantity(
         type=np.float64,
@@ -431,6 +453,9 @@ class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
             name_type="specified",
             optionality="required",
             enumeration=["tuple", "combinatorics"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     min_cluster_size = Quantity(

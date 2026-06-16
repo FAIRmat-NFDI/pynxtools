@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -176,6 +181,9 @@ class SpectrumProcess(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detector_identifier = Quantity(
         type=str,
@@ -191,6 +199,9 @@ class SpectrumProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -240,6 +251,9 @@ class SpectrumProcessInput(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -294,6 +308,9 @@ class SpectrumSpectrum0d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -324,6 +341,9 @@ class SpectrumSpectrum0d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -378,6 +398,9 @@ class SpectrumSpectrum1d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -409,6 +432,9 @@ class SpectrumSpectrum1d(Data):
             optionality="optional",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -439,6 +465,9 @@ class SpectrumSpectrum1d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -493,6 +522,9 @@ class SpectrumSpectrum2d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -523,6 +555,9 @@ class SpectrumSpectrum2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -555,6 +590,9 @@ class SpectrumSpectrum2d(Data):
             optionality="optional",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -585,6 +623,9 @@ class SpectrumSpectrum2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -639,6 +680,9 @@ class SpectrumSpectrum3d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_k = Quantity(
         type=np.float64,
@@ -669,6 +713,9 @@ class SpectrumSpectrum3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_k",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -701,6 +748,9 @@ class SpectrumSpectrum3d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -732,6 +782,9 @@ class SpectrumSpectrum3d(Data):
             optionality="optional",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -762,6 +815,9 @@ class SpectrumSpectrum3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -816,6 +872,9 @@ class SpectrumStack0d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_group = Quantity(
         type=np.int64,
@@ -846,6 +905,9 @@ class SpectrumStack0d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="indices_group",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_spectrum = Quantity(
@@ -878,6 +940,9 @@ class SpectrumStack0d(Data):
             optionality="optional",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -908,6 +973,9 @@ class SpectrumStack0d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -962,6 +1030,9 @@ class SpectrumStack2d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_group = Quantity(
         type=np.int64,
@@ -992,6 +1063,9 @@ class SpectrumStack2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="indices_group",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_spectrum = Quantity(
@@ -1024,6 +1098,9 @@ class SpectrumStack2d(Data):
             optionality="optional",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -1054,6 +1131,9 @@ class SpectrumStack2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -1086,6 +1166,9 @@ class SpectrumStack2d(Data):
             optionality="optional",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -1116,6 +1199,9 @@ class SpectrumStack2d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1170,6 +1256,9 @@ class SpectrumStack3d(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_group = Quantity(
         type=np.int64,
@@ -1200,6 +1289,9 @@ class SpectrumStack3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="indices_group",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_spectrum = Quantity(
@@ -1232,6 +1324,9 @@ class SpectrumStack3d(Data):
             optionality="optional",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_k = Quantity(
         type=np.float64,
@@ -1262,6 +1357,9 @@ class SpectrumStack3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_k",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -1294,6 +1392,9 @@ class SpectrumStack3d(Data):
             optionality="optional",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -1325,6 +1426,9 @@ class SpectrumStack3d(Data):
             optionality="optional",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -1355,6 +1459,9 @@ class SpectrumStack3d(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

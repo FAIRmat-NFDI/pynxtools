@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -80,6 +85,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     magnification = Quantity(
         type=np.float64,
@@ -99,6 +108,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     defocus = Quantity(
         type=np.float64,
@@ -118,6 +131,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     semi_convergence_angle = Quantity(
         type=np.float64,
@@ -139,6 +156,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     field_of_view = Quantity(
         type=np.float64,
@@ -158,6 +179,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     working_distance = Quantity(
         type=np.float64,
@@ -181,6 +206,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     probe = Quantity(
         type=np.float64,
@@ -221,6 +250,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     dose_management = Quantity(
         type=str,
@@ -240,6 +273,9 @@ class EmOpticalSystem(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     dose_rate = Quantity(
         type=np.float64,
@@ -256,6 +292,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="1/(angstrom^2*s)",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1/(angstrom^2*s)"},
     )
     rotation = Quantity(
         type=np.float64,
@@ -280,6 +320,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     focal_length = Quantity(
         type=np.float64,
@@ -301,6 +345,10 @@ class EmOpticalSystem(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     tilt_correction = Quantity(
         type=bool,
@@ -320,6 +368,9 @@ class EmOpticalSystem(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     dynamic_focus_correction = Quantity(
         type=bool,
@@ -338,6 +389,9 @@ class EmOpticalSystem(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     dynamic_refocusing = Quantity(
         type=str,
@@ -355,6 +409,9 @@ class EmOpticalSystem(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

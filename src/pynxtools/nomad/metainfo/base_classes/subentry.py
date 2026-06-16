@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -226,6 +231,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     IDF_Version = Quantity(
         type=str,
@@ -239,6 +247,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -251,6 +262,9 @@ class Subentry(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_identifier = Quantity(
@@ -268,6 +282,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -280,6 +297,9 @@ class Subentry(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     collection_identifier = Quantity(
@@ -296,6 +316,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     collection_description = Quantity(
         type=str,
@@ -308,6 +331,9 @@ class Subentry(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     entry_identifier = Quantity(
@@ -322,6 +348,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition = Quantity(
         type=str,
@@ -334,6 +363,9 @@ class Subentry(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition__version = Quantity(
@@ -349,6 +381,9 @@ class Subentry(Object):
             optionality="optional",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition__URL = Quantity(
         type=str,
@@ -362,6 +397,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition_local = Quantity(
@@ -380,6 +418,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition_local__version = Quantity(
         type=str,
@@ -393,6 +434,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
             parent_field="definition_local",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition_local__URL = Quantity(
@@ -408,6 +452,9 @@ class Subentry(Object):
             optionality="optional",
             parent_field="definition_local",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -421,6 +468,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -433,6 +483,9 @@ class Subentry(Object):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     duration = Quantity(
@@ -450,6 +503,10 @@ class Subentry(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     collection_time = Quantity(
         type=np.float64,
@@ -469,6 +526,10 @@ class Subentry(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     run_cycle = Quantity(
         type=str,
@@ -485,6 +546,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program_name = Quantity(
         type=str,
@@ -497,6 +561,9 @@ class Subentry(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     program_name__version = Quantity(
@@ -512,6 +579,9 @@ class Subentry(Object):
             optionality="optional",
             parent_field="program_name",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program_name__configuration = Quantity(
         type=str,
@@ -525,6 +595,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
             parent_field="program_name",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     revision = Quantity(
@@ -542,6 +615,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     revision__comment = Quantity(
         type=str,
@@ -554,6 +630,9 @@ class Subentry(Object):
             name_type="specified",
             optionality="optional",
             parent_field="revision",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     pre_sample_flightpath = Quantity(
@@ -578,6 +657,10 @@ class Subentry(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -624,6 +707,10 @@ class SubentryThumbnail(Note):
             name_type="specified",
             optionality="optional",
             enumeration=["image/*"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="image/*",
         ),
     )
 

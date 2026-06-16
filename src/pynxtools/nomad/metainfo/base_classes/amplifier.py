@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -95,6 +100,9 @@ class Amplifier(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     num_of_channels = Quantity(
         type=np.float64,
@@ -107,6 +115,9 @@ class Amplifier(Component):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     active_channels = Quantity(
@@ -124,6 +135,9 @@ class Amplifier(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     openloop_amplification = Quantity(
         type=np.float64,
@@ -139,6 +153,9 @@ class Amplifier(Component):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     signal_over_noise = Quantity(
@@ -156,6 +173,9 @@ class Amplifier(Component):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     crosstalk_factor = Quantity(
@@ -179,6 +199,10 @@ class Amplifier(Component):
             optionality="optional",
             units="db",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "db"},
     )
     crosstalk_compensation = Quantity(
         type=bool,
@@ -194,6 +218,9 @@ class Amplifier(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     bandwidth = Quantity(
@@ -216,6 +243,10 @@ class Amplifier(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     center_frequency = Quantity(
         type=np.float64,
@@ -232,6 +263,10 @@ class Amplifier(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     lower_cutoff_frequency = Quantity(
         type=np.float64,
@@ -251,6 +286,10 @@ class Amplifier(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     upper_cutoff_frequency = Quantity(
         type=np.float64,
@@ -270,6 +309,10 @@ class Amplifier(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     gain = Quantity(
         type=np.float64,
@@ -284,6 +327,9 @@ class Amplifier(Component):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

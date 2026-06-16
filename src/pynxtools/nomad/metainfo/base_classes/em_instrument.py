@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -266,6 +271,9 @@ class EmInstrument(Instrument):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     location = Quantity(
         type=str,
@@ -281,6 +289,9 @@ class EmInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     type = Quantity(
@@ -313,6 +324,9 @@ class EmInstrument(Instrument):
             name_type="specified",
             optionality="recommended",
             enumeration=["sem", "fib", "tem"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -407,6 +421,9 @@ class EmInstrumentStageID(Manipulator):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     alias = Quantity(
         type=str,
@@ -423,6 +440,9 @@ class EmInstrumentStageID(Manipulator):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     tilt1 = Quantity(
@@ -447,6 +467,10 @@ class EmInstrumentStageID(Manipulator):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     tilt1__comment = Quantity(
         type=str,
@@ -463,6 +487,9 @@ class EmInstrumentStageID(Manipulator):
             name_type="specified",
             optionality="optional",
             parent_field="tilt1",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     tilt2 = Quantity(
@@ -487,6 +514,10 @@ class EmInstrumentStageID(Manipulator):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     tilt2__comment = Quantity(
         type=str,
@@ -503,6 +534,9 @@ class EmInstrumentStageID(Manipulator):
             name_type="specified",
             optionality="optional",
             parent_field="tilt2",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     rotation = Quantity(
@@ -527,6 +561,10 @@ class EmInstrumentStageID(Manipulator):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     rotation__comment = Quantity(
         type=str,
@@ -543,6 +581,9 @@ class EmInstrumentStageID(Manipulator):
             name_type="specified",
             optionality="optional",
             parent_field="rotation",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     position = Quantity(

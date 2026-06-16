@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -165,6 +170,9 @@ class ApmReconstruction(Process):
             optionality="optional",
             parent_field="reconstructed_positions",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     quality = Quantity(
         type=str,
@@ -181,6 +189,9 @@ class ApmReconstruction(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     volume = Quantity(
@@ -201,6 +212,10 @@ class ApmReconstruction(Process):
             optionality="optional",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     field_of_view = Quantity(
         type=np.float64,
@@ -222,6 +237,10 @@ class ApmReconstruction(Process):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -286,6 +305,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     voltage_filter_final = Quantity(
         type=np.float64,
@@ -305,6 +328,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     protocol_name = Quantity(
         type=str,
@@ -324,6 +351,9 @@ class ApmReconstructionConfig(Parameters):
             enumeration=["bas", "geiser", "gault", "cameca"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     primary_element = Quantity(
         type=str,
@@ -340,6 +370,9 @@ class ApmReconstructionConfig(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     efficiency = Quantity(
@@ -360,6 +393,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     flight_path = Quantity(
         type=np.float64,
@@ -379,6 +416,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     evaporation_field = Quantity(
         type=np.float64,
@@ -396,6 +437,9 @@ class ApmReconstructionConfig(Parameters):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     image_compression = Quantity(
@@ -417,6 +461,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     kfactor = Quantity(
         type=np.float64,
@@ -438,6 +486,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     shank_angle = Quantity(
         type=np.float64,
@@ -457,6 +509,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     ion_volume = Quantity(
         type=np.float64,
@@ -473,6 +529,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     tip_radius = Quantity(
         type=np.float64,
@@ -492,6 +552,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     tip_radius_zero = Quantity(
         type=np.float64,
@@ -511,6 +575,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     voltage_zero = Quantity(
         type=np.float64,
@@ -530,6 +598,10 @@ class ApmReconstructionConfig(Parameters):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     crystallographic_calibration = Quantity(
         type=str,
@@ -548,6 +620,9 @@ class ApmReconstructionConfig(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     comment = Quantity(
@@ -570,6 +645,9 @@ class ApmReconstructionConfig(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -610,6 +688,10 @@ class ApmReconstructionObb(Collection):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     xmax = Quantity(
         type=np.float64,
@@ -626,6 +708,10 @@ class ApmReconstructionObb(Collection):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     ymin = Quantity(
         type=np.float64,
@@ -642,6 +728,10 @@ class ApmReconstructionObb(Collection):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     ymax = Quantity(
         type=np.float64,
@@ -658,6 +748,10 @@ class ApmReconstructionObb(Collection):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     zmin = Quantity(
         type=np.float64,
@@ -674,6 +768,10 @@ class ApmReconstructionObb(Collection):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     zmax = Quantity(
         type=np.float64,
@@ -690,6 +788,10 @@ class ApmReconstructionObb(Collection):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

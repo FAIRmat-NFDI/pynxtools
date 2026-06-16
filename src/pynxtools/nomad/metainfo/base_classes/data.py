@@ -26,6 +26,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -257,6 +262,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     auxiliary_signals = Quantity(
         type=str,
@@ -277,6 +285,9 @@ class Data(Object, basesections.ActivityResult):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     default_slice = Quantity(
@@ -314,6 +325,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     reference = Quantity(
         type=str,
@@ -333,6 +347,9 @@ class Data(Object, basesections.ActivityResult):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     AXISNAME_indices = Quantity(
@@ -427,6 +444,9 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             parent_field="AXISNAME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     AXISNAME__units = Quantity(
         type=str,
@@ -444,6 +464,9 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             parent_field="AXISNAME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     AXISNAME__distribution = Quantity(
         type=bool,
@@ -457,6 +480,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
             parent_field="AXISNAME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     AXISNAME__first_good = Quantity(
@@ -472,6 +498,9 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             parent_field="AXISNAME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     AXISNAME__last_good = Quantity(
         type=np.int64,
@@ -485,6 +514,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
             parent_field="AXISNAME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     AXISNAME__axis = Quantity(
@@ -506,6 +538,9 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             parent_field="AXISNAME",
             deprecated="Use the group ``axes`` attribute   (NIAC2014)",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     AXISNAME__reference = Quantity(
@@ -535,6 +570,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
             parent_field="AXISNAME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     DATA = Quantity(
@@ -579,6 +617,9 @@ class Data(Object, basesections.ActivityResult):
             parent_field="DATA",
             deprecated="Use the group ``signal`` attribute   (NIAC2014)",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     DATA__axes = Quantity(
         type=str,
@@ -600,6 +641,9 @@ class Data(Object, basesections.ActivityResult):
             parent_field="DATA",
             deprecated="Use the group ``axes`` attribute   (NIAC2014)",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     DATA__long_name = Quantity(
         type=str,
@@ -613,6 +657,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
             parent_field="DATA",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     DATA__reference = Quantity(
@@ -635,6 +682,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
             parent_field="DATA",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     FIELDNAME_errors = Quantity(
@@ -675,6 +725,9 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
             deprecated="Use ``DATA_errors`` instead (NIAC2018)",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     FIELDNAME_scaling_factor = Quantity(
@@ -744,6 +797,9 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use FIELDNAME_scaling_factor instead",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     offset = Quantity(
         type=np.float64,
@@ -763,6 +819,9 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use FIELDNAME_offset instead",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     title = Quantity(
         type=np.float64,
@@ -775,6 +834,9 @@ class Data(Object, basesections.ActivityResult):
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     x = Quantity(

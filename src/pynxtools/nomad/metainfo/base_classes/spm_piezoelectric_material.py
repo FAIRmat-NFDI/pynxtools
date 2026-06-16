@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -81,6 +86,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_piezo_material = Quantity(
         type=str,
@@ -94,6 +102,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     chemical_formula = Quantity(
         type=str,
@@ -105,6 +116,9 @@ class SpmPiezoelectricMaterial(Crystal):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     type = Quantity(
@@ -122,6 +136,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     density = Quantity(
         type=np.float64,
@@ -135,6 +152,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     relative_permittivity = Quantity(
@@ -151,6 +171,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     D_piezoelectric_constant = Quantity(
@@ -211,6 +234,9 @@ class SpmPiezoelectricMaterial(Crystal):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     P_pyroelectric_constant = Quantity(
         type=np.float64,
@@ -229,6 +255,9 @@ class SpmPiezoelectricMaterial(Crystal):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     acoustic_impedance = Quantity(
         type=np.float64,
@@ -242,6 +271,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     young_modulus = Quantity(
@@ -257,6 +289,9 @@ class SpmPiezoelectricMaterial(Crystal):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     surface_resistivity = Quantity(
         type=np.float64,
@@ -270,6 +305,9 @@ class SpmPiezoelectricMaterial(Crystal):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     temperature_range = Quantity(
@@ -291,6 +329,10 @@ class SpmPiezoelectricMaterial(Crystal):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     glass_transition_temperature = Quantity(
         type=np.float64,
@@ -310,6 +352,10 @@ class SpmPiezoelectricMaterial(Crystal):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

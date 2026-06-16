@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -185,6 +190,9 @@ class SpmPiezoConfigCalibration(Calibration):
             optionality="optional",
             enumeration=["active", "passive"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     calibration_name = Quantity(
         type=str,
@@ -200,6 +208,9 @@ class SpmPiezoConfigCalibration(Calibration):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     calibration_date = Quantity(
         type=Datetime,
@@ -212,6 +223,9 @@ class SpmPiezoConfigCalibration(Calibration):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     calibratedAXIS = Quantity(
@@ -309,6 +323,9 @@ class SpmPiezoConfigCalibration(Calibration):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     driftN = Quantity(

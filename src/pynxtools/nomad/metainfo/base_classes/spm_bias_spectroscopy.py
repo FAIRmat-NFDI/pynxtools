@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -125,6 +130,9 @@ class SpmBiasSpectroscopy(Object):
             optionality="optional",
             enumeration=["constant_spacing", "variadic_spacing"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     identifier_environment = Quantity(
         type=str,
@@ -144,6 +152,9 @@ class SpmBiasSpectroscopy(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -189,6 +200,10 @@ class SpmBiasSpectroscopyCircuit(Circuit):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     measurement_time = Quantity(
         type=np.float64,
@@ -208,6 +223,10 @@ class SpmBiasSpectroscopyCircuit(Circuit):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -283,6 +302,10 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             enumeration=["linear"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="linear",
+        ),
     )
     number_of_sweeps = Quantity(
         type=np.float64,
@@ -298,6 +321,9 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     first_settling_time = Quantity(
@@ -319,6 +345,10 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     end_settling_time = Quantity(
         type=np.float64,
@@ -337,6 +367,10 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     settling_time = Quantity(
         type=np.float64,
@@ -357,6 +391,10 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     max_slew_rate = Quantity(
         type=np.float64,
@@ -375,6 +413,9 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     final_z = Quantity(
         type=np.float64,
@@ -391,6 +432,10 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     total_spectroscopy_time = Quantity(
         type=np.float64,
@@ -407,6 +452,10 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -451,6 +500,10 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     scan_range_bias = Quantity(
         type=np.float64,
@@ -471,6 +524,10 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     scan_start_bias = Quantity(
         type=np.float64,
@@ -487,6 +544,10 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     scan_end_bias = Quantity(
         type=np.float64,
@@ -503,6 +564,10 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -541,6 +606,9 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     scan_points_bias = Quantity(
         type=np.float64,
@@ -553,6 +621,9 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     step_size_bias = Quantity(
@@ -573,6 +644,10 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     scan_time = Quantity(
         type=np.float64,
@@ -589,6 +664,10 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     reset_bias = Quantity(
         type=bool,
@@ -604,6 +683,9 @@ class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 

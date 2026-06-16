@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -347,6 +352,10 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             optionality="optional",
             enumeration=["in_the_pattern_center"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="in_the_pattern_center",
+        ),
     )
     x_direction = Quantity(
         type=MEnum(["north", "east", "south", "west", "in", "out"]),
@@ -363,6 +372,9 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="optional",
             enumeration=["north", "east", "south", "west", "in", "out"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     y_direction = Quantity(
@@ -381,6 +393,9 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             optionality="optional",
             enumeration=["north", "east", "south", "west", "in", "out"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     z_direction = Quantity(
         type=MEnum(["north", "east", "south", "west", "in", "out"]),
@@ -397,6 +412,9 @@ class EmEbsdGnomonicReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="optional",
             enumeration=["north", "east", "south", "west", "in", "out"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -455,6 +473,9 @@ class EmEbsdPatternCenter(Process):
             optionality="optional",
             enumeration=["top", "right", "bottom", "left"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     x_normalization_direction = Quantity(
         type=MEnum(["north", "east", "south", "west"]),
@@ -471,6 +492,9 @@ class EmEbsdPatternCenter(Process):
             name_type="specified",
             optionality="optional",
             enumeration=["north", "east", "south", "west"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     y_boundary_convention = Quantity(
@@ -489,6 +513,9 @@ class EmEbsdPatternCenter(Process):
             optionality="optional",
             enumeration=["top", "right", "bottom", "left"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     y_normalization_direction = Quantity(
         type=MEnum(["north", "east", "south", "west"]),
@@ -505,6 +532,9 @@ class EmEbsdPatternCenter(Process):
             name_type="specified",
             optionality="optional",
             enumeration=["north", "east", "south", "west"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -567,6 +597,10 @@ class EmEbsdMeasurement(Process):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     time__epoch_start = Quantity(
         type=str,
@@ -584,6 +618,9 @@ class EmEbsdMeasurement(Process):
             optionality="optional",
             parent_field="time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     depends_on = Quantity(
         type=str,
@@ -599,6 +636,9 @@ class EmEbsdMeasurement(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -656,6 +696,9 @@ class EmEbsdSimulation(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -739,6 +782,9 @@ class EmEbsdCalibration(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -881,6 +927,9 @@ class EmEbsdIndexing(Process):
             enumeration=["hough_transform", "dictionary", "radon_transform"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     status = Quantity(
         type=np.int64,
@@ -1008,6 +1057,9 @@ class EmEbsdIndexing(Process):
             optionality="optional",
             enumeration=["confidence_index", "mean_angular_deviation", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     scan_point_positions = Quantity(
         type=np.float64,
@@ -1047,6 +1099,10 @@ class EmEbsdIndexing(Process):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_scan_points = Quantity(
         type=np.int64,
@@ -1063,6 +1119,10 @@ class EmEbsdIndexing(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     pixel_shape = Quantity(
         type=MEnum(["square", "hexagon", "cube", "other"]),
@@ -1080,6 +1140,9 @@ class EmEbsdIndexing(Process):
             name_type="specified",
             optionality="optional",
             enumeration=["square", "hexagon", "cube", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1168,6 +1231,10 @@ class EmEbsdIndexingPhaseID(Phase):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_planes = Quantity(
         type=np.int64,
@@ -1186,6 +1253,10 @@ class EmEbsdIndexingPhaseID(Phase):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     miller = Quantity(
         type=np.float64,
@@ -1244,6 +1315,9 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -1256,6 +1330,9 @@ class EmEbsdIndexingRoi(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -1288,6 +1365,9 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             parent_field="data",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_y = Quantity(
         type=np.float64,
@@ -1319,6 +1399,9 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             parent_field="axis_y",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_x = Quantity(
         type=np.float64,
@@ -1349,6 +1432,9 @@ class EmEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_x",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

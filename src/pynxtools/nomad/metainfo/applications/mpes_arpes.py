@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -107,6 +112,10 @@ class MpesArpes(Mpes):
             optionality="required",
             enumeration=["NXmpes_arpes"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXmpes_arpes",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -119,6 +128,9 @@ class MpesArpes(Mpes):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     method = Quantity(
@@ -142,6 +154,9 @@ class MpesArpes(Mpes):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -153,6 +168,9 @@ class MpesArpes(Mpes):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -171,6 +189,9 @@ class MpesArpes(Mpes):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -187,6 +208,9 @@ class MpesArpes(Mpes):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     transitions = Quantity(
@@ -232,6 +256,9 @@ class MpesArpes(Mpes):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -275,6 +302,9 @@ class MpesArpesArpesGeometry(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -386,6 +416,9 @@ class MpesArpesInstrumentElectronanalyzer(Electronanalyzer):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -426,6 +459,10 @@ class MpesArpesInstrumentElectronanalyzerAngularN_resolution(Resolution):
             optionality="required",
             enumeration=["angle"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="angle",
+        ),
     )
     type = Quantity(
         type=MEnum(["estimated", "derived", "calibrated", "other"]),
@@ -438,6 +475,9 @@ class MpesArpesInstrumentElectronanalyzerAngularN_resolution(Resolution):
             name_type="specified",
             optionality="recommended",
             enumeration=["estimated", "derived", "calibrated", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     resolution = Quantity(
@@ -454,6 +494,10 @@ class MpesArpesInstrumentElectronanalyzerAngularN_resolution(Resolution):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -497,6 +541,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     analyzer_rotation__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -510,6 +558,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_rotation",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     analyzer_rotation__vector = Quantity(
@@ -542,6 +594,9 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_rotation",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     analyzer_elevation = Quantity(
         type=np.float64,
@@ -562,6 +617,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     analyzer_elevation__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -575,6 +634,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_elevation",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     analyzer_elevation__vector = Quantity(
@@ -604,6 +667,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             parent_field="analyzer_elevation",
             enumeration=["analyzer_dispersion"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="analyzer_dispersion",
+        ),
     )
     analyzer_dispersion = Quantity(
         type=np.float64,
@@ -624,6 +691,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     analyzer_dispersion__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -637,6 +708,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_dispersion",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     analyzer_dispersion__vector = Quantity(
@@ -665,6 +740,10 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_dispersion",
             enumeration=["analyzer_rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="analyzer_rotation",
         ),
     )
 
@@ -699,6 +778,9 @@ class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             optionality="recommended",
             enumeration=["angular dispersive", "non-dispersive"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     angular_acceptance = Quantity(
         type=np.float64,
@@ -714,6 +796,10 @@ class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             optionality="recommended",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -759,6 +845,10 @@ class MpesArpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -789,6 +879,9 @@ class MpesArpesInstrumentElectronanalyzerEnergydispersionEntranceSlit(Aperture):
             name_type="specified",
             optionality="required",
             enumeration=["straight slit", "curved slit"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -833,6 +926,10 @@ class MpesArpesSample(MpesSample):
             optionality="required",
             enumeration=["vacuum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="vacuum",
+        ),
     )
     depends_on = Quantity(
         type=str,
@@ -849,6 +946,9 @@ class MpesArpesSample(MpesSample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -891,6 +991,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     sample_azimuth__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -904,6 +1008,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             parent_field="sample_azimuth",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     sample_azimuth__vector = Quantity(
@@ -933,6 +1041,10 @@ class MpesArpesSampleTransformations(Transformations):
             parent_field="sample_azimuth",
             enumeration=["offset_azimuth"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="offset_azimuth",
+        ),
     )
     offset_azimuth = Quantity(
         type=np.float64,
@@ -949,6 +1061,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     offset_azimuth__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -962,6 +1078,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             parent_field="offset_azimuth",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     offset_azimuth__vector = Quantity(
@@ -991,6 +1111,10 @@ class MpesArpesSampleTransformations(Transformations):
             parent_field="offset_azimuth",
             enumeration=["sample_tilt"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="sample_tilt",
+        ),
     )
     sample_tilt = Quantity(
         type=np.float64,
@@ -1007,6 +1131,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     sample_tilt__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1020,6 +1148,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             parent_field="sample_tilt",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     sample_tilt__vector = Quantity(
@@ -1049,6 +1181,10 @@ class MpesArpesSampleTransformations(Transformations):
             parent_field="sample_tilt",
             enumeration=["offset_tilt"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="offset_tilt",
+        ),
     )
     offset_tilt = Quantity(
         type=np.float64,
@@ -1065,6 +1201,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     offset_tilt__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1078,6 +1218,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             parent_field="offset_tilt",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     offset_tilt__vector = Quantity(
@@ -1107,6 +1251,10 @@ class MpesArpesSampleTransformations(Transformations):
             parent_field="offset_tilt",
             enumeration=["sample_polar"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="sample_polar",
+        ),
     )
     sample_polar = Quantity(
         type=np.float64,
@@ -1125,6 +1273,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     sample_polar__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1138,6 +1290,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             parent_field="sample_polar",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     sample_polar__vector = Quantity(
@@ -1167,6 +1323,10 @@ class MpesArpesSampleTransformations(Transformations):
             parent_field="sample_polar",
             enumeration=["offset_polar"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="offset_polar",
+        ),
     )
     offset_polar = Quantity(
         type=np.float64,
@@ -1183,6 +1343,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     offset_polar__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1196,6 +1360,10 @@ class MpesArpesSampleTransformations(Transformations):
             optionality="required",
             parent_field="offset_polar",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     offset_polar__vector = Quantity(
@@ -1227,6 +1395,9 @@ class MpesArpesSampleTransformations(Transformations):
             name_type="specified",
             optionality="required",
             parent_field="offset_polar",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1261,6 +1432,10 @@ class MpesArpesData(MpesData):
             optionality="required",
             enumeration=["data"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="data",
+        ),
     )
     axes = Quantity(
         type=str,
@@ -1290,6 +1465,9 @@ class MpesArpesData(MpesData):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     angular0_indices = Quantity(
         type=np.int64,
@@ -1302,6 +1480,9 @@ class MpesArpesData(MpesData):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     angular1_indices = Quantity(
         type=np.int64,
@@ -1313,6 +1494,9 @@ class MpesArpesData(MpesData):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     energy = Quantity(
@@ -1330,6 +1514,10 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -1347,6 +1535,9 @@ class MpesArpesData(MpesData):
             parent_field="energy",
             enumeration=["kinetic", "binding"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     angular0 = Quantity(
         type=np.float64,
@@ -1363,6 +1554,10 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angular1 = Quantity(
         type=np.float64,
@@ -1382,6 +1577,10 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     data_quantity = Quantity(
         type=np.float64,
@@ -1401,6 +1600,9 @@ class MpesArpesData(MpesData):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

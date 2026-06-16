@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -96,6 +101,10 @@ class ApmParaprobeSpatstatResults(ApmParaprobeToolResults):
             optionality="required",
             enumeration=["NXapm_paraprobe_spatstat_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_spatstat_results",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -108,6 +117,9 @@ class ApmParaprobeSpatstatResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

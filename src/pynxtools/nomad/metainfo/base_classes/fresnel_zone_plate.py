@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -93,6 +98,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     outermost_zone_width = Quantity(
         type=np.float64,
@@ -108,6 +117,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     central_stop_diameter = Quantity(
         type=np.float64,
@@ -123,6 +136,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     fabrication_quantity = Quantity(
         type=MEnum(["etched", "plated", "zone doubled", "other"]),
@@ -136,6 +153,9 @@ class FresnelZonePlate(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["etched", "plated", "zone doubled", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     zone_height = Quantity(
@@ -152,6 +172,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     zone_material = Quantity(
         type=str,
@@ -164,6 +188,9 @@ class FresnelZonePlate(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     zone_support_material = Quantity(
@@ -181,6 +208,9 @@ class FresnelZonePlate(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     central_stop_material = Quantity(
         type=str,
@@ -192,6 +222,9 @@ class FresnelZonePlate(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     central_stop_thickness = Quantity(
@@ -208,6 +241,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     mask_thickness = Quantity(
         type=np.float64,
@@ -223,6 +260,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     mask_material = Quantity(
         type=str,
@@ -239,6 +280,9 @@ class FresnelZonePlate(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     support_membrane_material = Quantity(
         type=str,
@@ -250,6 +294,9 @@ class FresnelZonePlate(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     support_membrane_thickness = Quantity(
@@ -266,6 +313,10 @@ class FresnelZonePlate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     depends_on = Quantity(
         type=str,
@@ -281,6 +332,9 @@ class FresnelZonePlate(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

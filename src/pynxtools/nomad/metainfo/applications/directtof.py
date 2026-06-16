@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -87,6 +92,9 @@ class Directtof(Tofraw):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -98,6 +106,9 @@ class Directtof(Tofraw):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     definition = Quantity(
@@ -113,6 +124,10 @@ class Directtof(Tofraw):
             optionality="required",
             enumeration=["NXdirecttof"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXdirecttof",
+        ),
     )
     duration = Quantity(
         type=np.float64,
@@ -125,6 +140,9 @@ class Directtof(Tofraw):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     run_number = Quantity(
         type=np.int64,
@@ -136,6 +154,9 @@ class Directtof(Tofraw):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pre_sample_flightpath = Quantity(
@@ -160,6 +181,10 @@ class Directtof(Tofraw):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -250,6 +275,10 @@ class DirecttofInstrumentFermiChopper(FermiChopper):
             optionality="required",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     energy = Quantity(
         type=np.float64,
@@ -266,6 +295,10 @@ class DirecttofInstrumentFermiChopper(FermiChopper):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -301,6 +334,10 @@ class DirecttofInstrumentDiskChopper(DiskChopper):
             optionality="required",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     energy = Quantity(
         type=np.float64,
@@ -317,6 +354,10 @@ class DirecttofInstrumentDiskChopper(DiskChopper):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

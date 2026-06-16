@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -242,6 +247,10 @@ class MicrostructureScoreConfig(Entry):
             optionality="required",
             enumeration=["NXmicrostructure_score_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXmicrostructure_score_config",
+        ),
     )
     identifier_simulation = Quantity(
         type=np.int64,
@@ -254,6 +263,9 @@ class MicrostructureScoreConfig(Entry):
             type="NX_UINT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     description_quantity = Quantity(
@@ -270,6 +282,9 @@ class MicrostructureScoreConfig(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -285,6 +300,9 @@ class MicrostructureScoreConfig(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -327,6 +345,9 @@ class MicrostructureScoreConfigSample(Sample):
             optionality="required",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     is_simulation = Quantity(
         type=MEnum(["experiment", "simulation"]),
@@ -340,6 +361,9 @@ class MicrostructureScoreConfigSample(Sample):
             name_type="specified",
             optionality="required",
             enumeration=["experiment", "simulation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     atom_types = Quantity(
@@ -360,6 +384,9 @@ class MicrostructureScoreConfigSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -395,6 +422,9 @@ class MicrostructureScoreConfigProgram1(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -407,6 +437,9 @@ class MicrostructureScoreConfigProgram1(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -474,6 +507,9 @@ class MicrostructureScoreConfigEnvironmentProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -486,6 +522,9 @@ class MicrostructureScoreConfigEnvironmentProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -540,6 +579,10 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     shear_modulus_zero = Quantity(
         type=np.float64,
@@ -556,6 +599,10 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_PRESSURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "pascal"},
     )
     nadal_lepoac_a = Quantity(
         type=np.float64,
@@ -575,6 +622,10 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     nadal_lepoac_zeta = Quantity(
         type=np.float64,
@@ -594,6 +645,10 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     burgers_vector_zero = Quantity(
         type=np.float64,
@@ -610,6 +665,10 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     lattice_expansion_second = Quantity(
         type=np.float64,
@@ -627,6 +686,9 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     lattice_expansion_first = Quantity(
         type=np.float64,
@@ -643,6 +705,9 @@ class MicrostructureScoreConfigMaterial(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     lattice_expansion_null = Quantity(
@@ -663,6 +728,10 @@ class MicrostructureScoreConfigMaterial(Parameters):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -739,6 +808,9 @@ class MicrostructureScoreConfigDeformation(Parameters):
             optionality="required",
             enumeration=["cuboidal", "poisson_voronoi", "ebsd", "damask"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     extent = Quantity(
         type=np.float64,
@@ -775,6 +847,10 @@ class MicrostructureScoreConfigDeformation(Parameters):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -874,6 +950,9 @@ class MicrostructureScoreConfigDeformationEbsd(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -886,6 +965,9 @@ class MicrostructureScoreConfigDeformationEbsd(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -897,6 +979,9 @@ class MicrostructureScoreConfigDeformationEbsd(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     stepsize = Quantity(
@@ -957,6 +1042,9 @@ class MicrostructureScoreConfigDeformationDamask(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -969,6 +1057,9 @@ class MicrostructureScoreConfigDeformationDamask(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -980,6 +1071,9 @@ class MicrostructureScoreConfigDeformationDamask(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1034,6 +1128,9 @@ class MicrostructureScoreConfigNucleation(Parameters):
             optionality="required",
             enumeration=["csr", "damask"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     incubation_time = Quantity(
         type=MEnum(["site_saturation"]),
@@ -1050,6 +1147,10 @@ class MicrostructureScoreConfigNucleation(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["site_saturation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="site_saturation",
         ),
     )
     orientation = Quantity(
@@ -1069,6 +1170,9 @@ class MicrostructureScoreConfigNucleation(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["ensemble", "random", "damask"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1198,6 +1302,9 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
             optionality="required",
             enumeration=["sebald_gottstein", "rollett_holm"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1234,6 +1341,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     lagb_enthalpy = Quantity(
         type=np.float64,
@@ -1247,6 +1357,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     hagb_pre_factor = Quantity(
@@ -1262,6 +1375,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     hagb_enthalpy = Quantity(
         type=np.float64,
@@ -1275,6 +1391,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     special_pre_factor = Quantity(
@@ -1294,6 +1413,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     special_enthalpy = Quantity(
         type=np.float64,
@@ -1311,6 +1433,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1350,6 +1475,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     enthalpy = Quantity(
         type=np.float64,
@@ -1366,6 +1494,9 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     c1 = Quantity(
@@ -1385,6 +1516,10 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     c2 = Quantity(
         type=np.float64,
@@ -1401,6 +1536,10 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     c3 = Quantity(
         type=np.float64,
@@ -1417,6 +1556,10 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1453,6 +1596,10 @@ class MicrostructureScoreConfigStoredEnergyRecovery(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["none"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="none",
         ),
     )
 
@@ -1503,6 +1650,9 @@ class MicrostructureScoreConfigDispersoidDrag(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["none", "zener_smith"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1555,6 +1705,10 @@ class MicrostructureScoreConfigDispersoidDragZenerSmith(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     surface_energy = Quantity(
         type=np.float64,
@@ -1571,6 +1725,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmith(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1606,6 +1763,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -1631,6 +1791,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     radius_indices = Quantity(
         type=np.int64,
@@ -1643,6 +1806,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -1654,6 +1820,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(
@@ -1688,6 +1857,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             optionality="required",
             parent_field="time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     radius = Quantity(
         type=np.float64,
@@ -1719,6 +1891,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             name_type="specified",
             optionality="required",
             parent_field="radius",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1829,6 +2004,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -1854,6 +2032,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     temperature_indices = Quantity(
         type=np.int64,
@@ -1866,6 +2047,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -1877,6 +2061,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(
@@ -1911,6 +2098,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             optionality="required",
             parent_field="time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     temperature = Quantity(
         type=np.float64,
@@ -1940,6 +2130,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             name_type="specified",
             optionality="required",
             parent_field="temperature",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2093,6 +2286,10 @@ class MicrostructureScoreConfigNumerics(Parameters):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     max_time = Quantity(
         type=np.float64,
@@ -2109,6 +2306,10 @@ class MicrostructureScoreConfigNumerics(Parameters):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     max_iteration = Quantity(
         type=np.int64,
@@ -2125,6 +2326,10 @@ class MicrostructureScoreConfigNumerics(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     max_delta_x = Quantity(
         type=np.float64,
@@ -2145,6 +2350,10 @@ class MicrostructureScoreConfigNumerics(Parameters):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     x_set = Quantity(
         type=np.float64,
@@ -2219,6 +2428,10 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     realloc = Quantity(
         type=np.float64,
@@ -2239,6 +2452,10 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     defragment = Quantity(
         type=bool,
@@ -2254,6 +2471,9 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     defragment_x = Quantity(
@@ -2312,6 +2532,9 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     number_of_domains = Quantity(
         type=np.int64,
@@ -2330,6 +2553,10 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     rediscretization = Quantity(
         type=np.int64,
@@ -2350,6 +2577,10 @@ class MicrostructureScoreConfigSolitaryUnit(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

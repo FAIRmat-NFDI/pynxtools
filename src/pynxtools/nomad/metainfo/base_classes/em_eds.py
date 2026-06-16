@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -172,6 +177,9 @@ class EmEdsIndexing(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -225,6 +233,9 @@ class EmEdsIndexingSummary(Data):
             optionality="optional",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -255,6 +266,9 @@ class EmEdsIndexingSummary(Data):
             name_type="specified",
             optionality="optional",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -345,6 +359,10 @@ class EmEdsIndexingPeakAtom(Atom):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     iupac_line_name = Quantity(
         type=str,
@@ -424,6 +442,9 @@ class EmEdsIndexingImage(Image):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     iupac_line_candidates = Quantity(
         type=str,
@@ -441,6 +462,9 @@ class EmEdsIndexingImage(Image):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     energy_range = Quantity(
@@ -517,6 +541,10 @@ class EmEdsIndexingImageProcess(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

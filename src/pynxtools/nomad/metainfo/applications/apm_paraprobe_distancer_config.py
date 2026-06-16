@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -98,6 +103,10 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_distancer_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_distancer_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -110,6 +119,9 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -163,6 +175,9 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             optionality="required",
             enumeration=["default", "skin"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     threshold_distance = Quantity(
         type=np.float64,
@@ -181,6 +196,10 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     number_of_triangle_sets = Quantity(
         type=np.int64,
@@ -201,6 +220,10 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

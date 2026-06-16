@@ -26,6 +26,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -107,6 +112,9 @@ class SampleComponent(Component, basesections.Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     chemical_formula = Quantity(
         type=str,
@@ -136,6 +144,9 @@ class SampleComponent(Component, basesections.Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     unit_cell_abc = Quantity(
@@ -187,6 +198,10 @@ class SampleComponent(Component, basesections.Component):
             optionality="optional",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     sample_orientation = Quantity(
         type=np.float64,
@@ -241,6 +256,10 @@ class SampleComponent(Component, basesections.Component):
             optionality="optional",
             units="NX_MASS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram"},
     )
     density = Quantity(
         type=np.float64,
@@ -257,6 +276,10 @@ class SampleComponent(Component, basesections.Component):
             optionality="optional",
             units="NX_MASS_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / m ** 3"},
     )
     relative_molecular_mass = Quantity(
         type=np.float64,
@@ -273,6 +296,10 @@ class SampleComponent(Component, basesections.Component):
             optionality="optional",
             units="NX_MASS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram"},
     )
     description_quantity = Quantity(
         type=str,
@@ -286,6 +313,9 @@ class SampleComponent(Component, basesections.Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     volume_fraction = Quantity(
         type=np.float64,
@@ -298,6 +328,9 @@ class SampleComponent(Component, basesections.Component):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     scattering_length_density = Quantity(
@@ -315,6 +348,10 @@ class SampleComponent(Component, basesections.Component):
             optionality="optional",
             units="NX_SCATTERING_LENGTH_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m ** 2"},
     )
     unit_cell_class = Quantity(
         type=MEnum(
@@ -347,6 +384,9 @@ class SampleComponent(Component, basesections.Component):
                 "cubic",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     space_group = Quantity(
         type=str,
@@ -360,6 +400,9 @@ class SampleComponent(Component, basesections.Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     point_group = Quantity(
         type=str,
@@ -372,6 +415,9 @@ class SampleComponent(Component, basesections.Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

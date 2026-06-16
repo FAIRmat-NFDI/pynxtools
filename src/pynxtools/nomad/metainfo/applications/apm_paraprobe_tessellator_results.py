@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -115,6 +120,10 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
             optionality="required",
             enumeration=["NXapm_paraprobe_tessellator_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_tessellator_results",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -127,6 +136,9 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -365,6 +377,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
             units="NX_UNITLESS",
             enumeration=["3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="3",
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -381,6 +397,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     volume = Quantity(
         type=np.float64,
@@ -447,6 +467,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     xdmf_topology = Quantity(
         type=np.int64,
@@ -551,6 +575,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_offset_vertex = Quantity(
         type=np.int64,
@@ -563,6 +591,9 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     indices_offset_face = Quantity(
         type=np.int64,
@@ -574,6 +605,9 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     vertices = Quantity(
@@ -648,6 +682,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactGlobal(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -663,6 +701,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactGlobal(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -718,6 +760,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactLeft(CsFilterBoolea
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -733,6 +779,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactLeft(CsFilterBoolea
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -788,6 +838,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactRight(CsFilterBoole
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -803,6 +857,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactRight(CsFilterBoole
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -858,6 +916,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactFront(CsFilterBoole
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -873,6 +935,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactFront(CsFilterBoole
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -928,6 +994,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactRear(CsFilterBoolea
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -943,6 +1013,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactRear(CsFilterBoolea
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1000,6 +1074,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactBottom(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -1015,6 +1093,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactBottom(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1070,6 +1152,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactTop(CsFilterBoolean
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -1085,6 +1171,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactTop(CsFilterBoolean
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

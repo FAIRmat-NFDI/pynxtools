@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -120,6 +125,9 @@ class Monitor(Component):
             optionality="optional",
             enumeration=["monitor", "timer"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -132,6 +140,9 @@ class Monitor(Component):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     end_time = Quantity(
@@ -146,6 +157,9 @@ class Monitor(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     preset = Quantity(
         type=np.float64,
@@ -159,6 +173,9 @@ class Monitor(Component):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     distance = Quantity(
@@ -177,6 +194,10 @@ class Monitor(Component):
             units="NX_LENGTH",
             deprecated="Use transformations/distance instead",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     range = Quantity(
         type=np.float64,
@@ -209,6 +230,9 @@ class Monitor(Component):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     integral = Quantity(
         type=np.float64,
@@ -223,6 +247,9 @@ class Monitor(Component):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     type = Quantity(
         type=MEnum(["Fission Chamber", "Scintillator"]),
@@ -235,6 +262,9 @@ class Monitor(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["Fission Chamber", "Scintillator"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     time_of_flight = Quantity(
@@ -252,6 +282,10 @@ class Monitor(Component):
             optionality="optional",
             units="NX_TIME_OF_FLIGHT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     efficiency = Quantity(
         type=np.float64,
@@ -268,6 +302,10 @@ class Monitor(Component):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     data_quantity = Quantity(
         type=np.float64,
@@ -281,6 +319,9 @@ class Monitor(Component):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     sampled_fraction = Quantity(
@@ -298,6 +339,10 @@ class Monitor(Component):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     count_time = Quantity(
         type=np.float64,
@@ -319,6 +364,10 @@ class Monitor(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     depends_on = Quantity(
         type=str,
@@ -338,6 +387,9 @@ class Monitor(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

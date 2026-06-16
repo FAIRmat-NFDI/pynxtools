@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -126,6 +131,10 @@ class Transmission(Entry):
             optionality="required",
             enumeration=["NXtransmission"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXtransmission",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -142,6 +151,9 @@ class Transmission(Entry):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition__URL = Quantity(
@@ -160,6 +172,9 @@ class Transmission(Entry):
             optionality="required",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -172,6 +187,9 @@ class Transmission(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     experiment_identifier = Quantity(
@@ -191,6 +209,9 @@ class Transmission(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -208,6 +229,9 @@ class Transmission(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -253,6 +277,9 @@ class TransmissionAcquisitionProgram(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -269,6 +296,9 @@ class TransmissionAcquisitionProgram(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     url = Quantity(
         type=str,
@@ -281,6 +311,9 @@ class TransmissionAcquisitionProgram(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -320,6 +353,9 @@ class TransmissionUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     affiliation = Quantity(
         type=str,
@@ -335,6 +371,9 @@ class TransmissionUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -440,6 +479,9 @@ class TransmissionInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     polarizer_quantity = Quantity(
         type=np.float64,
@@ -456,6 +498,10 @@ class TransmissionInstrument(Instrument):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     time_points = Quantity(
         type=np.float64,
@@ -529,6 +575,10 @@ class TransmissionInstrumentCommonBeamMask(Slit):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -566,6 +616,10 @@ class TransmissionInstrumentRefAttenuator(Attenuator):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -603,6 +657,10 @@ class TransmissionInstrumentSampleAttenuator(Attenuator):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -702,6 +760,10 @@ class TransmissionInstrumentSpectrometerSpectralResolution(Resolution):
             optionality="required",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -756,6 +818,10 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     blaze_wavelength = Quantity(
         type=np.float64,
@@ -772,6 +838,10 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_range = Quantity(
         type=np.float64,
@@ -826,6 +896,10 @@ class TransmissionInstrumentSpectrometerGratingSpectralResolution(Resolution):
             optionality="required",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -887,6 +961,9 @@ class TransmissionInstrumentDetector(Detector):
             optionality="required",
             enumeration=["PMT", "PbS", "InGaAs"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     response_time = Quantity(
         type=np.float64,
@@ -903,6 +980,10 @@ class TransmissionInstrumentDetector(Detector):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     gain = Quantity(
         type=np.float64,
@@ -915,6 +996,9 @@ class TransmissionInstrumentDetector(Detector):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -950,6 +1034,9 @@ class TransmissionInstrumentDetectorSlit(Slit):
             name_type="specified",
             optionality="required",
             enumeration=["fixed", "servo"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -988,6 +1075,9 @@ class TransmissionInstrumentSource(Source):
             optionality="required",
             enumeration=["halogen", "D2"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     spectrum = Quantity(
@@ -1054,6 +1144,9 @@ class TransmissionSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

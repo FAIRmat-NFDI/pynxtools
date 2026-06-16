@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -234,6 +239,9 @@ class IbeamColumn(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -282,6 +290,9 @@ class IbeamColumnIonSource(Source):
             optionality="optional",
             enumeration=["liquid_metal", "plasma", "gas_field", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -298,6 +309,9 @@ class IbeamColumnIonSource(Source):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     flux = Quantity(
         type=np.float64,
@@ -312,6 +326,9 @@ class IbeamColumnIonSource(Source):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     brightness = Quantity(
         type=np.float64,
@@ -325,6 +342,9 @@ class IbeamColumnIonSource(Source):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     current = Quantity(
@@ -342,6 +362,10 @@ class IbeamColumnIonSource(Source):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     voltage = Quantity(
         type=np.float64,
@@ -361,6 +385,10 @@ class IbeamColumnIonSource(Source):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     ion_energy_profile = Quantity(
         type=np.float64,
@@ -379,6 +407,10 @@ class IbeamColumnIonSource(Source):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

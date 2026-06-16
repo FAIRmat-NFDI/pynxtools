@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -155,6 +160,9 @@ class Manipulator(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -168,6 +176,9 @@ class Manipulator(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -180,6 +191,9 @@ class Manipulator(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -237,6 +251,10 @@ class ManipulatorCryostat(Actuator):
             optionality="optional",
             enumeration=["temperature"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -287,6 +305,10 @@ class ManipulatorCryostatPidController(PidController):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -325,6 +347,10 @@ class ManipulatorCryostatPidControllerSetpointLog(Log):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -370,6 +396,10 @@ class ManipulatorTemperatureSensor(Sensor):
             name_type="specified",
             optionality="optional",
             enumeration=["temperature"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
         ),
     )
     value = Quantity(
@@ -431,6 +461,10 @@ class ManipulatorTemperatureSensorValueLog(Log):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -488,6 +522,10 @@ class ManipulatorSampleHeater(Actuator):
             optionality="optional",
             enumeration=["temperature"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
+        ),
     )
     output_heater_power = Quantity(
         type=np.float64,
@@ -508,6 +546,10 @@ class ManipulatorSampleHeater(Actuator):
             optionality="optional",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -546,6 +588,10 @@ class ManipulatorSampleHeaterOutputHeaterPowerLog(Log):
             optionality="optional",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -596,6 +642,10 @@ class ManipulatorSampleHeaterPidController(PidController):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -634,6 +684,10 @@ class ManipulatorSampleHeaterPidControllerSetpointLog(Log):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -679,6 +733,10 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
             name_type="specified",
             optionality="optional",
             enumeration=["current"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="current",
         ),
     )
     value = Quantity(
@@ -740,6 +798,10 @@ class ManipulatorDrainCurrentAmmeterValueLog(Log):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -786,6 +848,10 @@ class ManipulatorSampleBiasPotentiostat(Actuator):
             name_type="specified",
             optionality="optional",
             enumeration=["voltage"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="voltage",
         ),
     )
 
@@ -837,6 +903,10 @@ class ManipulatorSampleBiasPotentiostatPidController(PidController):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -875,6 +945,10 @@ class ManipulatorSampleBiasPotentiostatPidControllerSetpointLog(Log):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -920,6 +994,10 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
             name_type="specified",
             optionality="optional",
             enumeration=["voltage"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="voltage",
         ),
     )
     value = Quantity(
@@ -980,6 +1058,10 @@ class ManipulatorSampleBiasVoltmeterValueLog(Log):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

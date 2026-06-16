@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -112,6 +117,9 @@ class Lockin(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     modulation_status = Quantity(
         type=bool,
@@ -124,6 +132,9 @@ class Lockin(Object):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     modulation_signal = Quantity(
@@ -144,6 +155,9 @@ class Lockin(Object):
             enumeration=["voltage", "current", "bias"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     modulation_frequency = Quantity(
         type=np.float64,
@@ -163,6 +177,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     reference_amplitude = Quantity(
         type=np.float64,
@@ -181,6 +199,9 @@ class Lockin(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -197,6 +218,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     reference_phase = Quantity(
         type=np.float64,
@@ -213,6 +238,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     phase_difference = Quantity(
         type=np.float64,
@@ -233,6 +262,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     demodulated_signal = Quantity(
         type=str,
@@ -252,6 +285,9 @@ class Lockin(Object):
             enumeration=["current", "voltage", "bias"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     demodulated_frequency = Quantity(
         type=np.float64,
@@ -268,6 +304,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     frequency_modulation_bandwidth = Quantity(
         type=np.float64,
@@ -284,6 +324,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     phase_modulation_bandwidth = Quantity(
         type=np.float64,
@@ -303,6 +347,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     amplitude_modulation_bandwidth = Quantity(
         type=np.float64,
@@ -322,6 +370,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     demodulated_amplitude = Quantity(
         type=np.float64,
@@ -339,6 +391,9 @@ class Lockin(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     demodulated_phase = Quantity(
         type=np.float64,
@@ -355,6 +410,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     demodulator_channels = Quantity(
         type=str,
@@ -367,6 +426,9 @@ class Lockin(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     low_passN = Quantity(
@@ -506,6 +568,10 @@ class Lockin(Object):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     dc_offset_valueN = Quantity(
         type=np.float64,

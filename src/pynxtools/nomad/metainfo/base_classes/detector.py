@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -191,6 +196,10 @@ class Detector(Component):
             enumeration=["3"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="3",
+        ),
     )
     time_of_flight__primary = Quantity(
         type=MEnum(["1"]),
@@ -206,6 +215,10 @@ class Detector(Component):
             enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
+        ),
     )
     time_of_flight__long_name = Quantity(
         type=str,
@@ -219,6 +232,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             parent_field="time_of_flight",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     raw_time_of_flight = Quantity(
@@ -251,6 +267,9 @@ class Detector(Component):
             optionality="optional",
             parent_field="raw_time_of_flight",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     detector_number = Quantity(
         type=np.int64,
@@ -265,6 +284,9 @@ class Detector(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -324,6 +346,9 @@ class Detector(Component):
             optionality="optional",
             parent_field="data",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     data_quantity__check_sum = Quantity(
         type=np.int64,
@@ -337,6 +362,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             parent_field="data",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_errors = Quantity(
@@ -393,6 +421,10 @@ class Detector(Component):
             enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
+        ),
     )
     x_pixel_offset__primary = Quantity(
         type=MEnum(["1"]),
@@ -408,6 +440,10 @@ class Detector(Component):
             enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
+        ),
     )
     x_pixel_offset__long_name = Quantity(
         type=str,
@@ -421,6 +457,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             parent_field="x_pixel_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     y_pixel_offset = Quantity(
@@ -457,6 +496,10 @@ class Detector(Component):
             enumeration=["2"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="2",
+        ),
     )
     y_pixel_offset__primary = Quantity(
         type=MEnum(["1"]),
@@ -472,6 +515,10 @@ class Detector(Component):
             enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
+        ),
     )
     y_pixel_offset__long_name = Quantity(
         type=str,
@@ -485,6 +532,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             parent_field="y_pixel_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     z_pixel_offset = Quantity(
@@ -521,6 +571,10 @@ class Detector(Component):
             enumeration=["3"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="3",
+        ),
     )
     z_pixel_offset__primary = Quantity(
         type=MEnum(["1"]),
@@ -536,6 +590,10 @@ class Detector(Component):
             enumeration=["1"],
             deprecated="see: https://github.com/nexusformat/definitions/issues/436",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
+        ),
     )
     z_pixel_offset__long_name = Quantity(
         type=str,
@@ -549,6 +607,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             parent_field="z_pixel_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     distance = Quantity(
@@ -637,6 +698,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -650,6 +714,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     local_name = Quantity(
         type=str,
@@ -662,6 +729,9 @@ class Detector(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     solid_angle = Quantity(
@@ -768,6 +838,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     crate = Quantity(
         type=np.int64,
@@ -795,6 +869,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             parent_field="crate",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     slot = Quantity(
@@ -824,6 +901,9 @@ class Detector(Component):
             optionality="optional",
             parent_field="slot",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     input = Quantity(
         type=np.int64,
@@ -852,6 +932,9 @@ class Detector(Component):
             optionality="optional",
             parent_field="input",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -868,6 +951,9 @@ class Detector(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real_time = Quantity(
@@ -927,6 +1013,9 @@ class Detector(Component):
             optionality="optional",
             parent_field="start_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     stop_time = Quantity(
         type=np.float64,
@@ -960,6 +1049,9 @@ class Detector(Component):
             optionality="optional",
             parent_field="stop_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     calibration_date = Quantity(
         type=Datetime,
@@ -975,6 +1067,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     layout = Quantity(
         type=MEnum(["point", "linear", "area"]),
@@ -988,6 +1083,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["point", "linear", "area"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     count_time = Quantity(
@@ -1045,6 +1143,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_center_y = Quantity(
         type=np.float64,
@@ -1066,6 +1168,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     frame_start_number = Quantity(
         type=np.int64,
@@ -1085,6 +1191,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     diameter = Quantity(
         type=np.float64,
@@ -1101,6 +1210,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     acquisition_mode = Quantity(
         type=MEnum(
@@ -1133,6 +1246,9 @@ class Detector(Component):
                 "pulse counting",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     angular_calibration_applied = Quantity(
         type=bool,
@@ -1148,6 +1264,9 @@ class Detector(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     angular_calibration = Quantity(
@@ -1178,6 +1297,9 @@ class Detector(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     flatfield = Quantity(
@@ -1225,6 +1347,9 @@ class Detector(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     pixel_mask = Quantity(
@@ -1310,6 +1435,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     countrate_correction_lookup_table = Quantity(
         type=np.float64,
@@ -1349,6 +1477,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     bit_depth_readout = Quantity(
         type=np.int64,
@@ -1365,6 +1496,9 @@ class Detector(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detector_readout_time = Quantity(
@@ -1385,6 +1519,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     trigger_delay_time = Quantity(
         type=np.float64,
@@ -1407,6 +1545,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     trigger_delay_time_set = Quantity(
         type=np.float64,
@@ -1423,6 +1565,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     trigger_internal_delay_time = Quantity(
         type=np.float64,
@@ -1445,6 +1591,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     trigger_dead_time = Quantity(
         type=np.float64,
@@ -1465,6 +1615,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     frame_time = Quantity(
         type=np.float64,
@@ -1506,6 +1660,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     saturation_value = Quantity(
         type=np.float64,
@@ -1526,6 +1683,9 @@ class Detector(Component):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     underload_value = Quantity(
@@ -1548,6 +1708,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     number_of_cycles = Quantity(
         type=np.int64,
@@ -1566,6 +1729,9 @@ class Detector(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     sensor_material = Quantity(
         type=str,
@@ -1582,6 +1748,9 @@ class Detector(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     sensor_thickness = Quantity(
@@ -1603,6 +1772,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     threshold_energy = Quantity(
         type=np.float64,
@@ -1623,6 +1796,10 @@ class Detector(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     depends_on = Quantity(
         type=str,
@@ -1639,6 +1816,9 @@ class Detector(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1735,6 +1915,10 @@ class DetectorEfficiency(Data):
             optionality="optional",
             enumeration=["efficiency"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="efficiency",
+        ),
     )
     axes = Quantity(
         type=MEnum([".", ". .", ". . .", ". . . .", "wavelength"]),
@@ -1761,6 +1945,10 @@ class DetectorEfficiency(Data):
             name_type="specified",
             optionality="optional",
             enumeration=["0"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="0",
         ),
     )
     efficiency = Quantity(

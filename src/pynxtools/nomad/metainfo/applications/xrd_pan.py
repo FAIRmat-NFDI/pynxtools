@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -114,6 +119,9 @@ class XrdPan(Xrd):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement_type = Quantity(
         type=str,
@@ -126,6 +134,9 @@ class XrdPan(Xrd):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition = Quantity(
@@ -140,6 +151,10 @@ class XrdPan(Xrd):
             name_type="specified",
             optionality="required",
             enumeration=["NXxrd_pan"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXxrd_pan",
         ),
     )
     method = Quantity(
@@ -158,6 +173,9 @@ class XrdPan(Xrd):
             enumeration=["X-Ray Diffraction (XRD)"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -170,6 +188,9 @@ class XrdPan(Xrd):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -181,6 +202,9 @@ class XrdPan(Xrd):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -266,6 +290,9 @@ class XrdPanInstrumentSource(Source):
             enumeration=["Cu", "Cr", "Mo", "Fe", "Ag", "In", "Ga"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     xray_tube_current = Quantity(
         type=np.float64,
@@ -282,6 +309,10 @@ class XrdPanInstrumentSource(Source):
             optionality="required",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     xray_tube_voltage = Quantity(
         type=np.float64,
@@ -298,6 +329,10 @@ class XrdPanInstrumentSource(Source):
             optionality="required",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     k_alpha_one = Quantity(
         type=np.float64,
@@ -314,6 +349,10 @@ class XrdPanInstrumentSource(Source):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     k_alpha_one__units = Quantity(
         type=str,
@@ -328,6 +367,9 @@ class XrdPanInstrumentSource(Source):
             parent_field="k_alpha_one",
             enumeration=["angstrom"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     k_alpha_two = Quantity(
@@ -345,6 +387,10 @@ class XrdPanInstrumentSource(Source):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     k_alpha_two__units = Quantity(
         type=str,
@@ -359,6 +405,9 @@ class XrdPanInstrumentSource(Source):
             parent_field="k_alpha_two",
             enumeration=["angstrom"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     ratio_k_alphatwo_k_alphaone = Quantity(
@@ -376,6 +425,10 @@ class XrdPanInstrumentSource(Source):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     kbeta = Quantity(
         type=np.float64,
@@ -392,6 +445,10 @@ class XrdPanInstrumentSource(Source):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     kbeta__units = Quantity(
         type=str,
@@ -406,6 +463,9 @@ class XrdPanInstrumentSource(Source):
             parent_field="kbeta",
             enumeration=["angstrom"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     source_peak_wavelength = Quantity(
@@ -425,6 +485,10 @@ class XrdPanInstrumentSource(Source):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -457,6 +521,9 @@ class XrdPanInstrumentDetector(Detector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     scan_mode = Quantity(
         type=str,
@@ -469,6 +536,9 @@ class XrdPanInstrumentDetector(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     integration_time = Quantity(
@@ -486,6 +556,10 @@ class XrdPanInstrumentDetector(Detector):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -542,6 +616,9 @@ class XrdPanExperimentConfig(Object):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     goniometer_x = Quantity(
         type=np.float64,
@@ -558,6 +635,10 @@ class XrdPanExperimentConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     goniometer_y = Quantity(
         type=np.float64,
@@ -574,6 +655,10 @@ class XrdPanExperimentConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     goniometer_z = Quantity(
         type=np.float64,
@@ -590,6 +675,10 @@ class XrdPanExperimentConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     count_time = Quantity(
         type=np.float64,
@@ -606,6 +695,10 @@ class XrdPanExperimentConfig(Object):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -640,6 +733,10 @@ class XrdPanExperimentConfigTwoTheta(Object):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     end = Quantity(
         type=np.float64,
@@ -656,6 +753,10 @@ class XrdPanExperimentConfigTwoTheta(Object):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     step = Quantity(
         type=np.float64,
@@ -672,6 +773,10 @@ class XrdPanExperimentConfigTwoTheta(Object):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -706,6 +811,10 @@ class XrdPanExperimentConfigOmega(Object):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     end = Quantity(
         type=np.float64,
@@ -722,6 +831,10 @@ class XrdPanExperimentConfigOmega(Object):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     step = Quantity(
         type=np.float64,
@@ -738,6 +851,10 @@ class XrdPanExperimentConfigOmega(Object):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -859,6 +976,9 @@ class XrdPanExperimentResult(XrdData):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     q_perpendicular = Quantity(
         type=np.float64,
@@ -875,6 +995,9 @@ class XrdPanExperimentResult(XrdData):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     q_norm = Quantity(
@@ -895,6 +1018,9 @@ class XrdPanExperimentResult(XrdData):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -936,6 +1062,9 @@ class XrdPanQData(XrdData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -953,6 +1082,9 @@ class XrdPanQData(XrdData):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     q_parallel = Quantity(
@@ -973,6 +1105,9 @@ class XrdPanQData(XrdData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     q_perpendicular = Quantity(
         type=np.float64,
@@ -990,6 +1125,9 @@ class XrdPanQData(XrdData):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1027,6 +1165,9 @@ class XrdPanSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     sample_id = Quantity(
         type=str,
@@ -1039,6 +1180,9 @@ class XrdPanSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     sample_name = Quantity(
@@ -1055,6 +1199,9 @@ class XrdPanSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

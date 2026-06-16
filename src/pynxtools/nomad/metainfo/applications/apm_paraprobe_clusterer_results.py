@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -106,6 +111,10 @@ class ApmParaprobeClustererResults(ApmParaprobeToolResults):
             optionality="required",
             enumeration=["NXapm_paraprobe_clusterer_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_clusterer_results",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -118,6 +127,9 @@ class ApmParaprobeClustererResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -211,6 +223,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     min_pts = Quantity(
         type=np.int64,
@@ -227,6 +243,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     cardinality = Quantity(
         type=np.int64,
@@ -249,6 +269,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -273,6 +297,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     targets = Quantity(
         type=np.int64,
@@ -477,6 +505,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_noise_members = Quantity(
         type=np.int64,
@@ -495,6 +527,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_core_members = Quantity(
         type=np.int64,
@@ -513,6 +549,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_features = Quantity(
         type=np.int64,
@@ -529,6 +569,10 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_feature = Quantity(
         type=np.int64,

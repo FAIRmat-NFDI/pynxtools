@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -474,6 +479,10 @@ class Apm(Entry):
             optionality="required",
             enumeration=["NXapm"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -486,6 +495,9 @@ class Apm(Entry):
             name_type="specified",
             optionality="optional",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     run_number = Quantity(
@@ -527,6 +539,10 @@ class Apm(Entry):
             optionality="recommended",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     experiment_alias = Quantity(
         type=str,
@@ -541,6 +557,9 @@ class Apm(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_description = Quantity(
@@ -559,6 +578,9 @@ class Apm(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -591,6 +613,9 @@ class Apm(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -612,6 +637,9 @@ class Apm(Entry):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -631,6 +659,10 @@ class Apm(Entry):
             optionality="recommended",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     operation_mode = Quantity(
         type=str,
@@ -656,6 +688,9 @@ class Apm(Entry):
             optionality="required",
             enumeration=["apt", "fim", "apt_fim"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -760,6 +795,9 @@ class ApmProfilingProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -772,6 +810,9 @@ class ApmProfilingProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -839,6 +880,9 @@ class ApmProfilingEnvironmentProgram(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -851,6 +895,9 @@ class ApmProfilingEnvironmentProgram(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -885,6 +932,9 @@ class ApmCiteID(Cite):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     doi = Quantity(
         type=str,
@@ -896,6 +946,9 @@ class ApmCiteID(Cite):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -929,6 +982,9 @@ class ApmNoteID(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -940,6 +996,9 @@ class ApmNoteID(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -953,6 +1012,9 @@ class ApmNoteID(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -964,6 +1026,9 @@ class ApmNoteID(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -994,6 +1059,9 @@ class ApmProject(Project):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1054,6 +1122,9 @@ class ApmUserID(User):
                 "URN",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1121,6 +1192,9 @@ class ApmSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     alias = Quantity(
         type=str,
@@ -1133,6 +1207,9 @@ class ApmSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     grain_diameter = Quantity(
@@ -1158,6 +1235,10 @@ class ApmSample(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     grain_diameter_errors = Quantity(
         type=np.float64,
@@ -1174,6 +1255,10 @@ class ApmSample(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     heat_treatment_time = Quantity(
         type=np.float64,
@@ -1199,6 +1284,10 @@ class ApmSample(Sample):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     heat_treatment_temperature = Quantity(
         type=np.float64,
@@ -1224,6 +1313,10 @@ class ApmSample(Sample):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     heat_treatment_temperature_errors = Quantity(
         type=np.float64,
@@ -1245,6 +1338,10 @@ class ApmSample(Sample):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     heat_treatment_quenching_rate = Quantity(
         type=np.float64,
@@ -1267,6 +1364,9 @@ class ApmSample(Sample):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     heat_treatment_quenching_rate_errors = Quantity(
         type=np.float64,
@@ -1286,6 +1386,9 @@ class ApmSample(Sample):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1341,6 +1444,9 @@ class ApmSampleChemicalComposition(ChemicalComposition):
             optionality="required",
             enumeration=["atom_percent", "weight_percent"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1374,6 +1480,9 @@ class ApmSampleChemicalCompositionAtom(Atom):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     composition = Quantity(
         type=np.float64,
@@ -1389,6 +1498,10 @@ class ApmSampleChemicalCompositionAtom(Atom):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     composition_errors = Quantity(
         type=np.float64,
@@ -1404,6 +1517,10 @@ class ApmSampleChemicalCompositionAtom(Atom):
             optionality="recommended",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1457,6 +1574,9 @@ class ApmSpecimen(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     alias = Quantity(
         type=str,
@@ -1473,6 +1593,9 @@ class ApmSpecimen(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_parent = Quantity(
@@ -1491,6 +1614,9 @@ class ApmSpecimen(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     preparation_date = Quantity(
@@ -1515,6 +1641,9 @@ class ApmSpecimen(Sample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     atom_types = Quantity(
         type=str,
@@ -1537,6 +1666,9 @@ class ApmSpecimen(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     is_polycrystalline = Quantity(
         type=bool,
@@ -1553,6 +1685,9 @@ class ApmSpecimen(Sample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     is_amorphous = Quantity(
         type=bool,
@@ -1567,6 +1702,9 @@ class ApmSpecimen(Sample):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     initial_radius = Quantity(
@@ -1587,6 +1725,10 @@ class ApmSpecimen(Sample):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     shank_angle = Quantity(
         type=np.float64,
@@ -1609,6 +1751,10 @@ class ApmSpecimen(Sample):
             optionality="recommended",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1654,6 +1800,9 @@ class ApmConsistentRotations(Parameters):
             optionality="required",
             enumeration=["counter_clockwise", "clockwise"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     rotation_convention = Quantity(
         type=MEnum(["passive", "active"]),
@@ -1671,6 +1820,9 @@ class ApmConsistentRotations(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["passive", "active"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     euler_angle_convention = Quantity(
@@ -1722,6 +1874,9 @@ class ApmConsistentRotations(Parameters):
                 "yxz",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     axis_angle_convention = Quantity(
         type=MEnum(["rotation_angle_on_interval_zero_to_pi"]),
@@ -1741,6 +1896,10 @@ class ApmConsistentRotations(Parameters):
             optionality="required",
             enumeration=["rotation_angle_on_interval_zero_to_pi"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation_angle_on_interval_zero_to_pi",
+        ),
     )
     sign_convention = Quantity(
         type=MEnum(["p_plus_one", "p_minus_one"]),
@@ -1759,6 +1918,9 @@ class ApmConsistentRotations(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["p_plus_one", "p_minus_one"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1841,6 +2003,9 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -1855,6 +2020,9 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             enumeration=["undefined", "cartesian"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     origin = Quantity(
         type=str,
@@ -1866,6 +2034,9 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     x = Quantity(
@@ -1895,6 +2066,9 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     y = Quantity(
         type=np.float64,
@@ -1923,6 +2097,9 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     z = Quantity(
         type=np.float64,
@@ -1950,6 +2127,9 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2245,6 +2425,9 @@ class ApmApmMeasurement(ApmMeasurement):
             optionality="recommended",
             enumeration=["success", "aborted"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     quality = Quantity(
         type=str,
@@ -2256,6 +2439,9 @@ class ApmApmMeasurement(ApmMeasurement):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2435,6 +2621,9 @@ class ApmMeasurementInstrument(ApmInstrument):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     location = Quantity(
         type=str,
@@ -2446,6 +2635,9 @@ class ApmMeasurementInstrument(ApmInstrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     flight_path = Quantity(
@@ -2462,6 +2654,10 @@ class ApmMeasurementInstrument(ApmInstrument):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2492,6 +2688,9 @@ class ApmMeasurementInstrumentFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2504,6 +2703,9 @@ class ApmMeasurementInstrumentFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2515,6 +2717,9 @@ class ApmMeasurementInstrumentFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2545,6 +2750,9 @@ class ApmMeasurementInstrumentReflectron(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -2587,6 +2795,9 @@ class ApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     aperture_type = Quantity(
         type=str,
@@ -2598,6 +2809,9 @@ class ApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2629,6 +2843,9 @@ class ApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2641,6 +2858,9 @@ class ApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2652,6 +2872,9 @@ class ApmMeasurementInstrumentLocalElectrodeFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2711,6 +2934,9 @@ class ApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2723,6 +2949,9 @@ class ApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2734,6 +2963,9 @@ class ApmMeasurementInstrumentIonDetectorFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2806,6 +3038,9 @@ class ApmMeasurementInstrumentPulserFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2818,6 +3053,9 @@ class ApmMeasurementInstrumentPulserFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2829,6 +3067,9 @@ class ApmMeasurementInstrumentPulserFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2891,6 +3132,9 @@ class ApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2903,6 +3147,9 @@ class ApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2914,6 +3161,9 @@ class ApmMeasurementInstrumentPulserSourceIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2973,6 +3223,9 @@ class ApmMeasurementInstrumentStageFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2985,6 +3238,9 @@ class ApmMeasurementInstrumentStageFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2996,6 +3252,9 @@ class ApmMeasurementInstrumentStageFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3055,6 +3314,9 @@ class ApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3067,6 +3329,9 @@ class ApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3078,6 +3343,9 @@ class ApmMeasurementInstrumentAnalysisChamberFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3137,6 +3405,9 @@ class ApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3149,6 +3420,9 @@ class ApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3160,6 +3434,9 @@ class ApmMeasurementInstrumentBufferChamberFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3219,6 +3496,9 @@ class ApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3231,6 +3511,9 @@ class ApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3242,6 +3525,9 @@ class ApmMeasurementInstrumentLoadLockChamberFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3301,6 +3587,9 @@ class ApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3313,6 +3602,9 @@ class ApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3324,6 +3616,9 @@ class ApmMeasurementInstrumentGetterPumpFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3383,6 +3678,9 @@ class ApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3395,6 +3693,9 @@ class ApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3406,6 +3707,9 @@ class ApmMeasurementInstrumentRougheningPumpFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3465,6 +3769,9 @@ class ApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3477,6 +3784,9 @@ class ApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3488,6 +3798,9 @@ class ApmMeasurementInstrumentTurbomolecularPumpFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3532,6 +3845,9 @@ class ApmMeasurementEventID(ApmEventData):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -3543,6 +3859,9 @@ class ApmMeasurementEventID(ApmEventData):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -3655,6 +3974,10 @@ class ApmMeasurementEventIDInstrumentReflectron(Component):
             optionality="required",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3688,6 +4011,10 @@ class ApmMeasurementEventIDInstrumentLocalElectrode(ElectromagneticLens):
             optionality="required",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3734,6 +4061,9 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
             enumeration=["laser", "voltage", "laser_and_voltage"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pulse_frequency = Quantity(
         type=np.float64,
@@ -3749,6 +4079,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
             optionality="required",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     pulse_fraction = Quantity(
         type=np.float64,
@@ -3764,6 +4098,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     pulse_voltage = Quantity(
         type=np.float64,
@@ -3848,6 +4186,10 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
             optionality="recommended",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     power = Quantity(
         type=np.float64,
@@ -3863,6 +4205,10 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
             optionality="required",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
     pulse_energy = Quantity(
         type=np.float64,
@@ -3937,6 +4283,10 @@ class ApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
             name_type="specified",
             optionality="required",
             enumeration=["temperature"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
         ),
     )
     value = Quantity(
@@ -4013,6 +4363,10 @@ class ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
             optionality="required",
             enumeration=["pressure"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="pressure",
+        ),
     )
     value = Quantity(
         type=np.float64,
@@ -4059,6 +4413,9 @@ class ApmMeasurementEventIDInstrumentControl(Parameters):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     target_detection_rate = Quantity(
         type=np.float64,
@@ -4071,6 +4428,9 @@ class ApmMeasurementEventIDInstrumentControl(Parameters):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -4125,6 +4485,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -4136,6 +4499,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -4149,6 +4515,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -4160,6 +4529,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -4174,6 +4546,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -4187,6 +4562,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     standing_voltage = Quantity(
         type=np.float64,
@@ -4198,6 +4576,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     standing_voltage__units = Quantity(
@@ -4212,6 +4593,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             optionality="required",
             parent_field="standing_voltage",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     standing_voltage__long_name = Quantity(
         type=str,
@@ -4224,6 +4608,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="standing_voltage",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4278,6 +4665,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -4289,6 +4679,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -4302,6 +4695,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -4313,6 +4709,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -4327,6 +4726,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -4340,6 +4742,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pulse_frequency = Quantity(
         type=np.float64,
@@ -4351,6 +4756,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pulse_frequency__units = Quantity(
@@ -4365,6 +4773,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             optionality="required",
             parent_field="pulse_frequency",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pulse_frequency__long_name = Quantity(
         type=str,
@@ -4377,6 +4788,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="pulse_frequency",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4431,6 +4845,9 @@ class ApmMeasurementDetectionRateTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -4442,6 +4859,9 @@ class ApmMeasurementDetectionRateTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -4455,6 +4875,9 @@ class ApmMeasurementDetectionRateTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -4466,6 +4889,9 @@ class ApmMeasurementDetectionRateTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -4480,6 +4906,9 @@ class ApmMeasurementDetectionRateTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -4493,6 +4922,9 @@ class ApmMeasurementDetectionRateTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate = Quantity(
         type=np.float64,
@@ -4504,6 +4936,9 @@ class ApmMeasurementDetectionRateTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate__units = Quantity(
@@ -4518,6 +4953,9 @@ class ApmMeasurementDetectionRateTime(Data):
             optionality="required",
             parent_field="detection_rate",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate__long_name = Quantity(
         type=str,
@@ -4530,6 +4968,9 @@ class ApmMeasurementDetectionRateTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="detection_rate",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4584,6 +5025,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -4595,6 +5039,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -4608,6 +5055,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -4619,6 +5069,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -4633,6 +5086,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -4646,6 +5102,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate_set = Quantity(
         type=np.float64,
@@ -4657,6 +5116,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate_set__units = Quantity(
@@ -4671,6 +5133,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             optionality="required",
             parent_field="detection_rate_set",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate_set__long_name = Quantity(
         type=str,
@@ -4683,6 +5148,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="detection_rate_set",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4737,6 +5205,9 @@ class ApmMeasurementPressureTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -4748,6 +5219,9 @@ class ApmMeasurementPressureTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -4761,6 +5235,9 @@ class ApmMeasurementPressureTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -4772,6 +5249,9 @@ class ApmMeasurementPressureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -4786,6 +5266,9 @@ class ApmMeasurementPressureTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -4799,6 +5282,9 @@ class ApmMeasurementPressureTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pressure = Quantity(
         type=np.float64,
@@ -4810,6 +5296,9 @@ class ApmMeasurementPressureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pressure__units = Quantity(
@@ -4824,6 +5313,9 @@ class ApmMeasurementPressureTime(Data):
             optionality="required",
             parent_field="pressure",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pressure__long_name = Quantity(
         type=str,
@@ -4836,6 +5328,9 @@ class ApmMeasurementPressureTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="pressure",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4890,6 +5385,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -4901,6 +5399,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -4914,6 +5415,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -4925,6 +5429,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -4939,6 +5446,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -4952,6 +5462,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_voltage = Quantity(
         type=np.float64,
@@ -4963,6 +5476,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_voltage__units = Quantity(
@@ -4977,6 +5493,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             optionality="required",
             parent_field="specimen_voltage",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_voltage__long_name = Quantity(
         type=str,
@@ -4989,6 +5508,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="specimen_voltage",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5043,6 +5565,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -5054,6 +5579,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5067,6 +5595,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -5078,6 +5609,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -5092,6 +5626,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -5105,6 +5642,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_temperature = Quantity(
         type=np.float64,
@@ -5116,6 +5656,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_temperature__units = Quantity(
@@ -5130,6 +5673,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             optionality="required",
             parent_field="specimen_temperature",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_temperature__long_name = Quantity(
         type=str,
@@ -5142,6 +5688,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="specimen_temperature",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5196,6 +5745,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -5207,6 +5759,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5220,6 +5775,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -5231,6 +5789,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -5245,6 +5806,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -5258,6 +5822,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ambient_temperature = Quantity(
         type=np.float64,
@@ -5269,6 +5836,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ambient_temperature__units = Quantity(
@@ -5283,6 +5853,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             optionality="required",
             parent_field="ambient_temperature",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ambient_temperature__long_name = Quantity(
         type=str,
@@ -5295,6 +5868,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="ambient_temperature",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5349,6 +5925,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -5360,6 +5939,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5373,6 +5955,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -5384,6 +5969,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -5398,6 +5986,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -5411,6 +6002,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reflectron_voltage = Quantity(
         type=np.float64,
@@ -5422,6 +6016,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     reflectron_voltage__units = Quantity(
@@ -5436,6 +6033,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             optionality="required",
             parent_field="reflectron_voltage",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reflectron_voltage__long_name = Quantity(
         type=str,
@@ -5448,6 +6048,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="reflectron_voltage",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5502,6 +6105,9 @@ class ApmMeasurementXstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -5513,6 +6119,9 @@ class ApmMeasurementXstagePositionTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5526,6 +6135,9 @@ class ApmMeasurementXstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -5537,6 +6149,9 @@ class ApmMeasurementXstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -5551,6 +6166,9 @@ class ApmMeasurementXstagePositionTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -5564,6 +6182,9 @@ class ApmMeasurementXstagePositionTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     xstage_position = Quantity(
         type=np.float64,
@@ -5575,6 +6196,9 @@ class ApmMeasurementXstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     xstage_position__units = Quantity(
@@ -5589,6 +6213,9 @@ class ApmMeasurementXstagePositionTime(Data):
             optionality="required",
             parent_field="xstage_position",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     xstage_position__long_name = Quantity(
         type=str,
@@ -5601,6 +6228,9 @@ class ApmMeasurementXstagePositionTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="xstage_position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5655,6 +6285,9 @@ class ApmMeasurementYstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -5666,6 +6299,9 @@ class ApmMeasurementYstagePositionTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5679,6 +6315,9 @@ class ApmMeasurementYstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -5690,6 +6329,9 @@ class ApmMeasurementYstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -5704,6 +6346,9 @@ class ApmMeasurementYstagePositionTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -5717,6 +6362,9 @@ class ApmMeasurementYstagePositionTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ystage_position = Quantity(
         type=np.float64,
@@ -5728,6 +6376,9 @@ class ApmMeasurementYstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ystage_position__units = Quantity(
@@ -5742,6 +6393,9 @@ class ApmMeasurementYstagePositionTime(Data):
             optionality="required",
             parent_field="ystage_position",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ystage_position__long_name = Quantity(
         type=str,
@@ -5754,6 +6408,9 @@ class ApmMeasurementYstagePositionTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="ystage_position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5808,6 +6465,9 @@ class ApmMeasurementZstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time_indices = Quantity(
         type=np.int64,
@@ -5819,6 +6479,9 @@ class ApmMeasurementZstagePositionTime(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5832,6 +6495,9 @@ class ApmMeasurementZstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time = Quantity(
         type=np.float64,
@@ -5843,6 +6509,9 @@ class ApmMeasurementZstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__units = Quantity(
@@ -5857,6 +6526,9 @@ class ApmMeasurementZstagePositionTime(Data):
             optionality="required",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     elapsed_time__long_name = Quantity(
         type=str,
@@ -5870,6 +6542,9 @@ class ApmMeasurementZstagePositionTime(Data):
             optionality="recommended",
             parent_field="elapsed_time",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     zstage_position = Quantity(
         type=np.float64,
@@ -5881,6 +6556,9 @@ class ApmMeasurementZstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     zstage_position__units = Quantity(
@@ -5895,6 +6573,9 @@ class ApmMeasurementZstagePositionTime(Data):
             optionality="required",
             parent_field="zstage_position",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     zstage_position__long_name = Quantity(
         type=str,
@@ -5907,6 +6588,9 @@ class ApmMeasurementZstagePositionTime(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="zstage_position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5961,6 +6645,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -5972,6 +6659,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -5985,6 +6675,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -5996,6 +6689,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6010,6 +6706,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6023,6 +6722,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     standing_voltage = Quantity(
         type=np.float64,
@@ -6034,6 +6736,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     standing_voltage__units = Quantity(
@@ -6048,6 +6753,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             optionality="required",
             parent_field="standing_voltage",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     standing_voltage__long_name = Quantity(
         type=str,
@@ -6060,6 +6768,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="standing_voltage",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6114,6 +6825,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -6125,6 +6839,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -6138,6 +6855,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -6149,6 +6869,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6163,6 +6886,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6176,6 +6902,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pulse_frequency = Quantity(
         type=np.float64,
@@ -6187,6 +6916,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pulse_frequency__units = Quantity(
@@ -6201,6 +6933,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             optionality="required",
             parent_field="pulse_frequency",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pulse_frequency__long_name = Quantity(
         type=str,
@@ -6213,6 +6948,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="pulse_frequency",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6267,6 +7005,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -6278,6 +7019,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -6291,6 +7035,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -6302,6 +7049,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6316,6 +7066,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6329,6 +7082,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate = Quantity(
         type=np.float64,
@@ -6340,6 +7096,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate__units = Quantity(
@@ -6354,6 +7113,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             optionality="required",
             parent_field="detection_rate",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate__long_name = Quantity(
         type=str,
@@ -6366,6 +7128,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="detection_rate",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6420,6 +7185,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -6431,6 +7199,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -6444,6 +7215,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -6455,6 +7229,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6469,6 +7246,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6482,6 +7262,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate_set = Quantity(
         type=np.float64,
@@ -6493,6 +7276,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate_set__units = Quantity(
@@ -6507,6 +7293,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             optionality="required",
             parent_field="detection_rate_set",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     detection_rate_set__long_name = Quantity(
         type=str,
@@ -6519,6 +7308,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="detection_rate_set",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6573,6 +7365,9 @@ class ApmMeasurementPressureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -6584,6 +7379,9 @@ class ApmMeasurementPressureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -6597,6 +7395,9 @@ class ApmMeasurementPressureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -6608,6 +7409,9 @@ class ApmMeasurementPressureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6622,6 +7426,9 @@ class ApmMeasurementPressureSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6635,6 +7442,9 @@ class ApmMeasurementPressureSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pressure = Quantity(
         type=np.float64,
@@ -6646,6 +7456,9 @@ class ApmMeasurementPressureSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pressure__units = Quantity(
@@ -6660,6 +7473,9 @@ class ApmMeasurementPressureSequence(Data):
             optionality="required",
             parent_field="pressure",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     pressure__long_name = Quantity(
         type=str,
@@ -6672,6 +7488,9 @@ class ApmMeasurementPressureSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="pressure",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6726,6 +7545,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -6737,6 +7559,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -6750,6 +7575,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -6761,6 +7589,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6775,6 +7606,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6788,6 +7622,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_voltage = Quantity(
         type=np.float64,
@@ -6799,6 +7636,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_voltage__units = Quantity(
@@ -6813,6 +7653,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             optionality="required",
             parent_field="specimen_voltage",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_voltage__long_name = Quantity(
         type=str,
@@ -6825,6 +7668,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="specimen_voltage",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6879,6 +7725,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -6890,6 +7739,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -6903,6 +7755,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -6914,6 +7769,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -6928,6 +7786,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -6941,6 +7802,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_temperature = Quantity(
         type=np.float64,
@@ -6952,6 +7816,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_temperature__units = Quantity(
@@ -6966,6 +7833,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             optionality="required",
             parent_field="specimen_temperature",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_temperature__long_name = Quantity(
         type=str,
@@ -6978,6 +7848,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="specimen_temperature",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7032,6 +7905,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -7043,6 +7919,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -7056,6 +7935,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -7067,6 +7949,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -7081,6 +7966,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -7094,6 +7982,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ambient_temperature = Quantity(
         type=np.float64,
@@ -7105,6 +7996,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ambient_temperature__units = Quantity(
@@ -7119,6 +8013,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             optionality="required",
             parent_field="ambient_temperature",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ambient_temperature__long_name = Quantity(
         type=str,
@@ -7131,6 +8028,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="ambient_temperature",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7185,6 +8085,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -7196,6 +8099,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -7209,6 +8115,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -7220,6 +8129,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -7234,6 +8146,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -7247,6 +8162,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reflectron_voltage = Quantity(
         type=np.float64,
@@ -7258,6 +8176,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     reflectron_voltage__units = Quantity(
@@ -7272,6 +8193,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             optionality="required",
             parent_field="reflectron_voltage",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reflectron_voltage__long_name = Quantity(
         type=str,
@@ -7284,6 +8208,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="reflectron_voltage",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7338,6 +8265,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -7349,6 +8279,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -7362,6 +8295,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -7373,6 +8309,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -7387,6 +8326,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -7400,6 +8342,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     xstage_position = Quantity(
         type=np.float64,
@@ -7411,6 +8356,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     xstage_position__units = Quantity(
@@ -7425,6 +8373,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             optionality="required",
             parent_field="xstage_position",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     xstage_position__long_name = Quantity(
         type=str,
@@ -7437,6 +8388,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="xstage_position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7491,6 +8445,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -7502,6 +8459,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -7515,6 +8475,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -7526,6 +8489,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -7540,6 +8506,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -7553,6 +8522,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ystage_position = Quantity(
         type=np.float64,
@@ -7564,6 +8536,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ystage_position__units = Quantity(
@@ -7578,6 +8553,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             optionality="required",
             parent_field="ystage_position",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ystage_position__long_name = Quantity(
         type=str,
@@ -7590,6 +8568,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="ystage_position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7644,6 +8625,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id_indices = Quantity(
         type=np.int64,
@@ -7655,6 +8639,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title = Quantity(
@@ -7668,6 +8655,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id = Quantity(
         type=np.int64,
@@ -7679,6 +8669,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__units = Quantity(
@@ -7693,6 +8686,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             optionality="required",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     event_id__long_name = Quantity(
         type=str,
@@ -7706,6 +8702,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             optionality="recommended",
             parent_field="event_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     zstage_position = Quantity(
         type=np.float64,
@@ -7717,6 +8716,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     zstage_position__units = Quantity(
@@ -7731,6 +8733,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             optionality="required",
             parent_field="zstage_position",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     zstage_position__long_name = Quantity(
         type=str,
@@ -7743,6 +8748,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="zstage_position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7925,6 +8933,9 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -7994,6 +9005,9 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -8006,6 +9020,9 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -8034,6 +9051,9 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -8046,6 +9066,9 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8109,6 +9132,9 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -8179,6 +9205,9 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -8191,6 +9220,9 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -8219,6 +9251,9 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -8231,6 +9266,9 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8302,6 +9340,9 @@ class ApmAtom_probeIDRawData(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     number_of_dld_wires = Quantity(
         type=MEnum(["1", "2", "3"]),
@@ -8318,6 +9359,9 @@ class ApmAtom_probeIDRawData(Process):
             optionality="recommended",
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     dld_wire_names = Quantity(
@@ -8410,6 +9454,9 @@ class ApmAtom_probeIDRawDataProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -8422,6 +9469,9 @@ class ApmAtom_probeIDRawDataProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8461,6 +9511,9 @@ class ApmAtom_probeIDRawDataSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -8472,6 +9525,9 @@ class ApmAtom_probeIDRawDataSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -8485,6 +9541,9 @@ class ApmAtom_probeIDRawDataSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -8496,6 +9555,9 @@ class ApmAtom_probeIDRawDataSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8558,6 +9620,9 @@ class ApmAtom_probeIDHitFinding(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     hit_positions = Quantity(
         type=np.float64,
@@ -8596,6 +9661,9 @@ class ApmAtom_probeIDHitFinding(Process):
             optionality="required",
             parent_field="hit_positions",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     total_event_golden = Quantity(
         type=np.int64,
@@ -8617,6 +9685,10 @@ class ApmAtom_probeIDHitFinding(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     total_event_incomplete = Quantity(
         type=np.int64,
@@ -8638,6 +9710,10 @@ class ApmAtom_probeIDHitFinding(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     total_event_multiple = Quantity(
         type=np.int64,
@@ -8659,6 +9735,10 @@ class ApmAtom_probeIDHitFinding(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     total_event_partials = Quantity(
         type=np.int64,
@@ -8680,6 +9760,10 @@ class ApmAtom_probeIDHitFinding(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     total_event_record = Quantity(
         type=np.int64,
@@ -8701,6 +9785,10 @@ class ApmAtom_probeIDHitFinding(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     hit_quality_type = Quantity(
         type=str,
@@ -8802,6 +9890,9 @@ class ApmAtom_probeIDHitFindingProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -8814,6 +9905,9 @@ class ApmAtom_probeIDHitFindingProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8845,6 +9939,9 @@ class ApmAtom_probeIDHitFindingConfig(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -8856,6 +9953,9 @@ class ApmAtom_probeIDHitFindingConfig(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -8869,6 +9969,9 @@ class ApmAtom_probeIDHitFindingConfig(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -8880,6 +9983,9 @@ class ApmAtom_probeIDHitFindingConfig(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8944,6 +10050,9 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     evaporation_id_offset = Quantity(
         type=np.int64,
@@ -8963,6 +10072,10 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     evaporation_id = Quantity(
         type=np.int64,
@@ -9020,6 +10133,9 @@ class ApmAtom_probeIDHitSpatialFilteringProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -9032,6 +10148,9 @@ class ApmAtom_probeIDHitSpatialFilteringProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9063,6 +10182,9 @@ class ApmAtom_probeIDHitSpatialFilteringSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -9074,6 +10196,9 @@ class ApmAtom_probeIDHitSpatialFilteringSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -9087,6 +10212,9 @@ class ApmAtom_probeIDHitSpatialFilteringSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -9098,6 +10226,9 @@ class ApmAtom_probeIDHitSpatialFilteringSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9132,6 +10263,10 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -9147,6 +10282,10 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -9162,6 +10301,10 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9234,6 +10377,9 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     raw_tof = Quantity(
         type=np.float64,
@@ -9264,6 +10410,10 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     calibrated_tof = Quantity(
         type=np.float64,
@@ -9310,6 +10460,9 @@ class ApmAtom_probeIDVoltageAndBowlProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -9322,6 +10475,9 @@ class ApmAtom_probeIDVoltageAndBowlProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9353,6 +10509,9 @@ class ApmAtom_probeIDVoltageAndBowlSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -9364,6 +10523,9 @@ class ApmAtom_probeIDVoltageAndBowlSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -9377,6 +10539,9 @@ class ApmAtom_probeIDVoltageAndBowlSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -9388,6 +10553,9 @@ class ApmAtom_probeIDVoltageAndBowlSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9424,6 +10592,9 @@ class ApmAtom_probeIDVoltageAndBowlConfig(Parameters):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -9488,6 +10659,9 @@ class ApmAtom_probeIDMassToChargeConversion(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     mass_to_charge = Quantity(
         type=np.float64,
@@ -9534,6 +10708,9 @@ class ApmAtom_probeIDMassToChargeConversionProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -9546,6 +10723,9 @@ class ApmAtom_probeIDMassToChargeConversionProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9577,6 +10757,9 @@ class ApmAtom_probeIDMassToChargeConversionSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -9588,6 +10771,9 @@ class ApmAtom_probeIDMassToChargeConversionSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -9601,6 +10787,9 @@ class ApmAtom_probeIDMassToChargeConversionSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -9612,6 +10801,9 @@ class ApmAtom_probeIDMassToChargeConversionSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9659,6 +10851,9 @@ class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     mass_resolution = Quantity(
@@ -9766,6 +10961,9 @@ class ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION(Atom):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9849,6 +11047,9 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     reconstructed_positions = Quantity(
         type=np.float64,
@@ -9880,6 +11081,10 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
             optionality="recommended",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     field_of_view = Quantity(
         type=np.float64,
@@ -9895,6 +11100,10 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9927,6 +11136,9 @@ class ApmAtom_probeIDReconstructionProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -9939,6 +11151,9 @@ class ApmAtom_probeIDReconstructionProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9979,6 +11194,9 @@ class ApmAtom_probeIDReconstructionSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -9990,6 +11208,9 @@ class ApmAtom_probeIDReconstructionSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -10003,6 +11224,9 @@ class ApmAtom_probeIDReconstructionSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -10014,6 +11238,9 @@ class ApmAtom_probeIDReconstructionSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10058,6 +11285,9 @@ class ApmAtom_probeIDReconstructionResults(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -10069,6 +11299,9 @@ class ApmAtom_probeIDReconstructionResults(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -10082,6 +11315,9 @@ class ApmAtom_probeIDReconstructionResults(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -10093,6 +11329,9 @@ class ApmAtom_probeIDReconstructionResults(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10127,6 +11366,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     voltage_filter_final = Quantity(
         type=np.float64,
@@ -10142,6 +11385,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     protocol_name = Quantity(
         type=str,
@@ -10156,6 +11403,9 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             enumeration=["bas", "geiser", "gault", "cameca"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     primary_element = Quantity(
         type=str,
@@ -10167,6 +11417,9 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     efficiency = Quantity(
@@ -10183,6 +11436,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     flight_path = Quantity(
         type=np.float64,
@@ -10198,6 +11455,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     evaporation_field = Quantity(
         type=str,
@@ -10209,6 +11470,9 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     image_compression = Quantity(
@@ -10225,6 +11489,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     kfactor = Quantity(
         type=np.float64,
@@ -10240,6 +11508,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     shank_angle = Quantity(
         type=np.float64,
@@ -10255,6 +11527,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     ion_volume = Quantity(
         type=np.float64,
@@ -10270,6 +11546,10 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             optionality="recommended",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     crystallographic_calibration = Quantity(
         type=str,
@@ -10282,6 +11562,9 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     comment = Quantity(
         type=str,
@@ -10293,6 +11576,9 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10367,6 +11653,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -10379,6 +11668,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10410,6 +11702,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -10448,6 +11743,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -10488,6 +11786,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             optionality="required",
             parent_field="axis_z",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_z__long_name = Quantity(
         type=str,
@@ -10500,6 +11801,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_z",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_y = Quantity(
@@ -10527,6 +11831,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             optionality="required",
             parent_field="axis_y",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_y__long_name = Quantity(
         type=str,
@@ -10539,6 +11846,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_y",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_x = Quantity(
@@ -10566,6 +11876,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             optionality="required",
             parent_field="axis_x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_x__long_name = Quantity(
         type=str,
@@ -10578,6 +11891,9 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_x",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10672,6 +11988,9 @@ class ApmAtom_probeIDRanging(ApmRanging):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10704,6 +12023,9 @@ class ApmAtom_probeIDRangingProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -10716,6 +12038,9 @@ class ApmAtom_probeIDRangingProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10751,6 +12076,9 @@ class ApmAtom_probeIDRangingSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -10762,6 +12090,9 @@ class ApmAtom_probeIDRangingSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -10775,6 +12106,9 @@ class ApmAtom_probeIDRangingSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -10786,6 +12120,9 @@ class ApmAtom_probeIDRangingSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10840,6 +12177,9 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     min_mass_to_charge = Quantity(
         type=np.float64,
@@ -10853,6 +12193,9 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     max_mass_to_charge = Quantity(
         type=np.float64,
@@ -10865,6 +12208,9 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     n_mass_to_charge = Quantity(
@@ -10881,6 +12227,10 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10913,6 +12263,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -10925,6 +12278,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -10955,6 +12311,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -10994,6 +12353,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -11019,6 +12381,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_mass_to_charge = Quantity(
@@ -11046,6 +12411,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
             optionality="required",
             parent_field="axis_mass_to_charge",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_mass_to_charge__long_name = Quantity(
         type=str,
@@ -11058,6 +12426,9 @@ class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
             name_type="specified",
             optionality="recommended",
             parent_field="axis_mass_to_charge",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11102,6 +12473,9 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     background = Quantity(
         type=np.float64,
@@ -11118,6 +12492,9 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     mrp_value = Quantity(
@@ -11147,6 +12524,10 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             optionality="recommended",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mrp_mass_to_charge = Quantity(
         type=np.float64,
@@ -11163,6 +12544,9 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     mrp_voltage = Quantity(
@@ -11182,6 +12566,10 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             optionality="recommended",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     mrp_flight_path_length = Quantity(
         type=np.float64,
@@ -11198,6 +12586,10 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11230,6 +12622,9 @@ class ApmAtom_probeIDRangingBackgroundQuantificationProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -11242,6 +12637,9 @@ class ApmAtom_probeIDRangingBackgroundQuantificationProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11298,6 +12696,9 @@ class ApmAtom_probeIDRangingPeakSearch(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11330,6 +12731,9 @@ class ApmAtom_probeIDRangingPeakSearchProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -11342,6 +12746,9 @@ class ApmAtom_probeIDRangingPeakSearchProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11375,6 +12782,9 @@ class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -11386,6 +12796,9 @@ class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     category = Quantity(
@@ -11418,6 +12831,9 @@ class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
             optionality="recommended",
             enumeration=["0", "1", "2", "3", "4", "5"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     position = Quantity(
         type=np.float64,
@@ -11429,6 +12845,9 @@ class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -11486,6 +12905,9 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     number_of_ion_types = Quantity(
         type=np.int64,
@@ -11501,6 +12923,10 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     maximum_number_of_atoms_per_molecular_ion = Quantity(
         type=np.int64,
@@ -11516,6 +12942,10 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     iontypes = Quantity(
         type=np.int64,
@@ -11570,6 +13000,9 @@ class ApmAtom_probeIDRangingPeakIdentificationProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -11582,6 +13015,9 @@ class ApmAtom_probeIDRangingPeakIdentificationProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11653,6 +13089,10 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mass_to_charge_range = Quantity(
         type=np.float64,
@@ -11694,6 +13134,9 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11871,6 +13314,10 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     min_abundance = Quantity(
         type=np.float64,
@@ -11886,6 +13333,10 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     sacrifice_isotopic_uniqueness = Quantity(
         type=bool,
@@ -11897,6 +13348,9 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 

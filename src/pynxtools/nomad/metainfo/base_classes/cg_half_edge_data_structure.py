@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -87,6 +92,9 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     number_of_vertices = Quantity(
@@ -151,6 +159,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_edge = Quantity(
         type=np.int64,
@@ -172,6 +184,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_face = Quantity(
         type=np.int64,
@@ -189,6 +205,9 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     position = Quantity(
@@ -351,6 +370,9 @@ class CgHalfEdgeDataStructure(CgPrimitive):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -235,6 +240,9 @@ class Electronanalyzer(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -247,6 +255,9 @@ class Electronanalyzer(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     name_quantity__short_name = Quantity(
@@ -261,6 +272,9 @@ class Electronanalyzer(Component):
             name_type="specified",
             optionality="optional",
             parent_field="name",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     work_function = Quantity(
@@ -305,6 +319,10 @@ class Electronanalyzer(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     voltage_range = Quantity(
         type=np.float64,
@@ -324,6 +342,10 @@ class Electronanalyzer(Component):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     fast_axes = Quantity(
         type=str,
@@ -420,6 +442,10 @@ class ElectronanalyzerEnergyResolution(Resolution):
             optionality="optional",
             enumeration=["energy"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="energy",
+        ),
     )
     resolution = Quantity(
         type=np.float64,
@@ -441,6 +467,10 @@ class ElectronanalyzerEnergyResolution(Resolution):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     resolution_errors = Quantity(
         type=np.float64,
@@ -456,6 +486,10 @@ class ElectronanalyzerEnergyResolution(Resolution):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -491,6 +525,10 @@ class ElectronanalyzerMomentumResolution(Resolution):
             optionality="optional",
             enumeration=["momentum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="momentum",
+        ),
     )
     resolution = Quantity(
         type=np.float64,
@@ -506,6 +544,10 @@ class ElectronanalyzerMomentumResolution(Resolution):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     resolution_errors = Quantity(
         type=np.float64,
@@ -521,6 +563,10 @@ class ElectronanalyzerMomentumResolution(Resolution):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -556,6 +602,10 @@ class ElectronanalyzerAngularResolution(Resolution):
             optionality="optional",
             enumeration=["angle"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="angle",
+        ),
     )
     resolution = Quantity(
         type=np.float64,
@@ -571,6 +621,10 @@ class ElectronanalyzerAngularResolution(Resolution):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     resolution_errors = Quantity(
         type=np.float64,
@@ -586,6 +640,10 @@ class ElectronanalyzerAngularResolution(Resolution):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -626,6 +684,10 @@ class ElectronanalyzerSpatialResolution(Resolution):
             optionality="optional",
             enumeration=["length"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="length",
+        ),
     )
     resolution = Quantity(
         type=np.float64,
@@ -641,6 +703,10 @@ class ElectronanalyzerSpatialResolution(Resolution):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     resolution_errors = Quantity(
         type=np.float64,
@@ -656,6 +722,10 @@ class ElectronanalyzerSpatialResolution(Resolution):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -707,6 +777,10 @@ class ElectronanalyzerTransmissionFunction(Data):
             name_type="specified",
             optionality="optional",
             enumeration=["relative_intensity"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="relative_intensity",
         ),
     )
     axes = Quantity(
