@@ -1113,10 +1113,6 @@ class XpcsInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     count_time = Quantity(
         type=np.float64,
@@ -1210,10 +1206,6 @@ class XpcsInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     y_pixel_size = Quantity(
         type=np.float64,
@@ -1230,10 +1222,6 @@ class XpcsInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

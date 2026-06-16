@@ -853,6 +853,20 @@ def _build_named_concept(
         ):
             continue
         qty = _build_quantity_from_node(child)
+        # Suppress ELN annotation when the override has no explicit shape but
+        # the base class field is multi-dimensional: NOMAD's __init_metainfo__
+        # inherits the parent's shape, making the ELN validator fail with
+        # "Only scalars or lists can be edited."
+        if qty.eln_component is not None and not qty.shape:
+            base_node = base_lookup.get(child.name)
+            if (
+                base_node is not None
+                and isinstance(base_node, NXTreeField)
+                and base_node.shape is not None
+                and len(base_node.shape) > 1
+            ):
+                qty.eln_component = None
+                qty.eln_default = None
         # Apply same conflict resolution as top-level quantities: ancestor
         # SubSection wins, field Quantity gets _field suffix.
         if qty.python_name in concept_field_suffix:

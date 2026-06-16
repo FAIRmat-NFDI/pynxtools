@@ -461,9 +461,6 @@ class StxmInstrumentDetector(Detector):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

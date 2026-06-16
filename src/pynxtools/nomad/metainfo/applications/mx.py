@@ -757,9 +757,6 @@ class MxInstrumentDetector(Detector):
             optionality="recommended",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -950,9 +947,6 @@ class MxInstrumentDetector(Detector):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     flatfield_error = Quantity(
         type=np.float64,
@@ -988,9 +982,6 @@ class MxInstrumentDetector(Detector):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pixel_mask = Quantity(
