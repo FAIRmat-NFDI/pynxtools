@@ -33,7 +33,8 @@ import numpy as np
 
 {% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections" %}from {{ mod }} import {{ cls }}
 {% endif %}{% endfor %}{% if needs_basesections %}from nomad.datamodel.metainfo import basesections
-{% endif %}from nomad.metainfo import (
+{% endif %}from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum, SchemaAnnotation
+from nomad.metainfo import (
     MEnum,
     Quantity,
     Section,
@@ -74,6 +75,9 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         links=["{{ class_doc_url }}"],
         {% if nx_category == "application" or nx_name == "NXentry" %}
         categories=[ExperimentCategory],
+        {% endif %}
+        {% if nx_name in ("NXentry", "NXroot") %}
+        a_schema=SchemaAnnotation(enabled=False),
         {% endif %}
         a_nexus_definition=NeXusDefinition(
             nx_class="{{ nx_name }}",
@@ -193,6 +197,17 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
             deprecated="{{ qty.node.deprecated }}",
             {% endif %}
         ),
+        {% endif %}
+        {% if qty.eln_component %}
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.{{ qty.eln_component }},
+            {% if qty.eln_default is not none %}
+            default={{ qty.eln_default | tojson }},
+            {% endif %}
+        ),
+        {% if qty.eln_component == "NumberEditQuantity" and qty.default_unit %}
+        a_display={'unit': '{{ qty.default_unit }}'},
+        {% endif %}
         {% endif %}
     )
     {% endfor %}
@@ -375,6 +390,17 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             deprecated="{{ qty.node.deprecated }}",
             {% endif %}
         ),
+        {% endif %}
+        {% if qty.eln_component %}
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.{{ qty.eln_component }},
+            {% if qty.eln_default is not none %}
+            default={{ qty.eln_default | tojson }},
+            {% endif %}
+        ),
+        {% if qty.eln_component == "NumberEditQuantity" and qty.default_unit %}
+        a_display={'unit': '{{ qty.default_unit }}'},
+        {% endif %}
         {% endif %}
     )
     {% endfor %}

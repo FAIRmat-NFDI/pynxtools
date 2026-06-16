@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -116,6 +121,10 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
             optionality="required",
             enumeration=["NXapm_paraprobe_surfacer_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_surfacer_results",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -128,6 +137,9 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -252,6 +264,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
             units="NX_UNITLESS",
             enumeration=["2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     type = Quantity(
         type=MEnum(
@@ -273,6 +288,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
                 "undefined",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     mode = Quantity(
         type=MEnum(["general", "regularized"]),
@@ -286,6 +304,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
             optionality="required",
             enumeration=["general", "regularized"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     alpha = Quantity(
         type=np.float64,
@@ -298,6 +319,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -346,6 +370,10 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDWindow(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -362,6 +390,10 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDWindow(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -433,6 +465,10 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSet(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -469,6 +505,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetT
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     number_of_vertices = Quantity(
         type=np.int64,
@@ -500,6 +539,10 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetT
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_offset_vertex = Quantity(
         type=np.int64,
@@ -512,6 +555,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetT
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     indices_offset_face = Quantity(
         type=np.int64,
@@ -523,6 +569,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetT
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     vertices = Quantity(
@@ -588,6 +637,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetT
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     volume = Quantity(
@@ -660,6 +712,10 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetr
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     volume = Quantity(
         type=np.float64,
@@ -728,6 +784,10 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetr
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_offset_vertex = Quantity(
         type=np.int64,
@@ -740,6 +800,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetr
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     indices_offset_face = Quantity(
         type=np.int64,
@@ -751,6 +814,9 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetr
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     vertices = Quantity(

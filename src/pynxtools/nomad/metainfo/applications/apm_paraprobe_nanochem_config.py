@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -174,6 +179,10 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_nanochem_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_nanochem_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -186,6 +195,9 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -260,6 +272,9 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             name_type="specified",
             optionality="required",
             enumeration=["compute", "load_existent"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     nuclide_whitelist = Quantity(
@@ -347,6 +362,10 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     kernel_variance = Quantity(
         type=np.float64,
@@ -389,6 +408,9 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             optionality="required",
             enumeration=["none", "composition", "concentration"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     has_scalar_fields = Quantity(
         type=bool,
@@ -403,6 +425,9 @@ class ApmParaprobeNanochemConfigDelocalizationID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -491,6 +516,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             optionality="required",
             enumeration=["default", "keep_edge_triangles"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     edge_threshold = Quantity(
         type=np.float64,
@@ -525,6 +553,10 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     phi = Quantity(
         type=np.float64,
@@ -548,6 +580,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     has_triangle_soup = Quantity(
         type=bool,
@@ -568,6 +603,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_object = Quantity(
@@ -600,6 +638,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_object_geometry = Quantity(
         type=bool,
@@ -627,6 +668,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_object_properties = Quantity(
         type=bool,
@@ -642,6 +686,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_object_obb = Quantity(
@@ -667,6 +714,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_object_ions = Quantity(
@@ -704,6 +754,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_object_edge_contact = Quantity(
         type=bool,
@@ -725,6 +778,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_proxy = Quantity(
@@ -752,6 +808,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_proxy_geometry = Quantity(
         type=bool,
@@ -764,6 +823,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_proxy_properties = Quantity(
@@ -778,6 +840,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_proxy_obb = Quantity(
         type=bool,
@@ -790,6 +855,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_proxy_ions = Quantity(
@@ -804,6 +872,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_proxy_edge_contact = Quantity(
         type=bool,
@@ -816,6 +887,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_object_proxigram = Quantity(
@@ -833,6 +907,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_object_proxigram_edge_contact = Quantity(
@@ -862,6 +939,9 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -936,6 +1016,9 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             optionality="required",
             enumeration=["default", "control_point_file"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     method = Quantity(
         type=MEnum(["pca_plus_dcom"]),
@@ -955,6 +1038,10 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             optionality="required",
             enumeration=["pca_plus_dcom"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="pca_plus_dcom",
+        ),
     )
     number_of_iterations = Quantity(
         type=np.int64,
@@ -971,6 +1058,10 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     target_edge_length = Quantity(
         type=np.float64,
@@ -1126,6 +1217,10 @@ class ApmParaprobeNanochemConfigOned_profileID(
             optionality="required",
             enumeration=["project_to_triangle_plane"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="project_to_triangle_plane",
+        ),
     )
     roi_orientation = Quantity(
         type=MEnum(["triangle_outer_unit_normal"]),
@@ -1142,6 +1237,10 @@ class ApmParaprobeNanochemConfigOned_profileID(
             name_type="specified",
             optionality="required",
             enumeration=["triangle_outer_unit_normal"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="triangle_outer_unit_normal",
         ),
     )
     roi_cylinder_height = Quantity(
@@ -1163,6 +1262,10 @@ class ApmParaprobeNanochemConfigOned_profileID(
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     roi_cylinder_radius = Quantity(
         type=np.float64,
@@ -1182,6 +1285,10 @@ class ApmParaprobeNanochemConfigOned_profileID(
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1251,6 +1358,10 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylind
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     center = Quantity(
         type=np.float64,

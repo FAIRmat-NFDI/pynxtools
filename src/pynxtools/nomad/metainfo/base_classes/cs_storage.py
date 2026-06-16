@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -107,6 +112,9 @@ class CsStorageCircuit(Circuit):
             optionality="optional",
             enumeration=["solid_state_disk", "hard_disk", "optical", "tape"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     max_physical_capacity = Quantity(
         type=np.int64,
@@ -120,6 +128,9 @@ class CsStorageCircuit(Circuit):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     max_read_rate = Quantity(
@@ -135,6 +146,9 @@ class CsStorageCircuit(Circuit):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     max_write_rate = Quantity(
         type=np.float64,
@@ -148,6 +162,9 @@ class CsStorageCircuit(Circuit):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

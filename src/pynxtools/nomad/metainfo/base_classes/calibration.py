@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -130,6 +135,9 @@ class Calibration(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     physical_quantity = Quantity(
         type=str,
@@ -145,6 +153,9 @@ class Calibration(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_calibration_method = Quantity(
@@ -162,6 +173,9 @@ class Calibration(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_calibration_reference = Quantity(
@@ -182,6 +196,9 @@ class Calibration(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     last_process = Quantity(
         type=str,
@@ -198,6 +215,9 @@ class Calibration(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     applied = Quantity(
         type=bool,
@@ -210,6 +230,9 @@ class Calibration(Process):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     original_axis = Quantity(
@@ -251,6 +274,9 @@ class Calibration(Process):
             optionality="optional",
             parent_field="original_axis",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     original_axis__input_path = Quantity(
         type=str,
@@ -268,6 +294,9 @@ class Calibration(Process):
             name_type="specified",
             optionality="optional",
             parent_field="original_axis",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fit_formula_description = Quantity(
@@ -294,6 +323,9 @@ class Calibration(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     mapping_MAPPING = Quantity(
@@ -351,6 +383,9 @@ class Calibration(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -399,6 +434,9 @@ class CalibrationFitFormulaInputs(Parameters):
             name_type="specified",
             optionality="optional",
             parent_field="PARAMETER",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -464,6 +502,9 @@ class CalibrationParameters(Parameters):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     offset = Quantity(
         type=np.float64,
@@ -482,6 +523,9 @@ class CalibrationParameters(Parameters):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

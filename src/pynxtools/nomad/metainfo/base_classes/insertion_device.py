@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -116,6 +121,9 @@ class InsertionDevice(Component):
             optionality="optional",
             enumeration=["undulator", "wiggler", "wavelength_shifter"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     gap = Quantity(
         type=np.float64,
@@ -132,6 +140,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     taper = Quantity(
         type=np.float64,
@@ -151,6 +163,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     phase = Quantity(
         type=np.float64,
@@ -166,6 +182,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     poles = Quantity(
         type=np.int64,
@@ -182,6 +202,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     magnetic_wavelength = Quantity(
         type=np.float64,
@@ -197,6 +221,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     k = Quantity(
         type=np.float64,
@@ -213,6 +241,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     length = Quantity(
         type=np.float64,
@@ -229,6 +261,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     power = Quantity(
         type=np.float64,
@@ -245,6 +281,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
     energy = Quantity(
         type=np.float64,
@@ -261,6 +301,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     bandwidth = Quantity(
         type=np.float64,
@@ -277,6 +321,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     harmonic = Quantity(
         type=np.int64,
@@ -293,6 +341,10 @@ class InsertionDevice(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     depends_on = Quantity(
         type=str,
@@ -307,6 +359,9 @@ class InsertionDevice(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

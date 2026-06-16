@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -131,6 +136,10 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
             optionality="required",
             enumeration=["NXapm_paraprobe_nanochem_results"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_nanochem_results",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -143,6 +152,9 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -223,6 +235,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDWindow(CsFilterBooleanMask):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -238,6 +253,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDWindow(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -253,6 +272,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDWindow(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -338,6 +361,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -354,6 +380,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     origin = Quantity(
         type=np.float64,
@@ -383,6 +413,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             name_type="specified",
             optionality="required",
             enumeration=["cubic"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="cubic",
         ),
     )
     cell_dimensions = Quantity(
@@ -452,6 +486,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     kernel_size = Quantity(
         type=np.int64,
@@ -486,6 +524,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             name_type="specified",
             optionality="required",
             enumeration=["gaussian"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="gaussian",
         ),
     )
     kernel_sigma = Quantity(
@@ -549,6 +591,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
             name_type="specified",
             optionality="required",
             enumeration=["total", "candidates", "composition", "concentration"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -619,6 +664,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBox(CgHexahedron):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -662,6 +711,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     face_index_offset = Quantity(
         type=np.int64,
@@ -685,6 +738,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     vertices = Quantity(
         type=np.float64,
@@ -781,6 +838,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     boundaries = Quantity(
         type=str,
@@ -1053,6 +1114,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     isovalue = Quantity(
         type=np.float64,
@@ -1066,6 +1130,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     marching_cubes = Quantity(
@@ -1085,6 +1152,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1137,6 +1207,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -1152,6 +1225,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -1167,6 +1244,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1232,6 +1313,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     number_of_faces = Quantity(
         type=np.int64,
@@ -1243,6 +1327,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             type="NX_POSINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     vertex_index_offset = Quantity(
@@ -1256,6 +1343,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     face_index_offset = Quantity(
         type=np.int64,
@@ -1267,6 +1357,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     vertices = Quantity(
@@ -2244,6 +2337,10 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     nuclide_hash = Quantity(
         type=np.int64,
@@ -2479,6 +2576,9 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             optionality="required",
             enumeration=["before", "after"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     dimensionality = Quantity(
         type=MEnum(["1", "2", "3"]),
@@ -2495,6 +2595,9 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -2510,6 +2613,10 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -2525,6 +2632,10 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     area = Quantity(
         type=np.float64,
@@ -2620,6 +2731,9 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     number_of_vertices = Quantity(
         type=np.int64,
@@ -2651,6 +2765,10 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_vertex = Quantity(
         type=np.int64,
@@ -2666,6 +2784,10 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_edge = Quantity(
         type=np.int64,
@@ -2681,6 +2803,10 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset_face = Quantity(
         type=np.int64,
@@ -2696,6 +2822,10 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_face = Quantity(
         type=np.int64,
@@ -2917,6 +3047,9 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -2932,6 +3065,10 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     center = Quantity(
         type=np.float64,

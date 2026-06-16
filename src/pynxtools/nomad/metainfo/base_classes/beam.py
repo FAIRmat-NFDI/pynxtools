@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -131,6 +136,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_energy = Quantity(
         type=np.float64,
@@ -174,6 +183,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     incident_energy_weights = Quantity(
         type=np.float64,
@@ -194,6 +207,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     final_energy = Quantity(
         type=np.float64,
@@ -266,6 +283,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_wavelength_weights = Quantity(
         type=np.float64,
@@ -285,6 +306,9 @@ class Beam(Object):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     incident_wavelength_spread = Quantity(
@@ -523,6 +547,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     average_power = Quantity(
         type=np.float64,
@@ -539,6 +567,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
     fluence = Quantity(
         type=np.float64,
@@ -555,6 +587,10 @@ class Beam(Object):
             optionality="optional",
             units="mJ/cm^2",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "mJ/cm^2"},
     )
     pulse_duration = Quantity(
         type=np.float64,
@@ -571,6 +607,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     pulse_delay = Quantity(
         type=np.float64,
@@ -587,6 +627,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     pulse_delay__reference_beam = Quantity(
         type=str,
@@ -606,6 +650,9 @@ class Beam(Object):
             name_type="specified",
             optionality="optional",
             parent_field="pulse_delay",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     frog_trace = Quantity(
@@ -680,6 +727,9 @@ class Beam(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     chirp_GDD = Quantity(
         type=np.float64,
@@ -696,6 +746,10 @@ class Beam(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     depends_on = Quantity(
         type=str,
@@ -716,6 +770,9 @@ class Beam(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -824,6 +881,9 @@ class BeamTransformations(Transformations):
             optionality="optional",
             parent_field="BEAMdirection",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reference_plane = Quantity(
         type=np.float64,
@@ -847,6 +907,10 @@ class BeamTransformations(Transformations):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     reference_plane__vector = Quantity(
         type=np.float64,
@@ -880,6 +944,9 @@ class BeamTransformations(Transformations):
             name_type="specified",
             optionality="optional",
             parent_field="reference_plane",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

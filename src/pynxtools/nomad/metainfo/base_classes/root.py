@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -64,6 +69,7 @@ class Root(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot"
         ],
+        a_schema=SchemaAnnotation(enabled=False),
         a_nexus_definition=NeXusDefinition(
             nx_class="NXroot",
             category="base",
@@ -96,6 +102,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -109,6 +118,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_update_time = Quantity(
         type=Datetime,
@@ -121,6 +133,9 @@ class Root(Object):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     NeXus_version = Quantity(
@@ -140,6 +155,9 @@ class Root(Object):
             optionality="optional",
             deprecated="NAPI is frozen.",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     NeXus_repository = Quantity(
         type=str,
@@ -156,6 +174,9 @@ class Root(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     NeXus_release = Quantity(
@@ -186,6 +207,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     HDF_version = Quantity(
         type=str,
@@ -198,6 +222,9 @@ class Root(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     HDF5_Version = Quantity(
@@ -216,6 +243,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     XML_version = Quantity(
         type=str,
@@ -229,6 +259,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     h5py_version = Quantity(
         type=str,
@@ -241,6 +274,9 @@ class Root(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     partial = Quantity(
@@ -261,6 +297,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     creator = Quantity(
         type=str,
@@ -274,6 +313,9 @@ class Root(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     creator_version = Quantity(
         type=str,
@@ -286,6 +328,9 @@ class Root(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     default = Quantity(
@@ -311,6 +356,9 @@ class Root(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

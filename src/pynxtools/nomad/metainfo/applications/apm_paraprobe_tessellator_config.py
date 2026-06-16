@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -90,6 +95,10 @@ class ApmParaprobeTessellatorConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_tessellator_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_tessellator_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -102,6 +111,9 @@ class ApmParaprobeTessellatorConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -152,6 +164,10 @@ class ApmParaprobeTessellatorConfigTessellateID(
             optionality="required",
             enumeration=["default"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="default",
+        ),
     )
     has_cell_volume = Quantity(
         type=bool,
@@ -164,6 +180,9 @@ class ApmParaprobeTessellatorConfigTessellateID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_cell_neighbors = Quantity(
@@ -181,6 +200,9 @@ class ApmParaprobeTessellatorConfigTessellateID(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_cell_geometry = Quantity(
         type=bool,
@@ -195,6 +217,9 @@ class ApmParaprobeTessellatorConfigTessellateID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     has_cell_edge_detection = Quantity(
@@ -216,6 +241,9 @@ class ApmParaprobeTessellatorConfigTessellateID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 

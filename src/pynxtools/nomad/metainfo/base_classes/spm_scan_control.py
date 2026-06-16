@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -182,6 +187,9 @@ class SpmScanControl(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     scan_time_end = Quantity(
         type=Datetime,
@@ -197,6 +205,9 @@ class SpmScanControl(Object):
             name_type="specified",
             optionality="optional",
             units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     independent_scan_axes = Quantity(
@@ -215,6 +226,9 @@ class SpmScanControl(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     scan_resolutionN = Quantity(
@@ -267,6 +281,9 @@ class SpmScanControl(Object):
             optionality="optional",
             enumeration=["trajectory", "mesh", "snake", "spiral", "linear", "tilt"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     scan_control_type = Quantity(
         type=MEnum(["stepping", "continuous", "oscillating"]),
@@ -280,6 +297,9 @@ class SpmScanControl(Object):
             name_type="specified",
             optionality="optional",
             enumeration=["stepping", "continuous", "oscillating"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 

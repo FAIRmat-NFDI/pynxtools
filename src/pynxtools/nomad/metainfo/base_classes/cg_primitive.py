@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -114,6 +119,9 @@ class CgPrimitive(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     dimensionality = Quantity(
         type=MEnum(["1", "2", "3"]),
@@ -130,6 +138,9 @@ class CgPrimitive(Object):
             optionality="optional",
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     cardinality = Quantity(
@@ -149,6 +160,10 @@ class CgPrimitive(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -177,6 +192,10 @@ class CgPrimitive(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices = Quantity(
         type=np.int64,
@@ -391,6 +410,9 @@ class CgPrimitive(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     is_triangle_mesh = Quantity(
         type=bool,
@@ -404,6 +426,9 @@ class CgPrimitive(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     is_surface_mesh = Quantity(
         type=bool,
@@ -416,6 +441,9 @@ class CgPrimitive(Object):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     is_geodesic_mesh = Quantity(
@@ -448,6 +476,9 @@ class CgPrimitive(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -463,6 +494,9 @@ class CgPrimitive(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

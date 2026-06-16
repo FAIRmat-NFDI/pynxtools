@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -161,6 +166,9 @@ class MicrostructureOdfConfiguration(Parameters):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_symmetry_point_group = Quantity(
         type=str,
@@ -178,6 +186,9 @@ class MicrostructureOdfConfiguration(Parameters):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     kernel_halfwidth = Quantity(
         type=np.float64,
@@ -194,6 +205,10 @@ class MicrostructureOdfConfiguration(Parameters):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     kernel_name = Quantity(
         type=str,
@@ -206,6 +221,9 @@ class MicrostructureOdfConfiguration(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     resolution = Quantity(
@@ -223,6 +241,10 @@ class MicrostructureOdfConfiguration(Parameters):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -266,6 +288,10 @@ class MicrostructureOdfCharacteristics(Process):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -308,6 +334,9 @@ class MicrostructureOdfKthExtrema(Process):
             optionality="optional",
             enumeration=["minima", "maxima"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     kth = Quantity(
         type=np.int64,
@@ -324,6 +353,10 @@ class MicrostructureOdfKthExtrema(Process):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     theta = Quantity(
         type=np.float64,
@@ -343,6 +376,10 @@ class MicrostructureOdfKthExtrema(Process):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     location = Quantity(
         type=np.float64,
@@ -421,6 +458,10 @@ class MicrostructureOdfSampling(Process):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     euler = Quantity(
         type=np.float64,

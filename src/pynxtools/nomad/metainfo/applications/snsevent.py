@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -139,6 +144,9 @@ class Snsevent(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     collection_title = Quantity(
         type=str,
@@ -150,6 +158,9 @@ class Snsevent(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition = Quantity(
@@ -164,6 +175,10 @@ class Snsevent(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXsnsevent"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXsnsevent",
         ),
     )
     duration = Quantity(
@@ -180,6 +195,10 @@ class Snsevent(Entry):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     end_time = Quantity(
         type=Datetime,
@@ -191,6 +210,9 @@ class Snsevent(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     entry_identifier = Quantity(
@@ -204,6 +226,9 @@ class Snsevent(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_identifier = Quantity(
         type=str,
@@ -216,6 +241,9 @@ class Snsevent(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     notes_quantity = Quantity(
         type=str,
@@ -227,6 +255,9 @@ class Snsevent(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     proton_charge = Quantity(
@@ -243,6 +274,10 @@ class Snsevent(Entry):
             optionality="required",
             units="NX_CHARGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "coulomb"},
     )
     raw_frames = Quantity(
         type=np.int64,
@@ -254,6 +289,9 @@ class Snsevent(Entry):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     run_number = Quantity(
@@ -267,6 +305,9 @@ class Snsevent(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -279,6 +320,9 @@ class Snsevent(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -290,6 +334,9 @@ class Snsevent(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     total_counts = Quantity(
@@ -306,6 +353,10 @@ class Snsevent(Entry):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     total_uncounted_counts = Quantity(
         type=np.int64,
@@ -321,6 +372,10 @@ class Snsevent(Entry):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -410,6 +465,9 @@ class SnseventDaslogsLog(Log):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     average_value_errors = Quantity(
         type=np.float64,
@@ -423,6 +481,9 @@ class SnseventDaslogsLog(Log):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -434,6 +495,9 @@ class SnseventDaslogsLog(Log):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     duration = Quantity(
@@ -448,6 +512,9 @@ class SnseventDaslogsLog(Log):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     maximum_value = Quantity(
         type=np.float64,
@@ -461,6 +528,9 @@ class SnseventDaslogsLog(Log):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     minimum_value = Quantity(
         type=np.float64,
@@ -473,6 +543,9 @@ class SnseventDaslogsLog(Log):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     time = Quantity(
@@ -540,6 +613,9 @@ class SnseventDaslogsPositioner(Positioner):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     average_value_error = Quantity(
         type=np.float64,
@@ -553,6 +629,9 @@ class SnseventDaslogsPositioner(Positioner):
             optionality="optional",
             deprecated="see https://github.com/nexusformat/definitions/issues/821",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     average_value_errors = Quantity(
         type=np.float64,
@@ -564,6 +643,9 @@ class SnseventDaslogsPositioner(Positioner):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     description_quantity = Quantity(
@@ -577,6 +659,9 @@ class SnseventDaslogsPositioner(Positioner):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     duration = Quantity(
         type=np.float64,
@@ -588,6 +673,9 @@ class SnseventDaslogsPositioner(Positioner):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     maximum_value = Quantity(
@@ -601,6 +689,9 @@ class SnseventDaslogsPositioner(Positioner):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     minimum_value = Quantity(
         type=np.float64,
@@ -612,6 +703,9 @@ class SnseventDaslogsPositioner(Positioner):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     time = Quantity(
@@ -670,6 +764,9 @@ class SnseventSnshistotool(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     SNSmapping_file_name = Quantity(
         type=str,
@@ -682,6 +779,9 @@ class SnseventSnshistotool(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     author = Quantity(
         type=str,
@@ -693,6 +793,9 @@ class SnseventSnshistotool(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     command1 = Quantity(
@@ -707,6 +810,9 @@ class SnseventSnshistotool(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     date = Quantity(
         type=str,
@@ -718,6 +824,9 @@ class SnseventSnshistotool(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     description_quantity = Quantity(
@@ -731,6 +840,9 @@ class SnseventSnshistotool(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     version = Quantity(
         type=str,
@@ -742,6 +854,9 @@ class SnseventSnshistotool(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -987,6 +1102,9 @@ class SnseventInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     SNSgeometry_file_name = Quantity(
         type=str,
@@ -998,6 +1116,9 @@ class SnseventInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     SNStranslation_service = Quantity(
@@ -1011,6 +1132,9 @@ class SnseventInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     beamline = Quantity(
         type=str,
@@ -1023,6 +1147,9 @@ class SnseventInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1034,6 +1161,9 @@ class SnseventInstrument(Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1068,6 +1198,10 @@ class SnseventInstrumentSns(Source):
             optionality="required",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     name_quantity = Quantity(
         type=str,
@@ -1079,6 +1213,9 @@ class SnseventInstrumentSns(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     probe = Quantity(
@@ -1114,6 +1251,9 @@ class SnseventInstrumentSns(Source):
                 "positron",
                 "proton",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     type = Quantity(
@@ -1151,6 +1291,9 @@ class SnseventInstrumentSns(Source):
                 "Globar",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1328,6 +1471,9 @@ class SnseventInstrumentDetector(Detector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     x_pixel_offset = Quantity(
         type=np.float64,
@@ -1473,6 +1619,9 @@ class SnseventInstrumentDetectorOriginShape(Shape):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     shape = Quantity(
         type=MEnum(
@@ -1507,6 +1656,9 @@ class SnseventInstrumentDetectorOriginShape(Shape):
                 "nxparabolic",
                 "nxpolynomial",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     size = Quantity(
@@ -1593,6 +1745,10 @@ class SnseventInstrumentDiskChopper(DiskChopper):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1623,6 +1779,9 @@ class SnseventInstrumentModerator(Moderator):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     distance = Quantity(
         type=np.float64,
@@ -1638,6 +1797,10 @@ class SnseventInstrumentModerator(Moderator):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     temperature = Quantity(
         type=np.float64,
@@ -1653,6 +1816,10 @@ class SnseventInstrumentModerator(Moderator):
             optionality="required",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     type = Quantity(
         type=MEnum(
@@ -1687,6 +1854,9 @@ class SnseventInstrumentModerator(Moderator):
                 "Solid CH4",
                 "Solid H2",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1734,6 +1904,10 @@ class SnseventInstrumentAperture(Aperture):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1847,6 +2021,9 @@ class SnseventInstrumentApertureOriginShape(Shape):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     shape = Quantity(
         type=MEnum(
@@ -1881,6 +2058,9 @@ class SnseventInstrumentApertureOriginShape(Shape):
                 "nxparabolic",
                 "nxpolynomial",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     size = Quantity(
@@ -1967,6 +2147,10 @@ class SnseventInstrumentAttenuator(Attenuator):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2009,6 +2193,9 @@ class SnseventInstrumentCrystal(Crystal):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     wavelength = Quantity(
@@ -2087,6 +2274,9 @@ class SnseventInstrumentCrystalOrigin(Geometry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2152,6 +2342,9 @@ class SnseventInstrumentCrystalOriginShape(Shape):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     shape = Quantity(
         type=MEnum(
@@ -2186,6 +2379,9 @@ class SnseventInstrumentCrystalOriginShape(Shape):
                 "nxparabolic",
                 "nxpolynomial",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     size = Quantity(
@@ -2286,6 +2482,10 @@ class SnseventMonitor(Monitor):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     mode = Quantity(
         type=MEnum(["monitor", "timer"]),
@@ -2298,6 +2498,9 @@ class SnseventMonitor(Monitor):
             name_type="specified",
             optionality="required",
             enumeration=["monitor", "timer"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     time_of_flight = Quantity(
@@ -2345,6 +2548,9 @@ class SnseventSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     holder = Quantity(
         type=str,
@@ -2357,6 +2563,9 @@ class SnseventSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -2368,6 +2577,9 @@ class SnseventSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     name_quantity = Quantity(
@@ -2382,6 +2594,9 @@ class SnseventSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     nature = Quantity(
         type=str,
@@ -2393,6 +2608,9 @@ class SnseventSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2426,6 +2644,9 @@ class SnseventUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -2438,6 +2659,9 @@ class SnseventUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     role = Quantity(
         type=str,
@@ -2449,6 +2673,9 @@ class SnseventUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

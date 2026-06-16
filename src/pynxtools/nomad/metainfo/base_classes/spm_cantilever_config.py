@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -85,6 +90,9 @@ class SpmCantileverConfig(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     curvature_radiusN = Quantity(
         type=np.float64,
@@ -119,6 +127,9 @@ class SpmCantileverConfig(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     cantilever_length = Quantity(
         type=np.float64,
@@ -137,6 +148,10 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     cantilever_width = Quantity(
         type=np.float64,
@@ -153,6 +168,10 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     cantilever_thickness = Quantity(
         type=np.float64,
@@ -169,6 +188,10 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     resonance_frequency = Quantity(
         type=np.float64,
@@ -188,6 +211,10 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     amplitude_excitation = Quantity(
         type=np.float64,
@@ -206,6 +233,9 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     fermi_level = Quantity(
         type=np.float64,
@@ -222,6 +252,10 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     resonance_amplitude = Quantity(
         type=np.float64,
@@ -241,6 +275,10 @@ class SpmCantileverConfig(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     spring_constant = Quantity(
         type=np.float64,
@@ -254,6 +292,9 @@ class SpmCantileverConfig(Object):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -305,6 +346,9 @@ class SpmCantileverConfigCalibration(Calibration):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -88,6 +93,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -109,6 +118,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     reference_phase = Quantity(
         type=np.float64,
@@ -129,6 +142,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     frequency_harmonic = Quantity(
         type=np.float64,
@@ -148,6 +165,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     phase_shift = Quantity(
         type=np.float64,
@@ -167,6 +188,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     frequency_shift = Quantity(
         type=np.float64,
@@ -183,6 +208,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     frequency_cutoff = Quantity(
         type=np.float64,
@@ -199,6 +228,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     frequency_bandwidth = Quantity(
         type=np.float64,
@@ -215,6 +248,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     target_amplitude = Quantity(
         type=np.float64,
@@ -235,6 +272,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     target_frequency = Quantity(
         type=np.float64,
@@ -255,6 +296,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     active_frequency = Quantity(
         type=np.float64,
@@ -271,6 +316,10 @@ class SpmCantileverOscillator(Object):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

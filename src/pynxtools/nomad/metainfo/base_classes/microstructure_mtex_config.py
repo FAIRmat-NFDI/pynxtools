@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -151,6 +156,9 @@ class MicrostructureMtexConfigConventions(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     z_axis_direction = Quantity(
         type=str,
@@ -163,6 +171,9 @@ class MicrostructureMtexConfigConventions(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     a_axis_direction = Quantity(
@@ -177,6 +188,9 @@ class MicrostructureMtexConfigConventions(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     b_axis_direction = Quantity(
         type=str,
@@ -189,6 +203,9 @@ class MicrostructureMtexConfigConventions(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     euler_angle = Quantity(
@@ -203,6 +220,9 @@ class MicrostructureMtexConfigConventions(Collection):
             name_type="specified",
             optionality="optional",
             enumeration=["unknown", "undefined", "bunge"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -240,6 +260,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     inner_plot_spacing = Quantity(
         type=np.float64,
@@ -253,6 +276,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     outer_plot_spacing = Quantity(
@@ -268,6 +294,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     marker_size = Quantity(
         type=np.float64,
@@ -282,6 +311,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     figure_size = Quantity(
         type=np.float64,
@@ -294,6 +326,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     show_micron_bar = Quantity(
@@ -308,6 +343,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     show_coordinates = Quantity(
         type=bool,
@@ -320,6 +358,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     pf_anno_fun_hdl = Quantity(
@@ -335,6 +376,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     color_map = Quantity(
@@ -382,6 +426,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     degree_char = Quantity(
         type=str,
@@ -394,6 +441,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     arrow_char = Quantity(
@@ -408,6 +458,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     marker = Quantity(
         type=str,
@@ -420,6 +473,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     marker_edge_color = Quantity(
@@ -434,6 +490,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     marker_face_color = Quantity(
         type=str,
@@ -447,6 +506,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     hit_test = Quantity(
         type=bool,
@@ -459,6 +521,9 @@ class MicrostructureMtexConfigPlotting(Collection):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -495,6 +560,9 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     generating_help_mode = Quantity(
         type=bool,
@@ -507,6 +575,9 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     methods_advise = Quantity(
@@ -521,6 +592,9 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     stop_on_symmetry_mismatch = Quantity(
         type=bool,
@@ -533,6 +607,9 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     inside_poly = Quantity(
@@ -547,6 +624,9 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     text_interpreter = Quantity(
         type=str,
@@ -559,6 +639,9 @@ class MicrostructureMtexConfigMiscellaneous(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -598,6 +681,10 @@ class MicrostructureMtexConfigNumerics(Collection):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     fft_accuracy = Quantity(
         type=np.float64,
@@ -611,6 +698,9 @@ class MicrostructureMtexConfigNumerics(Collection):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     max_stwo_bandwidth = Quantity(
@@ -626,6 +716,9 @@ class MicrostructureMtexConfigNumerics(Collection):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     max_sothree_bandwidth = Quantity(
         type=np.float64,
@@ -639,6 +732,9 @@ class MicrostructureMtexConfigNumerics(Collection):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -675,6 +771,9 @@ class MicrostructureMtexConfigSystem(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     open_gl_bug = Quantity(
         type=bool,
@@ -688,6 +787,9 @@ class MicrostructureMtexConfigSystem(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     save_to_file = Quantity(
         type=bool,
@@ -700,6 +802,9 @@ class MicrostructureMtexConfigSystem(Collection):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -736,6 +841,9 @@ class MicrostructureMtexConfigPath(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     data_quantity = Quantity(
         type=str,
@@ -748,6 +856,9 @@ class MicrostructureMtexConfigPath(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     cif = Quantity(
@@ -762,6 +873,9 @@ class MicrostructureMtexConfigPath(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ebsd = Quantity(
         type=str,
@@ -774,6 +888,9 @@ class MicrostructureMtexConfigPath(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     pf = Quantity(
@@ -788,6 +905,9 @@ class MicrostructureMtexConfigPath(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     odf = Quantity(
         type=str,
@@ -800,6 +920,9 @@ class MicrostructureMtexConfigPath(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     tensor = Quantity(
@@ -814,6 +937,9 @@ class MicrostructureMtexConfigPath(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     example = Quantity(
         type=str,
@@ -827,6 +953,9 @@ class MicrostructureMtexConfigPath(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     import_wizard = Quantity(
         type=str,
@@ -839,6 +968,9 @@ class MicrostructureMtexConfigPath(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     pf_extensions = Quantity(
@@ -856,6 +988,9 @@ class MicrostructureMtexConfigPath(Collection):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ebsd_extensions = Quantity(
         type=str,
@@ -868,6 +1003,9 @@ class MicrostructureMtexConfigPath(Collection):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

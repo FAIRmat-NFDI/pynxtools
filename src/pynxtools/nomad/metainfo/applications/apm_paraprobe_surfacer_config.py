@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -92,6 +97,10 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
             optionality="required",
             enumeration=["NXapm_paraprobe_surfacer_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_paraprobe_surfacer_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -104,6 +113,9 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -197,6 +209,9 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
                 "set_of_alpha_wrappings",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     alpha_values = Quantity(
         type=np.float64,
@@ -253,6 +268,9 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_closure = Quantity(
         type=bool,
@@ -269,6 +287,9 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     has_interior_tetrahedra = Quantity(
         type=bool,
@@ -284,6 +305,9 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -325,6 +349,9 @@ class ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing(Parameters):
             optionality="required",
             enumeration=["default", "percolation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     kernel_width = Quantity(
         type=np.int64,
@@ -345,6 +372,10 @@ class ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

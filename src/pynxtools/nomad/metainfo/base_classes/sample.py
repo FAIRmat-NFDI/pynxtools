@@ -26,6 +26,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -273,6 +278,9 @@ class Sample(Component, basesections.CompositeSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     chemical_formula = Quantity(
         type=str,
@@ -303,6 +311,9 @@ class Sample(Component, basesections.CompositeSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     temperature = Quantity(
         type=np.float64,
@@ -319,6 +330,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     electric_field = Quantity(
         type=np.float64,
@@ -350,6 +365,9 @@ class Sample(Component, basesections.CompositeSystem):
             parent_field="electric_field",
             enumeration=["x", "y", "z"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     magnetic_field_quantity = Quantity(
         type=np.float64,
@@ -379,6 +397,9 @@ class Sample(Component, basesections.CompositeSystem):
             parent_field="magnetic_field",
             enumeration=["x", "y", "z"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     stress_field = Quantity(
         type=np.float64,
@@ -407,6 +428,9 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             parent_field="stress_field",
             enumeration=["x", "y", "z"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     pressure = Quantity(
@@ -441,6 +465,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     unit_cell_abc = Quantity(
         type=np.float64,
@@ -654,6 +682,9 @@ class Sample(Component, basesections.CompositeSystem):
                 "sample environment",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     situation = Quantity(
         type=MEnum(
@@ -690,6 +721,9 @@ class Sample(Component, basesections.CompositeSystem):
                 "other",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -703,6 +737,9 @@ class Sample(Component, basesections.CompositeSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     preparation_date = Quantity(
         type=Datetime,
@@ -715,6 +752,9 @@ class Sample(Component, basesections.CompositeSystem):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     component = Quantity(
@@ -825,6 +865,9 @@ class Sample(Component, basesections.CompositeSystem):
                 "cubic",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     space_group = Quantity(
         type=str,
@@ -872,6 +915,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     path_length_window = Quantity(
         type=np.float64,
@@ -891,6 +938,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     thickness = Quantity(
         type=np.float64,
@@ -907,6 +958,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     external_DAC = Quantity(
         type=np.float64,
@@ -921,6 +976,9 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     short_title = Quantity(
         type=str,
@@ -933,6 +991,9 @@ class Sample(Component, basesections.CompositeSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     rotation_angle = Quantity(
@@ -955,6 +1016,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     x_translation = Quantity(
         type=np.float64,
@@ -975,6 +1040,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     distance = Quantity(
         type=np.float64,
@@ -995,6 +1064,10 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     physical_form = Quantity(
         type=str,
@@ -1011,6 +1084,9 @@ class Sample(Component, basesections.CompositeSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

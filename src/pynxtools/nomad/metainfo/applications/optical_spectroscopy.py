@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -198,6 +203,10 @@ class OpticalSpectroscopy(Entry):
             optionality="required",
             enumeration=["NXoptical_spectroscopy"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXoptical_spectroscopy",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -214,6 +223,9 @@ class OpticalSpectroscopy(Entry):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition__URL = Quantity(
@@ -232,6 +244,9 @@ class OpticalSpectroscopy(Entry):
             optionality="required",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -243,6 +258,9 @@ class OpticalSpectroscopy(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -263,6 +281,9 @@ class OpticalSpectroscopy(Entry):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -282,6 +303,9 @@ class OpticalSpectroscopy(Entry):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -293,6 +317,9 @@ class OpticalSpectroscopy(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_description = Quantity(
@@ -314,6 +341,9 @@ class OpticalSpectroscopy(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_type = Quantity(
@@ -340,6 +370,9 @@ class OpticalSpectroscopy(Entry):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_sub_type = Quantity(
         type=str,
@@ -357,6 +390,9 @@ class OpticalSpectroscopy(Entry):
             optionality="optional",
             enumeration=["time resolved", "imaging", "pump-probe"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -402,6 +438,9 @@ class OpticalSpectroscopyBeamRefFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -437,6 +476,9 @@ class OpticalSpectroscopySampleNormalRefFrame(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -711,6 +753,9 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="recommended",
             enumeration=["beam centered", "sample-normal centered"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     omega = Quantity(
         type=np.float64,
@@ -727,6 +772,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     twotheta = Quantity(
         type=np.float64,
@@ -743,6 +792,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     chi = Quantity(
         type=np.float64,
@@ -762,6 +815,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     phi = Quantity(
         type=np.float64,
@@ -780,6 +837,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angle_of_incidence = Quantity(
         type=np.float64,
@@ -800,6 +861,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angle_of_detection = Quantity(
         type=np.float64,
@@ -821,6 +886,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angle_of_incident_and_detection_beam = Quantity(
         type=np.float64,
@@ -846,6 +915,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angle_of_in_plane_sample_rotation = Quantity(
         type=np.float64,
@@ -867,6 +940,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     lateral_focal_point_offset = Quantity(
         type=np.float64,
@@ -886,6 +963,10 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -935,6 +1016,9 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             optionality="required",
             enumeration=["measured", "nominal"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     incident_wavelength = Quantity(
         type=np.float64,
@@ -947,6 +1031,9 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     incident_wavelength_spread = Quantity(
         type=np.float64,
@@ -958,6 +1045,9 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             type="NX_NUMBER",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     incident_polarization = Quantity(
@@ -1011,6 +1101,9 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     beam_polarization_type = Quantity(
         type=MEnum(["linear", "circular", "elliptically", "unpolarized"]),
@@ -1023,6 +1116,9 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             name_type="specified",
             optionality="optional",
             enumeration=["linear", "circular", "elliptically", "unpolarized"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     linear_beam_sample_polarization = Quantity(
@@ -1049,6 +1145,10 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1103,6 +1203,9 @@ class OpticalSpectroscopyInstrumentDetector_TYPE(Detector):
             optionality="required",
             enumeration=["single-channel", "multichannel"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     detector_type = Quantity(
         type=str,
@@ -1128,6 +1231,9 @@ class OpticalSpectroscopyInstrumentDetector_TYPE(Detector):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     additional_detector_hardware = Quantity(
         type=str,
@@ -1144,6 +1250,9 @@ class OpticalSpectroscopyInstrumentDetector_TYPE(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1183,6 +1292,10 @@ class OpticalSpectroscopyInstrumentDetector_TYPERawData(Data):
             optionality="required",
             enumeration=["raw"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="raw",
+        ),
     )
     raw = Quantity(
         type=np.float64,
@@ -1195,6 +1308,9 @@ class OpticalSpectroscopyInstrumentDetector_TYPERawData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1255,6 +1371,9 @@ class OpticalSpectroscopyInstrumentSource_TYPE(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1266,6 +1385,9 @@ class OpticalSpectroscopyInstrumentSource_TYPE(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     standard = Quantity(
@@ -1279,6 +1401,9 @@ class OpticalSpectroscopyInstrumentSource_TYPE(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -1298,6 +1423,9 @@ class OpticalSpectroscopyInstrumentSource_TYPE(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1384,6 +1512,9 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             optionality="required",
             enumeration=["incident beam", "detection beam", "sample"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     polar = Quantity(
         type=np.float64,
@@ -1402,6 +1533,10 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     polar__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1416,6 +1551,10 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             parent_field="polar",
             enumeration=["rotation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
+        ),
     )
     polar__vector = Quantity(
         type=str,
@@ -1428,6 +1567,9 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             name_type="specified",
             optionality="required",
             parent_field="polar",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     polar__depends_on = Quantity(
@@ -1445,6 +1587,9 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             name_type="specified",
             optionality="required",
             parent_field="polar",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     azimuth = Quantity(
@@ -1464,6 +1609,10 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     azimuth__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1478,6 +1627,10 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             parent_field="azimuth",
             enumeration=["rotation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
+        ),
     )
     azimuth__vector = Quantity(
         type=str,
@@ -1490,6 +1643,9 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             name_type="specified",
             optionality="required",
             parent_field="azimuth",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     azimuth__depends_on = Quantity(
@@ -1504,6 +1660,10 @@ class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformation
             optionality="required",
             parent_field="azimuth",
             enumeration=["offset_tilt"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="offset_tilt",
         ),
     )
 
@@ -1554,6 +1714,9 @@ class OpticalSpectroscopyInstrumentOpticalLens(OpticalLens):
             optionality="required",
             enumeration=["objective", "lens", "glass fiber", "none"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1614,6 +1777,9 @@ class OpticalSpectroscopyInstrumentPolfilter_TYPE(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specific_polarization_filter_type = Quantity(
         type=str,
@@ -1630,6 +1796,9 @@ class OpticalSpectroscopyInstrumentPolfilter_TYPE(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1700,6 +1869,9 @@ class OpticalSpectroscopyInstrumentSpectralfilter_TYPE(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intended_use = Quantity(
         type=str,
@@ -1722,6 +1894,9 @@ class OpticalSpectroscopyInstrumentSpectralfilter_TYPE(Component):
                 "intensity manipulation",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1762,6 +1937,9 @@ class OpticalSpectroscopyInstrumentSpectralfilter_TYPEFilterCharacteristics(Data
             name_type="specified",
             optionality="optional",
             enumeration=["transmission", "reflection"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1829,6 +2007,9 @@ class OpticalSpectroscopyInstrumentSampleStage(Manipulator):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     beam_sample_relation = Quantity(
         type=str,
@@ -1846,6 +2027,9 @@ class OpticalSpectroscopyInstrumentSampleStage(Manipulator):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1888,6 +2072,9 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement = Quantity(
         type=MEnum(["temperature"]),
@@ -1900,6 +2087,10 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
             name_type="specified",
             optionality="required",
             enumeration=["temperature"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
         ),
     )
     value = Quantity(
@@ -1973,6 +2164,9 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     physical_quantity = Quantity(
         type=MEnum(["temperature"]),
@@ -1986,6 +2180,10 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
             optionality="required",
             enumeration=["temperature"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
+        ),
     )
     cooler_or_heater = Quantity(
         type=MEnum(["cooler", "heater"]),
@@ -1998,6 +2196,9 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
             name_type="specified",
             optionality="recommended",
             enumeration=["cooler", "heater"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -2030,6 +2231,9 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPEPidController(PidController)
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -2067,6 +2271,9 @@ class OpticalSpectroscopyInstrumentDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2078,6 +2285,9 @@ class OpticalSpectroscopyInstrumentDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier = Quantity(
@@ -2091,6 +2301,9 @@ class OpticalSpectroscopyInstrumentDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     construction_year = Quantity(
         type=Datetime,
@@ -2102,6 +2315,9 @@ class OpticalSpectroscopyInstrumentDeviceInformation(Fabrication):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -2141,6 +2357,9 @@ class OpticalSpectroscopyInstrumentSoftware_TYPE(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -2161,6 +2380,9 @@ class OpticalSpectroscopyInstrumentSoftware_TYPE(Program):
             optionality="recommended",
             parent_field="program",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__URL = Quantity(
         type=str,
@@ -2177,6 +2399,9 @@ class OpticalSpectroscopyInstrumentSoftware_TYPE(Program):
             name_type="specified",
             optionality="optional",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2230,6 +2455,9 @@ class OpticalSpectroscopyInstrumentInstrument_calibration_DEVICE(Calibration):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     calibration_status = Quantity(
         type=MEnum(
@@ -2262,6 +2490,9 @@ class OpticalSpectroscopyInstrumentInstrument_calibration_DEVICE(Calibration):
                 "within 1 week",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     calibration_time = Quantity(
         type=Datetime,
@@ -2278,6 +2509,9 @@ class OpticalSpectroscopyInstrumentInstrument_calibration_DEVICE(Calibration):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -2314,6 +2548,10 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
             optionality="required",
             enumeration=["wavelength"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="wavelength",
+        ),
     )
     type = Quantity(
         type=MEnum(["estimated", "derived", "calibrated", "other"]),
@@ -2326,6 +2564,9 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
             name_type="specified",
             optionality="recommended",
             enumeration=["estimated", "derived", "calibrated", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     resolution = Quantity(
@@ -2345,6 +2586,10 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2405,6 +2650,9 @@ class OpticalSpectroscopySample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     sample_id = Quantity(
         type=str,
@@ -2419,6 +2667,9 @@ class OpticalSpectroscopySample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     physical_form = Quantity(
@@ -2437,6 +2688,9 @@ class OpticalSpectroscopySample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     chemical_formula = Quantity(
@@ -2460,6 +2714,9 @@ class OpticalSpectroscopySample(Sample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     atom_types = Quantity(
         type=str,
@@ -2478,6 +2735,9 @@ class OpticalSpectroscopySample(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     preparation_date = Quantity(
         type=Datetime,
@@ -2495,6 +2755,9 @@ class OpticalSpectroscopySample(Sample):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     thickness = Quantity(
@@ -2518,6 +2781,10 @@ class OpticalSpectroscopySample(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     thickness_determination = Quantity(
         type=str,
@@ -2533,6 +2800,9 @@ class OpticalSpectroscopySample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     layer_structure = Quantity(
@@ -2552,6 +2822,9 @@ class OpticalSpectroscopySample(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     sample_orientation = Quantity(
         type=str,
@@ -2569,6 +2842,9 @@ class OpticalSpectroscopySample(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     substrate = Quantity(
         type=str,
@@ -2584,6 +2860,9 @@ class OpticalSpectroscopySample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2661,6 +2940,9 @@ class OpticalSpectroscopySampleTemperatureEnv(Environment):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2708,6 +2990,9 @@ class OpticalSpectroscopySampleEnvironment(Environment):
                 "water",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     sample_medium_refractive_indices = Quantity(
@@ -2789,6 +3074,9 @@ class OpticalSpectroscopyData(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2993,6 +3281,9 @@ class OpticalSpectroscopyDerivedParametersANALYSIS_program(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -3005,6 +3296,9 @@ class OpticalSpectroscopyDerivedParametersANALYSIS_program(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -152,6 +157,9 @@ class BeamSplitter(Component):
                 "fiber optic splitter",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     polarizing = Quantity(
         type=bool,
@@ -164,6 +172,9 @@ class BeamSplitter(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     multiple_outputs = Quantity(
@@ -180,6 +191,9 @@ class BeamSplitter(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     splitting_ratio = Quantity(
@@ -222,6 +236,10 @@ class BeamSplitter(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     wavelength_range = Quantity(
         type=np.float64,
@@ -282,6 +300,10 @@ class BeamSplitter(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     deflection_angle = Quantity(
         type=np.float64,
@@ -301,6 +323,10 @@ class BeamSplitter(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     AOI_range = Quantity(
         type=np.float64,
@@ -423,6 +449,9 @@ class BeamSplitterShape(Shape):
             optionality="optional",
             enumeration=["cube", "cylinder", "plate", "prism", "wedged", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     size = Quantity(
         type=str,
@@ -466,6 +495,10 @@ class BeamSplitterShape(Shape):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -506,6 +539,9 @@ class BeamSplitterSubstrate(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     substrate_thickness = Quantity(
@@ -592,6 +628,9 @@ class BeamSplitterCoating(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     coating_material = Quantity(
         type=str,
@@ -604,6 +643,9 @@ class BeamSplitterCoating(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     coating_thickness = Quantity(
@@ -621,6 +663,10 @@ class BeamSplitterCoating(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_range_coating = Quantity(
         type=np.float64,

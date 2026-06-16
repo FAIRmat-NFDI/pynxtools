@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -124,6 +129,9 @@ class ApmParaprobeToolConfig(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -136,6 +144,9 @@ class ApmParaprobeToolConfig(Entry):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -246,6 +257,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
             optionality="recommended",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -276,6 +291,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -287,6 +305,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     algorithm = Quantity(
@@ -300,6 +321,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     position = Quantity(
         type=str,
@@ -312,6 +336,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     mass_to_charge = Quantity(
         type=str,
@@ -323,6 +350,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -354,6 +384,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersRanging(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -365,6 +398,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersRanging(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     algorithm = Quantity(
@@ -378,6 +414,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersRanging(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     ranging_definitions = Quantity(
         type=str,
@@ -389,6 +428,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersRanging(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -472,6 +514,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilte
             optionality="required",
             enumeration=["entire_dataset", "union_of_primitives", "bitmask"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -519,6 +564,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -534,6 +582,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -549,6 +601,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -580,6 +636,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             type="NX_UINT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -617,6 +676,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -632,6 +694,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -647,6 +713,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     center = Quantity(
         type=np.float64,
@@ -729,6 +799,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     cardinality = Quantity(
         type=np.int64,
@@ -744,6 +817,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -759,6 +836,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     center = Quantity(
         type=np.float64,
@@ -784,6 +865,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     orientation = Quantity(
@@ -836,6 +920,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -851,6 +939,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -866,6 +958,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -901,6 +997,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     increment = Quantity(
         type=np.int64,
@@ -916,6 +1016,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     max = Quantity(
         type=np.int64,
@@ -931,6 +1035,10 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -961,6 +1069,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersIontypeFilter(MatchFilter)
             name_type="specified",
             optionality="required",
             enumeration=["whitelist", "blacklist"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     match = Quantity(
@@ -1010,6 +1121,9 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersHitMultiplicityFilter(
             name_type="specified",
             optionality="required",
             enumeration=["whitelist", "blacklist"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     match = Quantity(
@@ -1081,6 +1195,9 @@ class ApmParaprobeToolConfigCommon(ApmParaprobeToolCommon):
             optionality="required",
             enumeration=["success", "failure"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1113,6 +1230,9 @@ class ApmParaprobeToolConfigCommonProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -1125,6 +1245,9 @@ class ApmParaprobeToolConfigCommonProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1156,6 +1279,9 @@ class ApmParaprobeToolConfigCommonProfiling(CsProfiling):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -1167,6 +1293,9 @@ class ApmParaprobeToolConfigCommonProfiling(CsProfiling):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     total_elapsed_time = Quantity(
@@ -1183,6 +1312,10 @@ class ApmParaprobeToolConfigCommonProfiling(CsProfiling):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

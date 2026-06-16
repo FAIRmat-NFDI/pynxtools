@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -214,6 +219,9 @@ class Cansas(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     canSAS_class = Quantity(
         type=MEnum(["SASentry"]),
@@ -227,6 +235,10 @@ class Cansas(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["SASentry"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASentry",
         ),
     )
     version = Quantity(
@@ -246,6 +258,10 @@ class Cansas(Entry):
             optionality="required",
             enumeration=["1.1"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1.1",
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXcanSAS"]),
@@ -259,6 +275,10 @@ class Cansas(Entry):
             name_type="specified",
             optionality="required",
             enumeration=["NXcanSAS"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXcanSAS",
         ),
     )
     definition__name_quantity = Quantity(
@@ -278,6 +298,9 @@ class Cansas(Entry):
             optionality="optional",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -294,6 +317,9 @@ class Cansas(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     title__name_quantity = Quantity(
@@ -312,6 +338,9 @@ class Cansas(Entry):
             name_type="specified",
             optionality="optional",
             parent_field="title",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     run = Quantity(
@@ -349,6 +378,9 @@ class Cansas(Entry):
             name_type="specified",
             optionality="optional",
             parent_field="run",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -418,6 +450,10 @@ class CansasData(Data):
             optionality="required",
             enumeration=["SASdata"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASdata",
+        ),
     )
     signal = Quantity(
         type=MEnum(["I"]),
@@ -431,6 +467,10 @@ class CansasData(Data):
             name_type="specified",
             optionality="required",
             enumeration=["I"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="I",
         ),
     )
     I_axes = Quantity(
@@ -454,6 +494,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     Q_indices = Quantity(
         type=np.int64,
@@ -474,6 +517,9 @@ class CansasData(Data):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     mask = Quantity(
@@ -496,6 +542,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     Mask_indices = Quantity(
         type=str,
@@ -515,6 +564,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     timestamp = Quantity(
         type=Datetime,
@@ -527,6 +579,9 @@ class CansasData(Data):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     Q = Quantity(
@@ -554,6 +609,10 @@ class CansasData(Data):
             optionality="required",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     Q__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
@@ -573,6 +632,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="Q",
             enumeration=["1/m", "1/nm", "1/angstrom"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     Q__uncertainties = Quantity(
@@ -603,6 +665,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="optional",
             parent_field="Q",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     Q__resolutions = Quantity(
@@ -644,6 +709,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="Q",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     Q__resolutions_description = Quantity(
         type=str,
@@ -670,6 +738,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="optional",
             parent_field="Q",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     I = Quantity(
@@ -711,6 +782,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     I__units = Quantity(
         type=MEnum(["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"]),
@@ -732,6 +806,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="I",
             enumeration=["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     I__uncertainties = Quantity(
@@ -757,6 +834,9 @@ class CansasData(Data):
             name_type="specified",
             optionality="optional",
             parent_field="I",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     I__scaling_factor = Quantity(
@@ -784,6 +864,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="I",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     Idev = Quantity(
         type=np.float64,
@@ -802,6 +885,9 @@ class CansasData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     Idev__units = Quantity(
@@ -826,6 +912,9 @@ class CansasData(Data):
             parent_field="Idev",
             enumeration=["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     Qdev = Quantity(
         type=np.float64,
@@ -848,6 +937,10 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     Qdev__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
@@ -866,6 +959,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="Qdev",
             enumeration=["1/m", "1/nm", "1/angstrom"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     dQw = Quantity(
@@ -891,6 +987,10 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     dQw__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
@@ -909,6 +1009,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="dQw",
             enumeration=["1/m", "1/nm", "1/angstrom"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     dQl = Quantity(
@@ -934,6 +1037,10 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     dQl__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
@@ -952,6 +1059,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="dQl",
             enumeration=["1/m", "1/nm", "1/angstrom"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     Qmean = Quantity(
@@ -974,6 +1084,10 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     Qmean__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
@@ -992,6 +1106,9 @@ class CansasData(Data):
             optionality="optional",
             parent_field="Qmean",
             enumeration=["1/m", "1/nm", "1/angstrom"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     ShadowFactor = Quantity(
@@ -1013,6 +1130,10 @@ class CansasData(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1111,6 +1232,10 @@ class CansasInstrument(Instrument):
             optionality="required",
             enumeration=["SASinstrument"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASinstrument",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1154,6 +1279,10 @@ class CansasInstrumentAperture(Aperture):
             optionality="required",
             enumeration=["SASaperture"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASaperture",
+        ),
     )
     shape = Quantity(
         type=MEnum(
@@ -1194,6 +1323,9 @@ class CansasInstrumentAperture(Aperture):
                 "grid",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     x_gap = Quantity(
         type=np.float64,
@@ -1210,6 +1342,10 @@ class CansasInstrumentAperture(Aperture):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     y_gap = Quantity(
         type=np.float64,
@@ -1226,6 +1362,10 @@ class CansasInstrumentAperture(Aperture):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1270,6 +1410,10 @@ class CansasInstrumentCollimator(Collimator):
             optionality="required",
             enumeration=["SAScollimation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SAScollimation",
+        ),
     )
     length = Quantity(
         type=np.float64,
@@ -1286,6 +1430,10 @@ class CansasInstrumentCollimator(Collimator):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     distance = Quantity(
         type=np.float64,
@@ -1302,6 +1450,10 @@ class CansasInstrumentCollimator(Collimator):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1342,6 +1494,10 @@ class CansasInstrumentDetector(Detector):
             optionality="required",
             enumeration=["SASdetector"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASdetector",
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1354,6 +1510,9 @@ class CansasInstrumentDetector(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     SDD = Quantity(
@@ -1379,6 +1538,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     slit_length = Quantity(
         type=np.float64,
@@ -1398,6 +1561,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     x_position = Quantity(
         type=np.float64,
@@ -1414,6 +1581,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     y_position = Quantity(
         type=np.float64,
@@ -1430,6 +1601,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     roll = Quantity(
         type=np.float64,
@@ -1446,6 +1621,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     pitch = Quantity(
         type=np.float64,
@@ -1462,6 +1641,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     yaw = Quantity(
         type=np.float64,
@@ -1478,6 +1661,10 @@ class CansasInstrumentDetector(Detector):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1517,6 +1704,10 @@ class CansasInstrumentSource(Source):
             name_type="specified",
             optionality="required",
             enumeration=["SASsource"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASsource",
         ),
     )
     radiation = Quantity(
@@ -1582,6 +1773,9 @@ class CansasInstrumentSource(Source):
             ],
             deprecated="Use either (or both) ``probe`` or ``type`` fields from ``NXsource`` (issue #765)",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     beam_shape = Quantity(
         type=str,
@@ -1596,6 +1790,9 @@ class CansasInstrumentSource(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     incident_wavelength = Quantity(
@@ -1615,6 +1812,10 @@ class CansasInstrumentSource(Source):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_min = Quantity(
         type=np.float64,
@@ -1634,6 +1835,10 @@ class CansasInstrumentSource(Source):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_max = Quantity(
         type=np.float64,
@@ -1653,6 +1858,10 @@ class CansasInstrumentSource(Source):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_wavelength_spread = Quantity(
         type=np.float64,
@@ -1672,6 +1881,10 @@ class CansasInstrumentSource(Source):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_size_x = Quantity(
         type=np.float64,
@@ -1688,6 +1901,10 @@ class CansasInstrumentSource(Source):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_size_y = Quantity(
         type=np.float64,
@@ -1704,6 +1921,10 @@ class CansasInstrumentSource(Source):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1744,6 +1965,10 @@ class CansasSample(Sample):
             optionality="required",
             enumeration=["SASsample"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASsample",
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1756,6 +1981,9 @@ class CansasSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     transmission_quantity = Quantity(
@@ -1779,6 +2007,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     temperature = Quantity(
         type=np.float64,
@@ -1795,6 +2027,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     details = Quantity(
         type=str,
@@ -1825,6 +2061,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     y_position = Quantity(
         type=np.float64,
@@ -1841,6 +2081,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     roll = Quantity(
         type=np.float64,
@@ -1857,6 +2101,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     pitch = Quantity(
         type=np.float64,
@@ -1873,6 +2121,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     yaw = Quantity(
         type=np.float64,
@@ -1889,6 +2141,10 @@ class CansasSample(Sample):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1946,6 +2202,10 @@ class CansasProcess(Process):
             optionality="required",
             enumeration=["SASprocess"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASprocess",
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1959,6 +2219,9 @@ class CansasProcess(Process):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -1971,6 +2234,9 @@ class CansasProcess(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     term = Quantity(
@@ -2036,6 +2302,10 @@ class CansasProcessCollection(Collection):
             optionality="required",
             enumeration=["SASprocessnote"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASprocessnote",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2075,6 +2345,10 @@ class CansasCollection(Collection):
             name_type="specified",
             optionality="required",
             enumeration=["SASnote"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SASnote",
         ),
     )
 
@@ -2120,6 +2394,10 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             enumeration=["SAStransmission_spectrum"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="SAStransmission_spectrum",
+        ),
     )
     signal = Quantity(
         type=MEnum(["T"]),
@@ -2134,6 +2412,10 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             enumeration=["T"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="T",
+        ),
     )
     T_axes = Quantity(
         type=MEnum(["T"]),
@@ -2146,6 +2428,10 @@ class CansasTransmissionSpectrum(Data):
             name_type="specified",
             optionality="required",
             enumeration=["T"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="T",
         ),
     )
     name_quantity = Quantity(
@@ -2167,6 +2453,9 @@ class CansasTransmissionSpectrum(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     timestamp = Quantity(
         type=Datetime,
@@ -2179,6 +2468,9 @@ class CansasTransmissionSpectrum(Data):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     lambda_quantity = Quantity(
@@ -2199,6 +2491,10 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     T = Quantity(
         type=np.float64,
@@ -2218,6 +2514,10 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     T__uncertainties = Quantity(
         type=str,
@@ -2238,6 +2538,9 @@ class CansasTransmissionSpectrum(Data):
             name_type="specified",
             optionality="required",
             parent_field="T",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     Tdev = Quantity(
@@ -2261,6 +2564,10 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

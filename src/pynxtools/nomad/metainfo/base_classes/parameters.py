@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -88,6 +93,9 @@ class Parameters(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     PARAMETER = Quantity(
         type=np.float64,
@@ -115,6 +123,9 @@ class Parameters(Object):
             optionality="optional",
             parent_field="PARAMETER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     PARAMETER__error = Quantity(
         type=np.float64,
@@ -131,6 +142,9 @@ class Parameters(Object):
             optionality="optional",
             parent_field="PARAMETER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     PARAMETER__description_quantity = Quantity(
         type=str,
@@ -144,6 +158,9 @@ class Parameters(Object):
             name_type="specified",
             optionality="optional",
             parent_field="PARAMETER",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     PARAMETER__expression = Quantity(
@@ -164,6 +181,9 @@ class Parameters(Object):
             optionality="optional",
             parent_field="PARAMETER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     PARAMETER__initial = Quantity(
         type=np.float64,
@@ -177,6 +197,9 @@ class Parameters(Object):
             name_type="specified",
             optionality="optional",
             parent_field="PARAMETER",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     PARAMETER__max = Quantity(
@@ -192,6 +215,9 @@ class Parameters(Object):
             optionality="optional",
             parent_field="PARAMETER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     PARAMETER__min = Quantity(
         type=np.float64,
@@ -206,6 +232,9 @@ class Parameters(Object):
             optionality="optional",
             parent_field="PARAMETER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     PARAMETER__vary = Quantity(
         type=bool,
@@ -219,6 +248,9 @@ class Parameters(Object):
             name_type="specified",
             optionality="optional",
             parent_field="PARAMETER",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 

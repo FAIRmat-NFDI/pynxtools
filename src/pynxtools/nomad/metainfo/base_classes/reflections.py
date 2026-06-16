@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -102,6 +107,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="h",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     k = Quantity(
         type=np.float64,
@@ -130,6 +138,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="k",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     l = Quantity(
         type=np.float64,
@@ -157,6 +168,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="l",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     id = Quantity(
@@ -190,6 +204,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reflection_id = Quantity(
         type=np.int64,
@@ -221,6 +238,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="reflection_id",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     entering = Quantity(
         type=bool,
@@ -249,6 +269,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="entering",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     det_module = Quantity(
         type=np.int64,
@@ -276,6 +299,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="det_module",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     flags = Quantity(
@@ -320,6 +346,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="flags",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     d = Quantity(
         type=np.float64,
@@ -347,6 +376,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="d",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     partiality = Quantity(
@@ -378,6 +410,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="partiality",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     predicted_frame = Quantity(
@@ -412,6 +447,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="predicted_frame",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     predicted_x = Quantity(
         type=np.float64,
@@ -444,6 +482,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="predicted_x",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     predicted_y = Quantity(
@@ -478,6 +519,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="predicted_y",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     predicted_phi = Quantity(
         type=np.float64,
@@ -510,6 +554,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="predicted_phi",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     predicted_px_x = Quantity(
@@ -545,6 +592,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="predicted_px_x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     predicted_px_y = Quantity(
         type=np.float64,
@@ -578,6 +628,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="predicted_px_y",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_frame = Quantity(
@@ -613,6 +666,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_frame",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_frame_var = Quantity(
         type=np.float64,
@@ -646,6 +702,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_frame_var",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_frame_errors = Quantity(
@@ -681,6 +740,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_frame_errors",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_px_x = Quantity(
         type=np.float64,
@@ -714,6 +776,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_px_x",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_px_x_var = Quantity(
@@ -749,6 +814,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_px_x_var",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_px_x_errors = Quantity(
         type=np.float64,
@@ -782,6 +850,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_px_x_errors",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_px_y = Quantity(
@@ -817,6 +888,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_px_y",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_px_y_var = Quantity(
         type=np.float64,
@@ -850,6 +924,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_px_y_var",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_px_y_errors = Quantity(
@@ -885,6 +962,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_px_y_errors",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_phi = Quantity(
         type=np.float64,
@@ -918,6 +998,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_phi",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_phi_var = Quantity(
@@ -953,6 +1036,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_phi_var",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_phi_errors = Quantity(
         type=np.float64,
@@ -986,6 +1072,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_phi_errors",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_x = Quantity(
@@ -1021,6 +1110,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_x_var = Quantity(
         type=np.float64,
@@ -1054,6 +1146,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_x_var",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_x_errors = Quantity(
@@ -1089,6 +1184,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_x_errors",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_y = Quantity(
         type=np.float64,
@@ -1122,6 +1220,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_y",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     observed_y_var = Quantity(
@@ -1157,6 +1258,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="observed_y_var",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     observed_y_errors = Quantity(
         type=np.float64,
@@ -1190,6 +1294,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="observed_y_errors",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     bounding_box = Quantity(
@@ -1231,6 +1338,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="bounding_box",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     background_mean = Quantity(
         type=np.float64,
@@ -1259,6 +1369,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="background_mean",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     int_prf = Quantity(
         type=np.float64,
@@ -1286,6 +1399,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="int_prf",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     int_prf_var = Quantity(
@@ -1318,6 +1434,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="int_prf_var",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     int_prf_errors = Quantity(
         type=np.float64,
@@ -1349,6 +1468,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="int_prf_errors",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     int_sum = Quantity(
         type=np.float64,
@@ -1376,6 +1498,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="int_sum",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     int_sum_var = Quantity(
@@ -1406,6 +1531,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="int_sum_var",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     int_sum_errors = Quantity(
@@ -1438,6 +1566,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="int_sum_errors",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     lp = Quantity(
         type=np.float64,
@@ -1467,6 +1598,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="lp",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     prf_cc = Quantity(
@@ -1499,6 +1633,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="prf_cc",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     overlaps = Quantity(
         type=np.int64,
@@ -1517,6 +1654,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     overlaps__description_quantity = Quantity(
         type=str,
@@ -1530,6 +1670,9 @@ class Reflections(Object):
             name_type="specified",
             optionality="optional",
             parent_field="overlaps",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     polar_angle = Quantity(
@@ -1565,6 +1708,9 @@ class Reflections(Object):
             optionality="optional",
             parent_field="polar_angle",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     azimuthal_angle = Quantity(
         type=np.float64,
@@ -1597,6 +1743,9 @@ class Reflections(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

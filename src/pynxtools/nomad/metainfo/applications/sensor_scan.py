@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -158,6 +163,9 @@ class SensorScan(Entry):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXsensor_scan"]),
@@ -171,6 +179,10 @@ class SensorScan(Entry):
             optionality="required",
             enumeration=["NXsensor_scan"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXsensor_scan",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -183,6 +195,9 @@ class SensorScan(Entry):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_experiment = Quantity(
@@ -202,6 +217,9 @@ class SensorScan(Entry):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_collection = Quantity(
         type=str,
@@ -219,6 +237,9 @@ class SensorScan(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -230,6 +251,9 @@ class SensorScan(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -244,6 +268,9 @@ class SensorScan(Entry):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -256,6 +283,9 @@ class SensorScan(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -306,6 +336,9 @@ class SensorScanProcess(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program_quantity__version = Quantity(
         type=str,
@@ -326,6 +359,9 @@ class SensorScanProcess(Process):
             optionality="required",
             parent_field="program",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program_quantity__program_url = Quantity(
         type=str,
@@ -339,6 +375,9 @@ class SensorScanProcess(Process):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -378,6 +417,9 @@ class SensorScanUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     affiliation = Quantity(
         type=str,
@@ -393,6 +435,9 @@ class SensorScanUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     address = Quantity(
@@ -410,6 +455,9 @@ class SensorScanUser(User):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     email = Quantity(
         type=str,
@@ -422,6 +470,9 @@ class SensorScanUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     orcid = Quantity(
@@ -436,6 +487,9 @@ class SensorScanUser(User):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     telephone_number = Quantity(
         type=str,
@@ -448,6 +502,9 @@ class SensorScanUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -549,6 +606,9 @@ class SensorScanInstrumentEnvironment(Environment):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement_sensors = Quantity(
         type=str,
@@ -561,6 +621,9 @@ class SensorScanInstrumentEnvironment(Environment):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -636,6 +699,9 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     run_control = Quantity(
         type=str,
@@ -647,6 +713,9 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     run_control__description_quantity = Quantity(
@@ -666,6 +735,9 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
             optionality="required",
             parent_field="run_control",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     calibration_time = Quantity(
         type=Datetime,
@@ -681,6 +753,9 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -712,6 +787,9 @@ class SensorScanSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

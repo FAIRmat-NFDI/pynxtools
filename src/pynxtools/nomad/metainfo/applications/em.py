@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -412,6 +417,10 @@ class Em(Entry):
             optionality="required",
             enumeration=["NXem"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXem",
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -428,6 +437,9 @@ class Em(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_alias = Quantity(
         type=str,
@@ -442,6 +454,9 @@ class Em(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_description = Quantity(
@@ -460,6 +475,9 @@ class Em(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -489,6 +507,9 @@ class Em(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -505,6 +526,9 @@ class Em(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -602,6 +626,9 @@ class EmProfilingProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -614,6 +641,9 @@ class EmProfilingProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -648,6 +678,9 @@ class EmCiteID(Cite):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     doi = Quantity(
         type=str,
@@ -659,6 +692,9 @@ class EmCiteID(Cite):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -699,6 +735,9 @@ class EmNoteID(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -710,6 +749,9 @@ class EmNoteID(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -723,6 +765,9 @@ class EmNoteID(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -734,6 +779,9 @@ class EmNoteID(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -764,6 +812,9 @@ class EmProject(Project):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -830,6 +881,9 @@ class EmUserID(User):
                 "URN",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -906,6 +960,9 @@ class EmSampleID(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     physical_form = Quantity(
         type=str,
@@ -919,6 +976,9 @@ class EmSampleID(Sample):
             optionality="recommended",
             enumeration=["bulk", "foil", "thin_film", "powder"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_sample = Quantity(
@@ -949,6 +1009,9 @@ class EmSampleID(Sample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_sample__type = Quantity(
         type=str,
@@ -977,6 +1040,9 @@ class EmSampleID(Sample):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_parent = Quantity(
         type=str,
@@ -994,6 +1060,9 @@ class EmSampleID(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     identifier_parent__type = Quantity(
@@ -1023,6 +1092,9 @@ class EmSampleID(Sample):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     preparation_date = Quantity(
         type=Datetime,
@@ -1051,6 +1123,9 @@ class EmSampleID(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1063,6 +1138,9 @@ class EmSampleID(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     atom_types = Quantity(
@@ -1085,6 +1163,9 @@ class EmSampleID(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     thickness = Quantity(
@@ -1110,6 +1191,10 @@ class EmSampleID(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     density = Quantity(
         type=np.float64,
@@ -1131,6 +1216,9 @@ class EmSampleID(Sample):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1177,6 +1265,9 @@ class EmConsistentRotations(Parameters):
             optionality="required",
             enumeration=["counter_clockwise", "clockwise"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     rotation_convention = Quantity(
         type=MEnum(["passive", "active"]),
@@ -1194,6 +1285,9 @@ class EmConsistentRotations(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["passive", "active"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     euler_angle_convention = Quantity(
@@ -1245,6 +1339,9 @@ class EmConsistentRotations(Parameters):
                 "yxz",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     axis_angle_convention = Quantity(
         type=MEnum(["rotation_angle_on_interval_zero_to_pi"]),
@@ -1264,6 +1361,10 @@ class EmConsistentRotations(Parameters):
             optionality="required",
             enumeration=["rotation_angle_on_interval_zero_to_pi"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation_angle_on_interval_zero_to_pi",
+        ),
     )
     sign_convention = Quantity(
         type=MEnum(["p_plus_one", "p_minus_one"]),
@@ -1282,6 +1383,9 @@ class EmConsistentRotations(Parameters):
             name_type="specified",
             optionality="required",
             enumeration=["p_plus_one", "p_minus_one"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1315,6 +1419,9 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -1329,6 +1436,9 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             enumeration=["undefined", "cartesian"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     origin = Quantity(
         type=str,
@@ -1340,6 +1450,9 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     x = Quantity(
@@ -1369,6 +1482,9 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     y = Quantity(
         type=np.float64,
@@ -1397,6 +1513,9 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     z = Quantity(
         type=np.float64,
@@ -1424,6 +1543,9 @@ class EmNAMED_reference_frameID(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1455,6 +1577,9 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -1468,6 +1593,9 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["undefined", "cartesian"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     origin = Quantity(
@@ -1500,6 +1628,9 @@ class EmProcessingReferenceFrame(CoordinateSystem):
                 "back_bottom_left",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     x = Quantity(
@@ -1535,6 +1666,9 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     y = Quantity(
         type=np.float64,
@@ -1568,6 +1702,9 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     z = Quantity(
@@ -1603,6 +1740,9 @@ class EmProcessingReferenceFrame(CoordinateSystem):
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1633,6 +1773,9 @@ class EmSampleReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -1646,6 +1789,9 @@ class EmSampleReferenceFrame(CoordinateSystem):
             optionality="required",
             enumeration=["undefined", "cartesian"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     origin = Quantity(
@@ -1678,6 +1824,9 @@ class EmSampleReferenceFrame(CoordinateSystem):
                 "back_bottom_left",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     x = Quantity(
@@ -1713,6 +1862,9 @@ class EmSampleReferenceFrame(CoordinateSystem):
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     y = Quantity(
         type=np.float64,
@@ -1747,6 +1899,9 @@ class EmSampleReferenceFrame(CoordinateSystem):
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     z = Quantity(
         type=np.float64,
@@ -1780,6 +1935,9 @@ class EmSampleReferenceFrame(CoordinateSystem):
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1817,6 +1975,9 @@ class EmDetector_reference_frameID(CoordinateSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -1830,6 +1991,9 @@ class EmDetector_reference_frameID(CoordinateSystem):
             optionality="required",
             enumeration=["undefined", "cartesian"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     origin = Quantity(
@@ -1862,6 +2026,9 @@ class EmDetector_reference_frameID(CoordinateSystem):
                 "back_bottom_left",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     x = Quantity(
@@ -1897,6 +2064,9 @@ class EmDetector_reference_frameID(CoordinateSystem):
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     y = Quantity(
         type=np.float64,
@@ -1931,6 +2101,9 @@ class EmDetector_reference_frameID(CoordinateSystem):
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     z = Quantity(
         type=np.float64,
@@ -1964,6 +2137,9 @@ class EmDetector_reference_frameID(CoordinateSystem):
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2160,6 +2336,9 @@ class EmMeasurementInstrument(EmInstrument):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     location = Quantity(
         type=str,
@@ -2171,6 +2350,9 @@ class EmMeasurementInstrument(EmInstrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2202,6 +2384,9 @@ class EmMeasurementInstrumentFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2214,6 +2399,9 @@ class EmMeasurementInstrumentFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2225,6 +2413,9 @@ class EmMeasurementInstrumentFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2261,6 +2452,9 @@ class EmMeasurementInstrumentProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -2273,6 +2467,9 @@ class EmMeasurementInstrumentProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2496,6 +2693,9 @@ class EmMeasurementInstrumentEbeamColumnFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2508,6 +2708,9 @@ class EmMeasurementInstrumentEbeamColumnFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2519,6 +2722,9 @@ class EmMeasurementInstrumentEbeamColumnFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2561,6 +2767,9 @@ class EmMeasurementInstrumentEbeamColumnElectronSource(Source):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     probe = Quantity(
         type=MEnum(["electron"]),
@@ -2573,6 +2782,10 @@ class EmMeasurementInstrumentEbeamColumnElectronSource(Source):
             name_type="specified",
             optionality="optional",
             enumeration=["electron"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="electron",
         ),
     )
 
@@ -2604,6 +2817,9 @@ class EmMeasurementInstrumentEbeamColumnElectronSourceFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2616,6 +2832,9 @@ class EmMeasurementInstrumentEbeamColumnElectronSourceFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2627,6 +2846,9 @@ class EmMeasurementInstrumentEbeamColumnElectronSourceFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2671,6 +2893,9 @@ class EmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2701,6 +2926,9 @@ class EmMeasurementInstrumentEbeamColumnLensIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2713,6 +2941,9 @@ class EmMeasurementInstrumentEbeamColumnLensIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2724,6 +2955,9 @@ class EmMeasurementInstrumentEbeamColumnLensIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2768,6 +3002,9 @@ class EmMeasurementInstrumentEbeamColumnApertureID(Aperture):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2798,6 +3035,9 @@ class EmMeasurementInstrumentEbeamColumnApertureIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2810,6 +3050,9 @@ class EmMeasurementInstrumentEbeamColumnApertureIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2821,6 +3064,9 @@ class EmMeasurementInstrumentEbeamColumnApertureIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2865,6 +3111,9 @@ class EmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2895,6 +3144,9 @@ class EmMeasurementInstrumentEbeamColumnDeflectorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2907,6 +3159,9 @@ class EmMeasurementInstrumentEbeamColumnDeflectorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -2918,6 +3173,9 @@ class EmMeasurementInstrumentEbeamColumnDeflectorIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2962,6 +3220,9 @@ class EmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2992,6 +3253,9 @@ class EmMeasurementInstrumentEbeamColumnBlankerIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3004,6 +3268,9 @@ class EmMeasurementInstrumentEbeamColumnBlankerIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3015,6 +3282,9 @@ class EmMeasurementInstrumentEbeamColumnBlankerIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3076,6 +3346,9 @@ class EmMeasurementInstrumentEbeamColumnMonochromatorID(Monochromator):
                 "sector_analyzer",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3106,6 +3379,9 @@ class EmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3118,6 +3394,9 @@ class EmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3129,6 +3408,9 @@ class EmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3181,6 +3463,9 @@ class EmMeasurementInstrumentEbeamColumnCorrector_csID(CorrectorCs):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3211,6 +3496,9 @@ class EmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3223,6 +3511,9 @@ class EmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3234,6 +3525,9 @@ class EmMeasurementInstrumentEbeamColumnCorrector_csIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3295,6 +3589,9 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3307,6 +3604,9 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3318,6 +3618,9 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3379,6 +3682,9 @@ class EmMeasurementInstrumentEbeamColumnBiprismIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3391,6 +3697,9 @@ class EmMeasurementInstrumentEbeamColumnBiprismIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3402,6 +3711,9 @@ class EmMeasurementInstrumentEbeamColumnBiprismIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3448,6 +3760,9 @@ class EmMeasurementInstrumentEbeamColumnPhaseplateID(Component):
             enumeration=["thin_film", "electrostatic"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3478,6 +3793,9 @@ class EmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3490,6 +3808,9 @@ class EmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3501,6 +3822,9 @@ class EmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3560,6 +3884,9 @@ class EmMeasurementInstrumentEbeamColumnScanControllerFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3572,6 +3899,9 @@ class EmMeasurementInstrumentEbeamColumnScanControllerFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3583,6 +3913,9 @@ class EmMeasurementInstrumentEbeamColumnScanControllerFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3760,6 +4093,9 @@ class EmMeasurementInstrumentIbeamColumnFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3772,6 +4108,9 @@ class EmMeasurementInstrumentIbeamColumnFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3783,6 +4122,9 @@ class EmMeasurementInstrumentIbeamColumnFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3826,6 +4168,9 @@ class EmMeasurementInstrumentIbeamColumnIonSource(Source):
             optionality="required",
             enumeration=["liquid_metal", "plasma", "gas_field", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3856,6 +4201,9 @@ class EmMeasurementInstrumentIbeamColumnIonSourceFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3868,6 +4216,9 @@ class EmMeasurementInstrumentIbeamColumnIonSourceFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3879,6 +4230,9 @@ class EmMeasurementInstrumentIbeamColumnIonSourceFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3923,6 +4277,9 @@ class EmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3953,6 +4310,9 @@ class EmMeasurementInstrumentIbeamColumnLensIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3965,6 +4325,9 @@ class EmMeasurementInstrumentIbeamColumnLensIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -3976,6 +4339,9 @@ class EmMeasurementInstrumentIbeamColumnLensIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4020,6 +4386,9 @@ class EmMeasurementInstrumentIbeamColumnApertureID(Aperture):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4050,6 +4419,9 @@ class EmMeasurementInstrumentIbeamColumnApertureIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4062,6 +4434,9 @@ class EmMeasurementInstrumentIbeamColumnApertureIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4073,6 +4448,9 @@ class EmMeasurementInstrumentIbeamColumnApertureIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4117,6 +4495,9 @@ class EmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4147,6 +4528,9 @@ class EmMeasurementInstrumentIbeamColumnDeflectorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4159,6 +4543,9 @@ class EmMeasurementInstrumentIbeamColumnDeflectorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4170,6 +4557,9 @@ class EmMeasurementInstrumentIbeamColumnDeflectorIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4214,6 +4604,9 @@ class EmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4244,6 +4637,9 @@ class EmMeasurementInstrumentIbeamColumnBlankerIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4256,6 +4652,9 @@ class EmMeasurementInstrumentIbeamColumnBlankerIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4267,6 +4666,9 @@ class EmMeasurementInstrumentIbeamColumnBlankerIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4311,6 +4713,9 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -4322,6 +4727,9 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4353,6 +4761,9 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4365,6 +4776,9 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4376,6 +4790,9 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4435,6 +4852,9 @@ class EmMeasurementInstrumentIbeamColumnScanControllerFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4447,6 +4867,9 @@ class EmMeasurementInstrumentIbeamColumnScanControllerFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4458,6 +4881,9 @@ class EmMeasurementInstrumentIbeamColumnScanControllerFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4502,6 +4928,9 @@ class EmMeasurementInstrumentDetectorID(Detector):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4532,6 +4961,9 @@ class EmMeasurementInstrumentDetectorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4544,6 +4976,9 @@ class EmMeasurementInstrumentDetectorIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4555,6 +4990,9 @@ class EmMeasurementInstrumentDetectorIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4614,6 +5052,9 @@ class EmMeasurementInstrumentGasInjectorFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4626,6 +5067,9 @@ class EmMeasurementInstrumentGasInjectorFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4637,6 +5081,9 @@ class EmMeasurementInstrumentGasInjectorFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4681,6 +5128,9 @@ class EmMeasurementInstrumentStageID(Manipulator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4711,6 +5161,9 @@ class EmMeasurementInstrumentStageIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4723,6 +5176,9 @@ class EmMeasurementInstrumentStageIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4734,6 +5190,9 @@ class EmMeasurementInstrumentStageIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4794,6 +5253,9 @@ class EmMeasurementInstrumentNanoprobeIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -4806,6 +5268,9 @@ class EmMeasurementInstrumentNanoprobeIDFabrication(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -4817,6 +5282,9 @@ class EmMeasurementInstrumentNanoprobeIDFabrication(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4860,6 +5328,9 @@ class EmMeasurementInstrumentPumpID(Pump):
                 "scroll",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4939,6 +5410,9 @@ class EmMeasurementEventID(EmEventData):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -4950,6 +5424,9 @@ class EmMeasurementEventID(EmEventData):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     identifier_sample = Quantity(
@@ -4965,6 +5442,9 @@ class EmMeasurementEventID(EmEventData):
             name_type="specified",
             optionality="recommended",
             units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5109,6 +5589,9 @@ class EmMeasurementEventIDImageIDProcess(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5139,6 +5622,9 @@ class EmMeasurementEventIDImageIDProcessInput(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -5150,6 +5636,9 @@ class EmMeasurementEventIDImageIDProcessInput(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -5163,6 +5652,9 @@ class EmMeasurementEventIDImageIDProcessInput(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -5175,6 +5667,9 @@ class EmMeasurementEventIDImageIDProcessInput(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     context = Quantity(
         type=str,
@@ -5186,6 +5681,9 @@ class EmMeasurementEventIDImageIDProcessInput(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5216,6 +5714,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -5255,6 +5756,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -5283,6 +5787,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -5313,6 +5820,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -5341,6 +5851,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     complex = Quantity(
@@ -5371,6 +5884,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="required",
             parent_field="complex",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -5397,6 +5913,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5427,6 +5946,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -5466,6 +5988,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -5494,6 +6019,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -5524,6 +6052,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -5553,6 +6084,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     magnitude = Quantity(
         type=np.complex128,
@@ -5564,6 +6098,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             type="NX_COMPLEX",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     magnitude__long_name = Quantity(
@@ -5577,6 +6114,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="magnitude",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -5605,6 +6145,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -5631,6 +6174,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5661,6 +6207,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -5700,6 +6249,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -5728,6 +6280,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -5758,6 +6313,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -5786,6 +6344,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     complex = Quantity(
@@ -5816,6 +6377,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             parent_field="complex",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_k = Quantity(
         type=np.float64,
@@ -5842,6 +6406,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_k",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -5870,6 +6437,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -5896,6 +6466,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -5926,6 +6499,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -5965,6 +6541,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -5993,6 +6572,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -6023,6 +6605,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -6051,6 +6636,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     complex = Quantity(
@@ -6081,6 +6669,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             parent_field="complex",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_m = Quantity(
         type=np.float64,
@@ -6107,6 +6698,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_m",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_k = Quantity(
@@ -6135,6 +6729,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             parent_field="axis_k",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -6162,6 +6759,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -6188,6 +6788,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6218,6 +6821,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -6257,6 +6863,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -6285,6 +6894,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -6315,6 +6927,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -6343,6 +6958,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     complex = Quantity(
@@ -6373,6 +6991,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             parent_field="complex",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_group = Quantity(
         type=np.int64,
@@ -6401,6 +7022,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="indices_group",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_image = Quantity(
@@ -6431,6 +7055,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             parent_field="indices_image",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -6457,6 +7084,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6487,6 +7117,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -6526,6 +7159,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -6554,6 +7190,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -6584,6 +7223,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -6612,6 +7254,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     complex = Quantity(
@@ -6642,6 +7287,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             parent_field="complex",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_group = Quantity(
         type=np.int64,
@@ -6670,6 +7318,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="indices_group",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_image = Quantity(
@@ -6700,6 +7351,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             parent_field="indices_image",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -6727,6 +7381,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -6753,6 +7410,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -6783,6 +7443,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -6822,6 +7485,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     real = Quantity(
         type=np.float64,
@@ -6850,6 +7516,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="real",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     imag = Quantity(
@@ -6880,6 +7549,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             parent_field="imag",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -6908,6 +7580,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     complex = Quantity(
@@ -6938,6 +7613,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             parent_field="complex",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_group = Quantity(
         type=np.int64,
@@ -6966,6 +7644,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="indices_group",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_image = Quantity(
@@ -6996,6 +7677,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             parent_field="indices_image",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_k = Quantity(
         type=np.float64,
@@ -7022,6 +7706,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_k",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -7050,6 +7737,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -7076,6 +7766,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7230,6 +7923,9 @@ class EmMeasurementEventIDSpectrumIDProcess(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -7260,6 +7956,9 @@ class EmMeasurementEventIDSpectrumIDProcessInput(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -7271,6 +7970,9 @@ class EmMeasurementEventIDSpectrumIDProcessInput(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -7284,6 +7986,9 @@ class EmMeasurementEventIDSpectrumIDProcessInput(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -7296,6 +8001,9 @@ class EmMeasurementEventIDSpectrumIDProcessInput(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     context = Quantity(
         type=str,
@@ -7307,6 +8015,9 @@ class EmMeasurementEventIDSpectrumIDProcessInput(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7337,6 +8048,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -7376,6 +8090,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -7404,6 +8121,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_energy = Quantity(
@@ -7434,6 +8154,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             optionality="required",
             parent_field="axis_energy",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -7463,6 +8186,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -7502,6 +8228,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -7530,6 +8259,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -7560,6 +8292,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -7588,6 +8323,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -7618,6 +8356,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -7657,6 +8398,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -7685,6 +8429,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -7715,6 +8462,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -7743,6 +8493,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_energy = Quantity(
@@ -7773,6 +8526,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             parent_field="axis_energy",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -7802,6 +8558,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -7841,6 +8600,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -7869,6 +8631,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_k = Quantity(
@@ -7899,6 +8664,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             parent_field="axis_k",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -7927,6 +8695,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -7957,6 +8728,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -7985,6 +8759,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8015,6 +8792,9 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -8054,6 +8834,9 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -8082,6 +8865,9 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_spectrum = Quantity(
@@ -8112,6 +8898,9 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             optionality="required",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -8140,6 +8929,9 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8170,6 +8962,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -8209,6 +9004,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -8220,6 +9018,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     intensity__long_name = Quantity(
@@ -8234,6 +9035,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             optionality="required",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_spectrum = Quantity(
         type=np.int64,
@@ -8245,6 +9049,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     indices_spectrum__long_name = Quantity(
@@ -8259,6 +9066,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             optionality="required",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -8270,6 +9080,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     axis_i__long_name = Quantity(
@@ -8284,6 +9097,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -8295,6 +9111,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     axis_energy__long_name = Quantity(
@@ -8308,6 +9127,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8338,6 +9160,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -8377,6 +9202,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -8405,6 +9233,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_spectrum = Quantity(
@@ -8435,6 +9266,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -8463,6 +9297,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_i = Quantity(
@@ -8493,6 +9330,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -8521,6 +9361,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -8551,6 +9394,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -8590,6 +9436,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -8618,6 +9467,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_spectrum = Quantity(
@@ -8648,6 +9500,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             parent_field="indices_spectrum",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_k = Quantity(
         type=np.float64,
@@ -8676,6 +9531,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_k",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_j = Quantity(
@@ -8706,6 +9564,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -8735,6 +9596,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy = Quantity(
         type=np.float64,
@@ -8763,6 +9627,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -9029,6 +9896,9 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9062,6 +9932,10 @@ class EmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             optionality="required",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     extraction_voltage = Quantity(
         type=np.float64,
@@ -9077,6 +9951,10 @@ class EmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     emission_current = Quantity(
         type=np.float64,
@@ -9092,6 +9970,10 @@ class EmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     filament_current = Quantity(
         type=np.float64,
@@ -9107,6 +9989,10 @@ class EmMeasurementEventIDInstrumentEbeamColumnElectronSource(Source):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9139,6 +10025,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnLensID(ElectromagneticLens):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -9178,6 +10067,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnApertureID(Aperture):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9210,6 +10102,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     dispersion = Quantity(
         type=np.float64,
@@ -9222,6 +10117,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     voltage = Quantity(
@@ -9238,6 +10136,10 @@ class EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID(Monochromator):
             optionality="recommended",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9282,6 +10184,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csID(CorrectorCs):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -9724,6 +10629,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC1(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9754,6 +10662,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA1(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -9786,6 +10697,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB2(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9816,6 +10730,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA2(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -9848,6 +10765,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC3(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9878,6 +10798,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS3(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -9910,6 +10833,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA3(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9940,6 +10866,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDB4(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -9972,6 +10901,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDD4(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10002,6 +10934,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA4(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10034,6 +10969,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC5(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10064,6 +11002,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDS5(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10096,6 +11037,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDR5(Aberrat
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10126,6 +11070,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDA6(Aberrat
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10158,6 +11105,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC10(Aberra
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10188,6 +11138,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12A(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10220,6 +11173,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC12B(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10250,6 +11206,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21A(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10282,6 +11241,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC21B(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10312,6 +11274,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23A(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10344,6 +11309,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC23B(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10374,6 +11342,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC30(Aberra
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10406,6 +11377,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32A(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10436,6 +11410,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC32B(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10468,6 +11445,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34A(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10498,6 +11478,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC34B(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10530,6 +11513,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41A(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10560,6 +11546,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC41B(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10592,6 +11581,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43A(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10622,6 +11614,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC43B(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10654,6 +11649,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45A(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10684,6 +11682,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC45B(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10716,6 +11717,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC50(Aberra
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10746,6 +11750,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52A(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10778,6 +11785,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC52B(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10808,6 +11818,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54A(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10840,6 +11853,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC54B(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10870,6 +11886,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56A(Aberr
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10902,6 +11921,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrector_csIDTableauIDC56B(Aberr
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -10932,6 +11954,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     value_x = Quantity(
         type=np.float64,
@@ -10945,6 +11970,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     value_y = Quantity(
         type=np.float64,
@@ -10957,6 +11985,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -10988,6 +12019,9 @@ class EmMeasurementEventIDInstrumentEbeamColumnScanController(ScanController):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     dwell_time = Quantity(
         type=np.float64,
@@ -11003,6 +12037,10 @@ class EmMeasurementEventIDInstrumentEbeamColumnScanController(ScanController):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11138,6 +12176,9 @@ class EmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11171,6 +12212,10 @@ class EmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
             optionality="required",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     flux = Quantity(
         type=np.float64,
@@ -11183,6 +12228,9 @@ class EmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -11216,6 +12264,9 @@ class EmMeasurementEventIDInstrumentIbeamColumnLensID(ElectromagneticLens):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -11255,6 +12306,9 @@ class EmMeasurementEventIDInstrumentIbeamColumnApertureID(Aperture):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11287,6 +12341,9 @@ class EmMeasurementEventIDInstrumentIbeamColumnMonochromatorID(Monochromator):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11317,6 +12374,9 @@ class EmMeasurementEventIDInstrumentIbeamColumnScanController(ScanController):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     dwell_time = Quantity(
         type=np.float64,
@@ -11332,6 +12392,10 @@ class EmMeasurementEventIDInstrumentIbeamColumnScanController(ScanController):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11366,6 +12430,9 @@ class EmMeasurementEventIDInstrumentDetectorID(Detector):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11410,6 +12477,9 @@ class EmMeasurementEventIDInstrumentStageID(Manipulator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     tilt1 = Quantity(
         type=np.float64,
@@ -11425,6 +12495,10 @@ class EmMeasurementEventIDInstrumentStageID(Manipulator):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     tilt2 = Quantity(
         type=np.float64,
@@ -11440,6 +12514,10 @@ class EmMeasurementEventIDInstrumentStageID(Manipulator):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     rotation = Quantity(
         type=np.float64,
@@ -11455,6 +12533,10 @@ class EmMeasurementEventIDInstrumentStageID(Manipulator):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     position = Quantity(
         type=np.float64,
@@ -11501,6 +12583,9 @@ class EmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     heater_current = Quantity(
         type=np.float64,
@@ -11517,6 +12602,10 @@ class EmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     heater_voltage = Quantity(
         type=np.float64,
@@ -11533,6 +12622,10 @@ class EmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     heater_power = Quantity(
         type=np.float64,
@@ -11548,6 +12641,10 @@ class EmMeasurementEventIDInstrumentStageIDSampleHeater(Actuator):
             optionality="required",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11646,6 +12743,9 @@ class EmSimulationProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -11658,6 +12758,9 @@ class EmSimulationProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11725,6 +12828,9 @@ class EmSimulationEnvironmentProgram(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -11737,6 +12843,9 @@ class EmSimulationEnvironmentProgram(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -11956,6 +13065,9 @@ class EmRoiIDImgImageID(Image):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12054,6 +13166,9 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=str,
@@ -12068,6 +13183,9 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             enumeration=["undefined", "cartesian"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     origin = Quantity(
         type=MEnum(["in_the_pattern_center"]),
@@ -12080,6 +13198,10 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["in_the_pattern_center"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="in_the_pattern_center",
         ),
     )
     x = Quantity(
@@ -12110,6 +13232,9 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     y = Quantity(
         type=np.float64,
@@ -12139,6 +13264,9 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     z = Quantity(
         type=np.float64,
@@ -12167,6 +13295,9 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="recommended",
             enumeration=["north", "east", "south", "west", "in", "out"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -12199,6 +13330,9 @@ class EmRoiIDEbsdPatternCenter(Process):
             optionality="required",
             enumeration=["top", "right", "bottom", "left"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     x_normalization_direction = Quantity(
         type=MEnum(["north", "east", "south", "west"]),
@@ -12211,6 +13345,9 @@ class EmRoiIDEbsdPatternCenter(Process):
             name_type="specified",
             optionality="required",
             enumeration=["north", "east", "south", "west"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     y_boundary_convention = Quantity(
@@ -12225,6 +13362,9 @@ class EmRoiIDEbsdPatternCenter(Process):
             optionality="required",
             enumeration=["top", "right", "bottom", "left"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     y_normalization_direction = Quantity(
         type=MEnum(["north", "east", "south", "west"]),
@@ -12237,6 +13377,9 @@ class EmRoiIDEbsdPatternCenter(Process):
             name_type="specified",
             optionality="required",
             enumeration=["north", "east", "south", "west"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -12279,6 +13422,9 @@ class EmRoiIDEbsdMeasurement(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12309,6 +13455,9 @@ class EmRoiIDEbsdMeasurementSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -12320,6 +13469,9 @@ class EmRoiIDEbsdMeasurementSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -12333,6 +13485,9 @@ class EmRoiIDEbsdMeasurementSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -12344,6 +13499,9 @@ class EmRoiIDEbsdMeasurementSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -12386,6 +13544,9 @@ class EmRoiIDEbsdSimulation(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12416,6 +13577,9 @@ class EmRoiIDEbsdSimulationSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -12427,6 +13591,9 @@ class EmRoiIDEbsdSimulationSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -12440,6 +13607,9 @@ class EmRoiIDEbsdSimulationSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -12451,6 +13621,9 @@ class EmRoiIDEbsdSimulationSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -12530,6 +13703,10 @@ class EmRoiIDEbsdIndexing(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indexing_rate = Quantity(
         type=np.float64,
@@ -12545,6 +13722,10 @@ class EmRoiIDEbsdIndexing(Process):
             optionality="recommended",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12721,6 +13902,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfiguration(Process):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=MEnum(
@@ -12746,6 +13930,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfiguration(Process):
                 "markov_chain_clustering",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     disorientation_threshold = Quantity(
         type=np.float64,
@@ -12761,6 +13948,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfiguration(Process):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12803,6 +13994,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfigurationProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -12815,6 +14009,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfigurationProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -12846,6 +14043,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDCrystals(MicrostructureFeature):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_crystals = Quantity(
         type=np.int64,
@@ -12861,6 +14061,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDCrystals(MicrostructureFeature):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -12876,6 +14080,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDCrystals(MicrostructureFeature):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12906,6 +14114,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDInterfaces(MicrostructureFeature):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_interfaces = Quantity(
         type=np.int64,
@@ -12921,6 +14132,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDInterfaces(MicrostructureFeature):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -12936,6 +14151,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDInterfaces(MicrostructureFeature):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12966,6 +14185,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDTripleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_junctions = Quantity(
         type=np.int64,
@@ -12981,6 +14203,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDTripleJunctions(MicrostructureFeature):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -12996,6 +14222,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDTripleJunctions(MicrostructureFeature):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13026,6 +14256,9 @@ class EmRoiIDEbsdIndexingMicrostructureIDQuadrupleJunctions(MicrostructureFeatur
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_junctions = Quantity(
         type=np.int64,
@@ -13041,6 +14274,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDQuadrupleJunctions(MicrostructureFeatur
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -13056,6 +14293,10 @@ class EmRoiIDEbsdIndexingMicrostructureIDQuadrupleJunctions(MicrostructureFeatur
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13086,6 +14327,9 @@ class EmRoiIDEbsdIndexingSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     file_name = Quantity(
         type=str,
@@ -13097,6 +14341,9 @@ class EmRoiIDEbsdIndexingSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     checksum = Quantity(
@@ -13110,6 +14357,9 @@ class EmRoiIDEbsdIndexingSource(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -13121,6 +14371,9 @@ class EmRoiIDEbsdIndexingSource(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -13201,6 +14454,9 @@ class EmRoiIDEbsdIndexingPhaseID(Phase):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_scan_points = Quantity(
         type=np.int64,
@@ -13216,6 +14472,10 @@ class EmRoiIDEbsdIndexingPhaseID(Phase):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13249,6 +14509,10 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     b = Quantity(
         type=np.float64,
@@ -13264,6 +14528,10 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     c = Quantity(
         type=np.float64,
@@ -13279,6 +14547,10 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     alpha = Quantity(
         type=np.float64,
@@ -13294,6 +14566,10 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     beta = Quantity(
         type=np.float64,
@@ -13309,6 +14585,10 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     gamma = Quantity(
         type=np.float64,
@@ -13324,6 +14604,10 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     space_group = Quantity(
         type=str,
@@ -13335,6 +14619,9 @@ class EmRoiIDEbsdIndexingPhaseIDUnitCell(UnitCell):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -13390,6 +14677,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfID(MicrostructureIpf):
             optionality="required",
             enumeration=["tsl", "mtex"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     projection_direction = Quantity(
         type=np.float64,
@@ -13436,6 +14726,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -13474,6 +14767,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     data_quantity = Quantity(
         type=np.float64,
@@ -13489,6 +14785,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     data_quantity__long_name = Quantity(
         type=str,
@@ -13501,6 +14801,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             name_type="specified",
             optionality="required",
             parent_field="data",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_x = Quantity(
@@ -13531,6 +14834,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="required",
             parent_field="axis_x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_y = Quantity(
         type=np.float64,
@@ -13559,6 +14865,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_y",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_z = Quantity(
@@ -13589,6 +14898,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="required",
             parent_field="axis_z",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13618,6 +14930,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -13657,6 +14972,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     data_quantity = Quantity(
         type=np.float64,
@@ -13683,6 +15001,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             name_type="specified",
             optionality="required",
             parent_field="data",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_x = Quantity(
@@ -13713,6 +15034,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             optionality="required",
             parent_field="axis_x",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_y = Quantity(
         type=np.float64,
@@ -13741,6 +15065,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_y",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -13822,6 +15149,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     specimen_symmetry_point_group = Quantity(
         type=str,
@@ -13833,6 +15163,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     kernel_halfwidth = Quantity(
@@ -13849,6 +15182,10 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     kernel_name = Quantity(
         type=str,
@@ -13860,6 +15197,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     resolution = Quantity(
@@ -13876,6 +15216,10 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration(Parameters):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13909,6 +15253,10 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDCharacteristics(Process):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13938,6 +15286,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -13977,6 +15328,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -14005,6 +15359,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             name_type="specified",
             optionality="required",
             parent_field="intensity",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     varphi_one = Quantity(
@@ -14035,6 +15392,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             parent_field="varphi_one",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     capital_phi = Quantity(
         type=np.float64,
@@ -14063,6 +15423,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             name_type="specified",
             optionality="required",
             parent_field="capital_phi",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     varphi_two = Quantity(
@@ -14093,6 +15456,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             parent_field="varphi_two",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -14122,6 +15488,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -14161,6 +15530,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     descriptor = Quantity(
         type=MEnum(["band_contrast", "confidence_index", "mean_angular_deviation"]),
@@ -14173,6 +15545,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -14202,6 +15577,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     axis_z__long_name = Quantity(
         type=str,
@@ -14214,6 +15592,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_z",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_y = Quantity(
@@ -14244,6 +15625,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             optionality="required",
             parent_field="axis_y",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_x = Quantity(
         type=np.float64,
@@ -14272,6 +15656,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_x",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -14355,6 +15742,9 @@ class EmRoiIDEdsIndexing(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -14384,6 +15774,9 @@ class EmRoiIDEdsIndexingSummary(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -14423,6 +15816,9 @@ class EmRoiIDEdsIndexingSummary(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -14451,6 +15847,9 @@ class EmRoiIDEdsIndexingSummary(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -14463,6 +15862,9 @@ class EmRoiIDEdsIndexingSummary(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_energy",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -14507,6 +15909,9 @@ class EmRoiIDEdsIndexingImage(Image):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     energy_range = Quantity(
@@ -14554,6 +15959,9 @@ class EmRoiIDEdsIndexingImageImage2d(Data):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axes = Quantity(
         type=str,
@@ -14592,6 +16000,9 @@ class EmRoiIDEdsIndexingImageImage2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     intensity = Quantity(
         type=np.float64,
@@ -14621,6 +16032,9 @@ class EmRoiIDEdsIndexingImageImage2d(Data):
             optionality="required",
             parent_field="intensity",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -14648,6 +16062,9 @@ class EmRoiIDEdsIndexingImageImage2d(Data):
             optionality="required",
             parent_field="axis_i",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -14674,6 +16091,9 @@ class EmRoiIDEdsIndexingImageImage2d(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_j",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -14799,6 +16219,9 @@ class EmRoiIDTomoReconstructionIDProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -14811,6 +16234,9 @@ class EmRoiIDTomoReconstructionIDProgramID(Program):
             name_type="specified",
             optionality="recommended",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -14845,6 +16271,9 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axes = Quantity(
@@ -14883,6 +16312,9 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -14923,6 +16355,9 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             optionality="required",
             parent_field="axis_k",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_j = Quantity(
         type=np.float64,
@@ -14949,6 +16384,9 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             optionality="required",
             parent_field="axis_j",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     axis_i = Quantity(
         type=np.float64,
@@ -14974,6 +16412,9 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             name_type="specified",
             optionality="required",
             parent_field="axis_i",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

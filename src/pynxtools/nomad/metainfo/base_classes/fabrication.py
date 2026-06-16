@@ -26,6 +26,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -73,6 +78,9 @@ class Fabrication(Object, basesections.Instrument):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -85,6 +93,9 @@ class Fabrication(Object, basesections.Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     model__version = Quantity(
@@ -103,6 +114,9 @@ class Fabrication(Object, basesections.Instrument):
             optionality="optional",
             parent_field="model",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     serial_number = Quantity(
         type=str,
@@ -115,6 +129,9 @@ class Fabrication(Object, basesections.Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     construction_date = Quantity(
@@ -135,6 +152,9 @@ class Fabrication(Object, basesections.Instrument):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     capability = Quantity(
         type=str,
@@ -147,6 +167,9 @@ class Fabrication(Object, basesections.Instrument):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -149,6 +154,9 @@ class DelocalizationWeightingModel(MatchFilter):
             optionality="optional",
             enumeration=["default", "element", "isotope"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     method = Quantity(
         type=MEnum(["whitelist"]),
@@ -161,6 +169,10 @@ class DelocalizationWeightingModel(MatchFilter):
             name_type="specified",
             optionality="optional",
             enumeration=["whitelist"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="whitelist",
         ),
     )
     match = Quantity(

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -177,6 +182,10 @@ class Monochromator(Component):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_error = Quantity(
         type=np.float64,
@@ -194,6 +203,10 @@ class Monochromator(Component):
             units="NX_WAVELENGTH",
             deprecated="see https://github.com/nexusformat/definitions/issues/820",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_errors = Quantity(
         type=np.float64,
@@ -210,6 +223,10 @@ class Monochromator(Component):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     energy = Quantity(
         type=np.float64,
@@ -226,6 +243,10 @@ class Monochromator(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy_error = Quantity(
         type=np.float64,
@@ -243,6 +264,10 @@ class Monochromator(Component):
             units="NX_ENERGY",
             deprecated="see https://github.com/nexusformat/definitions/issues/820",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy_errors = Quantity(
         type=np.float64,
@@ -259,6 +284,10 @@ class Monochromator(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy_dispersion = Quantity(
         type=np.float64,
@@ -275,6 +304,10 @@ class Monochromator(Component):
             optionality="optional",
             units="eV/mm",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "eV/mm"},
     )
     wavelength_dispersion = Quantity(
         type=np.float64,
@@ -291,6 +324,10 @@ class Monochromator(Component):
             optionality="optional",
             units="nm/mm",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "nm/mm"},
     )
     depends_on = Quantity(
         type=str,
@@ -305,6 +342,9 @@ class Monochromator(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

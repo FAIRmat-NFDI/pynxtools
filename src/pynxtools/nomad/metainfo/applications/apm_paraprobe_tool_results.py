@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -117,6 +122,9 @@ class ApmParaprobeToolResults(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -129,6 +137,9 @@ class ApmParaprobeToolResults(Entry):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -206,6 +217,10 @@ class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     bitdepth = Quantity(
         type=np.int64,
@@ -221,6 +236,10 @@ class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
         type=np.int64,
@@ -323,6 +342,9 @@ class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
             optionality="required",
             enumeration=["success", "failure"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     identifier_analysis = Quantity(
         type=np.int64,
@@ -338,6 +360,10 @@ class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -368,6 +394,9 @@ class ApmParaprobeToolResultsCommonConfig(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -380,6 +409,9 @@ class ApmParaprobeToolResultsCommonConfig(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -391,6 +423,9 @@ class ApmParaprobeToolResultsCommonConfig(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -424,6 +459,9 @@ class ApmParaprobeToolResultsCommonProgramID(Program):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program__version = Quantity(
         type=str,
@@ -436,6 +474,9 @@ class ApmParaprobeToolResultsCommonProgramID(Program):
             name_type="specified",
             optionality="required",
             parent_field="program",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -467,6 +508,9 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -478,6 +522,9 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     total_elapsed_time = Quantity(
@@ -494,6 +541,10 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     max_processes = Quantity(
         type=np.int64,
@@ -509,6 +560,10 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     max_threads = Quantity(
         type=np.int64,
@@ -524,6 +579,10 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     max_gpus = Quantity(
         type=np.int64,
@@ -539,6 +598,10 @@ class ApmParaprobeToolResultsCommonProfiling(CsProfiling):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -575,6 +638,9 @@ class ApmParaprobeToolResultsCommonUserID(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -607,6 +673,9 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             enumeration=["undefined", "cartesian"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     x = Quantity(
         type=np.float64,
@@ -634,6 +703,9 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     y = Quantity(
@@ -663,6 +735,9 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     z = Quantity(
         type=np.float64,
@@ -690,6 +765,9 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

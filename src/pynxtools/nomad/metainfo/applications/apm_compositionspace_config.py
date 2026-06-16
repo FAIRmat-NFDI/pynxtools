@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -146,6 +151,10 @@ class ApmCompositionspaceConfig(Entry):
             optionality="required",
             enumeration=["NXapm_compositionspace_config"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXapm_compositionspace_config",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -159,6 +168,9 @@ class ApmCompositionspaceConfig(Entry):
             optionality="optional",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_analysis = Quantity(
         type=np.int64,
@@ -170,6 +182,9 @@ class ApmCompositionspaceConfig(Entry):
             type="NX_UINT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -223,6 +238,9 @@ class ApmCompositionspaceConfigReconstruction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -235,6 +253,9 @@ class ApmCompositionspaceConfigReconstruction(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -246,6 +267,9 @@ class ApmCompositionspaceConfigReconstruction(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     position = Quantity(
@@ -263,6 +287,9 @@ class ApmCompositionspaceConfigReconstruction(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     mass_to_charge = Quantity(
         type=str,
@@ -278,6 +305,9 @@ class ApmCompositionspaceConfigReconstruction(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -325,6 +355,9 @@ class ApmCompositionspaceConfigRanging(Note):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     checksum = Quantity(
         type=str,
@@ -337,6 +370,9 @@ class ApmCompositionspaceConfigRanging(Note):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=str,
@@ -348,6 +384,9 @@ class ApmCompositionspaceConfigRanging(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     ranging_definitions = Quantity(
@@ -365,6 +404,9 @@ class ApmCompositionspaceConfigRanging(Note):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -421,6 +463,10 @@ class ApmCompositionspaceConfigVoxelization(Process):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -474,6 +520,9 @@ class ApmCompositionspaceConfigVoxelizationAutophase(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     initial_guess = Quantity(
         type=np.int64,
@@ -496,6 +545,10 @@ class ApmCompositionspaceConfigVoxelizationAutophase(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     trunc_species = Quantity(
         type=np.int64,
@@ -512,6 +565,10 @@ class ApmCompositionspaceConfigVoxelizationAutophase(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -609,6 +666,10 @@ class ApmCompositionspaceConfigSegmentationIcOpt(Process):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -683,6 +744,10 @@ class ApmCompositionspaceConfigClusteringDbscan(Parameters):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     min_samples = Quantity(
         type=np.int64,
@@ -702,6 +767,10 @@ class ApmCompositionspaceConfigClusteringDbscan(Parameters):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

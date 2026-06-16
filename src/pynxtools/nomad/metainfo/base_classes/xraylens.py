@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -100,6 +105,9 @@ class Xraylens(Component):
             optionality="optional",
             enumeration=["paraboloid", "spherical", "elliptical", "hyperbolical"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     symmetric = Quantity(
         type=bool,
@@ -112,6 +120,9 @@ class Xraylens(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     cylindrical = Quantity(
@@ -126,6 +137,9 @@ class Xraylens(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     focus_type = Quantity(
         type=MEnum(["line", "point"]),
@@ -139,6 +153,9 @@ class Xraylens(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["line", "point"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     lens_thickness = Quantity(
@@ -156,6 +173,10 @@ class Xraylens(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     lens_length = Quantity(
         type=np.float64,
@@ -172,6 +193,10 @@ class Xraylens(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     curvature = Quantity(
         type=np.float64,
@@ -188,6 +213,10 @@ class Xraylens(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     aperture = Quantity(
         type=np.float64,
@@ -204,6 +233,10 @@ class Xraylens(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     number_of_lenses = Quantity(
         type=np.int64,
@@ -216,6 +249,9 @@ class Xraylens(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     lens_material = Quantity(
@@ -230,6 +266,9 @@ class Xraylens(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     gas = Quantity(
         type=str,
@@ -242,6 +281,9 @@ class Xraylens(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     gas_pressure = Quantity(
@@ -259,6 +301,10 @@ class Xraylens(Component):
             optionality="optional",
             units="NX_PRESSURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "pascal"},
     )
     depends_on = Quantity(
         type=str,
@@ -273,6 +319,9 @@ class Xraylens(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

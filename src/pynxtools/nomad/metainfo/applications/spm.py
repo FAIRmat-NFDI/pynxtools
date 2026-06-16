@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -149,6 +154,10 @@ class Spm(SensorScan):
             optionality="required",
             enumeration=["NXspm"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXspm",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -161,6 +170,9 @@ class Spm(SensorScan):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_technique = Quantity(
@@ -175,6 +187,9 @@ class Spm(SensorScan):
             name_type="specified",
             optionality="required",
             enumeration=["STM", "STS", "AFM"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     scan_mode = Quantity(
@@ -204,6 +219,9 @@ class Spm(SensorScan):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     scan_type = Quantity(
         type=str,
@@ -221,6 +239,9 @@ class Spm(SensorScan):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_experiment = Quantity(
         type=str,
@@ -235,6 +256,9 @@ class Spm(SensorScan):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     default = Quantity(
@@ -256,6 +280,9 @@ class Spm(SensorScan):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier_collection = Quantity(
         type=str,
@@ -273,6 +300,9 @@ class Spm(SensorScan):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -284,6 +314,9 @@ class Spm(SensorScan):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -298,6 +331,9 @@ class Spm(SensorScan):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -310,6 +346,9 @@ class Spm(SensorScan):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -520,6 +559,9 @@ class SpmInstrumentHardware(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     vendor = Quantity(
         type=str,
@@ -532,6 +574,9 @@ class SpmInstrumentHardware(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     model = Quantity(
@@ -547,6 +592,9 @@ class SpmInstrumentHardware(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -586,6 +634,9 @@ class SpmInstrumentSoftware(Fabrication):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     vendor = Quantity(
         type=str,
@@ -599,6 +650,9 @@ class SpmInstrumentSoftware(Fabrication):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -611,6 +665,9 @@ class SpmInstrumentSoftware(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -654,6 +711,9 @@ class SpmInstrumentLockinAmplifier(Lockin):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     active_channel = Quantity(
         type=str,
@@ -669,6 +729,9 @@ class SpmInstrumentLockinAmplifier(Lockin):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -755,6 +818,10 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
             optionality="required",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     offset_value = Quantity(
         type=np.float64,
@@ -771,6 +838,10 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -835,6 +906,9 @@ class SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters(Parameters)
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -874,6 +948,10 @@ class SpmInstrumentCurrent_sensorTAGAmplifier(Amplifier):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -964,6 +1042,10 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     offset_value = Quantity(
         type=np.float64,
@@ -983,6 +1065,10 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1047,6 +1133,9 @@ class SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters(Parameters)
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1086,6 +1175,10 @@ class SpmInstrumentVoltage_sensorTAGAmplifier(Amplifier):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1124,6 +1217,10 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     y = Quantity(
         type=np.float64,
@@ -1140,6 +1237,10 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     z = Quantity(
         type=np.float64,
@@ -1156,6 +1257,10 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1206,6 +1311,10 @@ class SpmInstrumentSampleBiasVoltage(Sensor):
             optionality="required",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     bias_offset_value = Quantity(
         type=np.float64,
@@ -1222,6 +1331,10 @@ class SpmInstrumentSampleBiasVoltage(Sensor):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1285,6 +1398,9 @@ class SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters(Parameters)
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1383,6 +1499,10 @@ class SpmSampleSampleEnvironment(Environment):
             optionality="recommended",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

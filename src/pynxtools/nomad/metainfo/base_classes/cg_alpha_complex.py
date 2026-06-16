@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -143,6 +148,9 @@ class CgAlphaComplex(CgPrimitive):
             optionality="optional",
             enumeration=["convex_hull", "alpha_shape", "alpha_wrapping"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     regularization = Quantity(
         type=str,
@@ -155,6 +163,9 @@ class CgAlphaComplex(CgPrimitive):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     is_regularized = Quantity(
@@ -172,6 +183,9 @@ class CgAlphaComplex(CgPrimitive):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     alpha = Quantity(
         type=np.float64,
@@ -188,6 +202,9 @@ class CgAlphaComplex(CgPrimitive):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     offset = Quantity(
@@ -207,6 +224,10 @@ class CgAlphaComplex(CgPrimitive):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

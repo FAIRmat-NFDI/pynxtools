@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -72,6 +77,9 @@ class Flipper(Component):
             optionality="optional",
             enumeration=["coil", "current-sheet"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     flip_turns = Quantity(
         type=np.float64,
@@ -91,6 +99,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     comp_turns = Quantity(
         type=np.float64,
@@ -110,6 +122,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     guide_turns = Quantity(
         type=np.float64,
@@ -128,6 +144,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     flip_current = Quantity(
         type=np.float64,
@@ -144,6 +164,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     comp_current = Quantity(
         type=np.float64,
@@ -160,6 +184,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     guide_current = Quantity(
         type=np.float64,
@@ -176,6 +204,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     thickness = Quantity(
         type=np.float64,
@@ -192,6 +224,10 @@ class Flipper(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     depends_on = Quantity(
         type=str,
@@ -206,6 +242,9 @@ class Flipper(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

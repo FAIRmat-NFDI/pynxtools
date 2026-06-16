@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -122,6 +127,9 @@ class Azint2d(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition = Quantity(
         type=MEnum(["NXazint2d"]),
@@ -136,6 +144,10 @@ class Azint2d(Entry):
             optionality="required",
             enumeration=["NXazint2d"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXazint2d",
+        ),
     )
     solid_angle_applied = Quantity(
         type=bool,
@@ -149,6 +161,9 @@ class Azint2d(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     polarization_applied = Quantity(
         type=bool,
@@ -161,6 +176,9 @@ class Azint2d(Entry):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     normalization_applied = Quantity(
@@ -181,6 +199,9 @@ class Azint2d(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     monitor_applied = Quantity(
         type=bool,
@@ -199,6 +220,9 @@ class Azint2d(Entry):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
 
@@ -264,6 +288,9 @@ class Azint2dInstrument(Instrument):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -299,6 +326,10 @@ class Azint2dInstrumentMonochromator(Monochromator):
             optionality="required",
             units="angstrom",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "angstrom"},
     )
     energy = Quantity(
         type=np.float64,
@@ -315,6 +346,10 @@ class Azint2dInstrumentMonochromator(Monochromator):
             optionality="required",
             units="keV",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "keV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -346,6 +381,9 @@ class Azint2dInstrumentSource(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     type = Quantity(
@@ -385,6 +423,9 @@ class Azint2dInstrumentSource(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     probe = Quantity(
         type=MEnum(
@@ -420,6 +461,9 @@ class Azint2dInstrumentSource(Source):
                 "positron",
                 "proton",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -463,6 +507,9 @@ class Azint2dReduction(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     version = Quantity(
         type=str,
@@ -476,6 +523,9 @@ class Azint2dReduction(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     date = Quantity(
         type=Datetime,
@@ -488,6 +538,9 @@ class Azint2dReduction(Process):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     reference = Quantity(
@@ -504,6 +557,9 @@ class Azint2dReduction(Process):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     note_quantity = Quantity(
         type=str,
@@ -518,6 +574,9 @@ class Azint2dReduction(Process):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -606,6 +665,10 @@ class Azint2dData(Data):
             optionality="required",
             enumeration=["image"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="image",
+        ),
     )
     signal = Quantity(
         type=MEnum(["I"]),
@@ -618,6 +681,10 @@ class Azint2dData(Data):
             name_type="specified",
             optionality="required",
             enumeration=["I"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="I",
         ),
     )
     I = Quantity(
@@ -646,6 +713,10 @@ class Azint2dData(Data):
             parent_field="I",
             enumeration=["intensity"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="intensity",
+        ),
     )
     I__units = Quantity(
         type=MEnum(["arbitrary units"]),
@@ -659,6 +730,10 @@ class Azint2dData(Data):
             optionality="required",
             parent_field="I",
             enumeration=["arbitrary units"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="arbitrary units",
         ),
     )
     I_errors = Quantity(
@@ -687,6 +762,10 @@ class Azint2dData(Data):
             parent_field="I_errors",
             enumeration=["estimated intensity error"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="estimated intensity error",
+        ),
     )
     I_errors__units = Quantity(
         type=MEnum(["arbitrary units"]),
@@ -700,6 +779,10 @@ class Azint2dData(Data):
             optionality="optional",
             parent_field="I_errors",
             enumeration=["arbitrary units"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="arbitrary units",
         ),
     )
     radial_axis = Quantity(
@@ -728,6 +811,9 @@ class Azint2dData(Data):
             parent_field="radial_axis",
             enumeration=["q", "2theta"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     radial_axis__units = Quantity(
         type=MEnum(["NX_PER_LENGHT", "NX_WAVENUMBER", "NX_ANGLE"]),
@@ -741,6 +827,9 @@ class Azint2dData(Data):
             optionality="required",
             parent_field="radial_axis",
             enumeration=["NX_PER_LENGHT", "NX_WAVENUMBER", "NX_ANGLE"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     radial_axis_edges = Quantity(
@@ -769,6 +858,9 @@ class Azint2dData(Data):
             parent_field="radial_axis_edges",
             enumeration=["q bin edges", "2theta bin edges"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     radial_axis_edges__units = Quantity(
         type=MEnum(["NX_PER_LENGTH", "NX_WAVENUMBER", "NX_ANGLE"]),
@@ -782,6 +874,9 @@ class Azint2dData(Data):
             optionality="required",
             parent_field="radial_axis_edges",
             enumeration=["NX_PER_LENGTH", "NX_WAVENUMBER", "NX_ANGLE"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     norm = Quantity(
@@ -832,6 +927,10 @@ class Azint2dData(Data):
                 "effective number of pixels contributing to the corresponding bin"
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="effective number of pixels contributing to the corresponding bin",
+        ),
     )
     norm__units = Quantity(
         type=MEnum(["arbitrary units"]),
@@ -845,6 +944,10 @@ class Azint2dData(Data):
             optionality="required",
             parent_field="norm",
             enumeration=["arbitrary units"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="arbitrary units",
         ),
     )
     azimuthal_axis = Quantity(
@@ -873,6 +976,10 @@ class Azint2dData(Data):
             parent_field="azimuthal_axis",
             enumeration=["azimuthal bin center"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="azimuthal bin center",
+        ),
     )
     azimuthal_axis__units = Quantity(
         type=MEnum(["NX_ANGLE"]),
@@ -886,6 +993,10 @@ class Azint2dData(Data):
             optionality="required",
             parent_field="azimuthal_axis",
             enumeration=["NX_ANGLE"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NX_ANGLE",
         ),
     )
     azimuthal_axis_edges = Quantity(
@@ -914,6 +1025,10 @@ class Azint2dData(Data):
             parent_field="azimuthal_axis_edges",
             enumeration=["azimuthal bin edges"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="azimuthal bin edges",
+        ),
     )
     azimuthal_axis_edges__units = Quantity(
         type=MEnum(["NX_ANGLE"]),
@@ -927,6 +1042,10 @@ class Azint2dData(Data):
             optionality="required",
             parent_field="azimuthal_axis_edges",
             enumeration=["NX_ANGLE"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NX_ANGLE",
         ),
     )
 

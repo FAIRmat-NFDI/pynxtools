@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -364,6 +369,9 @@ class Microstructure(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     date = Quantity(
         type=Datetime,
@@ -379,6 +387,9 @@ class Microstructure(Object):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     time = Quantity(
@@ -400,6 +411,10 @@ class Microstructure(Object):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     iteration = Quantity(
         type=np.int64,
@@ -416,6 +431,10 @@ class Microstructure(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -470,6 +489,9 @@ class MicrostructureConfiguration(Process):
             units="NX_UNITLESS",
             enumeration=["1", "2", "3"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     algorithm = Quantity(
         type=MEnum(
@@ -504,6 +526,9 @@ class MicrostructureConfiguration(Process):
                 "markov_chain_clustering",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     disorientation_threshold = Quantity(
         type=np.float64,
@@ -525,6 +550,10 @@ class MicrostructureConfiguration(Process):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -576,6 +605,10 @@ class MicrostructurePhases(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -644,6 +677,9 @@ class MicrostructureCrystals(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_crystals = Quantity(
         type=np.int64,
@@ -663,6 +699,10 @@ class MicrostructureCrystals(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     number_of_phases = Quantity(
         type=np.int64,
@@ -683,6 +723,10 @@ class MicrostructureCrystals(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -699,6 +743,10 @@ class MicrostructureCrystals(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_crystal = Quantity(
         type=np.int64,
@@ -886,6 +934,9 @@ class MicrostructureInterfaces(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_interfaces = Quantity(
         type=np.int64,
@@ -902,6 +953,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -918,6 +973,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_interface = Quantity(
         type=np.int64,
@@ -973,6 +1032,9 @@ class MicrostructureInterfaces(MicrostructureFeature):
             optionality="optional",
             parent_field="indices_crystal",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_phase = Quantity(
         type=np.int64,
@@ -1007,6 +1069,9 @@ class MicrostructureInterfaces(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="indices_phase",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     number_of_triple_junctions = Quantity(
@@ -1069,6 +1134,9 @@ class MicrostructureInterfaces(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="indices_triple_junction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     boundary_contact = Quantity(
@@ -1210,6 +1278,9 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_junctions = Quantity(
         type=np.int64,
@@ -1226,6 +1297,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -1242,6 +1317,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_triple_junction = Quantity(
         type=np.int64,
@@ -1292,6 +1371,9 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="location",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     position = Quantity(
@@ -1366,6 +1448,9 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             optionality="optional",
             parent_field="indices_interface",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_polyline = Quantity(
         type=np.int64,
@@ -1399,6 +1484,9 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="indices_polyline",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     boundary_contact = Quantity(
@@ -1537,6 +1625,9 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     number_of_junctions = Quantity(
         type=np.int64,
@@ -1553,6 +1644,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     index_offset = Quantity(
         type=np.int64,
@@ -1569,6 +1664,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     indices_quadruple_junction = Quantity(
         type=np.int64,
@@ -1619,6 +1718,9 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="location",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     position = Quantity(
@@ -1674,6 +1776,9 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             optionality="optional",
             parent_field="indices_crystal",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_interface = Quantity(
         type=np.int64,
@@ -1710,6 +1815,9 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="indices_interface",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_triple_junction = Quantity(
@@ -1748,6 +1856,9 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             optionality="optional",
             parent_field="indices_triple_junction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     indices_phase = Quantity(
         type=np.int64,
@@ -1784,6 +1895,9 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
             name_type="specified",
             optionality="optional",
             parent_field="indices_phase",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     boundary_contact = Quantity(

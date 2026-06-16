@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -127,6 +132,10 @@ class DispersiveMaterial(Entry):
             optionality="required",
             enumeration=["NXdispersive_material"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXdispersive_material",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -143,6 +152,9 @@ class DispersiveMaterial(Entry):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition__URL = Quantity(
@@ -161,6 +173,9 @@ class DispersiveMaterial(Entry):
             optionality="required",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     dispersion_type = Quantity(
         type=MEnum(["measured", "simulated"]),
@@ -176,6 +191,9 @@ class DispersiveMaterial(Entry):
             name_type="specified",
             optionality="recommended",
             enumeration=["measured", "simulated"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -216,6 +234,9 @@ class DispersiveMaterialSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     atom_types = Quantity(
         type=str,
@@ -234,6 +255,9 @@ class DispersiveMaterialSample(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     colloquial_name = Quantity(
         type=str,
@@ -249,6 +273,9 @@ class DispersiveMaterialSample(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     material_phase = Quantity(
         type=str,
@@ -263,6 +290,9 @@ class DispersiveMaterialSample(Sample):
             optionality="optional",
             enumeration=["gas", "liquid", "solid"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     material_phase_comment = Quantity(
@@ -280,6 +310,9 @@ class DispersiveMaterialSample(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     additional_phase_information = Quantity(
         type=str,
@@ -296,6 +329,9 @@ class DispersiveMaterialSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -332,6 +368,9 @@ class DispersiveMaterialCite(Cite):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     doi = Quantity(
         type=str,
@@ -343,6 +382,9 @@ class DispersiveMaterialCite(Cite):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -415,6 +457,9 @@ class DispersiveMaterialDispersionX(Dispersion):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -446,6 +491,9 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     convention = Quantity(
         type=MEnum(["n + ik", "n - ik"]),
@@ -458,6 +506,9 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
             name_type="specified",
             optionality="required",
             enumeration=["n + ik", "n - ik"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     wavelength = Quantity(
@@ -561,6 +612,9 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula = Quantity(
         type=str,
@@ -572,6 +626,9 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     convention = Quantity(
@@ -586,6 +643,9 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             optionality="required",
             enumeration=["n + ik", "n - ik"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     energy_identifier = Quantity(
         type=str,
@@ -597,6 +657,9 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     energy_unit = Quantity(
@@ -613,6 +676,10 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     wavelength_identifier = Quantity(
         type=str,
@@ -624,6 +691,9 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     wavelength_unit = Quantity(
@@ -640,6 +710,10 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     representation = Quantity(
         type=MEnum(["n", "eps"]),
@@ -652,6 +726,9 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             name_type="specified",
             optionality="required",
             enumeration=["n", "eps"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -686,6 +763,9 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionSingleParameter(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     value = Quantity(
         type=np.float64,
@@ -698,6 +778,9 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionSingleParameter(
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -731,6 +814,9 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionRepeatedParameter
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     values = Quantity(
@@ -815,6 +901,9 @@ class DispersiveMaterialDispersionY(Dispersion):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -846,6 +935,9 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     convention = Quantity(
         type=MEnum(["n + ik", "n - ik"]),
@@ -858,6 +950,9 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
             name_type="specified",
             optionality="required",
             enumeration=["n + ik", "n - ik"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     wavelength = Quantity(
@@ -961,6 +1056,9 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula = Quantity(
         type=str,
@@ -972,6 +1070,9 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     convention = Quantity(
@@ -986,6 +1087,9 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             optionality="required",
             enumeration=["n + ik", "n - ik"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     energy_identifier = Quantity(
         type=str,
@@ -997,6 +1101,9 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     energy_unit = Quantity(
@@ -1013,6 +1120,10 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     wavelength_identifier = Quantity(
         type=str,
@@ -1024,6 +1135,9 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     wavelength_unit = Quantity(
@@ -1040,6 +1154,10 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     representation = Quantity(
         type=MEnum(["n", "eps"]),
@@ -1052,6 +1170,9 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             name_type="specified",
             optionality="required",
             enumeration=["n", "eps"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1086,6 +1207,9 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionSingleParameter(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     value = Quantity(
         type=np.float64,
@@ -1098,6 +1222,9 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionSingleParameter(
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1131,6 +1258,9 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionRepeatedParameter
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     values = Quantity(
@@ -1217,6 +1347,9 @@ class DispersiveMaterialDispersionZ(Dispersion):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1248,6 +1381,9 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     convention = Quantity(
         type=MEnum(["n + ik", "n - ik"]),
@@ -1260,6 +1396,9 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
             name_type="specified",
             optionality="required",
             enumeration=["n + ik", "n - ik"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     wavelength = Quantity(
@@ -1363,6 +1502,9 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula = Quantity(
         type=str,
@@ -1374,6 +1516,9 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     convention = Quantity(
@@ -1388,6 +1533,9 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             optionality="required",
             enumeration=["n + ik", "n - ik"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     energy_identifier = Quantity(
         type=str,
@@ -1399,6 +1547,9 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     energy_unit = Quantity(
@@ -1415,6 +1566,10 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     wavelength_identifier = Quantity(
         type=str,
@@ -1426,6 +1581,9 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     wavelength_unit = Quantity(
@@ -1442,6 +1600,10 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     representation = Quantity(
         type=MEnum(["n", "eps"]),
@@ -1454,6 +1616,9 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             name_type="specified",
             optionality="required",
             enumeration=["n", "eps"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -1488,6 +1653,9 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionSingleParameter(
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     value = Quantity(
         type=np.float64,
@@ -1500,6 +1668,9 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionSingleParameter(
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1533,6 +1704,9 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionRepeatedParameter
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     values = Quantity(

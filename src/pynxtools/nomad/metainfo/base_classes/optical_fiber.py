@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -110,6 +115,9 @@ class OpticalFiber(Component):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     type = Quantity(
         type=MEnum(["single mode", "multimode graded index", "multimode step index"]),
@@ -132,6 +140,9 @@ class OpticalFiber(Component):
                 "multimode step index",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     dispersion_type = Quantity(
         type=str,
@@ -146,6 +157,9 @@ class OpticalFiber(Component):
             optionality="optional",
             enumeration=["modal", "material", "chromatic"],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     dispersion = Quantity(
@@ -183,6 +197,10 @@ class OpticalFiber(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     spectral_range = Quantity(
         type=np.float64,
@@ -218,6 +236,9 @@ class OpticalFiber(Component):
             optionality="optional",
             parent_field="spectral_range",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     transfer_rate = Quantity(
         type=np.float64,
@@ -234,6 +255,10 @@ class OpticalFiber(Component):
             optionality="optional",
             units="GB/s",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "GB/s"},
     )
     numerical_aperture = Quantity(
         type=np.float64,
@@ -250,6 +275,10 @@ class OpticalFiber(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     attenuation = Quantity(
         type=np.float64,
@@ -284,6 +313,10 @@ class OpticalFiber(Component):
             parent_field="attenuation",
             enumeration=["dB/km"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="dB/km",
+        ),
     )
     power_loss = Quantity(
         type=np.float64,
@@ -300,6 +333,10 @@ class OpticalFiber(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     acceptance_angle = Quantity(
         type=np.float64,
@@ -316,6 +353,10 @@ class OpticalFiber(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -360,6 +401,9 @@ class OpticalFiberCore(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     diameter = Quantity(
         type=np.float64,
@@ -376,6 +420,10 @@ class OpticalFiberCore(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
         type=np.float64,
@@ -431,6 +479,9 @@ class OpticalFiberCladding(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     diameter = Quantity(
         type=np.float64,
@@ -447,6 +498,10 @@ class OpticalFiberCladding(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
         type=np.float64,
@@ -502,6 +557,9 @@ class OpticalFiberCoating(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     diameter = Quantity(
         type=np.float64,
@@ -518,6 +576,10 @@ class OpticalFiberCoating(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

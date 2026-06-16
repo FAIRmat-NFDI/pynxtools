@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -86,6 +91,9 @@ class Atom(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     id = Quantity(
         type=np.int64,
@@ -105,6 +113,10 @@ class Atom(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     identifier_chemical = Quantity(
         type=MEnum(["inchi"]),
@@ -120,6 +132,10 @@ class Atom(Object):
             name_type="specified",
             optionality="optional",
             enumeration=["inchi"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="inchi",
         ),
     )
     charge = Quantity(
@@ -143,6 +159,10 @@ class Atom(Object):
             optionality="optional",
             units="NX_CHARGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "coulomb"},
     )
     charge_state = Quantity(
         type=np.float64,
@@ -169,6 +189,10 @@ class Atom(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     volume = Quantity(
         type=np.float64,
@@ -189,6 +213,10 @@ class Atom(Object):
             optionality="optional",
             units="NX_VOLUME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m ** 3"},
     )
     indices = Quantity(
         type=str,
@@ -262,6 +290,9 @@ class Atom(Object):
             name_type="specified",
             optionality="optional",
             parent_field="position",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     occupancy = Quantity(

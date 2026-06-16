@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -90,6 +95,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     data_size = Quantity(
         type=np.int64,
@@ -106,6 +114,9 @@ class DetectorModule(Object):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     module_offset = Quantity(
@@ -126,6 +137,10 @@ class DetectorModule(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     module_offset__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -140,6 +155,10 @@ class DetectorModule(Object):
             parent_field="module_offset",
             enumeration=["translation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="translation",
+        ),
     )
     module_offset__vector = Quantity(
         type=np.float64,
@@ -153,6 +172,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
             parent_field="module_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     module_offset__offset = Quantity(
@@ -171,6 +193,9 @@ class DetectorModule(Object):
             optionality="optional",
             parent_field="module_offset",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     module_offset__offset_units = Quantity(
         type=str,
@@ -185,6 +210,9 @@ class DetectorModule(Object):
             optionality="optional",
             parent_field="module_offset",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     module_offset__depends_on = Quantity(
         type=str,
@@ -198,6 +226,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
             parent_field="module_offset",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     fast_pixel_direction = Quantity(
@@ -222,6 +253,10 @@ class DetectorModule(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     fast_pixel_direction__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -236,6 +271,10 @@ class DetectorModule(Object):
             parent_field="fast_pixel_direction",
             enumeration=["translation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="translation",
+        ),
     )
     fast_pixel_direction__vector = Quantity(
         type=np.float64,
@@ -249,6 +288,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
             parent_field="fast_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     fast_pixel_direction__offset = Quantity(
@@ -267,6 +309,9 @@ class DetectorModule(Object):
             optionality="optional",
             parent_field="fast_pixel_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     fast_pixel_direction__offset_units = Quantity(
         type=str,
@@ -281,6 +326,9 @@ class DetectorModule(Object):
             optionality="optional",
             parent_field="fast_pixel_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     fast_pixel_direction__depends_on = Quantity(
         type=str,
@@ -294,6 +342,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
             parent_field="fast_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     slow_pixel_direction = Quantity(
@@ -318,6 +369,10 @@ class DetectorModule(Object):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     slow_pixel_direction__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -332,6 +387,10 @@ class DetectorModule(Object):
             parent_field="slow_pixel_direction",
             enumeration=["translation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="translation",
+        ),
     )
     slow_pixel_direction__vector = Quantity(
         type=np.float64,
@@ -345,6 +404,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
             parent_field="slow_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     slow_pixel_direction__offset = Quantity(
@@ -363,6 +425,9 @@ class DetectorModule(Object):
             optionality="optional",
             parent_field="slow_pixel_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     slow_pixel_direction__offset_units = Quantity(
         type=str,
@@ -376,6 +441,9 @@ class DetectorModule(Object):
             name_type="specified",
             optionality="optional",
             parent_field="slow_pixel_direction",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     slow_pixel_direction__depends_on = Quantity(
@@ -391,6 +459,9 @@ class DetectorModule(Object):
             optionality="optional",
             parent_field="slow_pixel_direction",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     depends_on = Quantity(
         type=str,
@@ -403,6 +474,9 @@ class DetectorModule(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

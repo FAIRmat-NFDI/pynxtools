@@ -103,6 +103,10 @@ class QuantityContext:
     scalar_items: list[str] | None
     # The originating node — NXTreeField for fields, NXTreeAttribute for attributes.
     node: NXTreeField | NXTreeAttribute
+    # ELN component name (e.g. "StringEditQuantity") — None for arrays/Bytes/variadic.
+    eln_component: str | None
+    # Default value for the ELN annotation; set for single-value MEnum only.
+    eln_default: str | None
 
 
 @dataclass
@@ -460,6 +464,36 @@ def _concept_class_name_from_parts(
 # ---------------------------------------------------------------------------
 
 
+def _eln_component_for(
+    python_type: str,
+    shape: list | None,
+    name_type: str | None,
+    scalar_items: list[str] | None,
+) -> tuple[str | None, str | None]:
+    """Return (eln_component, eln_default) for a generated Quantity.
+
+    Returns (None, None) for arrays, variadic quantities, Bytes, and link targets.
+    Single-value MEnum fields get their sole enum string as ``eln_default``.
+    """
+    if shape:  # non-empty list → array; None or [] → scalar
+        return None, None
+    if (name_type or "specified") in ("any", "partial"):
+        return None, None
+    if python_type == "Bytes":
+        return None, None
+    if python_type == "Datetime":
+        return "DateTimeEditQuantity", None
+    if python_type == "bool":
+        return "BoolEditQuantity", None
+    if python_type.startswith("MEnum("):
+        default = scalar_items[0] if scalar_items and len(scalar_items) == 1 else None
+        return "EnumEditQuantity", default
+    if python_type == "str":
+        return "StringEditQuantity", None
+    # Numeric: np.float64, np.int64, np.complex128, int, float
+    return "NumberEditQuantity", None
+
+
 def _build_quantity_from_node(
     node: NXTreeField | NXTreeAttribute,
     parent_field: str | None = None,
@@ -502,6 +536,10 @@ def _build_quantity_from_node(
     else:
         python_type = nx_type_to_source(node.dtype)
 
+    eln_component, eln_default = _eln_component_for(
+        python_type, shape, node.name_type, scalar_items
+    )
+
     return QuantityContext(
         python_name=python_name,
         python_type=python_type,
@@ -515,6 +553,8 @@ def _build_quantity_from_node(
         long_name=long_name,
         scalar_items=scalar_items,
         node=node,
+        eln_component=eln_component,
+        eln_default=eln_default,
     )
 
 

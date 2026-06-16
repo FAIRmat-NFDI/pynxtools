@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -142,6 +147,9 @@ class Filter(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     status = Quantity(
         type=MEnum(["in", "out"]),
@@ -159,6 +167,9 @@ class Filter(Component):
             optionality="optional",
             enumeration=["in", "out"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     temperature = Quantity(
         type=np.float64,
@@ -175,6 +186,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     thickness = Quantity(
         type=np.float64,
@@ -191,6 +206,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     density = Quantity(
         type=np.float64,
@@ -207,6 +226,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_MASS_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / m ** 3"},
     )
     chemical_formula = Quantity(
         type=str,
@@ -237,6 +260,9 @@ class Filter(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     unit_cell_a = Quantity(
         type=np.float64,
@@ -253,6 +279,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     unit_cell_b = Quantity(
         type=np.float64,
@@ -269,6 +299,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     unit_cell_c = Quantity(
         type=np.float64,
@@ -285,6 +319,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     unit_cell_alpha = Quantity(
         type=np.float64,
@@ -301,6 +339,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     unit_cell_beta = Quantity(
         type=np.float64,
@@ -317,6 +359,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     unit_cell_gamma = Quantity(
         type=np.float64,
@@ -333,6 +379,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     unit_cell_volume = Quantity(
         type=np.float64,
@@ -384,6 +434,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     substrate_material = Quantity(
         type=str,
@@ -396,6 +450,9 @@ class Filter(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     substrate_thickness = Quantity(
@@ -413,6 +470,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     coating_material = Quantity(
         type=str,
@@ -425,6 +486,9 @@ class Filter(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     substrate_roughness = Quantity(
@@ -442,6 +506,10 @@ class Filter(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     coating_roughness = Quantity(
         type=np.float64,
@@ -471,6 +539,9 @@ class Filter(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

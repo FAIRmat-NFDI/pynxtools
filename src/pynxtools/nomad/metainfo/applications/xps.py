@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -157,6 +162,10 @@ class Xps(Mpes):
             optionality="required",
             enumeration=["NXxps"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXxps",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -169,6 +178,9 @@ class Xps(Mpes):
             name_type="specified",
             optionality="required",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     method = Quantity(
@@ -194,6 +206,9 @@ class Xps(Mpes):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     transitions = Quantity(
         type=str,
@@ -206,6 +221,9 @@ class Xps(Mpes):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -217,6 +235,9 @@ class Xps(Mpes):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -235,6 +256,9 @@ class Xps(Mpes):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -251,6 +275,9 @@ class Xps(Mpes):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -305,6 +332,10 @@ class XpsCoordinateSystem(CoordinateSystem):
             optionality="required",
             enumeration=["sample stage"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="sample stage",
+        ),
     )
     z_direction = Quantity(
         type=MEnum(["sample stage normal"]),
@@ -317,6 +348,10 @@ class XpsCoordinateSystem(CoordinateSystem):
             name_type="specified",
             optionality="required",
             enumeration=["sample stage normal"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="sample stage normal",
         ),
     )
     x = Quantity(
@@ -383,6 +418,9 @@ class XpsCoordinateSystem(CoordinateSystem):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -490,6 +528,10 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     depends_on = Quantity(
         type=str,
@@ -505,6 +547,9 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -540,6 +585,10 @@ class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             optionality="recommended",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -574,6 +623,10 @@ class XpsInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     energy_scan_mode = Quantity(
         type=str,
@@ -593,6 +646,9 @@ class XpsInstrumentElectronanalyzerEnergydispersion(Energydispersion):
                 "dither",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -637,6 +693,10 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     analyzer_take_off_polar_angle__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -650,6 +710,10 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_take_off_polar_angle",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     analyzer_take_off_polar_angle__vector = Quantity(
@@ -679,6 +743,10 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             parent_field="analyzer_take_off_polar_angle",
             enumeration=["analyzer_take_off_azimuth_angle"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="analyzer_take_off_azimuth_angle",
+        ),
     )
     analyzer_take_off_azimuth_angle = Quantity(
         type=np.float64,
@@ -698,6 +766,10 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     analyzer_take_off_azimuth_angle__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -711,6 +783,10 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             optionality="required",
             parent_field="analyzer_take_off_azimuth_angle",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     analyzer_take_off_azimuth_angle__vector = Quantity(
@@ -742,6 +818,9 @@ class XpsInstrumentElectronanalyzerTransformations(Transformations):
             name_type="specified",
             optionality="required",
             parent_field="analyzer_take_off_azimuth_angle",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -838,6 +917,9 @@ class XpsFit(Fit):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     figure_of_meritMETRIC = Quantity(
         type=np.float64,
@@ -866,6 +948,9 @@ class XpsFit(Fit):
             name_type="specified",
             optionality="required",
             parent_field="figure_of_meritMETRIC",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -906,6 +991,9 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     input_independent = Quantity(
         type=np.float64,
@@ -925,6 +1013,10 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     fit_sum = Quantity(
         type=np.float64,
@@ -938,6 +1030,9 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     residual = Quantity(
         type=np.float64,
@@ -950,6 +1045,9 @@ class XpsFitData(Data):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1003,6 +1101,9 @@ class XpsFitPeakPEAK(Peak):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     total_area = Quantity(
         type=np.float64,
@@ -1021,6 +1122,9 @@ class XpsFitPeakPEAK(Peak):
             optionality="recommended",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     relative_atomic_concentration = Quantity(
         type=np.float64,
@@ -1037,6 +1141,9 @@ class XpsFitPeakPEAK(Peak):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1072,6 +1179,10 @@ class XpsFitPeakPEAKData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     intensity = Quantity(
         type=np.float64,
@@ -1090,6 +1201,9 @@ class XpsFitPeakPEAKData(Data):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1154,6 +1268,9 @@ class XpsFitPeakPEAKFunction(FitFunction):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -1167,6 +1284,9 @@ class XpsFitPeakPEAKFunction(FitFunction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula_description = Quantity(
         type=str,
@@ -1178,6 +1298,9 @@ class XpsFitPeakPEAKFunction(FitFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1211,6 +1334,9 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     width = Quantity(
         type=np.float64,
@@ -1235,6 +1361,10 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     position = Quantity(
         type=np.float64,
@@ -1251,6 +1381,10 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1312,6 +1446,9 @@ class XpsFitBackgroundBACKGROUND(Peak):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1345,6 +1482,10 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     intensity = Quantity(
         type=np.float64,
@@ -1357,6 +1498,9 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -1401,6 +1545,9 @@ class XpsFitBackgroundBACKGROUNDFunction(FitFunction):
             enumeration=["Linear", "Shirley", "Tougaard", "Step Down", "Step Up"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -1414,6 +1561,9 @@ class XpsFitBackgroundBACKGROUNDFunction(FitFunction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula_description = Quantity(
         type=str,
@@ -1425,6 +1575,9 @@ class XpsFitBackgroundBACKGROUNDFunction(FitFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1456,6 +1609,9 @@ class XpsFitGlobalFitFunction(FitFunction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -1468,6 +1624,9 @@ class XpsFitGlobalFitFunction(FitFunction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula_description = Quantity(
         type=str,
@@ -1479,6 +1638,9 @@ class XpsFitGlobalFitFunction(FitFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1510,6 +1672,9 @@ class XpsFitErrorFunction(FitFunction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -1522,6 +1687,9 @@ class XpsFitErrorFunction(FitFunction):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     formula_description = Quantity(
         type=str,
@@ -1533,6 +1701,9 @@ class XpsFitErrorFunction(FitFunction):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1580,6 +1751,9 @@ class XpsSample(MpesSample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1614,6 +1788,10 @@ class XpsSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     sample_rotation_angle__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1627,6 +1805,10 @@ class XpsSampleTransformations(Transformations):
             optionality="required",
             parent_field="sample_rotation_angle",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     sample_rotation_angle__vector = Quantity(
@@ -1656,6 +1838,10 @@ class XpsSampleTransformations(Transformations):
             parent_field="sample_rotation_angle",
             enumeration=["sample_normal_polar_angle_of_tilt"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="sample_normal_polar_angle_of_tilt",
+        ),
     )
     sample_normal_polar_angle_of_tilt = Quantity(
         type=np.float64,
@@ -1675,6 +1861,10 @@ class XpsSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     sample_normal_polar_angle_of_tilt__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1688,6 +1878,10 @@ class XpsSampleTransformations(Transformations):
             optionality="required",
             parent_field="sample_normal_polar_angle_of_tilt",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     sample_normal_polar_angle_of_tilt__vector = Quantity(
@@ -1717,6 +1911,10 @@ class XpsSampleTransformations(Transformations):
             parent_field="sample_normal_polar_angle_of_tilt",
             enumeration=["sample_normal_tilt_azimuth_angle"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="sample_normal_tilt_azimuth_angle",
+        ),
     )
     sample_normal_tilt_azimuth_angle = Quantity(
         type=np.float64,
@@ -1736,6 +1934,10 @@ class XpsSampleTransformations(Transformations):
             optionality="required",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     sample_normal_tilt_azimuth_angle__transformation_type = Quantity(
         type=MEnum(["rotation"]),
@@ -1749,6 +1951,10 @@ class XpsSampleTransformations(Transformations):
             optionality="required",
             parent_field="sample_normal_tilt_azimuth_angle",
             enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
         ),
     )
     sample_normal_tilt_azimuth_angle__vector = Quantity(
@@ -1780,6 +1986,9 @@ class XpsSampleTransformations(Transformations):
             name_type="specified",
             optionality="required",
             parent_field="sample_normal_tilt_azimuth_angle",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1815,6 +2024,10 @@ class XpsData(MpesData):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -1832,6 +2045,9 @@ class XpsData(MpesData):
             parent_field="energy",
             enumeration=["kinetic", "binding"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     energy_indices = Quantity(
         type=np.int64,
@@ -1843,6 +2059,9 @@ class XpsData(MpesData):
             type="NX_INT",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

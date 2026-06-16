@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -83,6 +88,9 @@ class Pump(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     base_pressure = Quantity(
         type=np.float64,
@@ -102,6 +110,10 @@ class Pump(Component):
             optionality="optional",
             units="NX_PRESSURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "pascal"},
     )
     medium = Quantity(
         type=MEnum(["vacuum", "liquid", "gas", "slurry", "powder"]),
@@ -120,6 +132,9 @@ class Pump(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["vacuum", "liquid", "gas", "slurry", "powder"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 

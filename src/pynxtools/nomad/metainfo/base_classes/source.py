@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -206,6 +211,10 @@ class Source(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     name_quantity = Quantity(
         type=str,
@@ -218,6 +227,9 @@ class Source(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     name_quantity__short_name = Quantity(
@@ -232,6 +244,9 @@ class Source(Component):
             name_type="specified",
             optionality="optional",
             parent_field="name",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     type = Quantity(
@@ -274,6 +289,9 @@ class Source(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     probe = Quantity(
         type=MEnum(
@@ -313,6 +331,9 @@ class Source(Component):
                 "proton",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     power = Quantity(
         type=np.float64,
@@ -329,6 +350,10 @@ class Source(Component):
             optionality="optional",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
     emittance_x = Quantity(
         type=np.float64,
@@ -345,6 +370,10 @@ class Source(Component):
             optionality="optional",
             units="NX_EMITTANCE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m * radian"},
     )
     emittance_y = Quantity(
         type=np.float64,
@@ -361,6 +390,10 @@ class Source(Component):
             optionality="optional",
             units="NX_EMITTANCE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m * radian"},
     )
     sigma_x = Quantity(
         type=np.float64,
@@ -377,6 +410,10 @@ class Source(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     sigma_y = Quantity(
         type=np.float64,
@@ -393,6 +430,10 @@ class Source(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     flux = Quantity(
         type=np.float64,
@@ -409,6 +450,10 @@ class Source(Component):
             optionality="optional",
             units="NX_FLUX",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / second / m ** 2"},
     )
     energy = Quantity(
         type=np.float64,
@@ -428,6 +473,10 @@ class Source(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     current = Quantity(
         type=np.float64,
@@ -444,6 +493,10 @@ class Source(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     voltage = Quantity(
         type=np.float64,
@@ -460,6 +513,10 @@ class Source(Component):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
     frequency = Quantity(
         type=np.float64,
@@ -476,6 +533,10 @@ class Source(Component):
             optionality="optional",
             units="NX_FREQUENCY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "hertz"},
     )
     period = Quantity(
         type=np.float64,
@@ -492,6 +553,10 @@ class Source(Component):
             optionality="optional",
             units="NX_PERIOD",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     target_material = Quantity(
         type=MEnum(["Ta", "W", "depleted_U", "enriched_U", "Hg", "Pb", "C"]),
@@ -506,6 +571,9 @@ class Source(Component):
             optionality="optional",
             enumeration=["Ta", "W", "depleted_U", "enriched_U", "Hg", "Pb", "C"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     number_of_bunches = Quantity(
         type=np.int64,
@@ -518,6 +586,9 @@ class Source(Component):
             type="NX_INT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     bunch_length = Quantity(
@@ -535,6 +606,10 @@ class Source(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     bunch_distance = Quantity(
         type=np.float64,
@@ -551,6 +626,10 @@ class Source(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     pulse_width = Quantity(
         type=np.float64,
@@ -567,6 +646,10 @@ class Source(Component):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     mode = Quantity(
         type=str,
@@ -582,6 +665,9 @@ class Source(Component):
             enumeration=["Single Bunch", "Multi Bunch"],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     top_up = Quantity(
         type=bool,
@@ -594,6 +680,9 @@ class Source(Component):
             type="NX_BOOLEAN",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     last_fill = Quantity(
@@ -613,6 +702,10 @@ class Source(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     last_fill__time = Quantity(
         type=Datetime,
@@ -626,6 +719,9 @@ class Source(Component):
             name_type="specified",
             optionality="optional",
             parent_field="last_fill",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     wavelength = Quantity(
@@ -643,6 +739,10 @@ class Source(Component):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     pulse_energy = Quantity(
         type=np.float64,
@@ -659,6 +759,10 @@ class Source(Component):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     peak_power = Quantity(
         type=np.float64,
@@ -677,6 +781,10 @@ class Source(Component):
             optionality="optional",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
     anode_material = Quantity(
         type=str,
@@ -689,6 +797,9 @@ class Source(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     filament_current = Quantity(
@@ -706,6 +817,10 @@ class Source(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     emission_current = Quantity(
         type=np.float64,
@@ -722,6 +837,10 @@ class Source(Component):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
     gas_pressure = Quantity(
         type=np.float64,
@@ -738,6 +857,10 @@ class Source(Component):
             optionality="optional",
             units="NX_PRESSURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "pascal"},
     )
     previous_source = Quantity(
         type=str,
@@ -759,6 +882,9 @@ class Source(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     depends_on = Quantity(
         type=str,
@@ -775,6 +901,9 @@ class Source(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

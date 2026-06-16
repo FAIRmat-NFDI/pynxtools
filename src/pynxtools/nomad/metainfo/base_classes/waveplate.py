@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -114,6 +119,9 @@ class Waveplate(Component):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     retardance = Quantity(
         type=MEnum(["full-wave", "half-wave", "quarter-wave"]),
@@ -130,6 +138,9 @@ class Waveplate(Component):
             name_type="specified",
             optionality="optional",
             enumeration=["full-wave", "half-wave", "quarter-wave"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     wavelengths = Quantity(
@@ -166,6 +177,10 @@ class Waveplate(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     clear_aperture = Quantity(
         type=np.float64,
@@ -185,6 +200,10 @@ class Waveplate(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     reflectance = Quantity(
         type=np.float64,
@@ -201,6 +220,10 @@ class Waveplate(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -250,6 +273,9 @@ class WaveplateSubstrate(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     substrate_thickness = Quantity(
         type=np.float64,
@@ -266,6 +292,10 @@ class WaveplateSubstrate(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     index_of_refraction_substrate = Quantity(
         type=np.float64,
@@ -326,6 +356,9 @@ class WaveplateCoating(Sample):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     coating_material = Quantity(
         type=str,
@@ -338,6 +371,9 @@ class WaveplateCoating(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     coating_thickness = Quantity(
@@ -355,6 +391,10 @@ class WaveplateCoating(Sample):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     wavelength_range_coating = Quantity(
         type=np.float64,

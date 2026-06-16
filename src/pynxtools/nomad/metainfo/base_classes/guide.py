@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -134,6 +139,9 @@ class Guide(Component):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     incident_angle = Quantity(
         type=np.float64,
@@ -150,6 +158,10 @@ class Guide(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     bend_angle_x = Quantity(
         type=np.float64,
@@ -166,6 +178,10 @@ class Guide(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     bend_angle_y = Quantity(
         type=np.float64,
@@ -182,6 +198,10 @@ class Guide(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     interior_atmosphere = Quantity(
         type=MEnum(["vacuum", "helium", "argon"]),
@@ -195,6 +215,9 @@ class Guide(Component):
             optionality="optional",
             enumeration=["vacuum", "helium", "argon"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     external_material = Quantity(
         type=str,
@@ -207,6 +230,9 @@ class Guide(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     m_value = Quantity(
@@ -323,6 +349,10 @@ class Guide(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     depends_on = Quantity(
         type=str,
@@ -342,6 +372,9 @@ class Guide(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -387,6 +420,10 @@ class GuideReflectivity(Data):
             optionality="optional",
             enumeration=["data"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="data",
+        ),
     )
     axes = Quantity(
         type=MEnum(["surface wavelength"]),
@@ -414,6 +451,10 @@ class GuideReflectivity(Data):
             optionality="optional",
             enumeration=["0"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="0",
+        ),
     )
     wavelength_indices = Quantity(
         type=MEnum(["1"]),
@@ -426,6 +467,10 @@ class GuideReflectivity(Data):
             name_type="specified",
             optionality="optional",
             enumeration=["1"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="1",
         ),
     )
     data_quantity = Quantity(

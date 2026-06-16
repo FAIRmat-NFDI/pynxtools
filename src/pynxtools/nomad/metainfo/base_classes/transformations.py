@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -197,6 +202,9 @@ class Transformations(Object):
             parent_field="AXISNAME",
             enumeration=["translation", "rotation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     AXISNAME__vector = Quantity(
         type=np.float64,
@@ -273,6 +281,9 @@ class Transformations(Object):
             optionality="optional",
             parent_field="AXISNAME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     AXISNAME__depends_on = Quantity(
         type=str,
@@ -294,6 +305,9 @@ class Transformations(Object):
             optionality="optional",
             parent_field="AXISNAME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     AXISNAME__equipment_component = Quantity(
         type=str,
@@ -313,6 +327,9 @@ class Transformations(Object):
             name_type="specified",
             optionality="optional",
             parent_field="AXISNAME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     AXISNAME_end = Quantity(

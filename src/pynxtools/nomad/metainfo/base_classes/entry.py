@@ -27,6 +27,11 @@ from typing import TYPE_CHECKING
 import numpy as np
 from nomad.datamodel.data import EntryData
 from nomad.datamodel.metainfo import basesections
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -63,6 +68,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"
         ],
         categories=[ExperimentCategory],
+        a_schema=SchemaAnnotation(enabled=False),
         a_nexus_definition=NeXusDefinition(
             nx_class="NXentry",
             category="base",
@@ -242,6 +248,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     IDF_Version = Quantity(
         type=str,
@@ -255,6 +264,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -267,6 +279,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_identifier = Quantity(
@@ -284,6 +299,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_description = Quantity(
         type=str,
@@ -296,6 +314,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     collection_identifier = Quantity(
@@ -312,6 +333,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     collection_description = Quantity(
         type=str,
@@ -324,6 +348,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     entry_identifier = Quantity(
@@ -338,6 +365,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     entry_identifier_uuid = Quantity(
         type=str,
@@ -350,6 +380,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     entry_identifier_uuid__version = Quantity(
@@ -365,6 +398,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             parent_field="entry_identifier_uuid",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_location = Quantity(
         type=str,
@@ -377,6 +413,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_start_date = Quantity(
@@ -394,6 +433,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     experiment_end_date = Quantity(
         type=Datetime,
@@ -410,6 +452,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     experiment_institution = Quantity(
         type=str,
@@ -422,6 +467,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     experiment_facility = Quantity(
@@ -436,6 +484,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     experiment_laboratory = Quantity(
         type=str,
@@ -448,6 +499,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     features = Quantity(
@@ -464,6 +518,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition = Quantity(
@@ -489,6 +546,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -503,6 +563,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition__URL = Quantity(
         type=str,
@@ -516,6 +579,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
             parent_field="definition",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition_local = Quantity(
@@ -535,6 +601,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             deprecated="see same field in :ref:`NXsubentry` for preferred use",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     definition_local__version = Quantity(
         type=str,
@@ -548,6 +617,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
             parent_field="definition_local",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     definition_local__URL = Quantity(
@@ -563,6 +635,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             parent_field="definition_local",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -576,6 +651,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -588,6 +666,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     duration = Quantity(
@@ -605,6 +686,10 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     collection_time = Quantity(
         type=np.float64,
@@ -624,6 +709,10 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     run_cycle = Quantity(
         type=str,
@@ -640,6 +729,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program_name = Quantity(
         type=str,
@@ -652,6 +744,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     program_name__version = Quantity(
@@ -667,6 +762,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             parent_field="program_name",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     program_name__configuration = Quantity(
         type=str,
@@ -680,6 +778,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
             parent_field="program_name",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     revision = Quantity(
@@ -697,6 +798,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     revision__comment = Quantity(
         type=str,
@@ -709,6 +813,9 @@ class Entry(Object, basesections.Measurement, EntryData):
             name_type="specified",
             optionality="optional",
             parent_field="revision",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     pre_sample_flightpath = Quantity(
@@ -733,6 +840,10 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -780,6 +891,10 @@ class EntryThumbnail(Note):
             optionality="optional",
             enumeration=["image/*"],
             deprecated="Use the `type` field instead",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="image/*",
         ),
     )
 

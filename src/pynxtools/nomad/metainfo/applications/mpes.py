@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -270,6 +275,10 @@ class Mpes(Entry):
             optionality="required",
             enumeration=["NXmpes"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXmpes",
+        ),
     )
     definition__version = Quantity(
         type=str,
@@ -283,6 +292,9 @@ class Mpes(Entry):
             optionality="required",
             parent_field="definition",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     title = Quantity(
         type=str,
@@ -294,6 +306,9 @@ class Mpes(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -312,6 +327,9 @@ class Mpes(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -328,6 +346,9 @@ class Mpes(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     method = Quantity(
@@ -356,6 +377,9 @@ class Mpes(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     transitions = Quantity(
@@ -400,6 +424,9 @@ class Mpes(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -448,6 +475,9 @@ class MpesUser(User):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     affiliation = Quantity(
         type=str,
@@ -463,6 +493,9 @@ class MpesUser(User):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -673,6 +706,10 @@ class MpesInstrumentEnergyResolution(Resolution):
             optionality="required",
             enumeration=["energy"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="energy",
+        ),
     )
     type = Quantity(
         type=MEnum(["estimated", "derived", "calibrated", "other"]),
@@ -685,6 +722,9 @@ class MpesInstrumentEnergyResolution(Resolution):
             name_type="specified",
             optionality="recommended",
             enumeration=["estimated", "derived", "calibrated", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     resolution = Quantity(
@@ -707,6 +747,10 @@ class MpesInstrumentEnergyResolution(Resolution):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -737,6 +781,9 @@ class MpesInstrumentDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -749,6 +796,9 @@ class MpesInstrumentDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -760,6 +810,9 @@ class MpesInstrumentDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -825,6 +878,9 @@ class MpesInstrumentSourceProbe(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -836,6 +892,9 @@ class MpesInstrumentSourceProbe(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -855,6 +914,9 @@ class MpesInstrumentSourceProbe(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -886,6 +948,9 @@ class MpesInstrumentSourceProbeDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -898,6 +963,9 @@ class MpesInstrumentSourceProbeDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -909,6 +977,9 @@ class MpesInstrumentSourceProbeDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -984,6 +1055,9 @@ class MpesInstrumentSourcePump(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -995,6 +1069,9 @@ class MpesInstrumentSourcePump(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -1014,6 +1091,9 @@ class MpesInstrumentSourcePump(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1045,6 +1125,9 @@ class MpesInstrumentSourcePumpDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -1057,6 +1140,9 @@ class MpesInstrumentSourcePumpDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -1068,6 +1154,9 @@ class MpesInstrumentSourcePumpDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1158,6 +1247,9 @@ class MpesInstrumentSource_TYPE(Source):
             ],
             open_enum=True,
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     name_quantity = Quantity(
         type=str,
@@ -1169,6 +1261,9 @@ class MpesInstrumentSource_TYPE(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -1188,6 +1283,9 @@ class MpesInstrumentSource_TYPE(Source):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1219,6 +1317,9 @@ class MpesInstrumentSource_TYPEDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -1231,6 +1332,9 @@ class MpesInstrumentSource_TYPEDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -1242,6 +1346,9 @@ class MpesInstrumentSource_TYPEDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1289,6 +1396,10 @@ class MpesInstrumentBeamProbe(Beam):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_energy = Quantity(
         type=np.float64,
@@ -1320,6 +1431,10 @@ class MpesInstrumentBeamProbe(Beam):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     incident_polarization = Quantity(
         type=np.float64,
@@ -1369,6 +1484,9 @@ class MpesInstrumentBeamProbe(Beam):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1416,6 +1534,10 @@ class MpesInstrumentBeamPump(Beam):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_energy = Quantity(
         type=np.float64,
@@ -1447,6 +1569,10 @@ class MpesInstrumentBeamPump(Beam):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     incident_polarization = Quantity(
         type=np.float64,
@@ -1495,6 +1621,9 @@ class MpesInstrumentBeamPump(Beam):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1547,6 +1676,10 @@ class MpesInstrumentBeam_TYPE(Beam):
             optionality="recommended",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     incident_energy = Quantity(
         type=np.float64,
@@ -1578,6 +1711,10 @@ class MpesInstrumentBeam_TYPE(Beam):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     incident_polarization = Quantity(
         type=np.float64,
@@ -1626,6 +1763,9 @@ class MpesInstrumentBeam_TYPE(Beam):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1712,6 +1852,9 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     work_function = Quantity(
         type=np.float64,
@@ -1727,6 +1870,10 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     fast_axes = Quantity(
         type=str,
@@ -1783,6 +1930,9 @@ class MpesInstrumentElectronanalyzerDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -1795,6 +1945,9 @@ class MpesInstrumentElectronanalyzerDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -1806,6 +1959,9 @@ class MpesInstrumentElectronanalyzerDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1838,6 +1994,9 @@ class MpesInstrumentElectronanalyzerEnergyResolution(Resolution):
             optionality="recommended",
             enumeration=["estimated", "derived", "calibrated", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     physical_quantity = Quantity(
         type=MEnum(["energy"]),
@@ -1850,6 +2009,10 @@ class MpesInstrumentElectronanalyzerEnergyResolution(Resolution):
             name_type="specified",
             optionality="required",
             enumeration=["energy"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="energy",
         ),
     )
     resolution = Quantity(
@@ -1866,6 +2029,10 @@ class MpesInstrumentElectronanalyzerEnergyResolution(Resolution):
             optionality="required",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1952,6 +2119,9 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
                 "non-dispersive",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     lens_mode = Quantity(
         type=str,
@@ -1963,6 +2133,9 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     projection = Quantity(
@@ -1976,6 +2149,9 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
             name_type="specified",
             optionality="recommended",
             enumeration=["real", "reciprocal"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -2007,6 +2183,9 @@ class MpesInstrumentElectronanalyzerCollectioncolumnDeviceInformation(Fabricatio
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2019,6 +2198,9 @@ class MpesInstrumentElectronanalyzerCollectioncolumnDeviceInformation(Fabricatio
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -2030,6 +2212,9 @@ class MpesInstrumentElectronanalyzerCollectioncolumnDeviceInformation(Fabricatio
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2110,6 +2295,9 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
                 "retarding grid",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     pass_energy = Quantity(
         type=np.float64,
@@ -2130,6 +2318,10 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     drift_energy = Quantity(
         type=np.float64,
@@ -2150,6 +2342,10 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy_scan_mode = Quantity(
         type=str,
@@ -2169,6 +2365,9 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
                 "dither",
             ],
             open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2200,6 +2399,9 @@ class MpesInstrumentElectronanalyzerEnergydispersionDeviceInformation(Fabricatio
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2212,6 +2414,9 @@ class MpesInstrumentElectronanalyzerEnergydispersionDeviceInformation(Fabricatio
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -2223,6 +2428,9 @@ class MpesInstrumentElectronanalyzerEnergydispersionDeviceInformation(Fabricatio
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2278,6 +2486,9 @@ class MpesInstrumentElectronanalyzerElectronDetector(ElectronDetector):
             optionality="recommended",
             enumeration=["MCP", "channeltron"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     detector_type = Quantity(
         type=MEnum(
@@ -2300,6 +2511,9 @@ class MpesInstrumentElectronanalyzerElectronDetector(ElectronDetector):
                 "Anode",
                 "Multi-anode",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -2331,6 +2545,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorDeviceInformation(Fabricatio
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -2343,6 +2560,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorDeviceInformation(Fabricatio
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -2354,6 +2574,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorDeviceInformation(Fabricatio
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2398,6 +2621,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="required",
             enumeration=["raw"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="raw",
+        ),
     )
     raw = Quantity(
         type=np.float64,
@@ -2410,6 +2637,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pixel_x = Quantity(
@@ -2424,6 +2654,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     pixel_y = Quantity(
         type=np.int64,
@@ -2436,6 +2669,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     energy = Quantity(
@@ -2453,6 +2689,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -2469,6 +2709,9 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="required",
             parent_field="energy",
             enumeration=["kinetic", "binding"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     photon_energy = Quantity(
@@ -2489,6 +2732,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     kx = Quantity(
         type=np.float64,
@@ -2514,6 +2761,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     ky = Quantity(
         type=np.float64,
@@ -2535,6 +2786,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     kz = Quantity(
         type=np.float64,
@@ -2556,6 +2811,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     k_parallel = Quantity(
         type=np.float64,
@@ -2583,6 +2842,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     k_perpendicular = Quantity(
         type=np.float64,
@@ -2609,6 +2872,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     angular0 = Quantity(
         type=np.float64,
@@ -2634,6 +2901,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angular1 = Quantity(
         type=np.float64,
@@ -2656,6 +2927,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     spatial0 = Quantity(
         type=np.float64,
@@ -2681,6 +2956,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     spatial1 = Quantity(
         type=np.float64,
@@ -2703,6 +2982,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     delay = Quantity(
         type=np.float64,
@@ -2724,6 +3007,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     temperature = Quantity(
         type=np.float64,
@@ -2745,6 +3032,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2868,6 +3159,9 @@ class MpesInstrumentManipulatorTemperatureSensor(Sensor):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement = Quantity(
         type=MEnum(["temperature"]),
@@ -2880,6 +3174,10 @@ class MpesInstrumentManipulatorTemperatureSensor(Sensor):
             name_type="specified",
             optionality="required",
             enumeration=["temperature"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
         ),
     )
     value = Quantity(
@@ -2939,6 +3237,9 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     actuation_target = Quantity(
         type=MEnum(["temperature"]),
@@ -2951,6 +3252,10 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
             name_type="specified",
             optionality="required",
             enumeration=["temperature"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
         ),
     )
     output_heater_power = Quantity(
@@ -2967,6 +3272,10 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
             optionality="recommended",
             units="NX_POWER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3001,6 +3310,10 @@ class MpesInstrumentManipulatorSampleHeaterPidController(PidController):
             optionality="recommended",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3043,6 +3356,9 @@ class MpesInstrumentManipulatorCryostat(Actuator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     actuation_target = Quantity(
         type=MEnum(["temperature"]),
@@ -3055,6 +3371,10 @@ class MpesInstrumentManipulatorCryostat(Actuator):
             name_type="specified",
             optionality="required",
             enumeration=["temperature"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="temperature",
         ),
     )
 
@@ -3090,6 +3410,10 @@ class MpesInstrumentManipulatorCryostatPidController(PidController):
             optionality="recommended",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3120,6 +3444,9 @@ class MpesInstrumentManipulatorDrainCurrentAmmeter(Sensor):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement = Quantity(
         type=MEnum(["current"]),
@@ -3132,6 +3459,10 @@ class MpesInstrumentManipulatorDrainCurrentAmmeter(Sensor):
             name_type="specified",
             optionality="required",
             enumeration=["current"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="current",
         ),
     )
     value = Quantity(
@@ -3179,6 +3510,9 @@ class MpesInstrumentManipulatorSampleBiasVoltmeter(Sensor):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement = Quantity(
         type=MEnum(["voltage"]),
@@ -3191,6 +3525,10 @@ class MpesInstrumentManipulatorSampleBiasVoltmeter(Sensor):
             name_type="specified",
             optionality="required",
             enumeration=["voltage"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="voltage",
         ),
     )
     value = Quantity(
@@ -3250,6 +3588,9 @@ class MpesInstrumentManipulatorSampleBiasPotentiostat(Actuator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     actuation_target = Quantity(
         type=MEnum(["voltage"]),
@@ -3262,6 +3603,10 @@ class MpesInstrumentManipulatorSampleBiasPotentiostat(Actuator):
             name_type="specified",
             optionality="required",
             enumeration=["voltage"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="voltage",
         ),
     )
 
@@ -3297,6 +3642,10 @@ class MpesInstrumentManipulatorSampleBiasPotentiostatPidController(PidController
             optionality="recommended",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3327,6 +3676,9 @@ class MpesInstrumentManipulatorDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     model = Quantity(
         type=str,
@@ -3339,6 +3691,9 @@ class MpesInstrumentManipulatorDeviceInformation(Fabrication):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -3350,6 +3705,9 @@ class MpesInstrumentManipulatorDeviceInformation(Fabrication):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3396,6 +3754,9 @@ class MpesInstrumentPressureGauge(Sensor):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     measurement = Quantity(
         type=MEnum(["pressure"]),
@@ -3408,6 +3769,10 @@ class MpesInstrumentPressureGauge(Sensor):
             name_type="specified",
             optionality="required",
             enumeration=["pressure"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="pressure",
         ),
     )
     value = Quantity(
@@ -3467,6 +3832,10 @@ class MpesInstrumentPressureGaugeValueLog(Log):
             optionality="required",
             units="NX_PRESSURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "pascal"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3513,6 +3882,9 @@ class MpesInstrumentFloodGun(Actuator):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     actuation_target = Quantity(
         type=MEnum(["current"]),
@@ -3525,6 +3897,10 @@ class MpesInstrumentFloodGun(Actuator):
             name_type="specified",
             optionality="required",
             enumeration=["current"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="current",
         ),
     )
     current = Quantity(
@@ -3546,6 +3922,10 @@ class MpesInstrumentFloodGun(Actuator):
             optionality="recommended",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3584,6 +3964,10 @@ class MpesInstrumentFloodGunCurrentLog(Log):
             optionality="required",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3623,6 +4007,10 @@ class MpesInstrumentMonochromator_TYPE(Monochromator):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     associated_beam = Quantity(
         type=str,
@@ -3641,6 +4029,9 @@ class MpesInstrumentMonochromator_TYPE(Monochromator):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3681,6 +4072,10 @@ class MpesEnergyAxisCalibration(Calibration):
             name_type="specified",
             optionality="required",
             enumeration=["energy"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="energy",
         ),
     )
     calibrated_axis = Quantity(
@@ -3789,6 +4184,10 @@ class MpesEnergyReferencing(Calibration):
             optionality="required",
             enumeration=["energy"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="energy",
+        ),
     )
     level = Quantity(
         type=str,
@@ -3808,6 +4207,9 @@ class MpesEnergyReferencing(Calibration):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     reference_peak = Quantity(
         type=str,
@@ -3824,6 +4226,9 @@ class MpesEnergyReferencing(Calibration):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     binding_energy = Quantity(
@@ -3847,6 +4252,10 @@ class MpesEnergyReferencing(Calibration):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     offset = Quantity(
         type=np.float64,
@@ -3866,6 +4275,10 @@ class MpesEnergyReferencing(Calibration):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     calibrated_axis = Quantity(
         type=np.float64,
@@ -3963,6 +4376,10 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
             name_type="specified",
             optionality="required",
             enumeration=["relative_intensity"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="relative_intensity",
         ),
     )
     axes = Quantity(
@@ -4103,6 +4520,9 @@ class MpesSample(Sample):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     identifier = Quantity(
         type=str,
@@ -4115,6 +4535,9 @@ class MpesSample(Sample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     chemical_formula = Quantity(
         type=str,
@@ -4126,6 +4549,9 @@ class MpesSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     atom_types = Quantity(
@@ -4145,6 +4571,9 @@ class MpesSample(Sample):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     physical_form = Quantity(
         type=str,
@@ -4156,6 +4585,9 @@ class MpesSample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     situation = Quantity(
@@ -4181,6 +4613,9 @@ class MpesSample(Sample):
                 "oxidizing atmosphere",
                 "reducing atmosphere",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -4250,6 +4685,9 @@ class MpesSampleHistorySamplePreparation(Activity):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -4261,6 +4699,9 @@ class MpesSampleHistorySamplePreparation(Activity):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     method = Quantity(
@@ -4277,6 +4718,9 @@ class MpesSampleHistorySamplePreparation(Activity):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -4355,6 +4799,10 @@ class MpesSampleTemperatureEnv(Environment):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4412,6 +4860,10 @@ class MpesSampleGasPressureEnv(Environment):
             optionality="optional",
             units="NX_PRESSURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "pascal"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4482,6 +4934,10 @@ class MpesSampleBiasEnv(Environment):
             optionality="optional",
             units="NX_VOLTAGE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4536,6 +4992,10 @@ class MpesSampleDrainCurrentEnv(Environment):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4591,6 +5051,10 @@ class MpesSampleFloodGunCurrentEnv(Environment):
             optionality="optional",
             units="NX_CURRENT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "ampere"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4635,6 +5099,10 @@ class MpesData(Data):
             optionality="required",
             enumeration=["data"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="data",
+        ),
     )
     data_quantity = Quantity(
         type=np.float64,
@@ -4656,6 +5124,9 @@ class MpesData(Data):
             optionality="required",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     energy = Quantity(
         type=np.float64,
@@ -4672,6 +5143,10 @@ class MpesData(Data):
             optionality="recommended",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -4689,6 +5164,9 @@ class MpesData(Data):
             parent_field="energy",
             enumeration=["kinetic", "binding"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     energy_indices = Quantity(
         type=np.int64,
@@ -4700,6 +5178,9 @@ class MpesData(Data):
             type="NX_INT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     photon_energy = Quantity(
@@ -4720,6 +5201,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     kx = Quantity(
         type=np.float64,
@@ -4744,6 +5229,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     ky = Quantity(
         type=np.float64,
@@ -4764,6 +5253,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     kz = Quantity(
         type=np.float64,
@@ -4784,6 +5277,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     k_parallel = Quantity(
         type=np.float64,
@@ -4810,6 +5307,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     k_perpendicular = Quantity(
         type=np.float64,
@@ -4835,6 +5336,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     angular0 = Quantity(
         type=np.float64,
@@ -4860,6 +5365,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     angular1 = Quantity(
         type=np.float64,
@@ -4881,6 +5390,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     spatial0 = Quantity(
         type=np.float64,
@@ -4906,6 +5419,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     spatial1 = Quantity(
         type=np.float64,
@@ -4927,6 +5444,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     delay = Quantity(
         type=np.float64,
@@ -4946,6 +5467,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     temperature = Quantity(
         type=np.float64,
@@ -4967,6 +5492,10 @@ class MpesData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -25,6 +25,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -132,6 +137,9 @@ class Mirror(Component):
             optionality="optional",
             enumeration=["single", "multi"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     description_quantity = Quantity(
         type=str,
@@ -144,6 +152,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     incident_angle = Quantity(
@@ -160,6 +171,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     bend_angle_x = Quantity(
         type=np.float64,
@@ -175,6 +190,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     bend_angle_y = Quantity(
         type=np.float64,
@@ -190,6 +209,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_ANGLE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
     interior_atmosphere = Quantity(
         type=MEnum(["vacuum", "helium", "argon"]),
@@ -203,6 +226,9 @@ class Mirror(Component):
             optionality="optional",
             enumeration=["vacuum", "helium", "argon"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     external_material = Quantity(
         type=str,
@@ -215,6 +241,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     m_value = Quantity(
@@ -235,6 +264,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     substrate_material = Quantity(
         type=str,
@@ -246,6 +279,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     substrate_density = Quantity(
@@ -262,6 +298,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_MASS_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / m ** 3"},
     )
     substrate_thickness = Quantity(
         type=np.float64,
@@ -277,6 +317,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     coating_material = Quantity(
         type=str,
@@ -288,6 +332,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     substrate_roughness = Quantity(
@@ -304,6 +351,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     coating_roughness = Quantity(
         type=np.float64,
@@ -319,6 +370,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     even_layer_material = Quantity(
         type=str,
@@ -330,6 +385,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     even_layer_density = Quantity(
@@ -346,6 +404,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_MASS_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / m ** 3"},
     )
     odd_layer_material = Quantity(
         type=str,
@@ -357,6 +419,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     odd_layer_density = Quantity(
@@ -373,6 +438,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_MASS_DENSITY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kilogram / m ** 3"},
     )
     layer_thickness = Quantity(
         type=np.float64,
@@ -389,6 +458,10 @@ class Mirror(Component):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     depends_on = Quantity(
         type=str,
@@ -409,6 +482,9 @@ class Mirror(Component):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

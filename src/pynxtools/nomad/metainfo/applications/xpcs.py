@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -146,6 +151,10 @@ class Xpcs(Entry):
             optionality="required",
             enumeration=["NXxpcs"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="NXxpcs",
+        ),
     )
     entry_identifier = Quantity(
         type=str,
@@ -162,6 +171,9 @@ class Xpcs(Entry):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     entry_identifier_uuid = Quantity(
@@ -185,6 +197,9 @@ class Xpcs(Entry):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     scan_number = Quantity(
         type=np.int64,
@@ -201,6 +216,9 @@ class Xpcs(Entry):
             optionality="required",
             deprecated="Use the ``entry_identifier`` field.",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     start_time = Quantity(
         type=Datetime,
@@ -216,6 +234,9 @@ class Xpcs(Entry):
             name_type="specified",
             optionality="required",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     end_time = Quantity(
         type=Datetime,
@@ -228,6 +249,9 @@ class Xpcs(Entry):
             type="NX_DATE_TIME",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -282,6 +306,10 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_COUNT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     frame_average = Quantity(
         type=np.float64,
@@ -301,6 +329,10 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_COUNT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     g2 = Quantity(
         type=np.float64,
@@ -342,6 +374,10 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     g2__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -362,6 +398,9 @@ class XpcsData(Data):
             optionality="required",
             parent_field="g2",
             enumeration=["one_array", "data_exchange_keys", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     g2_derr = Quantity(
@@ -384,6 +423,10 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     g2_derr__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -397,6 +440,9 @@ class XpcsData(Data):
             optionality="required",
             parent_field="g2_derr",
             enumeration=["one_array", "data_exchange_keys", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     G2_unnormalized = Quantity(
@@ -416,6 +462,9 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     G2_unnormalized__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -429,6 +478,9 @@ class XpcsData(Data):
             optionality="required",
             parent_field="G2_unnormalized",
             enumeration=["one_array", "data_exchange_keys", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     delay_difference = Quantity(
@@ -454,6 +506,10 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_COUNT",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     delay_difference__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -467,6 +523,9 @@ class XpcsData(Data):
             optionality="required",
             parent_field="delay_difference",
             enumeration=["one_array", "data_exchange_keys", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 
@@ -532,6 +591,9 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
     )
     two_time_corr_func__storage_mode = Quantity(
         type=MEnum(
@@ -557,6 +619,9 @@ class XpcsTwotime(Data):
                 "other",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     two_time_corr_func__baseline_reference = Quantity(
         type=MEnum(["0", "1"]),
@@ -576,6 +641,9 @@ class XpcsTwotime(Data):
             parent_field="two_time_corr_func",
             enumeration=["0", "1"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     two_time_corr_func__time_origin_location = Quantity(
         type=MEnum(["upper_left", "lower_left"]),
@@ -590,6 +658,9 @@ class XpcsTwotime(Data):
             optionality="required",
             parent_field="two_time_corr_func",
             enumeration=["upper_left", "lower_left"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     two_time_corr_func__populated_elements = Quantity(
@@ -608,6 +679,9 @@ class XpcsTwotime(Data):
             optionality="required",
             parent_field="two_time_corr_func",
             enumeration=["all", "upper_half", "lower_half"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     g2_from_two_time_corr_func = Quantity(
@@ -637,6 +711,10 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     g2_from_two_time_corr_func__storage_mode = Quantity(
         type=MEnum(
@@ -658,6 +736,9 @@ class XpcsTwotime(Data):
                 "other",
             ],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     g2_from_two_time_corr_func__baseline_reference = Quantity(
         type=MEnum(["0", "1"]),
@@ -671,6 +752,9 @@ class XpcsTwotime(Data):
             optionality="required",
             parent_field="g2_from_two_time_corr_func",
             enumeration=["0", "1"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     g2_from_two_time_corr_func__first_point_for_fit = Quantity(
@@ -693,6 +777,9 @@ class XpcsTwotime(Data):
             parent_field="g2_from_two_time_corr_func",
             enumeration=["0", "1"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     g2_err_from_two_time_corr_func = Quantity(
         type=np.float64,
@@ -713,6 +800,10 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     g2_err_from_two_time_corr_func__storage_mode = Quantity(
         type=MEnum(
@@ -733,6 +824,9 @@ class XpcsTwotime(Data):
                 "data_exchange_keys",
                 "other",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     g2_from_two_time_corr_func_partials = Quantity(
@@ -763,6 +857,10 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     g2_from_two_time_corr_func_partials__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -777,6 +875,9 @@ class XpcsTwotime(Data):
             parent_field="g2_from_two_time_corr_func_partials",
             enumeration=["one_array", "data_exchange_keys", "other"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     g2_from_two_time_corr_func_partials__baseline_reference = Quantity(
         type=MEnum(["0", "1"]),
@@ -790,6 +891,9 @@ class XpcsTwotime(Data):
             optionality="required",
             parent_field="g2_from_two_time_corr_func_partials",
             enumeration=["0", "1"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     g2_err_from_two_time_corr_func_partials = Quantity(
@@ -811,6 +915,10 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -924,6 +1032,10 @@ class XpcsInstrumentIncidentBeam(Beam):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     incident_polarization_type = Quantity(
         type=str,
@@ -939,6 +1051,9 @@ class XpcsInstrumentIncidentBeam(Beam):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -998,6 +1113,10 @@ class XpcsInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     count_time = Quantity(
         type=np.float64,
@@ -1031,6 +1150,10 @@ class XpcsInstrumentDetector(Detector):
             optionality="required",
             units="NX_TIME",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
     )
     beam_center_x = Quantity(
         type=np.float64,
@@ -1047,6 +1170,10 @@ class XpcsInstrumentDetector(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_center_y = Quantity(
         type=np.float64,
@@ -1063,6 +1190,10 @@ class XpcsInstrumentDetector(Detector):
             optionality="required",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     x_pixel_size = Quantity(
         type=np.float64,
@@ -1079,6 +1210,10 @@ class XpcsInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     y_pixel_size = Quantity(
         type=np.float64,
@@ -1095,6 +1230,10 @@ class XpcsInstrumentDetector(Detector):
             optionality="optional",
             units="NX_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1159,6 +1298,10 @@ class XpcsInstrumentMasks(Note):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     dynamic_q_list = Quantity(
         type=np.float64,
@@ -1188,6 +1331,10 @@ class XpcsInstrumentMasks(Note):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     dynamic_phi_list = Quantity(
         type=np.float64,
@@ -1208,6 +1355,10 @@ class XpcsInstrumentMasks(Note):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
     static_roi_map = Quantity(
         type=np.float64,
@@ -1228,6 +1379,10 @@ class XpcsInstrumentMasks(Note):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     static_q_list = Quantity(
         type=np.float64,
@@ -1244,6 +1399,10 @@ class XpcsInstrumentMasks(Note):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "1 / m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1313,6 +1472,10 @@ class XpcsSample(Sample):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
     temperature = Quantity(
         type=np.float64,
@@ -1329,6 +1492,10 @@ class XpcsSample(Sample):
             optionality="optional",
             units="NX_TEMPERATURE",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
