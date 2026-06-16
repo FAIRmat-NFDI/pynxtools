@@ -432,12 +432,9 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% if lnk.target_quantity and lnk.target_quantity.shape %}
         shape={{ lnk.target_quantity.shape }},
         {% endif %}
-<<<<<<< HEAD:src/pynxtools/nomad/converters/templates/nexus.py.j2
         {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
         flexible_unit=True,
         {% endif %}
-=======
->>>>>>> f9ef0974 (Resolve <link target=...> to typed Quantity in generated application classes):src/pynxtools/nomad/converters/templates/base_class.py.j2
         {% if lnk.description %}
         description=(
             {{ lnk.description }}
