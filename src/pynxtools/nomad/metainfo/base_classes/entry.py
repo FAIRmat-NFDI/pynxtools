@@ -68,7 +68,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"
         ],
         categories=[ExperimentCategory],
-        a_schema=SchemaAnnotation(enabled=False),
+        a_schema=SchemaAnnotation(label="Entry", enabled=False),
         a_nexus_definition=NeXusDefinition(
             nx_class="NXentry",
             category="base",

@@ -69,7 +69,7 @@ class Root(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXroot.html#nxroot"
         ],
-        a_schema=SchemaAnnotation(enabled=False),
+        a_schema=SchemaAnnotation(label="Root", enabled=False),
         a_nexus_definition=NeXusDefinition(
             nx_class="NXroot",
             category="base",
