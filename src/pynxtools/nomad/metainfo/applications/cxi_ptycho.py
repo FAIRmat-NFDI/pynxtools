@@ -675,9 +675,6 @@ class CxiPtychoInstrument1Detector1(Detector):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     x_pixel_size = Quantity(
         type=np.float64,

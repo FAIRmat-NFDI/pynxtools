@@ -637,9 +637,6 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
