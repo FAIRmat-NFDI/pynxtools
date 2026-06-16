@@ -77,7 +77,7 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         categories=[ExperimentCategory],
         {% endif %}
         {% if nx_name in ("NXentry", "NXroot") %}
-        a_schema=SchemaAnnotation(enabled=False),
+        a_schema=SchemaAnnotation(label="{{ class_name }}", enabled=False),
         {% endif %}
         a_nexus_definition=NeXusDefinition(
             nx_class="{{ nx_name }}",
