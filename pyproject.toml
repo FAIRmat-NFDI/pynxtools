@@ -111,7 +111,6 @@ nexus_schema = "pynxtools.nomad.schema_packages:nexus_schema"
 nexus_data_converter = "pynxtools.nomad.schema_packages:nexus_data_converter"
 nexus_app = "pynxtools.nomad.apps:nexus_app"
 simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
-#ontology_service = "pynxtools.nomad.apis:ontology_service"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
