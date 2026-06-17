@@ -246,6 +246,23 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             if len(app_entry) < 1:
                 raise AttributeError()
             self.steps = []
+
+            ontology_info = None
+            if ONTOLOGY_SERVICE_AVAILABLE:
+                try:
+                    ep = config.get_plugin_entry_point(
+                        "nomad_ontology_service:ontology_service"
+                    )
+                    ontology_imports = ep.ontologies[0].imports if ep.ontologies else []
+                    ensure_ontology_initialization(ontology_imports=ontology_imports)
+                    ontology_info = {
+                        "base": config.services.api_base_path.rstrip("/"),
+                        "prefix": ep.prefix.strip("/"),
+                        "ontology_name": ep.ontologies[0].name,
+                    }
+                except Exception as e:
+                    logger.warning(f"Could not initialize ontology for ontology service: {e}")
+
             for entry in app_entry:
                 ref = NexusActivityStep(name=entry.name, reference=entry)
                 if entry.start_time__field is not None:
@@ -273,16 +290,11 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         # Directly use entry.definition__field as class_name
                         class_name = entry.definition__field.strip()
 
-                        if ONTOLOGY_SERVICE_AVAILABLE:
+                        if ontology_info:
                             try:
-                                ep = config.get_plugin_entry_point(
-                                    "nomad_ontology_service:ontology_service"
-                                )
-                                base = config.services.api_base_path.rstrip("/")
-                                prefix = ep.prefix.strip("/")
-                                ontology_name = ep.ontologies[0].name
-                                #print prefix and ontology_name for debugging
-                                print(f"Ontology service base: {base}, prefix: {prefix}, ontology: {ontology_name}")
+                                base = ontology_info["base"]
+                                prefix = ontology_info["prefix"]
+                                ontology_name = ontology_info["ontology_name"]
                                 url = f"http://localhost:8000{base}/{prefix}/{ontology_name}/superclasses/{class_name}"
                                 response = requests.get(url)
                                 if response.status_code == 200:
@@ -1240,9 +1252,3 @@ def init_nexus_metainfo():
 
 
 init_nexus_metainfo()
-
-#ensure that the ontology is initialized for the ontology service, if it is available
-try:
-    ensure_ontology_initialization()
-except Exception:
-    logger_.warning("Could not initialize ontology for ontology service", exc_info=True)
