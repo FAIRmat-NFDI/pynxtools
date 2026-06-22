@@ -1597,10 +1597,9 @@ def decode_if_bytes(value: Any, encoding: str = "utf-8") -> Any:
         if value.dtype.kind == "O":
             if value.size == 1:
                 return _decode_bytes_recursive(value[0], encoding)
-            else:
-                return np.vectorize(_decode_bytes_recursive, otypes=[object])(
-                    value, encoding
-                )
+            return np.vectorize(_decode_bytes_recursive, otypes=[object])(
+                value, encoding
+            )
         return value
 
     return _decode_bytes_recursive(value, encoding)
