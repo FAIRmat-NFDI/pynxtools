@@ -66,6 +66,11 @@ nexus_app_v2 = AppEntryPoint(
                 selected=True,
             ),
             Column(
+                title="Description",
+                search_quantity=f"data.experiment_description#{schema}",
+                selected=True,
+            ),
+            Column(
                 title="Author",
                 search_quantity=f"data.user[*].name_quantity#{schema}",
                 selected=True,
