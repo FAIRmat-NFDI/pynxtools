@@ -52,7 +52,11 @@ def _get_def_map(file: str) -> dict[str, str]:
                 and f"/{entry_name}/definition" in h5file
             ):
                 def_map.update(
-                    {entry_name: h5file[f"/{entry_name}/definition"][()].decode("utf8")}
+                    {
+                        entry_name: helpers.decode_if_bytes(
+                            h5file[f"/{entry_name}/definition"][()]
+                        )
+                    }
                 )
 
     return def_map
