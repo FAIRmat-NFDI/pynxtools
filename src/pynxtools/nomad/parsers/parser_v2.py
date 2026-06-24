@@ -56,6 +56,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 from pynxtools.nexus.nexus_tree import NexusNode
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver
@@ -210,9 +211,7 @@ class _SectionIndex:
             if (
                 annotation.name_type == "partial"
                 and annotation.name
-                and hdf_name.startswith(
-                    annotation.name.replace("GROUPNAME", "").replace("NAME", "")
-                )
+                and get_nx_namefit(hdf_name, annotation.name, name_partial=True) >= 0
             ):
                 return subsection_name, sub, annotation
         for subsection_name, sub, annotation in candidates:
