@@ -1149,6 +1149,22 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             units="NX_TIME",
         ),
     )
+    time__min = Quantity(
+        type=np.float64,
+        description="Minimum of time, computed over the full array at parse time.",
+    )
+    time__max = Quantity(
+        type=np.float64,
+        description="Maximum of time, computed over the full array at parse time.",
+    )
+    time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of time in the HDF5 file.",
+    )
+    time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of time in the HDF5 file.",
+    )
     iteration = Quantity(
         type=np.int64,
         links=[
@@ -1165,6 +1181,22 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    iteration__min = Quantity(
+        type=np.int64,
+        description="Minimum of iteration, computed over the full array at parse time.",
+    )
+    iteration__max = Quantity(
+        type=np.int64,
+        description="Maximum of iteration, computed over the full array at parse time.",
+    )
+    iteration__size = Quantity(
+        type=np.int64,
+        description="Number of elements of iteration in the HDF5 file.",
+    )
+    iteration__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of iteration in the HDF5 file.",
     )
     temperature = Quantity(
         type=np.float64,
@@ -1183,6 +1215,22 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             units="NX_TEMPERATURE",
         ),
     )
+    temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of temperature, computed over the full array at parse time.",
+    )
+    temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of temperature, computed over the full array at parse time.",
+    )
+    temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of temperature in the HDF5 file.",
+    )
+    temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of temperature in the HDF5 file.",
+    )
     x = Quantity(
         type=np.float64,
         links=[
@@ -1199,6 +1247,22 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+    )
+    x__min = Quantity(
+        type=np.float64,
+        description="Minimum of x, computed over the full array at parse time.",
+    )
+    x__max = Quantity(
+        type=np.float64,
+        description="Maximum of x, computed over the full array at parse time.",
+    )
+    x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of x in the HDF5 file.",
+    )
+    x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of x in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1252,6 +1316,22 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
             units="NX_ANY",
         ),
     )
+    tensor__min = Quantity(
+        type=np.float64,
+        description="Minimum of tensor, computed over the full array at parse time.",
+    )
+    tensor__max = Quantity(
+        type=np.float64,
+        description="Maximum of tensor, computed over the full array at parse time.",
+    )
+    tensor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of tensor in the HDF5 file.",
+    )
+    tensor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of tensor in the HDF5 file.",
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -1301,6 +1381,22 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    tensor__min = Quantity(
+        type=np.float64,
+        description="Minimum of tensor, computed over the full array at parse time.",
+    )
+    tensor__max = Quantity(
+        type=np.float64,
+        description="Maximum of tensor, computed over the full array at parse time.",
+    )
+    tensor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of tensor in the HDF5 file.",
+    )
+    tensor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of tensor in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

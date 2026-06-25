@@ -5777,6 +5777,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -5808,6 +5824,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -5841,6 +5873,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -5873,6 +5921,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
+    )
     complex__long_name = Quantity(
         type=str,
         links=[
@@ -5903,6 +5967,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6010,6 +6090,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -6042,6 +6138,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     imag__long_name = Quantity(
         type=str,
         links=[
@@ -6073,6 +6185,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -6136,6 +6264,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             units="NX_ANY",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -6166,6 +6310,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6273,6 +6433,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -6304,6 +6480,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6337,6 +6529,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -6369,6 +6577,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
+    )
     complex__long_name = Quantity(
         type=str,
         links=[
@@ -6399,6 +6623,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -6431,6 +6671,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             units="NX_ANY",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -6461,6 +6717,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6568,6 +6840,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -6599,6 +6887,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6632,6 +6936,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -6664,6 +6984,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             units="NX_UNITLESS",
         ),
     )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
+    )
     complex__long_name = Quantity(
         type=str,
         links=[
@@ -6694,6 +7030,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_m__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_m, computed over the full array at parse time.",
+    )
+    axis_m__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_m, computed over the full array at parse time.",
+    )
+    axis_m__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_m in the HDF5 file.",
+    )
+    axis_m__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_m in the HDF5 file.",
     )
     axis_m__long_name = Quantity(
         type=str,
@@ -6726,6 +7078,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             units="NX_ANY",
         ),
     )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
+    )
     axis_k__long_name = Quantity(
         type=str,
         links=[
@@ -6757,6 +7125,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             units="NX_ANY",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -6787,6 +7171,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6894,6 +7294,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -6925,6 +7341,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6958,6 +7390,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -6989,6 +7437,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7022,6 +7486,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
+    )
     indices_group__long_name = Quantity(
         type=str,
         links=[
@@ -7054,6 +7534,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_image__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
+    )
     indices_image__long_name = Quantity(
         type=str,
         links=[
@@ -7084,6 +7580,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -7191,6 +7703,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -7222,6 +7750,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -7255,6 +7799,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -7286,6 +7846,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7319,6 +7895,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
+    )
     indices_group__long_name = Quantity(
         type=str,
         links=[
@@ -7351,6 +7943,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_image__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
+    )
     indices_image__long_name = Quantity(
         type=str,
         links=[
@@ -7382,6 +7990,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             units="NX_ANY",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -7412,6 +8036,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -7519,6 +8159,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     real__long_name = Quantity(
         type=str,
         links=[
@@ -7550,6 +8206,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -7583,6 +8255,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -7614,6 +8302,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7647,6 +8351,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
+    )
     indices_group__long_name = Quantity(
         type=str,
         links=[
@@ -7679,6 +8399,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_image__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
+    )
     indices_image__long_name = Quantity(
         type=str,
         links=[
@@ -7709,6 +8445,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -7741,6 +8493,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             units="NX_ANY",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -7771,6 +8539,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -8127,6 +8911,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -8158,6 +8958,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8265,6 +9081,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -8297,6 +9129,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -8328,6 +9176,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8435,6 +9299,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -8466,6 +9346,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -8499,6 +9395,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -8530,6 +9442,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8637,6 +9565,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -8668,6 +9612,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -8701,6 +9661,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -8733,6 +9709,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -8764,6 +9756,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8871,6 +9879,22 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -8903,6 +9927,22 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
+    )
     indices_spectrum__long_name = Quantity(
         type=str,
         links=[
@@ -8934,6 +9974,22 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -9239,6 +10295,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -9270,6 +10342,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -9303,6 +10391,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -9335,6 +10439,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -9366,6 +10486,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -9473,6 +10609,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -9504,6 +10656,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -9537,6 +10705,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
+    )
     axis_k__long_name = Quantity(
         type=str,
         links=[
@@ -9568,6 +10752,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -9601,6 +10801,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -9632,6 +10848,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -14884,6 +16116,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
+    )
     axis_x__long_name = Quantity(
         type=str,
         links=[
@@ -14916,6 +16164,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
+    )
     axis_y__long_name = Quantity(
         type=str,
         links=[
@@ -14947,6 +16211,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_z__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_z in the HDF5 file.",
+    )
+    axis_z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_z__long_name = Quantity(
         type=str,
@@ -15053,6 +16333,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             units="NX_ANY",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     data_quantity__long_name = Quantity(
         type=str,
         links=[
@@ -15085,6 +16381,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             units="NX_UNITLESS",
         ),
     )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
+    )
     axis_x__long_name = Quantity(
         type=str,
         links=[
@@ -15116,6 +16428,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_y__long_name = Quantity(
         type=str,
@@ -15411,6 +16739,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -15442,6 +16786,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
+    )
+    varphi_one__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_one in the HDF5 file.",
+    )
+    varphi_one__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_one in the HDF5 file.",
     )
     varphi_one__long_name = Quantity(
         type=str,
@@ -15475,6 +16835,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             units="NX_ANGLE",
         ),
     )
+    capital_phi__min = Quantity(
+        type=np.float64,
+        description="Minimum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__max = Quantity(
+        type=np.float64,
+        description="Maximum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__size = Quantity(
+        type=np.int64,
+        description="Number of elements of capital_phi in the HDF5 file.",
+    )
+    capital_phi__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of capital_phi in the HDF5 file.",
+    )
     capital_phi__long_name = Quantity(
         type=str,
         links=[
@@ -15506,6 +16882,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
+    )
+    varphi_two__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_two in the HDF5 file.",
+    )
+    varphi_two__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_two in the HDF5 file.",
     )
     varphi_two__long_name = Quantity(
         type=str,
@@ -15629,6 +17021,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
             units="NX_UNITLESS",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     axis_z = Quantity(
         type=np.float64,
         links=[
@@ -15676,6 +17084,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
+    )
     axis_y__long_name = Quantity(
         type=str,
         links=[
@@ -15707,6 +17131,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__long_name = Quantity(
         type=str,
@@ -15899,6 +17339,22 @@ class EmRoiIDEdsIndexingSummary(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     axis_energy = Quantity(
         type=str,
         links=[
@@ -16083,6 +17539,22 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -16114,6 +17586,22 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             units="NX_ANY",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -16144,6 +17632,22 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -16395,6 +17899,22 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             optionality="required",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     axis_k = Quantity(
         type=np.float64,
         links=[
@@ -16407,6 +17927,22 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -16437,6 +17973,22 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             optionality="required",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -16465,6 +18017,22 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,

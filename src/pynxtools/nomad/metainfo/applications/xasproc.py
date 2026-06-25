@@ -307,6 +307,22 @@ class XasprocData(Data):
             optionality="required",
         ),
     )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
+    )
     data_quantity = Quantity(
         type=np.float64,
         links=[
@@ -323,6 +339,22 @@ class XasprocData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

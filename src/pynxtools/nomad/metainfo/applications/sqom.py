@@ -451,6 +451,22 @@ class SqomData(Data):
             optionality="required",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.int64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.int64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     qx = Quantity(
         type=np.float64,
         links=[
@@ -467,6 +483,22 @@ class SqomData(Data):
             optionality="required",
             units="NX_WAVENUMBER",
         ),
+    )
+    qx__min = Quantity(
+        type=np.float64,
+        description="Minimum of qx, computed over the full array at parse time.",
+    )
+    qx__max = Quantity(
+        type=np.float64,
+        description="Maximum of qx, computed over the full array at parse time.",
+    )
+    qx__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qx in the HDF5 file.",
+    )
+    qx__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qx in the HDF5 file.",
     )
     qy = Quantity(
         type=np.float64,
@@ -485,6 +517,22 @@ class SqomData(Data):
             units="NX_WAVENUMBER",
         ),
     )
+    qy__min = Quantity(
+        type=np.float64,
+        description="Minimum of qy, computed over the full array at parse time.",
+    )
+    qy__max = Quantity(
+        type=np.float64,
+        description="Maximum of qy, computed over the full array at parse time.",
+    )
+    qy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qy in the HDF5 file.",
+    )
+    qy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qy in the HDF5 file.",
+    )
     qz = Quantity(
         type=np.float64,
         links=[
@@ -502,6 +550,22 @@ class SqomData(Data):
             units="NX_WAVENUMBER",
         ),
     )
+    qz__min = Quantity(
+        type=np.float64,
+        description="Minimum of qz, computed over the full array at parse time.",
+    )
+    qz__max = Quantity(
+        type=np.float64,
+        description="Maximum of qz, computed over the full array at parse time.",
+    )
+    qz__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qz in the HDF5 file.",
+    )
+    qz__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qz in the HDF5 file.",
+    )
     en = Quantity(
         type=np.float64,
         links=[
@@ -518,6 +582,22 @@ class SqomData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    en__min = Quantity(
+        type=np.float64,
+        description="Minimum of en, computed over the full array at parse time.",
+    )
+    en__max = Quantity(
+        type=np.float64,
+        description="Maximum of en, computed over the full array at parse time.",
+    )
+    en__size = Quantity(
+        type=np.int64,
+        description="Number of elements of en in the HDF5 file.",
+    )
+    en__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of en in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

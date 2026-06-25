@@ -701,6 +701,22 @@ class Azint2dData(Data):
             optionality="required",
         ),
     )
+    I__min = Quantity(
+        type=np.float64,
+        description="Minimum of I, computed over the full array at parse time.",
+    )
+    I__max = Quantity(
+        type=np.float64,
+        description="Maximum of I, computed over the full array at parse time.",
+    )
+    I__size = Quantity(
+        type=np.int64,
+        description="Number of elements of I in the HDF5 file.",
+    )
+    I__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of I in the HDF5 file.",
+    )
     I__long_name = Quantity(
         type=MEnum(["intensity"]),
         links=[
@@ -749,6 +765,22 @@ class Azint2dData(Data):
             name_type="specified",
             optionality="optional",
         ),
+    )
+    I_errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of I_errors, computed over the full array at parse time.",
+    )
+    I_errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of I_errors, computed over the full array at parse time.",
+    )
+    I_errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of I_errors in the HDF5 file.",
+    )
+    I_errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of I_errors in the HDF5 file.",
     )
     I_errors__long_name = Quantity(
         type=MEnum(["estimated intensity error"]),
@@ -799,6 +831,22 @@ class Azint2dData(Data):
             optionality="required",
         ),
     )
+    radial_axis__min = Quantity(
+        type=np.float64,
+        description="Minimum of radial_axis, computed over the full array at parse time.",
+    )
+    radial_axis__max = Quantity(
+        type=np.float64,
+        description="Maximum of radial_axis, computed over the full array at parse time.",
+    )
+    radial_axis__size = Quantity(
+        type=np.int64,
+        description="Number of elements of radial_axis in the HDF5 file.",
+    )
+    radial_axis__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of radial_axis in the HDF5 file.",
+    )
     radial_axis__long_name = Quantity(
         type=MEnum(["q", "2theta"]),
         links=[
@@ -845,6 +893,22 @@ class Azint2dData(Data):
             name_type="specified",
             optionality="optional",
         ),
+    )
+    radial_axis_edges__min = Quantity(
+        type=np.float64,
+        description="Minimum of radial_axis_edges, computed over the full array at parse time.",
+    )
+    radial_axis_edges__max = Quantity(
+        type=np.float64,
+        description="Maximum of radial_axis_edges, computed over the full array at parse time.",
+    )
+    radial_axis_edges__size = Quantity(
+        type=np.int64,
+        description="Number of elements of radial_axis_edges in the HDF5 file.",
+    )
+    radial_axis_edges__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of radial_axis_edges in the HDF5 file.",
     )
     radial_axis_edges__long_name = Quantity(
         type=MEnum(["q bin edges", "2theta bin edges"]),
@@ -911,6 +975,22 @@ class Azint2dData(Data):
             optionality="optional",
         ),
     )
+    norm__min = Quantity(
+        type=np.float64,
+        description="Minimum of norm, computed over the full array at parse time.",
+    )
+    norm__max = Quantity(
+        type=np.float64,
+        description="Maximum of norm, computed over the full array at parse time.",
+    )
+    norm__size = Quantity(
+        type=np.int64,
+        description="Number of elements of norm in the HDF5 file.",
+    )
+    norm__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of norm in the HDF5 file.",
+    )
     norm__long_name = Quantity(
         type=MEnum(
             ["effective number of pixels contributing to the corresponding bin"]
@@ -964,6 +1044,22 @@ class Azint2dData(Data):
             optionality="optional",
         ),
     )
+    azimuthal_axis__min = Quantity(
+        type=np.float64,
+        description="Minimum of azimuthal_axis, computed over the full array at parse time.",
+    )
+    azimuthal_axis__max = Quantity(
+        type=np.float64,
+        description="Maximum of azimuthal_axis, computed over the full array at parse time.",
+    )
+    azimuthal_axis__size = Quantity(
+        type=np.int64,
+        description="Number of elements of azimuthal_axis in the HDF5 file.",
+    )
+    azimuthal_axis__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of azimuthal_axis in the HDF5 file.",
+    )
     azimuthal_axis__long_name = Quantity(
         type=MEnum(["azimuthal bin center"]),
         links=[
@@ -1012,6 +1108,22 @@ class Azint2dData(Data):
             name_type="specified",
             optionality="optional",
         ),
+    )
+    azimuthal_axis_edges__min = Quantity(
+        type=np.float64,
+        description="Minimum of azimuthal_axis_edges, computed over the full array at parse time.",
+    )
+    azimuthal_axis_edges__max = Quantity(
+        type=np.float64,
+        description="Maximum of azimuthal_axis_edges, computed over the full array at parse time.",
+    )
+    azimuthal_axis_edges__size = Quantity(
+        type=np.int64,
+        description="Number of elements of azimuthal_axis_edges in the HDF5 file.",
+    )
+    azimuthal_axis_edges__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of azimuthal_axis_edges in the HDF5 file.",
     )
     azimuthal_axis_edges__long_name = Quantity(
         type=MEnum(["azimuthal bin edges"]),

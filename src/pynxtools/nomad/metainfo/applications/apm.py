@@ -8982,6 +8982,22 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     axis_j = Quantity(
         type=np.float64,
         links=[
@@ -8996,6 +9012,22 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__units = Quantity(
         type=str,
@@ -9043,6 +9075,22 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__units = Quantity(
         type=str,
@@ -9184,6 +9232,22 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
     axis_j = Quantity(
         type=np.float64,
         links=[
@@ -9198,6 +9262,22 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__units = Quantity(
         type=str,
@@ -9245,6 +9325,22 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__units = Quantity(
         type=str,
@@ -11773,6 +11869,22 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             optionality="required",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     axis_z = Quantity(
         type=np.float64,
         links=[
@@ -11785,6 +11897,22 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_z__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_z in the HDF5 file.",
+    )
+    axis_z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_z__units = Quantity(
         type=str,
@@ -11831,6 +11959,22 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             optionality="required",
         ),
     )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
+    )
     axis_y__units = Quantity(
         type=str,
         links=[
@@ -11875,6 +12019,22 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__units = Quantity(
         type=str,
@@ -12384,6 +12544,22 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
             optionality="required",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -12412,6 +12588,22 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_mass_to_charge__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_mass_to_charge, computed over the full array at parse time.",
+    )
+    axis_mass_to_charge__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_mass_to_charge, computed over the full array at parse time.",
+    )
+    axis_mass_to_charge__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_mass_to_charge in the HDF5 file.",
+    )
+    axis_mass_to_charge__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_mass_to_charge in the HDF5 file.",
     )
     axis_mass_to_charge__units = Quantity(
         type=str,

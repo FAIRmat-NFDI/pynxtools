@@ -487,6 +487,22 @@ class GuideReflectivity(Data):
             optionality="optional",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     surface = Quantity(
         type=np.float64,
         links=[
@@ -506,6 +522,22 @@ class GuideReflectivity(Data):
             units="NX_ANY",
         ),
     )
+    surface__min = Quantity(
+        type=np.float64,
+        description="Minimum of surface, computed over the full array at parse time.",
+    )
+    surface__max = Quantity(
+        type=np.float64,
+        description="Maximum of surface, computed over the full array at parse time.",
+    )
+    surface__size = Quantity(
+        type=np.int64,
+        description="Number of elements of surface in the HDF5 file.",
+    )
+    surface__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of surface in the HDF5 file.",
+    )
     wavelength = Quantity(
         type=np.float64,
         links=[
@@ -522,6 +554,22 @@ class GuideReflectivity(Data):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+    )
+    wavelength__min = Quantity(
+        type=np.float64,
+        description="Minimum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__max = Quantity(
+        type=np.float64,
+        description="Maximum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__size = Quantity(
+        type=np.int64,
+        description="Number of elements of wavelength in the HDF5 file.",
+    )
+    wavelength__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of wavelength in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

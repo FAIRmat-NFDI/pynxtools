@@ -456,6 +456,22 @@ class IqprocData(Data):
             optionality="required",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.int64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.int64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     variable = Quantity(
         type=np.float64,
         links=[
@@ -468,6 +484,22 @@ class IqprocData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    variable__min = Quantity(
+        type=np.float64,
+        description="Minimum of variable, computed over the full array at parse time.",
+    )
+    variable__max = Quantity(
+        type=np.float64,
+        description="Maximum of variable, computed over the full array at parse time.",
+    )
+    variable__size = Quantity(
+        type=np.int64,
+        description="Number of elements of variable in the HDF5 file.",
+    )
+    variable__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of variable in the HDF5 file.",
     )
     variable__varied_variable = Quantity(
         type=str,
@@ -503,6 +535,22 @@ class IqprocData(Data):
             optionality="required",
         ),
     )
+    qx__min = Quantity(
+        type=np.float64,
+        description="Minimum of qx, computed over the full array at parse time.",
+    )
+    qx__max = Quantity(
+        type=np.float64,
+        description="Maximum of qx, computed over the full array at parse time.",
+    )
+    qx__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qx in the HDF5 file.",
+    )
+    qx__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qx in the HDF5 file.",
+    )
     qy = Quantity(
         type=np.float64,
         links=[
@@ -516,6 +564,22 @@ class IqprocData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    qy__min = Quantity(
+        type=np.float64,
+        description="Minimum of qy, computed over the full array at parse time.",
+    )
+    qy__max = Quantity(
+        type=np.float64,
+        description="Maximum of qy, computed over the full array at parse time.",
+    )
+    qy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qy in the HDF5 file.",
+    )
+    qy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qy in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

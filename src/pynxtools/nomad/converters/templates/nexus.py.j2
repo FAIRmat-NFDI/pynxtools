@@ -136,7 +136,7 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
         links=["{{ qty.node.get_link() }}"],
-        {% if qty.node.name_type in ("any", "partial") %}
+        {% if qty.node.variadic %}
         variable=True,
         {% endif %}
         {% if qty.dimensionality %}
@@ -213,6 +213,36 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         {% endif %}
         {% endif %}
     )
+    {% if qty.has_statistics %}
+    {{ qty.python_name }}__min = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Minimum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__max = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Maximum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__size = Quantity(
+        type=np.int64,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of elements of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {{ qty.python_name }}__ndim = Quantity(
+        type=np.int8,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of dimensions of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {% endif %}
     {% endfor %}
 
     {% for lnk in links %}
@@ -335,7 +365,7 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
     {{ qty.python_name }} = Quantity(
         type={{ qty.python_type }},
         links=["{{ qty.node.get_link() }}"],
-        {% if qty.node.name_type in ("any", "partial") %}
+        {% if qty.node.variadic %}
         variable=True,
         {% endif %}
         {% if qty.dimensionality %}
@@ -412,6 +442,36 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% endif %}
         {% endif %}
     )
+    {% if qty.has_statistics %}
+    {{ qty.python_name }}__min = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Minimum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__max = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Maximum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__size = Quantity(
+        type=np.int64,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of elements of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {{ qty.python_name }}__ndim = Quantity(
+        type=np.int8,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of dimensions of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {% endif %}
     {% endfor %}
 
     {% for lnk in concept.links %}

@@ -1970,6 +1970,22 @@ class DetectorEfficiency(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
+    efficiency__min = Quantity(
+        type=np.float64,
+        description="Minimum of efficiency, computed over the full array at parse time.",
+    )
+    efficiency__max = Quantity(
+        type=np.float64,
+        description="Maximum of efficiency, computed over the full array at parse time.",
+    )
+    efficiency__size = Quantity(
+        type=np.int64,
+        description="Number of elements of efficiency in the HDF5 file.",
+    )
+    efficiency__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of efficiency in the HDF5 file.",
+    )
     wavelength = Quantity(
         type=np.float64,
         links=[
@@ -1994,6 +2010,22 @@ class DetectorEfficiency(Data):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+    )
+    wavelength__min = Quantity(
+        type=np.float64,
+        description="Minimum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__max = Quantity(
+        type=np.float64,
+        description="Maximum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__size = Quantity(
+        type=np.int64,
+        description="Number of elements of wavelength in the HDF5 file.",
+    )
+    wavelength__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of wavelength in the HDF5 file.",
     )
 
     pixel_shape_off_geometry = SubSection(

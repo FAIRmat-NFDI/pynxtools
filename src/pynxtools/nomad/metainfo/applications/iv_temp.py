@@ -484,6 +484,22 @@ class IvTempData(Data):
             optionality="required",
         ),
     )
+    current__min = Quantity(
+        type=np.float64,
+        description="Minimum of current, computed over the full array at parse time.",
+    )
+    current__max = Quantity(
+        type=np.float64,
+        description="Maximum of current, computed over the full array at parse time.",
+    )
+    current__size = Quantity(
+        type=np.int64,
+        description="Number of elements of current in the HDF5 file.",
+    )
+    current__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of current in the HDF5 file.",
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

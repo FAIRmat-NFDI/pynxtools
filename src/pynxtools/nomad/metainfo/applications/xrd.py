@@ -338,6 +338,22 @@ class XrdData(Data):
             optionality="required",
         ),
     )
+    polar_angle__min = Quantity(
+        type=np.float64,
+        description="Minimum of polar_angle, computed over the full array at parse time.",
+    )
+    polar_angle__max = Quantity(
+        type=np.float64,
+        description="Maximum of polar_angle, computed over the full array at parse time.",
+    )
+    polar_angle__size = Quantity(
+        type=np.int64,
+        description="Number of elements of polar_angle in the HDF5 file.",
+    )
+    polar_angle__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of polar_angle in the HDF5 file.",
+    )
     data_quantity = Quantity(
         type=np.float64,
         links=[
@@ -354,6 +370,22 @@ class XrdData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -2427,6 +2427,26 @@ class SpmData(Data):
             units="NX_ANY",
         ),
     )
+    DATA__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of DATA, computed over the full array at parse time.",
+    )
+    DATA__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of DATA, computed over the full array at parse time.",
+    )
+    DATA__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of DATA in the HDF5 file.",
+    )
+    DATA__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of DATA in the HDF5 file.",
+    )
     AXISNAME = Quantity(
         type=np.float64,
         links=[
@@ -2442,6 +2462,26 @@ class SpmData(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    AXISNAME__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of AXISNAME, computed over the full array at parse time.",
+    )
+    AXISNAME__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of AXISNAME, computed over the full array at parse time.",
+    )
+    AXISNAME__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of AXISNAME in the HDF5 file.",
+    )
+    AXISNAME__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of AXISNAME in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

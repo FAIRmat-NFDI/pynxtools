@@ -824,6 +824,26 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             units="NX_ANY",
         ),
     )
+    NAME_spectrum__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of NAME_spectrum, computed over the full array at parse time.",
+    )
+    NAME_spectrum__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of NAME_spectrum, computed over the full array at parse time.",
+    )
+    NAME_spectrum__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of NAME_spectrum in the HDF5 file.",
+    )
+    NAME_spectrum__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of NAME_spectrum in the HDF5 file.",
+    )
     NAME_spectrum__units = Quantity(
         type=str,
         links=[
@@ -872,6 +892,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             units="NX_ANY",
         ),
     )
+    measured_data__min = Quantity(
+        type=np.float64,
+        description="Minimum of measured_data, computed over the full array at parse time.",
+    )
+    measured_data__max = Quantity(
+        type=np.float64,
+        description="Maximum of measured_data, computed over the full array at parse time.",
+    )
+    measured_data__size = Quantity(
+        type=np.int64,
+        description="Number of elements of measured_data in the HDF5 file.",
+    )
+    measured_data__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of measured_data in the HDF5 file.",
+    )
     measured_data__units = Quantity(
         type=str,
         links=[
@@ -912,6 +948,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             units="NX_ANY",
         ),
     )
+    measured_data_errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of measured_data_errors, computed over the full array at parse time.",
+    )
+    measured_data_errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of measured_data_errors, computed over the full array at parse time.",
+    )
+    measured_data_errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of measured_data_errors in the HDF5 file.",
+    )
+    measured_data_errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of measured_data_errors in the HDF5 file.",
+    )
     measured_data_errors__units = Quantity(
         type=str,
         links=[
@@ -949,6 +1001,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="optional",
         ),
+    )
+    varied_parameter_link__min = Quantity(
+        type=np.float64,
+        description="Minimum of varied_parameter_link, computed over the full array at parse time.",
+    )
+    varied_parameter_link__max = Quantity(
+        type=np.float64,
+        description="Maximum of varied_parameter_link, computed over the full array at parse time.",
+    )
+    varied_parameter_link__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varied_parameter_link in the HDF5 file.",
+    )
+    varied_parameter_link__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varied_parameter_link in the HDF5 file.",
     )
     reference_data_link = Quantity(
         type=np.float64,

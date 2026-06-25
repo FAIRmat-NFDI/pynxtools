@@ -672,6 +672,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             units="NX_LENGTH",
         ),
     )
+    z__min = Quantity(
+        type=np.float64,
+        description="Minimum of z, computed over the full array at parse time.",
+    )
+    z__max = Quantity(
+        type=np.float64,
+        description="Maximum of z, computed over the full array at parse time.",
+    )
+    z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of z in the HDF5 file.",
+    )
+    z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of z in the HDF5 file.",
+    )
     z__long_name = Quantity(
         type=str,
         links=[
@@ -706,6 +722,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             units="NX_LENGTH",
         ),
     )
+    y__min = Quantity(
+        type=np.float64,
+        description="Minimum of y, computed over the full array at parse time.",
+    )
+    y__max = Quantity(
+        type=np.float64,
+        description="Maximum of y, computed over the full array at parse time.",
+    )
+    y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of y in the HDF5 file.",
+    )
+    y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of y in the HDF5 file.",
+    )
     y__long_name = Quantity(
         type=str,
         links=[
@@ -739,6 +771,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    x__min = Quantity(
+        type=np.float64,
+        description="Minimum of x, computed over the full array at parse time.",
+    )
+    x__max = Quantity(
+        type=np.float64,
+        description="Maximum of x, computed over the full array at parse time.",
+    )
+    x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of x in the HDF5 file.",
+    )
+    x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of x in the HDF5 file.",
     )
     x__long_name = Quantity(
         type=str,

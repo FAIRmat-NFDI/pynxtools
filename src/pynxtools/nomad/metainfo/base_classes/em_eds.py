@@ -220,6 +220,22 @@ class EmEdsIndexingSummary(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -253,6 +269,22 @@ class EmEdsIndexingSummary(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,

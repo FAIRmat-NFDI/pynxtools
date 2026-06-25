@@ -813,6 +813,22 @@ class ElectronanalyzerTransmissionFunction(Data):
             units="NX_ENERGY",
         ),
     )
+    kinetic_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of kinetic_energy, computed over the full array at parse time.",
+    )
+    kinetic_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of kinetic_energy, computed over the full array at parse time.",
+    )
+    kinetic_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of kinetic_energy in the HDF5 file.",
+    )
+    kinetic_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of kinetic_energy in the HDF5 file.",
+    )
     relative_intensity = Quantity(
         type=np.float64,
         links=[
@@ -829,6 +845,22 @@ class ElectronanalyzerTransmissionFunction(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    relative_intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of relative_intensity, computed over the full array at parse time.",
+    )
+    relative_intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of relative_intensity, computed over the full array at parse time.",
+    )
+    relative_intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of relative_intensity in the HDF5 file.",
+    )
+    relative_intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of relative_intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

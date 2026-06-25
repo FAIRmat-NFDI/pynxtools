@@ -551,6 +551,22 @@ class MicrostructureOdfPhiTwoPlot(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     varphi_one = Quantity(
         type=np.float64,
         links=[
@@ -569,6 +585,22 @@ class MicrostructureOdfPhiTwoPlot(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+    )
+    varphi_one__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_one in the HDF5 file.",
+    )
+    varphi_one__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_one in the HDF5 file.",
     )
     capital_phi = Quantity(
         type=np.float64,
@@ -589,6 +621,22 @@ class MicrostructureOdfPhiTwoPlot(Data):
             units="NX_ANGLE",
         ),
     )
+    capital_phi__min = Quantity(
+        type=np.float64,
+        description="Minimum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__max = Quantity(
+        type=np.float64,
+        description="Maximum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__size = Quantity(
+        type=np.int64,
+        description="Number of elements of capital_phi in the HDF5 file.",
+    )
+    capital_phi__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of capital_phi in the HDF5 file.",
+    )
     varphi_two = Quantity(
         type=np.float64,
         links=[
@@ -607,6 +655,22 @@ class MicrostructureOdfPhiTwoPlot(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+    )
+    varphi_two__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_two in the HDF5 file.",
+    )
+    varphi_two__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_two in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

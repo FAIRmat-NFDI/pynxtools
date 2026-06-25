@@ -109,6 +109,11 @@ class QuantityContext:
     eln_component: str | None
     # Default value for the ELN annotation; set for single-value MEnum only.
     eln_default: str | None
+    # True for numeric array fields inside NXdata-derived classes — the generator
+    # emits parallel {name}__mean/__min/__max/__size/__ndim scalar quantities and
+    # the parser populates those instead of attempting to write a reduced scalar
+    # into this (correctly array-shaped) quantity.
+    has_statistics: bool = False
 
 
 @dataclass
@@ -537,6 +542,7 @@ def _build_quantity_from_node(
     node: NXTreeField | NXTreeAttribute,
     parent_field: str | None = None,
     python_name_override: str | None = None,
+    is_nxdata_class: bool = False,
 ) -> QuantityContext:
     """Build a QuantityContext from a NXTreeField or NXTreeAttribute node.
 
@@ -583,6 +589,29 @@ def _build_quantity_from_node(
         python_type, shape, node.name_type, scalar_items
     )
 
+    # NXDL leaves some NXdata signals (DATA/AXISNAME) with no <dimensions>
+    # element at all — node.shape is None, even though they are, by NeXus
+    # convention, always arrays (just of unspecified rank). This is only used
+    # to decide has_statistics below; it must NOT feed back into the
+    # quantity's own declared `shape` (qty.shape stays exactly what
+    # _shape_from_node() returned) — declaring shape=["*"] on the actual
+    # Quantity changed how the parser populates it (it now requires real
+    # array structure) and broke previously-working scalar-style population
+    # for fields like AXISNAME in real files (confirmed via a regression in
+    # test_arpes_example: "Invalid shape for [1.2404502e-05]").
+    is_effectively_array = bool(shape) or (
+        is_nxdata_class
+        and isinstance(node, NXTreeField)
+        and (node.name_type or "specified") in ("any", "partial")
+    )
+
+    has_statistics = (
+        is_nxdata_class
+        and isinstance(node, NXTreeField)
+        and is_effectively_array
+        and python_type in ("np.float64", "np.int64", "np.complex128")
+    )
+
     return QuantityContext(
         python_name=python_name,
         python_type=python_type,
@@ -599,6 +628,7 @@ def _build_quantity_from_node(
         node=node,
         eln_component=eln_component,
         eln_default=eln_default,
+        has_statistics=has_statistics,
     )
 
 
@@ -627,7 +657,7 @@ def _build_subsection_from_node(
     nx_name_type = node.name_type or "specified"
 
     repeats: bool = node.variadic
-    variable = nx_name_type in ("any", "partial")
+    variable = node.variadic
 
     if nx_name_type == "any":
         # node.name is always populated by NexusNode — either the NXDL's
@@ -844,7 +874,7 @@ def _build_named_concept(
     _seen_concept = seen_concept if seen_concept is not None else set()
     _naming_base = naming_base if naming_base is not None else concept_class_name
     nx_name_type = node.name_type or "specified"
-    variable = nx_name_type in ("any", "partial")
+    variable = node.variadic
 
     # None for a genuinely anonymous group (no name= attribute at all — NXDL
     # gives no template name); the literal name otherwise, even for "any"
@@ -905,7 +935,9 @@ def _build_named_concept(
             child, (NXTreeField, NXTreeAttribute)
         ):
             continue
-        qty = _build_quantity_from_node(child)
+        qty = _build_quantity_from_node(
+            child, is_nxdata_class=(node.nx_class == "NXdata")
+        )
         # Suppress ELN annotation when the override has no explicit shape but
         # the base class field is multi-dimensional: NOMAD's __init_metainfo__
         # inherits the parent's shape, making the ELN validator fail with
@@ -1480,7 +1512,9 @@ def build_context(nx_name: str) -> dict:
             quantities.append(qty)
 
         elif child.nx_type == "field":
-            qty = _build_quantity_from_node(child)
+            qty = _build_quantity_from_node(
+                child, is_nxdata_class=(nx_name == "NXdata")
+            )
             if qty.python_name in _qty_field_suffix_for.get(nx_name, frozenset()):
                 qty.python_name = field_conflicts_with_group(qty.python_name)
             elif qty.python_name in all_sub_names:

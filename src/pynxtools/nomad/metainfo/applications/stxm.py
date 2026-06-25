@@ -731,6 +731,22 @@ class StxmData(Data):
             optionality="required",
         ),
     )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
+    )
     sample_y = Quantity(
         type=np.float64,
         links=[
@@ -749,6 +765,22 @@ class StxmData(Data):
             optionality="required",
         ),
     )
+    sample_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of sample_y, computed over the full array at parse time.",
+    )
+    sample_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of sample_y, computed over the full array at parse time.",
+    )
+    sample_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of sample_y in the HDF5 file.",
+    )
+    sample_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of sample_y in the HDF5 file.",
+    )
     sample_x = Quantity(
         type=np.float64,
         links=[
@@ -766,6 +798,22 @@ class StxmData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    sample_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of sample_x, computed over the full array at parse time.",
+    )
+    sample_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of sample_x, computed over the full array at parse time.",
+    )
+    sample_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of sample_x in the HDF5 file.",
+    )
+    sample_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of sample_x in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

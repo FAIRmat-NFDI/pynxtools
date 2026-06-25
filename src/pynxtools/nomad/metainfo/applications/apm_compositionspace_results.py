@@ -1075,6 +1075,22 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
+    axis_feature_indices__min = Quantity(
+        type=np.int64,
+        description="Minimum of axis_feature_indices, computed over the full array at parse time.",
+    )
+    axis_feature_indices__max = Quantity(
+        type=np.int64,
+        description="Maximum of axis_feature_indices, computed over the full array at parse time.",
+    )
+    axis_feature_indices__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_feature_indices in the HDF5 file.",
+    )
+    axis_feature_indices__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_feature_indices in the HDF5 file.",
+    )
     axis_feature_indices__long_name = Quantity(
         type=str,
         links=[
@@ -1111,6 +1127,22 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+    )
+    axis_feature_importance__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_feature_importance, computed over the full array at parse time.",
+    )
+    axis_feature_importance__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_feature_importance, computed over the full array at parse time.",
+    )
+    axis_feature_importance__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_feature_importance in the HDF5 file.",
+    )
+    axis_feature_importance__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_feature_importance in the HDF5 file.",
     )
     axis_feature_importance__long_name = Quantity(
         type=str,
@@ -1318,6 +1350,22 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
+    axis_explained_variance__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_explained_variance, computed over the full array at parse time.",
+    )
+    axis_explained_variance__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_explained_variance, computed over the full array at parse time.",
+    )
+    axis_explained_variance__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_explained_variance in the HDF5 file.",
+    )
+    axis_explained_variance__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_explained_variance in the HDF5 file.",
+    )
     axis_pca_dimension = Quantity(
         type=np.int64,
         links=[
@@ -1337,6 +1385,22 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_pca_dimension__min = Quantity(
+        type=np.int64,
+        description="Minimum of axis_pca_dimension, computed over the full array at parse time.",
+    )
+    axis_pca_dimension__max = Quantity(
+        type=np.int64,
+        description="Maximum of axis_pca_dimension, computed over the full array at parse time.",
+    )
+    axis_pca_dimension__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_pca_dimension in the HDF5 file.",
+    )
+    axis_pca_dimension__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_pca_dimension in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1554,6 +1618,22 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             units="NX_ANY",
         ),
     )
+    axis_aic__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_aic, computed over the full array at parse time.",
+    )
+    axis_aic__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_aic, computed over the full array at parse time.",
+    )
+    axis_aic__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_aic in the HDF5 file.",
+    )
+    axis_aic__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_aic in the HDF5 file.",
+    )
     axis_bic = Quantity(
         type=np.float64,
         links=[
@@ -1571,6 +1651,22 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             units="NX_UNITLESS",
         ),
     )
+    axis_bic__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_bic, computed over the full array at parse time.",
+    )
+    axis_bic__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_bic, computed over the full array at parse time.",
+    )
+    axis_bic__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_bic in the HDF5 file.",
+    )
+    axis_bic__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_bic in the HDF5 file.",
+    )
     axis_dimension = Quantity(
         type=np.int64,
         links=[
@@ -1587,6 +1683,22 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_dimension__min = Quantity(
+        type=np.int64,
+        description="Minimum of axis_dimension, computed over the full array at parse time.",
+    )
+    axis_dimension__max = Quantity(
+        type=np.int64,
+        description="Maximum of axis_dimension, computed over the full array at parse time.",
+    )
+    axis_dimension__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_dimension in the HDF5 file.",
+    )
+    axis_dimension__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_dimension in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

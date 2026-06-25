@@ -2345,6 +2345,26 @@ class StressFitDiffractogram(Data):
             optionality="optional",
         ),
     )
+    DAXIS__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of DAXIS, computed over the full array at parse time.",
+    )
+    DAXIS__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of DAXIS, computed over the full array at parse time.",
+    )
+    DAXIS__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of DAXIS in the HDF5 file.",
+    )
+    DAXIS__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of DAXIS in the HDF5 file.",
+    )
     XAXIS = Quantity(
         type=np.float64,
         links=[
@@ -2366,6 +2386,26 @@ class StressFitDiffractogram(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    XAXIS__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of XAXIS, computed over the full array at parse time.",
+    )
+    XAXIS__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of XAXIS, computed over the full array at parse time.",
+    )
+    XAXIS__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of XAXIS in the HDF5 file.",
+    )
+    XAXIS__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of XAXIS in the HDF5 file.",
     )
     XAXIS__units = Quantity(
         type=str,
@@ -2437,6 +2477,22 @@ class StressFitDiffractogram(Data):
             units="NX_ANY",
         ),
     )
+    diffractogram__min = Quantity(
+        type=np.float64,
+        description="Minimum of diffractogram, computed over the full array at parse time.",
+    )
+    diffractogram__max = Quantity(
+        type=np.float64,
+        description="Maximum of diffractogram, computed over the full array at parse time.",
+    )
+    diffractogram__size = Quantity(
+        type=np.int64,
+        description="Number of elements of diffractogram in the HDF5 file.",
+    )
+    diffractogram__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of diffractogram in the HDF5 file.",
+    )
     diffractogram__interpretation = Quantity(
         type=MEnum(["spectrum"]),
         links=[
@@ -2487,6 +2543,22 @@ class StressFitDiffractogram(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    diffractogram_errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of diffractogram_errors, computed over the full array at parse time.",
+    )
+    diffractogram_errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of diffractogram_errors, computed over the full array at parse time.",
+    )
+    diffractogram_errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of diffractogram_errors in the HDF5 file.",
+    )
+    diffractogram_errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of diffractogram_errors in the HDF5 file.",
     )
     diffractogram_errors__interpretation = Quantity(
         type=MEnum(["spectrum"]),
@@ -2539,6 +2611,22 @@ class StressFitDiffractogram(Data):
             units="NX_ANY",
         ),
     )
+    fit__min = Quantity(
+        type=np.float64,
+        description="Minimum of fit, computed over the full array at parse time.",
+    )
+    fit__max = Quantity(
+        type=np.float64,
+        description="Maximum of fit, computed over the full array at parse time.",
+    )
+    fit__size = Quantity(
+        type=np.int64,
+        description="Number of elements of fit in the HDF5 file.",
+    )
+    fit__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of fit in the HDF5 file.",
+    )
     fit__interpretation = Quantity(
         type=MEnum(["spectrum"]),
         links=[
@@ -2590,6 +2678,22 @@ class StressFitDiffractogram(Data):
             units="NX_ANY",
         ),
     )
+    fit_errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of fit_errors, computed over the full array at parse time.",
+    )
+    fit_errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of fit_errors, computed over the full array at parse time.",
+    )
+    fit_errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of fit_errors in the HDF5 file.",
+    )
+    fit_errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of fit_errors in the HDF5 file.",
+    )
     fit_errors__units = Quantity(
         type=str,
         links=[
@@ -2625,6 +2729,22 @@ class StressFitDiffractogram(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    background__min = Quantity(
+        type=np.float64,
+        description="Minimum of background, computed over the full array at parse time.",
+    )
+    background__max = Quantity(
+        type=np.float64,
+        description="Maximum of background, computed over the full array at parse time.",
+    )
+    background__size = Quantity(
+        type=np.int64,
+        description="Number of elements of background in the HDF5 file.",
+    )
+    background__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of background in the HDF5 file.",
     )
     background__interpretation = Quantity(
         type=MEnum(["spectrum"]),
@@ -2676,6 +2796,22 @@ class StressFitDiffractogram(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    residuals__min = Quantity(
+        type=np.float64,
+        description="Minimum of residuals, computed over the full array at parse time.",
+    )
+    residuals__max = Quantity(
+        type=np.float64,
+        description="Maximum of residuals, computed over the full array at parse time.",
+    )
+    residuals__size = Quantity(
+        type=np.int64,
+        description="Number of elements of residuals in the HDF5 file.",
+    )
+    residuals__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of residuals in the HDF5 file.",
     )
     residuals__interpretation = Quantity(
         type=MEnum(["spectrum"]),

@@ -442,6 +442,22 @@ class TomoprocData(Data):
             optionality="required",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     data_quantity__transform = Quantity(
         type=str,
         links=[
@@ -509,6 +525,22 @@ class TomoprocData(Data):
             units="NX_ANY",
         ),
     )
+    x__min = Quantity(
+        type=np.float64,
+        description="Minimum of x, computed over the full array at parse time.",
+    )
+    x__max = Quantity(
+        type=np.float64,
+        description="Maximum of x, computed over the full array at parse time.",
+    )
+    x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of x in the HDF5 file.",
+    )
+    x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of x in the HDF5 file.",
+    )
     y = Quantity(
         type=np.float64,
         links=[
@@ -528,6 +560,22 @@ class TomoprocData(Data):
             units="NX_ANY",
         ),
     )
+    y__min = Quantity(
+        type=np.float64,
+        description="Minimum of y, computed over the full array at parse time.",
+    )
+    y__max = Quantity(
+        type=np.float64,
+        description="Maximum of y, computed over the full array at parse time.",
+    )
+    y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of y in the HDF5 file.",
+    )
+    y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of y in the HDF5 file.",
+    )
     z = Quantity(
         type=np.float64,
         links=[
@@ -546,6 +594,22 @@ class TomoprocData(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    z__min = Quantity(
+        type=np.float64,
+        description="Minimum of z, computed over the full array at parse time.",
+    )
+    z__max = Quantity(
+        type=np.float64,
+        description="Maximum of z, computed over the full array at parse time.",
+    )
+    z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of z in the HDF5 file.",
+    )
+    z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of z in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

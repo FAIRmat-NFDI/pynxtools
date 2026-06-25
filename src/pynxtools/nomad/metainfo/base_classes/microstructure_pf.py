@@ -257,6 +257,22 @@ class MicrostructurePfPf(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     axis_y = Quantity(
         type=np.float64,
         links=[
@@ -276,6 +292,22 @@ class MicrostructurePfPf(Data):
             units="NX_ANY",
         ),
     )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
+    )
     axis_x = Quantity(
         type=np.float64,
         links=[
@@ -294,6 +326,22 @@ class MicrostructurePfPf(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
