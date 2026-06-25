@@ -836,6 +836,22 @@ class XrdPanExperimentResult(XrdData):
             optionality="required",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     two_theta = Quantity(
         type=np.float64,
         links=[
@@ -852,6 +868,22 @@ class XrdPanExperimentResult(XrdData):
             optionality="required",
             units="NX_ANGLE",
         ),
+    )
+    two_theta__min = Quantity(
+        type=np.float64,
+        description="Minimum of two_theta, computed over the full array at parse time.",
+    )
+    two_theta__max = Quantity(
+        type=np.float64,
+        description="Maximum of two_theta, computed over the full array at parse time.",
+    )
+    two_theta__size = Quantity(
+        type=np.int64,
+        description="Number of elements of two_theta in the HDF5 file.",
+    )
+    two_theta__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of two_theta in the HDF5 file.",
     )
     omega = Quantity(
         type=np.float64,
@@ -870,6 +902,22 @@ class XrdPanExperimentResult(XrdData):
             units="NX_ANGLE",
         ),
     )
+    omega__min = Quantity(
+        type=np.float64,
+        description="Minimum of omega, computed over the full array at parse time.",
+    )
+    omega__max = Quantity(
+        type=np.float64,
+        description="Maximum of omega, computed over the full array at parse time.",
+    )
+    omega__size = Quantity(
+        type=np.int64,
+        description="Number of elements of omega in the HDF5 file.",
+    )
+    omega__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of omega in the HDF5 file.",
+    )
     phi = Quantity(
         type=np.float64,
         links=[
@@ -887,6 +935,22 @@ class XrdPanExperimentResult(XrdData):
             units="NX_ANGLE",
         ),
     )
+    phi__min = Quantity(
+        type=np.float64,
+        description="Minimum of phi, computed over the full array at parse time.",
+    )
+    phi__max = Quantity(
+        type=np.float64,
+        description="Maximum of phi, computed over the full array at parse time.",
+    )
+    phi__size = Quantity(
+        type=np.int64,
+        description="Number of elements of phi in the HDF5 file.",
+    )
+    phi__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of phi in the HDF5 file.",
+    )
     chi = Quantity(
         type=np.float64,
         links=[
@@ -903,6 +967,22 @@ class XrdPanExperimentResult(XrdData):
             optionality="optional",
             units="NX_ANGLE",
         ),
+    )
+    chi__min = Quantity(
+        type=np.float64,
+        description="Minimum of chi, computed over the full array at parse time.",
+    )
+    chi__max = Quantity(
+        type=np.float64,
+        description="Maximum of chi, computed over the full array at parse time.",
+    )
+    chi__size = Quantity(
+        type=np.int64,
+        description="Number of elements of chi in the HDF5 file.",
+    )
+    chi__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of chi in the HDF5 file.",
     )
     q_parallel = Quantity(
         type=np.float64,
