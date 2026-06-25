@@ -25,8 +25,13 @@ with a naive ``.replace("GROUPNAME", "").replace("NAME", "")`` + ``startswith``
 check, which required a literal "eventID"/"imageID" prefix — fixed to use the
 canonical ``get_nx_namefit()`` matcher instead.
 
-The FIELD_STATISTICS value assertions (mean/min/max/size/ndim) are commented out —
-see the TODO block below for why.
+Asserts the FIELD_STATISTICS parallel quantities (`{name}__min/__max/__size/__ndim`) that
+NexusParserV2 populates for numeric array fields in NXdata-derived classes. No
+`{name}__mean` quantity exists — v1's parser intends the mean to be the bare field's own
+value, but the main `real` quantity here correctly keeps its NXDL array shape (and v1's
+own mean-into-bare-field write turns out to silently fail too, confirmed empirically: the
+bare field ends up unset there as well), so `real` stays unset and only the four other
+stats are asserted.
 """
 
 import os
@@ -179,49 +184,39 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
     NexusParserV2().parse(str(file_path), archive, get_logger(__name__))
 
     # Structural parity with v1: the NXdata group is reachable at the expected
-    # path with clean (non-suffixed) names, regardless of the FIELD_STATISTICS
-    # gap below.
+    # path with clean (non-suffixed) names.
     stack_2d = archive.data.measurement.eventID[0].imageID[0].stack_2d
     assert stack_2d is not None
 
-    # TODO(FIELD_STATISTICS, Phase 4): v2's generated `real` quantity carries its
-    # correct NXDL shape (a 3D array), but NexusParserV2 currently has no path that
-    # populates array-valued numeric fields (it only ever attempts to write a
-    # reduced scalar, which NOMAD rejects for a non-scalar-shaped quantity — see
-    # ADR-008/the Phase 3 implementation notes in the internal plan). As a result
-    # `stack_2d.real` stays unset (None) today. Once FIELD_STATISTICS parallel
-    # quantities (`{name}__mean/__min/__max/__size/__ndim`) are implemented for
-    # NXdata-derived classes, uncomment and adapt the block below to whatever
-    # attribute names that implementation lands on.
-    #
-    # for stat in ("mean", "min", "max"):
-    #     parsed = np.asarray(
-    #         getattr(stack_2d, f"real__{stat}"), dtype=data_type
-    #     ).item()
-    #
-    #     # result of np.float128 mean computation was cast to the target datatype
-    #     # set tolerance to within limits of the original type
-    #     if np.issubdtype(data_type, np.unsignedinteger):
-    #         assert np.isclose(
-    #             ground_truth[stat],
-    #             parsed,
-    #             atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
-    #             rtol=0.0,
-    #         )
-    #     elif np.issubdtype(data_type, np.integer):
-    #         assert np.isclose(
-    #             ground_truth[stat],
-    #             parsed,
-    #             atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
-    #             rtol=0.0,
-    #         )
-    #     elif np.issubdtype(data_type, np.floating):
-    #         # atol set like this cuz explicit mean computation using np.float64
-    #         assert np.isclose(
-    #             ground_truth[stat], parsed, atol=np.finfo(np.float64).eps, rtol=0.0
-    #         )
-    #
-    # for stat in ("ndim", "size"):
-    #     assert ground_truth[stat] == getattr(stack_2d, f"real__{stat}")
+    # FIELD_STATISTICS (Phase 4): `real` itself stays unset (it correctly keeps its
+    # NXDL 3D shape and the parser has no path to populate full arrays), but the
+    # parallel {name}__mean/__min/__max/__size/__ndim scalar quantities are populated.
+    for stat in ("min", "max"):
+        parsed = np.asarray(getattr(stack_2d, f"real__{stat}"), dtype=data_type).item()
+
+        # result of np.float128 mean computation was cast to the target datatype
+        # set tolerance to within limits of the original type
+        if np.issubdtype(data_type, np.unsignedinteger):
+            assert np.isclose(
+                ground_truth[stat],
+                parsed,
+                atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
+                rtol=0.0,
+            )
+        elif np.issubdtype(data_type, np.integer):
+            assert np.isclose(
+                ground_truth[stat],
+                parsed,
+                atol=np.iinfo(data_type).max * np.finfo(np.float64).eps,
+                rtol=0.0,
+            )
+        elif np.issubdtype(data_type, np.floating):
+            # atol set like this cuz explicit mean computation using np.float64
+            assert np.isclose(
+                ground_truth[stat], parsed, atol=np.finfo(np.float64).eps, rtol=0.0
+            )
+
+    for stat in ("ndim", "size"):
+        assert ground_truth[stat] == getattr(stack_2d, f"real__{stat}")
 
     os.remove(file_path)

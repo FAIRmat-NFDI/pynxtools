@@ -1037,6 +1037,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -1070,6 +1086,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_pattern__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_pattern, computed over the full array at parse time.",
+    )
+    indices_pattern__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_pattern, computed over the full array at parse time.",
+    )
+    indices_pattern__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_pattern in the HDF5 file.",
+    )
+    indices_pattern__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_pattern in the HDF5 file.",
+    )
     indices_pattern__long_name = Quantity(
         type=str,
         links=[
@@ -1101,6 +1133,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    s__min = Quantity(
+        type=np.float64,
+        description="Minimum of s, computed over the full array at parse time.",
+    )
+    s__max = Quantity(
+        type=np.float64,
+        description="Maximum of s, computed over the full array at parse time.",
+    )
+    s__size = Quantity(
+        type=np.int64,
+        description="Number of elements of s in the HDF5 file.",
+    )
+    s__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of s in the HDF5 file.",
     )
     s__long_name = Quantity(
         type=str,
@@ -1134,6 +1182,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             units="NX_TIME",
         ),
+    )
+    time__min = Quantity(
+        type=np.float64,
+        description="Minimum of time, computed over the full array at parse time.",
+    )
+    time__max = Quantity(
+        type=np.float64,
+        description="Maximum of time, computed over the full array at parse time.",
+    )
+    time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of time in the HDF5 file.",
+    )
+    time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of time in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

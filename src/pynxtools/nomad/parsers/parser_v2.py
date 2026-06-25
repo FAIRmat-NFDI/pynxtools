@@ -62,7 +62,12 @@ from pynxtools.nexus.nexus_tree import NexusNode
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.root import Root
-from pynxtools.nomad.parsers._field_io import extract_iuf_scalar, get_field_str
+from pynxtools.nomad.parsers._field_io import (
+    extract_iuf_scalar,
+    get_field_stats_iuf_chunked,
+    get_field_stats_iuf_contiguous,
+    get_field_str,
+)
 from pynxtools.units import ureg
 
 # ---------------------------------------------------------------------------
@@ -684,6 +689,56 @@ class NomadVisitorV2(NexusVisitor):
 
         return idx.field_map.get(hdf_field_name)
 
+    def _populate_field_statistics(
+        self,
+        qty: Any,
+        hdf_node: h5py.Dataset,
+        current: MSection,
+        concept_name: str,
+        hdf_field_name: str,
+    ) -> None:
+        """Populate the {concept_name}__min/__max/__size/__ndim quantities.
+
+        No {concept_name}__mean quantity is written: v1's parser intends the mean
+        to be the bare field's own value, but the main quantity here correctly
+        keeps its NXDL array shape and cannot hold a reduced scalar (confirmed
+        empirically that v1's own mean-into-bare-field write silently fails too —
+        the bare field ends up unset there as well). __mean is still computed
+        below purely as a finiteness check; it is not exposed as a quantity.
+
+        When the main quantity is variadic (e.g. NXdata's DATA/AXISNAME, where
+        multiple distinctly-named HDF5 datasets map to the same Python slot),
+        the stat quantities are variadic too and each instance's stats are
+        wrapped via MQuantity.wrap(..., hdf_field_name) — mirroring how v1 keys
+        "intensity__min" separately from "errors__min" — instead of repeatedly
+        overwriting one shared value across every named instance.
+        """
+        try:
+            if hdf_node.chunks is not None:
+                stats = get_field_stats_iuf_chunked(hdf_node)
+            else:
+                stats = get_field_stats_iuf_contiguous(hdf_node)
+        except Exception as e:
+            self._logger.debug("Error computing stats for %s: %s", hdf_field_name, e)
+            return
+
+        if not np.isfinite(float(stats["__mean"])):
+            return
+
+        for suffix in ("min", "max", "size", "ndim"):
+            stat_qty = current.m_def.all_quantities.get(f"{concept_name}__{suffix}")
+            if stat_qty is None:
+                continue
+            try:
+                value = stats[f"__{suffix}"]
+                if qty.use_full_storage:
+                    value = MQuantity.wrap(value, f"{hdf_field_name}__{suffix}")
+                current.m_set(stat_qty, value)
+            except Exception as e:
+                self._logger.debug(
+                    "Error setting %s__%s: %s", hdf_field_name, suffix, e
+                )
+
     def _populate_field(
         self,
         qty: Any,
@@ -719,6 +774,22 @@ class NomadVisitorV2(NexusVisitor):
             )
             return
 
+        if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
+            min_qty = current.m_def.all_quantities.get(f"{concept_name}__min")
+            if min_qty is not None:
+                self._populate_field_statistics(
+                    qty, hdf_node, current, concept_name, hdf_field_name
+                )
+                # Only the stats quantities exist to hold a reduced value when
+                # the main quantity has a real declared shape (e.g. a 3D NXdata
+                # signal) — writing a scalar into it would fail. When the main
+                # quantity has no declared shape (e.g. AXISNAME, DATA itself),
+                # it can safely hold the mean too, same as before has_statistics
+                # existed — fall through to populate it normally instead of
+                # skipping it.
+                if qty.shape:
+                    return
+
         try:
             if hdf_node.dtype.kind in "iuf":
                 if hdf_node.shape == ():
@@ -726,6 +797,11 @@ class NomadVisitorV2(NexusVisitor):
                     if not np.isfinite(value):
                         return
                 else:
+                    # No parallel __min/__max/__size/__ndim quantities exist for
+                    # this field (has_statistics was False at generation time,
+                    # e.g. the field isn't in an NXdata-derived class) — fall back
+                    # to writing the mean directly into the main quantity. This only
+                    # succeeds if that quantity happens to be scalar-shaped.
                     value, _ = extract_iuf_scalar(hdf_node)
                     if not np.isfinite(float(value)):  # type: ignore[arg-type]
                         return

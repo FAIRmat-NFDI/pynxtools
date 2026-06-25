@@ -289,6 +289,22 @@ class SpectrumSpectrum0d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -322,6 +338,22 @@ class SpectrumSpectrum0d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -379,6 +411,22 @@ class SpectrumSpectrum1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -413,6 +461,22 @@ class SpectrumSpectrum1d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -446,6 +510,22 @@ class SpectrumSpectrum1d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -503,6 +583,22 @@ class SpectrumSpectrum2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -536,6 +632,22 @@ class SpectrumSpectrum2d(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -571,6 +683,22 @@ class SpectrumSpectrum2d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -604,6 +732,22 @@ class SpectrumSpectrum2d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -661,6 +805,22 @@ class SpectrumSpectrum3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -694,6 +854,22 @@ class SpectrumSpectrum3d(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -729,6 +905,22 @@ class SpectrumSpectrum3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -763,6 +955,22 @@ class SpectrumSpectrum3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -796,6 +1004,22 @@ class SpectrumSpectrum3d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -853,6 +1077,22 @@ class SpectrumStack0d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -886,6 +1126,22 @@ class SpectrumStack0d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -921,6 +1177,22 @@ class SpectrumStack0d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
+    )
     indices_spectrum__long_name = Quantity(
         type=str,
         links=[
@@ -954,6 +1226,22 @@ class SpectrumStack0d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -1011,6 +1299,22 @@ class SpectrumStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -1044,6 +1348,22 @@ class SpectrumStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -1079,6 +1399,22 @@ class SpectrumStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
+    )
     indices_spectrum__long_name = Quantity(
         type=str,
         links=[
@@ -1112,6 +1448,22 @@ class SpectrumStack2d(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -1147,6 +1499,22 @@ class SpectrumStack2d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -1180,6 +1548,22 @@ class SpectrumStack2d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -1237,6 +1621,22 @@ class SpectrumStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -1270,6 +1670,22 @@ class SpectrumStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -1305,6 +1721,22 @@ class SpectrumStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
+    )
     indices_spectrum__long_name = Quantity(
         type=str,
         links=[
@@ -1338,6 +1770,22 @@ class SpectrumStack3d(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -1373,6 +1821,22 @@ class SpectrumStack3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
+    )
     axis_j__long_name = Quantity(
         type=str,
         links=[
@@ -1407,6 +1871,22 @@ class SpectrumStack3d(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -1440,6 +1920,22 @@ class SpectrumStack3d(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
