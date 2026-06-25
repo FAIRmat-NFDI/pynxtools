@@ -1738,6 +1738,22 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             units="NX_TIME",
         ),
     )
+    time__min = Quantity(
+        type=np.float64,
+        description="Minimum of time, computed over the full array at parse time.",
+    )
+    time__max = Quantity(
+        type=np.float64,
+        description="Maximum of time, computed over the full array at parse time.",
+    )
+    time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of time in the HDF5 file.",
+    )
+    time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of time in the HDF5 file.",
+    )
     time__long_name = Quantity(
         type=str,
         links=[
@@ -1772,6 +1788,22 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    radius__min = Quantity(
+        type=np.float64,
+        description="Minimum of radius, computed over the full array at parse time.",
+    )
+    radius__max = Quantity(
+        type=np.float64,
+        description="Maximum of radius, computed over the full array at parse time.",
+    )
+    radius__size = Quantity(
+        type=np.int64,
+        description="Number of elements of radius in the HDF5 file.",
+    )
+    radius__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of radius in the HDF5 file.",
     )
     radius__long_name = Quantity(
         type=str,
@@ -1979,6 +2011,22 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             units="NX_TIME",
         ),
     )
+    time__min = Quantity(
+        type=np.float64,
+        description="Minimum of time, computed over the full array at parse time.",
+    )
+    time__max = Quantity(
+        type=np.float64,
+        description="Maximum of time, computed over the full array at parse time.",
+    )
+    time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of time in the HDF5 file.",
+    )
+    time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of time in the HDF5 file.",
+    )
     time__long_name = Quantity(
         type=str,
         links=[
@@ -2011,6 +2059,22 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             optionality="required",
             units="NX_TEMPERATURE",
         ),
+    )
+    temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of temperature, computed over the full array at parse time.",
+    )
+    temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of temperature, computed over the full array at parse time.",
+    )
+    temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of temperature in the HDF5 file.",
+    )
+    temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of temperature in the HDF5 file.",
     )
     temperature__long_name = Quantity(
         type=str,

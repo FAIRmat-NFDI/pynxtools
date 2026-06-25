@@ -887,6 +887,22 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data)
             units="NX_ANY",
         ),
     )
+    xdmf_intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of xdmf_intensity, computed over the full array at parse time.",
+    )
+    xdmf_intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of xdmf_intensity, computed over the full array at parse time.",
+    )
+    xdmf_intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xdmf_intensity in the HDF5 file.",
+    )
+    xdmf_intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xdmf_intensity in the HDF5 file.",
+    )
     xdmf_xyz = Quantity(
         type=np.float64,
         links=[
@@ -907,6 +923,22 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data)
             units="NX_LENGTH",
         ),
     )
+    xdmf_xyz__min = Quantity(
+        type=np.float64,
+        description="Minimum of xdmf_xyz, computed over the full array at parse time.",
+    )
+    xdmf_xyz__max = Quantity(
+        type=np.float64,
+        description="Maximum of xdmf_xyz, computed over the full array at parse time.",
+    )
+    xdmf_xyz__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xdmf_xyz in the HDF5 file.",
+    )
+    xdmf_xyz__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xdmf_xyz in the HDF5 file.",
+    )
     xdmf_topology = Quantity(
         type=np.float64,
         links=[
@@ -926,6 +958,22 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data)
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    xdmf_topology__min = Quantity(
+        type=np.float64,
+        description="Minimum of xdmf_topology, computed over the full array at parse time.",
+    )
+    xdmf_topology__max = Quantity(
+        type=np.float64,
+        description="Maximum of xdmf_topology, computed over the full array at parse time.",
+    )
+    xdmf_topology__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xdmf_topology in the HDF5 file.",
+    )
+    xdmf_topology__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xdmf_topology in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -971,6 +1019,22 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data)
             units="NX_ANY",
         ),
     )
+    xdmf_gradient__min = Quantity(
+        type=np.float64,
+        description="Minimum of xdmf_gradient, computed over the full array at parse time.",
+    )
+    xdmf_gradient__max = Quantity(
+        type=np.float64,
+        description="Maximum of xdmf_gradient, computed over the full array at parse time.",
+    )
+    xdmf_gradient__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xdmf_gradient in the HDF5 file.",
+    )
+    xdmf_gradient__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xdmf_gradient in the HDF5 file.",
+    )
     xdmf_xyz = Quantity(
         type=np.float64,
         links=[
@@ -991,6 +1055,22 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data)
             units="NX_LENGTH",
         ),
     )
+    xdmf_xyz__min = Quantity(
+        type=np.float64,
+        description="Minimum of xdmf_xyz, computed over the full array at parse time.",
+    )
+    xdmf_xyz__max = Quantity(
+        type=np.float64,
+        description="Maximum of xdmf_xyz, computed over the full array at parse time.",
+    )
+    xdmf_xyz__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xdmf_xyz in the HDF5 file.",
+    )
+    xdmf_xyz__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xdmf_xyz in the HDF5 file.",
+    )
     xdmf_topology = Quantity(
         type=np.float64,
         links=[
@@ -1010,6 +1090,22 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data)
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    xdmf_topology__min = Quantity(
+        type=np.float64,
+        description="Minimum of xdmf_topology, computed over the full array at parse time.",
+    )
+    xdmf_topology__max = Quantity(
+        type=np.float64,
+        description="Maximum of xdmf_topology, computed over the full array at parse time.",
+    )
+    xdmf_topology__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xdmf_topology in the HDF5 file.",
+    )
+    xdmf_topology__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xdmf_topology in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

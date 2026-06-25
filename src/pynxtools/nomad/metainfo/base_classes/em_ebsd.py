@@ -1269,6 +1269,22 @@ class EmEbsdIndexingRoi(Data):
             units="NX_UNITLESS",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     data_quantity__long_name = Quantity(
         type=str,
         links=[
@@ -1303,6 +1319,22 @@ class EmEbsdIndexingRoi(Data):
             units="NX_LENGTH",
         ),
     )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
+    )
     axis_y__long_name = Quantity(
         type=str,
         links=[
@@ -1336,6 +1368,22 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__long_name = Quantity(
         type=str,
