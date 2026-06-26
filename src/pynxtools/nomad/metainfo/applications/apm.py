@@ -1418,13 +1418,13 @@ class ApmSampleChemicalComposition(ChemicalComposition):
         ),
     )
 
-    atom = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalCompositionAtom",
+    element = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalCompositionElement",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXatom",
-            name=None,
+            name="ELEMENT",
             name_type="any",
             optionality="required",
             min_occurs=1,
@@ -1453,7 +1453,7 @@ class ApmSampleChemicalComposition(ChemicalComposition):
         super().normalize(archive, logger)
 
 
-class ApmSampleChemicalCompositionAtom(Atom):
+class ApmSampleChemicalCompositionElement(Atom):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-chemical-composition-element-group"
@@ -1461,7 +1461,7 @@ class ApmSampleChemicalCompositionAtom(Atom):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXatom",
-            name=None,
+            name="ELEMENT",
             name_type="any",
             optionality="required",
             min_occurs=1,

@@ -47,7 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-    ApmParaprobeToolConfigApmParaprobeToolParameters,
+    ApmParaprobeToolConfigTaskconfig,
 )
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
@@ -143,7 +143,7 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
 
 
 class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
+    ApmParaprobeToolConfigTaskconfig
 ):
     """
     Tracking volume_volume_spatial_correlations (v_v) is the process of

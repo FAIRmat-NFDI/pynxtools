@@ -50,7 +50,7 @@ from pynxtools.nexus.nexus_tree import NexusField as NXTreeField
 from pynxtools.nexus.nexus_tree import NexusGroup as NXTreeGroup
 from pynxtools.nexus.nexus_tree import NexusLink as NXTreeLink
 from pynxtools.nexus.nexus_tree import generate_tree_from
-from pynxtools.nexus.utils import get_nexus_definitions_path
+from pynxtools.nexus.utils import get_nexus_definitions_path, strip_nx_prefix
 from pynxtools.nomad.converters._mapping import (
     _DEFAULT_BASE,
     BASESECTIONS_MAP,
@@ -406,29 +406,57 @@ def _description_string(node) -> str | None:
 # ---------------------------------------------------------------------------
 
 
+def _group_has_explicit_name(name: str, nx_class: str) -> bool:
+    """Return True if a NXDL ``<group>`` had an explicit ``name=`` attribute.
+
+    Only used to decide what to record in the ``a_nexus_group(name=...)``
+    annotation literal — *not* for Python attribute naming, which always
+    uses ``node.name`` regardless (see ``_group_python_name``). The
+    annotation should faithfully say "NXDL declares no name here" (``None``)
+    for a genuinely anonymous group (e.g. a bare ``<group
+    type="NXpid_controller"/>``), as opposed to one NXDL does name even
+    though instances may use a different actual name (e.g. ``name=
+    "BIAS_SWEEP"`` with ``nameType="any"``).
+
+    ``NexusNode.add_node_from()`` (in ``nexus_tree.py``) auto-derives a
+    group's ``name`` from ``strip_nx_prefix(nx_class)`` — the uppercase
+    class stem, e.g. ``"PID_CONTROLLER"`` for ``NXpid_controller`` — only
+    when no ``name`` attribute was present in the XML. So a group whose
+    resolved ``name`` matches that derived stem exactly had no explicit
+    name; mirrors that derivation rather than re-implementing a second
+    heuristic, so it can't drift out of sync with it.
+    """
+    return name != strip_nx_prefix(nx_class)
+
+
 def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
     """Return the Python class name for a named concept class.
 
-    For variadic groups (name_type="any") the NX class name is the suffix,
-    e.g. ``ObjectLog`` for any NXlog inside NXobject.
+    ``node.name`` is always populated by ``NexusNode`` — either the NXDL's
+    explicit ``name=`` attribute, or (when absent) the NX class stem in
+    uppercase, e.g. ``"USER"`` for ``NXuser``. So variadic groups
+    (name_type="any") and fixed-name groups (name_type="specified") use the
+    same CamelCase-from-name logic below: e.g. ``"USER"`` → ``User`` (same
+    result as CamelCasing the NX class directly, since that's exactly what
+    ``name`` already is when no explicit name was given), and an explicitly
+    named variadic group like ``name="BIAS_SWEEP"`` on a ``nameType="any"``
+    group → ``BiasSweep`` ("any" only means instances may use any actual
+    name, not that NXDL gives no template name for the slot).
 
     For partial groups (name_type="partial") the NXDL name follows the
     convention ``fixedPrefixVARIABLE_SUFFIX`` — the upper-case part marks the
     user-chosen portion. Only the lower-case prefix is meaningful, e.g.
     ``peakPEAK`` → ``"peak"`` → ``FitPeak``.
-
-    For fixed-name groups (name_type="specified") the full name is used in
-    CamelCase, e.g. ``temperature_log`` → ``SampleTemperatureLog``.
     """
     return _concept_class_name_from_parts(
-        parent_class_name, node.name, node.name_type or "specified", node.nx_class
+        parent_class_name, node.name, node.name_type or "specified"
     )
 
 
 def _concept_class_name_from_parts(
-    parent_class_name: str, name: str, name_type: str, nx_class: str
+    parent_class_name: str, name: str, name_type: str
 ) -> str:
-    """Compute concept class name from explicit name/name_type/nx_class parts.
+    """Compute concept class name from explicit name/name_type parts.
 
     Used when the source is a raw inheritance XML element (via ``group_naming_at``)
     rather than a full NexusGroup node.
@@ -440,9 +468,7 @@ def _concept_class_name_from_parts(
     ``build_context`` re-adds the prefix when the resulting concept name would equal
     the base class name (e.g. ``ApmApmMeasurement`` is intentional).
     """
-    if name_type == "any":
-        child_suffix = nxdl_to_class_name(nx_class)
-    elif name_type == "partial":
+    if name_type == "partial":
         child_suffix = name[0].upper() + name[1:] if name else ""
     else:
         child_suffix = "".join(
@@ -586,21 +612,31 @@ def _build_subsection_from_node(
     variable = nx_name_type in ("any", "partial")
 
     if nx_name_type == "any":
-        stem = (
-            node.nx_class[2:].lower()
-            if node.nx_class.startswith("NX")
-            else node.nx_class.lower()
-        )
-        python_name = nxdl_to_subsection_name(stem)
-        nx_name_literal = "None"
+        # node.name is always populated by NexusNode — either the NXDL's
+        # explicit name= attribute (e.g. "BIAS_SWEEP") or, when absent, the
+        # NX class stem in uppercase (e.g. "USER" for any NXuser). Either
+        # way it's the right template name for this slot; "any" only means
+        # instances may use a different actual HDF5 name. Lowercase it for
+        # a pythonic attribute name (e.g. "bias_sweep"/"user") — unlike
+        # "specified" names, NXDL writes these in uppercase by convention.
+        python_name = nxdl_to_subsection_name(node.name.lower())
     elif nx_name_type == "partial":
         # Partial groups: use the full NXDL name as the python attribute name
         # (e.g. "peakPEAK") so the partial-group nature is visible in code and
         # the name is consistent with the concept class name (FitPeakPEAK).
         python_name = nxdl_to_subsection_name(node.name)
-        nx_name_literal = f'"{node.name}"'
     else:
         python_name = nxdl_to_subsection_name(node.name)
+
+    # The annotation literal records what NXDL actually declares: None for a
+    # genuinely anonymous group (no name= attribute at all — node.name was
+    # auto-derived from the class stem), the literal name otherwise — even
+    # for "any" groups that do have an explicit template name (e.g.
+    # "BIAS_SWEEP"). This is independent of python_name above, which always
+    # uses node.name regardless.
+    if nx_name_type == "any" and not _group_has_explicit_name(node.name, node.nx_class):
+        nx_name_literal = "None"
+    else:
         nx_name_literal = f'"{node.name}"'
 
     return SubSectionContext(
@@ -662,19 +698,16 @@ def _base_class_group_nx_classes(nx_class: str) -> frozenset[str]:
 def _group_python_name(node: NXTreeGroup) -> str:
     """Return the Python attribute name a SubSection for ``node`` would get.
 
-    Mirrors the naming rule in ``_build_subsection_from_node``: variadic
-    (``name_type="any"``) groups are named after the NX class stem (e.g.
-    ``"detector"`` for any ``NXdetector``), while specified/partial groups use
-    their NXDL ``name`` directly (e.g. ``"analyser"``).
+    Mirrors the naming rule in ``_build_subsection_from_node``: ``node.name``
+    is always populated (NXDL's explicit name, or the uppercase NX class stem
+    when absent), so variadic (``name_type="any"``) groups just lowercase it
+    (e.g. ``"detector"`` for any ``NXdetector``, ``"bias_sweep"`` for an
+    explicitly-named ``name="BIAS_SWEEP"`` variadic group); other groups use
+    it as-is (e.g. ``"analyser"``).
     """
     nx_name_type = node.name_type or "specified"
     if nx_name_type == "any":
-        stem = (
-            node.nx_class[2:].lower()
-            if node.nx_class.startswith("NX")
-            else node.nx_class.lower()
-        )
-        return nxdl_to_subsection_name(stem)
+        return nxdl_to_subsection_name(node.name.lower())
     return nxdl_to_subsection_name(node.name)
 
 
@@ -795,12 +828,14 @@ def _build_named_concept(
     nx_name_type = node.name_type or "specified"
     variable = nx_name_type in ("any", "partial")
 
-    if nx_name_type == "any":
+    # None for a genuinely anonymous group (no name= attribute at all — NXDL
+    # gives no template name); the literal name otherwise, even for "any"
+    # groups that do have an explicit template name (e.g. "BIAS_SWEEP"). For
+    # partial groups this preserves the full name (e.g. "peakPEAK") so the
+    # parser can extract the prefix matching rule.
+    if nx_name_type == "any" and not _group_has_explicit_name(node.name, node.nx_class):
         nx_name_literal = "None"
     else:
-        # specified or partial — store the NXDL name.
-        # For partial groups this preserves the full name (e.g. "peakPEAK") so
-        # the parser can extract the prefix matching rule.
         nx_name_literal = f'"{node.name}"'
 
     if base_class_override is not None:
@@ -904,10 +939,14 @@ def _build_named_concept(
     # declared by the parent concept class (if one exists, e.g. MpesInstrument
     # for XpsInstrument).
     base_group_python_names = _base_class_group_python_names(node.nx_class)
-    # Sub-groups already covered by the parent concept class (to avoid duplication)
-    parent_concept_nx_classes: frozenset[str] = (
+    # Sub-groups already covered by the parent concept class (to avoid duplication).
+    # Compared by python_name (slot identity), not nx_class (type) — two groups of
+    # the same NX class but different explicit names (e.g. the parent's generic,
+    # unnamed "ENVIRONMENT" slot vs. this class's distinctly-named "SCAN_ENVIRONMENT"
+    # slot) are different slots, not a duplicate of each other.
+    parent_concept_group_names: frozenset[str] = (
         frozenset(
-            getattr(c, "nx_class", None)
+            _group_python_name(c)
             for c in node.children_at_definition(parent_concept_file)
             if isinstance(c, NXTreeGroup)
         )
@@ -924,9 +963,9 @@ def _build_named_concept(
     for child in node_children:
         if not isinstance(child, NXTreeGroup):
             continue
-        if child.nx_class in parent_concept_nx_classes:
-            continue  # already declared in parent concept class
         sub_python_name = _group_python_name(child)
+        if sub_python_name in parent_concept_group_names:
+            continue  # already declared in parent concept class
         if sub_python_name in base_qty_python_names:
             continue  # would shadow an inherited Quantity with a SubSection
         if sub_python_name in seen_sub:
@@ -1070,12 +1109,7 @@ def _all_ancestor_member_names(nx_class: str) -> tuple[frozenset[str], frozenset
                 if c.nx_type == "group":
                     nx_nt = c.name_type or "specified"
                     if nx_nt == "any":
-                        stem = (
-                            c.nx_class[2:].lower()
-                            if c.nx_class.startswith("NX")
-                            else c.nx_class.lower()
-                        )
-                        sub_names.add(nxdl_to_subsection_name(stem))
+                        sub_names.add(nxdl_to_subsection_name(c.name.lower()))
                     else:
                         sub_names.add(nxdl_to_subsection_name(c.name))
                 elif c.nx_type in ("field", "attribute"):
@@ -1156,12 +1190,7 @@ def _ensure_conflicts_precomputed() -> None:
                     continue
                 nx_nt = c.name_type or "specified"
                 if nx_nt == "any":
-                    stem = (
-                        c.nx_class[2:].lower()
-                        if c.nx_class.startswith("NX")
-                        else c.nx_class.lower()
-                    )
-                    group_names.add(nxdl_to_subsection_name(stem))
+                    group_names.add(nxdl_to_subsection_name(c.name.lower()))
                 else:
                     group_names.add(nxdl_to_subsection_name(c.name))
         except Exception:
@@ -1409,12 +1438,7 @@ def build_context(nx_name: str) -> dict:
             continue
         nx_nt = child.name_type or "specified"
         if nx_nt == "any":
-            stem = (
-                child.nx_class[2:].lower()
-                if child.nx_class.startswith("NX")
-                else child.nx_class.lower()
-            )
-            own_sub_names.add(nxdl_to_subsection_name(stem))
+            own_sub_names.add(nxdl_to_subsection_name(child.name.lower()))
         else:
             own_sub_names.add(nxdl_to_subsection_name(child.name))
 
@@ -1521,9 +1545,9 @@ def build_context(nx_name: str) -> dict:
                 # not "ApmParaprobeToolConfigCamecaToNexus" (derived app's name).
                 parent_naming = child.group_naming_at(1)
                 if parent_naming is not None:
-                    p_name, p_name_type, p_nx_class = parent_naming
+                    p_name, p_name_type, _p_nx_class = parent_naming
                     parent_concept_name = _concept_class_name_from_parts(
-                        _parent_class_name, p_name, p_name_type, p_nx_class
+                        _parent_class_name, p_name, p_name_type
                     )
                     _base_class_override = (parent_concept_name, _parent_module)
             _parent_category = _nxdl_category(nx_name)

@@ -67,8 +67,8 @@ class ChemicalComposition(Object):
         ),
     )
 
-    atom = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.chemical_composition.ChemicalCompositionAtom",
+    element = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.chemical_composition.ChemicalCompositionElement",
         repeats=True,
         variable=True,
         description=(
@@ -138,7 +138,7 @@ class ChemicalComposition(Object):
 # =============================================================================
 
 
-class ChemicalCompositionAtom(Atom):
+class ChemicalCompositionElement(Atom):
     """
     If this group is used to report the composition of elements from the
     periodic table, the group should use the chemical symbol of that element.
@@ -152,7 +152,7 @@ class ChemicalCompositionAtom(Atom):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXatom",
-            name=None,
+            name="ELEMENT",
             name_type="any",
             optionality="required",
             min_occurs=1,

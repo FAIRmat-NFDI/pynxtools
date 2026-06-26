@@ -85,8 +85,8 @@ class DispersiveMaterial(Entry):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialSample",
         repeats=False,
     )
-    cite = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialCite",
+    references = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialReferences",
         repeats=True,
         variable=True,
     )
@@ -339,7 +339,7 @@ class DispersiveMaterialSample(Sample):
         super().normalize(archive, logger)
 
 
-class DispersiveMaterialCite(Cite):
+class DispersiveMaterialReferences(Cite):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-references-group"
@@ -347,7 +347,7 @@ class DispersiveMaterialCite(Cite):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXcite",
-            name=None,
+            name="REFERENCES",
             name_type="any",
             optionality="recommended",
         ),

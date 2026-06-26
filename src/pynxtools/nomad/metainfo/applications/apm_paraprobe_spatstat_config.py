@@ -47,9 +47,10 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-    ApmParaprobeToolConfigApmParaprobeToolParameters,
+    ApmParaprobeToolConfigTaskconfig,
 )
 from pynxtools.nomad.metainfo.base_classes.cs_prng import CsPrng
+from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -136,9 +137,7 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-group"
@@ -153,6 +152,26 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
         ),
     )
 
+    surface_distance = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDSurfaceDistance",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    feature_distance = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDFeatureDistance",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="feature_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     random_number_generator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator",
         repeats=False,
@@ -336,6 +355,231 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatConfigSpatial_statisticsIDSurfaceDistance(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    distance = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-distance-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    edge_distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-edge-distance-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "Threshold to define how far an ion has to lay at least from the "
+            "edge of the dataset so that the ion can act as a source. This means "
+            "that an ROI is placed at the location of the ion and its neighbors "
+            "are analyzed how they contribute to the computed statistics. The "
+            "edge_distance threshold can be combined with the feature_distance "
+            "threshold. This threshold defines defines up to which distance to a "
+            "microstructural feature an ROI is placed. The threshold is useful "
+            "to process the dataset such that ROIs do not protrude out of the "
+            "dataset as this would add bias."
+        ),
+        a_nexus_field=NeXusField(
+            name="edge_distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeSpatstatConfigSpatial_statisticsIDFeatureDistance(Note):
+    """
+    Distance between each ion and triangulated mesh of microstructural
+    features. In addition to spatial filtering and considering how far ions lie
+    to the edge of the dataset, it is possible to restrict the analyses to a
+    sub-set of ions within a distance not farther away to a feature than the
+    feature_distance threshold value.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-feature-distance-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="feature_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-feature-distance-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-feature-distance-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-feature-distance-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    distance = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-feature-distance-distance-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file which points to the distance of "
+            "each ion to the closest feature."
+        ),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    feature_distance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-feature-distance-feature-distance-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "Threshold to define how close an ion has to lay to a feature so "
+            "that the ion can at all qualify as a source, i.e. that an ROI is "
+            "placed at the location of the ion and its neighbors are then "
+            "analyzed how they contribute to the computed statistics. Recall "
+            "that this feature_distance threshold is used in combination with "
+            "the edge_distance threshold when placing ROI about source ions."
+        ),
+        a_nexus_field=NeXusField(
+            name="feature_distance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -100,7 +100,7 @@ class CgAlphaComplex(CgPrimitive):
             optionality="optional",
         ),
     )
-    cg_triangle = SubSection(
+    triangle_soup = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_triangle.CgTriangle",
         repeats=True,
         variable=True,
@@ -109,12 +109,27 @@ class CgAlphaComplex(CgPrimitive):
         ),
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_triangle",
-            name=None,
+            name="TRIANGLE_SOUP",
             name_type="any",
             optionality="optional",
         ),
     )
-    cg_tetrahedron = SubSection(
+    alpha_complex = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cg_triangle.CgTriangle",
+        repeats=True,
+        variable=True,
+        description=(
+            "Triangle mesh representing the output of the computation, i.e. the "
+            "alpha complex."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcg_triangle",
+            name="ALPHA_COMPLEX",
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    tetrahedralization = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_tetrahedron.CgTetrahedron",
         repeats=True,
         variable=True,
@@ -124,7 +139,7 @@ class CgAlphaComplex(CgPrimitive):
         ),
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_tetrahedron",
-            name=None,
+            name="TETRAHEDRALIZATION",
             name_type="any",
             optionality="optional",
         ),

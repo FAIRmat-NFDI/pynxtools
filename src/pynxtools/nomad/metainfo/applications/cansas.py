@@ -200,6 +200,16 @@ class Cansas(Entry):
             "Free form description of anything not covered by other elements."
         ),
     )
+    transmission_spectrum = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.cansas.CansasTransmissionSpectrum",
+        repeats=True,
+        variable=True,
+        description=(
+            "The *SAStransmission_spectrum* element This describes certain data "
+            "obtained from a variable-wavelength source such as pulsed-neutron "
+            "source."
+        ),
+    )
 
     default = Quantity(
         type=str,
@@ -2371,7 +2381,7 @@ class CansasTransmissionSpectrum(Data):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
-            name=None,
+            name="TRANSMISSION_SPECTRUM",
             name_type="any",
             optionality="optional",
             min_occurs=0,
