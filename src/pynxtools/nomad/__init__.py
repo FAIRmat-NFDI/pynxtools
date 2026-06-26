@@ -40,12 +40,10 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-from pynxtools.nomad.converters._mapping import _RESERVED_QUANTITY_NAMES
-
 REPLACEMENT_FOR_NX = ""
 
-# Alias for backward compatibility — canonical definition is _mapping._RESERVED_QUANTITY_NAMES.
-UNALLOWED_GROUP_NAMES = _RESERVED_QUANTITY_NAMES
+# This is a list of NeXus group names that are not allowed because they are defined as quantities in the BaseSection class.
+UNALLOWED_GROUP_NAMES = {"name", "datetime", "lab_id", "description"}
 
 NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
     "NX_COMPLEX": m_complex128,

@@ -103,7 +103,7 @@ class FitFunction(Object):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit_function.html#nxfit_function-description-field"
@@ -187,7 +187,7 @@ class FitFunctionFitParameters(Parameters):
             units="NX_ANY",
         ),
     )
-    PARAMETER__description_quantity = Quantity(
+    PARAMETER__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit_function.html#nxfit_function-fit-parameters-parameter-description-attribute"

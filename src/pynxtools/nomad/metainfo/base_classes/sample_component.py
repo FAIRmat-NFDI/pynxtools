@@ -100,7 +100,7 @@ class SampleComponent(Component, basesections.Component):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-name-field"
@@ -301,7 +301,7 @@ class SampleComponent(Component, basesections.Component):
         ),
         a_display={"unit": "kilogram"},
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-description-field"

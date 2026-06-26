@@ -686,7 +686,7 @@ class Detector(Component):
             units="NX_ANGLE",
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-description-field"

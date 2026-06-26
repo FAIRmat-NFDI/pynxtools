@@ -84,7 +84,7 @@ class Xnb(Xbase):
         section_def="pynxtools.nomad.metainfo.applications.xnb.XnbSample",
         repeats=False,
     )
-    name_group = SubSection(
+    name = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xnb.XnbName",
         repeats=False,
     )

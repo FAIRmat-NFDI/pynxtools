@@ -104,7 +104,7 @@ class CsProfilingEvent(Object):
             component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-description-field"

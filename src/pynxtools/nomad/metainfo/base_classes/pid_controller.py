@@ -114,7 +114,7 @@ class PidController(Component):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpid_controller.html#nxpid_controller-description-field"

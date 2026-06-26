@@ -752,7 +752,7 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionSingleParameter(
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-dispersion-single-parameter-name-field"
@@ -804,7 +804,7 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionRepeatedParameter
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-dispersion-repeated-parameter-name-field"
@@ -1196,7 +1196,7 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionSingleParameter(
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-dispersion-single-parameter-name-field"
@@ -1248,7 +1248,7 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionRepeatedParameter
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-dispersion-repeated-parameter-name-field"
@@ -1642,7 +1642,7 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionSingleParameter(
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-dispersion-single-parameter-name-field"
@@ -1694,7 +1694,7 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionRepeatedParameter
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-dispersion-repeated-parameter-name-field"

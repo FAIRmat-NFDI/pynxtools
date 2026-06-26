@@ -121,7 +121,7 @@ class Component(Object):
             component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcomponent.html#nxcomponent-name-field"
@@ -137,7 +137,7 @@ class Component(Object):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcomponent.html#nxcomponent-description-field"

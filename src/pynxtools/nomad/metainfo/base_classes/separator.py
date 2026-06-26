@@ -90,7 +90,7 @@ class Separator(Component):
         description=("voltage read from HT supply."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXseparator.html#nxseparator-description-field"

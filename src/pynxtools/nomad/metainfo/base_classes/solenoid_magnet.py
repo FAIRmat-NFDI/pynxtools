@@ -80,7 +80,7 @@ class SolenoidMagnet(Component):
         description=("voltage read from supply."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsolenoid_magnet.html#nxsolenoid_magnet-description-field"

@@ -189,7 +189,7 @@ class MicrostructureScoreResults(Entry):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-description-field"

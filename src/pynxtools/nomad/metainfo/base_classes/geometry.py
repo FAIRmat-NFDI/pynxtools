@@ -112,7 +112,7 @@ class Geometry(Object):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgeometry.html#nxgeometry-description-field"

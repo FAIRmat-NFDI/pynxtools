@@ -79,7 +79,7 @@ class Rcs(Object):
         description=("The fabrication information."),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-name-field"
@@ -95,7 +95,7 @@ class Rcs(Object):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXrcs.html#nxrcs-description-field"

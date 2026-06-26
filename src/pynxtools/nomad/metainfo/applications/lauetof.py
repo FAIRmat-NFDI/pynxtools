@@ -89,7 +89,7 @@ class Lauetof(Entry):
         section_def="pynxtools.nomad.metainfo.applications.lauetof.LauetofControl",
         repeats=False,
     )
-    name_group = SubSection(
+    name = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.lauetof.LauetofName",
         repeats=False,
     )
@@ -320,7 +320,7 @@ class LauetofSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-sample-name-field"

@@ -80,7 +80,7 @@ class MagneticKicker(Component):
         description=("Voltage read from supply."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmagnetic_kicker.html#nxmagnetic_kicker-description-field"
@@ -138,7 +138,7 @@ class MagneticKicker(Component):
         ),
         a_display={"unit": "second"},
     )
-    timing__description_quantity = Quantity(
+    timing__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmagnetic_kicker.html#nxmagnetic_kicker-timing-description-attribute"

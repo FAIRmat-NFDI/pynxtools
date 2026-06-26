@@ -83,7 +83,7 @@ class Xrot(Xbase):
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotSample",
         repeats=False,
     )
-    name_group = SubSection(
+    name = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotName",
         repeats=False,
     )

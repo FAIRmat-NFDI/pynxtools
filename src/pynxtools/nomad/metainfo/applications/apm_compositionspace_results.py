@@ -890,7 +890,7 @@ class ApmCompositionspaceResultsVoxelizationIonID(Atom):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-ionid-name-field"

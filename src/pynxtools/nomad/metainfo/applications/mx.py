@@ -372,7 +372,7 @@ class MxSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-sample-name-field"
@@ -495,7 +495,7 @@ class MxInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-name-field"
@@ -518,7 +518,7 @@ class MxInstrument(Instrument):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity__short_name = Quantity(
+    name__short_name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-name-short-name-attribute"
@@ -758,7 +758,7 @@ class MxInstrumentDetector(Detector):
             units="NX_ANY",
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-description-field"
@@ -1732,7 +1732,7 @@ class MxSource(Source):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-source-name-field"
@@ -1752,7 +1752,7 @@ class MxSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity__short_name = Quantity(
+    name__short_name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-source-name-short-name-attribute"

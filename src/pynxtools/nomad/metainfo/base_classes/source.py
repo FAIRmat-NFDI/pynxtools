@@ -216,7 +216,7 @@ class Source(Component):
         ),
         a_display={"unit": "m"},
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-name-field"
@@ -232,7 +232,7 @@ class Source(Component):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity__short_name = Quantity(
+    name__short_name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-name-short-name-attribute"

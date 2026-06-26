@@ -94,7 +94,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    h__description_quantity = Quantity(
+    h__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-h-description-attribute"
@@ -125,7 +125,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    k__description_quantity = Quantity(
+    k__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-k-description-attribute"
@@ -156,7 +156,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    l__description_quantity = Quantity(
+    l__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-l-description-attribute"
@@ -191,7 +191,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    id__description_quantity = Quantity(
+    id__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-id-description-attribute"
@@ -225,7 +225,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    reflection_id__description_quantity = Quantity(
+    reflection_id__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-reflection-id-description-attribute"
@@ -256,7 +256,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    entering__description_quantity = Quantity(
+    entering__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-entering-description-attribute"
@@ -287,7 +287,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    det_module__description_quantity = Quantity(
+    det_module__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-det-module-description-attribute"
@@ -333,7 +333,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    flags__description_quantity = Quantity(
+    flags__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-flags-description-attribute"
@@ -364,7 +364,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    d__description_quantity = Quantity(
+    d__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-d-description-attribute"
@@ -398,7 +398,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    partiality__description_quantity = Quantity(
+    partiality__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-partiality-description-attribute"
@@ -434,7 +434,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    predicted_frame__description_quantity = Quantity(
+    predicted_frame__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-frame-description-attribute"
@@ -470,7 +470,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    predicted_x__description_quantity = Quantity(
+    predicted_x__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-x-description-attribute"
@@ -506,7 +506,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    predicted_y__description_quantity = Quantity(
+    predicted_y__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-y-description-attribute"
@@ -542,7 +542,7 @@ class Reflections(Object):
             units="NX_ANGLE",
         ),
     )
-    predicted_phi__description_quantity = Quantity(
+    predicted_phi__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-phi-description-attribute"
@@ -579,7 +579,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    predicted_px_x__description_quantity = Quantity(
+    predicted_px_x__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-x-description-attribute"
@@ -616,7 +616,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    predicted_px_y__description_quantity = Quantity(
+    predicted_px_y__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-y-description-attribute"
@@ -653,7 +653,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_frame__description_quantity = Quantity(
+    observed_frame__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-description-attribute"
@@ -690,7 +690,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_frame_var__description_quantity = Quantity(
+    observed_frame_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-var-description-attribute"
@@ -727,7 +727,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_frame_errors__description_quantity = Quantity(
+    observed_frame_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-errors-description-attribute"
@@ -764,7 +764,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_px_x__description_quantity = Quantity(
+    observed_px_x__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-description-attribute"
@@ -801,7 +801,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_px_x_var__description_quantity = Quantity(
+    observed_px_x_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-var-description-attribute"
@@ -838,7 +838,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_px_x_errors__description_quantity = Quantity(
+    observed_px_x_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-errors-description-attribute"
@@ -875,7 +875,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_px_y__description_quantity = Quantity(
+    observed_px_y__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-description-attribute"
@@ -912,7 +912,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_px_y_var__description_quantity = Quantity(
+    observed_px_y_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-var-description-attribute"
@@ -949,7 +949,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    observed_px_y_errors__description_quantity = Quantity(
+    observed_px_y_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-errors-description-attribute"
@@ -986,7 +986,7 @@ class Reflections(Object):
             units="NX_ANGLE",
         ),
     )
-    observed_phi__description_quantity = Quantity(
+    observed_phi__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-description-attribute"
@@ -1023,7 +1023,7 @@ class Reflections(Object):
             units="NX_ANGLE",
         ),
     )
-    observed_phi_var__description_quantity = Quantity(
+    observed_phi_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-var-description-attribute"
@@ -1060,7 +1060,7 @@ class Reflections(Object):
             units="NX_ANGLE",
         ),
     )
-    observed_phi_errors__description_quantity = Quantity(
+    observed_phi_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-errors-description-attribute"
@@ -1097,7 +1097,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    observed_x__description_quantity = Quantity(
+    observed_x__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-description-attribute"
@@ -1134,7 +1134,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    observed_x_var__description_quantity = Quantity(
+    observed_x_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-var-description-attribute"
@@ -1171,7 +1171,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    observed_x_errors__description_quantity = Quantity(
+    observed_x_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-errors-description-attribute"
@@ -1208,7 +1208,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    observed_y__description_quantity = Quantity(
+    observed_y__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-description-attribute"
@@ -1245,7 +1245,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    observed_y_var__description_quantity = Quantity(
+    observed_y_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-var-description-attribute"
@@ -1282,7 +1282,7 @@ class Reflections(Object):
             units="NX_LENGTH",
         ),
     )
-    observed_y_errors__description_quantity = Quantity(
+    observed_y_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-errors-description-attribute"
@@ -1325,7 +1325,7 @@ class Reflections(Object):
             units="NX_UNITLESS",
         ),
     )
-    bounding_box__description_quantity = Quantity(
+    bounding_box__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-bounding-box-description-attribute"
@@ -1356,7 +1356,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    background_mean__description_quantity = Quantity(
+    background_mean__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-background-mean-description-attribute"
@@ -1387,7 +1387,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    int_prf__description_quantity = Quantity(
+    int_prf__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-description-attribute"
@@ -1421,7 +1421,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    int_prf_var__description_quantity = Quantity(
+    int_prf_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-var-description-attribute"
@@ -1455,7 +1455,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    int_prf_errors__description_quantity = Quantity(
+    int_prf_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-errors-description-attribute"
@@ -1486,7 +1486,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    int_sum__description_quantity = Quantity(
+    int_sum__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-description-attribute"
@@ -1519,7 +1519,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    int_sum_var__description_quantity = Quantity(
+    int_sum_var__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-var-description-attribute"
@@ -1553,7 +1553,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    int_sum_errors__description_quantity = Quantity(
+    int_sum_errors__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-errors-description-attribute"
@@ -1586,7 +1586,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    lp__description_quantity = Quantity(
+    lp__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-lp-description-attribute"
@@ -1620,7 +1620,7 @@ class Reflections(Object):
             optionality="optional",
         ),
     )
-    prf_cc__description_quantity = Quantity(
+    prf_cc__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-prf-cc-description-attribute"
@@ -1658,7 +1658,7 @@ class Reflections(Object):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    overlaps__description_quantity = Quantity(
+    overlaps__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-overlaps-description-attribute"
@@ -1695,7 +1695,7 @@ class Reflections(Object):
             units="NX_ANGLE",
         ),
     )
-    polar_angle__description_quantity = Quantity(
+    polar_angle__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-polar-angle-description-attribute"
@@ -1732,7 +1732,7 @@ class Reflections(Object):
             units="NX_ANGLE",
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-description-attribute"

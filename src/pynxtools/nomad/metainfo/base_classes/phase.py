@@ -164,7 +164,7 @@ class Phase(Object):
         ),
         a_display={"unit": "dimensionless"},
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXphase.html#nxphase-name-field"

@@ -102,7 +102,7 @@ class CsComputer(Object):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_computer.html#nxcs_computer-name-field"

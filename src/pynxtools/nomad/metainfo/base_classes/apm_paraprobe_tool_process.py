@@ -79,7 +79,7 @@ class ApmParaprobeToolProcess(Process):
         description=("A bitmask which identifies all ions considered in the analysis."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_process.html#nxapm_paraprobe_tool_process-description-field"

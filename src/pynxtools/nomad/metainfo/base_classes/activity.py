@@ -146,7 +146,7 @@ class Activity(Object):
             component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXactivity.html#nxactivity-description-field"

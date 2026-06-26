@@ -21,12 +21,6 @@ Naming utilities for converting NXDL names to Python / NOMAD conventions.
 
 from __future__ import annotations
 
-# NOMAD BaseSection quantity names that conflict with NXDL field names.
-# Fields with these names get a `_quantity` suffix to avoid shadowing.
-_RESERVED_QUANTITY_NAMES: frozenset[str] = frozenset(
-    {"name", "datetime", "lab_id", "description"}
-)
-
 
 def nxdl_to_class_name(nx_name: str) -> str:
     """Convert an NXDL class name (e.g. 'NXoptical_spectroscopy') to a
@@ -49,21 +43,28 @@ def nxdl_to_class_name(nx_name: str) -> str:
 def nxdl_to_quantity_name(nxdl_name: str) -> str:
     """Convert an NXDL field/attribute name to a safe Python quantity name.
 
-    Fields whose names collide with NOMAD BaseSection quantities or Python
-    keywords get a ``_quantity`` suffix.
+    Only Python keywords get a ``_quantity`` suffix. Fields named like a
+    NOMAD BaseSection quantity (e.g. ``name``, ``datetime``, ``lab_id``,
+    ``description``) are *not* suffixed — NOMAD allows a subclass to directly
+    override any inherited quantity of a compatible type, and the generator
+    does not pre-verify that compatibility (it would require importing
+    nomad-lab at generation time, which this module deliberately avoids — the
+    generator runs on NXDL/XML alone). An incompatible override would surface
+    as a NOMAD ``MetainfoError`` when the generated schema is loaded, caught
+    by the existing test suite, not by the generator itself.
 
     Examples
     --------
     >>> nxdl_to_quantity_name("start_time")
     'start_time'
     >>> nxdl_to_quantity_name("name")
-    'name_quantity'
+    'name'
     >>> nxdl_to_quantity_name("lambda")
     'lambda_quantity'
     """
     import keyword
 
-    if nxdl_name in _RESERVED_QUANTITY_NAMES or keyword.iskeyword(nxdl_name):
+    if keyword.iskeyword(nxdl_name):
         return f"{nxdl_name}_quantity"
     return nxdl_name
 
@@ -90,8 +91,6 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
     Variadic groups (nameType=any/partial) use the lowercase NXDL class name
     without the NX prefix as the subsection name.
     """
-    if nxdl_name in _RESERVED_QUANTITY_NAMES:
-        return f"{nxdl_name}_group"
     return nxdl_name
 
 

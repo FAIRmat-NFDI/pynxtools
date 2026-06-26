@@ -405,7 +405,7 @@ class SensorScanUser(User):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-user-name-field"
@@ -718,7 +718,7 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    run_control__description_quantity = Quantity(
+    run_control__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-run-control-description-attribute"
@@ -777,7 +777,7 @@ class SensorScanSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-sample-name-field"
